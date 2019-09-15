@@ -1,0 +1,65 @@
+Die Gesellschaft ist in verschiedene Kaste/Gruppen eingeteilt. 
+
+Jede Gruppe liefert Zutaten für Science Packs, sodass sich durch die anspruchsvoller werdenden Kasten eine Schwierigkeitskurve ergibt. 
+
+Sosciencity
+
+Primäre Kasten:
+(erzeugen Science Pack Zutaten)
+
+Automation Science Tier: 
+    Item Name: (smart) note
+    Typ: Arbeiter
+    Name: Clockwork Caste
+    Item-Ursprung: club
+    Bonus: Assembly Machine and Mine Speed
+
+Logistic Science Tier:
+    Item Name: Intellectual Essay
+    Typ: Normale Bevölkerung / Kastenlos
+    Name: Ember Caste
+    Item-Ursprung: School
+    Bonus: Happiness aller anderen Kasten
+
+Military Science Tier: 
+    Item Name: Strategic Considerations
+    Typ: Soldaten
+    Name: Gunfire Caste
+    Item-Ursprung: Barrack
+    Bonus: Damage von Türmen
+
+Chemical Science Tier: 
+    Item Name: Published Paper
+    Typ: Wissenschaftler
+    Name: Gleam Caste
+    Item-Ursprung: University 1
+    Bonus: Research Productivity + Speed
+
+Production Science Tier:
+    Item Name: Complex Scientific Data
+    Typ: Ingenieure
+    Name: Foundry Caste
+    Item-Ursprung: University 2
+    Bonus: Mining Productivity
+
+Utility Science Tier: 
+    Item Name: Data Collection
+    Typ: Bürokraten/Verwalter/Planer
+    Name: Orchid Caste
+    Item-Ursprung: City Hall
+    Bonus: Verbessern die Infrastrukturgebäude?
+
+Space Science Tier: 
+    Item Name: Well-funded Scientific Thesis
+    Typ: Elite/Promis/Politiker/kA
+    Name: Aurora Caste
+    Item-Ursprung: Research Center
+    Bonus: Rocket Silo Productivity, Happiness der anderen Kasten
+
+Sekundäre Kasten: 
+
+Plasma Caste: Ärzte
+    betreiben Krankenhäuser
+
+?? Caste: Bauern, Gärtner, etc.
+    

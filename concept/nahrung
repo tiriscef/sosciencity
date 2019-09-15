@@ -1,0 +1,42 @@
+Ideen allgemein: 
+ - Gemüse und Früchte
+ - Getreide
+ - verarbeitetes Getreide
+ - Fertiggerichte
+
+
+Ideen konkret:
+Kartoffeln
+Tomaten
+Reis
+Zitronen
+Brot
+Pizza
+
+
+Attribute: 
+ - Brennwert (evtl. Summe der Nährstoffe) - calories
+ - Nährstoffe: 
+    - Fett - fat
+    - Kohlenhydrate - carbohydrates
+    - Protein - proteins
+ - Gesundheit:
+    - intrinsischer Healthyness-Wert - healthiness
+    - diätarischer Wert, wie ausgeglichen die Nährstoffe der Kombination ist - dietary_completeness
+ - Geschmack-Kategorie - taste_category
+ - Geschmack-Wert - taste_quality
+ - Luxus-Wert - luxority
+
+
+Geschmackskategorien: 
+ - scharf
+ - süß
+ - umami
+ - neutral
+ - salzig
+ - bitter
+ - sauer
+
+Kastenspezifische Energiezufuhr
+
+http://www.ernaehrung.de/tipps/allgemeine_infos/ernaehr10.php#zufuhr

@@ -1,0 +1,69 @@
+[img]https://i.imgur.com/gqlCBrN.png[/img]
+
+[h]Description[/h]
+
+You are an architect. The architect of a new civilization. 
+
+You crashlanded on this planet, lost most of your resources, found out it's inhabited by vicious aliens and - yeah - nearly died. But that is merely a small setback on the mission to found your own city. 
+
+This mod is for people who like both city builder games and factorio (obviously), but don't like the focus on space optimization and traffic that a lot of them have. Instead this mod will focus on policies and choices as you try to satisfy a growing number of people. 
+
+[h]Society[/h]
+
+The society you're living in originated from a caste system and is still divided into 7 groups with vastly differing worldviews. 
+
+[list]
+[*][b]The Clockwork Caste:[/b] Undemanding, simple and living in boxes. The Clockwork Caste consists mostly of mechanics that keep factories and thus civilisations up and running. Also, they will speed up your machines.
+[*][b]The Ember Caste:[/b] Historically the Ember Caste was a small group of people that stayed at the campfire and kept the fires alife. In modern times they became the caste of all the people without a caste-forming profession (or due to growing automation: without any profession at all). They are the core of culture, art and social engagement. Everyone likes to have them around.
+[*][b]The Gunfire Caste:[/b] The Caste of the military. They do not talk much, but they will make your defenses deadlier.
+[*][b]The Gleam Caste:[/b] Curious and in pursuit of a better understanding of the world - like a spark in the dark. The Gleam People dedicate their lives to expanding their knowledge and sciences. Intellectuals, professors and livelong students that will increase the speed and productivity of your labs.
+[*][b]The Foundry Caste:[/b] If you combine the Clockwork and the Gleam Caste, you essentially get the Foundry Caste. Engineers. They take scientific findings, some nights and a lot of caffeine - and create a machine that solves exactly your problem. (Also, they will increase your mining productivity.) 
+[*][b]The Orchid Caste:[/b] Officials that plan and organise the society. They strive to create beauty and make everyones live better. 
+[*][b]The Aurora People:[/b] A small group of really famous people. Actors, Artists, Mod Autors... - people that inspire other people. While they are technically members of the Ember Caste, they are often seen as their own group. They will increase the productivity of rocket silos. 
+[/list]
+
+[h]Science[/h]
+
+While the base game requires you to produce the equipment and fundings to research, Sosciencity will add another ingredient: Ideas. 
+
+Each tier of science packs requires you to attract another caste into your city. 
+[list]
+[*]Automation Science - Clockwork Caste
+[*]Logistic Science - Ember Caste
+[*]Military Science - Gunfire Caste
+[*]Chemical Science - Gleam Caste
+[*]Production Science - Foundry Caste
+[*]Utility Science - Orchid Caste
+[*]Space Science - Aurora People
+[/list]
+
+[h]City[/h]
+
+As the architect of the city you need to fulfill several responsibilities in order to keep the citizens satisfied. 
+[list]
+[*]Food
+[*]Clean Water
+[*]Power
+[*]Healthcare
+[*]Safety from Biters
+[*]Garbage Collection
+[*]Education (maybe, I don't know yet how that would work)
+[/list]
+
+[h]Implementation Plan[/h]
+
+I like to develop in a continuous process and get feedback as I go, so I will implement and release the mod caste by caste. 
+While I will try to avoid it, I cannot guarantee the backwards compatibility of each release - especially because I haven't planed every feature out, yet. It might happen that you need to refactor your factory or create a new map after a major release. 
+
+[h]Compatibility[/h]
+
+Sosciencity will likely be compatible with any mod that doesn't remove the vanilla science packs or resources. I will probably add compatibility to a lot of mods as I don't think it will be hard, yet. 
+
+[h]Bugs[/h]
+
+The population part of Sosciencity relies heavily on runtime scripting, which is prone to have bugs that end with desyncs and crashes. Please report any of those to me, either in this thread, the mod portal, via PN, discord or email. //TODO add discord and email when the mod is released x.ô 
+If the game gives you an error message, then send that to me. If not or if you think the circumstance of the crash could be hard to replicate, then please send me your savefile. 
+
+[h]Credits[/h]
+
+Thanks to all the nice people in the discord's mod making channel.
