@@ -1,4 +1,4 @@
-TECHNOLOGY {
+Technology:create {
     type = "technology",
     name = "gunfire-caste",
     icon = "__sosciencity__/graphics/technology/gunfire-caste.png", -- TODO create icon

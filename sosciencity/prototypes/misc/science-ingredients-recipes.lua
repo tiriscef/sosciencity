@@ -1,4 +1,4 @@
-RECIPE {
+Recipe:create {
     type = "recipe",
     name = "brainstorm",
     category = "handcrafting",
@@ -15,7 +15,7 @@ RECIPE {
     main_product = ""
 }
 
-RECIPE {
+Recipe:create {
     type = "recipe",
     name = "write-essay",
     category = "handcrafting",

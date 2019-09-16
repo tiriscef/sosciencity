@@ -1,12 +1,4 @@
-require("__stdlib__/stdlib/data/data").Util.create_data_globals()
-table = require("__stdlib__/stdlib/utils/table")
-
-function try_load(file)
-    local ok, err = pcall(require, file)
-    if not ok and not err:find('^module .* not found') then
-        error(err)
-    end
-end
+require("lib.prototypes")
 
 require("prototypes.item-groups")
 
@@ -31,13 +23,10 @@ local enabled_concepts = {
     "building.orchid-housing",
     "building.aurora-housing",
     "building.club",
-
 }
 
 for _, concept in pairs(enabled_concepts) do
     try_load("prototypes." .. concept)
 end
 
-for _, concept in pairs(enabled_concepts) do
-    try_load("prototypes." .. concept .. "-recipes")
-end
+Prototype:finish_postponed()

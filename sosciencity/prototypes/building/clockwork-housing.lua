@@ -1,4 +1,4 @@
-ITEM {
+Item:create {
     type = "item",
     name = "clockwork-housing-1",
     icon = "__sosciencity__/graphics/icon/note.png",
@@ -10,7 +10,7 @@ ITEM {
     stack_size = 10
 }
 
-RECIPE {
+Recipe:create {
     type = "recipe",
     name = "clockwork-housing-1",
     category = "crafting",
@@ -26,7 +26,7 @@ RECIPE {
     order = "aaa"
 }--:add_unlock("clockwork-caste") --TODO
 
-ENTITY {
+Entity:create {
     type = "container",
     name = "clockwork-housing-1",
     order = "aaa",

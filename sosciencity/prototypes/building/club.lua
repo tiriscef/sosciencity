@@ -1,4 +1,4 @@
-ITEM {
+Item:create {
     type = "item",
     name = "club",
     icon = "__sosciencity__/graphics/icon/note.png", --TODO icon
@@ -10,7 +10,7 @@ ITEM {
     stack_size = 10
 }
 
-ENTITY {
+Entity:create {
     type = "container",
     name = "club",
     order = "aaa",

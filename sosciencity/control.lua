@@ -1,3 +1,9 @@
+local dataphase_test = true
+
+if dataphase_test then
+    return
+end
+
 --[[
     Data structures
 
@@ -13,28 +19,19 @@
         -- Housing
         ["inhabitants"]: int
         ["happiness"]: float
-        ["food_supply"]: float
-        ["food_luxurity"]: float
-        ["food_healthiness"]: float
+        ["food"]: table
 
     subentity: table
         ["type"]: int/enum
         ["entity"]: LuaEntity
 ]]
-local dataphase_test = false
-
-if dataphase_test then
-    return
-end
 
 --[[ runtime finals ]]
-local string = require("__stdlib__/stdlib/utils/string")
-local table = require("__stdlib__/stdlib/utils/table")
-
+require("constants.castes")
+require("constants.diseases")
 require("constants.entity_types")
 require("constants.food")
 require("constants.housing")
-require("constants.castes")
 
 --[[ register system ]]
 local function new_registered_entity(entity, type)

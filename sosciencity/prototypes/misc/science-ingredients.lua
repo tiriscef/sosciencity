@@ -1,4 +1,4 @@
-ITEM {
+Item:create {
     type = "item",
     name = "note",
     enabled = true,
@@ -10,7 +10,7 @@ ITEM {
     stack_size = 200
 }
 
-ITEM {
+Item:create {
     type = "item",
     name = "essay",
     enabled = false,
@@ -22,7 +22,7 @@ ITEM {
     stack_size = 200
 }
 
-ITEM {
+Item:create {
     type = "item",
     name = "strategic-considerations",
     enabled = false,
@@ -34,7 +34,7 @@ ITEM {
     stack_size = 200
 }
 
-ITEM {
+Item:create {
     type = "item",
     name = "data-collection",
     enabled = false,
@@ -46,7 +46,7 @@ ITEM {
     stack_size = 200
 }
 
-ITEM {
+Item:create {
     type = "item",
     name = "complex-scientific-data",
     enabled = false,
@@ -58,7 +58,7 @@ ITEM {
     stack_size = 200
 }
 
-ITEM {
+Item:create {
     type = "item",
     name = "published-paper",
     enabled = false,
@@ -70,7 +70,7 @@ ITEM {
     stack_size = 200
 }
 
-ITEM {
+Item:create {
     type = "item",
     name = "well-funded-scientific-thesis",
     enabled = false,
