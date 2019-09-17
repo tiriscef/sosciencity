@@ -1,7 +1,20 @@
 function conditional_add_ingredient(recipe, details)
     if recipe:results_contain_item(details.item) then
-        local ingredient_amount = recipe:get_result_item_count(details.item) * details.amount_factor
+        if recipe:has_difficulties() then
+            local normal_amount, expensive_amount = recipe:get_result_item_count(details.item)
 
+            if not (normal_amount and expensive_amount) then
+                recipe:add_ingredient {type = details.type, name = details.item_to_add, amount = (normal_amount or expensive_amount)}
+            else
+                recipe:add_ingredient(
+                    {type = details.type, name = details.item_to_add, amount = normal_amount},
+                    {type = details.type, name = details.item_to_add, amount = expensive_amount}
+                )
+            end
+            return
+        end
+
+        local ingredient_amount = recipe:get_result_item_count(details.item) * details.amount_factor
         recipe:add_ingredient {type = details.type, name = details.item_to_add, amount = ingredient_amount}
     end
 end

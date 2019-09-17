@@ -125,16 +125,16 @@ function Recipe:results_contain_item(item_name)
     end
 end
 
-local function recipe_result_count(recipe, item_name)
+local function recipe_result_count(recipe, name, type)
     if recipe.result then
-        if recipe.result == item_name then
+        if recipe.result == name then
             return recipe.result_count or 1 -- factorio defaults to 1 if no result_count is specified
         else
             return 0
         end
     elseif recipe.results then
         for _, result in pairs(results_table) do
-            if RecipeEntry:get_name() == item_name and RecipeEntry:yields_item() then
+            if RecipeEntry:get_name(result) == name and RecipeEntry:get_type(result) then
                 return RecipeEntry:get_average_yield(result)
             end
         end

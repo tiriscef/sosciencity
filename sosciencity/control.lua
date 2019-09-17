@@ -180,15 +180,27 @@ local function on_entity_built(event)
 end
 
 local function on_entity_removed(event)
+    local entity = event.entity -- all removement events use entity as key
 
+    if global.register[entity.unit_number] then
+        remove_from_register(entity)
+    end
 end
 
-local function on_entity_destroyed(event)
-    on_entity_removed(event)
-
-    if TYPES.entity_is_civil then
+local function on_entity_died(event)
+    if TYPES.entity_is_civil(event.entity) then
         -- TODO create panic
     end
+
+    on_entity_removed(event)
+end
+
+local function on_entity_mined(event)
+    if TYPES.entity_is_housing(event.entity) then
+        -- TODO resettlement
+    end
+
+    on_entity_removed(event)
 end
 
 local function on_configuration_change(event)
@@ -225,9 +237,9 @@ script.on_event(defines.events.script_raised_built, on_entity_built)
 script.on_event(defines.events.script_raised_revive, on_entity_built)
 
 -- removing
-script.on_event(defines.events.on_player_mined_entity, on_entity_removed)
-script.on_event(defines.events.on_robot_mined_entity, on_entity_removed)
-script.on_event(defines.events.on_entity_died, on_entity_destroyed)
+script.on_event(defines.events.on_player_mined_entity, on_entity_mined)
+script.on_event(defines.events.on_robot_mined_entity, on_entity_mined)
+script.on_event(defines.events.on_entity_died, on_entity_died)
 script.on_event(defines.events.script_raised_destroy, on_entity_removed)
 
 -- mod update
