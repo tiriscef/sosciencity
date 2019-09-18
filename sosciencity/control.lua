@@ -8,7 +8,7 @@ end
     Data structures
 
     global.register: table
-        [LuaEntity]: registered_entity
+        [LuaEntity.unit_number]: registered_entity
 
     registered_entity: table
         ["type"]: int/enum
@@ -24,6 +24,11 @@ end
     subentity: table
         ["type"]: int/enum
         ["entity"]: LuaEntity
+
+    global.inhabitants: table
+        [caste_type]: int (count)
+
+    global.panic: double
 ]]
 
 --[[ runtime finals ]]
@@ -34,25 +39,39 @@ require("constants.food")
 require("constants.housing")
 
 --[[ register system ]]
-local function new_registered_entity(entity, type)
+local function get_starting_diet(type)
+
+end
+
+local function add_housing_data(registered_entity)
+    registered_entity.inhabitants = 0
+    registered_entity.trend = 0
+    registered_entity.diet = get_starting_diet(registered_entity.type)
+
+    return registered_entity
+end
+
+local function establish_registered_entity(entity)
+    local type = TYPES(entity)
+
     local registered_entity = {
         entity = entity,
         type = type,
-        last_update = game.tick, 
+        last_update = game.tick,
         subentities = {}
     }
     
     if is_housing(type) then
-        registered_entity.inhabitants = 0.
-        registered_entity.happiness = 0.
+        add_housing_data(registered_entity)
     end
 
-    global.register[entity] = registered_entity
-    refresh(registered_entity)
+    return registered_entity
 end
 
-local function add_to_register(entity)
-    new_registered_entity(entity, entity_type_lookup[type])
+local function add_entity_to_register(entity)
+    local registered_entity = establish_registered_entity(entity)
+    global.register[entity.unit_number] = registered_entity
+    refresh(registered_entity)
 end
 
 local function remove_from_register(registered_entity)

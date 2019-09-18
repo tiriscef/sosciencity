@@ -9,12 +9,6 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-science-ingredients",
-        group = "sosciencity",
-        order = "aaa"
-    }, 
-    {
-        type = "item-subgroup",
         name = "sosciencity-infrastructure",
         group = "sosciencity",
         order = "baa"
@@ -51,7 +45,7 @@ data:extend {
     }, 
     {
         type = "item-subgroup",
-        name = "sosciencity--housing",
+        name = "sosciencity-orchid-housing",
         group = "sosciencity",
         order = "cfa"
     }, 
@@ -60,5 +54,11 @@ data:extend {
         name = "sosciencity-aurora-housing",
         group = "sosciencity",
         order = "cga"
-    }
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-science-ingredients",
+        group = "sosciencity",
+        order = "zaa"
+    }, 
 }

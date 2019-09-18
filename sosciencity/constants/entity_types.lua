@@ -53,6 +53,10 @@ TYPES.entity_type_lookup = {
     end
 }
 
+function TYPES:get_entity_type(entity)
+    return TYPES(entity)
+end
+
 function TYPES:is_housing(type)
     return type < 100
 end
