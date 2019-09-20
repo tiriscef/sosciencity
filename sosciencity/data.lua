@@ -1,32 +1,14 @@
 require("lib.prototypes")
+require("integrations")
 
 require("prototypes.item-groups")
+require("prototypes.recipe-categories")
 
-local enabled_concepts = {
-    "misc.science-ingredients",
-    --
-    -- technologies
-    --[["technology.clockwork-caste",
-    "technology.ember-caste",
-    "technology.gunfire-caste",
-    "technology.gleam-caste",
-    "technology.foundry-caste",
-    "technology.orchid-caste",
-    "technology.aurora-caste",]]
-    --
-    -- buildings
-    "building.clockwork-housing",
-    "building.ember-housing",
-    "building.gunfire-housing",
-    "building.gleam-housing",
-    "building.foundry-housing",
-    "building.orchid-housing",
-    "building.aurora-housing",
-    "building.club",
-}
-
-for _, concept in pairs(enabled_concepts) do
-    try_load("prototypes." .. concept)
-end
+require("prototypes.technologies")
+require("prototypes.buildings") -- TODO
+require("prototypes.food")
+require("prototypes.ideas")
+require("prototypes.hidden-entities.beacon")
+require("prototypes.hidden-entities.electric-energy-interface")
 
 Prototype:finish_postponed()

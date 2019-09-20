@@ -25,6 +25,13 @@ end
         ["type"]: int/enum
         ["entity"]: LuaEntity
 
+    food: table
+        ["healthiness"]: float
+        ["healthiness_mental"]: float
+        ["taste_category"]: string
+        ["taste_quality"]: float
+        ["luxority"]: float
+
     global.inhabitants: table
         [caste_type]: int (count)
 
@@ -86,6 +93,10 @@ end
 
 --[[ update functions ]]
 -- entities need to be checked for validity before calling the update-function
+local function has_power(entity)
+    return entity-power > 0
+end
+
 local function update_house_clockwork(registered_entity)
 end
 

@@ -1,6 +1,6 @@
 function try_load(file)
     local ok, err = pcall(require, file)
-    if not ok and not err:find('^module .* not found') then
+    if not ok and not string.find(err, '^module .* not found') then
         error(err)
     end
 end
