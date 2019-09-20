@@ -5,7 +5,8 @@ require("prototypes.item-groups")
 require("prototypes.recipe-categories")
 
 require("prototypes.technologies")
-require("prototypes.buildings") -- TODO
+require("prototypes.housing")
+require("prototypes.buildings")
 require("prototypes.food")
 require("prototypes.ideas")
 require("prototypes.hidden-entities.beacon")

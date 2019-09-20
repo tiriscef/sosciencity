@@ -1,3 +1,4 @@
+-- entities
 TYPE_CLOCKWORK = 1
 TYPE_EMBER = 2
 TYPE_GUNFIRE = 3
@@ -20,12 +21,21 @@ TYPE_CITY_HALL = 206
 TYPE_RESEARCH_CENTER = 207
 
 TYPE_ASSEMBLY_MACHINE = 1001
-TYPE_MINING_DRILL = 1002
-TYPE_LAB = 1003
-TYPE_ROCKET_SILO = 1004
-TYPE_FURNACE = 1005
+TYPE_FURNACE = 1002
+TYPE_ROCKET_SILO = 1003
+TYPE_MINING_DRILL = 1004
+TYPE_LAB = 1005
 
 TYPE_NULL = 9999
+
+--tastes
+TASTE_BITTER = 1
+TASTE_NEUTRAL = 2
+TASTE_SALTY = 3
+TASTE_SOUR = 4
+TASTE_SPICY = 5
+TASTE_SWEET = 6
+TASTE_UMAMI = 7
 
 TYPES = {}
 TYPES.entity_type_lookup = {
@@ -57,6 +67,23 @@ function TYPES:get_entity_type(entity)
     return TYPES(entity)
 end
 
+TYPES.caste_names = {
+    [TYPE_CLOCKWORK] = "clockwork",
+    [TYPE_EMBER] = "ember",
+    [TYPE_GUNFIRE] = "gunfire",
+    [TYPE_GLEAM] = "gleam",
+    [TYPE_FOUNDRY] = "foundry",
+    [TYPE_ORCHID] = "orchid",
+    [TYPE_AURORA] = "aurora",
+    __call = function(self, type)
+        return self[type]
+    end
+}
+
+function TYPES:get_caste_name(type)
+    return self.caste_names[type]
+end
+
 function TYPES:is_housing(type)
     return type < 100
 end
@@ -75,4 +102,13 @@ end
 
 function TYPES:entity_is_relevant(entity)
     return self.entity_type_lookup(entity) ~= TYPE_NULL
+end
+
+function TYPES:is_affected_by_clockwork(type)
+    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
+end
+
+function TYPES:entity_is_affected_by_clockwork(entity)
+    local type = self.entity_type_lookup(entity)
+    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
 end

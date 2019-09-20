@@ -1,85 +1,71 @@
 Item:create {
     type = "item",
     name = "note",
-    enabled = true,
     icon = "__sosciencity__/graphics/icon/note.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aaa",
-    stack_size = 200
+    stack_size = 100
 }
 
 Item:create {
     type = "item",
     name = "essay",
-    enabled = false,
     icon = "__sosciencity__/graphics/icon/essay.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aab",
-    stack_size = 200
+    stack_size = 100
 }
 
 Item:create {
     type = "item",
     name = "strategic-considerations",
-    enabled = false,
     icon = "__sosciencity__/graphics/icon/strategic-considerations.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aac",
-    stack_size = 200
+    stack_size = 100
 }
 
 Item:create {
     type = "item",
     name = "data-collection",
-    enabled = false,
     icon = "__sosciencity__/graphics/icon/data-collection.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aad",
-    stack_size = 200
+    stack_size = 100
 }
 
 Item:create {
     type = "item",
     name = "complex-scientific-data",
-    enabled = false,
     icon = "__sosciencity__/graphics/icon/complex-scientific-data.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aae",
-    stack_size = 200
+    stack_size = 100
 }
 
 Item:create {
     type = "item",
     name = "published-paper",
-    enabled = false,
     icon = "__sosciencity__/graphics/icon/published-paper.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aaf",
-    stack_size = 200
+    stack_size = 100
 }
 
 Item:create {
     type = "item",
     name = "well-funded-scientific-thesis",
-    enabled = false,
     icon = "__sosciencity__/graphics/icon/well-funded-scientific-thesis.png",
     icon_size = 64,
-    flags = {},
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aag",
-    stack_size = 200
+    stack_size = 100
 }
 
 Recipe:create {
@@ -94,7 +80,7 @@ Recipe:create {
     },
     icon = "__sosciencity__/graphics/icon/note.png",
     icon_size = 64,
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aaa", 
     main_product = ""
 }
@@ -111,7 +97,7 @@ Recipe:create {
     },
     icon = "__sosciencity__/graphics/icon/essay.png",
     icon_size = 64,
-    subgroup = "sosciencity-science-ingredients",
+    subgroup = "sosciencity-ideas",
     order = "aab",
     main_product = ""
 }:add_unlock("ember-caste")

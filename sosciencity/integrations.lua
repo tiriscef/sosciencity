@@ -5,6 +5,6 @@ function try_load(file)
     end
 end
 
-for _, mod_name in pairs(mods) do
-    try_load("integration-scripts." .. mod_name)
+for mod_name, _ in pairs(mods) do
+    try_load("integrations." .. mod_name)
 end

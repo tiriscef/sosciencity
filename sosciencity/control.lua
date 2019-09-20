@@ -15,6 +15,8 @@ end
         ["entity"]: LuaEntity
         ["last_update"]: uint (tick)
         ["subentities"]: table of subentities
+        ["active_surroundings"]: table of unit_numbers
+        ["inactive_surroundings"]: table
         
         -- Housing
         ["inhabitants"]: int
@@ -36,12 +38,14 @@ end
         [caste_type]: int (count)
 
     global.panic: double
+
+    global.pharmacies: table of unit_numbers
 ]]
 
 --[[ runtime finals ]]
 require("constants.castes")
 require("constants.diseases")
-require("constants.entity_types")
+require("constants.types")
 require("constants.food")
 require("constants.housing")
 
@@ -68,7 +72,7 @@ local function establish_registered_entity(entity)
         subentities = {}
     }
     
-    if is_housing(type) then
+    if TYPES:is_housing(type) then
         add_housing_data(registered_entity)
     end
 
@@ -95,6 +99,10 @@ end
 -- entities need to be checked for validity before calling the update-function
 local function has_power(entity)
     return entity-power > 0
+end
+
+local function generate_ideas(registered_entity)
+
 end
 
 local function update_house_clockwork(registered_entity)

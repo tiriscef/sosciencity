@@ -24,6 +24,8 @@ Entity:create {
         type = "electric",
         buffer_capacity = "1MW",
         usage_priority = "secondary-input"
-    }
+    },
+    icon = "__sosciencity__/graphics/icon/eei.png",
+    icon_size = 64
 }
--- TODO icon and description for the energy network gui
+-- TODO icon
