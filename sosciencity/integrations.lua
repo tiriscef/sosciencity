@@ -1,10 +1,9 @@
-function try_load(file)
-    local ok, err = pcall(require, file)
-    if not ok and not string.find(err, '^module .* not found') then
-        error(err)
-    end
-end
+local integrations = {
+    ["bspmod"] = true,
+}
 
-for mod_name, _ in pairs(mods) do
-    try_load("integrations." .. mod_name)
+for mod_name, _ in pairs(integrations) do
+    if mods[mod_name] then
+        require("integrations." .. mod_name)
+    end
 end

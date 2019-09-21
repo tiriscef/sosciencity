@@ -1,9 +1,11 @@
 --[[
-    Some functions (mainly those who make changes to another prototype which might not yet be created) might postpone their execution.
+    Some functions (mainly those who make changes to another prototype which might not 
+    yet be created) might postpone their execution.
+    So they will add a table with all the necessary data and a execute-function to the 
+    Prototype.postpones_functions table.
 
-    So they will add a table with all the necessary data and a execute-function to the Prototype.postpones_functions table.
-
-    A call to finish_postponed will iterate repeatedly over the table and execute the stored functions.
+    A call to finish_postponed will iterate repeatedly over the table and execute the 
+    stored functions.
 ]]
 Prototype = {
     postponed_functions = {}
@@ -28,7 +30,8 @@ function Prototype:postpone(func)
     table.insert(self.postponed_functions, func)
 end
 
--- TODO: This assumes that a 'successful' call to a postponed function will not result in another postponed function
+-- This assumes that a 'successful' call to a postponed function will not result in 
+-- another postponed function
 function Prototype:finish_postponed()
     local todo = self.postponed_functions
     local todo_count = table_size(todo)
@@ -47,9 +50,3 @@ function Prototype:finish_postponed()
 
     return todo_count == 0 -- return true if there are no more things to do
 end
-
-require("lib.recipe")
-require("lib.item")
-require("lib.entity")
-require("lib.technology")
-require("lib.fluid")

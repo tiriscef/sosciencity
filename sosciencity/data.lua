@@ -1,9 +1,10 @@
-require("lib.prototypes")
+-- initialisation
+require("lib.init")
 require("integrations")
 
+-- create prototypes
 require("prototypes.item-groups")
 require("prototypes.recipe-categories")
-
 require("prototypes.technologies")
 require("prototypes.housing")
 require("prototypes.buildings")
