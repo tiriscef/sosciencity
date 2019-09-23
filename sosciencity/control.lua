@@ -14,7 +14,7 @@ end
         ["type"]: int/enum
         ["entity"]: LuaEntity
         ["last_update"]: uint (tick)
-        ["subentities"]: table of subentities
+        ["subentities"]: table of subentity type - entity pairs
         ["active_surroundings"]: table of unit_numbers
         ["inactive_surroundings"]: table
         
@@ -22,10 +22,6 @@ end
         ["inhabitants"]: int
         ["happiness"]: float
         ["food"]: table
-
-    subentity: table
-        ["type"]: int/enum
-        ["entity"]: LuaEntity
 
     food: table
         ["healthiness"]: float
@@ -37,29 +33,91 @@ end
     global.inhabitants: table
         [caste_type]: int (count)
 
-    global.panic: double
+    global.panic: float
 
     global.pharmacies: table of unit_numbers
 ]]
-
---[[ runtime finals ]]
+--<< runtime finals >>
 require("constants.castes")
 require("constants.diseases")
 require("constants.types")
 require("constants.food")
 require("constants.housing")
 
---[[ register system ]]
-local function get_starting_diet(type)
+--<< subentities >>
+local function add_subentity(registered_entity, type)
+    local subentity =
+        registered_entity.entity.surface.create_entity {
+        name = TYPES.subentity_lookup[type],
+        position = registered_entity.entity.position,
+        force = registered_entity.entity.force
+    }
 
+    registered_entity.subentities[type] = subentity
 end
 
+-- Assumes that the entry has a beacon.
+-- speed and productivity need to be positive
+local function set_beacon_effects(registered_entity, speed, productivity, add_penalty)
+    local beacon_inventory = registered_entity.subentities[SUB_BEACON].get_module_inventory()
+    beacon_inventory.clear()
+
+    if speed then
+        -- ceil to make sure we don't end up attempting to insert 0 modules
+        speed = math.ceil(speed)
+
+        beacon_inventory.insert {
+            name = "sosciencity-speed-module",
+            count = speed % 100
+        }
+        beacon_inventory.insert {
+            name = "sosciencity-speed-module-100",
+            count = speed / 100
+        }
+    end
+
+    if productivity then
+        -- ceil to make sure we don't end up attempting to insert 0 modules
+        productivity = math.ceil(productivity)
+
+        beacon_inventory.insert {
+            name = "sosciencity-productivity-module",
+            count = productivity % 100
+        }
+        beacon_inventory.insert {
+            name = "sosciencity-productivity-module-100",
+            count = productivity / 100
+        }
+    end
+
+    if add_penalty then
+        beacon_inventory.insert {
+            name = "sosciencity-speed-penalty-module",
+            count = 1
+        }
+    end
+end
+
+-- Checks if the entity is supplied with power. Assumes that the entry has an eei.
+local function has_power(registered_entity)
+    -- check if the buffer is partially filled
+    return registered_entity.subentities[SUB_EEI].power > 0
+end
+
+-- Sets the power usage of the entity. Assumes that the entry has an eei.
+-- usage seems to be in W
+local function set_power_usage(registered_entity, usage)
+    registered_entity.subentities[SUB_EEI].power_usage = usage
+end
+
+--<< register system >>
 local function add_housing_data(registered_entity)
+    registered_entity.happiness = 0
+    registered_entity.healthiness = 0
+    registered_entity.healthiness_mental = 0
+    registered_entity.ideas = 0
     registered_entity.inhabitants = 0
     registered_entity.trend = 0
-    registered_entity.diet = get_starting_diet(registered_entity.type)
-
-    return registered_entity
 end
 
 local function establish_registered_entity(entity)
@@ -71,7 +129,7 @@ local function establish_registered_entity(entity)
         last_update = game.tick,
         subentities = {}
     }
-    
+
     if TYPES:is_housing(type) then
         add_housing_data(registered_entity)
     end
@@ -89,20 +147,15 @@ local function remove_from_register(registered_entity)
     global.register[registered_entity.entity] = nil
 
     for _, subentity in pairs(registered_entity.subentities) do
-        if subentity.entity.valid then
-            subentity.entity.destroy()
+        if subentity.valid then
+            subentity.destroy()
         end
     end
 end
 
---[[ update functions ]]
+--<< update functions >>
 -- entities need to be checked for validity before calling the update-function
-local function has_power(entity)
-    return entity-power > 0
-end
-
 local function generate_ideas(registered_entity)
-
 end
 
 local function update_house_clockwork(registered_entity)
@@ -148,9 +201,11 @@ local function update(registered_entity)
     end
 
     update_function_lookup[registered_entity.type](registered_entity)
+
+    last_update = game.tick
 end
 
---[[ event handler functions ]]
+--<< event handler functions >>
 local function init()
     global.version = game.active_mods["sosciencity"]
     global.updates_per_cycle = settings.startup["sosciencity-entity-updates-per-cycle"].value
@@ -213,21 +268,21 @@ local function on_entity_built(event)
     end
 
     if TYPES:entity_is_relevant(entity) then
-        add_to_register(entity)
+        add_entity_to_register(entity)
     end
 end
 
 local function on_entity_removed(event)
     local entity = event.entity -- all removement events use entity as key
-
-    if global.register[entity.unit_number] then
-        remove_from_register(entity)
+    local entry = global.register[entity.unit_number]
+    if entry then
+        remove_from_register(entry)
     end
 end
 
 local function on_entity_died(event)
     if TYPES.entity_is_civil(event.entity) then
-        -- TODO create panic
+    -- TODO create panic
     end
 
     on_entity_removed(event)
@@ -235,7 +290,7 @@ end
 
 local function on_entity_mined(event)
     if TYPES.entity_is_housing(event.entity) then
-        -- TODO resettlement
+    -- TODO resettlement
     end
 
     on_entity_removed(event)
@@ -246,8 +301,8 @@ local function on_configuration_change(event)
     if game.active_mods["sosciencity"] ~= global.version then
         global.version = game.active_mods["sosciencity"]
 
-        -- Reset recipes, techs and tech effects in case I changed something. 
-        -- I do that a lot and don't want to forget a migration file. 
+        -- Reset recipes, techs and tech effects in case I changed something.
+        -- I do that a lot and don't want to forget a migration file.
         for _, force in pairs(game.forces) do
             force.reset_recipes()
             force.reset_technologies()
@@ -256,7 +311,7 @@ local function on_configuration_change(event)
     end
 end
 
---[[ event handler registration ]]
+--<< event handler registration >>
 -- initialisation
 script.on_init(init)
 script.on_load(load)

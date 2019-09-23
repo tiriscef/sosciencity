@@ -23,10 +23,14 @@ TYPE_RESEARCH_CENTER = 207
 TYPE_ASSEMBLY_MACHINE = 1001
 TYPE_FURNACE = 1002
 TYPE_ROCKET_SILO = 1003
-TYPE_MINING_DRILL = 1004
-TYPE_LAB = 1005
+TYPE_MINING_DRILL = 1101
+TYPE_LAB = 1102
 
 TYPE_NULL = 9999
+
+--subentities
+SUB_BEACON = 1
+SUB_EEI = 2
 
 --tastes
 TASTE_BITTER = 1
@@ -112,3 +116,8 @@ function TYPES:entity_is_affected_by_clockwork(entity)
     local type = self.entity_type_lookup(entity)
     return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
 end
+
+TYPES.subentity_lookup = {
+    [SUB_BEACON] = "sosciencity-invisible-beacon",
+    [SUB_EEI] = "sosciencity-invisible-eei"
+}

@@ -12,35 +12,57 @@ Item:create {
     effect = {speed = {bonus = -0.80}}
 }
 
-for strenght = 1, 21 do
-    Item:create {
-        type = "module",
-        name = "sosciencity-speed-module-" .. strenght,
-        icon = "__sosciencity__/graphics/icon/empty.png",
-        icon_size = 1,
-        flags = {"hidden", "hide-from-bonus-gui"},
-        subgroup = "module",
-        category = "speed",
-        tier = 0,
-        stack_size = 1,
-        effect = {speed = {bonus = 0.01 * 2 ^ (strenght - 1)}}
-    }
-end
+Item:create {
+    type = "module",
+    name = "sosciencity-speed-module",
+    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon_size = 1,
+    flags = {"hidden", "hide-from-bonus-gui"},
+    subgroup = "module",
+    category = "speed",
+    tier = 0,
+    stack_size = 1,
+    effect = {speed = {bonus = 0.01}}
+}
 
-for strenght = 1, 21 do
-    Item:create {
-        type = "module",
-        name = "sosciencity-productivity-module-" .. strenght,
-        icon = "__sosciencity__/graphics/icon/empty.png",
-        icon_size = 1,
-        flags = {"hidden", "hide-from-bonus-gui"},
-        subgroup = "module",
-        category = "productivity",
-        tier = 0,
-        stack_size = 1,
-        effect = {productivity = {bonus = 0.01 * 2 ^ (strenght - 1)}}
-    }
-end
+Item:create {
+    type = "module",
+    name = "sosciencity-speed-module-100",
+    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon_size = 1,
+    flags = {"hidden", "hide-from-bonus-gui"},
+    subgroup = "module",
+    category = "speed",
+    tier = 0,
+    stack_size = 1,
+    effect = {speed = {bonus = 1}}
+}
+
+Item:create {
+    type = "module",
+    name = "sosciencity-productivity-module",
+    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon_size = 1,
+    flags = {"hidden", "hide-from-bonus-gui"},
+    subgroup = "module",
+    category = "productivity",
+    tier = 0,
+    stack_size = 1,
+    effect = {productivity = {bonus = 0.01}}
+}
+
+Item:create {
+    type = "module",
+    name = "sosciencity-productivity-module-100",
+    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon_size = 1,
+    flags = {"hidden", "hide-from-bonus-gui"},
+    subgroup = "module",
+    category = "productivity",
+    tier = 0,
+    stack_size = 1,
+    effect = {productivity = {bonus = 1}}
+}
 
 --[[ beacon ]]
 Entity:create {
