@@ -8,7 +8,7 @@ TYPE_ORCHID = 6
 TYPE_AURORA = 7
 TYPE_PLASMA = 8
 
-TYPE_SHOPPING_CENTER = 101
+TYPE_MARKET = 101
 TYPE_WATER_DISTRIBUTION_FACILITY = 102
 TYPE_HOSPITAL = 103
 
@@ -121,3 +121,11 @@ TYPES.subentity_lookup = {
     [SUB_BEACON] = "sosciencity-invisible-beacon",
     [SUB_EEI] = "sosciencity-invisible-eei"
 }
+
+function TYPES:needs_beacon(type)
+    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_LAB
+end
+
+function TYPES:needs_eei(type)
+    return type < 1000
+end

@@ -11,7 +11,7 @@ for food_name, food in pairs(food_values) do
         subgroup = "sosciencity-food",
         order = food_name,
         stack_size = 200,
-        durability = 100,
+        durability = food.calories,
         durability_description_key = "description.sosciencity-food-key",
         durability_description_value = "description.sosciencity-food-value",
         infinite = false,
