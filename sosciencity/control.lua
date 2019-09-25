@@ -237,8 +237,8 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
         table.insert(flags, "high-carbohydrates")
     end
 
-    return 2 +
-        0.25 * (get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage))
+    return 0.25 *
+        (2 + get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage))
 end
 
 local function get_diet_effects(diet, caste_type)
@@ -339,7 +339,8 @@ local function evaluate_diet(registered_entity, delta_ticks)
 
     local diet_effects = get_diet_effects(diet, registered_entity.type)
 
-    local calories_to_consume = caste_values[registered_entity.type].calorific_demand * delta_ticks * registered_entity.inhabitants
+    local calories_to_consume =
+        caste_values[registered_entity.type].calorific_demand * delta_ticks * registered_entity.inhabitants
     local hunger_satisfaction = consume_food(house_inventory, calories_to_consume, diet_effects)
     apply_hunger_effects(diet_effects, hunger_satisfaction)
 
