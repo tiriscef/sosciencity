@@ -38,6 +38,10 @@ end
     global.pharmacies: table of unit_numbers
 ]]
 ---------------------------------------------------------------------------------------------------
+--<< helper functions >>
+require("lib.table")
+
+---------------------------------------------------------------------------------------------------
 --<< runtime finals >>
 require("constants.castes")
 require("constants.diseases")
@@ -309,13 +313,41 @@ local function get_diet_effects(diet, caste_type)
     }
 end
 
+local function consume_specific_food_items(inventory, amount, item_name)
+    local inventory_size = #inventory
+    local amount_to_consume = amount
+
+    for i = 1, inventory_size do
+        local slot = inventory[i]
+        if slot.valid_for_read then -- check if the slot has an item in it
+            if slot.name == item_name then
+                amount_to_consume = amount_to_consume - slot.drain_durability(amount_to_consume)
+                if amount_to_consume < 0.001 then
+                    return amount -- everything was consumed
+                end
+            end
+        end
+    end
+
+    return amount - amount_to_consume
+end
+
 -- Tries to consume the given amount of calories. Returns the percentage of the amount that
 -- was consumed
 local function consume_food(inventory, amount, diet, diet_effects)
     local count = diet_effects.count
+    local items = get_keyset(diet)
+    local amount_to_consume = amount
+    shuffle(items)
 
-    while amount > 0 and count > 0 do
+    for i = 1, count do
+        amount_to_consume = amount_to_consume - consume_specific_food_items(inventory, amount_to_consume, items[i])
+        if amount_to_consume < 0.001 then
+            return 1 -- 100% was consumed
+        end
     end
+
+    return (amount - amount_to_consume) / amount
 end
 
 local function apply_hunger_effects(diet_effects, percentage)
