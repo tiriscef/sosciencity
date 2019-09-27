@@ -23,14 +23,19 @@ TYPE_RESEARCH_CENTER = 207
 TYPE_ASSEMBLY_MACHINE = 1001
 TYPE_FURNACE = 1002
 TYPE_ROCKET_SILO = 1003
-TYPE_MINING_DRILL = 1101
-TYPE_LAB = 1102
+
+TYPE_MINING_DRILL = 2001
+TYPE_LAB = 2002
+TYPE_TURRET = 2003
 
 TYPE_NULL = 9999
 
---subentities
+-- subentities
 SUB_BEACON = 1
 SUB_EEI = 2
+
+-- neighborhood
+NEIGHBOR_MARKET = 1
 
 --tastes
 TASTE_BITTER = 1
@@ -41,17 +46,21 @@ TASTE_SPICY = 5
 TASTE_SWEET = 6
 TASTE_UMAMI = 7
 
-TYPES = {}
-TYPES.entity_type_lookup = {
+Types = {}
+Types.entity_type_lookup = {
     types = {
         ["assembly-machine"] = TYPE_ASSEMBLY_MACHINE,
         ["mining-drill"] = TYPE_MINING_DRILL,
         ["lab"] = TYPE_LAB,
         ["rocket-silo"] = TYPE_ROCKET_SILO,
-        ["furnace"] = TYPE_FURNACE
+        ["furnace"] = TYPE_FURNACE,
+        ["ammo-turret"] = TYPE_TURRET,
+        ["electric-turret"] = TYPE_TURRET,
+        ["fluid-turret"] = TYPE_TURRET,
+        ["turret"] = TYPE_TURRET
     },
-    names = {
-        ["shopping-center"] = TYPE_SHOPPING_CENTER,
+    names = { -- TODO add the names from housing
+        ["market"] = TYPE_MARKET,
         ["water-distribution-facility"] = TYPE_WATER_DISTRIBUTION_FACILITY,
         ["hospital"] = TYPE_HOSPITAL,
         ["club"] = TYPE_CLUB,
@@ -60,18 +69,18 @@ TYPES.entity_type_lookup = {
         ["university"] = TYPE_UNIVERSITY,
         ["university-mk02"] = TYPE_UNIVERSITY_MK02,
         ["city-hall"] = TYPE_CITY_HALL,
-        ["research-center"] = TYPE_CITY_HALL,
+        ["research-center"] = TYPE_CITY_HALL
     },
     __call = function(self, entity)
         return self.types[entity.type] or self.names[entity.name] or TYPE_NULL
     end
 }
 
-function TYPES:get_entity_type(entity)
-    return TYPES(entity)
+function Types:get_entity_type(entity)
+    return Types(entity)
 end
 
-TYPES.caste_names = {
+Types.caste_names = {
     [TYPE_CLOCKWORK] = "clockwork",
     [TYPE_EMBER] = "ember",
     [TYPE_GUNFIRE] = "gunfire",
@@ -84,48 +93,66 @@ TYPES.caste_names = {
     end
 }
 
-function TYPES:get_caste_name(type)
+function Types:get_caste_name(type)
     return self.caste_names[type]
 end
 
-function TYPES:is_housing(type)
+function Types:is_housing(type)
     return type < 100
 end
 
-function TYPES:entity_is_housing(entity)
+function Types:entity_is_housing(entity)
     return self.entity_type_lookup(entity) < 100
 end
 
-function TYPES:is_civil(type)
+function Types:is_civil(type)
     return type < 1000
 end
 
-function TYPES:entity_is_civil(entity)
+function Types:entity_is_civil(entity)
     return self.entity_type_lookup(entity) < 1000
 end
 
-function TYPES:entity_is_relevant(entity)
-    return self.entity_type_lookup(entity) ~= TYPE_NULL
+function Types:is_relevant_to_register(type)
+    return type < 2000
 end
 
-function TYPES:is_affected_by_clockwork(type)
+function Types:entity_is_relevant_to_register(entity)
+    return self.entity_type_lookup(entity) < 2000
+end
+
+function Types:is_affected_by_clockwork(type)
     return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
 end
 
-function TYPES:entity_is_affected_by_clockwork(entity)
+function Types:entity_is_affected_by_clockwork(entity)
     local type = self.entity_type_lookup(entity)
     return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
 end
 
-TYPES.subentity_lookup = {
+Types.subentity_lookup = {
     [SUB_BEACON] = "sosciencity-invisible-beacon",
     [SUB_EEI] = "sosciencity-invisible-eei"
 }
 
-function TYPES:needs_beacon(type)
-    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_LAB
+function Types:needs_beacon(type)
+    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
 end
 
-function TYPES:needs_eei(type)
+function Types:needs_eei(type)
     return type < 1000
+end
+
+Types.taste_lookup = {
+    [TASTE_BITTER] = "bitter",
+    [TASTE_NEUTRAL] = "neutral",
+    [TASTE_SALTY] = "salty",
+    [TASTE_SOUR] = "sour",
+    [TASTE_SPICY] = "spicy",
+    [TASTE_SWEET] = "sweet",
+    [TASTE_UMAMI] = "umami"
+}
+
+function Types:needs_neighborhood(type) -- I might need to add more
+    return self.is_housing(type)
 end

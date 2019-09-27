@@ -14,9 +14,9 @@ end
         ["type"]: int/enum
         ["entity"]: LuaEntity
         ["last_update"]: uint (tick)
-        ["subentities"]: table of subentity type - entity pairs
-        ["active_surroundings"]: table of unit_numbers
-        ["inactive_surroundings"]: table
+        ["subentities"]: table of (subentity type, entity) pairs
+        ["neighborhood"]: table
+        ["neughborhood_data"]: table
         
         -- Housing
         ["inhabitants"]: int
@@ -24,11 +24,17 @@ end
         ["food"]: table
 
     food: table
-        ["healthiness"]: float
+        ["healthiness_dietary"]: float
         ["healthiness_mental"]: float
-        ["taste_category"]: string
-        ["taste_quality"]: float
-        ["luxority"]: float
+        ["satisfaction"]: float
+        ["count"]: int
+        ["flags"]: table of strings
+
+    neighborhood: table
+        [entity type]: table of (unit_number, entity) pairs
+
+    neighborhood_data: table
+        [] TODO
 
     global.inhabitants: table
         [caste_type]: int (count)
@@ -38,10 +44,6 @@ end
     global.pharmacies: table of unit_numbers
 ]]
 ---------------------------------------------------------------------------------------------------
---<< helper functions >>
-require("lib.table")
-
----------------------------------------------------------------------------------------------------
 --<< runtime finals >>
 require("constants.castes")
 require("constants.diseases")
@@ -50,11 +52,15 @@ require("constants.food")
 require("constants.housing")
 
 ---------------------------------------------------------------------------------------------------
+--<< helper functions >>
+require("lib.table")
+
+---------------------------------------------------------------------------------------------------
 --<< subentities >>
 local function add_subentity(registered_entity, type)
     local subentity =
         registered_entity.entity.surface.create_entity {
-        name = TYPES.subentity_lookup[type],
+        name = Types.subentity_lookup[type],
         position = registered_entity.entity.position,
         force = registered_entity.entity.force
     }
@@ -117,6 +123,30 @@ local function set_power_usage(registered_entity, usage)
 end
 
 ---------------------------------------------------------------------------------------------------
+--<< neighborhood functions >>
+local function add_neighborhood_data(registered_entity, type)
+    -- TODO
+end
+
+local function get_neighbors_of_type(registered_entity, type)
+    if not registered_entity.neighborhood or not registered_entity.neighborhood[type] then
+        return {}
+    end
+
+    local ret = {}
+
+    for unit_number, entity in pairs(registered_entity.neighborhood[type]) do
+        if not entity.valid then
+            registered_entity.neighborhood[unit_number] = nil
+        else
+            table.insert(ret, entity)
+        end
+    end
+
+    return ret
+end
+
+---------------------------------------------------------------------------------------------------
 --<< register system >>
 local function add_housing_data(registered_entity)
     registered_entity.happiness = 0
@@ -128,7 +158,7 @@ local function add_housing_data(registered_entity)
 end
 
 local function establish_registered_entity(entity)
-    local type = TYPES(entity)
+    local type = Types(entity)
 
     local registered_entity = {
         entity = entity,
@@ -137,14 +167,17 @@ local function establish_registered_entity(entity)
         subentities = {}
     }
 
-    if TYPES:is_housing(type) then
+    if Types:is_housing(type) then
         add_housing_data(registered_entity)
     end
-    if TYPES:needs_beacon(type) then
+    if Types:needs_beacon(type) then
         add_subentity(registered_entity, SUB_BEACON)
     end
-    if TYPES:needs_eei(type) then
+    if Types:needs_eei(type) then
         add_subentity(registered_entity, SUB_EEI)
+    end
+    if Types:needs_neighborhood(type) then
+        add_neighborhood_data(registered_entity, type)
     end
 
     return registered_entity
@@ -153,7 +186,7 @@ end
 local function add_entity_to_register(entity)
     local registered_entity = establish_registered_entity(entity)
     global.register[entity.unit_number] = registered_entity
-    refresh(registered_entity)
+    update(registered_entity)
 end
 
 local function remove_from_register(registered_entity)
@@ -171,12 +204,26 @@ end
 
 -- Checks the local market entities if they have different food items and tries to transfer them.
 -- Returns true if an item transaction has occured.
-local function check_markets(registered_entity, diet)
-    return false -- TODO implement markets
+local function check_markets(registered_entity, diet, house_inventory)
+    for _, market in pairs(get_neighbors_of_type(registered_entity, NEIGHBOR_MARKET)) do
+        local market_inventory = market.get_inventory(defines.inventory.chest)
+        local inventory_size = #market_inventory
+        local caste = caste_values[registered_entity.type]
+
+        for i = 1, inventory_size do
+            local slot = market_inventory[i]
+            if slot.valid_for_read then
+                local item_name = slot.name
+                if food_values[item_name] and not diet[item_name] and caste.least_favored_taste ~= food_values[item_name].taste_category then
+                    -- TODO
+                end
+            end
+        end
+    end
 end
 
 -- returns a table with every available food item type as keys
-local function get_diet(inventory)
+local function get_diet(registered_entity, inventory)
     local diet = {}
     local inventory_size = #inventory
 
@@ -364,10 +411,7 @@ local function evaluate_diet(registered_entity, delta_ticks)
     local house_inventory = registered_entity.entity.get_inventory(defines.inventory.chest)
     local diet = get_diet(house_inventory)
 
-    if check_markets(registered_entity) then
-        -- diet changed, needs to be updated
-        diet = get_diet(house_inventory)
-    end
+    check_markets(registered_entity, diet, house_inventory)
 
     local diet_effects = get_diet_effects(diet, registered_entity.type)
 
@@ -377,6 +421,102 @@ local function evaluate_diet(registered_entity, delta_ticks)
     apply_hunger_effects(diet_effects, hunger_satisfaction)
 
     return diet_effects
+end
+
+---------------------------------------------------------------------------------------------------
+--<< hidden technology functions >>
+local function set_researched(tech_name, is_researched)
+    -- we just do that in every force, because I don't want to support multiple player factions
+    for _, force in pairs(game.forces) do
+        force.technologies[tech_name].researched = is_researched
+    end
+end
+
+-- sets the hidden caste-technologies so they encode the given value
+local function set_binary_techs(value, name)
+    local new_value = value
+    local strength = 1
+
+    while value > 0 do
+        new_value = value / 2
+
+        -- if new_value times two doesn't equal value, then the remainder was one
+        -- which means that the current binary decimal is one and that the corresponding tech should be researched
+        set_researched(strength .. name, new_value * 2 ~= value)
+
+        strength = strength * 2
+        value = new_value
+    end
+end
+
+-- Assumes value is an integer
+local function set_gunfire_bonus(value)
+    set_binary_techs(value, "-gunfire-caste")
+    global.gunfire_bonus = value
+end
+
+-- Assumes value is an integer
+local function set_gleam_bonus(value)
+    set_binary_techs(value, "-gleam-caste")
+    global.gleam_bonus = value
+end
+
+-- Assumes value is an integer
+local function set_foundry_bonus(value)
+    set_binary_techs(value, "-foundry-caste")
+    global.foundry_bonus = value
+end
+
+---------------------------------------------------------------------------------------------------
+--<< caste bonus functions >>
+local function get_gunfire_bonus(effective_population)
+    return math.floor(effective_population * 10 / global.turret_count) -- TODO balancing
+end
+
+local function get_gleam_bonus(effective_population)
+    return math.floor(math.sqrt(effective_population))
+end
+
+local function get_foundry_bonus(effective_population)
+    return math.floor(effective_population * 5 / global.mining_drill_count)
+end
+
+---------------------------------------------------------------------------------------------------
+--<< resettlement >>
+local resettlement_tech_name = ""
+local function is_resettlement_researched()
+    for _, force in pairs(game.forces) do
+        if force.technologies[resettlement_tech_name].researched then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function try_resettle(registered_entity)
+    if not is_resettlement_researched() or not Types:is_housing(registered_entity.type) then
+        return
+    end
+
+    for unit_number, registered_entity in pairs(global.register) do
+        if registered_entity.entity.valid then
+            
+        else
+            remove_from_register(registered_entity)
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+--<< panic >>
+local function ease_panic(delta_ticks)
+    -- TODO
+end
+
+local function add_panic()
+    global.last_panic_event = game.tick
+    global.panic = global.panic + 1 -- TODO balancing
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -412,18 +552,12 @@ local function update_entity_with_beacon(registered_entity)
     local productivity_bonus = 0
     local use_pentalty_module = false
 
-    if (TYPES:is_affected_by_clockwork(registered_entity.type)) then
+    if (Types:is_affected_by_clockwork(registered_entity.type)) then
         speed_bonus = global.effective_population[TYPE_CLOCKWORK] / global.machine_count -- TODO formula
         use_pentalty_module = global.use_penalty
     end
-    if registered_entity.type == TYPE_LAB then
-        productivity_bonus = global.effective_population[TYPE_GLEAM] -- TODO formula
-    end
     if registered_entity.type == TYPE_ROCKET_SILO then
         productivity_bonus = global.effective_population[TYPE_AURORA] -- TODO formula
-    end
-    if registered_entity.type == TYPE_MINING_DRILL then
-        productivity_bonus = global.effective_population[TYPE_FOUNDRY] -- TODO formula
     end
 
     set_beacon_effects(registered_entity, speed_bonus, productivity_bonus, use_pentalty_module)
@@ -439,9 +573,7 @@ local update_function_lookup = {
     [TYPE_AURORA] = update_house_aurora,
     [TYPE_ASSEMBLY_MACHINE] = update_entity_with_beacon,
     [TYPE_FURNACE] = update_entity_with_beacon,
-    [TYPE_ROCKET_SILO] = update_entity_with_beacon,
-    [TYPE_MINING_DRILL] = update_entity_with_beacon,
-    [TYPE_LAB] = update_entity_with_beacon
+    [TYPE_ROCKET_SILO] = update_entity_with_beacon
 }
 
 local function update(registered_entity)
@@ -454,6 +586,24 @@ local function update(registered_entity)
     update_function_lookup[registered_entity.type](registered_entity, delta_ticks)
 
     registered_entity.last_update = game.tick
+end
+
+local function update_caste_boni()
+    -- We check if the boni have actually changed because I think manipulating techs is quite expensive
+    local current_gunfire_bonus = get_gunfire_bonus(global.effective_population[TYPE_GUNFIRE])
+    if global.gunfire_bonus ~= current_gunfire_bonus then
+        set_gunfire_bonus(current_gunfire_bonus)
+    end
+
+    local current_gleam_bonus = get_gleam_bonus(global.effective_population[TYPE_GLEAM])
+    if global.gleam_bonus ~= current_gleam_bonus then
+        set_gleam_bonus(current_gleam_bonus)
+    end
+
+    local current_foundry_bonus = get_foundry_bonus(global.effective_population[TYPE_FOUNDRY])
+    if global.foundry_bonus ~= current_foundry_bonus then
+        set_foundry_bonus(current_foundry_bonus)
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -484,18 +634,50 @@ local function init()
         TYPE_AURORA = 0,
         TYPE_PLASMA = 0
     }
+    global.gunfire_bonus = 0
+    global.gleam_bonus = 0
+    global.foundry_bonus = 0
+
     global.machine_count = 0
+    global.turret_count = 0
+    global.mining_drill_count = 0
 
     global.register = {}
 
+    -- find and register all the machines
     for _, surface in pairs(game.surfaces) do
         for _, entity in pairs(
             surface.find_entities_filtered {
-                type = {"assembling-machine", "rocket-silo", "furnace"}
+                type = {
+                    "assembling-machine",
+                    "rocket-silo",
+                    "furnace",
+                    "mining-drill",
+                    "turret",
+                    "ammo-turret",
+                    "electric-turret",
+                    "fluid-turret"
+                }
             }
         ) do
+            global.machine_count = global.machine_count + 1
             add_entity_to_register(entity)
         end
+    end
+
+    -- count all the mining drills
+    for _, surface in pairs(game.surfaces) do
+        global.mining_drill_count =
+            global.mining_drill_count + surface.count_entities_filtered {type = {"mining-drill"}}
+    end
+
+    -- count all the turrets
+    for _, surface in pairs(game.surfaces) do
+        global.turret_count =
+            global.turret_count +
+            surface.count_entities_filtered {
+                {type = {"turret", "ammo-turret", "electric-turret", "fluid-turret"}, force = "player"}
+            }
     end
 end
 
@@ -519,11 +701,14 @@ local function update_cycle()
         count = count + 1
     end
 
+    update_caste_boni()
+
     global.last_index = index
 end
 
 local function on_entity_built(event)
     --https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
+    local entity
     if event.created_entity then
         entity = event.created_entity
     elseif event.entity then
@@ -536,30 +721,63 @@ local function on_entity_built(event)
         return
     end
 
-    if TYPES:entity_is_relevant(entity) then
+    if Types:entity_is_relevant_to_register(entity) then
         add_entity_to_register(entity)
+    end
+
+    if entity.type == "mining-drill" then
+        global.mining_drill_count = global.mining_drill_count + 1
+    end
+    if Types:entity_is_affected_by_clockwork(entity) then
+        global.machine_count = global.machine_count + 1
+    end
+    if Types:entity_is_turret(entity) and entity.force then
+        global.turret_count = global.turret_count + 1
     end
 end
 
 local function on_entity_removed(event)
     local entity = event.entity -- all removement events use entity as key
+    if not entity.valid then
+        return
+    end
+
     local entry = global.register[entity.unit_number]
     if entry then
         remove_from_register(entry)
     end
+
+    if entity.type == "mining-drill" then
+        global.mining_drill_count = global.mining_drill_count - 1
+    end
+    if Types:entity_is_affected_by_clockwork(entity) then
+        global.machine_count = global.machine_count - 1
+    end
+    if Types:entity_is_turret(entity) then
+        global.turret_count = global.turret_count - 1
+    end
 end
 
 local function on_entity_died(event)
-    if TYPES.entity_is_civil(event.entity) then
-    -- TODO create panic
+    if not event.entity.valid then
+        return
+    end
+
+    if Types.entity_is_civil(event.entity) then
+        add_panic()
     end
 
     on_entity_removed(event)
 end
 
 local function on_entity_mined(event)
-    if TYPES.entity_is_housing(event.entity) then
-    -- TODO resettlement
+    local entity = event.entity
+    if not entity.valid then
+        return
+    end
+    local registered_entity = global.register[entity.unit_number]
+    if registered_entity and Types:is_housing(registered_entity.type) then
+        try_resettle(registered_entity)
     end
 
     on_entity_removed(event)

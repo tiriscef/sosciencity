@@ -1,6 +1,8 @@
 require("constants.types")
 
-housing_values = {
+Housing = {}
+
+Housing.houses = {}
     --[[["example-house"] = {
         room_number,
         tech_level = 0,
@@ -11,4 +13,11 @@ housing_values = {
             }
         },
     }]]
-}
+
+function Housing:get_capacity(registered_entity)
+    -- TODO
+end
+
+function Housing:get_free_capacity(registered_entity)
+    
+end

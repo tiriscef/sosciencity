@@ -9,7 +9,9 @@ caste_values = {
         favored_taste = TASTE_UMAMI,
         least_favored_taste = TASTE_SPICY,
         desire_for_luxority = 0,
-        minimum_food_count = 2
+        minimum_food_count = 2,
+        required_room_count = 1,
+        minimum_housing_contentment = 0
     },
     [TYPE_EMBER] = {
         panic_multiplier = 1.2,
@@ -19,7 +21,9 @@ caste_values = {
         favored_taste = TASTE_SWEET,
         least_favored_taste = TASTE_SALTY,
         desire_for_luxority = 0.1,
-        minimum_food_count = 3
+        minimum_food_count = 3,
+        required_room_count = 2,
+        minimum_housing_contentment = 1
     },
     [TYPE_GUNFIRE] = {
         panic_multiplier = 0,
@@ -29,7 +33,9 @@ caste_values = {
         favored_taste = TASTE_BITTER,
         least_favored_taste = TASTE_SWEET,
         desire_for_luxority = 0,
-        minimum_food_count = 2
+        minimum_food_count = 2,
+        required_room_count = 1,
+        minimum_housing_contentment = 0
     },
     [TYPE_GLEAM] = {
         panic_multiplier = 1,
@@ -39,7 +45,9 @@ caste_values = {
         favored_taste = TASTE_SPICY,
         least_favored_taste = TASTE_SOUR,
         desire_for_luxority = 0.3,
-        minimum_food_count = 4
+        minimum_food_count = 4,
+        required_room_count = 2,
+        minimum_housing_contentment = 4
     },
     [TYPE_FOUNDRY] = {
         panic_multiplier = 0.7,
@@ -49,7 +57,9 @@ caste_values = {
         favored_taste = TASTE_SPICY,
         least_favored_taste = TASTE_SOUR,
         desire_for_luxority = 0.5,
-        minimum_food_count = 8
+        minimum_food_count = 8,
+        required_room_count = 4,
+        minimum_housing_contentment = 6
     },
     [TYPE_ORCHID] = {
         panic_multiplier = 2,
@@ -59,7 +69,9 @@ caste_values = {
         favored_taste = TASTE_SOUR,
         least_favored_taste = TASTE_UMAMI,
         desire_for_luxority = 1,
-        minimum_food_count = 10
+        minimum_food_count = 10,
+        required_room_count = 6,
+        minimum_housing_contentment = 8
     },
     [TYPE_AURORA] = {
         panic_multiplier = 2,
@@ -69,7 +81,9 @@ caste_values = {
         favored_taste = TASTE_SWEET,
         least_favored_taste = TASTE_SALTY,
         desire_for_luxority = 0.8,
-        minimum_food_count = 8
+        minimum_food_count = 8,
+        required_room_count = 20,
+        minimum_housing_contentment = 9
     },
     [TYPE_PLASMA] = {
         panic_multiplier = 1,
@@ -79,7 +93,9 @@ caste_values = {
         favored_taste = TASTE_SWEET,
         least_favored_taste = TASTE_SALTY,
         desire_for_luxority = 0.2,
-        minimum_food_count = 5
+        minimum_food_count = 5,
+        required_room_count = 5,
+        minimum_housing_contentment = 5
     }
 }
 

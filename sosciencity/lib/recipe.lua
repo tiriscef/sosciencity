@@ -71,7 +71,7 @@ end
 Recipe = {}
 
 function Recipe:get(name)
-    new = Prototype:get("recipe", name)
+    local new = Prototype:get("recipe", name)
     setmetatable(new, self)
     return new
 end
@@ -125,7 +125,7 @@ function Recipe:results_contain_item(item_name)
     end
 end
 
-local function recipe_result_count(recipe, name, type)
+local function recipe_result_count(recipe, name)
     if recipe.result then
         if recipe.result == name then
             return recipe.result_count or 1 -- factorio defaults to 1 if no result_count is specified
@@ -133,7 +133,7 @@ local function recipe_result_count(recipe, name, type)
             return 0
         end
     elseif recipe.results then
-        for _, result in pairs(results_table) do
+        for _, result in pairs(recipe.results) do
             if RecipeEntry:get_name(result) == name and RecipeEntry:get_type(result) then
                 return RecipeEntry:get_average_yield(result)
             end
@@ -145,6 +145,7 @@ end
 
 function Recipe:get_result_item_count(item_name)
     if self:has_difficulties() then
+        local normal_count, expensive_count
         if self:has_normal_difficulty() then
             normal_count = recipe_result_count(self.normal, item_name)
         end
@@ -219,7 +220,7 @@ function Recipe:add_unlock(technology_name)
         Prototype:postpone {
             object = self,
             technology = technology_name,
-            execute = function()
+            execute = function(self)
                 self.object:add_unlock(self.technology)
             end
         }

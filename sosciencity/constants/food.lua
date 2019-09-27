@@ -5,7 +5,7 @@ require("constants.types")
     one item is a portion of 10kg
 ]]
 food_values = {
-    ["oats"] = {
+--[[    ["oats"] = {
         fat = 7,
         carbohydrates = 63,
         proteins = 13,
@@ -14,7 +14,7 @@ food_values = {
         taste_category = TASTE_NEUTRAL,
         taste_quality = 1,
         luxority = 0
-    },
+    },]]
 }
 
 local energy_density_fat = 900 -- kcal per g

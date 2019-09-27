@@ -2,7 +2,7 @@ Item = {}
 
 function Item:get(name)
     local item_types = require("lib.prototype-types.item-types")
-    new = Prototype:get(item_types, name)
+    local new = Prototype:get(item_types, name)
     setmetatable(new, self)
     return new
 end

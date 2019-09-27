@@ -1,10 +1,10 @@
 --[[
-    Some functions (mainly those who make changes to another prototype which might not 
+    Some functions (mainly those who make changes to another prototype which might not
     yet be created) might postpone their execution.
-    So they will add a table with all the necessary data and a execute-function to the 
+    So they will add a table with all the necessary data and a execute-function to the
     Prototype.postpones_functions table.
 
-    A call to finish_postponed will iterate repeatedly over the table and execute the 
+    A call to finish_postponed will iterate repeatedly over the table and execute the
     stored functions.
 ]]
 Prototype = {
@@ -30,7 +30,7 @@ function Prototype:postpone(func)
     table.insert(self.postponed_functions, func)
 end
 
--- This assumes that a 'successful' call to a postponed function will not result in 
+-- This assumes that a 'successful' call to a postponed function will not result in
 -- another postponed function
 function Prototype:finish_postponed()
     local todo = self.postponed_functions
@@ -39,7 +39,7 @@ function Prototype:finish_postponed()
 
     while todo_count < last_todo_count do
         self.postponed_functions = {}
-        for index, func in pairs(todo) do
+        for _, func in pairs(todo) do
             func:execute()
         end
 

@@ -1,7 +1,7 @@
 Fluid = {}
 
 function Fluid:get(name)
-    new = Prototype:get("fluid", name)
+    local new = Prototype:get("fluid", name)
     setmetatable(new, self)
     return new
 end
