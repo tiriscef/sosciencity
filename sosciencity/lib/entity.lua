@@ -18,14 +18,14 @@ end
 
 function Entity:get_selection_box(width, height)
     return {
-        {-width / 2., -height / 2.}, 
+        {-width / 2., -height / 2.},
         {width / 2., height / 2.}
     }
 end
 
 function Entity:get_collision_box(width, height)
     return {
-        {-width / 2. + 0.2, -height / 2. + 0.2}, 
+        {-width / 2. + 0.2, -height / 2. + 0.2},
         {width / 2. - 0.2, height / 2. - 0.2}
     }
 end
@@ -34,6 +34,6 @@ function Entity:add_crafting_category(category_name)
     if not self.crafting_categories then
         self.crafting_categories = {}
     end
-    
+
     table.insert(self.crafting_categories, category_name)
 end

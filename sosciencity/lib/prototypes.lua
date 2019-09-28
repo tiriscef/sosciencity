@@ -6,10 +6,10 @@
 
     A call to finish_postponed will iterate repeatedly over the table and execute the
     stored functions.
-]]
-Prototype = {
-    postponed_functions = {}
-}
+]] --
+Prototype = {}
+
+Prototype.postponed_functions = {}
 
 function Prototype:get(name, prototype_type)
     if type(prototype_type) == "string" then

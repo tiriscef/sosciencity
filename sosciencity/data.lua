@@ -1,6 +1,5 @@
 -- initialisation
 require("lib.init")
-require("integrations")
 
 -- create prototypes
 require("prototypes.item-groups")

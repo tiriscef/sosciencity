@@ -4,7 +4,9 @@ require("constants.types")
     fat, carbohydrates and proteins are in g per 100g
     one item is a portion of 10kg
 ]]
-food_values = {
+Food = {}
+
+Food.values = {
 --[[    ["oats"] = {
         fat = 7,
         carbohydrates = 63,
@@ -17,12 +19,16 @@ food_values = {
     },]]
 }
 
+function Food:__call(item)
+    return self.values[item]
+end
+
 local energy_density_fat = 900 -- kcal per g
 local energy_density_carbohydrates = 400
 local energy_density_proteins = 370
 
 
-for _, food in pairs(food_values) do
+for _, food in pairs(Food) do
     -- convert nutrients from g per 100g to kcal per 100g
     food.fat = food.fat * energy_density_fat
     food.carbohydrates = food.carbohydrates * energy_density_carbohydrates

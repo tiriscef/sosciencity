@@ -70,6 +70,7 @@ end
 -- class for recipes
 Recipe = {}
 
+-- getter functions
 function Recipe:get(name)
     local new = Prototype:get("recipe", name)
     setmetatable(new, self)
@@ -86,6 +87,10 @@ function Recipe:from_prototype(prototype)
 end
 
 function Recipe:create(prototype)
+    if not prototype.type then
+        prototype.type = "recipe"
+    end
+
     data:extend {prototype}
     return Recipe(prototype.name)
 end
@@ -182,7 +187,7 @@ function Recipe:add_ingredient(ingredient_prototype_normal, ingredient_prototype
             add_ingredient(self.normal, ingredient_prototype_normal)
         end
         if self:has_expensive_difficulty() then
-            ingredient_to_add = ingredient_prototype_expensive or ingredient_prototype_normal
+            local ingredient_to_add = ingredient_prototype_expensive or ingredient_prototype_normal
             add_ingredient(self.expensive, ingredient_to_add)
         end
     end

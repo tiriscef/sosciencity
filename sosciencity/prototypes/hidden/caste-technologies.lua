@@ -16,7 +16,7 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-speed-module", 1}
+                {"automation-science-pack", 1}
             }
         },
         enabled = false,
@@ -41,7 +41,7 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-speed-module", 1}
+                {"automation-science-pack", 1}
             }
         },
         enabled = false,
@@ -61,7 +61,7 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-speed-module", 1}
+                {"automation-science-pack", 1}
             }
         },
         enabled = false,

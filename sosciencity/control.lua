@@ -17,7 +17,8 @@ end
         ["subentities"]: table of (subentity type, entity) pairs
         ["neighborhood"]: table
         ["neughborhood_data"]: table
-        
+        ["flags"]: table of int/enum
+
         -- Housing
         ["inhabitants"]: int
         ["happiness"]: float
@@ -36,15 +37,18 @@ end
     neighborhood_data: table
         [] TODO
 
-    global.inhabitants: table
+    global.population: table
         [caste_type]: int (count)
+
+    global.effective_population: table
+        [caste_type]: float
 
     global.panic: float
 
     global.pharmacies: table of unit_numbers
 ]]
 ---------------------------------------------------------------------------------------------------
---<< runtime finals >>
+-- << runtime finals >>
 require("constants.castes")
 require("constants.diseases")
 require("constants.types")
@@ -52,11 +56,11 @@ require("constants.food")
 require("constants.housing")
 
 ---------------------------------------------------------------------------------------------------
---<< helper functions >>
+-- << helper functions >>
 require("lib.table")
 
 ---------------------------------------------------------------------------------------------------
---<< subentities >>
+-- << subentities >>
 local function add_subentity(registered_entity, type)
     local subentity =
         registered_entity.entity.surface.create_entity {
@@ -123,7 +127,7 @@ local function set_power_usage(registered_entity, usage)
 end
 
 ---------------------------------------------------------------------------------------------------
---<< neighborhood functions >>
+-- << neighborhood functions >>
 local function add_neighborhood_data(registered_entity, type)
     -- TODO
 end
@@ -147,7 +151,7 @@ local function get_neighbors_of_type(registered_entity, type)
 end
 
 ---------------------------------------------------------------------------------------------------
---<< register system >>
+-- << register system >>
 local function add_housing_data(registered_entity)
     registered_entity.happiness = 0
     registered_entity.healthiness = 0
@@ -186,7 +190,6 @@ end
 local function add_entity_to_register(entity)
     local registered_entity = establish_registered_entity(entity)
     global.register[entity.unit_number] = registered_entity
-    update(registered_entity)
 end
 
 local function remove_from_register(registered_entity)
@@ -200,30 +203,37 @@ local function remove_from_register(registered_entity)
 end
 
 ---------------------------------------------------------------------------------------------------
---<< diet functions >>
+-- << diet functions >>
 
 -- Checks the local market entities if they have different food items and tries to transfer them.
 -- Returns true if an item transaction has occured.
 local function check_markets(registered_entity, diet, house_inventory)
+    local ret = false
+
     for _, market in pairs(get_neighbors_of_type(registered_entity, NEIGHBOR_MARKET)) do
         local market_inventory = market.get_inventory(defines.inventory.chest)
         local inventory_size = #market_inventory
-        local caste = caste_values[registered_entity.type]
+        local caste = Caste(registered_entity)
 
         for i = 1, inventory_size do
             local slot = market_inventory[i]
             if slot.valid_for_read then
                 local item_name = slot.name
-                if food_values[item_name] and not diet[item_name] and caste.least_favored_taste ~= food_values[item_name].taste_category then
-                    -- TODO
+                if
+                    Food(item_name) and not diet[item_name] and
+                        caste.least_favored_taste ~= Food(item_name).taste_category
+                 then
+                -- TODO
                 end
             end
         end
     end
+
+    return ret
 end
 
 -- returns a table with every available food item type as keys
-local function get_diet(registered_entity, inventory)
+local function get_diet(inventory)
     local diet = {}
     local inventory_size = #inventory
 
@@ -231,7 +241,7 @@ local function get_diet(registered_entity, inventory)
         local slot = inventory[i]
         if slot.valid_for_read then -- check if the slot has an item in it
             local item_name = slot.name
-            if food_values[item_name] and not diet[item_name] then
+            if Food[item_name] and not diet[item_name] then
                 diet[item_name] = item_name
             end
         end
@@ -275,17 +285,17 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
     -- we focus on a reasonable amount of protein
     local protein_percentage = proteins / (fat + carbohydrates + proteins)
     if protein_percentage < 0.1 then
-        table.insert(flags, "low-protein")
+        table.insert(flags, FLAG_LOW_PROTEIN)
     elseif protein_percentage > 0.4 then
-        table.insert(flags, "high-protein")
+        table.insert(flags, FLAG_HIGH_PROTEIN)
     end
 
     -- and the fat to carbohydrates ratio (optimum is 0.375)
     local fat_to_carbohydrates_ratio = fat / (fat + carbohydrates)
     if fat_to_carbohydrates_ratio > 0.5 then
-        table.insert(flags, "high-fat")
+        table.insert(flags, FLAG_HIGH_FAT)
     elseif fat_to_carbohydrates_ratio < 0.1 then
-        table.insert(flags, "high-carbohydrates")
+        table.insert(flags, FLAG_HIGH_CARBOHYDRATES)
     end
 
     return 0.25 *
@@ -311,12 +321,12 @@ local function get_diet_effects(diet, caste_type)
     }
     local luxority = 0
     local flags = {}
-    local caste = caste_values[caste_type]
+    local caste = Caste(caste_type)
 
     for item_name, _ in pairs(diet) do
         count = count + 1
 
-        local values = food_values[item_name]
+        local values = Food.values[item_name]
 
         intrinsic_healthiness = intrinsic_healthiness + values.healthiness
         fat = fat + values.fat
@@ -360,23 +370,23 @@ local function get_diet_effects(diet, caste_type)
     }
 end
 
-local function consume_specific_food_items(inventory, amount, item_name)
+local function consume_specific_food(inventory, amount, item_name)
     local inventory_size = #inventory
-    local amount_to_consume = amount
+    local to_consume = amount
 
     for i = 1, inventory_size do
         local slot = inventory[i]
         if slot.valid_for_read then -- check if the slot has an item in it
             if slot.name == item_name then
-                amount_to_consume = amount_to_consume - slot.drain_durability(amount_to_consume)
-                if amount_to_consume < 0.001 then
+                to_consume = to_consume - slot.drain_durability(to_consume)
+                if to_consume < 0.001 then
                     return amount -- everything was consumed
                 end
             end
         end
     end
 
-    return amount - amount_to_consume
+    return amount - to_consume
 end
 
 -- Tries to consume the given amount of calories. Returns the percentage of the amount that
@@ -384,17 +394,17 @@ end
 local function consume_food(inventory, amount, diet, diet_effects)
     local count = diet_effects.count
     local items = get_keyset(diet)
-    local amount_to_consume = amount
+    local to_consume = amount
     shuffle(items)
 
     for i = 1, count do
-        amount_to_consume = amount_to_consume - consume_specific_food_items(inventory, amount_to_consume, items[i])
-        if amount_to_consume < 0.001 then
+        to_consume = to_consume - consume_specific_food(inventory, to_consume, items[i])
+        if to_consume < 0.001 then
             return 1 -- 100% was consumed
         end
     end
 
-    return (amount - amount_to_consume) / amount
+    return (amount - to_consume) / amount
 end
 
 local function apply_hunger_effects(diet_effects, percentage)
@@ -402,7 +412,7 @@ local function apply_hunger_effects(diet_effects, percentage)
     diet_effects.healthiness_dietary = diet_effects.healthiness_dietary * percentage - 5 * (1 - percentage)
 
     if percentage < 0.5 then
-        table.insert(diet_effects.flags, "hunger")
+        table.insert(diet_effects.flags, FLAG_HUNGER)
     end
 end
 
@@ -415,16 +425,15 @@ local function evaluate_diet(registered_entity, delta_ticks)
 
     local diet_effects = get_diet_effects(diet, registered_entity.type)
 
-    local calories_to_consume =
-        caste_values[registered_entity.type].calorific_demand * delta_ticks * registered_entity.inhabitants
-    local hunger_satisfaction = consume_food(house_inventory, calories_to_consume, diet_effects)
+    local to_consume = Caste(registered_entity).calorific_demand * delta_ticks * registered_entity.inhabitants
+    local hunger_satisfaction = consume_food(house_inventory, to_consume, diet_effects)
     apply_hunger_effects(diet_effects, hunger_satisfaction)
 
     return diet_effects
 end
 
 ---------------------------------------------------------------------------------------------------
---<< hidden technology functions >>
+-- << hidden technology functions >>
 local function set_researched(tech_name, is_researched)
     -- we just do that in every force, because I don't want to support multiple player factions
     for _, force in pairs(game.forces) do
@@ -468,9 +477,13 @@ local function set_foundry_bonus(value)
 end
 
 ---------------------------------------------------------------------------------------------------
---<< caste bonus functions >>
+-- << caste bonus functions >>
+local function get_clockwork_bonus(effective_population)
+    return math.floor(effective_population * 40 / math.max(global.machine_count, 1))
+end
+
 local function get_gunfire_bonus(effective_population)
-    return math.floor(effective_population * 10 / global.turret_count) -- TODO balancing
+    return math.floor(effective_population * 10 / math.max(global.turret_count, 1)) -- TODO balancing
 end
 
 local function get_gleam_bonus(effective_population)
@@ -478,15 +491,18 @@ local function get_gleam_bonus(effective_population)
 end
 
 local function get_foundry_bonus(effective_population)
-    return math.floor(effective_population * 5 / global.mining_drill_count)
+    return math.floor(effective_population * 5 / math.max(global.mining_drill_count, 1))
+end
+
+local function get_aurora_bonus(effective_population)
+    return math.floor(math.sqrt(effective_population))
 end
 
 ---------------------------------------------------------------------------------------------------
---<< resettlement >>
-local resettlement_tech_name = ""
-local function is_resettlement_researched()
+-- << resettlement >>
+local function resettlement_is_researched()
     for _, force in pairs(game.forces) do
-        if force.technologies[resettlement_tech_name].researched then
+        if force.technologies["resettlement"].researched then
             return true
         end
     end
@@ -495,13 +511,13 @@ local function is_resettlement_researched()
 end
 
 local function try_resettle(registered_entity)
-    if not is_resettlement_researched() or not Types:is_housing(registered_entity.type) then
+    if not resettlement_is_researched() or not Types:is_housing(registered_entity.type) then
         return
     end
 
     for unit_number, registered_entity in pairs(global.register) do
         if registered_entity.entity.valid then
-            
+            -- TODO
         else
             remove_from_register(registered_entity)
         end
@@ -509,8 +525,10 @@ local function try_resettle(registered_entity)
 end
 
 ---------------------------------------------------------------------------------------------------
---<< panic >>
-local function ease_panic(delta_ticks)
+-- << panic >>
+local function ease_panic()
+    local delta_ticks = game.tick - global.last_update
+
     -- TODO
 end
 
@@ -520,30 +538,42 @@ local function add_panic()
 end
 
 ---------------------------------------------------------------------------------------------------
---<< update functions >>
+-- << update functions >>
 -- entities need to be checked for validity before calling the update-function
 local function generate_ideas(registered_entity, delta_ticks)
 end
 
+-- Does all the things that are the same for every caste
+local function update_house(registered_entity, delta_ticks)
+    local diet_effects = evaluate_diet(registered_entity, delta_ticks)
+end
+
 local function update_house_clockwork(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 local function update_house_ember(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 local function update_house_gunfire(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 local function update_house_gleam(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 local function update_house_foundry(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 local function update_house_orchid(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 local function update_house_aurora(registered_entity, delta_ticks)
+    update_house(registered_entity, delta_ticks)
 end
 
 -- Assumes that the entity has a beacon
@@ -553,11 +583,11 @@ local function update_entity_with_beacon(registered_entity)
     local use_pentalty_module = false
 
     if (Types:is_affected_by_clockwork(registered_entity.type)) then
-        speed_bonus = global.effective_population[TYPE_CLOCKWORK] / global.machine_count -- TODO formula
+        speed_bonus = get_clockwork_bonus(global.effective_population[TYPE_CLOCKWORK])
         use_pentalty_module = global.use_penalty
     end
     if registered_entity.type == TYPE_ROCKET_SILO then
-        productivity_bonus = global.effective_population[TYPE_AURORA] -- TODO formula
+        productivity_bonus = get_aurora_bonus(global.effective_population[TYPE_AURORA])
     end
 
     set_beacon_effects(registered_entity, speed_bonus, productivity_bonus, use_pentalty_module)
@@ -607,7 +637,7 @@ local function update_caste_boni()
 end
 
 ---------------------------------------------------------------------------------------------------
---<< event handler functions >>
+-- << event handler functions >>
 local function init()
     global.version = game.active_mods["sosciencity"]
     global.updates_per_cycle = settings.startup["sosciencity-entity-updates-per-cycle"].value
@@ -668,7 +698,10 @@ local function init()
     -- count all the mining drills
     for _, surface in pairs(game.surfaces) do
         global.mining_drill_count =
-            global.mining_drill_count + surface.count_entities_filtered {type = {"mining-drill"}}
+            global.mining_drill_count +
+            surface.count_entities_filtered {
+                type = {"mining-drill"}
+            }
     end
 
     -- count all the turrets
@@ -676,7 +709,15 @@ local function init()
         global.turret_count =
             global.turret_count +
             surface.count_entities_filtered {
-                {type = {"turret", "ammo-turret", "electric-turret", "fluid-turret"}, force = "player"}
+                {
+                    type = {
+                        "turret",
+                        "ammo-turret",
+                        "electric-turret",
+                        "fluid-turret"
+                    },
+                    force = "player"
+                }
             }
     end
 end
@@ -702,12 +743,13 @@ local function update_cycle()
     end
 
     update_caste_boni()
+    ease_panic()
 
     global.last_index = index
 end
 
 local function on_entity_built(event)
-    --https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
+    -- https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
     local entity
     if event.created_entity then
         entity = event.created_entity
@@ -798,7 +840,7 @@ local function on_configuration_change(event)
 end
 
 ---------------------------------------------------------------------------------------------------
---<< event handler registration >>
+-- << event handler registration >>
 -- initialisation
 script.on_init(init)
 local cycle_frequency = settings.startup["sosciencity-entity-update-cycle-frequency"].value

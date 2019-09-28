@@ -1,0 +1,14 @@
+{
+    "Lua.diagnostics.globals": [
+        "global",
+        "data",
+        "circuit_connector_definitions",
+        "defines",
+        "script",
+        "game",
+        "settings",
+        "serpent",
+        "table_size",
+        "mods"
+    ]
+}

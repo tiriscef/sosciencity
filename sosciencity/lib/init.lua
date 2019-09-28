@@ -4,4 +4,6 @@ require("lib.item")
 require("lib.entity")
 require("lib.technology")
 require("lib.fluid")
+
 require("lib.recipe-generator")
+require("integrations")

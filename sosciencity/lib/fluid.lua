@@ -11,6 +11,10 @@ function Fluid:__call(name)
 end
 
 function Fluid:create(prototype)
-    data:extend{prototype}
+    if not prototype.type then
+        prototype.type = "fluid"
+    end
+
+    data:extend {prototype}
     return self.__call(prototype.name)
 end

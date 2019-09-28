@@ -37,7 +37,7 @@ SUB_EEI = 2
 -- neighborhood
 NEIGHBOR_MARKET = 1
 
---tastes
+-- tastes
 TASTE_BITTER = 1
 TASTE_NEUTRAL = 2
 TASTE_SALTY = 3
@@ -45,6 +45,13 @@ TASTE_SOUR = 4
 TASTE_SPICY = 5
 TASTE_SWEET = 6
 TASTE_UMAMI = 7
+
+-- flags
+FLAG_LOW_PROTEIN = 1
+FLAG_HIGH_PROTEIN = 2
+FLAG_HIGH_FAT = 3
+FLAG_HIGH_CARBOHYDRATES = 4
+FLAG_HUNGER = 5
 
 Types = {}
 Types.entity_type_lookup = {
@@ -59,7 +66,8 @@ Types.entity_type_lookup = {
         ["fluid-turret"] = TYPE_TURRET,
         ["turret"] = TYPE_TURRET
     },
-    names = { -- TODO add the names from housing
+    names = {
+        -- TODO add the names from housing
         ["market"] = TYPE_MARKET,
         ["water-distribution-facility"] = TYPE_WATER_DISTRIBUTION_FACILITY,
         ["hospital"] = TYPE_HOSPITAL,

@@ -11,6 +11,10 @@ function Technology:__call(name)
 end
 
 function Technology:create(prototype)
+    if not prototype.type then
+        prototype.type = "technology"
+    end
+
     data:extend {prototype}
     return self.__call(prototype.name)
 end

@@ -4,7 +4,7 @@ local function percentage(numerator, denominator)
     return string.format("%.0f", 100. * numerator / denominator)
 end
 
-for food_name, food in pairs(food_values) do
+for food_name, food_details in pairs(Food.values) do
     Item:create {
         type = "tool",
         name = food_name,
@@ -15,24 +15,24 @@ for food_name, food in pairs(food_values) do
         subgroup = "sosciencity-food",
         order = food_name,
         stack_size = 200,
-        durability = food.calories,
-        durability_description_key = "description.sosciencity-food-key",
-        durability_description_value = "description.sosciencity-food-value",
+        durability = food_details.calories,
+        durability_description_key = "description.food-key",
+        durability_description_value = "description.food-value",
         infinite = false,
         localised_description = {
             "item-description.foods",
             {"item-description." .. food_name},
-            {"food-category." .. food.food_category},
-            {"taste-category." .. Types.taste_lookup[food.taste_category]},
-            {"taste-scale." .. food.taste_quality},
-            {"health-scale." .. food.healthiness},
-            {"luxority-scale." .. food.luxority},
-            food.fat,
-            percentage(food.fat, food.calories),
-            food.carbohydrates,
-            percentage(food.carbohydrates, food.calories),
-            food.proteins,
-            percentage(food.proteins, food.calories),
+            {"food-category." .. food_details.food_category},
+            {"taste-category." .. Types.taste_lookup[food_details.taste_category]},
+            {"taste-scale." .. food_details.taste_quality},
+            {"health-scale." .. food_details.healthiness},
+            {"luxority-scale." .. food_details.luxority},
+            food_details.fat,
+            percentage(food_details.fat, food_details.calories),
+            food_details.carbohydrates,
+            percentage(food_details.carbohydrates, food_details.calories),
+            food_details.proteins,
+            percentage(food_details.proteins, food_details.calories),
         }
     }
 end

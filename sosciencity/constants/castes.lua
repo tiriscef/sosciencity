@@ -1,6 +1,8 @@
 require("constants.types")
 
-caste_values = {
+Caste = {}
+
+Caste.values = {
     [TYPE_CLOCKWORK] = {
         panic_multiplier = 0.5,
         calorific_demand = 4000, -- in kcal per day
@@ -99,7 +101,16 @@ caste_values = {
     }
 }
 
-for _, caste in pairs(caste_values) do
+function Caste:__call(entity)
+    -- check if it's a registered entity or a enum
+    if type(entity) == "table" then
+        return self.values[entity.type]
+    else
+        return self.values[entity]
+    end
+end
+
+for _, caste in pairs(Caste.values) do
     -- convert calorific demand to kcal per tick
     -- a day has 25000 ticks according to the wiki
     caste.calorific_demand = caste.calorific_demand / 25000.
