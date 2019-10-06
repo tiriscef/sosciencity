@@ -204,45 +204,32 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
-
--- Checks the local market entities if they have different food items and tries to transfer them.
--- Returns true if an item transaction has occured.
-local function check_markets(registered_entity, diet, house_inventory)
-    local ret = false
+-- returns a list of all inventories whose food is relevant to the diet
+-- markets act like additional food inventories
+local function get_food_inventories(registered_entity)
+    local inventories = {registered_entity.entity.get_inventory(defines.inventory.chest)}
 
     for _, market in pairs(get_neighbors_of_type(registered_entity, NEIGHBOR_MARKET)) do
-        local market_inventory = market.get_inventory(defines.inventory.chest)
-        local inventory_size = #market_inventory
-        local caste = Caste(registered_entity)
-
-        for i = 1, inventory_size do
-            local slot = market_inventory[i]
-            if slot.valid_for_read then
-                local item_name = slot.name
-                if
-                    Food(item_name) and not diet[item_name] and
-                        caste.least_favored_taste ~= Food(item_name).taste_category
-                 then
-                -- TODO
-                end
-            end
-        end
+        table.insert(inventories, market.get_inventory(defines.inventory.chest))
     end
 
-    return ret
+    return inventories
 end
 
 -- returns a table with every available food item type as keys
-local function get_diet(inventory)
+local function get_diet(inventories)
     local diet = {}
-    local inventory_size = #inventory
 
-    for i = 1, inventory_size do
-        local slot = inventory[i]
-        if slot.valid_for_read then -- check if the slot has an item in it
-            local item_name = slot.name
-            if Food[item_name] and not diet[item_name] then
-                diet[item_name] = item_name
+    for _, inventory in pairs(inventories) do
+        local inventory_size = #inventory
+
+        for i = 1, inventory_size do
+            local slot = inventory[i]
+            if slot.valid_for_read then -- check if the slot has an item in it
+                local item_name = slot.name
+                if Food[item_name] and not diet[item_name] then
+                    diet[item_name] = item_name
+                end
             end
         end
     end
@@ -370,17 +357,20 @@ local function get_diet_effects(diet, caste_type)
     }
 end
 
-local function consume_specific_food(inventory, amount, item_name)
-    local inventory_size = #inventory
+local function consume_specific_food(inventories, amount, item_name)
     local to_consume = amount
 
-    for i = 1, inventory_size do
-        local slot = inventory[i]
-        if slot.valid_for_read then -- check if the slot has an item in it
-            if slot.name == item_name then
-                to_consume = to_consume - slot.drain_durability(to_consume)
-                if to_consume < 0.001 then
-                    return amount -- everything was consumed
+    for _, inventory in pairs(inventories) do
+        local inventory_size = #inventory
+
+        for i = 1, inventory_size do
+            local slot = inventory[i]
+            if slot.valid_for_read then -- check if the slot has an item in it
+                if slot.name == item_name then
+                    to_consume = to_consume - slot.drain_durability(to_consume)
+                    if to_consume < 0.001 then
+                        return amount -- everything was consumed
+                    end
                 end
             end
         end
@@ -391,14 +381,14 @@ end
 
 -- Tries to consume the given amount of calories. Returns the percentage of the amount that
 -- was consumed
-local function consume_food(inventory, amount, diet, diet_effects)
+local function consume_food(inventories, amount, diet, diet_effects)
     local count = diet_effects.count
-    local items = get_keyset(diet)
+    local items = Tables.get_keyset(diet)
     local to_consume = amount
-    shuffle(items)
+    Tables.shuffle(items)
 
     for i = 1, count do
-        to_consume = to_consume - consume_specific_food(inventory, to_consume, items[i])
+        to_consume = to_consume - consume_specific_food(inventories, to_consume, items[i])
         if to_consume < 0.001 then
             return 1 -- 100% was consumed
         end
@@ -407,7 +397,7 @@ local function consume_food(inventory, amount, diet, diet_effects)
     return (amount - to_consume) / amount
 end
 
-local function apply_hunger_effects(diet_effects, percentage)
+local function apply_hunger_effects(percentage, diet_effects)
     diet_effects.satisfaction = diet_effects.satisfaction * percentage - 5 * (1 - percentage)
     diet_effects.healthiness_dietary = diet_effects.healthiness_dietary * percentage - 5 * (1 - percentage)
 
@@ -418,16 +408,14 @@ end
 
 -- Assumes the entity is a housing entity
 local function evaluate_diet(registered_entity, delta_ticks)
-    local house_inventory = registered_entity.entity.get_inventory(defines.inventory.chest)
-    local diet = get_diet(house_inventory)
-
-    check_markets(registered_entity, diet, house_inventory)
+    local inventories = get_food_inventories(registered_entity)
+    local diet = get_diet(inventories)
 
     local diet_effects = get_diet_effects(diet, registered_entity.type)
 
     local to_consume = Caste(registered_entity).calorific_demand * delta_ticks * registered_entity.inhabitants
-    local hunger_satisfaction = consume_food(house_inventory, to_consume, diet_effects)
-    apply_hunger_effects(diet_effects, hunger_satisfaction)
+    local hunger_satisfaction = consume_food(inventories, to_consume, diet, diet_effects)
+    apply_hunger_effects(hunger_satisfaction, diet_effects)
 
     return diet_effects
 end
@@ -499,6 +487,36 @@ local function get_aurora_bonus(effective_population)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << inhabitant functions >>
+local function add_inhabitants(registered_entity, count, happiness, healthiness, mental_healthiness)
+    local capacity = Housing:get_capacity(registered_entity)
+    local count_moving_in = math.min(count, Housing:get_free_capacity(registered_entity))
+
+    registered_entity.inhabitants = registered_entity.inhabitants + count_moving_in
+    registered_entity.happiness =
+        Utils.weighted_average(
+        registered_entity.happiness,
+        registered_entity.inhabitants - count_moving_in,
+        happiness,
+        count_moving_in
+    )
+    registered_entity.healthiness =
+        Utils.weighted_average(
+        registered_entity.healthiness,
+        registered_entity.inhabitants - count_moving_in,
+        healthiness,
+        count_moving_in
+    )
+    registered_entity.mental_healthiness =
+        Utils.weighted_average(
+        registered_entity.mental_healthiness,
+        registered_entity.inhabitants - count_moving_in,
+        mental_healthiness,
+        count_moving_in
+    )
+end
+
+---------------------------------------------------------------------------------------------------
 -- << resettlement >>
 local function resettlement_is_researched()
     for _, force in pairs(game.forces) do
@@ -515,11 +533,28 @@ local function try_resettle(registered_entity)
         return
     end
 
-    for unit_number, registered_entity in pairs(global.register) do
-        if registered_entity.entity.valid then
-            -- TODO
+    local to_resettle = registered_entity.inhabitants
+    for _, current_entity in pairs(global.register) do
+        if current_entity.entity.valid then
+            if current_entity.type == registered_entity.type then
+                local free_capacity = Housing:get_free_capacity(current_entity)
+                if free_capacity > 0 then
+                    local count = math.min(to_resettle, free_capacity)
+                    -- TODO make up my mind what to do with happiness, health, etc
+                    add_inhabitants(
+                        current_entity,
+                        count,
+                        registered_entity.happiness,
+                        registered_entity.healthiness,
+                        registered_entity.mental_healthiness
+                    )
+                    if to_resettle < 1 then
+                        return registered_entity.inhabitants
+                    end
+                end
+            end
         else
-            remove_from_register(registered_entity)
+            remove_from_register(current_entity)
         end
     end
 end
