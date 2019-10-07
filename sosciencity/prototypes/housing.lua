@@ -20,7 +20,7 @@ local unlocking_tech = {
 }
 
 for house_name, house in pairs(Housing.houses) do
-    local orderstring = string.format("%02d", house.contentment) .. "-" .. string.format("%09d", house.room_count)
+    local orderstring = string.format("%02d", house.comfort) .. "-" .. string.format("%09d", house.room_count)
     local details = data_details[house_name]
 
     Item:create {
@@ -31,7 +31,13 @@ for house_name, house in pairs(Housing.houses) do
         subgroup = "sosciencity-housing",
         order = orderstring,
         stack_size = details.stack_size or 20,
-        place_result = house_name
+        place_result = house_name,
+        localised_description = {
+            "item-description.housing",
+            {"item-description." .. house_name},
+            house.room_count,
+            {"comfort-scale." .. house.comfort}
+        }
     }
 
     RecipeGenerator:create_housing_recipe(house):add_unlock(unlocking_tech[house.tech_level])

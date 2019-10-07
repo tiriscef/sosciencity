@@ -4,14 +4,9 @@ Housing = {}
 
 Housing.houses = {}
     --[[["example-house"] = {
-        room_count,
+        room_count = 42,
         tech_level = 0,
-        castes = {
-            [TYPE_CLOCKWORK] = {
-                capacity_multiplier = 2,
-                contentment = 1
-            }
-        },
+        comfort = 32
     }]]
 
 function Housing:__call(registered_entity)

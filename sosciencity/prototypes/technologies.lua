@@ -3,8 +3,8 @@
 Technology:create {
     type = "technology",
     name = "clockwork-caste",
-    icon = "__sosciencity__/graphics/technology/clockwork-caste.png", -- TODO create icon
-    icon_size = 128,
+    icon = "__sosciencity__/graphics/technology/clockwork-caste.png",
+    icon_size = 256,
     upgrade = false,
     prerequisites = {},
     effects = {
@@ -100,7 +100,7 @@ Technology:create {
         }
     },
     unit = {
-        count = 100,
+        count = 133,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},
@@ -124,7 +124,7 @@ Technology:create {
         }
     },
     unit = {
-        count = 100,
+        count = 133,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},

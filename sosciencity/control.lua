@@ -156,7 +156,6 @@ local function add_housing_data(registered_entity)
     registered_entity.happiness = 0
     registered_entity.healthiness = 0
     registered_entity.healthiness_mental = 0
-    registered_entity.ideas = 0
     registered_entity.inhabitants = 0
     registered_entity.trend = 0
 end
@@ -272,17 +271,17 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
     -- we focus on a reasonable amount of protein
     local protein_percentage = proteins / (fat + carbohydrates + proteins)
     if protein_percentage < 0.1 then
-        table.insert(flags, FLAG_LOW_PROTEIN)
+        table.insert(flags, {FLAG_LOW_PROTEIN, protein_percentage})
     elseif protein_percentage > 0.4 then
-        table.insert(flags, FLAG_HIGH_PROTEIN)
+        table.insert(flags, {FLAG_HIGH_PROTEIN, protein_percentage})
     end
 
     -- and the fat to carbohydrates ratio (optimum is 0.375)
     local fat_to_carbohydrates_ratio = fat / (fat + carbohydrates)
     if fat_to_carbohydrates_ratio > 0.5 then
-        table.insert(flags, FLAG_HIGH_FAT)
+        table.insert(flags, {FLAG_HIGH_FAT, fat_to_carbohydrates_ratio})
     elseif fat_to_carbohydrates_ratio < 0.1 then
-        table.insert(flags, FLAG_HIGH_CARBOHYDRATES)
+        table.insert(flags, {FLAG_HIGH_CARBOHYDRATES, fat_to_carbohydrates_ratio})
     end
 
     return 0.25 *
@@ -402,7 +401,7 @@ local function apply_hunger_effects(percentage, diet_effects)
     diet_effects.healthiness_dietary = diet_effects.healthiness_dietary * percentage - 5 * (1 - percentage)
 
     if percentage < 0.5 then
-        table.insert(diet_effects.flags, FLAG_HUNGER)
+        table.insert(diet_effects.flags, {FLAG_HUNGER})
     end
 end
 
@@ -488,7 +487,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
-local function add_inhabitants(registered_entity, count, happiness, healthiness, mental_healthiness)
+local function add_inhabitants(registered_entity, count, happiness, healthiness, healthiness_mental)
     local capacity = Housing:get_capacity(registered_entity)
     local count_moving_in = math.min(count, Housing:get_free_capacity(registered_entity))
 
@@ -507,11 +506,11 @@ local function add_inhabitants(registered_entity, count, happiness, healthiness,
         healthiness,
         count_moving_in
     )
-    registered_entity.mental_healthiness =
+    registered_entity.healthiness_mental =
         Utils.weighted_average(
-        registered_entity.mental_healthiness,
+        registered_entity.healthiness_mental,
         registered_entity.inhabitants - count_moving_in,
-        mental_healthiness,
+        healthiness_mental,
         count_moving_in
     )
 end
@@ -528,35 +527,50 @@ local function resettlement_is_researched()
     return false
 end
 
+local function try_resettle_to(source_entity, destination_entity, resettle_count)
+    if not destination_entity.entity.valid then
+        remove_from_register(destination_entity)
+        return
+    end
+
+    if destination_entity.type == source_entity.type then
+        local free_capacity = Housing:get_free_capacity(destination_entity)
+        if free_capacity > 0 then
+            local count = math.min(resettle_count, free_capacity)
+
+            -- TODO diseases
+            add_inhabitants(
+                destination_entity,
+                count,
+                source_entity.happiness,
+                source_entity.healthiness,
+                source_entity.mental_healthiness
+            )
+            if resettle_count < 1 then
+                return source_entity.inhabitants
+            end
+        end
+    end
+end
+
+-- looks for housings to move the inhabitants of this registered_entity to
+-- returns the number of resettled inhabitants
 local function try_resettle(registered_entity)
     if not resettlement_is_researched() or not Types:is_housing(registered_entity.type) then
-        return
+        return 0
     end
 
     local to_resettle = registered_entity.inhabitants
     for _, current_entity in pairs(global.register) do
-        if current_entity.entity.valid then
-            if current_entity.type == registered_entity.type then
-                local free_capacity = Housing:get_free_capacity(current_entity)
-                if free_capacity > 0 then
-                    local count = math.min(to_resettle, free_capacity)
-                    -- TODO make up my mind what to do with happiness, health, etc
-                    add_inhabitants(
-                        current_entity,
-                        count,
-                        registered_entity.happiness,
-                        registered_entity.healthiness,
-                        registered_entity.mental_healthiness
-                    )
-                    if to_resettle < 1 then
-                        return registered_entity.inhabitants
-                    end
-                end
-            end
-        else
-            remove_from_register(current_entity)
+        local resettled_count = try_resettle_to(registered_entity, current_entity, to_resettle)
+        to_resettle = to_resettle - resettled_count
+
+        if to_resettle < 1 then
+            return registered_entity.inhabitants
         end
     end
+
+    return registered_entity.inhabitants - to_resettle
 end
 
 ---------------------------------------------------------------------------------------------------
