@@ -52,6 +52,7 @@ FLAG_HIGH_PROTEIN = 2
 FLAG_HIGH_FAT = 3
 FLAG_HIGH_CARBOHYDRATES = 4
 FLAG_HUNGER = 5
+FLAG_NO_POWER = 6
 
 Types = {}
 Types.entity_type_lookup = {

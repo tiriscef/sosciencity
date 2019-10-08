@@ -1,3 +1,15 @@
+TechnologyEffect = {}
+
+function TechnologyEffect:equal(effect1, effect2)
+    for key, value in pairs(effect1) do
+        if value ~= effect2[key] then
+            return false
+        end
+    end
+
+    return true
+end
+
 Technology = {}
 
 function Technology:get(name)
@@ -24,5 +36,21 @@ function Technology:add_effect(effect)
         self.effects = {}
     end
 
+    -- check if the Technology already has this effect
+    for _, current_effect in pairs(self.effects) do
+        if TechnologyEffect:equal(effect, current_effect) then
+            -- return without doing anything in this case
+            return self
+        end
+    end
+
     table.insert(self.effects, effect)
+    return self
+end
+
+function Technology:add_unlock(recipe_name)
+    return self:add_effect {
+        type = "unlock-recipe",
+        recipe = recipe_name
+    }
 end

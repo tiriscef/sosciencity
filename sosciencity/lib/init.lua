@@ -1,3 +1,5 @@
+require("lib.utils")
+
 require("lib.prototype")
 require("lib.recipe")
 require("lib.item")

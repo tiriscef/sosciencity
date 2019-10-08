@@ -161,6 +161,157 @@ Technology:create {
 }
 
 ---------------------------------------------------------------------------------------------------
+-- << architecture technologies >>
+Technology:create {
+    type = "technology",
+    name = "architecture-1",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"clockwork-caste"},
+    effects = {},
+    unit = {
+        count = 30,
+        ingredients = {{"automation-science-pack", 1}},
+        time = 10
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-2",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"ember-caste", "architecture-1"},
+    effects = {},
+    unit = {
+        count = 60,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-3",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"gunfire-caste", "architecture-2"},
+    effects = {},
+    unit = {
+        count = 110,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-4",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"gleam-caste", "architecture-3"},
+    effects = {},
+    unit = {
+        count = 230,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 25
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-5",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"foundry-caste", "architecture-4"},
+    effects = {},
+    unit = {
+        count = 470,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-6",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"orchid-caste", "architecture-5"},
+    effects = {},
+    unit = {
+        count = 1060,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 35
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-7",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"aurora-caste", "architecture-6"},
+    effects = {},
+    unit = {
+        count = 2350,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1},
+            {"utility-science-pack", 1}
+        },
+        time = 40
+    }
+}
+
+Technology:create {
+    type = "technology",
+    name = "architecture-8",
+    icon = "__sosciencity__/graphics/technology/architecture.png",
+    icon_size = 256,
+    upgrade = true,
+    prerequisites = {"space-science-pack", "architecture-7"},
+    effects = {},
+    unit = {
+        count = 5510,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1},
+            {"utility-science-pack", 1}
+        },
+        time = 45
+    }
+}
+
+---------------------------------------------------------------------------------------------------
 -- << other technologies >>
 Technology:create {
     type = "technology",

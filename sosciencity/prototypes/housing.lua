@@ -8,16 +8,6 @@ local data_details = {}
         width = 5,
         height = 5
     }]]
-local unlocking_tech = {
-    [0] = nil,
-    [1] = "clockwork-caste",
-    [2] = "ember-caste",
-    [3] = "gunfire-caste",
-    [4] = "gleam-caste",
-    [5] = "foundry-caste",
-    [6] = "orchid-caste",
-    [7] = "aurora-caste"
-}
 
 for house_name, house in pairs(Housing.houses) do
     local orderstring = string.format("%02d", house.comfort) .. "-" .. string.format("%09d", house.room_count)
@@ -40,7 +30,7 @@ for house_name, house in pairs(Housing.houses) do
         }
     }
 
-    RecipeGenerator:create_housing_recipe(house):add_unlock(unlocking_tech[house.tech_level])
+    RecipeGenerator:create_housing_recipe(house_name, house)
 
     Entity:create {
         type = "container",

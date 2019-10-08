@@ -18,11 +18,29 @@ data:extend {
         name = "sosciencity-housing",
         group = "sosciencity",
         order = "baa"
-    }, 
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-furniture",
+        group = "sosciencity",
+        order = "caa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-materials",
+        group = "sosciencity",
+        order = "daa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-food",
+        group = "sosciencity",
+        order = "eaa"
+    },
     {
         type = "item-subgroup",
         name = "sosciencity-ideas",
         group = "sosciencity",
         order = "zaa"
-    }, 
+    },
 }
