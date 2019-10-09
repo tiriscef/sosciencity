@@ -19,7 +19,7 @@ Attribute:
     - diätarischer Wert, wie ausgeglichen die Nährstoffe der Kombination ist - dietary_completeness
  - Geschmack-Kategorie - taste_category
  - Geschmack-Wert - taste_quality
- - Luxus-Wert - luxority
+ - Luxus-Wert - luxury
 
 
 Geschmackskategorien: 
