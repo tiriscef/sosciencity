@@ -26,7 +26,7 @@ for food_name, food_details in pairs(Food.values) do
             {"taste-category." .. Types.taste_lookup[food_details.taste_category]},
             {"taste-scale." .. (food_details.taste_quality + 5)},
             {"health-scale." .. (food_details.healthiness + 5)},
-            {"luxority-scale." .. (food_details.luxority + 5)},
+            {"luxury-scale." .. (food_details.luxury + 5)},
             food_details.fat,
             percentage(food_details.fat, food_details.calories),
             food_details.carbohydrates,

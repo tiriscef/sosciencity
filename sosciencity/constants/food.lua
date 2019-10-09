@@ -15,7 +15,7 @@ Food.values = {
         food_category = "organic",
         taste_category = TASTE_NEUTRAL,
         taste_quality = 1,
-        luxority = 0
+        luxury = 0
     },]]
 }
 

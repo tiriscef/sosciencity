@@ -305,7 +305,7 @@ local function get_diet_effects(diet, caste_type)
         [TASTE_SWEET] = 0,
         [TASTE_UMAMI] = 0
     }
-    local luxority = 0
+    local luxury = 0
     local flags = {}
     local caste = Caste(caste_type)
 
@@ -320,7 +320,7 @@ local function get_diet_effects(diet, caste_type)
         proteins = proteins + values.proteins
         taste_quality = taste_quality + values.taste_quality
         taste_category_counts[values.taste_category] = taste_category_counts[values.taste_category] + 1
-        luxority = luxority + values.luxority
+        luxury = luxury + values.luxury
     end
 
     local dominant_taste = TASTE_BITTER
@@ -332,7 +332,7 @@ local function get_diet_effects(diet, caste_type)
 
     intrinsic_healthiness = intrinsic_healthiness / count
     taste_quality = taste_quality / count
-    luxority = luxority / count
+    luxury = luxury / count
 
     -- evaluate features
     local mental_healthiness = 1
@@ -341,7 +341,7 @@ local function get_diet_effects(diet, caste_type)
         0.5 * (intrinsic_healthiness + get_nutrient_healthiness(fat, carbohydrates, proteins, flags))
 
     local satisfaction =
-        (1 - 0.5 * caste.desire_for_luxority) * taste_quality + 0.5 * caste.desire_for_luxority * luxority
+        (1 - 0.5 * caste.desire_for_luxury) * taste_quality + 0.5 * caste.desire_for_luxury * luxury
 
     if count == 1 or taste_category_counts[TASTE_NEUTRAL] == count or dominant_taste == caste.least_favored_taste then
         mental_healthiness = 0
