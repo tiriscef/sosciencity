@@ -1,73 +1,33 @@
-Item:create {
-    type = "item",
-    name = "note",
-    icon = "__sosciencity__/graphics/icon/note.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aaa",
-    stack_size = 100
+---------------------------------------------------------------------------------------------------
+-- << items >>
+local items = {
+    {name = "note"},
+    {name = "essay"},
+    {name = "strategic-considerations"},
+    {name = "data-collection"},
+    {name = "complex-scientific-data"},
+    {name = "published-paper"},
+    {name = "well-funded-scientific-thesis"}
 }
 
-Item:create {
-    type = "item",
-    name = "essay",
-    icon = "__sosciencity__/graphics/icon/essay.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aab",
-    stack_size = 100
-}
+for index, details in pairs(items) do
+    local item =
+        Item:create {
+        name = details.name,
+        icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
+        icon_size = 64,
+        subgroup = "sosciencity-ideas",
+        order = string.format("%02d", index),
+        stack_size = 100
+    }
 
-Item:create {
-    type = "item",
-    name = "strategic-considerations",
-    icon = "__sosciencity__/graphics/icon/strategic-considerations.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aac",
-    stack_size = 100
-}
+    if item.add_sprite_variations then
+        item:add_sprite_variations(64, "__sosciencity__/graphics/icon/", item.sprite_variations)
+    end
+end
 
-Item:create {
-    type = "item",
-    name = "data-collection",
-    icon = "__sosciencity__/graphics/icon/data-collection.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aad",
-    stack_size = 100
-}
-
-Item:create {
-    type = "item",
-    name = "complex-scientific-data",
-    icon = "__sosciencity__/graphics/icon/complex-scientific-data.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aae",
-    stack_size = 100
-}
-
-Item:create {
-    type = "item",
-    name = "published-paper",
-    icon = "__sosciencity__/graphics/icon/published-paper.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aaf",
-    stack_size = 100
-}
-
-Item:create {
-    type = "item",
-    name = "well-funded-scientific-thesis",
-    icon = "__sosciencity__/graphics/icon/well-funded-scientific-thesis.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "aag",
-    stack_size = 100
-}
-
+---------------------------------------------------------------------------------------------------
+-- << recipes >>
 Recipe:create {
     type = "recipe",
     name = "brainstorm",
@@ -81,7 +41,7 @@ Recipe:create {
     icon = "__sosciencity__/graphics/icon/note.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas",
-    order = "aaa", 
+    order = "aaa",
     main_product = ""
 }
 

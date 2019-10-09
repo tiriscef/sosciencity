@@ -53,7 +53,7 @@ RecipeGenerator.furniture_ingredients = {
         {type = "item", name = "table", amount = 1}
     },
     [2] = {
-        {type = "item", name = "wardrobe", amount = 2},
+        {type = "item", name = "furniture", amount = 2},
         {type = "item", name = "stool", amount = 2}
     },
     [3] = {
@@ -88,18 +88,18 @@ function RecipeGenerator:create_housing_recipe(housing_name, details)
         subgroup = "sosciencity-housing",
         order = item.order,
         main_product = housing_name
-    }
+    }:create_difficulties()
 
     local room_ingredients = self.room_ingredients[details.tech_level]
     house_recipe:add_ingredient_range(room_ingredients)
-    house_recipe:multiply_ingredient_amounts_expensive(self.expensive_multiplier)
+    house_recipe:multiply_expensive_ingredients(self.expensive_multiplier)
 
     for i = 0, details.coziness do
         local furniture = self.furniture_ingredients[details.coziness]
         house_recipe:add_ingredient_range(furniture)
     end
 
-    house_recipe:multiply_ingredient_amounts(details.room_count)
+    house_recipe:multiply_ingredients(details.room_count)
 
     return house_recipe
 end

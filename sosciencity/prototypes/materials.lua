@@ -1,18 +1,23 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local material_items = {
-    "bspmaterial"
+    {name = "bspmaterial"}
 }
 
-for _, material_name in pairs(material_items) do
-    Item:create {
-        name = material_name,
-        icon = "__sosciencity__/graphics/icon/" .. material_name .. ".png",
+for index, material in pairs(material_items) do
+    local material_item =
+        Item:create {
+        name = material.name,
+        icon = "__sosciencity__/graphics/icon/" .. material.name .. ".png",
         icon_size = 64,
         subgroup = "sosciencity-materials",
-        order = material_name,
-        stack_size = 100
+        order = string.format("%03d", index),
+        stack_size = 200
     }
+
+    if material.sprite_variations then
+        material_item:add_sprite_variations(64, "__sosciencity__/graphics/icon/", material.sprite_variations)
+    end
 end
 
 ---------------------------------------------------------------------------------------------------

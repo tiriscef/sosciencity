@@ -2,7 +2,7 @@
 Item:create {
     type = "module",
     name = "sosciencity-speed-penalty-module",
-    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon = "__sosciencity__/graphics/empty.png",
     icon_size = 1,
     flags = {"hidden", "hide-from-bonus-gui"},
     subgroup = "module",
@@ -15,7 +15,7 @@ Item:create {
 Item:create {
     type = "module",
     name = "sosciencity-speed-module",
-    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon = "__sosciencity__/graphics/empty.png",
     icon_size = 1,
     flags = {"hidden", "hide-from-bonus-gui"},
     subgroup = "module",
@@ -28,7 +28,7 @@ Item:create {
 Item:create {
     type = "module",
     name = "sosciencity-speed-module-100",
-    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon = "__sosciencity__/graphics/empty.png",
     icon_size = 1,
     flags = {"hidden", "hide-from-bonus-gui"},
     subgroup = "module",
@@ -41,7 +41,7 @@ Item:create {
 Item:create {
     type = "module",
     name = "sosciencity-productivity-module",
-    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon = "__sosciencity__/graphics/empty.png",
     icon_size = 1,
     flags = {"hidden", "hide-from-bonus-gui"},
     subgroup = "module",
@@ -54,7 +54,7 @@ Item:create {
 Item:create {
     type = "module",
     name = "sosciencity-productivity-module-100",
-    icon = "__sosciencity__/graphics/icon/empty.png",
+    icon = "__sosciencity__/graphics/empty.png",
     icon_size = 1,
     flags = {"hidden", "hide-from-bonus-gui"},
     subgroup = "module",
@@ -80,14 +80,14 @@ Entity:create {
         "no-automated-item-insertion"
     },
     animation = {
-        filename = "__sosciencity__/graphics/icon/empty.png",
+        filename = "__sosciencity__/graphics/empty.png",
         width = 1,
         height = 1,
         line_length = 8,
         frame_count = 1
     },
     animation_shadow = {
-        filename = "__sosciencity__/graphics/icon/empty.png",
+        filename = "__sosciencity__/graphics/empty.png",
         width = 1,
         height = 1,
         line_length = 8,
@@ -97,13 +97,13 @@ Entity:create {
         type = "void"
     },
     base_picture = {
-        filename = "__sosciencity__/graphics/icon/empty.png",
+        filename = "__sosciencity__/graphics/empty.png",
         width = 1,
         height = 1
     },
     supply_area_distance = 0,
     radius_visualisation_picture = {
-        filename = "__sosciencity__/graphics/icon/empty.png",
+        filename = "__sosciencity__/graphics/empty.png",
         width = 1,
         height = 1
     },

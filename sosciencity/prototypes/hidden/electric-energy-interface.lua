@@ -12,7 +12,7 @@ Entity:create {
         "no-automated-item-insertion"
     },
     base_picture = {
-        filename = "__sosciencity__/graphics/icon/empty.png",
+        filename = "__sosciencity__/graphics/empty.png",
         width = 1,
         height = 1
     },

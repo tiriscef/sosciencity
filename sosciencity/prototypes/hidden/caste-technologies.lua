@@ -4,7 +4,7 @@ for i = 0, 20 do
     Technology:create {
         type = "technology",
         name = strength .. "-gleam-caste",
-        icon = "__sosciencity__/graphics/icon/empty.png",
+        icon = "__sosciencity__/graphics/empty.png",
         icon_size = 1,
         effects = {
             {
@@ -29,7 +29,7 @@ for i = 0, 20 do
     Technology:create {
         type = "technology",
         name = strength .. "-foundry-caste",
-        icon = "__sosciencity__/graphics/icon/empty.png",
+        icon = "__sosciencity__/graphics/empty.png",
         icon_size = 1,
         effects = {
             {
@@ -54,7 +54,7 @@ for i = 0, 20 do
     Technology:create {
         type = "technology",
         name = strength .. "-gunfire-caste",
-        icon = "__sosciencity__/graphics/icon/empty.png",
+        icon = "__sosciencity__/graphics/empty.png",
         icon_size = 1,
         effects = {}, -- will be filled in data-final-fixes
         unit = {
