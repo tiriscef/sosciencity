@@ -47,18 +47,19 @@ RecipeGenerator.unlocking_tech = {
 -- table with coziness -> array of IngredientPrototypes
 RecipeGenerator.furniture_ingredients = {
     [0] = {
-        {type = "item", name = "bed", amount = 1}
+        {type = "item", name = "duvet", amount = 1}
     },
     [1] = {
         {type = "item", name = "stool", amount = 2},
         {type = "item", name = "table", amount = 1}
     },
     [2] = {
-        {type = "item", name = "furniture", amount = 2},
-        {type = "item", name = "stool", amount = 2}
+        {type = "item", name = "furniture", amount = 1},
+        {type = "item", name = "stool", amount = 2},
+        {type = "item", name = "bed", amount = 1}
     },
     [3] = {
-        {type = "item", name = "", amount = 1}
+        {type = "item", name = "furniture", amount = 2},
     },
     [4] = {},
     [5] = {},

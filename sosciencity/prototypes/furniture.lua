@@ -4,7 +4,11 @@ local furniture_items = {
     {name = "bed"},
     {name = "stool"},
     {name = "table"},
-    {name = "furniture", sprite_variations = {"furniture", "chest", "chest-2", "chest-3", "commode", "rack"}}
+    {name = "furniture", sprite_variations = {"furniture-2"}},
+    {name = "carpet"},
+    {name = "duvet"},
+    {name = "sofa"},
+    {name = "curtain"}
 }
 
 for index, furniture in pairs(furniture_items) do

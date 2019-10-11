@@ -1,7 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local material_items = {
-    {name = "bspmaterial"}
+    {name = "timber"},
+    {name = "tiriscefing-willow-wood"},
+    {name = "pemtenn-cotton"},
+    {name = "cloth"}
+
 }
 
 for index, material in pairs(material_items) do
