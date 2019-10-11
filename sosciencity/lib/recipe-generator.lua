@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for recipe generation >>
 -- generic recipes with configurable ingredients to facilitate integration/compatibility with other mods
+-- assumes the result items already exist
 RecipeGenerator = {}
 
 -- table with tech_level -> array of IngredientPrototypes
@@ -83,9 +84,7 @@ function RecipeGenerator:create_housing_recipe(housing_name, details)
         results = {
             {type = "item", name = housing_name, amount = 1}
         },
-        icon = item.icon,
-        icon_size = item.icon_size,
-        subgroup = "sosciencity-housing",
+        subgroup = item.subgroup,
         order = item.order,
         main_product = housing_name
     }:create_difficulties()
@@ -94,7 +93,7 @@ function RecipeGenerator:create_housing_recipe(housing_name, details)
     house_recipe:add_ingredient_range(room_ingredients)
     house_recipe:multiply_expensive_ingredients(self.expensive_multiplier)
 
-    for i = 0, details.coziness do
+    for _ = 0, details.coziness do
         local furniture = self.furniture_ingredients[details.coziness]
         house_recipe:add_ingredient_range(furniture)
     end

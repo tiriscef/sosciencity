@@ -33,20 +33,20 @@ end
 -- This assumes that a 'successful' call to a postponed function will not result in
 -- another postponed function
 function Prototype:finish_postponed()
-    local todo = self.postponed_functions
-    local todo_count = table_size(todo)
-    local last_todo_count = todo_count + 1 -- bogus value to ensure that the while loop gets executed
+    local to_do = self.postponed_functions
+    local to_do_count = table_size(to_do)
+    local last_to_do_count = to_do_count + 1 -- bogus value to ensure that the while loop gets executed
 
-    while todo_count < last_todo_count do
+    while to_do_count < last_to_do_count do
         self.postponed_functions = {}
-        for _, func in pairs(todo) do
+        for _, func in pairs(to_do) do
             func:execute()
         end
 
-        todo = self.postponed_functions
-        last_todo_count = todo_count
-        todo_count = table_size(todo)
+        to_do = self.postponed_functions
+        last_to_do_count = to_do_count
+        to_do_count = table_size(to_do)
     end
 
-    return todo_count == 0 -- return true if there are no more things to do
+    return to_do_count == 0 -- return true if there are no more things to do
 end
