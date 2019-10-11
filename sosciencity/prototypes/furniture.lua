@@ -6,7 +6,6 @@ local furniture_items = {
     {name = "table"},
     {name = "furniture", sprite_variations = {"furniture-2"}},
     {name = "carpet"},
-    {name = "duvet"},
     {name = "sofa"},
     {name = "curtain"}
 }
