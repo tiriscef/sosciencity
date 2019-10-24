@@ -13,7 +13,7 @@ end
 
 function Entity:create(prototype)
     data:extend {prototype}
-    return self.get(prototype.name)
+    return self:get(prototype.name)
 end
 
 function Entity:get_selection_box(width, height)

@@ -43,16 +43,30 @@ end
 
 -- clones the table and all tables inside
 -- assumes that there are no circular structures
-function Tables.recusive_copy(tbl)
+function Tables.recursive_copy(tbl)
     local ret = {}
 
     for key, value in pairs(tbl) do
         if type(value) == "table" then
-            ret[key] = Tables.recusive_copy(value)
+            ret[key] = Tables.recursive_copy(value)
         else
             ret[key] = value
         end
     end
 
     return ret
+end
+
+function Tables.contains(tbl, element)
+    for _, value in pairs(tbl) do
+        if element == value then
+            return true
+        end
+    end
+
+    return false
+end
+
+function Tables.contains_key(tbl, key)
+    return tbl[key] ~= nil
 end

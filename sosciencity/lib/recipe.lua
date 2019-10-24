@@ -130,10 +130,10 @@ function Recipe:create_difficulties()
 
     -- set ingredients
     self.normal = {
-        ingredients = Tables.recusive_copy(self.ingredients)
+        ingredients = Tables.recursive_copy(self.ingredients)
     }
     self.expensive = {
-        ingredients = Tables.recusive_copy(self.ingredients)
+        ingredients = Tables.recursive_copy(self.ingredients)
     }
     self.ingredients = nil
 
@@ -147,13 +147,15 @@ function Recipe:create_difficulties()
         self.result = nil
         self.result_count = nil
     elseif self.results then
-        self.normal.results = Tables.recusive_copy(self.results)
-        self.expensive.results = Tables.recusive_copy(self.results)
+        self.normal.results = Tables.recursive_copy(self.results)
+        self.expensive.results = Tables.recursive_copy(self.results)
 
         self.results = nil
     else
         error("Sosciencity found a recipe without a valid result:\n" .. serpent.block(self))
     end
+
+    return self
 end
 
 local function recipe_results_contain_item(recipe, item_name)
