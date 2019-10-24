@@ -14,6 +14,11 @@ function Item:__call(name)
     return self:get(name)
 end
 
+function Item:from_prototype(prototype)
+    setmetatable(prototype, self)
+    return prototype
+end
+
 -- << creation >>
 function Item:create(prototype)
     data:extend {prototype}
