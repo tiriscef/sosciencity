@@ -24,9 +24,9 @@ function Food:__call(item)
     return self.values[item]
 end
 
-local energy_density_fat = 900 -- kcal per g
-local energy_density_carbohydrates = 400
-local energy_density_proteins = 370
+local energy_density_fat = 9 -- kcal per g
+local energy_density_carbohydrates = 4
+local energy_density_proteins = 3.7
 
 for _, food in pairs(Food.values) do
     -- convert nutrients from g per 100g to kcal per 100g
