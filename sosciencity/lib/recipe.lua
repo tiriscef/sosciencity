@@ -83,21 +83,31 @@ end
 -- << class for recipes >>
 Recipe = {}
 
+-- this makes an object of this class call the class methods (if it hasn't an own method)
+-- lua is weird
+Recipe.__index = Recipe
+
 -- << getter functions >>
-function Recipe:get(name)
+function Recipe:get_by_name(name)
     local new = Prototype:get("recipe", name)
-    setmetatable(new, self)
+    setmetatable(new, Recipe)
     return new
 end
 
-function Recipe:__call(name)
-    return self:get(name)
-end
-
-function Recipe:from_prototype(prototype)
-    setmetatable(prototype, self)
+function Recipe:get_from_prototype(prototype)
+    setmetatable(prototype, Recipe)
     return prototype
 end
+
+function Recipe:get(name)
+    if type(name) == "string" then
+        return self:get_by_name(name)
+    else
+        return self:get_from_prototype(name)
+    end
+end
+
+Recipe.__call = Recipe.get
 
 -- << creation >>
 function Recipe:create(prototype)
@@ -106,7 +116,7 @@ function Recipe:create(prototype)
     end
 
     data:extend {prototype}
-    return Recipe(prototype.name)
+    return self:get(prototype)
 end
 
 -- << manipulation >>
@@ -119,7 +129,7 @@ function Recipe:has_expensive_difficulty()
 end
 
 function Recipe:has_difficulties()
-    return self.has_normal_difficulty() or self.has_expensive_difficulty()
+    return self:has_normal_difficulty() or self:has_expensive_difficulty()
 end
 
 function Recipe:create_difficulties()
@@ -172,9 +182,9 @@ local function recipe_results_contain_item(recipe, item_name)
 end
 
 function Recipe:results_contain_item(item_name)
-    if self.has_normal_difficulty then
+    if self:has_normal_difficulty() then
         return recipe_results_contain_item(self.normal, item_name)
-    elseif self.has_expensive_difficulty then
+    elseif self:has_expensive_difficulty() then
         return recipe_results_contain_item(self.expensive, item_name)
     else
         return recipe_results_contain_item(self, item_name)
@@ -305,7 +315,7 @@ function Recipe:add_unlock(technology_name)
         return self
     end
 
-    local tech = Technology:get(technology_name)
+    local tech = Technology:get_by_name(technology_name)
 
     if tech then
         tech:add_unlock(self.name)

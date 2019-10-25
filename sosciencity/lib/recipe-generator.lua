@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
--- << class for recipe generation >>
+-- << static class for recipe generation >>
 -- generic recipes with configurable ingredients to facilitate integration/compatibility with other mods
 -- assumes the result items already exist
 RecipeGenerator = {}
@@ -70,7 +70,7 @@ RecipeGenerator.furniture_ingredients = {
 RecipeGenerator.expensive_multiplier = 3
 
 function RecipeGenerator:create_housing_recipe(housing_name, details)
-    local item = Item:get(housing_name)
+    local item = Item:get_by_name(housing_name)
 
     local house_recipe =
         Recipe:create {

@@ -1,3 +1,5 @@
+---------------------------------------------------------------------------------------------------
+-- << static class for technology effects >>
 TechnologyEffect = {}
 
 function TechnologyEffect:equal(effect1, effect2)
@@ -10,17 +12,34 @@ function TechnologyEffect:equal(effect1, effect2)
     return true
 end
 
+---------------------------------------------------------------------------------------------------
+-- << class for technologies >>
 Technology = {}
 
-function Technology:get(name)
+-- this makes an object of this class call the class methods (if it hasn't an own method)
+-- lua is weird
+Technology.__index = Technology
+
+function Technology:get_by_name(name)
     local new = Prototype:get("technology", name)
-    setmetatable(new, self)
+    setmetatable(new, Technology)
     return new
 end
 
-function Technology:__call(name)
-    return self:get(name)
+function Technology:get_from_prototype(prototype)
+    setmetatable(prototype, Technology)
+    return prototype
 end
+
+function Technology:get(name)
+    if type(name) == "string" then
+        return self:get_by_name(name)
+    else
+        return self:get_from_prototype(name)
+    end
+end
+
+Technology.__call = Technology.get
 
 function Technology:create(prototype)
     if not prototype.type then
@@ -28,7 +47,7 @@ function Technology:create(prototype)
     end
 
     data:extend {prototype}
-    return self.__call(prototype.name)
+    return self:get_from_prototype(prototype)
 end
 
 function Technology:add_effect(effect)

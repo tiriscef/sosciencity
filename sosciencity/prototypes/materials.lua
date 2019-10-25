@@ -3,7 +3,7 @@
 local material_items = {
     {name = "timber"},
     {name = "tiriscefing-willow-wood"},
-    {name = "pemtenn-cotton"},
+    --{name = "pemtenn-cotton"},
     {name = "cloth", sprite_variations = {"cloth-2"}}
 }
 

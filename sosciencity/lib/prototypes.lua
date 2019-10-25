@@ -11,7 +11,7 @@ Prototype = {}
 
 Prototype.postponed_functions = {}
 
-function Prototype:get(name, prototype_type)
+function Prototype:get(prototype_type, name)
     if type(prototype_type) == "string" then
         return data.raw[prototype_type][name]
     elseif type(prototype_type) == "table" then

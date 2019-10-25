@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
-local items = {
+local idea_items = {
     {name = "note"},
     {name = "essay"},
     {name = "strategic-considerations"},
@@ -10,8 +10,8 @@ local items = {
     {name = "well-funded-scientific-thesis"}
 }
 
-for index, details in pairs(items) do
-    local item =
+for index, details in pairs(idea_items) do
+    local idea_item =
         Item:create {
         name = details.name,
         icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
@@ -21,8 +21,8 @@ for index, details in pairs(items) do
         stack_size = 100
     }
 
-    if item.add_sprite_variations then
-        item:add_sprite_variations(64, "__sosciencity__/graphics/icon/", item.sprite_variations)
+    if details.sprite_variations then
+        idea_item:add_sprite_variations(64, "__sosciencity__/graphics/icon/", idea_item.sprite_variations)
     end
 end
 

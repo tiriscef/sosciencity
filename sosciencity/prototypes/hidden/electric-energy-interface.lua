@@ -25,7 +25,7 @@ Entity:create {
         buffer_capacity = "1MW",
         usage_priority = "secondary-input"
     },
-    icon = "__sosciencity__/graphics/icon/eei.png",
-    icon_size = 64
+    icon = "__sosciencity__/graphics/technology/placeholder.png",
+    icon_size = 128
 }
 -- TODO icon

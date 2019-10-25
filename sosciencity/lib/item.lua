@@ -2,27 +2,41 @@
 -- << class for items >>
 Item = {}
 
+-- this makes an object of this class call the class methods (if it hasn't an own method)
+-- lua is weird
+Item.__index = Item
+
 -- << getter functions >>
-function Item:get(name)
+function Item:get_by_name(name)
     local item_types = require("lib.prototype-types.item-types")
     local new = Prototype:get(item_types, name)
-    setmetatable(new, self)
+    setmetatable(new, Item)
     return new
 end
 
-function Item:__call(name)
-    return self:get(name)
-end
-
-function Item:from_prototype(prototype)
-    setmetatable(prototype, self)
+function Item:get_from_prototype(prototype)
+    setmetatable(prototype, Item)
     return prototype
 end
 
+function Item:get(name)
+    if type(name) == "string" then
+        return self:get_by_name(name)
+    else
+        return self:get_from_prototype(name)
+    end
+end
+
+Item.__call = Item.get
+
 -- << creation >>
 function Item:create(prototype)
+    if not prototype.type then
+        prototype.type = "item"
+    end
+
     data:extend {prototype}
-    return self.__call(prototype.name)
+    return Item:get_by_name(prototype.name)
 end
 
 -- << manipulation >>
@@ -52,12 +66,12 @@ function Item:add_launch_product(product_prototype)
     return self
 end
 
-function Item:add_sprite_variations(size, path, variations)
+function Item:add_sprite_variations(size, path, variation_names)
     if not self.pictures then
         self.pictures = {}
     end
 
-    for _, variation in pairs(variations) do
+    for _, variation in pairs(variation_names) do
         table.insert(
             self.pictures,
             {

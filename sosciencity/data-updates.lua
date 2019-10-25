@@ -9,11 +9,11 @@ require("scripts.data-updates.gunfire-techs")
 require("scripts.data-updates.loot")
 
 --<< looping through items >>
-local item_types = require("lib.prototypes-types.item-types")
+local item_types = require("lib.prototype-types.item-types")
 
 for _, item_type in pairs(item_types) do
-    for _, item in pairs(data.raw[item_type]) do
-        local current_item = Item:from_prototype(item)
+    for item_name, _ in pairs(data.raw[item_type]) do
+        local current_item = Item:get_by_name(item_name)
 
         for _, operation in pairs(item_operations) do
             operation.func(current_item, operation.details)
@@ -22,11 +22,17 @@ for _, item_type in pairs(item_types) do
 end
 
 --<< looping through recipes >>
-for _, recipe in pairs(data.raw.recipe) do
-    local current_recipe = Recipe:from_prototype(recipe)
+for recipe_name, _ in pairs(data.raw.recipe) do
+    local current_recipe = Recipe:get_by_name(recipe_name)
 
     for _, operation in pairs(recipe_operations) do
         operation.func(current_recipe, operation.details)
+--[[
+        local status, err = pcall(operation.func, current_recipe, operation.details)
+
+        if not status then
+            error(err .. "\n" .. serpent.block(operation) .. "\nrecipe:\n" .. serpent.block(current_recipe))
+        end]]
     end
 end
 

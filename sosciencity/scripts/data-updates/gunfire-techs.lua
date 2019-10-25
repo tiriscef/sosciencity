@@ -3,14 +3,14 @@ local gunfire_techs = {}
 for i = 0, 20 do
     local strength = 2 ^ i
 
-    table.insert(gunfire_techs, {strength = strength, prototype = Technology:get(strength .. "-gunfire-caste")})
+    table.insert(gunfire_techs, {strength = strength, prototype = Technology:get_by_name(strength .. "-gunfire-caste")})
 end
 
 local turret_types = require("lib.prototype-types.turret-types")
 
 local function add_turret_to_gunfire(turret)
     for _, gunfire_tech in pairs(gunfire_techs) do
-        gunfire_tech:add_effect {
+        gunfire_tech.prototype:add_effect {
             type = "turret-attack",
             modifier = gunfire_tech.strength,
             turret_id = turret.name

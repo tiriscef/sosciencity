@@ -2,21 +2,22 @@ require("constants.types")
 
 --[[
     fat, carbohydrates and proteins are in g per 100g
-    one item is a portion of 10kg
+    portion_size is in kg
 ]]
 Food = {}
 
 Food.values = {
---[[    ["oats"] = {
-        fat = 7,
-        carbohydrates = 63,
-        proteins = 13,
-        healthiness = 1,
-        food_category = "organic",
-        taste_category = TASTE_NEUTRAL,
-        taste_quality = 1,
-        luxury = 0
-    },]]
+    ["alien-meat"] = {
+        fat = 17,
+        carbohydrates = 0,
+        proteins = 21,
+        healthiness = 4,
+        food_category = "meat",
+        taste_category = TASTE_UMAMI,
+        taste_quality = 5,
+        luxury = 4,
+        portion_size = 10
+    },
 }
 
 function Food:__call(item)
@@ -27,13 +28,13 @@ local energy_density_fat = 900 -- kcal per g
 local energy_density_carbohydrates = 400
 local energy_density_proteins = 370
 
-
-for _, food in pairs(Food) do
+for _, food in pairs(Food.values) do
     -- convert nutrients from g per 100g to kcal per 100g
     food.fat = food.fat * energy_density_fat
     food.carbohydrates = food.carbohydrates * energy_density_carbohydrates
     food.proteins = food.proteins * energy_density_proteins
 
     -- calories specifies the calorific value of one item
-    food.calories = (food.fat + food.carbohydrates + food.proteins) * 100
+    -- the magic 10 is just to get from 100g to 1kg
+    food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
 end

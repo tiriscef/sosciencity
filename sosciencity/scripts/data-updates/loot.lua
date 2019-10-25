@@ -25,7 +25,7 @@ for _, type in pairs(types) do
         if is_likely_an_alien(unit) then
             local count_min, count_max = get_meat_amounts(unit)
 
-            Entity:from_prototype(unit):add_loot {
+            Entity:get(unit):add_loot {
                 item = "alien-meat",
                 probability = PROBABILITY,
                 count_min = count_min,

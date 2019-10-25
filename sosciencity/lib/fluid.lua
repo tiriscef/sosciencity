@@ -1,14 +1,31 @@
+---------------------------------------------------------------------------------------------------
+-- << class for fluids >>
 Fluid = {}
 
-function Fluid:get(name)
+-- this makes an object of this class call the class methods (if it hasn't an own method)
+-- lua is weird
+Fluid.__index = Fluid
+
+function Fluid:get_by_name(name)
     local new = Prototype:get("fluid", name)
-    setmetatable(new, self)
+    setmetatable(new, Fluid)
     return new
 end
 
-function Fluid:__call(name)
-    return self:get(name)
+function Fluid:get_from_prototype(prototype)
+    setmetatable(prototype, Fluid)
+    return prototype
 end
+
+function Fluid:get(name)
+    if type(name) == "string" then
+        return self:get_by_name(name)
+    else
+        return self:get_from_prototype(name)
+    end
+end
+
+Fluid.__call = Fluid.get
 
 function Fluid:create(prototype)
     if not prototype.type then
@@ -16,5 +33,5 @@ function Fluid:create(prototype)
     end
 
     data:extend {prototype}
-    return self.__call(prototype.name)
+    return self:get(prototype.name)
 end

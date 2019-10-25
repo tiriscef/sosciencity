@@ -1,24 +1,36 @@
+---------------------------------------------------------------------------------------------------
+-- << class for entities >>
 Entity = {}
 
-function Entity:get(name)
+-- this makes an object of this class call the class methods (if it hasn't an own method)
+-- lua is weird
+Entity.__index = Entity
+
+function Entity:get_by_name(name)
     local entity_types = require("lib.prototype-types.entity-types")
     local new = Prototype:get(entity_types, name)
-    setmetatable(new, self)
+    setmetatable(new, Entity)
     return new
 end
 
-function Entity:__call(name)
-    return self:get(name)
-end
-
-function Entity:from_prototype(prototype)
-    setmetatable(prototype, self)
+function Entity:get_from_prototype(prototype)
+    setmetatable(prototype, Entity)
     return prototype
 end
 
+function Entity:get(name)
+    if type(name) == "string" then
+        return self:get_by_name(name)
+    else
+        return self:get_from_prototype(name)
+    end
+end
+
+Entity.__call = Entity.get
+
 function Entity:create(prototype)
     data:extend {prototype}
-    return self:get(prototype.name)
+    return self:get(prototype)
 end
 
 function Entity:get_selection_box(width, height)

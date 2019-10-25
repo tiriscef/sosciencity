@@ -1,4 +1,4 @@
---[[ modules ]]
+--<< modules >>
 Item:create {
     type = "module",
     name = "sosciencity-speed-penalty-module",
@@ -64,7 +64,7 @@ Item:create {
     effect = {productivity = {bonus = 1}}
 }
 
---[[ beacon ]]
+--<< beacon >>
 Entity:create {
     type = "beacon",
     name = "sosciencity-invisible-beacon",
@@ -118,5 +118,7 @@ Entity:create {
         "pollution"
     },
     selection_box = nil,
-    collision_box = nil
+    collision_box = nil,
+    icon = "__sosciencity__/graphics/technology/placeholder.png",
+    icon_size = 128
 }

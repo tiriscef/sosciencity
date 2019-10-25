@@ -1,6 +1,6 @@
 require("lib.utils")
 
-require("lib.prototype")
+require("lib.prototypes")
 require("lib.recipe")
 require("lib.item")
 require("lib.entity")
