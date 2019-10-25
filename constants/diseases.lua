@@ -1,0 +1,3 @@
+disease_values = {
+    
+}

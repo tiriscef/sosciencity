@@ -1,0 +1,20 @@
+return {
+    "item",
+    "tool",
+    "ammo",
+    "armor",
+    "blueprint-book",
+    "blueprint",
+    "capsule",
+    "deconstruction-item",
+    "gun",
+    "item-with-entity-data",
+    "item-with-inventory",
+    "item-with-label",
+    "item-with-tags",
+    "mining-tool",
+    "module",
+    "rail-planner",
+    "repair-tool",
+    "selection-tool"
+}
