@@ -5,6 +5,8 @@ local function percentage(numerator, denominator)
 end
 
 for food_name, food_details in pairs(Food.values) do
+    local calories = food_details.fat + food_details.carbohydrates + food_details.proteins
+
     Item:create {
         type = "tool",
         name = food_name,
@@ -24,15 +26,15 @@ for food_name, food_details in pairs(Food.values) do
             {"item-description." .. food_name},
             {"food-category." .. food_details.food_category},
             {"taste-category." .. Types.taste_lookup[food_details.taste_category]},
-            {"taste-scale." .. (food_details.taste_quality + 5)},
-            {"health-scale." .. (food_details.healthiness + 5)},
-            {"luxury-scale." .. (food_details.luxury + 5)},
+            {"taste-scale." .. food_details.taste_quality},
+            {"health-scale." .. food_details.healthiness},
+            {"luxury-scale." .. food_details.luxury},
             food_details.fat,
-            percentage(food_details.fat, food_details.calories),
+            percentage(food_details.fat, calories),
             food_details.carbohydrates,
-            percentage(food_details.carbohydrates, food_details.calories),
+            percentage(food_details.carbohydrates, calories),
             food_details.proteins,
-            percentage(food_details.proteins, food_details.calories),
+            percentage(food_details.proteins, calories),
         }
     }
 end
