@@ -3,16 +3,16 @@ if not settings.startup["sosciencity-alien-loot"].value then
 end
 
 --<< find all biter units and add alien meat as loot >>
--- there is no perfect way to detect all the poorly defined 'alien'-entities
+-- there is no perfect way to detect all the poorly defined 'alien'-units
 -- for now I will test the name, this should work for all the enemy adding mods I know of
--- checked: Rampant, Natural Enemies, Bobs Enemies, DyWorld, Big Monsters
+-- checked: Rampant, Natural Evolution Enemies, Bobs Enemies, DyWorld, Big Monsters, Cold Biters, Explosive Biters
 local function is_likely_an_alien(unit)
     return string.find(unit.name, "biter") or string.find(unit.name, "spitter") or string.find(unit.name, "worm")
 end
 
 -- Balancing heavy area
 local function get_meat_amounts(unit)
-    return 0, math.ceil(0.25 * unit.max_health ^ 0.4)
+    return 1, math.ceil(0.25 * unit.max_health ^ 0.4)
 end
 
 local PROBABILITY = 0.5

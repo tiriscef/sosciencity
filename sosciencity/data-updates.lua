@@ -3,10 +3,10 @@ require("lib.init")
 item_operations = {}
 recipe_operations = {}
 
-require("scripts.data-final-fixes.science-pack-ingredients")
-require("scripts.data-final-fixes.launchable-items")
-require("scripts.data-final-fixes.gunfire-techs")
-require("scripts.data-final-fixes.loot")
+require("scripts.data-updates.science-pack-ingredients")
+require("scripts.data-updates.launchable-items")
+require("scripts.data-updates.gunfire-techs")
+require("scripts.data-updates.loot")
 
 --<< looping through items >>
 local item_types = require("lib.prototypes-types.item-types")
