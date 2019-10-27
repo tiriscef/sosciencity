@@ -25,7 +25,7 @@ function Fluid:get(name)
     end
 end
 
-Fluid.__call = Fluid.get
+setmetatable(Fluid, {__call = Fluid.get})
 
 function Fluid:create(prototype)
     if not prototype.type then

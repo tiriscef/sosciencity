@@ -1,4 +1,5 @@
 -- entities
+TYPE_EMPTY_HOUSE = 0
 TYPE_CLOCKWORK = 1
 TYPE_EMBER = 2
 TYPE_GUNFIRE = 3
@@ -11,6 +12,7 @@ TYPE_PLASMA = 8
 TYPE_MARKET = 101
 TYPE_WATER_DISTRIBUTION_FACILITY = 102
 TYPE_HOSPITAL = 103
+TYPE_PHARMACY = 104
 
 TYPE_CLUB = 201
 TYPE_SCHOOL = 202
@@ -79,11 +81,17 @@ Types.entity_type_lookup = {
         ["university-mk02"] = TYPE_UNIVERSITY_MK02,
         ["city-hall"] = TYPE_CITY_HALL,
         ["research-center"] = TYPE_CITY_HALL
-    },
-    __call = function(self, entity)
-        return self.types[entity.type] or self.names[entity.name] or TYPE_NULL
-    end
+    }
 }
+
+setmetatable(
+    Types.entity_type_lookup,
+    {
+        __call = function(self, entity)
+            return self.types[entity.type] or self.names[entity.name] or TYPE_NULL
+        end
+    }
+)
 
 function Types:get_entity_type(entity)
     return Types(entity)

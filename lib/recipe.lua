@@ -107,7 +107,7 @@ function Recipe:get(name)
     end
 end
 
-Recipe.__call = Recipe.get
+setmetatable(Recipe, {__call = Recipe.get})
 
 -- << creation >>
 function Recipe:create(prototype)

@@ -39,7 +39,7 @@ function Technology:get(name)
     end
 end
 
-Technology.__call = Technology.get
+setmetatable(Technology, {__call = Technology.get})
 
 function Technology:create(prototype)
     if not prototype.type then

@@ -111,7 +111,9 @@ for _, caste in pairs(Caste.values) do
     caste.power_demand = caste.power_demand * 1000
 end
 
-function Caste:__call(entity)
+local meta = {}
+
+function meta:__call(entity)
     -- check if it's a registered entity or a enum
     if type(entity) == "table" then
         return self.values[entity.type]
@@ -119,3 +121,5 @@ function Caste:__call(entity)
         return self.values[entity]
     end
 end
+
+setmetatable(Caste, meta)

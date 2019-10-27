@@ -51,7 +51,7 @@ for house_name, house in pairs(Housing.houses) do
             filename = "__base__/sound/car-metal-impact.ogg",
             volume = 0.65
         },
-        picture = details[house_name].picture,
+        picture = details.picture,
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13

@@ -27,7 +27,7 @@ function Item:get(name)
     end
 end
 
-Item.__call = Item.get
+setmetatable(Item, {__call = Item.get})
 
 -- << creation >>
 function Item:create(prototype)

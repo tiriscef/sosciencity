@@ -26,7 +26,7 @@ function Entity:get(name)
     end
 end
 
-Entity.__call = Entity.get
+setmetatable(Entity, {__call = Entity.get})
 
 function Entity:create(prototype)
     data:extend {prototype}

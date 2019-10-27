@@ -9,10 +9,6 @@ Housing.houses = {}
         comfort = 32
     }]]
 
-function Housing:__call(registered_entity)
-    return self.houses[registered_entity.entity.name]
-end
-
 function Housing:get_capacity(registered_entity)
     return Housing(registered_entity).room_count / Caste(registered_entity.type).required_room_count
 end
@@ -20,3 +16,11 @@ end
 function Housing:get_free_capacity(registered_entity)
     return self:get_capacity(registered_entity) - registered_entity.inhabitants
 end
+
+local meta = {}
+
+function Housing:__call(registered_entity)
+    return self.houses[registered_entity.entity.name]
+end
+
+setmetatable(Housing, meta)
