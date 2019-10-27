@@ -10,6 +10,9 @@ end
     global.register: table
         [LuaEntity.unit_number]: registered_entity
 
+    global.register_by_type: table
+        [type]: table of unit_numbers
+
     registered_entity: table
         ["type"]: int/enum
         ["entity"]: LuaEntity
@@ -57,7 +60,7 @@ require("constants.housing")
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
-require("lib.table")
+require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
 -- << subentities >>
@@ -188,17 +191,28 @@ end
 
 local function add_entity_to_register(entity)
     local registered_entity = establish_registered_entity(entity)
-    global.register[entity.unit_number] = registered_entity
+    local unit_number = entity.unit_number
+    global.register[unit_number] = registered_entity
+    global.register_by_type[registered_entity.type][unit_number] = unit_number
 end
 
 local function remove_from_register(registered_entity)
-    global.register[registered_entity.entity] = nil
+    local unit_number = registered_entity.entity.unit_number
+    global.register[unit_number] = nil
+    global.register_by_type[registered_entity.type][unit_number] = nil
 
     for _, subentity in pairs(registered_entity.subentities) do
         if subentity.valid then
             subentity.destroy()
         end
     end
+end
+
+local function change_type(registered_entity, new_type)
+    local unit_number = registered_entity.entity.unit_number
+    global.register_by_type[registered_entity.type][unit_number] = nil
+    global.register_by_type[new_type][unit_number] = unit_number
+    registered_entity.type = new_type
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -515,16 +529,17 @@ local function add_inhabitants(registered_entity, count, happiness, healthiness,
     )
 end
 
+local INFLUX_COEFFICIENT = 1./60 -- TODO balance
+local MINIMAL_HAPPINESS = 5
+
+local function get_trend(registered_entity, delta_ticks)
+    return INFLUX_COEFFICIENT * delta_ticks * (registered_entity.happiness - MINIMAL_HAPPINESS)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << resettlement >>
-local function resettlement_is_researched()
-    for _, force in pairs(game.forces) do
-        if force.technologies["resettlement"].researched then
-            return true
-        end
-    end
-
-    return false
+local function resettlement_is_researched(force)
+    return force.technologies["resettlement"].researched
 end
 
 local function try_resettle_to(source_entity, destination_entity, resettle_count)
@@ -556,7 +571,7 @@ end
 -- looks for housings to move the inhabitants of this registered_entity to
 -- returns the number of resettled inhabitants
 local function try_resettle(registered_entity)
-    if not resettlement_is_researched() or not Types:is_housing(registered_entity.type) then
+    if not resettlement_is_researched(registered_entity.entity.force) or not Types:is_housing(registered_entity.type) then
         return 0
     end
 
@@ -595,6 +610,9 @@ end
 -- Does all the things that are the same for every caste
 local function update_house(registered_entity, delta_ticks)
     local diet_effects = evaluate_diet(registered_entity, delta_ticks)
+    -- TODO
+
+    registered_entity.trend = registered_entity.trend + get_trend(registered_entity, delta_ticks)
 end
 
 local function update_house_clockwork(registered_entity, delta_ticks)
@@ -722,6 +740,7 @@ local function init()
     global.mining_drill_count = 0
 
     global.register = {}
+    global.register_by_type = {}
 
     -- find and register all the machines
     for _, surface in pairs(game.surfaces) do
