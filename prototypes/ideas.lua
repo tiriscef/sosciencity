@@ -11,7 +11,7 @@ local idea_items = {
 }
 
 for index, details in pairs(idea_items) do
-    local idea_item =
+    local item_prototype =
         Item:create {
         name = details.name,
         icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
@@ -22,7 +22,11 @@ for index, details in pairs(idea_items) do
     }
 
     if details.sprite_variations then
-        idea_item:add_sprite_variations(64, "__sosciencity__/graphics/icon/", idea_item.sprite_variations)
+        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/", details.sprite_variations)
+
+        if details.sprite_variations.include_icon then
+            item_prototype:add_icon_to_sprite_variations()
+        end
     end
 end
 
