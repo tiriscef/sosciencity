@@ -27,12 +27,6 @@ for recipe_name, _ in pairs(data.raw.recipe) do
 
     for _, operation in pairs(recipe_operations) do
         operation.func(current_recipe, operation.details)
---[[
-        local status, err = pcall(operation.func, current_recipe, operation.details)
-
-        if not status then
-            error(err .. "\n" .. serpent.block(operation) .. "\nrecipe:\n" .. serpent.block(current_recipe))
-        end]]
     end
 end
 

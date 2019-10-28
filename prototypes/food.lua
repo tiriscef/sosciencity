@@ -1,5 +1,12 @@
 require("constants.food")
 
+-- things that are needed to create the prototype, but shouldn't be in memory during the control stage
+local additional_prototype_data = {
+    ["potato"] = {
+        sprite_variations = {name = "potato-pile", count = 4}
+    }
+}
+
 local function percentage(numerator, denominator)
     return string.format("%.0f", 100. * numerator / denominator)
 end
@@ -7,7 +14,7 @@ end
 for food_name, food_details in pairs(Food.values) do
     local calories = food_details.fat + food_details.carbohydrates + food_details.proteins
 
-    Item:create {
+    local item_prototype = Item:create {
         type = "tool",
         name = food_name,
         enabled = true,
@@ -37,4 +44,14 @@ for food_name, food_details in pairs(Food.values) do
             percentage(food_details.proteins, calories),
         }
     }
+
+    local details = additional_prototype_data[food_name] or {}
+
+    if details.sprite_variations then
+        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/", details.sprite_variations)
+
+        if details.sprite_variations.include_icon then
+            item_prototype:add_icon_to_sprite_variations()
+        end
+    end
 end

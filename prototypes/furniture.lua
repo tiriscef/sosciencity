@@ -4,14 +4,14 @@ local furniture_items = {
     {name = "bed"},
     {name = "stool"},
     {name = "table"},
-    {name = "furniture", sprite_variations = {"furniture", "furniture-2"}},
-    {name = "carpet"},
---    {name = "sofa"},
---    {name = "curtain"}
+    {name = "furniture", sprite_variations = {name = "furniture", count = 1, include_icon = true}},
+    {name = "carpet"}
+    --    {name = "sofa"},
+    --    {name = "curtain"}
 }
 
 for index, details in pairs(furniture_items) do
-    local furniture_item =
+    local item_prototype =
         Item:create {
         name = details.name,
         icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
@@ -22,7 +22,11 @@ for index, details in pairs(furniture_items) do
     }
 
     if details.sprite_variations then
-        furniture_item:add_sprite_variations(64, "__sosciencity__/graphics/icon/", details.sprite_variations)
+        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/", details.sprite_variations)
+
+        if details.sprite_variations.include_icon then
+            item_prototype:add_icon_to_sprite_variations()
+        end
     end
 end
 

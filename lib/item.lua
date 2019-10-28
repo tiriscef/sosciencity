@@ -66,19 +66,34 @@ function Item:add_launch_product(product_prototype)
     return self
 end
 
-function Item:add_sprite_variations(size, path, variation_names)
+function Item:add_sprite_variations(size, path, variations)
     if not self.pictures then
         self.pictures = {}
     end
 
-    for _, variation in pairs(variation_names) do
+    for i = 1, variations.count do
         table.insert(
             self.pictures,
             {
                 size = size,
-                filename = path .. variation .. ".png",
+                filename = path .. variations.name .. "-" .. i .. ".png",
                 scale = 16. / size
             }
         )
     end
+end
+
+function Item:add_icon_to_sprite_variations()
+    if not self.pictures then
+        self.pictures = {}
+    end
+
+    table.insert(
+        self.pictures,
+        {
+            size = self.icon_size,
+            filename = self.icon,
+            scale = 16. / self.icon_size
+        }
+    )
 end

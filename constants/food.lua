@@ -9,15 +9,26 @@ Food = {}
 Food.values = {
     ["alien-meat"] = {
         fat = 17,
-        carbohydrates = 0,
+        carbohydrates = 1,
         proteins = 21,
-        healthiness = 4,
+        healthiness = 3,
         food_category = "meat",
-        taste_category = TASTE_UMAMI,
+        taste_category = TASTE_SALTY,
         taste_quality = 5,
         luxury = 4,
         portion_size = 10
     },
+    ["potato"] = {
+        fat = 0.5,
+        carbohydrates = 17,
+        proteins = 2,
+        healthiness = 5,
+        food_category = "vegetable",
+        taste_category = TASTE_UMAMI,
+        taste_quality = 3,
+        luxury = 3,
+        portion_size = 50
+    }
 }
 
 local energy_density_fat = 9 -- kcal per g
