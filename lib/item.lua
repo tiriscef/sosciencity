@@ -46,7 +46,7 @@ end
 
 function Item:get_launch_products()
     if not self:is_launchable() then
-        return nil
+        return {}
     end
 
     return self.rocket_launch_product and {self.rocket_launch_product} or self.rocket_launch_products
