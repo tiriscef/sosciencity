@@ -10,6 +10,9 @@ local additional_prototype_data = {
     },
     ["tomato"] = {
         sprite_variations = {name = "tomato-pile", count = 4}
+    },
+    ["eggplant"] = {
+        sprite_variations = {name = "eggplant-pile", count = 5}
     }
 }
 
