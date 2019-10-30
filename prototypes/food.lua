@@ -4,6 +4,12 @@ require("constants.food")
 local additional_prototype_data = {
     ["potato"] = {
         sprite_variations = {name = "potato-pile", count = 4}
+    },
+    ["unnamed-fruit"] = {
+        sprite_variations = {name = "unnamed-fruit-pile", count = 4}
+    },
+    ["tomato"] = {
+        sprite_variations = {name = "tomato-pile", count = 4}
     }
 }
 
