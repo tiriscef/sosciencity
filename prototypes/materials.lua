@@ -4,7 +4,7 @@ local material_items = {
     {name = "timber"},
     {name = "tiriscefing-willow-wood"},
     --{name = "pemtenn-cotton"},
-    {name = "cloth", sprite_variations = {name = "cloth", count = 1, include_icon = true}}
+    {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}}
 }
 
 for index, details in pairs(material_items) do
