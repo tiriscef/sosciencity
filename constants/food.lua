@@ -18,6 +18,17 @@ Food.values = {
         luxury = 4,
         portion_size = 10
     },
+    ["unnamed-fruit"] = {
+        fat = 1,
+        carbohydrates = 10,
+        proteins = 3,
+        healthiness = 5,
+        food_category = "vegetable",
+        taste_category = TASTE_UMAMI,
+        taste_quality = 3,
+        luxury = 3,
+        portion_size = 50
+    },
     ["potato"] = {
         fat = 0.5,
         carbohydrates = 17,
@@ -27,6 +38,28 @@ Food.values = {
         taste_category = TASTE_UMAMI,
         taste_quality = 3,
         luxury = 3,
+        portion_size = 50
+    },
+    ["tomato"] = {
+        fat = 0.33,
+        carbohydrates = 4,
+        proteins = 1.5,
+        healthiness = 5,
+        food_category = "vegetable",
+        taste_category = TASTE_UMAMI,
+        taste_quality = 6,
+        luxury = 4,
+        portion_size = 50
+    },
+    ["eggplant"] = {
+        fat = 0.33,
+        carbohydrates = 4,
+        proteins = 1.5,
+        healthiness = 6,
+        food_category = "vegetable",
+        taste_category = TASTE_UMAMI,
+        taste_quality = 6,
+        luxury = 4,
         portion_size = 50
     }
 }
