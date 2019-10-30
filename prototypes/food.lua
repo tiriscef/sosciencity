@@ -8,13 +8,14 @@ local additional_prototype_data = {
 }
 
 local function percentage(numerator, denominator)
-    return string.format("%.0f", 100. * numerator / denominator)
+    return string.format("%.0f", 100. * numerator / denominator) .. "%"
 end
 
 for food_name, food_details in pairs(Food.values) do
     local calories = food_details.fat + food_details.carbohydrates + food_details.proteins
 
-    local item_prototype = Item:create {
+    local item_prototype =
+        Item:create {
         type = "tool",
         name = food_name,
         enabled = true,
@@ -34,14 +35,17 @@ for food_name, food_details in pairs(Food.values) do
             {"food-category." .. food_details.food_category},
             {"taste-category." .. Types.taste_lookup[food_details.taste_category]},
             {"taste-scale." .. food_details.taste_quality},
+            {"description.sos-details", food_details.taste_quality},
             {"health-scale." .. food_details.healthiness},
+            {"description.sos-details", food_details.healthiness},
             {"luxury-scale." .. food_details.luxury},
+            {"description.sos-details", food_details.luxury},
             food_details.fat,
-            percentage(food_details.fat, calories),
+            {"description.sos-details", percentage(food_details.fat, calories)},
             food_details.carbohydrates,
-            percentage(food_details.carbohydrates, calories),
+            {"description.sos-details", percentage(food_details.carbohydrates, calories)},
             food_details.proteins,
-            percentage(food_details.proteins, calories),
+            {"description.sos-details", percentage(food_details.proteins, calories)}
         }
     }
 
