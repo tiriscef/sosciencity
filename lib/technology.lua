@@ -41,6 +41,21 @@ end
 
 setmetatable(Technology, {__call = Technology.get})
 
+function Technology:pairs()
+    local index, prototype
+
+    local function _next()
+        index, prototype = next(data.raw["technology"], index)
+
+        if index then
+            setmetatable(prototype, Technology)
+            return index, prototype
+        end
+    end
+
+    return _next, index, prototype
+end
+
 function Technology:create(prototype)
     if not prototype.type then
         prototype.type = "technology"

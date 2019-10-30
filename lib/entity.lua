@@ -28,6 +28,21 @@ end
 
 setmetatable(Entity, {__call = Entity.get})
 
+function Entity:pairs(prototype_type)
+    local index, value
+
+    local function _next()
+        index, value = next(data.raw[prototype_type], index)
+
+        if index then
+            setmetatable(value, Entity)
+            return index, value
+        end
+    end
+
+    return _next, index, value
+end
+
 function Entity:create(prototype)
     data:extend {prototype}
     return self:get(prototype)

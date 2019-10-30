@@ -27,6 +27,21 @@ end
 
 setmetatable(Fluid, {__call = Fluid.get})
 
+function Fluid:pairs()
+    local index, value
+
+    local function _next()
+        index, value = next(data.raw["fluid"], index)
+
+        if index then
+            setmetatable(value, Fluid)
+            return index, value
+        end
+    end
+
+    return _next, index, value
+end
+
 function Fluid:create(prototype)
     if not prototype.type then
         prototype.type = "fluid"
