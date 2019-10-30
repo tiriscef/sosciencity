@@ -109,6 +109,21 @@ end
 
 setmetatable(Recipe, {__call = Recipe.get})
 
+function Recipe:pairs()
+    local index, value
+
+    local function _next()
+        index, value = next(data.raw["recipe"], index)
+
+        if index then
+            setmetatable(value, Recipe)
+            return index, value
+        end
+    end
+
+    return _next, index, value
+end
+
 -- << creation >>
 function Recipe:create(prototype)
     if not prototype.type then

@@ -29,6 +29,21 @@ end
 
 setmetatable(Item, {__call = Item.get})
 
+function Item:pairs(item_type)
+    local index, value
+
+    local function _next()
+        index, value = next(data.raw[item_type], index)
+
+        if index then
+            setmetatable(value, Item)
+            return index, value
+        end
+    end
+
+    return _next, index, value
+end
+
 -- << creation >>
 function Item:create(prototype)
     if not prototype.type then
