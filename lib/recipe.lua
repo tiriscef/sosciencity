@@ -373,3 +373,7 @@ function Recipe:multiply_expensive_ingredients(multiplier)
     multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
     return self
 end
+
+function Recipe:allow_productivity_modules()
+    Prototype:add_recipe_to_productivity_modules(self.name)
+end
