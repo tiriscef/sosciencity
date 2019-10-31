@@ -70,3 +70,11 @@ end
 function Tables.contains_key(tbl, key)
     return tbl[key] ~= nil
 end
+
+function Tables.merge(lh, rh)
+    for _, value in pairs(rh) do
+        table.insert(lh, value)
+    end
+
+    return lh
+end

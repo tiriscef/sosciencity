@@ -15,4 +15,4 @@ require("prototypes.hidden.beacon")
 require("prototypes.hidden.caste-technologies")
 require("prototypes.hidden.electric-energy-interface")
 
-Prototype:finish_postponed()
+Prototype:finish()

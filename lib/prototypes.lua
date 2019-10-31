@@ -1,15 +1,4 @@
---[[
-    Some functions (mainly those who make changes to another prototype which might not
-    yet be created) might postpone their execution.
-    So they will add a table with all the necessary data and a execute-function to the
-    Prototype.postpones_functions table.
-
-    A call to finish_postponed will iterate repeatedly over the table and execute the
-    stored functions.
-]] --
 Prototype = {}
-
-Prototype.postponed_functions = {}
 
 function Prototype:get(prototype_type, name)
     if type(prototype_type) == "string" then
@@ -25,6 +14,17 @@ function Prototype:get(prototype_type, name)
 
     return nil
 end
+
+--[[
+    Some functions (mainly those who make changes to another prototype which might not
+    yet be created) might postpone their execution.
+    So they will add a table with all the necessary data and a execute-function to the
+    Prototype.postpones_functions table.
+
+    A call to finish_postponed will iterate repeatedly over the table and execute the
+    stored functions.
+]] --
+Prototype.postponed_functions = {}
 
 function Prototype:postpone(func)
     table.insert(self.postponed_functions, func)
@@ -49,4 +49,23 @@ function Prototype:finish_postponed()
     end
 
     return to_do_count == 0 -- return true if there are no more things to do
+end
+
+Prototype.productivity_recipes = {}
+
+function Prototype:add_recipe_to_productivity_modules(recipe_name)
+    table.insert(self.productivity_recipes, recipe_name)
+end
+
+function Prototype:finish_productivity_modules()
+    for _, _module in Item:pairs("module") do
+        if _module.category == "productivity" and _module.limitation then
+            Tables.merge(_module.limitation, self.productivity_recipes)
+        end
+    end
+end
+
+function Prototype:finish()
+    self:finish_postponed()
+    self:finish_productivity_modules()
 end
