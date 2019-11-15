@@ -2,6 +2,9 @@ require("constants.food")
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local additional_prototype_data = {
+    ["alien-meat"] = {
+        sprite_variations = {name = "alien-meat", count = 2, include_icon = true}
+    },
     ["potato"] = {
         sprite_variations = {name = "potato-pile", count = 4}
     },
@@ -23,6 +26,10 @@ end
 for food_name, food_details in pairs(Food.values) do
     local calories = food_details.fat + food_details.carbohydrates + food_details.proteins
 
+    local taste = food_details.taste_quality
+    local health = food_details.healthiness
+    local luxury = food_details.luxury
+
     local item_prototype =
         Item:create {
         type = "tool",
@@ -43,11 +50,11 @@ for food_name, food_details in pairs(Food.values) do
             {"item-description." .. food_name},
             {"food-category." .. food_details.food_category},
             {"taste-category." .. Types.taste_lookup[food_details.taste_category]},
-            {"taste-scale." .. food_details.taste_quality},
+            {"color-scale." .. taste ,{"taste-scale." .. taste}},
             {"description.sos-details", food_details.taste_quality},
-            {"health-scale." .. food_details.healthiness},
+            {"color-scale." .. health ,{"health-scale." .. health}},
             {"description.sos-details", food_details.healthiness},
-            {"luxury-scale." .. food_details.luxury},
+            {"color-scale." .. luxury ,{"luxury-scale." .. luxury}},
             {"description.sos-details", food_details.luxury},
             food_details.fat,
             {"description.sos-details", percentage(food_details.fat, calories)},
