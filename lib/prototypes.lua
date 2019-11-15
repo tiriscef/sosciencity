@@ -51,6 +51,7 @@ function Prototype:finish_postponed()
     return to_do_count == 0 -- return true if there are no more things to do
 end
 
+-- A table with all the recipes which should be added to productivity modules
 Prototype.productivity_recipes = {}
 
 function Prototype:add_recipe_to_productivity_modules(recipe_name)
