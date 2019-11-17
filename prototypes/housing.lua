@@ -13,7 +13,8 @@ for house_name, house in pairs(Housing.houses) do
     local orderstring = string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
     local details = data_details[house_name]
 
-    Item:create {
+    local item_prototype =
+        Item:create {
         type = "item",
         name = house_name,
         icon = "__sosciencity__/graphics/icon/" .. house_name .. ".png",
@@ -29,6 +30,8 @@ for house_name, house in pairs(Housing.houses) do
             {"comfort-scale." .. house.comfort}
         }
     }
+
+    Tables.set_fields(item_prototype, details.distinctions)
 
     RecipeGenerator:create_housing_recipe(house_name, house)
 
