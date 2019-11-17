@@ -78,3 +78,13 @@ function Tables.merge(lh, rh)
 
     return lh
 end
+
+function Tables.set_fields(tbl, fields)
+    if fields ~= nil then
+        for key, value in pairs(fields) do
+            tbl[key] = value
+        end
+    end
+
+    return tbl
+end

@@ -28,6 +28,8 @@ for index, details in pairs(idea_items) do
             item_prototype:add_icon_to_sprite_variations()
         end
     end
+
+    Tables.set_fields(item_prototype, details.distinctions)
 end
 
 ---------------------------------------------------------------------------------------------------
