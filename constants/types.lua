@@ -22,7 +22,7 @@ TYPE_UNIVERSITY_MK02 = 205
 TYPE_CITY_HALL = 206
 TYPE_RESEARCH_CENTER = 207
 
-TYPE_ASSEMBLY_MACHINE = 1001
+TYPE_ASSEMBLING_MACHINE = 1001
 TYPE_FURNACE = 1002
 TYPE_ROCKET_SILO = 1003
 
@@ -59,7 +59,7 @@ FLAG_NO_POWER = 6
 Types = {}
 Types.entity_type_lookup = {
     types = {
-        ["assembly-machine"] = TYPE_ASSEMBLY_MACHINE,
+        ["assembling-machine"] = TYPE_ASSEMBLING_MACHINE,
         ["mining-drill"] = TYPE_MINING_DRILL,
         ["lab"] = TYPE_LAB,
         ["rocket-silo"] = TYPE_ROCKET_SILO,
@@ -84,67 +84,26 @@ Types.entity_type_lookup = {
     }
 }
 
-setmetatable(
-    Types.entity_type_lookup,
-    {
-        __call = function(self, entity)
-            return self.types[entity.type] or self.names[entity.name] or TYPE_NULL
-        end
-    }
-)
-
 function Types:get_entity_type(entity)
-    return Types(entity)
+    return self.entity_type_lookup.types[entity.type] or self.entity_type_lookup.names[entity.name] or TYPE_NULL
 end
 
-Types.caste_names = {
-    [TYPE_CLOCKWORK] = "clockwork",
-    [TYPE_EMBER] = "ember",
-    [TYPE_GUNFIRE] = "gunfire",
-    [TYPE_GLEAM] = "gleam",
-    [TYPE_FOUNDRY] = "foundry",
-    [TYPE_ORCHID] = "orchid",
-    [TYPE_AURORA] = "aurora",
-    __call = function(self, type)
-        return self[type]
-    end
-}
+setmetatable(Types, {__call = Types.get_entity_type})
 
-function Types:get_caste_name(type)
-    return self.caste_names[type]
+function Types:is_housing(_type)
+    return _type < 100
 end
 
-function Types:is_housing(type)
-    return type < 100
+function Types:is_civil(_type)
+    return _type < 1000
 end
 
-function Types:entity_is_housing(entity)
-    return self.entity_type_lookup(entity) < 100
+function Types:is_relevant_to_register(_type)
+    return _type < 2000
 end
 
-function Types:is_civil(type)
-    return type < 1000
-end
-
-function Types:entity_is_civil(entity)
-    return self.entity_type_lookup(entity) < 1000
-end
-
-function Types:is_relevant_to_register(type)
-    return type < 2000
-end
-
-function Types:entity_is_relevant_to_register(entity)
-    return self.entity_type_lookup(entity) < 2000
-end
-
-function Types:is_affected_by_clockwork(type)
-    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
-end
-
-function Types:entity_is_affected_by_clockwork(entity)
-    local type = self.entity_type_lookup(entity)
-    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
+function Types:is_affected_by_clockwork(_type)
+    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
 end
 
 Types.subentity_lookup = {
@@ -152,12 +111,12 @@ Types.subentity_lookup = {
     [SUB_EEI] = "sosciencity-invisible-eei"
 }
 
-function Types:needs_beacon(type)
-    return type >= TYPE_ASSEMBLY_MACHINE and type <= TYPE_ROCKET_SILO
+function Types:needs_beacon(_type)
+    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
 end
 
-function Types:needs_eei(type)
-    return type < 1000
+function Types:needs_eei(_type)
+    return _type < 1000
 end
 
 Types.taste_lookup = {
@@ -170,6 +129,23 @@ Types.taste_lookup = {
     [TASTE_UMAMI] = "umami"
 }
 
-function Types:needs_neighborhood(type) -- I might need to add more
-    return self.is_housing(type)
+function Types:needs_neighborhood(_type) -- I might need to add more
+    return self:is_housing(_type)
+end
+
+Types.caste_names = {
+    [TYPE_CLOCKWORK] = "clockwork",
+    [TYPE_EMBER] = "ember",
+    [TYPE_GUNFIRE] = "gunfire",
+    [TYPE_GLEAM] = "gleam",
+    [TYPE_FOUNDRY] = "foundry",
+    [TYPE_ORCHID] = "orchid",
+    [TYPE_AURORA] = "aurora",
+    __call = function(self, _type)
+        return self[_type]
+    end
+}
+
+function Types:get_caste_name(_type)
+    return self.caste_names[_type]
 end
