@@ -1,4 +1,4 @@
-local dataphase_test = true
+local dataphase_test = false
 
 if dataphase_test then
     return
@@ -75,6 +75,30 @@ local function add_subentity(registered_entity, type)
     registered_entity.subentities[type] = subentity
 end
 
+local SPEED_MODULE_NAME = "-sosciencity-speed"
+local PRODUCTIVITY_MODULE_NAME = "-sosciencity-productivity"
+local PENALTY_MODULE_NAME = "sosciencity-penalty"
+
+-- assumes that value is an integer
+local function set_binary_modules(beacon_inventory, module_name, value)
+    local new_value = value
+    local strength = 0
+
+    while value > 0 and strength <= 14 do
+        new_value = math.floor(value / 2)
+
+        if new_value * 2 ~= value then
+            beacon_inventory.insert {
+                name = strength .. module_name,
+                count = 1
+            }
+        end
+
+        strength = strength + 1
+        value = new_value
+    end
+end
+
 -- Assumes that the entry has a beacon.
 -- speed and productivity need to be positive
 local function set_beacon_effects(registered_entity, speed, productivity, add_penalty)
@@ -82,38 +106,15 @@ local function set_beacon_effects(registered_entity, speed, productivity, add_pe
     beacon_inventory.clear()
 
     if speed and speed > 0 then
-        -- ceil to make sure we don't end up attempting to insert 0 modules
-        speed = math.ceil(speed)
-
-        beacon_inventory.insert {
-            name = "sosciencity-speed-module",
-            count = speed % 100
-        }
-        beacon_inventory.insert {
-            name = "sosciencity-speed-module-100",
-            count = speed / 100
-        }
+        set_binary_modules(beacon_inventory, SPEED_MODULE_NAME, speed)
     end
 
     if productivity and productivity > 0 then
-        -- ceil to make sure we don't end up attempting to insert 0 modules
-        productivity = math.ceil(productivity)
-
-        beacon_inventory.insert {
-            name = "sosciencity-productivity-module",
-            count = productivity % 100
-        }
-        beacon_inventory.insert {
-            name = "sosciencity-productivity-module-100",
-            count = productivity / 100
-        }
+        set_binary_modules(beacon_inventory, PRODUCTIVITY_MODULE_NAME, productivity)
     end
 
     if add_penalty then
-        beacon_inventory.insert {
-            name = "sosciencity-speed-penalty-module",
-            count = 1
-        }
+        beacon_inventory.insert {name = PENALTY_MODULE_NAME}
     end
 end
 
@@ -163,37 +164,40 @@ local function add_housing_data(registered_entity)
     registered_entity.trend = 0
 end
 
-local function establish_registered_entity(entity)
-    local type = Types(entity)
-
+local function new_registered_entity(entity, _type)
     local registered_entity = {
         entity = entity,
-        type = type,
+        type = _type,
         last_update = game.tick,
         subentities = {}
     }
 
-    if Types:is_housing(type) then
+    if Types:is_housing(_type) then
         add_housing_data(registered_entity)
     end
-    if Types:needs_beacon(type) then
+    if Types:needs_beacon(_type) then
         add_subentity(registered_entity, SUB_BEACON)
     end
-    if Types:needs_eei(type) then
+    if Types:needs_eei(_type) then
         add_subentity(registered_entity, SUB_EEI)
     end
-    if Types:needs_neighborhood(type) then
-        add_neighborhood_data(registered_entity, type)
+    if Types:needs_neighborhood(_type) then
+        add_neighborhood_data(registered_entity, _type)
     end
 
     return registered_entity
 end
 
 local function add_entity_to_register(entity)
-    local registered_entity = establish_registered_entity(entity)
+    local _type = Types(entity)
+    local registered_entity = new_registered_entity(entity, _type)
     local unit_number = entity.unit_number
     global.register[unit_number] = registered_entity
-    global.register_by_type[registered_entity.type][unit_number] = unit_number
+
+    if not global.register_by_type[_type] then
+        global.register_by_type[_type] = {}
+    end
+    global.register_by_type[_type][unit_number] = unit_number
 end
 
 local function remove_from_register(registered_entity)
@@ -209,6 +213,10 @@ local function remove_from_register(registered_entity)
 end
 
 local function change_type(registered_entity, new_type)
+    if not global.register_by_type[new_type] then
+        global.register_by_type[new_type] = {}
+    end
+
     local unit_number = registered_entity.entity.unit_number
     global.register_by_type[registered_entity.type][unit_number] = nil
     global.register_by_type[new_type][unit_number] = unit_number
@@ -354,8 +362,7 @@ local function get_diet_effects(diet, caste_type)
     local dietary_healthiness =
         0.5 * (intrinsic_healthiness + get_nutrient_healthiness(fat, carbohydrates, proteins, flags))
 
-    local satisfaction =
-        (1 - 0.5 * caste.desire_for_luxury) * taste_quality + 0.5 * caste.desire_for_luxury * luxury
+    local satisfaction = (1 - 0.5 * caste.desire_for_luxury) * taste_quality + 0.5 * caste.desire_for_luxury * luxury
 
     if count == 1 or taste_category_counts[TASTE_NEUTRAL] == count or dominant_taste == caste.least_favored_taste then
         mental_healthiness = 0
@@ -445,16 +452,16 @@ end
 -- sets the hidden caste-technologies so they encode the given value
 local function set_binary_techs(value, name)
     local new_value = value
-    local strength = 1
+    local strength = 0
 
-    while value > 0 do
-        new_value = value / 2
+    while value > 0 and strength <= 20 do
+        new_value = math.floor(value / 2)
 
         -- if new_value times two doesn't equal value, then the remainder was one
         -- which means that the current binary decimal is one and that the corresponding tech should be researched
         set_researched(strength .. name, new_value * 2 ~= value)
 
-        strength = strength * 2
+        strength = strength + 1
         value = new_value
     end
 end
@@ -492,7 +499,7 @@ local function get_gleam_bonus(effective_population)
 end
 
 local function get_foundry_bonus(effective_population)
-    return math.floor(effective_population * 5 / math.max(global.mining_drill_count, 1))
+    return math.floor(effective_population * 5)
 end
 
 local function get_aurora_bonus(effective_population)
@@ -529,7 +536,7 @@ local function add_inhabitants(registered_entity, count, happiness, healthiness,
     )
 end
 
-local INFLUX_COEFFICIENT = 1./60 -- TODO balance
+local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
 local MINIMAL_HAPPINESS = 5
 
 local function get_trend(registered_entity, delta_ticks)
@@ -647,17 +654,17 @@ end
 local function update_entity_with_beacon(registered_entity)
     local speed_bonus = 0
     local productivity_bonus = 0
-    local use_pentalty_module = false
+    local use_penalty_module = false
 
-    if (Types:is_affected_by_clockwork(registered_entity.type)) then
+    if Types:is_affected_by_clockwork(registered_entity.type) then
         speed_bonus = get_clockwork_bonus(global.effective_population[TYPE_CLOCKWORK])
-        use_pentalty_module = global.use_penalty
+        use_penalty_module = global.use_penalty
     end
     if registered_entity.type == TYPE_ROCKET_SILO then
         productivity_bonus = get_aurora_bonus(global.effective_population[TYPE_AURORA])
     end
 
-    set_beacon_effects(registered_entity, speed_bonus, productivity_bonus, use_pentalty_module)
+    set_beacon_effects(registered_entity, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
 local update_function_lookup = {
@@ -668,7 +675,7 @@ local update_function_lookup = {
     [TYPE_FOUNDRY] = update_house_foundry,
     [TYPE_ORCHID] = update_house_orchid,
     [TYPE_AURORA] = update_house_aurora,
-    [TYPE_ASSEMBLY_MACHINE] = update_entity_with_beacon,
+    [TYPE_ASSEMBLING_MACHINE] = update_entity_with_beacon,
     [TYPE_FURNACE] = update_entity_with_beacon,
     [TYPE_ROCKET_SILO] = update_entity_with_beacon
 }
@@ -685,8 +692,8 @@ local function update(registered_entity)
     registered_entity.last_update = game.tick
 end
 
-local function update_caste_boni()
-    -- We check if the boni have actually changed because I think manipulating techs is quite expensive
+local function update_caste_bonuses()
+    -- We check if the bonuses have actually changed to avoid unnecessary api calls
     local current_gunfire_bonus = get_gunfire_bonus(global.effective_population[TYPE_GUNFIRE])
     if global.gunfire_bonus ~= current_gunfire_bonus then
         set_gunfire_bonus(current_gunfire_bonus)
@@ -710,26 +717,28 @@ local function init()
     global.updates_per_cycle = settings.startup["sosciencity-entity-updates-per-cycle"].value
     global.use_penalty = settings.startup["sosciencity-penalty-module"].value
 
+    global.last_update = game.tick
+
     global.panic = 0
     global.population = {
-        TYPE_CLOCKWORK = 0,
-        TYPE_EMBER = 0,
-        TYPE_GUNFIRE = 0,
-        TYPE_GLEAM = 0,
-        TYPE_FOUNDRY = 0,
-        TYPE_ORCHID = 0,
-        TYPE_AURORA = 0,
-        TYPE_PLASMA = 0
+        [TYPE_CLOCKWORK] = 0,
+        [TYPE_EMBER] = 0,
+        [TYPE_GUNFIRE] = 0,
+        [TYPE_GLEAM] = 0,
+        [TYPE_FOUNDRY] = 0,
+        [TYPE_ORCHID] = 0,
+        [TYPE_AURORA] = 0,
+        [TYPE_PLASMA] = 0
     }
     global.effective_population = {
-        TYPE_CLOCKWORK = 0,
-        TYPE_EMBER = 0,
-        TYPE_GUNFIRE = 0,
-        TYPE_GLEAM = 0,
-        TYPE_FOUNDRY = 0,
-        TYPE_ORCHID = 0,
-        TYPE_AURORA = 0,
-        TYPE_PLASMA = 0
+        [TYPE_CLOCKWORK] = 0,
+        [TYPE_EMBER] = 0,
+        [TYPE_GUNFIRE] = 0,
+        [TYPE_GLEAM] = 0,
+        [TYPE_FOUNDRY] = 0,
+        [TYPE_ORCHID] = 0,
+        [TYPE_AURORA] = 0,
+        [TYPE_PLASMA] = 0
     }
     global.gunfire_bonus = 0
     global.gleam_bonus = 0
@@ -737,55 +746,39 @@ local function init()
 
     global.machine_count = 0
     global.turret_count = 0
-    global.mining_drill_count = 0
 
     global.register = {}
     global.register_by_type = {}
 
-    -- find and register all the machines
     for _, surface in pairs(game.surfaces) do
+        -- find and register all the machines
         for _, entity in pairs(
             surface.find_entities_filtered {
                 type = {
                     "assembling-machine",
                     "rocket-silo",
-                    "furnace",
-                    "mining-drill",
-                    "turret",
-                    "ammo-turret",
-                    "electric-turret",
-                    "fluid-turret"
+                    "furnace"
                 }
             }
         ) do
             global.machine_count = global.machine_count + 1
             add_entity_to_register(entity)
         end
-    end
 
-    -- count all the mining drills
-    for _, surface in pairs(game.surfaces) do
-        global.mining_drill_count =
-            global.mining_drill_count +
-            surface.count_entities_filtered {
-                type = {"mining-drill"}
-            }
-    end
+        -- count the mining drills
+        global.machine_count = global.machine_count + surface.count_entities_filtered {type = "mining-drill"}
 
-    -- count all the turrets
-    for _, surface in pairs(game.surfaces) do
+        -- count the turrets
         global.turret_count =
             global.turret_count +
             surface.count_entities_filtered {
-                {
-                    type = {
-                        "turret",
-                        "ammo-turret",
-                        "electric-turret",
-                        "fluid-turret"
-                    },
-                    force = "player"
-                }
+                type = {
+                    "turret",
+                    "ammo-turret",
+                    "electric-turret",
+                    "fluid-turret"
+                },
+                force = "player"
             }
     end
 end
@@ -809,45 +802,41 @@ local function update_cycle()
         index, current_entity = next(register, index)
         count = count + 1
     end
+    global.last_index = index
 
-    update_caste_boni()
+    update_caste_bonuses()
     ease_panic()
 
-    global.last_index = index
+    global.last_update = game.tick
 end
 
 local function on_entity_built(event)
     -- https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
-    local entity
-    if event.created_entity then
-        entity = event.created_entity
-    elseif event.entity then
-        entity = event.entity
-    elseif event.destination then
-        entity = event.destination
-    end
+    local entity = event.entity or event.created_entity or event.destination
 
     if not entity or not entity.valid then
         return
     end
 
-    if Types:entity_is_relevant_to_register(entity) then
+    local entity_type = Types(entity)
+
+    if Types:is_relevant_to_register(entity_type) then
         add_entity_to_register(entity)
     end
 
-    if entity.type == "mining-drill" then
-        global.mining_drill_count = global.mining_drill_count + 1
-    end
-    if Types:entity_is_affected_by_clockwork(entity) then
+    if entity_type == TYPE_MINING_DRILL then
         global.machine_count = global.machine_count + 1
     end
-    if Types:entity_is_turret(entity) and entity.force then
+    if Types:is_affected_by_clockwork(entity_type) then
+        global.machine_count = global.machine_count + 1
+    end
+    if entity_type == TYPE_TURRET and entity.force.name ~= "enemy" then
         global.turret_count = global.turret_count + 1
     end
 end
 
 local function on_entity_removed(event)
-    local entity = event.entity -- all removement events use entity as key
+    local entity = event.entity -- all removement events use 'entity' as key
     if not entity.valid then
         return
     end
@@ -857,13 +846,14 @@ local function on_entity_removed(event)
         remove_from_register(entry)
     end
 
-    if entity.type == "mining-drill" then
-        global.mining_drill_count = global.mining_drill_count - 1
-    end
-    if Types:entity_is_affected_by_clockwork(entity) then
+    local entity_type = Types(entity)
+    if entity_type == TYPE_MINING_DRILL then
         global.machine_count = global.machine_count - 1
     end
-    if Types:entity_is_turret(entity) then
+    if Types:is_affected_by_clockwork(entity_type) then
+        global.machine_count = global.machine_count - 1
+    end
+    if entity_type == TYPE_TURRET and entity.force.name ~= "enemy" then
         global.turret_count = global.turret_count - 1
     end
 end
@@ -873,7 +863,9 @@ local function on_entity_died(event)
         return
     end
 
-    if Types.entity_is_civil(event.entity) then
+    local entity = event.entity
+    local entity_type = Types(entity)
+    if Types:is_civil(entity_type) then
         add_panic()
     end
 
@@ -911,12 +903,10 @@ end
 -- << event handler registration >>
 -- initialisation
 script.on_init(init)
+
+-- update function
 local cycle_frequency = settings.startup["sosciencity-entity-update-cycle-frequency"].value
-if cycle_frequency == 1 then
-    script.on_event(defines.events.on_tick, update_cycle)
-else
-    script.on_nth_tick(cycle_frequency, update_cycle)
-end
+script.on_nth_tick(cycle_frequency, update_cycle)
 
 -- placement
 script.on_event(defines.events.on_built_entity, on_entity_built)
