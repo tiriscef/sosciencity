@@ -23,8 +23,8 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "ember-caste",
-    icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
+    icon = "__sosciencity__/graphics/technology/ember-caste.png",
+    icon_size = 256,
     upgrade = false,
     prerequisites = {"clockwork-caste", "logistic-science-pack"},
     effects = {
@@ -43,8 +43,8 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "gunfire-caste",
-    icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
+    icon = "__sosciencity__/graphics/technology/gunfire-caste.png",
+    icon_size = 256,
     upgrade = false,
     prerequisites = {"ember-caste", "military-science-pack"},
     effects = {
