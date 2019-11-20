@@ -66,8 +66,8 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "gleam-caste",
-    icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
+    icon = "__sosciencity__/graphics/technology/gleam-caste.png",
+    icon_size = 256,
     upgrade = false,
     prerequisites = {"ember-caste", "chemical-science-pack"},
     effects = {
@@ -89,8 +89,8 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "foundry-caste",
-    icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
+    icon = "__sosciencity__/graphics/technology/foundry-caste.png",
+    icon_size = 256,
     upgrade = false,
     prerequisites = {"gleam-caste", "production-science-pack"},
     effects = {
