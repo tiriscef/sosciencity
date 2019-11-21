@@ -21,6 +21,7 @@ end
         ["neighborhood"]: table
         ["neughborhood_data"]: table
         ["flags"]: table of int/enum
+        ["sprite"]: sprite id
 
         -- Housing
         ["inhabitants"]: int
@@ -64,17 +65,45 @@ require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
 -- << subentities >>
-local function add_subentity(registered_entity, type)
+local function add_sub_entity(registered_entity, _type, name)
     local subentity =
         registered_entity.entity.surface.create_entity {
-        name = Types.subentity_lookup[type],
+        name = name,
         position = registered_entity.entity.position,
         force = registered_entity.entity.force
     }
 
-    registered_entity.subentities[type] = subentity
+    registered_entity.subentities[_type] = subentity
 end
 
+local function add_sub_sprite(registered_entity, name, alt_mode)
+    local sprite_id = rendering.draw_sprite {
+        sprite = name,
+        target = registered_entity.entity,
+        surface = registered_entity.entity.surface,
+        only_in_alt_mode = (alt_mode or false)
+    }
+
+    registered_entity.sprite = sprite_id
+end
+
+local HIDDEN_BEACON_NAME = "sosciencity-hidden-beacon"
+local HIDDEN_EEI_NAME = "sosciencity-hidden-eei"
+
+local function add_subentities(registered_entity, _type)
+    if Types:needs_beacon(_type) then
+        add_sub_entity(registered_entity, SUB_BEACON, HIDDEN_BEACON_NAME)
+    end
+    if Types:needs_eei(_type) then
+        add_sub_entity(registered_entity, SUB_EEI, HIDDEN_EEI_NAME)
+    end
+    if Types:needs_alt_mode_sprite(_type) then
+        add_sub_sprite(registered_entity, Types.caste_sprites[registered_entity.type], true)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << hidden beacons >>
 local SPEED_MODULE_NAME = "-sosciencity-speed"
 local PRODUCTIVITY_MODULE_NAME = "-sosciencity-productivity"
 local PENALTY_MODULE_NAME = "sosciencity-penalty"
@@ -124,9 +153,19 @@ local function has_power(registered_entity)
     return registered_entity.subentities[SUB_EEI].power > 0
 end
 
+-- Gets the current power usage of a housing entity
+local function get_residential_power_consumption(registered_entity)
+    local usage_per_inhabitant = Caste(registered_entity).power_demand
+    return -1 * registered_entity.inhabitants * usage_per_inhabitant
+end
+
 -- Sets the power usage of the entity. Assumes that the entry has an eei.
 -- usage seems to be in W
 local function set_power_usage(registered_entity, usage)
+    if not usage then
+        usage = get_residential_power_consumption(registered_entity)
+    end
+
     registered_entity.subentities[SUB_EEI].power_usage = usage
 end
 
@@ -157,6 +196,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
 local function add_housing_data(registered_entity)
+    -- TODO
     registered_entity.happiness = 0
     registered_entity.healthiness = 0
     registered_entity.healthiness_mental = 0
@@ -175,12 +215,7 @@ local function new_registered_entity(entity, _type)
     if Types:is_housing(_type) then
         add_housing_data(registered_entity)
     end
-    if Types:needs_beacon(_type) then
-        add_subentity(registered_entity, SUB_BEACON)
-    end
-    if Types:needs_eei(_type) then
-        add_subentity(registered_entity, SUB_EEI)
-    end
+    add_subentities(registered_entity, _type)
     if Types:needs_neighborhood(_type) then
         add_neighborhood_data(registered_entity, _type)
     end
@@ -509,8 +544,11 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
 local function add_inhabitants(registered_entity, count, happiness, healthiness, healthiness_mental)
-    local capacity = Housing:get_capacity(registered_entity)
     local count_moving_in = math.min(count, Housing:get_free_capacity(registered_entity))
+
+    if count_moving_in == 0 then
+        return 0
+    end
 
     registered_entity.inhabitants = registered_entity.inhabitants + count_moving_in
     registered_entity.happiness =
@@ -534,6 +572,7 @@ local function add_inhabitants(registered_entity, count, happiness, healthiness,
         healthiness_mental,
         count_moving_in
     )
+    return count_moving_in
 end
 
 local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
@@ -620,6 +659,12 @@ local function update_house(registered_entity, delta_ticks)
     -- TODO
 
     registered_entity.trend = registered_entity.trend + get_trend(registered_entity, delta_ticks)
+    if registered_entity.trend >= 1 then
+
+    elseif registered_entity.trend <= - 1 then
+
+    end
+    set_power_usage(registered_entity)
 end
 
 local function update_house_clockwork(registered_entity, delta_ticks)
@@ -686,10 +731,13 @@ local function update(registered_entity)
         return
     end
 
-    local delta_ticks = game.tick - registered_entity.last_update
-    update_function_lookup[registered_entity.type](registered_entity, delta_ticks)
+    local update_function = update_function_lookup[registered_entity.type]
 
-    registered_entity.last_update = game.tick
+    if update_function ~= nil then
+        local delta_ticks = game.tick - registered_entity.last_update
+        update_function_lookup[registered_entity.type](registered_entity, delta_ticks)
+        registered_entity.last_update = game.tick
+    end
 end
 
 local function update_caste_bonuses()
@@ -878,7 +926,7 @@ local function on_entity_mined(event)
         return
     end
     local registered_entity = global.register[entity.unit_number]
-    if registered_entity and Types:is_housing(registered_entity.type) then
+    if registered_entity and Types:is_inhabited(registered_entity.type) then
         try_resettle(registered_entity)
     end
 

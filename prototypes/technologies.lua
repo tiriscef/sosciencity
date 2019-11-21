@@ -3,7 +3,7 @@
 Technology:create {
     type = "technology",
     name = "clockwork-caste",
-    icon = "__sosciencity__/graphics/technology/clockwork-caste.png",
+    icon = "__sosciencity__/graphics/clockwork-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {},
@@ -23,7 +23,7 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "ember-caste",
-    icon = "__sosciencity__/graphics/technology/ember-caste.png",
+    icon = "__sosciencity__/graphics/ember-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {"clockwork-caste", "logistic-science-pack"},
@@ -43,7 +43,7 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "gunfire-caste",
-    icon = "__sosciencity__/graphics/technology/gunfire-caste.png",
+    icon = "__sosciencity__/graphics/gunfire-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {"ember-caste", "military-science-pack"},
@@ -66,7 +66,7 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "gleam-caste",
-    icon = "__sosciencity__/graphics/technology/gleam-caste.png",
+    icon = "__sosciencity__/graphics/gleam-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {"ember-caste", "chemical-science-pack"},
@@ -89,7 +89,7 @@ Technology:create {
 Technology:create {
     type = "technology",
     name = "foundry-caste",
-    icon = "__sosciencity__/graphics/technology/foundry-caste.png",
+    icon = "__sosciencity__/graphics/foundry-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {"gleam-caste", "production-science-pack"},

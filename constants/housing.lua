@@ -2,7 +2,13 @@ require("constants.types")
 
 Housing = {}
 
-Housing.houses = {}
+Housing.houses = {
+    ["test-house"] = {
+        room_count = 2,
+        tech_level = 0,
+        comfort = 0
+    }
+}
     --[[["example-house"] = {
         room_count = 42,
         tech_level = 0,

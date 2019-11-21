@@ -1,13 +1,18 @@
 require("constants.housing")
 
-local data_details = {}
---[[    ["example-house"] = {
+local data_details = {
+    ["test-house"] = {
         picture = {
-
+            filename = "__sosciencity__/graphics/entity/placeholder.png",
+            priority = "high",
+            width = 192,
+            height = 192,
+            scale = 0.5
         },
-        width = 5,
-        height = 5
-    }]]
+        width = 3,
+        height = 3
+    }
+}
 
 for house_name, house in pairs(Housing.houses) do
     local orderstring = string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
@@ -27,7 +32,8 @@ for house_name, house in pairs(Housing.houses) do
             "item-description.housing",
             {"item-description." .. house_name},
             house.room_count,
-            {"comfort-scale." .. house.comfort}
+            {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
+            {"description.sos-details", house.comfort}
         }
     }
 
