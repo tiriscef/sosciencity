@@ -9,6 +9,7 @@
         "settings",
         "serpent",
         "table_size",
-        "mods"
+        "mods",
+        "rendering"
     ]
 }

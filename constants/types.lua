@@ -35,6 +35,7 @@ TYPE_NULL = 9999
 -- subentities
 SUB_BEACON = 1
 SUB_EEI = 2
+SUB_ALT_MODE_SPRITE = 3
 
 -- neighborhood
 NEIGHBOR_MARKET = 1
@@ -71,6 +72,7 @@ Types.entity_type_lookup = {
     },
     names = {
         -- TODO add the names from housing
+        ["test-house"] = TYPE_EMPTY_HOUSE,
         ["market"] = TYPE_MARKET,
         ["water-distribution-facility"] = TYPE_WATER_DISTRIBUTION_FACILITY,
         ["hospital"] = TYPE_HOSPITAL,
@@ -94,6 +96,10 @@ function Types:is_housing(_type)
     return _type < 100
 end
 
+function Types:is_inhabited(_type)
+    return (_type < 100) and (_type ~= 0)
+end
+
 function Types:is_civil(_type)
     return _type < 1000
 end
@@ -106,17 +112,16 @@ function Types:is_affected_by_clockwork(_type)
     return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
 end
 
-Types.subentity_lookup = {
-    [SUB_BEACON] = "sosciencity-invisible-beacon",
-    [SUB_EEI] = "sosciencity-invisible-eei"
-}
-
 function Types:needs_beacon(_type)
     return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
 end
 
 function Types:needs_eei(_type)
     return _type < 1000
+end
+
+function Types:needs_alt_mode_sprite(_type)
+    return _type < 100
 end
 
 Types.taste_lookup = {
@@ -140,12 +145,22 @@ Types.caste_names = {
     [TYPE_GLEAM] = "gleam",
     [TYPE_FOUNDRY] = "foundry",
     [TYPE_ORCHID] = "orchid",
-    [TYPE_AURORA] = "aurora",
-    __call = function(self, _type)
-        return self[_type]
-    end
+    [TYPE_AURORA] = "aurora"
 }
 
 function Types:get_caste_name(_type)
     return self.caste_names[_type]
 end
+
+setmetatable(Types.caste_names, {__call = Types.get_caste_name})
+
+Types.caste_sprites = {
+    [TYPE_EMPTY_HOUSE] = "empty-caste",
+    [TYPE_CLOCKWORK] = "clockwork-caste",
+    [TYPE_EMBER] = "ember-caste",
+    [TYPE_GUNFIRE] = "gunfire-caste",
+    [TYPE_GLEAM] = "gleam-caste",
+    [TYPE_FOUNDRY] = "foundry-caste",
+    [TYPE_ORCHID] = "orchid-caste",
+    [TYPE_AURORA] = "aurora-caste"
+}

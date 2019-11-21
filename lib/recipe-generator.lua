@@ -91,8 +91,8 @@ function RecipeGenerator:create_housing_recipe(housing_name, details)
     house_recipe:add_ingredient_range(room_ingredients)
     house_recipe:multiply_expensive_ingredients(self.expensive_multiplier)
 
-    for _ = 0, details.coziness do
-        local furniture = self.furniture_ingredients[details.coziness]
+    for _ = 0, details.comfort do
+        local furniture = self.furniture_ingredients[details.comfort]
         house_recipe:add_ingredient_range(furniture)
     end
 

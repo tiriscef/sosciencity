@@ -360,7 +360,7 @@ function Recipe:multiply_ingredients(normal_multiplier, expensive_multiplier)
         if self:has_normal_difficulty() then
             multiply_ingredient_table_amounts(self.normal.ingredients, normal_multiplier)
         end
-        if self.has_expensive_difficulty() then
+        if self:has_expensive_difficulty() then
             multiply_ingredient_table_amounts(self.expensive.ingredients, expensive_multiplier or normal_multiplier)
         end
     end

@@ -45,7 +45,7 @@ end
 --<< beacon >>
 Entity:create {
     type = "beacon",
-    name = "sosciencity-invisible-beacon",
+    name = "sosciencity-hidden-beacon",
     energy_usage = "10W",
     flags = {
         "hide-alt-info",
@@ -97,6 +97,6 @@ Entity:create {
     },
     selection_box = nil,
     collision_box = nil,
-    icon = "__sosciencity__/graphics/technology/placeholder.png",
-    icon_size = 128
+    icon = "__sosciencity__/graphics/empty-caste.png",
+    icon_size = 256
 }

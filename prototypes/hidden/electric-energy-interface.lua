@@ -1,6 +1,6 @@
 Entity:create {
     type = "electric-energy-interface",
-    name = "sosciencity-invisible-eei",
+    name = "sosciencity-hidden-eei",
     flags = {
         "hide-alt-info",
         "not-blueprintable",
@@ -19,13 +19,13 @@ Entity:create {
     selection_box = nil,
     collision_box = nil,
     -- energy_usage is controlled by script, so basicly this value is arbitrary
-    energy_usage = "10kW", 
+    energy_usage = "0kW",
     energy_source = {
         type = "electric",
         buffer_capacity = "1MW",
         usage_priority = "secondary-input"
     },
-    icon = "__sosciencity__/graphics/technology/placeholder.png",
-    icon_size = 128
+    icon = "__sosciencity__/graphics/empty-caste.png",
+    icon_size = 256
 }
 -- TODO icon
