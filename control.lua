@@ -63,135 +63,9 @@ require("constants.housing")
 -- << helper functions >>
 require("lib.utils")
 
----------------------------------------------------------------------------------------------------
--- << subentities >>
-local function add_sub_entity(registered_entity, _type, name)
-    local subentity =
-        registered_entity.entity.surface.create_entity {
-        name = name,
-        position = registered_entity.entity.position,
-        force = registered_entity.entity.force
-    }
-
-    registered_entity.subentities[_type] = subentity
-end
-
-local function add_sub_sprite(registered_entity, name, alt_mode)
-    local sprite_id = rendering.draw_sprite {
-        sprite = name,
-        target = registered_entity.entity,
-        surface = registered_entity.entity.surface,
-        only_in_alt_mode = (alt_mode or false)
-    }
-
-    registered_entity.sprite = sprite_id
-end
-
-local HIDDEN_BEACON_NAME = "sosciencity-hidden-beacon"
-local HIDDEN_EEI_NAME = "sosciencity-hidden-eei"
-
-local function add_subentities(registered_entity, _type)
-    if Types:needs_beacon(_type) then
-        add_sub_entity(registered_entity, SUB_BEACON, HIDDEN_BEACON_NAME)
-    end
-    if Types:needs_eei(_type) then
-        add_sub_entity(registered_entity, SUB_EEI, HIDDEN_EEI_NAME)
-    end
-    if Types:needs_alt_mode_sprite(_type) then
-        add_sub_sprite(registered_entity, Types.caste_sprites[registered_entity.type], true)
-    end
-end
-
----------------------------------------------------------------------------------------------------
--- << hidden beacons >>
-local SPEED_MODULE_NAME = "-sosciencity-speed"
-local PRODUCTIVITY_MODULE_NAME = "-sosciencity-productivity"
-local PENALTY_MODULE_NAME = "sosciencity-penalty"
-
--- assumes that value is an integer
-local function set_binary_modules(beacon_inventory, module_name, value)
-    local new_value = value
-    local strength = 0
-
-    while value > 0 and strength <= 14 do
-        new_value = math.floor(value / 2)
-
-        if new_value * 2 ~= value then
-            beacon_inventory.insert {
-                name = strength .. module_name,
-                count = 1
-            }
-        end
-
-        strength = strength + 1
-        value = new_value
-    end
-end
-
--- Assumes that the entry has a beacon.
--- speed and productivity need to be positive
-local function set_beacon_effects(registered_entity, speed, productivity, add_penalty)
-    local beacon_inventory = registered_entity.subentities[SUB_BEACON].get_module_inventory()
-    beacon_inventory.clear()
-
-    if speed and speed > 0 then
-        set_binary_modules(beacon_inventory, SPEED_MODULE_NAME, speed)
-    end
-
-    if productivity and productivity > 0 then
-        set_binary_modules(beacon_inventory, PRODUCTIVITY_MODULE_NAME, productivity)
-    end
-
-    if add_penalty then
-        beacon_inventory.insert {name = PENALTY_MODULE_NAME}
-    end
-end
-
--- Checks if the entity is supplied with power. Assumes that the entry has an eei.
-local function has_power(registered_entity)
-    -- check if the buffer is partially filled
-    return registered_entity.subentities[SUB_EEI].power > 0
-end
-
--- Gets the current power usage of a housing entity
-local function get_residential_power_consumption(registered_entity)
-    local usage_per_inhabitant = Caste(registered_entity).power_demand
-    return -1 * registered_entity.inhabitants * usage_per_inhabitant
-end
-
--- Sets the power usage of the entity. Assumes that the entry has an eei.
--- usage seems to be in W
-local function set_power_usage(registered_entity, usage)
-    if not usage then
-        usage = get_residential_power_consumption(registered_entity)
-    end
-
-    registered_entity.subentities[SUB_EEI].power_usage = usage
-end
-
----------------------------------------------------------------------------------------------------
--- << neighborhood functions >>
-local function add_neighborhood_data(registered_entity, type)
-    -- TODO
-end
-
-local function get_neighbors_of_type(registered_entity, type)
-    if not registered_entity.neighborhood or not registered_entity.neighborhood[type] then
-        return {}
-    end
-
-    local ret = {}
-
-    for unit_number, entity in pairs(registered_entity.neighborhood[type]) do
-        if not entity.valid then
-            registered_entity.neighborhood[unit_number] = nil
-        else
-            table.insert(ret, entity)
-        end
-    end
-
-    return ret
-end
+require("scripts.control.subentities")
+require("scripts.control.neighborhood")
+require("scripts.control.inhabitants")
 
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
@@ -215,9 +89,9 @@ local function new_registered_entity(entity, _type)
     if Types:is_housing(_type) then
         add_housing_data(registered_entity)
     end
-    add_subentities(registered_entity, _type)
+    Subentities:add_all_for(registered_entity, _type)
     if Types:needs_neighborhood(_type) then
-        add_neighborhood_data(registered_entity, _type)
+        Neighborhood:add_neighborhood_data(registered_entity, _type)
     end
 
     return registered_entity
@@ -265,7 +139,7 @@ end
 local function get_food_inventories(registered_entity)
     local inventories = {registered_entity.entity.get_inventory(defines.inventory.chest)}
 
-    for _, market in pairs(get_neighbors_of_type(registered_entity, NEIGHBOR_MARKET)) do
+    for _, market in pairs(Neighborhood:get_by_type(registered_entity, NEIGHBOR_MARKET)) do
         table.insert(inventories, market.get_inventory(defines.inventory.chest))
     end
 
@@ -542,47 +416,6 @@ local function get_aurora_bonus(effective_population)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << inhabitant functions >>
-local function add_inhabitants(registered_entity, count, happiness, healthiness, healthiness_mental)
-    local count_moving_in = math.min(count, Housing:get_free_capacity(registered_entity))
-
-    if count_moving_in == 0 then
-        return 0
-    end
-
-    registered_entity.inhabitants = registered_entity.inhabitants + count_moving_in
-    registered_entity.happiness =
-        Utils.weighted_average(
-        registered_entity.happiness,
-        registered_entity.inhabitants - count_moving_in,
-        happiness,
-        count_moving_in
-    )
-    registered_entity.healthiness =
-        Utils.weighted_average(
-        registered_entity.healthiness,
-        registered_entity.inhabitants - count_moving_in,
-        healthiness,
-        count_moving_in
-    )
-    registered_entity.healthiness_mental =
-        Utils.weighted_average(
-        registered_entity.healthiness_mental,
-        registered_entity.inhabitants - count_moving_in,
-        healthiness_mental,
-        count_moving_in
-    )
-    return count_moving_in
-end
-
-local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
-local MINIMAL_HAPPINESS = 5
-
-local function get_trend(registered_entity, delta_ticks)
-    return INFLUX_COEFFICIENT * delta_ticks * (registered_entity.happiness - MINIMAL_HAPPINESS)
-end
-
----------------------------------------------------------------------------------------------------
 -- << resettlement >>
 local function resettlement_is_researched(force)
     return force.technologies["resettlement"].researched
@@ -600,7 +433,7 @@ local function try_resettle_to(source_entity, destination_entity, resettle_count
             local count = math.min(resettle_count, free_capacity)
 
             -- TODO diseases
-            add_inhabitants(
+            Inhabitants:add_inhabitants(
                 destination_entity,
                 count,
                 source_entity.happiness,
@@ -658,13 +491,13 @@ local function update_house(registered_entity, delta_ticks)
     local diet_effects = evaluate_diet(registered_entity, delta_ticks)
     -- TODO
 
-    registered_entity.trend = registered_entity.trend + get_trend(registered_entity, delta_ticks)
+    registered_entity.trend = registered_entity.trend + Inhabitants:get_trend(registered_entity, delta_ticks)
     if registered_entity.trend >= 1 then
 
     elseif registered_entity.trend <= - 1 then
 
     end
-    set_power_usage(registered_entity)
+    Subentities:set_power_usage(registered_entity)
 end
 
 local function update_house_clockwork(registered_entity, delta_ticks)
@@ -709,7 +542,7 @@ local function update_entity_with_beacon(registered_entity)
         productivity_bonus = get_aurora_bonus(global.effective_population[TYPE_AURORA])
     end
 
-    set_beacon_effects(registered_entity, speed_bonus, productivity_bonus, use_penalty_module)
+    Subentities:set_beacon_effects(registered_entity, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
 local update_function_lookup = {
