@@ -1,19 +1,19 @@
 Neighborhood = {}
 
-function Neighborhood:add_neighborhood_data(registered_entity, type)
+function Neighborhood:add_neighborhood_data(entry, type)
     -- TODO
 end
 
-function Neighborhood:get_by_type(registered_entity, type)
-    if not registered_entity.neighborhood or not registered_entity.neighborhood[type] then
+function Neighborhood:get_by_type(entry, type)
+    if not entry.neighborhood or not entry.neighborhood[type] then
         return {}
     end
 
     local ret = {}
 
-    for unit_number, entity in pairs(registered_entity.neighborhood[type]) do
+    for unit_number, entity in pairs(entry.neighborhood[type]) do
         if not entity.valid then
-            registered_entity.neighborhood[unit_number] = nil
+            entry.neighborhood[unit_number] = nil
         else
             table.insert(ret, entity)
         end
@@ -21,3 +21,5 @@ function Neighborhood:get_by_type(registered_entity, type)
 
     return ret
 end
+
+return Neighborhood
