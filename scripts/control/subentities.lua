@@ -7,48 +7,57 @@ Subentities.subentity_name_lookup = {
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
-local function add(registered_entity, _type)
+local function add(entry, _type)
     local subentity =
-        registered_entity.entity.surface.create_entity {
+        entry.entity.surface.create_entity {
         name = Subentities.subentity_name_lookup[_type],
-        position = registered_entity.entity.position,
-        force = registered_entity.entity.force
+        position = entry.entity.position,
+        force = entry.entity.force
     }
 
-    registered_entity.subentities[_type] = subentity
+    entry.subentities[_type] = subentity
 
     return subentity
 end
 
-local function add_sprite(registered_entity, name, alt_mode)
+local function add_sprite(entry, name, alt_mode)
     local sprite_id = rendering.draw_sprite {
         sprite = name,
-        target = registered_entity.entity,
-        surface = registered_entity.entity.surface,
+        target = entry.entity,
+        surface = entry.entity.surface,
         only_in_alt_mode = (alt_mode or false)
     }
 
-    registered_entity.sprite = sprite_id
+    entry.sprite = sprite_id
 
     return sprite_id
 end
 
-function Subentities:add_all_for(registered_entity)
-    if Types:needs_beacon(registered_entity.type) then
-        add(registered_entity, SUB_BEACON)
+function Subentities:add_all_for(entry)
+    if Types:needs_beacon(entry.type) then
+        add(entry, SUB_BEACON)
     end
-    if Types:needs_eei(registered_entity.type) then
-        add(registered_entity, SUB_EEI)
+    if Types:needs_eei(entry.type) then
+        add(entry, SUB_EEI)
     end
-    if Types:needs_alt_mode_sprite(registered_entity.type) then
-        add_sprite(registered_entity, Types.caste_sprites[registered_entity.type], true)
+    if Types:needs_alt_mode_sprite(entry.type) then
+        add_sprite(entry, Types.caste_sprites[entry.type], true)
     end
 end
 
-function Subentities:get(registered_entity, _type)
-    -- there is the possibility that 
-    local subentity = registered_entity.subentities[_type] or add(registered_entity, _type)
-    return subentity
+function Subentities:remove_all_for(entry)
+    for _, subentity in pairs(entry.subentities) do
+        if subentity.valid then
+            subentity.destroy()
+        end
+    end
+    -- we don't need to destroy sprites when their target entity gets destroyed
+end
+
+function Subentities:get(entry, _type)
+    -- there is the possibility that the subentity gets lost
+    -- in this case we simply create a new one
+    return entry.subentities[_type] or add(entry, _type)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -80,8 +89,8 @@ local function set_binary_modules(beacon_inventory, module_name, value)
 end
 
 -- speed and productivity need to be positive
-function Subentities:set_beacon_effects(registered_entity, speed, productivity, add_penalty)
-    local beacon = Subentities:get(registered_entity, SUB_BEACON)
+function Subentities:set_beacon_effects(entry, speed, productivity, add_penalty)
+    local beacon = Subentities:get(entry, SUB_BEACON)
 
     local beacon_inventory = beacon.get_module_inventory()
     beacon_inventory.clear()
@@ -102,20 +111,22 @@ end
 -- << hidden electric energy interface >>
 
 -- Checks if the entity is supplied with power. Assumes that the entry has an eei.
-function Subentities:has_power(registered_entity)
+function Subentities:has_power(entry)
     -- check if the buffer is partially filled
-    return Subentities:get(registered_entity, SUB_EEI).power > 0
+    return Subentities:get(entry, SUB_EEI).power > 0
 end
 
 -- Gets the current power usage of a housing entity
-local function get_residential_power_consumption(registered_entity)
-    local usage_per_inhabitant = Caste(registered_entity).power_demand
-    return -1 * registered_entity.inhabitants * usage_per_inhabitant
+local function get_residential_power_consumption(entry)
+    local usage_per_inhabitant = Caste(entry).power_demand
+    return -1 * entry.inhabitants * usage_per_inhabitant
 end
 
 -- Sets the power usage of the entity. Assumes that the entry has an eei.
 -- usage seems to be in W
-function Subentities:set_power_usage(registered_entity, usage)
-    usage = usage or get_residential_power_consumption(registered_entity)
-    Subentities:get(registered_entity, SUB_EEI).power_usage = usage
+function Subentities:set_power_usage(entry, usage)
+    usage = usage or get_residential_power_consumption(entry)
+    Subentities:get(entry, SUB_EEI).power_usage = usage
 end
+
+return Subentities
