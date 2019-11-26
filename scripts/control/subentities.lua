@@ -33,7 +33,7 @@ local function add_sprite(entry, name, alt_mode)
     return sprite_id
 end
 
-function Subentities:add_all_for(entry)
+function Subentities.add_all_for(entry)
     if Types:needs_beacon(entry.type) then
         add(entry, SUB_BEACON)
     end
@@ -45,7 +45,7 @@ function Subentities:add_all_for(entry)
     end
 end
 
-function Subentities:remove_all_for(entry)
+function Subentities.remove_all_for(entry)
     for _, subentity in pairs(entry.subentities) do
         if subentity.valid then
             subentity.destroy()
@@ -54,10 +54,14 @@ function Subentities:remove_all_for(entry)
     -- we don't need to destroy sprites when their target entity gets destroyed
 end
 
-function Subentities:get(entry, _type)
+function Subentities.get(entry, _type)
     -- there is the possibility that the subentity gets lost
     -- in this case we simply create a new one
-    return entry.subentities[_type] or add(entry, _type)
+    if entry.subentities[_type] and entry.subentities[_type].valid then
+        return entry.subentities[_type]
+    else
+        return add(entry, _type)
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -89,8 +93,8 @@ local function set_binary_modules(beacon_inventory, module_name, value)
 end
 
 -- speed and productivity need to be positive
-function Subentities:set_beacon_effects(entry, speed, productivity, add_penalty)
-    local beacon = Subentities:get(entry, SUB_BEACON)
+function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
+    local beacon = Subentities.get(entry, SUB_BEACON)
 
     local beacon_inventory = beacon.get_module_inventory()
     beacon_inventory.clear()
@@ -111,9 +115,9 @@ end
 -- << hidden electric energy interface >>
 
 -- Checks if the entity is supplied with power. Assumes that the entry has an eei.
-function Subentities:has_power(entry)
+function Subentities.has_power(entry)
     -- check if the buffer is partially filled
-    return Subentities:get(entry, SUB_EEI).power > 0
+    return Subentities.get(entry, SUB_EEI).power > 0
 end
 
 -- Gets the current power usage of a housing entity
@@ -124,9 +128,9 @@ end
 
 -- Sets the power usage of the entity. Assumes that the entry has an eei.
 -- usage seems to be in W
-function Subentities:set_power_usage(entry, usage)
+function Subentities.set_power_usage(entry, usage)
     usage = usage or get_residential_power_consumption(entry)
-    Subentities:get(entry, SUB_EEI).power_usage = usage
+    Subentities.get(entry, SUB_EEI).power_usage = usage
 end
 
 return Subentities

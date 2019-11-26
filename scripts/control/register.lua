@@ -19,9 +19,9 @@ local function new_entry(entity, _type)
         subentities = {}
     }
 
-    Subentities:add_all_for(entry)
+    Subentities.add_all_for(entry)
     if Types:needs_neighborhood(_type) then
-        Neighborhood:add_neighborhood_data(entry, _type)
+        Neighborhood.add_neighborhood_data(entry, _type)
     end
 
     return entry
@@ -38,11 +38,11 @@ local function add_entry(entity, _type)
     global.register_by_type[_type][unit_number] = unit_number
 end
 
-function Register:add(entity)
+function Register.add(entity)
     local _type = Types(entity)
 
     if Types:is_relevant_to_register(_type) then
-        add_entry(entity)
+        add_entry(entity, _type)
     end
 
     if _type == TYPE_MINING_DRILL then
@@ -61,10 +61,10 @@ local function remove_entry(entry)
     global.register[unit_number] = nil
     global.register_by_type[entry.type][unit_number] = nil
 
-    Subentities:remove_all_for(entry)
+    Subentities.remove_all_for(entry)
 end
 
-function Register:remove_entity(entity)
+function Register.remove_entity(entity)
     local entry = global.register[entity.unit_number]
     if entry then
         remove_entry(entry)
@@ -82,12 +82,12 @@ function Register:remove_entity(entity)
     end
 end
 
-function Register:remove_entry(entry)
+function Register.remove_entry(entry)
     remove_entry(entry)
-    Register:remove_entity(entry.entity)
+    Register.remove_entity(entry.entity)
 end
 
-function Register:change_type(entry, new_type)
+function Register.change_type(entry, new_type)
     if not global.register_by_type[new_type] then
         global.register_by_type[new_type] = {}
     end
@@ -99,7 +99,7 @@ function Register:change_type(entry, new_type)
 end
 
 -- Iterator for all entries of a specific type
-function Register:all_of_type(_type)
+function Register.all_of_type(_type)
     local index, entry
 
     local function _next()
@@ -113,7 +113,7 @@ function Register:all_of_type(_type)
     return _next, index, entry
 end
 
-function Register:init()
+function Register.init()
     global.register = {}
     global.register_by_type = {}
 
@@ -132,7 +132,7 @@ function Register:init()
             }
         ) do
             global.machine_count = global.machine_count + 1
-            Register:add(entity)
+            Register.add(entity)
         end
 
         -- count the mining drills

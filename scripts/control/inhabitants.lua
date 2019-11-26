@@ -1,6 +1,24 @@
 Inhabitants = {}
 
 ---------------------------------------------------------------------------------------------------
+-- << general >>
+function Inhabitants.caste_is_researched(caste_id)
+    -- this assumes that the player-force is the one that matters
+    -- it may be worth caching the results
+    return game.forces.player.technologies[Types.caste_names[caste_id] .. "-caste"].researched
+end
+
+function Inhabitants.get_population_count()
+    local population_count = 0
+
+    for id, _ in pairs(Types.caste_names) do
+        population_count = population_count + global.population[id]
+    end
+
+    return population_count
+end
+
+---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
 local function get_effective_population_multiplier(happiness)
     return math.min(1, 1 + (happiness - 5) * 0.1)
@@ -12,7 +30,7 @@ local DEFAULT_HEALTHINESS_MENTAL = 10
 
 -- Tries to add the specified amount of inhabitants to the house-entry
 -- Returns the number of inhabitants that were added
-function Inhabitants:try_add_to_house(entry, count, happiness, healthiness, healthiness_mental)
+function Inhabitants.try_add_to_house(entry, count, happiness, healthiness, healthiness_mental)
     local count_moving_in = math.min(count, Housing:get_free_capacity(entry))
 
     if count_moving_in == 0 then
@@ -41,7 +59,7 @@ function Inhabitants:try_add_to_house(entry, count, happiness, healthiness, heal
     return count_moving_in
 end
 
-function Inhabitants:remove(entry, count)
+function Inhabitants.remove(entry, count)
     local count_moving_out = math.min(entry.inhabitants, count)
 
     if count_moving_out == 0 then
@@ -57,14 +75,14 @@ function Inhabitants:remove(entry, count)
     return count_moving_out
 end
 
-function Inhabitants:remove_house(entry)
-    Inhabitants:remove(entry, entry.inhabitants)
+function Inhabitants.remove_house(entry)
+    Inhabitants.remove(entry, entry.inhabitants)
 end
 
 local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
 local MINIMAL_HAPPINESS = 5
 
-function Inhabitants:get_trend(entry, delta_ticks)
+function Inhabitants.get_trend(entry, delta_ticks)
     return INFLUX_COEFFICIENT * delta_ticks * (entry.happiness - MINIMAL_HAPPINESS)
 end
 
@@ -82,8 +100,8 @@ function Inhabitants.try_resettle(entry)
     end
 
     local to_resettle = entry.inhabitants
-    for _, current_entry in Register:all_of_type(entry.type) do
-        local resettled_count = Inhabitants:try_add_to_house(current_entry, to_resettle, entry.happiness, entry.healthiness, entry.mental_healthiness)
+    for _, current_entry in Register.all_of_type(entry.type) do
+        local resettled_count = Inhabitants.try_add_to_house(current_entry, to_resettle, entry.happiness, entry.healthiness, entry.mental_healthiness)
         to_resettle = to_resettle - resettled_count
 
         if to_resettle == 0 then
@@ -138,58 +156,58 @@ local function set_foundry_bonus(value)
     global.foundry_bonus = value
 end
 
-function Inhabitants:update_caste_bonuses()
+function Inhabitants.update_caste_bonuses()
     -- We check if the bonuses have actually changed to avoid unnecessary api calls
-    local current_gunfire_bonus = Inhabitants:get_gunfire_bonus(global.effective_population[TYPE_GUNFIRE])
+    local current_gunfire_bonus = Inhabitants.get_gunfire_bonus(global.effective_population[TYPE_GUNFIRE])
     if global.gunfire_bonus ~= current_gunfire_bonus then
         set_gunfire_bonus(current_gunfire_bonus)
     end
 
-    local current_gleam_bonus = Inhabitants:get_gleam_bonus(global.effective_population[TYPE_GLEAM])
+    local current_gleam_bonus = Inhabitants.get_gleam_bonus(global.effective_population[TYPE_GLEAM])
     if global.gleam_bonus ~= current_gleam_bonus then
         set_gleam_bonus(current_gleam_bonus)
     end
 
-    local current_foundry_bonus = Inhabitants:get_foundry_bonus(global.effective_population[TYPE_FOUNDRY])
+    local current_foundry_bonus = Inhabitants.get_foundry_bonus(global.effective_population[TYPE_FOUNDRY])
     if global.foundry_bonus ~= current_foundry_bonus then
         set_foundry_bonus(current_foundry_bonus)
     end
 end
 
-function Inhabitants:get_clockwork_bonus(effective_population)
+function Inhabitants.get_clockwork_bonus(effective_population)
     return math.floor(effective_population * 40 / math.max(global.machine_count, 1))
 end
 
-function Inhabitants:get_gunfire_bonus(effective_population)
+function Inhabitants.get_gunfire_bonus(effective_population)
     return math.floor(effective_population * 10 / math.max(global.turret_count, 1)) -- TODO balancing
 end
 
-function Inhabitants:get_gleam_bonus(effective_population)
+function Inhabitants.get_gleam_bonus(effective_population)
     return math.floor(math.sqrt(effective_population))
 end
 
-function Inhabitants:get_foundry_bonus(effective_population)
+function Inhabitants.get_foundry_bonus(effective_population)
     return math.floor(effective_population * 5)
 end
 
-function Inhabitants:get_aurora_bonus(effective_population)
+function Inhabitants.get_aurora_bonus(effective_population)
     return math.floor(math.sqrt(effective_population))
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << panic >>
-function Inhabitants:ease_panic()
+function Inhabitants.ease_panic()
     local delta_ticks = game.tick - global.last_update
 
     -- TODO
 end
 
-function Inhabitants:add_panic()
+function Inhabitants.add_panic()
     global.last_panic_event = game.tick
     global.panic = global.panic + 1 -- TODO balancing
 end
 
-function Inhabitants:init()
+function Inhabitants.init()
     global.panic = 0
     global.population = {
         [TYPE_CLOCKWORK] = 0,
