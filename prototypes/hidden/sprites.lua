@@ -1,4 +1,4 @@
-local sprites_to_create = {"empty", "clockwork", "ember", "gunfire", "gleam", "foundry"}
+local sprites_to_create = {"empty", "clockwork", "ember", "gunfire", "gleam", "foundry", "orchid", "aurora", "plasma"}
 
 for _, name in pairs(sprites_to_create) do
     Entity:create {

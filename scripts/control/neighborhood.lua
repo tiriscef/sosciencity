@@ -1,10 +1,10 @@
 Neighborhood = {}
 
-function Neighborhood:add_neighborhood_data(entry, type)
+function Neighborhood.add_neighborhood_data(entry, type)
     -- TODO
 end
 
-function Neighborhood:get_by_type(entry, type)
+function Neighborhood.get_by_type(entry, type)
     if not entry.neighborhood or not entry.neighborhood[type] then
         return {}
     end

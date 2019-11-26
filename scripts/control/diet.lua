@@ -7,7 +7,7 @@ Diet = {}
 local function get_food_inventories(entry)
     local inventories = {entry.entity.get_inventory(defines.inventory.chest)}
 
-    for _, market in pairs(Neighborhood:get_by_type(entry, NEIGHBOR_MARKET)) do
+    for _, market in pairs(Neighborhood.get_by_type(entry, NEIGHBOR_MARKET)) do
         table.insert(inventories, market.get_inventory(defines.inventory.chest))
     end
 
@@ -206,7 +206,7 @@ local function apply_hunger_effects(percentage, diet_effects)
 end
 
 -- Assumes the entity is a housing entity
-function Diet:evaluate(entry, delta_ticks)
+function Diet.evaluate(entry, delta_ticks)
     local inventories = get_food_inventories(entry)
     local diet = get_diet(inventories)
 

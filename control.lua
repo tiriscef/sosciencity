@@ -17,7 +17,7 @@ end
 --[[
     Data structures
 
-    global.register: table
+    global.Register. table
         [LuaEntity.unit_number]: entry
 
     global.register_by_type: table
@@ -45,7 +45,7 @@ end
         ["count"]: int
         ["flags"]: table of strings
 
-    neighborhood: table
+    Neighborhood. table
         [entity type]: table of (unit_number, entity) pairs
 
     neighborhood_data: table
@@ -77,27 +77,28 @@ local Register = require("scripts.control.register")
 local Subentities = require("scripts.control.subentities")
 local Neighborhood = require("scripts.control.neighborhood")
 local Inhabitants = require("scripts.control.inhabitants")
+local Gui = require("scripts.control.gui")
 
 ---------------------------------------------------------------------------------------------------
 -- << update functions >>
 -- entities need to be checked for validity before calling the update-function
 
 local function update_house(entry, delta_ticks)
-    local diet_effects = Diet:evaluate(entry, delta_ticks)
+    local diet_effects = Diet.evaluate(entry, delta_ticks)
     -- TODO happiness, healthiness, diseases, ideas, tralala
 
-    entry.trend = entry.trend + Inhabitants:get_trend(entry, delta_ticks)
+    entry.trend = entry.trend + Inhabitants.get_trend(entry, delta_ticks)
     if entry.trend >= 1 then
         -- let people move in
-        Inhabitants:try_add_to_house(entry, math.floor(entry.trend))
+        Inhabitants.try_add_to_house(entry, math.floor(entry.trend))
         entry.trend = entry.trend - math.floor(entry.trend)
     elseif entry.trend <= - 1 then
         -- let people move out
-        Inhabitants:remove(entry, -math.ceil(entry.trend))
+        Inhabitants.remove(entry, -math.ceil(entry.trend))
         entry.trend = entry.trend - math.ceil(entry.trend)
     end
 
-    Subentities:set_power_usage(entry)
+    Subentities.set_power_usage(entry)
 end
 
 -- Assumes that the entity has a beacon
@@ -107,14 +108,14 @@ local function update_entity_with_beacon(entry)
     local use_penalty_module = false
 
     if Types:is_affected_by_clockwork(entry.type) then
-        speed_bonus = Inhabitants:get_clockwork_bonus(global.effective_population[TYPE_CLOCKWORK])
+        speed_bonus = Inhabitants.get_clockwork_bonus(global.effective_population[TYPE_CLOCKWORK])
         use_penalty_module = global.use_penalty
     end
     if entry.type == TYPE_ROCKET_SILO then
-        productivity_bonus = Inhabitants:get_aurora_bonus(global.effective_population[TYPE_AURORA])
+        productivity_bonus = Inhabitants.get_aurora_bonus(global.effective_population[TYPE_AURORA])
     end
 
-    Subentities:set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
+    Subentities.set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
 local update_function_lookup = {
@@ -132,7 +133,7 @@ local update_function_lookup = {
 
 local function update(entry)
     if not entry.entity.valid then
-        Register:remove_entry(entry)
+        Register.remove_entry(entry)
         return
     end
 
@@ -154,8 +155,8 @@ local function init()
 
     global.last_update = game.tick
 
-    Inhabitants:init()
-    Register:init()
+    Inhabitants.init()
+    Register.init()
 end
 
 local function update_cycle()
@@ -179,8 +180,10 @@ local function update_cycle()
     end
     global.last_index = index
 
-    Inhabitants:update_caste_bonuses()
-    Inhabitants:ease_panic()
+    Inhabitants.update_caste_bonuses()
+    Inhabitants.ease_panic()
+
+    Gui.update_city_info()
 
     global.last_update = game.tick
 end
@@ -196,7 +199,7 @@ local function on_entity_built(event)
     local entity_type = Types(entity)
 
     if Types:is_relevant_to_register(entity_type) then
-        Register:add(entity)
+        Register.add(entity)
     end
 end
 
@@ -206,7 +209,7 @@ local function on_entity_removed(event)
         return
     end
 
-    Register:remove_entity(entity)
+    Register.remove_entity(entity)
 end
 
 local function on_entity_died(event)
@@ -217,7 +220,7 @@ local function on_entity_died(event)
     local entity = event.entity
     local entity_type = Types(entity)
     if Types:is_civil(entity_type) then
-        Inhabitants:add_panic()
+        Inhabitants.add_panic()
     end
 
     on_entity_removed(event)
@@ -228,10 +231,10 @@ local function on_entity_mined(event)
     if not entity.valid then
         return
     end
-    
+
     local entry = global.register[entity.unit_number]
     if entry then
-        Inhabitants:try_resettle(entry)
+        Inhabitants.try_resettle(entry)
     end
 
     on_entity_removed(event)
@@ -249,6 +252,13 @@ local function on_configuration_change(event)
             force.reset_technologies()
         end
     end
+end
+
+local function on_player_created(event)
+    local index = event.player_index
+    local player = game.get_player(index)
+
+    Gui.create_city_info_for(player)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -275,3 +285,6 @@ script.on_event(defines.events.script_raised_destroy, on_entity_removed)
 
 -- mod update
 script.on_configuration_changed(on_configuration_change)
+
+-- gui creation
+script.on_event(defines.events.on_player_created, on_player_created)
