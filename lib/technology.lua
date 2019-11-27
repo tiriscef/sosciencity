@@ -88,3 +88,18 @@ function Technology:add_unlock(recipe_name)
         recipe = recipe_name
     }
 end
+
+function Technology:add_prerequisite(tech_name)
+    if not self.prerequisites then
+        self.prerequisites = {}
+    end
+
+    for _, prerequisite in pairs(self.prerequisites) do
+        if prerequisite == tech_name then
+            return self
+        end
+    end
+
+    table.insert(self.prerequisites, tech_name)
+    return self
+end

@@ -31,7 +31,7 @@ local DEFAULT_HEALTHINESS_MENTAL = 10
 -- Tries to add the specified amount of inhabitants to the house-entry
 -- Returns the number of inhabitants that were added
 function Inhabitants.try_add_to_house(entry, count, happiness, healthiness, healthiness_mental)
-    local count_moving_in = math.min(count, Housing:get_free_capacity(entry))
+    local count_moving_in = math.min(count, Housing.get_free_capacity(entry))
 
     if count_moving_in == 0 then
         return 0
@@ -95,13 +95,20 @@ end
 -- looks for housings to move the inhabitants of this entry to
 -- returns the number of resettled inhabitants
 function Inhabitants.try_resettle(entry)
-    if not resettlement_is_researched(entry.entity.force) or not Types:is_inhabited(entry.type) then
+    if not resettlement_is_researched(entry.entity.force) or not Types.is_inhabited(entry.type) then
         return 0
     end
 
     local to_resettle = entry.inhabitants
     for _, current_entry in Register.all_of_type(entry.type) do
-        local resettled_count = Inhabitants.try_add_to_house(current_entry, to_resettle, entry.happiness, entry.healthiness, entry.mental_healthiness)
+        local resettled_count =
+            Inhabitants.try_add_to_house(
+            current_entry,
+            to_resettle,
+            entry.happiness,
+            entry.healthiness,
+            entry.mental_healthiness
+        )
         to_resettle = to_resettle - resettled_count
 
         if to_resettle == 0 then
@@ -174,24 +181,46 @@ function Inhabitants.update_caste_bonuses()
     end
 end
 
-function Inhabitants.get_clockwork_bonus(effective_population)
-    return math.floor(effective_population * 40 / math.max(global.machine_count, 1))
+function Inhabitants.get_clockwork_bonus()
+    return math.floor(global.effective_population[TYPE_CLOCKWORK] * 40 / math.max(global.machine_count, 1))
 end
 
-function Inhabitants.get_gunfire_bonus(effective_population)
-    return math.floor(effective_population * 10 / math.max(global.turret_count, 1)) -- TODO balancing
+function Inhabitants.get_orchid_bonus()
+    return math.floor(math.sqrt(global.effective_population[TYPE_ORCHID]))
 end
 
-function Inhabitants.get_gleam_bonus(effective_population)
-    return math.floor(math.sqrt(effective_population))
+function Inhabitants.get_gunfire_bonus()
+    return math.floor(global.effective_population[TYPE_GUNFIRE] * 10 / math.max(global.turret_count, 1)) -- TODO balancing
 end
 
-function Inhabitants.get_foundry_bonus(effective_population)
-    return math.floor(effective_population * 5)
+function Inhabitants.get_ember_bonus()
+    return math.floor(math.sqrt(global.effective_population[TYPE_EMBER] / Inhabitants.get_population_count()))
 end
 
-function Inhabitants.get_aurora_bonus(effective_population)
-    return math.floor(math.sqrt(effective_population))
+function Inhabitants.get_foundry_bonus()
+    return math.floor(global.effective_population[TYPE_FOUNDRY] * 5)
+end
+
+function Inhabitants.get_gleam_bonus()
+    return math.floor(math.sqrt(global.effective_population[TYPE_GLEAM]))
+end
+
+function Inhabitants.get_aurora_bonus()
+    return math.floor(math.sqrt(global.effective_population[TYPE_AURORA]))
+end
+
+local bonus_function_lookup = {
+    [TYPE_CLOCKWORK] = Inhabitants.get_clockwork_bonus,
+    [TYPE_ORCHID] = Inhabitants.get_orchid_bonus,
+    [TYPE_GUNFIRE] = Inhabitants.get_gunfire_bonus,
+    [TYPE_EMBER] = Inhabitants.get_ember_bonus,
+    [TYPE_FOUNDRY] = Inhabitants.get_foundry_bonus,
+    [TYPE_GLEAM] = Inhabitants.get_gleam_bonus,
+    [TYPE_AURORA] = Inhabitants.get_aurora_bonus
+}
+
+function Inhabitants.get_caste_bonus(caste_id)
+    return bonus_function_lookup[caste_id]()
 end
 
 ---------------------------------------------------------------------------------------------------

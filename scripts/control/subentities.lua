@@ -34,13 +34,13 @@ local function add_sprite(entry, name, alt_mode)
 end
 
 function Subentities.add_all_for(entry)
-    if Types:needs_beacon(entry.type) then
+    if Types.needs_beacon(entry.type) then
         add(entry, SUB_BEACON)
     end
-    if Types:needs_eei(entry.type) then
+    if Types.needs_eei(entry.type) then
         add(entry, SUB_EEI)
     end
-    if Types:needs_alt_mode_sprite(entry.type) then
+    if Types.needs_alt_mode_sprite(entry.type) then
         add_sprite(entry, Types.caste_sprites[entry.type], true)
     end
 end

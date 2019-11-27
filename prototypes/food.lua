@@ -49,7 +49,7 @@ for food_name, food_details in pairs(Food.values) do
             "item-description.foods",
             {"item-description." .. food_name},
             {"food-category." .. food_details.food_category},
-            {"taste-category." .. Types.taste_lookup[food_details.taste_category]},
+            {"taste-category." .. Types.taste_names[food_details.taste_category]},
             {"color-scale." .. taste ,{"taste-scale." .. taste}},
             {"description.sos-details", food_details.taste_quality},
             {"color-scale." .. health ,{"health-scale." .. health}},

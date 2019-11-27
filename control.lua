@@ -107,7 +107,7 @@ local function update_entity_with_beacon(entry)
     local productivity_bonus = 0
     local use_penalty_module = false
 
-    if Types:is_affected_by_clockwork(entry.type) then
+    if Types.is_affected_by_clockwork(entry.type) then
         speed_bonus = Inhabitants.get_clockwork_bonus(global.effective_population[TYPE_CLOCKWORK])
         use_penalty_module = global.use_penalty
     end
@@ -198,7 +198,7 @@ local function on_entity_built(event)
 
     local entity_type = Types(entity)
 
-    if Types:is_relevant_to_register(entity_type) then
+    if Types.is_relevant_to_register(entity_type) then
         Register.add(entity)
     end
 end
@@ -219,7 +219,7 @@ local function on_entity_died(event)
 
     local entity = event.entity
     local entity_type = Types(entity)
-    if Types:is_civil(entity_type) then
+    if Types.is_civil(entity_type) then
         Inhabitants.add_panic()
     end
 

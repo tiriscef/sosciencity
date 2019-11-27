@@ -116,9 +116,9 @@ local meta = {}
 function meta:__call(entity)
     -- check if it's a registered entity or a enum
     if type(entity) == "table" then
-        return self.values[entity.type]
+        return Caste.values[entity.type]
     else
-        return self.values[entity]
+        return Caste.values[entity]
     end
 end
 
