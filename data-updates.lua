@@ -12,7 +12,7 @@ require("scripts.data-updates.loot")
 local item_types = require("lib.prototype-types.item-types")
 
 for _, item_type in pairs(item_types) do
-    for _, current_item in Item:pairs(item_type) do
+    for _, current_item in Item.pairs(item_type) do
         for _, operation in pairs(item_operations) do
             operation.func(current_item, operation.details)
         end
@@ -20,7 +20,7 @@ for _, item_type in pairs(item_types) do
 end
 
 --<< looping through recipes >>
-for _, current_recipe in Recipe:pairs() do
+for _, current_recipe in Recipe.pairs() do
     for _, operation in pairs(recipe_operations) do
         operation.func(current_recipe, operation.details)
     end
@@ -36,10 +36,10 @@ if not data.raw["recipe-category"]["handcrafting"] then
         }
     }
 
-    for _, character in Entity:pairs("character") do
+    for _, character in Entity.pairs("character") do
         character:add_crafting_category("handcrafting")
     end
-    for _, controller in Entity:pairs("god-controller") do
+    for _, controller in Entity.pairs("god-controller") do
         -- technically a god controller isn't an entity, but adding a category works the same for them
         controller:add_crafting_category("handcrafting")
     end

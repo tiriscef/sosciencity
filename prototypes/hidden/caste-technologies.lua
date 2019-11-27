@@ -1,7 +1,7 @@
 for i = 0, 20 do
     local strength = 2 ^ i
 
-    Technology:create {
+    Technology.create {
         type = "technology",
         name = i .. "-gleam-caste",
         icon = "__sosciencity__/graphics/empty.png",
@@ -26,7 +26,7 @@ for i = 0, 20 do
         prerequisites = {}
     }
 
-    Technology:create {
+    Technology.create {
         type = "technology",
         name = i .. "-foundry-caste",
         icon = "__sosciencity__/graphics/empty.png",
@@ -51,7 +51,7 @@ for i = 0, 20 do
         prerequisites = {}
     }
 
-    Technology:create {
+    Technology.create {
         type = "technology",
         name = i .. "-gunfire-caste",
         icon = "__sosciencity__/graphics/empty.png",

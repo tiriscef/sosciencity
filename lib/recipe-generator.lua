@@ -69,11 +69,11 @@ RecipeGenerator.furniture_ingredients = {
 
 RecipeGenerator.expensive_multiplier = 3
 
-function RecipeGenerator:create_housing_recipe(housing_name, details)
-    local item = Item:get_by_name(housing_name)
+function RecipeGenerator.create_housing_recipe(housing_name, details)
+    local item = Item.get_by_name(housing_name)
 
     local house_recipe =
-        Recipe:create {
+        Recipe.create {
         name = housing_name,
         category = "crafting",
         enabled = (details.tech_level == 0),
@@ -87,12 +87,12 @@ function RecipeGenerator:create_housing_recipe(housing_name, details)
         main_product = housing_name
     }:create_difficulties()
 
-    local room_ingredients = self.room_ingredients[details.tech_level]
+    local room_ingredients = RecipeGenerator.room_ingredients[details.tech_level]
     house_recipe:add_ingredient_range(room_ingredients)
-    house_recipe:multiply_expensive_ingredients(self.expensive_multiplier)
+    house_recipe:multiply_expensive_ingredients(RecipeGenerator.expensive_multiplier)
 
     for _ = 0, details.comfort do
-        local furniture = self.furniture_ingredients[details.comfort]
+        local furniture = RecipeGenerator.furniture_ingredients[details.comfort]
         house_recipe:add_ingredient_range(furniture)
     end
 

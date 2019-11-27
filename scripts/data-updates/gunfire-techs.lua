@@ -3,7 +3,7 @@ local gunfire_techs = {}
 for i = 0, 20 do
     local strength = 2 ^ i
 
-    table.insert(gunfire_techs, {strength = strength, prototype = Technology:get_by_name(i .. "-gunfire-caste")})
+    table.insert(gunfire_techs, {strength = strength, prototype = Technology.get_by_name(i .. "-gunfire-caste")})
 end
 
 local turret_types = require("lib.prototype-types.turret-types")
