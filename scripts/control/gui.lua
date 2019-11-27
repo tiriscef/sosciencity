@@ -2,32 +2,31 @@ Gui = {}
 
 Gui.CITY_INFO_SPRITE_SIZE = 48
 
-local function add_population_flow(frame)
+local function add_population_flow(container)
     local population_count = Inhabitants.get_population_count()
 
-    local flow =
-        frame.add {
-        type = "flow",
+    local frame =
+        container.add {
+        type = "frame",
         name = "population",
         direction = "vertical"
     }
+    frame.style.padding = 0
 
-    local head = flow.add {
+    local head =
+        frame.add {
         type = "label",
         name = "population-head",
         caption = {"sos-gui.population"}
     }
-    head.style.minimal_width = Gui.CITY_INFO_SPRITE_SIZE
     head.style.horizontal_align = "center"
-    head.style.height = Gui.CITY_INFO_SPRITE_SIZE
-    head.style.vertical_align = "bottom"
 
-    local count = flow.add {
+    local count =
+        frame.add {
         type = "label",
         name = "population-count",
         caption = population_count
     }
-    count.style.minimal_width = Gui.CITY_INFO_SPRITE_SIZE
     count.style.horizontal_align = "center"
 end
 
@@ -38,17 +37,28 @@ local function update_population_flow(frame)
     population_flow["population-count"].caption = population_count
 end
 
-local function add_caste_flow(frame, caste_id)
+local function get_bonus_string(caste_id)
+    local bonus = Inhabitants.get_caste_bonus(caste_id)
+    if caste_id == TYPE_CLOCKWORK and global.use_penalty then
+        bonus = bonus - 80
+    end
+    return string.format("%+d", bonus)
+end
+
+local function add_caste_flow(container, caste_id)
     local caste = Types.caste_names[caste_id]
 
-    local flow =
-        frame.add {
-        type = "flow",
+    local frame =
+        container.add {
+        type = "frame",
         name = "caste-" .. caste_id,
         direction = "vertical"
     }
+    frame.style.padding = 0
+    frame.style.left_margin = 4
 
-    local sprite = flow.add {
+    local sprite =
+        frame.add {
         type = "sprite",
         name = "caste-sprite",
         sprite = "technology/" .. caste .. "-caste",
@@ -59,7 +69,8 @@ local function add_caste_flow(frame, caste_id)
     sprite.style.stretch_image_to_widget_size = true
     sprite.style.horizontal_align = "center"
 
-    local population_label = flow.add {
+    local population_label =
+        frame.add {
         type = "label",
         name = "caste-population",
         caption = global.population[caste_id],
@@ -67,18 +78,32 @@ local function add_caste_flow(frame, caste_id)
     }
     population_label.style.minimal_width = Gui.CITY_INFO_SPRITE_SIZE
     population_label.style.horizontal_align = "center"
+
+    local bonus_label =
+        frame.add {
+        type = "label",
+        name = "caste-bonus",
+        caption = {"caste-bonus.display-" .. caste, get_bonus_string(caste_id)},
+        tooltip = {"caste-bonus." .. caste}
+    }
+    bonus_label.style.minimal_width = Gui.CITY_INFO_SPRITE_SIZE
+    bonus_label.style.horizontal_align = "center"
 end
 
-local function update_caste_flow(frame, caste_id)
-    local caste_flow = frame["caste-" .. caste_id]
+local function update_caste_flow(container, caste_id)
+    local caste_frame = container["caste-" .. caste_id]
 
     -- the frame may not yet exist
-    if caste_flow == nil then
-        add_caste_flow(frame, caste_id)
+    if caste_frame == nil then
+        add_caste_flow(container, caste_id)
         return
     end
 
-    caste_flow["caste-population"].caption = global.population[caste_id]
+    caste_frame["caste-population"].caption = global.population[caste_id]
+    caste_frame["caste-bonus"].caption = {
+        "caste-bonus.display-" .. Types.get_caste_name(caste_id),
+        get_bonus_string(caste_id)
+    }
 end
 
 function Gui.create_city_info_for(player)
@@ -121,6 +146,14 @@ function Gui.update_city_info()
             Gui.create_city_info_for(player)
         end
     end
+end
+
+function Gui.create_details_view_for(player)
+
+end
+
+function Gui.update_details_view()
+
 end
 
 return Gui
