@@ -1,8 +1,11 @@
 Prototype = {}
 
+-- gets the prototype of the specified type (or one of the specified types) out of data.raw
+-- returns an empty table if no one was found, so that I can manipulate prototypes without
+-- checking if they exist
 function Prototype:get(prototype_type, name)
     if type(prototype_type) == "string" then
-        return data.raw[prototype_type][name]
+        return data.raw[prototype_type][name] or {}
     elseif type(prototype_type) == "table" then
         for _, ctype in pairs(prototype_type) do
             local res = data.raw[ctype][name]
@@ -12,7 +15,13 @@ function Prototype:get(prototype_type, name)
         end
     end
 
-    return nil
+    return {}
+end
+
+function Prototype:create(prototype)
+    data:extend {prototype}
+
+    return Prototype:get(prototype.type, prototype.name)
 end
 
 --[[

@@ -82,7 +82,7 @@ end
 local meta = {}
 
 function meta:__call(item)
-    return self.values[item]
+    return Food.values[item]
 end
 
 setmetatable(Food, meta)

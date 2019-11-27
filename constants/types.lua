@@ -1,11 +1,11 @@
 -- entities
 TYPE_EMPTY_HOUSE = 0
 TYPE_CLOCKWORK = 1
-TYPE_EMBER = 2
+TYPE_ORCHID = 2
 TYPE_GUNFIRE = 3
-TYPE_GLEAM = 4
+TYPE_EMBER = 4
 TYPE_FOUNDRY = 5
-TYPE_ORCHID = 6
+TYPE_GLEAM = 6
 TYPE_AURORA = 7
 TYPE_PLASMA = 8
 
@@ -86,45 +86,43 @@ Types.entity_type_lookup = {
     }
 }
 
-function Types:get_entity_type(entity)
-    return self.entity_type_lookup.types[entity.type] or self.entity_type_lookup.names[entity.name] or TYPE_NULL
+function Types.get_entity_type(entity)
+    return Types.entity_type_lookup.types[entity.type] or Types.entity_type_lookup.names[entity.name] or TYPE_NULL
 end
 
-setmetatable(Types, {__call = Types.get_entity_type})
-
-function Types:is_housing(_type)
+function Types.is_housing(_type)
     return _type < 100
 end
 
-function Types:is_inhabited(_type)
+function Types.is_inhabited(_type)
     return (_type < 100) and (_type ~= 0)
 end
 
-function Types:is_civil(_type)
+function Types.is_civil(_type)
     return _type < 1000
 end
 
-function Types:is_relevant_to_register(_type)
+function Types.is_relevant_to_register(_type)
     return _type < 2000
 end
 
-function Types:is_affected_by_clockwork(_type)
+function Types.is_affected_by_clockwork(_type)
     return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
 end
 
-function Types:needs_beacon(_type)
+function Types.needs_beacon(_type)
     return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
 end
 
-function Types:needs_eei(_type)
+function Types.needs_eei(_type)
     return _type < 1000
 end
 
-function Types:needs_alt_mode_sprite(_type)
+function Types.needs_alt_mode_sprite(_type)
     return _type < 100
 end
 
-Types.taste_lookup = {
+Types.taste_names = {
     [TASTE_BITTER] = "bitter",
     [TASTE_NEUTRAL] = "neutral",
     [TASTE_SALTY] = "salty",
@@ -134,22 +132,22 @@ Types.taste_lookup = {
     [TASTE_UMAMI] = "umami"
 }
 
-function Types:needs_neighborhood(_type) -- I might need to add more
-    return self:is_housing(_type)
+function Types.needs_neighborhood(_type) -- I might need to add more
+    return Types.is_housing(_type)
 end
 
 Types.caste_names = {
     [TYPE_CLOCKWORK] = "clockwork",
-    [TYPE_EMBER] = "ember",
-    [TYPE_GUNFIRE] = "gunfire",
-    [TYPE_GLEAM] = "gleam",
-    [TYPE_FOUNDRY] = "foundry",
     [TYPE_ORCHID] = "orchid",
+    [TYPE_GUNFIRE] = "gunfire",
+    [TYPE_EMBER] = "ember",
+    [TYPE_FOUNDRY] = "foundry",
+    [TYPE_GLEAM] = "gleam",
     [TYPE_AURORA] = "aurora"
 }
 
-function Types:get_caste_name(_type)
-    return self.caste_names[_type]
+function Types.get_caste_name(_type)
+    return Types.caste_names[_type]
 end
 
 setmetatable(Types.caste_names, {__call = Types.get_caste_name})
@@ -164,3 +162,11 @@ Types.caste_sprites = {
     [TYPE_ORCHID] = "orchid-caste",
     [TYPE_AURORA] = "aurora-caste"
 }
+
+local meta = {}
+
+function meta:__call(entity)
+    return Types.get_entity_type(entity)
+end
+
+setmetatable(Types, meta)

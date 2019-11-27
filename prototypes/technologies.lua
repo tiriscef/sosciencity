@@ -22,23 +22,27 @@ Technology:create {
 
 Technology:create {
     type = "technology",
-    name = "ember-caste",
-    icon = "__sosciencity__/graphics/ember-caste.png",
+    name = "orchid-caste",
+    icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
     icon_size = 256,
     upgrade = false,
-    prerequisites = {"clockwork-caste", "logistic-science-pack"},
+    prerequisites = {"clockwork-caste"},
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.ember-caste"}
+            effect_description = {"description.orchid-caste"}
         }
     },
     unit = {
         count = 51,
-        ingredients = {{"automation-science-pack", 1}},
-        time = 20
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
     }
 }
+
+Technology("logistic-science-pack"):add_prerequisite("orchid-caste")
 
 Technology:create {
     type = "technology",
@@ -46,7 +50,7 @@ Technology:create {
     icon = "__sosciencity__/graphics/gunfire-caste.png",
     icon_size = 256,
     upgrade = false,
-    prerequisites = {"ember-caste", "military-science-pack"},
+    prerequisites = {"orchid-caste", "logistic-science-pack"},
     effects = {
         {
             type = "nothing",
@@ -63,6 +67,59 @@ Technology:create {
     }
 }
 
+Technology("military-science-pack"):add_prerequisite("gunfire-caste")
+
+Technology:create {
+    type = "technology",
+    name = "ember-caste",
+    icon = "__sosciencity__/graphics/ember-caste.png",
+    icon_size = 256,
+    upgrade = false,
+    prerequisites = {"orchid-caste", "logistic-science-pack"},
+    effects = {
+        {
+            type = "nothing",
+            effect_description = {"description.ember-caste"}
+        }
+    },
+    unit = {
+        count = 133,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
+Technology("chemical-science-pack"):add_prerequisite("ember-caste")
+
+Technology:create {
+    type = "technology",
+    name = "foundry-caste",
+    icon = "__sosciencity__/graphics/foundry-caste.png",
+    icon_size = 256,
+    upgrade = false,
+    prerequisites = {"ember-caste", "chemical-science-pack"},
+    effects = {
+        {
+            type = "nothing",
+            effect_description = {"description.foundry-caste"}
+        }
+    },
+    unit = {
+        count = 233,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Technology("production-science-pack"):add_prerequisite("foundry-caste")
+
 Technology:create {
     type = "technology",
     name = "gleam-caste",
@@ -77,30 +134,7 @@ Technology:create {
         }
     },
     unit = {
-        count = 66,
-        ingredients = {
-            {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
-        },
-        time = 20
-    }
-}
-
-Technology:create {
-    type = "technology",
-    name = "foundry-caste",
-    icon = "__sosciencity__/graphics/foundry-caste.png",
-    icon_size = 256,
-    upgrade = false,
-    prerequisites = {"gleam-caste", "production-science-pack"},
-    effects = {
-        {
-            type = "nothing",
-            effect_description = {"description.foundry-caste"}
-        }
-    },
-    unit = {
-        count = 133,
+        count = 233,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},
@@ -110,37 +144,15 @@ Technology:create {
     }
 }
 
-Technology:create {
-    type = "technology",
-    name = "orchid-caste",
-    icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
-    upgrade = false,
-    prerequisites = {"gleam-caste", "utility-science-pack"},
-    effects = {
-        {
-            type = "nothing",
-            effect_description = {"description.orchid-caste"}
-        }
-    },
-    unit = {
-        count = 133,
-        ingredients = {
-            {"automation-science-pack", 1},
-            {"logistic-science-pack", 1},
-            {"chemical-science-pack", 1}
-        },
-        time = 30
-    }
-}
+Technology("utility-science-pack"):add_prerequisite("gleam-caste")
 
 Technology:create {
     type = "technology",
     name = "aurora-caste",
-    icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
+    icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
+    icon_size = 256,
     upgrade = false,
-    prerequisites = {"orchid-caste", "space-science-pack"},
+    prerequisites = {"orchid-caste", "utility-science-pack", "production-science-pack"},
     effects = {
         {
             type = "nothing",
@@ -148,7 +160,7 @@ Technology:create {
         }
     },
     unit = {
-        count = 500,
+        count = 511,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},
@@ -156,9 +168,11 @@ Technology:create {
             {"production-science-pack", 1},
             {"utility-science-pack", 1}
         },
-        time = 30
+        time = 60
     }
 }
+
+Technology("space-science-pack"):add_prerequisite("aurora-caste")
 
 ---------------------------------------------------------------------------------------------------
 -- << architecture technologies >>

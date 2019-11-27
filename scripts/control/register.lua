@@ -20,7 +20,7 @@ local function new_entry(entity, _type)
     }
 
     Subentities.add_all_for(entry)
-    if Types:needs_neighborhood(_type) then
+    if Types.needs_neighborhood(_type) then
         Neighborhood.add_neighborhood_data(entry, _type)
     end
 
@@ -41,14 +41,14 @@ end
 function Register.add(entity)
     local _type = Types(entity)
 
-    if Types:is_relevant_to_register(_type) then
+    if Types.is_relevant_to_register(_type) then
         add_entry(entity, _type)
     end
 
     if _type == TYPE_MINING_DRILL then
         global.machine_count = global.machine_count + 1
     end
-    if Types:is_affected_by_clockwork(_type) then
+    if Types.is_affected_by_clockwork(_type) then
         global.machine_count = global.machine_count + 1
     end
     if _type == TYPE_TURRET and entity.force.name ~= "enemy" then
@@ -74,7 +74,7 @@ function Register.remove_entity(entity)
     if entity_type == TYPE_MINING_DRILL then
         global.machine_count = global.machine_count - 1
     end
-    if Types:is_affected_by_clockwork(entity_type) then
+    if Types.is_affected_by_clockwork(entity_type) then
         global.machine_count = global.machine_count - 1
     end
     if entity_type == TYPE_TURRET and entity.force.name ~= "enemy" then
