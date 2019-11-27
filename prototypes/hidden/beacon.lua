@@ -1,5 +1,5 @@
 --<< modules >>
-Item:create {
+Item.create {
     type = "module",
     name = "sosciencity-penalty",
     icon = "__sosciencity__/graphics/empty.png",
@@ -15,7 +15,7 @@ Item:create {
 for i = 0, 14 do
     local strength = 2 ^ i * 0.01
 
-    Item:create {
+    Item.create {
         type = "module",
         name = i .. "-sosciencity-speed",
         icon = "__sosciencity__/graphics/empty.png",
@@ -28,7 +28,7 @@ for i = 0, 14 do
         effect = {speed = {bonus = strength}}
     }
 
-    Item:create {
+    Item.create {
         type = "module",
         name = i .. "-sosciencity-productivity",
         icon = "__sosciencity__/graphics/empty.png",
@@ -43,7 +43,7 @@ for i = 0, 14 do
 end
 
 --<< beacon >>
-Entity:create {
+Entity.create {
     type = "beacon",
     name = "sosciencity-hidden-beacon",
     energy_usage = "10W",

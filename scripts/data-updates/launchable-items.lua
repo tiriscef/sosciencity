@@ -2,7 +2,7 @@ table.insert(
     item_operations,
     {
         func = function(item, details)
-            local launch_products = item:get_launch_products()
+            local launch_products = Item:get_launch_products()
             for _, product in pairs(launch_products) do
                 local name = RecipeEntry:get_name(product)
                 local amount = RecipeEntry:get_average_yield(product)

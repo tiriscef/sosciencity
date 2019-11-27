@@ -88,28 +88,26 @@ Recipe = {}
 Recipe.__index = Recipe
 
 -- << getter functions >>
-function Recipe:get_by_name(name)
-    local new = Prototype:get("recipe", name)
+function Recipe.get_by_name(name)
+    local new = Prototype.get("recipe", name)
     setmetatable(new, Recipe)
     return new
 end
 
-function Recipe:get_from_prototype(prototype)
+function Recipe.get_from_prototype(prototype)
     setmetatable(prototype, Recipe)
     return prototype
 end
 
-function Recipe:get(name)
+function Recipe.get(name)
     if type(name) == "string" then
-        return self:get_by_name(name)
+        return Recipe.get_by_name(name)
     else
-        return self:get_from_prototype(name)
+        return Recipe.get_from_prototype(name)
     end
 end
 
-setmetatable(Recipe, {__call = Recipe.get})
-
-function Recipe:pairs()
+function Recipe.pairs()
     local index, value
 
     local function _next()
@@ -125,13 +123,13 @@ function Recipe:pairs()
 end
 
 -- << creation >>
-function Recipe:create(prototype)
+function Recipe.create(prototype)
     if not prototype.type then
         prototype.type = "recipe"
     end
 
     data:extend {prototype}
-    return self:get(prototype)
+    return Recipe.get(prototype)
 end
 
 -- << manipulation >>
@@ -330,12 +328,12 @@ function Recipe:add_unlock(technology_name)
         return self
     end
 
-    local tech = Technology:get_by_name(technology_name)
+    local tech = Technology.get_by_name(technology_name)
 
     if tech then
         tech:add_unlock(self.name)
     else
-        Prototype:postpone {
+        Prototype.postpone {
             recipe = self,
             technology = technology_name,
             execute = function(self)
@@ -375,5 +373,13 @@ function Recipe:multiply_expensive_ingredients(multiplier)
 end
 
 function Recipe:allow_productivity_modules()
-    Prototype:add_recipe_to_productivity_modules(self.name)
+    Prototype.add_recipe_to_productivity_modules(self.name)
 end
+
+local meta = {}
+
+function meta:__call(name)
+    return Recipe.get(name)
+end
+
+setmetatable(Recipe, meta)

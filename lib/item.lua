@@ -7,29 +7,27 @@ Item = {}
 Item.__index = Item
 
 -- << getter functions >>
-function Item:get_by_name(name)
+function Item.get_by_name(name)
     local item_types = require("lib.prototype-types.item-types")
-    local new = Prototype:get(item_types, name)
+    local new = Prototype.get(item_types, name)
     setmetatable(new, Item)
     return new
 end
 
-function Item:get_from_prototype(prototype)
+function Item.get_from_prototype(prototype)
     setmetatable(prototype, Item)
     return prototype
 end
 
-function Item:get(name)
+function Item.get(name)
     if type(name) == "string" then
-        return self:get_by_name(name)
+        return Item.get_by_name(name)
     else
-        return self:get_from_prototype(name)
+        return Item.get_from_prototype(name)
     end
 end
 
-setmetatable(Item, {__call = Item.get})
-
-function Item:pairs(item_type)
+function Item.pairs(item_type)
     local index, value
 
     local function _next()
@@ -45,13 +43,13 @@ function Item:pairs(item_type)
 end
 
 -- << creation >>
-function Item:create(prototype)
+function Item.create(prototype)
     if not prototype.type then
         prototype.type = "item"
     end
 
     data:extend {prototype}
-    return Item:get_by_name(prototype.name)
+    return Item.get_by_name(prototype.name)
 end
 
 -- << manipulation >>
@@ -112,3 +110,11 @@ function Item:add_icon_to_sprite_variations()
         }
     )
 end
+
+local meta = {}
+
+function meta:__call(name)
+    return Item.get(name)
+end
+
+setmetatable(Item, meta)

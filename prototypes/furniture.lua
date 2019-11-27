@@ -12,7 +12,7 @@ local furniture_items = {
 
 for index, details in pairs(furniture_items) do
     local item_prototype =
-        Item:create {
+        Item.create {
         name = details.name,
         icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
         icon_size = 64,

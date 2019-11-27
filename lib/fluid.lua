@@ -6,28 +6,26 @@ Fluid = {}
 -- lua is weird
 Fluid.__index = Fluid
 
-function Fluid:get_by_name(name)
-    local new = Prototype:get("fluid", name)
+function Fluid.get_by_name(name)
+    local new = Prototype.get("fluid", name)
     setmetatable(new, Fluid)
     return new
 end
 
-function Fluid:get_from_prototype(prototype)
+function Fluid.get_from_prototype(prototype)
     setmetatable(prototype, Fluid)
     return prototype
 end
 
-function Fluid:get(name)
+function Fluid.get(name)
     if type(name) == "string" then
-        return self:get_by_name(name)
+        return Fluid.get_by_name(name)
     else
-        return self:get_from_prototype(name)
+        return Fluid.get_from_prototype(name)
     end
 end
 
-setmetatable(Fluid, {__call = Fluid.get})
-
-function Fluid:pairs()
+function Fluid.pairs()
     local index, value
 
     local function _next()
@@ -48,5 +46,13 @@ function Fluid:create(prototype)
     end
 
     data:extend {prototype}
-    return self:get(prototype.name)
+    return Fluid.get(prototype.name)
 end
+
+local meta = {}
+
+function meta:__call(name)
+    return Fluid.get(name)
+end
+
+setmetatable(Fluid, meta)

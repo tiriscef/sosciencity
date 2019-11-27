@@ -12,7 +12,7 @@ local idea_items = {
 
 for index, details in pairs(idea_items) do
     local item_prototype =
-        Item:create {
+        Item.create {
         name = details.name,
         icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
         icon_size = 64,
@@ -34,7 +34,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
-Recipe:create {
+Recipe.create {
     type = "recipe",
     name = "brainstorm",
     category = "handcrafting",
@@ -51,7 +51,7 @@ Recipe:create {
     main_product = ""
 }
 
-Recipe:create {
+Recipe.create {
     type = "recipe",
     name = "write-essay",
     category = "handcrafting",

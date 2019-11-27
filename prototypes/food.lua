@@ -31,7 +31,7 @@ for food_name, food_details in pairs(Food.values) do
     local luxury = food_details.luxury
 
     local item_prototype =
-        Item:create {
+        Item.create {
         type = "tool",
         name = food_name,
         enabled = true,

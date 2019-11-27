@@ -19,7 +19,7 @@ for house_name, house in pairs(Housing.houses) do
     local details = data_details[house_name]
 
     local item_prototype =
-        Item:create {
+        Item.create {
         type = "item",
         name = house_name,
         icon = "__sosciencity__/graphics/icon/" .. house_name .. ".png",
@@ -39,9 +39,9 @@ for house_name, house in pairs(Housing.houses) do
 
     Tables.set_fields(item_prototype, details.distinctions)
 
-    RecipeGenerator:create_housing_recipe(house_name, house)
+    RecipeGenerator.create_housing_recipe(house_name, house)
 
-    Entity:create {
+    Entity.create {
         type = "container",
         name = house_name,
         order = orderstring,
@@ -53,8 +53,8 @@ for house_name, house in pairs(Housing.houses) do
         corpse = "small-remnants", -- TODO
         open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65}, -- TODO sounds
         close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7}, -- TODO
-        collision_box = Entity:get_collision_box(details.width, details.height),
-        selection_box = Entity:get_selection_box(details.width, details.height),
+        collision_box = Entity.get_collision_box(details.width, details.height),
+        selection_box = Entity.get_selection_box(details.width, details.height),
         inventory_size = 64,
         vehicle_impact_sound = {
             filename = "__base__/sound/car-metal-impact.ogg",
