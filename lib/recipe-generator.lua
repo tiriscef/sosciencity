@@ -8,12 +8,11 @@ RecipeGenerator = {}
 -- 0: Start of the game, nothing researched
 -- 1: automation science
 -- 2: logistic science
--- 3: military science
--- 4: chemical science
--- 5: production science
--- 6: utility science
--- 7: space science
--- 8: post space science
+-- 3: chemical science
+-- 4: production science
+-- 5: utility science
+-- 6: space science
+-- 7: post space science
 RecipeGenerator.room_ingredients = {
     [0] = {
         {type = "item", name = "wood", amount = 5},
@@ -40,8 +39,7 @@ RecipeGenerator.unlocking_tech = {
     [4] = "architecture-4",
     [5] = "architecture-5",
     [6] = "architecture-6",
-    [7] = "architecture-7",
-    [8] = "architecture-8"
+    [7] = "architecture-7"
 }
 
 -- table with coziness -> array of IngredientPrototypes

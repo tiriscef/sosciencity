@@ -15,7 +15,9 @@ Technology.create {
     },
     unit = {
         count = 10,
-        ingredients = {{"automation-science-pack", 1}},
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
         time = 10
     }
 }
@@ -186,7 +188,9 @@ Technology.create {
     effects = {},
     unit = {
         count = 30,
-        ingredients = {{"automation-science-pack", 1}},
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
         time = 10
     }
 }
@@ -197,7 +201,7 @@ Technology.create {
     icon = "__sosciencity__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"ember-caste", "architecture-1"},
+    prerequisites = {"logistic-science-pack", "architecture-1"},
     effects = {},
     unit = {
         count = 60,
@@ -215,13 +219,14 @@ Technology.create {
     icon = "__sosciencity__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"gunfire-caste", "architecture-2"},
+    prerequisites = {"chemical-science-pack", "architecture-2"},
     effects = {},
     unit = {
         count = 110,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 20
     }
@@ -233,13 +238,15 @@ Technology.create {
     icon = "__sosciencity__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"gleam-caste", "architecture-3"},
+    prerequisites = {"production-science-pack", "architecture-3"},
     effects = {},
     unit = {
         count = 230,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1}
         },
         time = 25
     }
@@ -251,14 +258,15 @@ Technology.create {
     icon = "__sosciencity__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"foundry-caste", "architecture-4"},
+    prerequisites = {"utility-science-pack", "architecture-4"},
     effects = {},
     unit = {
         count = 470,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},
-            {"chemical-science-pack", 1}
+            {"chemical-science-pack", 1},
+            {"utility-science-pack", 1}
         },
         time = 30
     }
@@ -270,14 +278,16 @@ Technology.create {
     icon = "__sosciencity__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"orchid-caste", "architecture-5"},
+    prerequisites = {"aurora-caste", "architecture-5"},
     effects = {},
     unit = {
         count = 1060,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},
-            {"chemical-science-pack", 1}
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1},
+            {"utility-science-pack", 1}
         },
         time = 35
     }
@@ -289,7 +299,7 @@ Technology.create {
     icon = "__sosciencity__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"aurora-caste", "architecture-6"},
+    prerequisites = {"space-science-pack", "architecture-6"},
     effects = {},
     unit = {
         count = 2350,
@@ -298,30 +308,29 @@ Technology.create {
             {"logistic-science-pack", 1},
             {"chemical-science-pack", 1},
             {"production-science-pack", 1},
-            {"utility-science-pack", 1}
+            {"utility-science-pack", 1},
+            {"space-science-pack", 1}
         },
         time = 40
     }
 }
 
+---------------------------------------------------------------------------------------------------
+-- << food stuff >>
 Technology.create {
     type = "technology",
-    name = "architecture-8",
-    icon = "__sosciencity__/graphics/technology/architecture.png",
+    name = "nightshades",
+    icon = "__sosciencity__/graphics/technology/nightshades.png",
     icon_size = 128,
-    upgrade = true,
-    prerequisites = {"space-science-pack", "architecture-7"},
+    upgrade = false,
+    prerequisites = {},
     effects = {},
     unit = {
-        count = 5510,
+        count = 35,
         ingredients = {
-            {"automation-science-pack", 1},
-            {"logistic-science-pack", 1},
-            {"chemical-science-pack", 1},
-            {"production-science-pack", 1},
-            {"utility-science-pack", 1}
+            {"automation-science-pack", 1}
         },
-        time = 45
+        time = 20
     }
 }
 
