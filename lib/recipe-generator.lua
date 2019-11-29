@@ -65,7 +65,20 @@ Tirislib_RecipeGenerator.furniture_ingredients = {
     [10] = {}
 }
 
+Tirislib_RecipeGenerator.greenhouse_ingredients = {
+    {type = "item", name = "timber", amount = 150},
+    {type = "item", name = "stone-brick", amount = 150},
+    {type = "item", name = "iron-plate", amount = 150},
+    {type = "item", name = "steel-plate", amount = 100},
+    {type = "item", name = "small-lamp", amount = 50},
+    {type = "item", name = "electric-circuit", amount = 20}
+}
+
 Tirislib_RecipeGenerator.expensive_multiplier = 3
+Tirislib_RecipeGenerator.expensive_farming_multiplier = 2
+
+Tirislib_RecipeGenerator.agriculture_time = 120
+Tirislib_RecipeGenerator.greenhouse_time = 100
 
 function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
     local item = Tirislib_Item.get(housing_name)
@@ -121,11 +134,53 @@ function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, addit
     recipe:add_ingredient_range(ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_multiplier)
 
-    if additional_fields then
-        Tirislib_Tables.set_fields(recipe, additional_fields)
-    end
+    Tirislib_Tables.set_fields(recipe, additional_fields)
 
     return recipe
 end
 
-Tirislib_RecipeGenerator.greenhouse_ingredients = {}
+function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, ingredients, yield, additional_fields)
+    local recipe =
+        Tirislib_Recipe.create {
+        name = product_name .. "-agriculture",
+        category = "sosciencity-agriculture",
+        enabled = true,
+        energy_required = Tirislib_RecipeGenerator.agriculture_time,
+        ingredients = {},
+        results = {
+            {type = "item", name = product_name, amount_min = 1, amount_max = yield, probability = 0.5}
+        },
+        subgroup = "sosciencity-agriculture"
+    }:create_difficulties()
+
+    recipe:add_ingredient_range(ingredients)
+    recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
+
+    Tirislib_Tables.set_fields(recipe, additional_fields)
+
+    return recipe
+end
+
+function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, ingredients, yield, additional_fields)
+    local min_yield = math.min(math.floor(yield / 2))
+
+    local recipe =
+        Tirislib_Recipe.create {
+        name = product_name .. "-greenhouse",
+        category = "sosciencity-greenhouse",
+        enabled = true,
+        energy_required = Tirislib_RecipeGenerator.greenhouse_time,
+        ingredients = {},
+        results = {
+            {type = "item", name = product_name, amount_min = min_yield, amount_max = yield}
+        },
+        subgroup = "sosciencity-greenhouse"
+    }:create_difficulties()
+
+    recipe:add_ingredient_range(ingredients)
+    recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
+
+    Tirislib_Tables.set_fields(recipe, additional_fields)
+
+    return recipe
+end
