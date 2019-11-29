@@ -323,11 +323,28 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
     return self
 end
 
+function Tirislib_Recipe:set_enabled(normal, expensive)
+    if not expensive then
+        self.enabled = normal
+        expensive = normal
+    else
+        self.enabled = nil
+    end
+
+    if self.normal then
+        self.normal.enabled = normal
+    end
+    if self.expensive then
+        self.expensive.enabled = expensive
+    end
+end
+
 function Tirislib_Recipe:add_unlock(technology_name)
     if not technology_name then
         return self
     end
 
+    self:set_enabled(false)
     local tech = Tirislib_Technology.get_by_name(technology_name)
 
     if tech then
