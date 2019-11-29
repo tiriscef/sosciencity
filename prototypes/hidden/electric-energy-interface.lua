@@ -1,4 +1,4 @@
-Entity.create {
+Tirislib_Entity.create {
     type = "electric-energy-interface",
     name = "sosciencity-hidden-eei",
     flags = {

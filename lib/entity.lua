@@ -1,39 +1,39 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for entities >>
-Entity = {}
+Tirislib_Entity = {}
 
 -- this makes an object of this class call the class methods (if it hasn't an own method)
 -- lua is weird
-Entity.__index = Entity
+Tirislib_Entity.__index = Tirislib_Entity
 
-function Entity.get_by_name(name)
+function Tirislib_Entity.get_by_name(name)
     local entity_types = require("lib.prototype-types.entity-types")
-    local new = Prototype.get(entity_types, name)
-    setmetatable(new, Entity)
+    local new = Tirislib_Prototype.get(entity_types, name)
+    setmetatable(new, Tirislib_Entity)
     return new
 end
 
-function Entity.get_from_prototype(prototype)
-    setmetatable(prototype, Entity)
+function Tirislib_Entity.get_from_prototype(prototype)
+    setmetatable(prototype, Tirislib_Entity)
     return prototype
 end
 
-function Entity.get(name)
+function Tirislib_Entity.get(name)
     if type(name) == "string" then
-        return Entity.get_by_name(name)
+        return Tirislib_Entity.get_by_name(name)
     else
-        return Entity.get_from_prototype(name)
+        return Tirislib_Entity.get_from_prototype(name)
     end
 end
 
-function Entity.pairs(prototype_type)
+function Tirislib_Entity.pairs(prototype_type)
     local index, value
 
     local function _next()
         index, value = next(data.raw[prototype_type], index)
 
         if index then
-            setmetatable(value, Entity)
+            setmetatable(value, Tirislib_Entity)
             return index, value
         end
     end
@@ -41,38 +41,38 @@ function Entity.pairs(prototype_type)
     return _next, index, value
 end
 
-function Entity.create(prototype)
+function Tirislib_Entity.create(prototype)
     data:extend {prototype}
-    return Entity.get(prototype)
+    return Tirislib_Entity.get(prototype)
 end
 
-function Entity.get_selection_box(width, height)
+function Tirislib_Entity.get_selection_box(width, height)
     return {
         {-width / 2., -height / 2.},
         {width / 2., height / 2.}
     }
 end
 
-function Entity.get_collision_box(width, height)
+function Tirislib_Entity.get_collision_box(width, height)
     return {
         {-width / 2. + 0.2, -height / 2. + 0.2},
         {width / 2. - 0.2, height / 2. - 0.2}
     }
 end
 
-function Entity:add_crafting_category(category_name)
+function Tirislib_Entity:add_crafting_category(category_name)
     if not self.crafting_categories then
         self.crafting_categories = {}
     end
 
-    if not Tables.contains(self.crafting_categories, category_name) then
+    if not Tirislib_Tables.contains(self.crafting_categories, category_name) then
         table.insert(self.crafting_categories, category_name)
     end
 
     return self
 end
 
-function Entity:add_loot(loot)
+function Tirislib_Entity:add_loot(loot)
     if not self.loot then
         self.loot = {}
     end
@@ -91,7 +91,7 @@ end
 local meta = {}
 
 function meta:__call(name)
-    return Entity.get(name)
+    return Tirislib_Entity.get(name)
 end
 
-setmetatable(Entity, meta)
+setmetatable(Tirislib_Entity, meta)

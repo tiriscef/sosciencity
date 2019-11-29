@@ -21,7 +21,7 @@ local PROBABILITY = 0.5
 local types = {"unit", "turret"}
 
 for _, prototype_type in pairs(types) do
-    for _, unit in Entity.pairs(prototype_type) do
+    for _, unit in Tirislib_Entity.pairs(prototype_type) do
         if is_likely_an_alien(unit) then
             local count_min, count_max = get_meat_amounts(unit)
 

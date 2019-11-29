@@ -1,14 +1,14 @@
 --<< Just some helper functions >>
-Utils = {}
+Tirislib_Utils = {}
 
-function Utils.weighted_average(a, weight_a, b, weight_b)
+function Tirislib_Utils.weighted_average(a, weight_a, b, weight_b)
     return (a * weight_a + b * weight_b) / (weight_a + weight_b)
 end
 
 --<< Just some table helper functions >>
-Tables = {}
+Tirislib_Tables = {}
 
-function Tables.get_keyset(tbl)
+function Tirislib_Tables.get_keyset(tbl)
     local ret = {}
     local index = 1
 
@@ -21,7 +21,7 @@ function Tables.get_keyset(tbl)
 end
 
 --https://gist.github.com/Uradamus/10323382
-function Tables.shuffle(tbl)
+function Tirislib_Tables.shuffle(tbl)
     for i = #tbl, 2, -1 do
         local j = math.random(i)
         tbl[i], tbl[j] = tbl[j], tbl[i]
@@ -31,7 +31,7 @@ function Tables.shuffle(tbl)
 end
 
 -- clones the table, tables inside will be referenced
-function Tables.copy(tbl)
+function Tirislib_Tables.copy(tbl)
     local ret = {}
 
     for key, value in pairs(tbl) do
@@ -43,12 +43,12 @@ end
 
 -- clones the table and all tables inside
 -- assumes that there are no circular structures
-function Tables.recursive_copy(tbl)
+function Tirislib_Tables.recursive_copy(tbl)
     local ret = {}
 
     for key, value in pairs(tbl) do
         if type(value) == "table" then
-            ret[key] = Tables.recursive_copy(value)
+            ret[key] = Tirislib_Tables.recursive_copy(value)
         else
             ret[key] = value
         end
@@ -57,7 +57,7 @@ function Tables.recursive_copy(tbl)
     return ret
 end
 
-function Tables.contains(tbl, element)
+function Tirislib_Tables.contains(tbl, element)
     for _, value in pairs(tbl) do
         if element == value then
             return true
@@ -67,11 +67,11 @@ function Tables.contains(tbl, element)
     return false
 end
 
-function Tables.contains_key(tbl, key)
+function Tirislib_Tables.contains_key(tbl, key)
     return tbl[key] ~= nil
 end
 
-function Tables.merge(lh, rh)
+function Tirislib_Tables.merge(lh, rh)
     for _, value in pairs(rh) do
         table.insert(lh, value)
     end
@@ -79,7 +79,7 @@ function Tables.merge(lh, rh)
     return lh
 end
 
-function Tables.set_fields(tbl, fields)
+function Tirislib_Tables.set_fields(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
             tbl[key] = value

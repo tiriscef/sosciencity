@@ -45,10 +45,10 @@ function Inhabitants.try_add_to_house(entry, count, happiness, healthiness, heal
     healthiness = healthiness or DEFAULT_HEALTHINESS
     healthiness_mental = healthiness_mental or DEFAULT_HEALTHINESS_MENTAL
 
-    entry.happiness = Utils.weighted_average(entry.happiness, entry.inhabitants, happiness, count_moving_in)
-    entry.healthiness = Utils.weighted_average(entry.healthiness, entry.inhabitants, healthiness, count_moving_in)
+    entry.happiness = Tirislib_Utils.weighted_average(entry.happiness, entry.inhabitants, happiness, count_moving_in)
+    entry.healthiness = Tirislib_Utils.weighted_average(entry.healthiness, entry.inhabitants, healthiness, count_moving_in)
     entry.healthiness_mental =
-        Utils.weighted_average(entry.healthiness_mental, entry.inhabitants, healthiness_mental, count_moving_in)
+        Tirislib_Utils.weighted_average(entry.healthiness_mental, entry.inhabitants, healthiness_mental, count_moving_in)
     entry.inhabitants = entry.inhabitants + count_moving_in
 
     global.population[entry.type] = global.population[entry.type] + count_moving_in

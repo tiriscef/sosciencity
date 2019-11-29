@@ -12,7 +12,7 @@ local idea_items = {
 
 for index, details in pairs(idea_items) do
     local item_prototype =
-        Item.create {
+        Tirislib_Item.create {
         name = details.name,
         icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
         icon_size = 64,
@@ -29,12 +29,12 @@ for index, details in pairs(idea_items) do
         end
     end
 
-    Tables.set_fields(item_prototype, details.distinctions)
+    Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
-Recipe.create {
+Tirislib_Recipe.create {
     type = "recipe",
     name = "brainstorm",
     category = "handcrafting",
@@ -51,7 +51,7 @@ Recipe.create {
     main_product = ""
 }
 
-Recipe.create {
+Tirislib_Recipe.create {
     type = "recipe",
     name = "write-essay",
     category = "handcrafting",

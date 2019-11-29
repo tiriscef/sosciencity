@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << caste technologies >>
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "clockwork-caste",
     icon = "__sosciencity__/graphics/clockwork-caste.png",
@@ -22,7 +22,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "orchid-caste",
     icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
@@ -44,9 +44,9 @@ Technology.create {
     }
 }
 
-Technology("logistic-science-pack"):add_prerequisite("orchid-caste")
+Tirislib_Technology("logistic-science-pack"):add_prerequisite("orchid-caste")
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "gunfire-caste",
     icon = "__sosciencity__/graphics/gunfire-caste.png",
@@ -69,9 +69,9 @@ Technology.create {
     }
 }
 
-Technology("military-science-pack"):add_prerequisite("gunfire-caste")
+Tirislib_Technology("military-science-pack"):add_prerequisite("gunfire-caste")
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "ember-caste",
     icon = "__sosciencity__/graphics/ember-caste.png",
@@ -94,9 +94,9 @@ Technology.create {
     }
 }
 
-Technology("chemical-science-pack"):add_prerequisite("ember-caste")
+Tirislib_Technology("chemical-science-pack"):add_prerequisite("ember-caste")
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "foundry-caste",
     icon = "__sosciencity__/graphics/foundry-caste.png",
@@ -120,9 +120,9 @@ Technology.create {
     }
 }
 
-Technology("production-science-pack"):add_prerequisite("foundry-caste")
+Tirislib_Technology("production-science-pack"):add_prerequisite("foundry-caste")
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "gleam-caste",
     icon = "__sosciencity__/graphics/gleam-caste.png",
@@ -146,9 +146,9 @@ Technology.create {
     }
 }
 
-Technology("utility-science-pack"):add_prerequisite("gleam-caste")
+Tirislib_Technology("utility-science-pack"):add_prerequisite("gleam-caste")
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "aurora-caste",
     icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
@@ -174,11 +174,11 @@ Technology.create {
     }
 }
 
-Technology("space-science-pack"):add_prerequisite("aurora-caste")
+Tirislib_Technology("space-science-pack"):add_prerequisite("aurora-caste")
 
 ---------------------------------------------------------------------------------------------------
 -- << architecture technologies >>
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-1",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -195,7 +195,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-2",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -213,7 +213,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-3",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -232,7 +232,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-4",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -252,7 +252,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-5",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -272,7 +272,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-6",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -293,7 +293,7 @@ Technology.create {
     }
 }
 
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "architecture-7",
     icon = "__sosciencity__/graphics/technology/architecture.png",
@@ -317,7 +317,7 @@ Technology.create {
 
 ---------------------------------------------------------------------------------------------------
 -- << food stuff >>
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "nightshades",
     icon = "__sosciencity__/graphics/technology/nightshades.png",
@@ -336,7 +336,7 @@ Technology.create {
 
 ---------------------------------------------------------------------------------------------------
 -- << other technologies >>
-Technology.create {
+Tirislib_Technology.create {
     type = "technology",
     name = "resettlement",
     icon = "__sosciencity__/graphics/technology/placeholder.png", -- TODO create icon
