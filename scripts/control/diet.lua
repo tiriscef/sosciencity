@@ -180,9 +180,9 @@ end
 -- was consumed
 local function consume_food(inventories, amount, diet, diet_effects)
     local count = diet_effects.count
-    local items = Tables.get_keyset(diet)
+    local items = Tirislib_Tables.get_keyset(diet)
     local to_consume = amount
-    Tables.shuffle(items)
+    Tirislib_Tables.shuffle(items)
 
     for i = 1, count do
         to_consume = to_consume - consume_specific_food(inventories, to_consume, items[i])

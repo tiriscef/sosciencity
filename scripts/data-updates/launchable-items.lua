@@ -2,10 +2,10 @@ table.insert(
     item_operations,
     {
         func = function(item, details)
-            local launch_products = Item:get_launch_products()
+            local launch_products = Tirislib_Item:get_launch_products()
             for _, product in pairs(launch_products) do
-                local name = RecipeEntry:get_name(product)
-                local amount = RecipeEntry:get_average_yield(product)
+                local name = Tirislib_RecipeEntry:get_name(product)
+                local amount = Tirislib_RecipeEntry:get_average_yield(product)
 
                 for _, operation in pairs(recipe_operations) do
                     if operation.details.spread_to_launch_products and name == operation.details.item then

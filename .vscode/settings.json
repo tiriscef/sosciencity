@@ -10,6 +10,9 @@
         "serpent",
         "table_size",
         "mods",
-        "rendering"
+        "rendering",
+        "pipecoverspictures",
+        "assembler2pipepictures",
+        "util"
     ]
 }

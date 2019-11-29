@@ -31,7 +31,7 @@ for food_name, food_details in pairs(Food.values) do
     local luxury = food_details.luxury
 
     local item_prototype =
-        Item.create {
+        Tirislib_Item.create {
         type = "tool",
         name = food_name,
         enabled = true,
@@ -75,5 +75,5 @@ for food_name, food_details in pairs(Food.values) do
         end
     end
 
-    Tables.set_fields(item_prototype, details.distinctions)
+    Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 end

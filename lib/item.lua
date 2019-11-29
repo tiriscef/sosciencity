@@ -1,40 +1,40 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for items >>
-Item = {}
+Tirislib_Item = {}
 
 -- this makes an object of this class call the class methods (if it hasn't an own method)
 -- lua is weird
-Item.__index = Item
+Tirislib_Item.__index = Tirislib_Item
 
 -- << getter functions >>
-function Item.get_by_name(name)
+function Tirislib_Item.get_by_name(name)
     local item_types = require("lib.prototype-types.item-types")
-    local new = Prototype.get(item_types, name)
-    setmetatable(new, Item)
+    local new = Tirislib_Prototype.get(item_types, name)
+    setmetatable(new, Tirislib_Item)
     return new
 end
 
-function Item.get_from_prototype(prototype)
-    setmetatable(prototype, Item)
+function Tirislib_Item.get_from_prototype(prototype)
+    setmetatable(prototype, Tirislib_Item)
     return prototype
 end
 
-function Item.get(name)
+function Tirislib_Item.get(name)
     if type(name) == "string" then
-        return Item.get_by_name(name)
+        return Tirislib_Item.get_by_name(name)
     else
-        return Item.get_from_prototype(name)
+        return Tirislib_Item.get_from_prototype(name)
     end
 end
 
-function Item.pairs(item_type)
+function Tirislib_Item.pairs(item_type)
     local index, value
 
     local function _next()
         index, value = next(data.raw[item_type], index)
 
         if index then
-            setmetatable(value, Item)
+            setmetatable(value, Tirislib_Item)
             return index, value
         end
     end
@@ -43,21 +43,21 @@ function Item.pairs(item_type)
 end
 
 -- << creation >>
-function Item.create(prototype)
+function Tirislib_Item.create(prototype)
     if not prototype.type then
         prototype.type = "item"
     end
 
     data:extend {prototype}
-    return Item.get_by_name(prototype.name)
+    return Tirislib_Item.get_by_name(prototype.name)
 end
 
 -- << manipulation >>
-function Item:is_launchable()
+function Tirislib_Item:is_launchable()
     return (self.rocket_launch_product ~= nil) or (self.rocket_launch_products ~= nil)
 end
 
-function Item:get_launch_products()
+function Tirislib_Item:get_launch_products()
     if not self:is_launchable() then
         return {}
     end
@@ -65,7 +65,7 @@ function Item:get_launch_products()
     return self.rocket_launch_product and {self.rocket_launch_product} or self.rocket_launch_products
 end
 
-function Item:add_launch_product(product_prototype)
+function Tirislib_Item:add_launch_product(product_prototype)
     if not self:is_launchable() then
         self.rocket_launch_products = {product_prototype}
     else
@@ -79,7 +79,7 @@ function Item:add_launch_product(product_prototype)
     return self
 end
 
-function Item:add_sprite_variations(size, path, variations)
+function Tirislib_Item:add_sprite_variations(size, path, variations)
     if not self.pictures then
         self.pictures = {}
     end
@@ -96,7 +96,7 @@ function Item:add_sprite_variations(size, path, variations)
     end
 end
 
-function Item:add_icon_to_sprite_variations()
+function Tirislib_Item:add_icon_to_sprite_variations()
     if not self.pictures then
         self.pictures = {}
     end
@@ -114,7 +114,7 @@ end
 local meta = {}
 
 function meta:__call(name)
-    return Item.get(name)
+    return Tirislib_Item.get(name)
 end
 
-setmetatable(Item, meta)
+setmetatable(Tirislib_Item, meta)

@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 -- << static class for technology effects >>
-TechnologyEffect = {}
+Tirislib_TechnologyEffect = {}
 
-function TechnologyEffect:equal(effect1, effect2)
+function Tirislib_TechnologyEffect:equal(effect1, effect2)
     for key, value in pairs(effect1) do
         if value ~= effect2[key] then
             return false
@@ -14,39 +14,39 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << class for technologies >>
-Technology = {}
+Tirislib_Technology = {}
 
 -- this makes an object of this class call the class methods (if it hasn't an own method)
 -- lua is weird
-Technology.__index = Technology
+Tirislib_Technology.__index = Tirislib_Technology
 
-function Technology.get_by_name(name)
-    local new = Prototype.get("technology", name)
-    setmetatable(new, Technology)
+function Tirislib_Technology.get_by_name(name)
+    local new = Tirislib_Prototype.get("technology", name)
+    setmetatable(new, Tirislib_Technology)
     return new
 end
 
-function Technology.get_from_prototype(prototype)
-    setmetatable(prototype, Technology)
+function Tirislib_Technology.get_from_prototype(prototype)
+    setmetatable(prototype, Tirislib_Technology)
     return prototype
 end
 
-function Technology.get(name)
+function Tirislib_Technology.get(name)
     if type(name) == "string" then
-        return Technology.get_by_name(name)
+        return Tirislib_Technology.get_by_name(name)
     else
-        return Technology.get_from_prototype(name)
+        return Tirislib_Technology.get_from_prototype(name)
     end
 end
 
-function Technology.pairs()
+function Tirislib_Technology.pairs()
     local index, prototype
 
     local function _next()
         index, prototype = next(data.raw["technology"], index)
 
         if index then
-            setmetatable(prototype, Technology)
+            setmetatable(prototype, Tirislib_Technology)
             return index, prototype
         end
     end
@@ -54,23 +54,23 @@ function Technology.pairs()
     return _next, index, prototype
 end
 
-function Technology.create(prototype)
+function Tirislib_Technology.create(prototype)
     if not prototype.type then
         prototype.type = "technology"
     end
 
     data:extend {prototype}
-    return Technology.get_from_prototype(prototype)
+    return Tirislib_Technology.get_from_prototype(prototype)
 end
 
-function Technology:add_effect(effect)
+function Tirislib_Technology:add_effect(effect)
     if not self.effects then
         self.effects = {}
     end
 
     -- check if the Technology already has this effect
     for _, current_effect in pairs(self.effects) do
-        if TechnologyEffect:equal(effect, current_effect) then
+        if Tirislib_TechnologyEffect:equal(effect, current_effect) then
             -- return without doing anything in this case
             return self
         end
@@ -80,14 +80,14 @@ function Technology:add_effect(effect)
     return self
 end
 
-function Technology:add_unlock(recipe_name)
+function Tirislib_Technology:add_unlock(recipe_name)
     return self:add_effect {
         type = "unlock-recipe",
         recipe = recipe_name
     }
 end
 
-function Technology:add_prerequisite(tech_name)
+function Tirislib_Technology:add_prerequisite(tech_name)
     if not self.prerequisites then
         self.prerequisites = {}
     end
@@ -105,7 +105,7 @@ end
 local meta = {}
 
 function meta:__call(name)
-    return Technology.get(name)
+    return Tirislib_Technology.get(name)
 end
 
-setmetatable(Technology, meta)
+setmetatable(Tirislib_Technology, meta)
