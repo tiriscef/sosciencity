@@ -45,6 +45,18 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-agriculture",
+        group = "sosciencity",
+        order = "eaa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-greenhouse",
+        group = "sosciencity",
+        order = "eab"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-ideas",
         group = "sosciencity",
         order = "zaa"
