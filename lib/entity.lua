@@ -60,6 +60,21 @@ function Tirislib_Entity.get_collision_box(width, height)
     }
 end
 
+function Tirislib_Entity:set_size(width, height)
+    self.selection_box = Tirislib_Entity.get_selection_box(width, height)
+    self.collision_box = Tirislib_Entity.get_collision_box(width, height)
+
+    return self
+end
+
+function Tirislib_Entity.get_empty_pipe_picture()
+    return {
+        filename = "__sosciencity__/graphics/empty.png",
+        width = 1,
+        height = 1
+    }
+end
+
 function Tirislib_Entity:add_crafting_category(category_name)
     if not self.crafting_categories then
         self.crafting_categories = {}

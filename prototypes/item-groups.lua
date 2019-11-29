@@ -9,9 +9,15 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-infrastructure",
+        name = "sosciencity-buildings",
         group = "sosciencity",
         order = "aaa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-infrastructure",
+        group = "sosciencity",
+        order = "aab"
     },
     {
         type = "item-subgroup",

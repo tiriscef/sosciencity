@@ -54,7 +54,7 @@ Tirislib_RecipeGenerator.furniture_ingredients = {
     },
     [3] = {
         {type = "item", name = "furniture", amount = 2},
-        {type = "item", name = "stool", amount = 2},
+        {type = "item", name = "stool", amount = 2}
     },
     [4] = {},
     [5] = {},
@@ -68,9 +68,9 @@ Tirislib_RecipeGenerator.furniture_ingredients = {
 Tirislib_RecipeGenerator.expensive_multiplier = 3
 
 function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
-    local item = Tirislib_Item.get_by_name(housing_name)
+    local item = Tirislib_Item.get(housing_name)
 
-    local house_recipe =
+    local recipe =
         Tirislib_Recipe.create {
         name = housing_name,
         category = "crafting",
@@ -86,15 +86,46 @@ function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
     }:create_difficulties()
 
     local room_ingredients = Tirislib_RecipeGenerator.room_ingredients[details.tech_level]
-    house_recipe:add_ingredient_range(room_ingredients)
-    house_recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_multiplier)
+    recipe:add_ingredient_range(room_ingredients)
+    recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_multiplier)
 
     for _ = 0, details.comfort do
         local furniture = Tirislib_RecipeGenerator.furniture_ingredients[details.comfort]
-        house_recipe:add_ingredient_range(furniture)
+        recipe:add_ingredient_range(furniture)
     end
 
-    house_recipe:multiply_ingredients(details.room_count)
+    recipe:multiply_ingredients(details.room_count)
 
-    return house_recipe
+    recipe:add_unlock(Tirislib_RecipeGenerator.unlocking_tech[details.tech_level])
+
+    return recipe
 end
+
+function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, additional_fields)
+    local item = Tirislib_Item.get(product_name)
+
+    local recipe =
+        Tirislib_Recipe.create {
+        name = product_name,
+        category = "crafting",
+        enabled = true,
+        energy_required = 5,
+        ingredients = {},
+        results = {
+            {type = "item", name = product_name, amount = 1}
+        },
+        subgroup = item.subgroup,
+        order = item.order
+    }:create_difficulties()
+
+    recipe:add_ingredient_range(ingredients)
+    recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_multiplier)
+
+    if additional_fields then
+        Tirislib_Tables.set_fields(recipe, additional_fields)
+    end
+
+    return recipe
+end
+
+Tirislib_RecipeGenerator.greenhouse_ingredients = {}

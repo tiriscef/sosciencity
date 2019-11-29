@@ -1,1 +1,1 @@
-require("buildings.automatic-greenhouse")
+require("buildings.greenhouse")
