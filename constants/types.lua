@@ -25,10 +25,11 @@ TYPE_RESEARCH_CENTER = 207
 TYPE_ASSEMBLING_MACHINE = 1001
 TYPE_FURNACE = 1002
 TYPE_ROCKET_SILO = 1003
+TYPE_MINING_DRILL = 1004
 
-TYPE_MINING_DRILL = 2001
+TYPE_TURRET = 1100
+
 TYPE_LAB = 2002
-TYPE_TURRET = 2003
 
 TYPE_NULL = 9999
 
@@ -87,7 +88,7 @@ Types.entity_type_lookup = {
 }
 
 function Types.get_entity_type(entity)
-    return Types.entity_type_lookup.types[entity.type] or Types.entity_type_lookup.names[entity.name] or TYPE_NULL
+    return Types.entity_type_lookup.names[entity.name] or Types.entity_type_lookup.types[entity.type] or TYPE_NULL
 end
 
 function Types.is_housing(_type)
@@ -107,11 +108,11 @@ function Types.is_relevant_to_register(_type)
 end
 
 function Types.is_affected_by_clockwork(_type)
-    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
+    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_MINING_DRILL)
 end
 
 function Types.needs_beacon(_type)
-    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ROCKET_SILO)
+    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_MINING_DRILL)
 end
 
 function Types.needs_eei(_type)
@@ -150,7 +151,14 @@ function Types.get_caste_name(_type)
     return Types.caste_names[_type]
 end
 
-setmetatable(Types.caste_names, {__call = Types.get_caste_name})
+setmetatable(
+    Types.caste_names,
+    {
+        __call = function(_, _type)
+            return Types.get_caste_name(_type)
+        end
+    }
+)
 
 Types.caste_sprites = {
     [TYPE_EMPTY_HOUSE] = "empty-caste",

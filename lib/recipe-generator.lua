@@ -66,7 +66,7 @@ Tirislib_RecipeGenerator.furniture_ingredients = {
 }
 
 Tirislib_RecipeGenerator.greenhouse_ingredients = {
-    {type = "item", name = "timber", amount = 150},
+    {type = "item", name = "lumber", amount = 150},
     {type = "item", name = "stone-brick", amount = 150},
     {type = "item", name = "iron-plate", amount = 150},
     {type = "item", name = "steel-plate", amount = 100},
