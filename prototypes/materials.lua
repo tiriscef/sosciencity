@@ -1,9 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local material_items = {
-    {name = "timber"},
+    {name = "lumber"},
     {name = "tiriscefing-willow-wood"},
-    --{name = "pemtenn-cotton"},
+    {name = "pemtenn-cotton"},
     {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}}
 }
 
@@ -31,3 +31,37 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+Tirislib_Recipe.create {
+    type = "recipe",
+    name = "lumber-from-wood",
+    category = "crafting",
+    enabled = true,
+    energy_required = 0.5,
+    ingredients = {
+        {type = "item", name = "wood", amount = 1}
+    },
+    results = {
+        {type = "item", name = "lumber", amount = 3}
+    },
+    subgroup = "sosciencity-materials",
+    order = "aaa",
+}
+
+Tirislib_Recipe.create {
+    type = "recipe",
+    name = "lumber-from-tiris",
+    category = "crafting",
+    enabled = true,
+    energy_required = 0.5,
+    ingredients = {
+        {type = "item", name = "tiriscefing-willow-wood", amount = 1}
+    },
+    results = {
+        {type = "item", name = "lumber", amount = 2}
+    },
+    subgroup = "sosciencity-materials",
+    order = "aab",
+}
+
+Tirislib_RecipeGenerator.create_agriculture_recipe("pemtenn-cotton", {}, 20)
+Tirislib_RecipeGenerator.create_greenhouse_recipe("pemtenn-cotton", {}, 30)
