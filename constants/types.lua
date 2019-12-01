@@ -26,6 +26,8 @@ TYPE_ASSEMBLING_MACHINE = 1001
 TYPE_FURNACE = 1002
 TYPE_ROCKET_SILO = 1003
 TYPE_MINING_DRILL = 1004
+TYPE_FARM = 1005
+TYPE_ORANGERY = 1006
 
 TYPE_TURRET = 1100
 
@@ -74,16 +76,7 @@ Types.entity_type_lookup = {
     names = {
         -- TODO add the names from housing
         ["test-house"] = TYPE_EMPTY_HOUSE,
-        ["market"] = TYPE_MARKET,
-        ["water-distribution-facility"] = TYPE_WATER_DISTRIBUTION_FACILITY,
-        ["hospital"] = TYPE_HOSPITAL,
-        ["club"] = TYPE_CLUB,
-        ["school"] = TYPE_SCHOOL,
-        ["barrack"] = TYPE_BARRACK,
-        ["university"] = TYPE_UNIVERSITY,
-        ["university-mk02"] = TYPE_UNIVERSITY_MK02,
-        ["city-hall"] = TYPE_CITY_HALL,
-        ["research-center"] = TYPE_CITY_HALL
+        ["greenhouse"] = TYPE_FARM
     }
 }
 
@@ -108,11 +101,15 @@ function Types.is_relevant_to_register(_type)
 end
 
 function Types.is_affected_by_clockwork(_type)
-    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_MINING_DRILL)
+    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ORANGERY)
+end
+
+function Types.is_affected_by_orchid(_type)
+    return (_type >= TYPE_FARM) and (_type <= TYPE_ORANGERY)
 end
 
 function Types.needs_beacon(_type)
-    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_MINING_DRILL)
+    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ORANGERY)
 end
 
 function Types.needs_eei(_type)

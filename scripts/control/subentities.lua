@@ -58,9 +58,9 @@ function Subentities.get(entry, _type)
     -- there is the possibility that the subentity gets lost
     -- in this case we simply create a new one
     if entry.subentities[_type] and entry.subentities[_type].valid then
-        return entry.subentities[_type]
+        return entry.subentities[_type], false
     else
-        return add(entry, _type)
+        return add(entry, _type), true
     end
 end
 
@@ -71,6 +71,10 @@ local PRODUCTIVITY_MODULE_NAME = "-sosciencity-productivity"
 local PENALTY_MODULE_NAME = "sosciencity-penalty"
 
 local MAX_MODULE_STRENGTH = 14
+
+local SPEED = 1
+local PRODUCTIVITY = 2
+local PENALTY = 3
 
 -- assumes that value is an integer
 local function set_binary_modules(beacon_inventory, module_name, value)
@@ -94,7 +98,12 @@ end
 
 -- speed and productivity need to be positive
 function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
-    local beacon = Subentities.get(entry, SUB_BEACON)
+    local beacon, new = Subentities.get(entry, SUB_BEACON)
+
+    -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
+    if not new and speed == entry[SPEED] and productivity == entry[PRODUCTIVITY] and add_penalty == entry[PENALTY] then
+        return
+    end
 
     local beacon_inventory = beacon.get_module_inventory()
     beacon_inventory.clear()
@@ -109,6 +118,11 @@ function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
     if add_penalty then
         beacon_inventory.insert {name = PENALTY_MODULE_NAME}
     end
+
+    -- save the current beacon settings
+    entry[SPEED] = speed
+    entry[PRODUCTIVITY] = productivity
+    entry[PENALTY] = add_penalty
 end
 
 ---------------------------------------------------------------------------------------------------
