@@ -108,11 +108,18 @@ local function update_entity_with_beacon(entry)
     local use_penalty_module = false
 
     if Types.is_affected_by_clockwork(entry.type) then
-        speed_bonus = Inhabitants.get_clockwork_bonus(global.effective_population[TYPE_CLOCKWORK])
+        speed_bonus = Inhabitants.get_clockwork_bonus()
         use_penalty_module = global.use_penalty
     end
     if entry.type == TYPE_ROCKET_SILO then
-        productivity_bonus = Inhabitants.get_aurora_bonus(global.effective_population[TYPE_AURORA])
+        productivity_bonus = Inhabitants.get_aurora_bonus()
+    end
+    if Types.is_affected_by_orchid then
+        productivity_bonus = Inhabitants.get_orchid_bonus()
+    end
+    if entry.type == TYPE_ORANGERY then
+        local age = game.tick - entry.tick_of_creation
+        productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
     end
 
     Subentities.set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
@@ -128,7 +135,10 @@ local update_function_lookup = {
     [TYPE_AURORA] = update_house,
     [TYPE_ASSEMBLING_MACHINE] = update_entity_with_beacon,
     [TYPE_FURNACE] = update_entity_with_beacon,
-    [TYPE_ROCKET_SILO] = update_entity_with_beacon
+    [TYPE_ROCKET_SILO] = update_entity_with_beacon,
+    [TYPE_FARM] = update_entity_with_beacon,
+    [TYPE_MINING_DRILL] = update_entity_with_beacon,
+    [TYPE_ORANGERY] = update_entity_with_beacon
 }
 
 local function update(entry)
