@@ -71,7 +71,7 @@ Tirislib_RecipeGenerator.greenhouse_ingredients = {
     {type = "item", name = "iron-plate", amount = 150},
     {type = "item", name = "steel-plate", amount = 100},
     {type = "item", name = "small-lamp", amount = 50},
-    {type = "item", name = "electric-circuit", amount = 20}
+    {type = "item", name = "electronic-circuit", amount = 20}
 }
 
 Tirislib_RecipeGenerator.expensive_multiplier = 3
