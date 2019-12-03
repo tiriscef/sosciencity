@@ -57,6 +57,18 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-orangery",
+        group = "sosciencity",
+        order = "eac"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-arboretum",
+        group = "sosciencity",
+        order = "ead"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-ideas",
         group = "sosciencity",
         order = "zaa"
