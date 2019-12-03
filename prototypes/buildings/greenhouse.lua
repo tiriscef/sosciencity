@@ -9,7 +9,7 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-local recipe = Tirislib_RecipeGenerator.create_recipe("greenhouse", Tirislib_RecipeGenerator.greenhouse_ingredients)
+local recipe = Tirislib_RecipeGenerator.create_recipe("greenhouse")
 recipe:add_unlock() --TODO tech
 
 local pipe_pictures = {

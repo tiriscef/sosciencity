@@ -273,6 +273,10 @@ function Tirislib_Recipe:add_ingredient(ingredient_prototype_normal, ingredient_
 end
 
 function Tirislib_Recipe:add_ingredient_range(ingredient_prototypes_normal, ingredient_prototypes_expensive)
+    if ingredient_prototypes_normal == nil and ingredient_prototypes_expensive == nil then
+        return self
+    end
+
     if not self:has_difficulties() then
         for _, entry in pairs(ingredient_prototypes_normal) do
             add_ingredient(self, entry)

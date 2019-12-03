@@ -111,6 +111,14 @@ function Tirislib_Item:add_icon_to_sprite_variations()
     )
 end
 
+function Tirislib_Item:set_min_stack_size(size)
+    if self.stack_size < size then
+        self.stack_size = size
+    end
+
+    return self
+end
+
 local meta = {}
 
 function meta:__call(name)

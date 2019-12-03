@@ -75,6 +75,22 @@ function Tirislib_Entity.get_empty_pipe_picture()
     }
 end
 
+function Tirislib_Entity.get_south_pipe_picture()
+    return {
+        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-S.png",
+        width = 44,
+        height = 31,
+        shift = util.by_pixel(0, -31.5),
+        hr_version = {
+            filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-S.png",
+            width = 88,
+            height = 61,
+            shift = util.by_pixel(0, -31.25),
+            scale = 0.5
+        }
+    }
+end
+
 function Tirislib_Entity:add_crafting_category(category_name)
     if not self.crafting_categories then
         self.crafting_categories = {}

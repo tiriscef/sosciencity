@@ -15,23 +15,47 @@ Tirislib_RecipeGenerator = {}
 -- 7: post space science
 Tirislib_RecipeGenerator.room_ingredients = {
     [0] = {
-        {type = "item", name = "wood", amount = 5},
-        {type = "item", name = "iron-plate", amount = 10}
+        {type = "item", name = "lumber", amount = 2},
+        {type = "item", name = "iron-plate", amount = 4}
     },
     [1] = {
-        {type = "item", name = "wood", amount = 5},
-        {type = "item", name = "iron-plate", amount = 10}
+        {type = "item", name = "lumber", amount = 2},
+        {type = "item", name = "iron-plate", amount = 6},
+        {type = "item", name = "stone-brick", amount = 5}
     },
-    [2] = {},
-    [3] = {},
-    [4] = {},
-    [5] = {},
-    [6] = {},
-    [7] = {},
-    [8] = {}
+    [2] = {
+        {type = "item", name = "lumber", amount = 4},
+        {type = "item", name = "iron-plate", amount = 8},
+        {type = "item", name = "stone-brick", amount = 10}
+    },
+    [3] = {
+        {type = "item", name = "lumber", amount = 4},
+        {type = "item", name = "steel-plate", amount = 5},
+        {type = "item", name = "stone-brick", amount = 10}
+    },
+    [4] = {
+        {type = "item", name = "lumber", amount = 6},
+        {type = "item", name = "steel-plate", amount = 6},
+        {type = "item", name = "concrete", amount = 10}
+    },
+    [5] = {
+        {type = "item", name = "lumber", amount = 6},
+        {type = "item", name = "steel-plate", amount = 6},
+        {type = "item", name = "concrete", amount = 10}
+    },
+    [6] = {
+        {type = "item", name = "lumber", amount = 8},
+        {type = "item", name = "steel-plate", amount = 8},
+        {type = "item", name = "refined-concrete", amount = 10}
+    },
+    [7] = {
+        {type = "item", name = "lumber", amount = 8},
+        {type = "item", name = "steel-plate", amount = 8},
+        {type = "item", name = "refined-concrete", amount = 10}
+    }
 }
 
-Tirislib_RecipeGenerator.unlocking_tech = {
+Tirislib_RecipeGenerator.housing_unlocking_tech = {
     [0] = nil,
     [1] = "architecture-1",
     [2] = "architecture-2",
@@ -42,7 +66,7 @@ Tirislib_RecipeGenerator.unlocking_tech = {
     [7] = "architecture-7"
 }
 
--- table with coziness -> array of IngredientPrototypes
+-- table with comfort -> array of IngredientPrototypes
 Tirislib_RecipeGenerator.furniture_ingredients = {
     [0] = {},
     [1] = {
@@ -65,13 +89,32 @@ Tirislib_RecipeGenerator.furniture_ingredients = {
     [10] = {}
 }
 
-Tirislib_RecipeGenerator.greenhouse_ingredients = {
-    {type = "item", name = "lumber", amount = 150},
-    {type = "item", name = "stone-brick", amount = 150},
-    {type = "item", name = "iron-plate", amount = 150},
-    {type = "item", name = "steel-plate", amount = 100},
-    {type = "item", name = "small-lamp", amount = 50},
-    {type = "item", name = "electronic-circuit", amount = 20}
+-- table with item_name -> array of IngredientPrototypes
+Tirislib_RecipeGenerator.ingredients = {
+    ["greenhouse"] = {
+        {type = "item", name = "lumber", amount = 150},
+        {type = "item", name = "stone-brick", amount = 150},
+        {type = "item", name = "iron-plate", amount = 150},
+        {type = "item", name = "steel-plate", amount = 100},
+        {type = "item", name = "small-lamp", amount = 50},
+        {type = "item", name = "electronic-circuit", amount = 20}
+    }
+}
+
+Tirislib_RecipeGenerator.agriculture_growing_ingredients = {
+    {type = "fluid", name = "water", amount = 500}
+}
+
+Tirislib_RecipeGenerator.greenhouse_growing_ingredients = {
+    {type = "fluid", name = "water", amount = 500}
+}
+
+Tirislib_RecipeGenerator.orangery_growing_ingredients = {
+    {type = "fluid", name = "water", amount = 500}
+}
+
+Tirislib_RecipeGenerator.arboretum_growing_ingredients = {
+    {type = "fluid", name = "water", amount = 500}
 }
 
 Tirislib_RecipeGenerator.expensive_multiplier = 3
@@ -79,6 +122,7 @@ Tirislib_RecipeGenerator.expensive_farming_multiplier = 2
 
 Tirislib_RecipeGenerator.agriculture_time = 120
 Tirislib_RecipeGenerator.greenhouse_time = 100
+Tirislib_RecipeGenerator.orangery_time = 120
 
 function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
     local item = Tirislib_Item.get(housing_name)
@@ -109,7 +153,7 @@ function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
 
     recipe:multiply_ingredients(details.room_count)
 
-    recipe:add_unlock(Tirislib_RecipeGenerator.unlocking_tech[details.tech_level])
+    recipe:add_unlock(Tirislib_RecipeGenerator.housing_unlocking_tech[details.tech_level])
 
     return recipe
 end
@@ -132,6 +176,7 @@ function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, addit
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
+    recipe:add_ingredient_range(Tirislib_RecipeGenerator.ingredients[product_name])
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
@@ -150,10 +195,12 @@ function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, ingred
         results = {
             {type = "item", name = product_name, amount_min = 1, amount_max = yield, probability = 0.5}
         },
-        subgroup = "sosciencity-agriculture"
+        subgroup = "sosciencity-agriculture",
+        main_product = ""
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
+    recipe:add_ingredient_range(Tirislib_RecipeGenerator.agriculture_growing_ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
@@ -174,10 +221,59 @@ function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, ingredi
         results = {
             {type = "item", name = product_name, amount_min = min_yield, amount_max = yield}
         },
-        subgroup = "sosciencity-greenhouse"
+        subgroup = "sosciencity-greenhouse",
+        main_product = ""
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
+    recipe:add_ingredient_range(Tirislib_RecipeGenerator.greenhouse_growing_ingredients)
+    recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
+
+    Tirislib_Tables.set_fields(recipe, additional_fields)
+
+    return recipe
+end
+
+function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, ingredients, yield, additional_fields)
+    local recipe =
+        Tirislib_Recipe.create {
+        name = product_name .. "-orangery",
+        category = "sosciencity-orangery",
+        enabled = true,
+        energy_required = Tirislib_RecipeGenerator.greenhouse_time,
+        ingredients = {},
+        results = {
+            {type = "item", name = product_name, amount_min = 1, amount_max = yield}
+        },
+        subgroup = "sosciencity-orangery",
+        main_product = ""
+    }:create_difficulties()
+
+    recipe:add_ingredient_range(ingredients)
+    recipe:add_ingredient_range(Tirislib_RecipeGenerator.orangery_growing_ingredients)
+    recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
+
+    Tirislib_Tables.set_fields(recipe, additional_fields)
+
+    return recipe
+end
+
+function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, ingredients, yield, additional_fields)
+    local recipe = Tirislib_Recipe.create {
+        name = product_name .. "-arboretum",
+        category = "sosciencity-arboretum",
+        enabled = true,
+        energy_required = Tirislib_RecipeGenerator.greenhouse_time,
+        ingredients = {},
+        results = {
+            {type = "item", name = product_name, amount_min = 1, amount_max = yield}
+        },
+        subgroup = "sosciencity-arboretum",
+        main_product = ""
+    }:create_difficulties()
+
+    recipe:add_ingredient_range(ingredients)
+    recipe:add_ingredient_range(Tirislib_RecipeGenerator.arboretum_growing_ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
