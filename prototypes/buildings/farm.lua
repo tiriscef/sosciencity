@@ -238,64 +238,57 @@ Tirislib_Entity.create {
     tile_width = 15,
     tile_height = 7,
     animation = {
-        {
-            filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants.png",
-            frame_count = 1,
-            width = 544,
-            height = 288,
-            direction_count = 1,
-            hr_version = {
-                filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants-hr.png",
-                frame_count = 1,
-                width = 1088,
-                height = 576,
-                direction_count = 1,
-                scale = 0.5
+        direction_count = 4,
+        width = 544,
+        height = 544,
+        stripes = {
+            {
+                filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants.png",
+                width_in_frames = 1,
+                height_in_frames = 1
+            },
+            {
+                filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants.png",
+                width_in_frames = 1,
+                height_in_frames = 1
+            },
+            {
+                filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants.png",
+                width_in_frames = 1,
+                height_in_frames = 1
+            },
+            {
+                filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants.png",
+                width_in_frames = 1,
+                height_in_frames = 1
             }
         },
-        {
-            filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants.png",
-            frame_count = 1,
-            width = 288,
-            height = 544,
-            direction_count = 1,
-            hr_version = {
-                filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants-hr.png",
-                frame_count = 1,
-                width = 576,
-                height = 1088,
-                direction_count = 1,
-                scale = 0.5
-            }
-        },
-        {
-            filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants.png",
-            frame_count = 1,
-            width = 544,
-            height = 288,
-            direction_count = 1,
-            hr_version = {
-                filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants-hr.png",
-                frame_count = 1,
-                width = 1088,
-                height = 576,
-                direction_count = 1,
-                scale = 0.5
-            }
-        },
-        {
-            filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants.png",
-            frame_count = 1,
-            width = 288,
-            height = 544,
-            direction_count = 1,
-            hr_version = {
-                filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants-hr.png",
-                frame_count = 1,
-                width = 576,
-                height = 1088,
-                direction_count = 1,
-                scale = 0.5
+        hr_version = {
+            direction_count = 4,
+            width = 1088,
+            height = 1088,
+            scale = 0.5,
+            stripes = {
+                {
+                    filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants-hr.png",
+                    width_in_frames = 1,
+                    height_in_frames = 1
+                },
+                {
+                    filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants-hr.png",
+                    width_in_frames = 1,
+                    height_in_frames = 1
+                },
+                {
+                    filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants-hr.png",
+                    width_in_frames = 1,
+                    height_in_frames = 1
+                },
+                {
+                    filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants-hr.png",
+                    width_in_frames = 1,
+                    height_in_frames = 1
+                }
             }
         }
     }
