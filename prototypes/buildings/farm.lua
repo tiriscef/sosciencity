@@ -27,7 +27,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "farm"},
     max_health = 200,
-    corpse = "small-remnants",
+    corpse = "farm-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
@@ -50,7 +50,7 @@ Tirislib_Entity.create {
                         width = 1088,
                         height = 576,
                         scale = 0.5,
-                        shift = {0.0, 0.0},
+                        shift = {0.0, 0.0}
                     }
                 },
                 {
@@ -90,7 +90,7 @@ Tirislib_Entity.create {
                         width = 576,
                         height = 1088,
                         scale = 0.5,
-                        shift = {0.0, 0.0},
+                        shift = {0.0, 0.0}
                     }
                 },
                 {
@@ -130,7 +130,7 @@ Tirislib_Entity.create {
                         width = 1088,
                         height = 640,
                         scale = 0.5,
-                        shift = {0.0, -0.5},
+                        shift = {0.0, -0.5}
                     }
                 },
                 {
@@ -170,7 +170,7 @@ Tirislib_Entity.create {
                         width = 576,
                         height = 1152,
                         scale = 0.5,
-                        shift = {0.0, -0.5},
+                        shift = {0.0, -0.5}
                     }
                 },
                 {
@@ -219,6 +219,84 @@ Tirislib_Entity.create {
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {8.0, 2.0}}},
             production_type = "input"
+        }
+    }
+}:set_size(15, 7)
+
+Tirislib_Entity.create {
+    type = "corpse",
+    name = "farm-remnants",
+    icon = "__sosciencity__/graphics/icon/farm.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "not-on-map"},
+    selectable_in_game = false,
+    time_before_removed = 60 * 60 * 15, -- 15 minutes
+    final_render_layer = "remnants",
+    subgroup = "remnants",
+    order = "dead-farm:(",
+    remove_on_tile_placement = false,
+    tile_width = 15,
+    tile_height = 7,
+    animation = {
+        {
+            filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants.png",
+            frame_count = 1,
+            width = 544,
+            height = 288,
+            direction_count = 1,
+            hr_version = {
+                filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants-hr.png",
+                frame_count = 1,
+                width = 1088,
+                height = 576,
+                direction_count = 1,
+                scale = 0.5
+            }
+        },
+        {
+            filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants.png",
+            frame_count = 1,
+            width = 288,
+            height = 544,
+            direction_count = 1,
+            hr_version = {
+                filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants-hr.png",
+                frame_count = 1,
+                width = 576,
+                height = 1088,
+                direction_count = 1,
+                scale = 0.5
+            }
+        },
+        {
+            filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants.png",
+            frame_count = 1,
+            width = 544,
+            height = 288,
+            direction_count = 1,
+            hr_version = {
+                filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants-hr.png",
+                frame_count = 1,
+                width = 1088,
+                height = 576,
+                direction_count = 1,
+                scale = 0.5
+            }
+        },
+        {
+            filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants.png",
+            frame_count = 1,
+            width = 288,
+            height = 544,
+            direction_count = 1,
+            hr_version = {
+                filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants-hr.png",
+                frame_count = 1,
+                width = 576,
+                height = 1088,
+                direction_count = 1,
+                scale = 0.5
+            }
         }
     }
 }:set_size(15, 7)
