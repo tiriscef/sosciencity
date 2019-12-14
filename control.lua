@@ -74,6 +74,7 @@ require("lib.utils")
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
 local Register = require("scripts.control.register")
+local Technologies = require("scripts.control.technologies")
 local Subentities = require("scripts.control.subentities")
 local Neighborhood = require("scripts.control.neighborhood")
 local Inhabitants = require("scripts.control.inhabitants")
@@ -270,6 +271,12 @@ local function on_player_created(event)
 
     Gui.create_city_info_for(player)
 end
+local i = 0
+local function on_research_finished(event)
+    game.print(i .. ": a research finished")
+    i = i + 1
+    Technologies.finished(event.research.name)
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
@@ -298,3 +305,6 @@ script.on_configuration_changed(on_configuration_change)
 
 -- gui creation
 script.on_event(defines.events.on_player_created, on_player_created)
+
+-- keeping track of research
+script.on_event(defines.events.on_research_finished, on_research_finished)
