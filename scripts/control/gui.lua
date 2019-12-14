@@ -107,7 +107,12 @@ local function update_caste_flow(container, caste_id)
 end
 
 function Gui.create_city_info_for(player)
-    local frame =
+    local frame = player.gui.top["sos-city-info"]
+    if frame and frame.valid then
+        return -- the gui was already created and is still valid
+    end
+
+    frame =
         player.gui.top.add {
         type = "flow",
         name = "sos-city-info",

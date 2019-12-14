@@ -2,10 +2,18 @@ Inhabitants = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+local caste_tech_names = {
+    [TYPE_CLOCKWORK] = "clockwork-caste",
+    [TYPE_EMBER] = "ember-caste",
+    [TYPE_GUNFIRE] = "gunfire-caste",
+    [TYPE_GLEAM] = "gleam-caste",
+    [TYPE_FOUNDRY] = "foundry-caste",
+    [TYPE_ORCHID] = "orchid-caste",
+    [TYPE_AURORA] = "aurora-caste"
+}
+
 function Inhabitants.caste_is_researched(caste_id)
-    -- this assumes that the player-force is the one that matters
-    -- it may be worth caching the results
-    return game.forces.player.technologies[Types.caste_names[caste_id] .. "-caste"].researched
+    return global.technologies[caste_tech_names[caste_id]]
 end
 
 function Inhabitants.get_population_count()
