@@ -1,6 +1,7 @@
 Gui = {}
 
-Gui.CITY_INFO_SPRITE_SIZE = 48
+local CITY_INFO_NAME = "sos-city-info"
+local CITY_INFO_SPRITE_SIZE = 48
 
 local function add_population_flow(container)
     local population_count = Inhabitants.get_population_count()
@@ -64,8 +65,8 @@ local function add_caste_flow(container, caste_id)
         sprite = "technology/" .. caste .. "-caste",
         tooltip = {"caste-name." .. caste}
     }
-    sprite.style.height = Gui.CITY_INFO_SPRITE_SIZE
-    sprite.style.width = Gui.CITY_INFO_SPRITE_SIZE
+    sprite.style.height = CITY_INFO_SPRITE_SIZE
+    sprite.style.width = CITY_INFO_SPRITE_SIZE
     sprite.style.stretch_image_to_widget_size = true
     sprite.style.horizontal_align = "center"
 
@@ -76,7 +77,7 @@ local function add_caste_flow(container, caste_id)
         caption = global.population[caste_id],
         tooltip = "population count"
     }
-    population_label.style.minimal_width = Gui.CITY_INFO_SPRITE_SIZE
+    population_label.style.minimal_width = CITY_INFO_SPRITE_SIZE
     population_label.style.horizontal_align = "center"
 
     local bonus_label =
@@ -86,7 +87,7 @@ local function add_caste_flow(container, caste_id)
         caption = {"caste-bonus.display-" .. caste, get_bonus_string(caste_id)},
         tooltip = {"caste-bonus." .. caste}
     }
-    bonus_label.style.minimal_width = Gui.CITY_INFO_SPRITE_SIZE
+    bonus_label.style.minimal_width = CITY_INFO_SPRITE_SIZE
     bonus_label.style.horizontal_align = "center"
 end
 
@@ -107,7 +108,7 @@ local function update_caste_flow(container, caste_id)
 end
 
 function Gui.create_city_info_for(player)
-    local frame = player.gui.top["sos-city-info"]
+    local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
     end
@@ -115,7 +116,7 @@ function Gui.create_city_info_for(player)
     frame =
         player.gui.top.add {
         type = "flow",
-        name = "sos-city-info",
+        name = CITY_INFO_NAME,
         direction = "horizontal"
     }
 
@@ -142,7 +143,7 @@ end
 
 function Gui.update_city_info()
     for _, player in pairs(game.players) do
-        local city_info_gui = player.gui.top["sos-city-info"]
+        local city_info_gui = player.gui.top[CITY_INFO_NAME]
 
         -- we check if the gui still exists, as other mods can delete them
         if city_info_gui ~= nil and city_info_gui.valid then

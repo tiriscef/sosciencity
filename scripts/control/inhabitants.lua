@@ -96,14 +96,10 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << resettlement >>
-local function resettlement_is_researched(force)
-    return force.technologies["resettlement"].researched
-end
-
 -- looks for housings to move the inhabitants of this entry to
 -- returns the number of resettled inhabitants
 function Inhabitants.try_resettle(entry)
-    if not resettlement_is_researched(entry.entity.force) or not Types.is_inhabited(entry.type) then
+    if not global.technologies["resettlement"] or not Types.is_inhabited(entry.type) then
         return 0
     end
 
@@ -129,24 +125,18 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << caste bonus functions >>
-local function set_researched(tech_name, is_researched)
-    -- we just do that in every force, because I don't want to support multiple player factions
-    for _, force in pairs(game.forces) do
-        force.technologies[tech_name].researched = is_researched
-    end
-end
-
 -- sets the hidden caste-technologies so they encode the given value
 local function set_binary_techs(value, name)
     local new_value = value
     local strength = 0
+    local techs = game.forces.player.technologies
 
     while value > 0 and strength <= 20 do
         new_value = math.floor(value / 2)
 
         -- if new_value times two doesn't equal value, then the remainder was one
         -- which means that the current binary decimal is one and that the corresponding tech should be researched
-        set_researched(strength .. name, new_value * 2 ~= value)
+        techs[strength .. name].researched = (new_value * 2 ~= value)
 
         strength = strength + 1
         value = new_value
@@ -173,17 +163,17 @@ end
 
 function Inhabitants.update_caste_bonuses()
     -- We check if the bonuses have actually changed to avoid unnecessary api calls
-    local current_gunfire_bonus = Inhabitants.get_gunfire_bonus(global.effective_population[TYPE_GUNFIRE])
+    local current_gunfire_bonus = Inhabitants.get_gunfire_bonus()
     if global.gunfire_bonus ~= current_gunfire_bonus then
         set_gunfire_bonus(current_gunfire_bonus)
     end
 
-    local current_gleam_bonus = Inhabitants.get_gleam_bonus(global.effective_population[TYPE_GLEAM])
+    local current_gleam_bonus = Inhabitants.get_gleam_bonus()
     if global.gleam_bonus ~= current_gleam_bonus then
         set_gleam_bonus(current_gleam_bonus)
     end
 
-    local current_foundry_bonus = Inhabitants.get_foundry_bonus(global.effective_population[TYPE_FOUNDRY])
+    local current_foundry_bonus = Inhabitants.get_foundry_bonus()
     if global.foundry_bonus ~= current_foundry_bonus then
         set_foundry_bonus(current_foundry_bonus)
     end
