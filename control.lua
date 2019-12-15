@@ -13,7 +13,6 @@ end
         - diseases
         - indicators
 ]]
-
 --[[
     Data structures
 
@@ -93,7 +92,7 @@ local function update_house(entry, delta_ticks)
         -- let people move in
         Inhabitants.try_add_to_house(entry, math.floor(entry.trend))
         entry.trend = entry.trend - math.floor(entry.trend)
-    elseif entry.trend <= - 1 then
+    elseif entry.trend <= -1 then
         -- let people move out
         Inhabitants.remove(entry, -math.ceil(entry.trend))
         entry.trend = entry.trend - math.ceil(entry.trend)
@@ -159,17 +158,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
-local function init()
-    global.version = game.active_mods["sosciencity"]
-    global.updates_per_cycle = settings.startup["sosciencity-entity-updates-per-cycle"].value
-    global.use_penalty = settings.startup["sosciencity-penalty-module"].value
-
-    global.last_update = game.tick
-
-    Inhabitants.init()
-    Register.init()
-end
-
 local function update_cycle()
     local next = next
     local count = 0
@@ -198,6 +186,31 @@ local function update_cycle()
 
     global.last_update = game.tick
 end
+
+local cycle_frequency = settings.global["sosciencity-entity-update-cycle-frequency"].value
+local function update_settings()
+    local new_frequency = settings.global["sosciencity-entity-update-cycle-frequency"].value
+    if new_frequency ~= cycle_frequency then
+        script.on_nth_tick(cycle_frequency, nil) -- unregisters the old frequency
+        script.on_nth_tick(new_frequency, update_cycle)
+        cycle_frequency = new_frequency
+    end
+
+    global.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
+
+    global.use_penalty = settings.global["sosciencity-penalty-module"]
+end
+
+local function init()
+    update_settings()
+
+    global.last_update = game.tick
+
+    Inhabitants.init()
+    Register.init()
+    Technologies.init()
+end
+
 
 local function on_entity_built(event)
     -- https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
@@ -271,10 +284,8 @@ local function on_player_created(event)
 
     Gui.create_city_info_for(player)
 end
-local i = 0
+
 local function on_research_finished(event)
-    game.print(i .. ": a research finished")
-    i = i + 1
     Technologies.finished(event.research.name)
 end
 
@@ -284,8 +295,8 @@ end
 script.on_init(init)
 
 -- update function
-local cycle_frequency = settings.startup["sosciencity-entity-update-cycle-frequency"].value
 script.on_nth_tick(cycle_frequency, update_cycle)
+script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 
 -- placement
 script.on_event(defines.events.on_built_entity, on_entity_built)
