@@ -39,7 +39,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "greenhouse"},
     max_health = 400,
-    corpse = "small-remnants",
+    corpse = "greenhouse-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
@@ -137,5 +137,36 @@ Tirislib_Entity.create {
             production_type = "output"
         },
         off_when_no_fluid_recipe = true
+    }
+}:set_size(15, 15)
+
+Tirislib_Entity.create {
+    type = "corpse",
+    name = "greenhouse-remnants",
+    icon = "__sosciencity__/graphics/icon/greenhouse.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "not-on-map"},
+    selectable_in_game = false,
+    time_before_removed = 60 * 60 * 15, -- 15 minutes
+    final_render_layer = "remnants",
+    subgroup = "remnants",
+    order = "dead-greenhouse:(",
+    remove_on_tile_placement = false,
+    tile_width = 15,
+    tile_height = 7,
+    animation = {
+        filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-remnants.png",
+        direction_count = 1,
+        width = 544,
+        height = 544,
+        shift = {0.0, -1.0},
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-remnants-hr.png",
+            direction_count = 1,
+            width = 1088,
+            height = 1088,
+            shift = {0.0, -1.0},
+            scale = 0.5,
+        }
     }
 }:set_size(15, 15)
