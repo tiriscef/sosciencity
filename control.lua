@@ -57,6 +57,12 @@ end
         [caste_type]: float
 
     global.panic: float
+
+    global.technologies: table
+        [tech name]: bool (is researched) or int (research level)
+
+    global.detail_view: table
+        [player_index]: unit_number (of the entity the detail view is for)
 ]]
 ---------------------------------------------------------------------------------------------------
 -- << runtime finals >>
@@ -183,6 +189,7 @@ local function update_cycle()
     Inhabitants.ease_panic()
 
     Gui.update_city_info()
+    Gui.update_details_view()
 
     global.last_update = game.tick
 end
@@ -209,6 +216,7 @@ local function init()
     Inhabitants.init()
     Register.init()
     Technologies.init()
+    Gui.init()
 end
 
 
@@ -282,7 +290,25 @@ local function on_player_created(event)
     local index = event.player_index
     local player = game.get_player(index)
 
-    Gui.create_city_info_for(player)
+    Gui.create_guis_for(player)
+end
+
+local function on_gui_opened(event)
+    if event.gui_type == defines.gui_type.entity then
+        local player = game.get_player(event.player_index)
+        Gui.open_details_view_for(player, event.entity)
+    end
+end
+
+local function on_gui_closed(event)
+    if event.gui_type == defines.gui_type.entity then
+        local player = game.get_player(event.player_index)
+        Gui.close_details_view_for(player)
+    end
+end
+
+local function on_gui_click(event)
+    -- TODO
 end
 
 local function on_research_finished(event)
@@ -316,6 +342,11 @@ script.on_configuration_changed(on_configuration_change)
 
 -- gui creation
 script.on_event(defines.events.on_player_created, on_player_created)
+script.on_event(defines.events.on_gui_opened, on_gui_opened)
+script.on_event(defines.events.on_gui_closed, on_gui_closed)
+
+-- gui events
+script.on_event(defines.events.on_gui_click, on_gui_click)
 
 -- keeping track of research
 script.on_event(defines.events.on_research_finished, on_research_finished)
