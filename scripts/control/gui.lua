@@ -10,6 +10,71 @@ local function get_bonus_string(caste_id)
     return string.format("%+d", bonus)
 end
 
+local function get_comfort_localised_string(comfort)
+    return {
+        "",
+        comfort .. " - ",
+        {"color-scale." .. comfort, {"comfort-scale." .. comfort}}
+    }
+end
+
+---------------------------------------------------------------------------------------------------
+-- << gui elements >>
+local DATA_LIST_NAME = "datalist"
+
+local function add_data_list(container, name)
+    local flow =
+        container.add {
+        type = "table",
+        name = name or DATA_LIST_NAME,
+        column_count = 2,
+        draw_vertical_lines = true
+    }
+    flow.style.horizontally_stretchable = true
+    flow.style.vertically_stretchable = true
+
+    return flow
+end
+
+local function add_kv_pair(data_list, key, key_caption, value_caption)
+    data_list.add {
+        type = "label",
+        name = "key-" .. key,
+        caption = key_caption
+    }
+    local value = data_list.add {
+        type = "label",
+        name = "value-" .. key,
+        caption = value_caption
+    }
+    value.style.horizontally_stretchable = true
+end
+
+local function get_kv_pair(data_list, key)
+    return data_list["key-" .. key], data_list["value-" .. key]
+end
+
+local function set_key(data_list, key, key_caption)
+    data_list["key-" .. key].caption = key_caption
+end
+
+local function set_value(data_list, key, value_caption)
+    data_list["value-" .. key].caption = value_caption
+end
+
+local function set_padding(element, padding)
+    local style = element.style
+    style.left_padding = padding
+    style.right_padding = padding
+    style.top_padding = padding
+    style.bottom_padding = padding
+end
+
+local function make_stretchable(element)
+    element.style.horizontally_stretchable = true
+    element.style.vertically_stretchable = true
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << city info gui >>
 local CITY_INFO_NAME = "sosciencity-city-info"
@@ -162,6 +227,10 @@ end
 -- << entity details view >>
 local DETAILS_VIEW_NAME = "sosciencity-details"
 
+local function set_details_view_title(container, caption)
+    container.parent.caption = caption
+end
+
 -- << empty housing details view >>
 local function add_caste_chooser_tab(tabbed_pane, details)
     local tab =
@@ -176,54 +245,80 @@ local function add_caste_chooser_tab(tabbed_pane, details)
         name = "button-flow",
         direction = "vertical"
     }
+    make_stretchable(flow)
+    flow.style.horizontal_align = "center"
+    flow.style.vertical_align = "center"
+    flow.style.vertical_spacing = 6
 
-    for _, name in pairs(Types.caste_names) do
-        local caste_name = {"caste-name." .. name}
+    local at_least_one = false
+    for caste_id, name in pairs(Types.caste_names) do
+        if Inhabitants.caste_is_researched(caste_id) then
+            local caste_name = {"caste-name." .. name}
+            local button =
+                flow.add {
+                type = "button",
+                name = name,
+                caption = caste_name,
+                tooltip = {"sosciencity-gui.move-in", caste_name},
+                mouse_button_filter = {"left"}
+            }
+            button.style.width = 150
+
+            if Housing.allowes_caste(details, caste_id) then
+                button.tooltip = {"sosciencity-gui.move-in", caste_name}
+            elseif Caste(caste_id).required_room_count > details.room_count then
+                button.tooltip = {"sosciencity-gui.not-enough-room"}
+            else
+                button.tooltip = {"sosciencity-gui.not-enough-comfort"}
+            end
+            button.enabled = Housing.allowes_caste(details, caste_id)
+            at_least_one = true
+        end
+    end
+
+    if not at_least_one then
         flow.add {
-            type = "button",
-            name = name,
-            caption = caste_name,
-            tooltip = {"sosciencity-gui.move-in", caste_name},
-            mouse_button_filter = {"left"}
+            type = "label",
+            name = "no-castes-researched-label",
+            caption = {"sosciencity-gui.no-castes-researched"}
         }
     end
 
     tabbed_pane.add_tab(tab, flow)
 end
 
-local function add_house_info_tab(tabbed_pane, details)
+local function add_empty_house_info_tab(tabbed_pane, details)
     local tab =
         tabbed_pane.add {
         type = "tab",
         name = "house",
         caption = {"sosciencity-gui.building-info"}
     }
-    local flow =
-        tabbed_pane.add {
-        type = "flow",
-        name = "pairs",
-        direction = "horizontal"
-    }
+    local data_list = add_data_list(tabbed_pane, "house-infos")
+    add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, details.room_count)
+    add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, get_comfort_localised_string(details.comfort))
 
-    tabbed_pane.add_tab(tab, flow)
+    tabbed_pane.add_tab(tab, data_list)
 end
 
 local function create_empty_housing_details(container, entry)
-    local details = Housing(entry)
-
-    container.caption = entry.entity.localised_name
-
+    set_details_view_title(container, entry.entity.localised_name)
     local tab_pane =
         container.add {
         type = "tabbed-pane",
         name = "tabpane"
     }
+    make_stretchable(tab_pane)
+
+    local details = Housing(entry)
     add_caste_chooser_tab(tab_pane, details)
-    add_house_info_tab(tab_pane, details)
+    add_empty_house_info_tab(tab_pane, details)
 end
 
 -- << housing details view >>
 local function create_housing_details(container, entry)
+    local title = {"", entry.entity.localised_name, " - ", "caste-name." .. Types.caste_names[entry.type]}
+    set_details_view_title(container, title)
     -- general info: building, inhabitants, happiness, health, kicking people out
     -- happiness and its sources
     -- health and its sources
@@ -242,6 +337,18 @@ function Gui.create_details_view_for(player)
         name = DETAILS_VIEW_NAME,
         direction = "horizontal"
     }
+    frame.style.minimal_width = 250
+    frame.style.minimal_height = 300
+    set_padding(frame, 4)
+
+    local nested = frame.add {
+        type = "frame",
+        name = "nested",
+        direction = "horizontal",
+        style = "inside_deep_frame_for_tabs"
+    }
+    make_stretchable(nested)
+
     frame.visible = false
 end
 
@@ -252,6 +359,7 @@ local function get_details_view(player)
     if details_view ~= nil and details_view.valid then
         return details_view
     else
+        -- recreate it otherwise
         Gui.create_details_view_for(player)
         return get_details_view(player)
     end
@@ -265,7 +373,7 @@ function Gui.update_details_view()
         local entry = global.register[unit_number]
 
         -- check if the entity hasn't been unregistered in the meantime
-        if not entry then
+        if not entry or not entry.entity.valid then
             Gui.close_details_view_for(game.players[player_id])
         else
             if content_updaters[entry.type] then
@@ -295,8 +403,8 @@ function Gui.open_details_view_for(player, entity)
     end
 
     if detail_view_builders[entry.type] then
-        details_view.clear()
-        detail_view_builders[entry.type](details_view, entry)
+        details_view.nested.clear()
+        detail_view_builders[entry.type](details_view.nested, entry)
         details_view.visible = true
         global.details_view[player.index] = entity.unit_number
     end
@@ -307,7 +415,7 @@ function Gui.close_details_view_for(player)
     details_view.visible = false
     global.details_view[player.index] = nil
     details_view.caption = nil
-    details_view.clear()
+    details_view.nested.clear()
 end
 
 ---------------------------------------------------------------------------------------------------

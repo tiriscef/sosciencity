@@ -331,7 +331,7 @@ script.on_event(defines.events.on_entity_cloned, on_entity_built)
 script.on_event(defines.events.script_raised_built, on_entity_built)
 script.on_event(defines.events.script_raised_revive, on_entity_built)
 
--- removing
+-- removement
 script.on_event(defines.events.on_player_mined_entity, on_entity_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_entity_mined)
 script.on_event(defines.events.on_entity_died, on_entity_died)
