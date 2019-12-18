@@ -10,7 +10,8 @@ local data_details = {
             scale = 0.5
         },
         width = 3,
-        height = 3
+        height = 3,
+        tech_level = 0
     }
 }
 
@@ -39,7 +40,9 @@ for house_name, house in pairs(Housing.houses) do
 
     Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 
-    Tirislib_RecipeGenerator.create_housing_recipe(house_name, house)
+    Tirislib_RecipeGenerator.create_housing_recipe(house_name, house):add_unlock(
+        Tirislib_RecipeGenerator.housing_unlocking_tech[details.tech_level]
+    )
 
     Tirislib_Entity.create {
         type = "container",
@@ -53,8 +56,6 @@ for house_name, house in pairs(Housing.houses) do
         corpse = "small-remnants", -- TODO
         open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65}, -- TODO sounds
         close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7}, -- TODO
-        collision_box = Tirislib_Entity.get_collision_box(details.width, details.height),
-        selection_box = Tirislib_Entity.get_selection_box(details.width, details.height),
         inventory_size = 64,
         vehicle_impact_sound = {
             filename = "__base__/sound/car-metal-impact.ogg",
@@ -64,5 +65,5 @@ for house_name, house in pairs(Housing.houses) do
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13
-    }
+    }:set_size(details.width, details.height)
 end

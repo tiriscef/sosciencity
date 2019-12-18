@@ -153,8 +153,6 @@ function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
 
     recipe:multiply_ingredients(details.room_count)
 
-    recipe:add_unlock(Tirislib_RecipeGenerator.housing_unlocking_tech[details.tech_level])
-
     return recipe
 end
 
