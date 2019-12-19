@@ -196,7 +196,7 @@ local function update_caste_flow(container, caste_id)
 
     caste_frame["caste-population"].caption = global.population[caste_id]
     caste_frame["caste-bonus"].caption = {
-        "caste-bonus.display-" .. Types.get_caste_name(caste_id),
+        "caste-bonus.display-" .. Types.caste_names[caste_id],
         get_bonus_string(caste_id)
     }
 end

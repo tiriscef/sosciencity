@@ -7,7 +7,7 @@ Diet = {}
 local function get_food_inventories(entry)
     local inventories = {entry.entity.get_inventory(defines.inventory.chest)}
 
-    for _, market in pairs(Neighborhood.get_by_type(entry, NEIGHBOR_MARKET)) do
+    for _, market in pairs(Neighborhood.get_by_type(entry, TYPE_MARKET)) do
         table.insert(inventories, market.get_inventory(defines.inventory.chest))
     end
 
