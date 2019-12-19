@@ -9,11 +9,8 @@ Housing.houses = {
         comfort = 0
     }
 }
---[[["example-house"] = {
-        room_count = 42,
-        tech_level = 0,
-        comfort = 32
-    }]]
+local houses = Housing.houses
+
 function Housing.get_capacity(entry)
     return math.floor(Housing(entry).room_count / Caste(entry.type).required_room_count)
 end
@@ -30,7 +27,7 @@ end
 local meta = {}
 
 function meta:__call(entry)
-    return Housing.houses[entry.entity.name]
+    return houses[entry.entity.name]
 end
 
 setmetatable(Housing, meta)

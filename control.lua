@@ -82,6 +82,7 @@ local Register = require("scripts.control.register")
 local Technologies = require("scripts.control.technologies")
 local Subentities = require("scripts.control.subentities")
 local Neighborhood = require("scripts.control.neighborhood")
+local Diet = require("scripts.control.diet")
 local Inhabitants = require("scripts.control.inhabitants")
 local Gui = require("scripts.control.gui")
 
@@ -120,7 +121,7 @@ local function update_entity_with_beacon(entry)
     if entry.type == TYPE_ROCKET_SILO then
         productivity_bonus = Inhabitants.get_aurora_bonus()
     end
-    if Types.is_affected_by_orchid then
+    if Types.is_affected_by_orchid(entry.type) then
         productivity_bonus = Inhabitants.get_orchid_bonus()
     end
     if entry.type == TYPE_ORANGERY then
@@ -264,7 +265,7 @@ local function on_entity_mined(event)
         return
     end
 
-    local entry = global.register[entity.unit_number]
+    local entry = Register.try_get(entity.unit_number)
     if entry then
         Inhabitants.try_resettle(entry)
     end
@@ -307,8 +308,24 @@ local function on_gui_closed(event)
     end
 end
 
+local UNIQUE_PREFIX = Gui.UNIQUE_PREFIX -- greetings to LuziferSenpai
 local function on_gui_click(event)
-    -- TODO
+    local gui_element = event.element
+    local name = gui_element.name
+
+    -- check if it's my gui with my prefix
+    if name:sub(1, UNIQUE_PREFIX:len()) ~= UNIQUE_PREFIX then
+        return
+    end
+    -- remove the prefix
+    name = name:sub(UNIQUE_PREFIX:len() + 1)
+
+    -- check Caste asignment buttons
+    for caste_id, caste_name in pairs(Types.caste_names) do
+        if name == caste_name then
+            Gui.handle_caste_button(event.player_index, caste_id)
+        end
+    end
 end
 
 local function on_research_finished(event)

@@ -1,5 +1,9 @@
 Gui = {}
 
+-- this should be added to every element which needs an event handler
+-- because the event handler is called for every gui in existance
+-- so I need to ensure that I'm not reacting to another mods gui
+Gui.UNIQUE_PREFIX = "sosciencity-"
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
 local function get_bonus_string(caste_id)
@@ -20,13 +24,12 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << gui elements >>
-local DATA_LIST_NAME = "datalist"
-
+local DATA_LIST_DEFAULT_NAME = "datalist"
 local function add_data_list(container, name)
     local flow =
         container.add {
         type = "table",
-        name = name or DATA_LIST_NAME,
+        name = name or DATA_LIST_DEFAULT_NAME,
         column_count = 2,
         draw_vertical_lines = true
     }
@@ -251,14 +254,13 @@ local function add_caste_chooser_tab(tabbed_pane, details)
     flow.style.vertical_spacing = 6
 
     local at_least_one = false
-    for caste_id, name in pairs(Types.caste_names) do
+    for caste_id, caste_name in pairs(Types.caste_names) do
         if Inhabitants.caste_is_researched(caste_id) then
-            local caste_name = {"caste-name." .. name}
             local button =
                 flow.add {
                 type = "button",
-                name = name,
-                caption = caste_name,
+                name = Gui.UNIQUE_PREFIX .. caste_name,
+                caption = {"caste-name." .. caste_name},
                 tooltip = {"sosciencity-gui.move-in", caste_name},
                 mouse_button_filter = {"left"}
             }
@@ -370,10 +372,10 @@ local content_updaters = {}
 
 function Gui.update_details_view()
     for player_id, unit_number in pairs(global.details_view) do
-        local entry = global.register[unit_number]
+        local entry = Register.try_get(unit_number)
 
         -- check if the entity hasn't been unregistered in the meantime
-        if not entry or not entry.entity.valid then
+        if not entry then
             Gui.close_details_view_for(game.players[player_id])
         else
             if content_updaters[entry.type] then
@@ -397,7 +399,7 @@ local detail_view_builders = {
 
 function Gui.open_details_view_for(player, entity)
     local details_view = get_details_view(player)
-    local entry = global.register[entity.unit_number]
+    local entry = Register.try_get(entity.unit_number)
     if not entry then
         return
     end
@@ -416,6 +418,17 @@ function Gui.close_details_view_for(player)
     global.details_view[player.index] = nil
     details_view.caption = nil
     details_view.nested.clear()
+end
+
+---------------------------------------------------------------------------------------------------
+-- << handlers >>
+function Gui.handle_caste_button(player_index, caste_id)
+    local entry = Register.try_get(global.details_view[player_index])
+    if not entry then
+        return
+    end
+
+    Inhabitants.try_allow_for_caste(entry, caste_id)
 end
 
 ---------------------------------------------------------------------------------------------------
