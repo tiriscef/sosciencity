@@ -36,29 +36,26 @@ TYPE_LAB = 2002
 TYPE_NULL = 9999
 
 -- subentities
-SUB_BEACON = 1
-SUB_EEI = 2
-SUB_ALT_MODE_SPRITE = 3
-
--- neighborhood
-NEIGHBOR_MARKET = 1
+SUB_BEACON = 10001
+SUB_EEI = 10002
+SUB_ALT_MODE_SPRITE = 10003
 
 -- tastes
-TASTE_BITTER = 1
-TASTE_NEUTRAL = 2
-TASTE_SALTY = 3
-TASTE_SOUR = 4
-TASTE_SPICY = 5
-TASTE_SWEET = 6
-TASTE_UMAMI = 7
+TASTE_BITTER = 20001
+TASTE_NEUTRAL = 20002
+TASTE_SALTY = 20003
+TASTE_SOUR = 20004
+TASTE_SPICY = 20005
+TASTE_SWEET = 20006
+TASTE_UMAMI = 20007
 
 -- flags
-FLAG_LOW_PROTEIN = 1
-FLAG_HIGH_PROTEIN = 2
-FLAG_HIGH_FAT = 3
-FLAG_HIGH_CARBOHYDRATES = 4
-FLAG_HUNGER = 5
-FLAG_NO_POWER = 6
+FLAG_LOW_PROTEIN = 30001
+FLAG_HIGH_PROTEIN = 30002
+FLAG_HIGH_FAT = 30003
+FLAG_HIGH_CARBOHYDRATES = 30004
+FLAG_HUNGER = 30005
+FLAG_NO_POWER = 30006
 
 Types = {}
 Types.entity_type_lookup = {
@@ -78,6 +75,37 @@ Types.entity_type_lookup = {
         ["test-house"] = TYPE_EMPTY_HOUSE,
         ["greenhouse"] = TYPE_FARM
     }
+}
+
+Types.taste_names = {
+    [TASTE_BITTER] = "bitter",
+    [TASTE_NEUTRAL] = "neutral",
+    [TASTE_SALTY] = "salty",
+    [TASTE_SOUR] = "sour",
+    [TASTE_SPICY] = "spicy",
+    [TASTE_SWEET] = "sweet",
+    [TASTE_UMAMI] = "umami"
+}
+
+Types.caste_names = {
+    [TYPE_CLOCKWORK] = "clockwork",
+    [TYPE_ORCHID] = "orchid",
+    [TYPE_GUNFIRE] = "gunfire",
+    [TYPE_EMBER] = "ember",
+    [TYPE_FOUNDRY] = "foundry",
+    [TYPE_GLEAM] = "gleam",
+    [TYPE_AURORA] = "aurora"
+}
+
+Types.caste_sprites = {
+    [TYPE_EMPTY_HOUSE] = "empty-caste",
+    [TYPE_CLOCKWORK] = "clockwork-caste",
+    [TYPE_EMBER] = "ember-caste",
+    [TYPE_GUNFIRE] = "gunfire-caste",
+    [TYPE_GLEAM] = "gleam-caste",
+    [TYPE_FOUNDRY] = "foundry-caste",
+    [TYPE_ORCHID] = "orchid-caste",
+    [TYPE_AURORA] = "aurora-caste"
 }
 
 function Types.get_entity_type(entity)
@@ -120,53 +148,9 @@ function Types.needs_alt_mode_sprite(_type)
     return _type < 100
 end
 
-Types.taste_names = {
-    [TASTE_BITTER] = "bitter",
-    [TASTE_NEUTRAL] = "neutral",
-    [TASTE_SALTY] = "salty",
-    [TASTE_SOUR] = "sour",
-    [TASTE_SPICY] = "spicy",
-    [TASTE_SWEET] = "sweet",
-    [TASTE_UMAMI] = "umami"
-}
-
 function Types.needs_neighborhood(_type) -- I might need to add more
     return Types.is_housing(_type)
 end
-
-Types.caste_names = {
-    [TYPE_CLOCKWORK] = "clockwork",
-    [TYPE_ORCHID] = "orchid",
-    [TYPE_GUNFIRE] = "gunfire",
-    [TYPE_EMBER] = "ember",
-    [TYPE_FOUNDRY] = "foundry",
-    [TYPE_GLEAM] = "gleam",
-    [TYPE_AURORA] = "aurora"
-}
-
-function Types.get_caste_name(_type)
-    return Types.caste_names[_type]
-end
-
-setmetatable(
-    Types.caste_names,
-    {
-        __call = function(_, _type)
-            return Types.get_caste_name(_type)
-        end
-    }
-)
-
-Types.caste_sprites = {
-    [TYPE_EMPTY_HOUSE] = "empty-caste",
-    [TYPE_CLOCKWORK] = "clockwork-caste",
-    [TYPE_EMBER] = "ember-caste",
-    [TYPE_GUNFIRE] = "gunfire-caste",
-    [TYPE_GLEAM] = "gleam-caste",
-    [TYPE_FOUNDRY] = "foundry-caste",
-    [TYPE_ORCHID] = "orchid-caste",
-    [TYPE_AURORA] = "aurora-caste"
-}
 
 local meta = {}
 

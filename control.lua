@@ -78,6 +78,11 @@ require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
+-- EmmyLua stuff
+---@class Entry
+---@class Entity
+---@class Type
+
 local Register = require("scripts.control.register")
 local Technologies = require("scripts.control.technologies")
 local Subentities = require("scripts.control.subentities")
@@ -89,6 +94,9 @@ local Gui = require("scripts.control.gui")
 ---------------------------------------------------------------------------------------------------
 -- << update functions >>
 -- entities need to be checked for validity before calling the update-function
+-- local all the frequently called functions for miniscule performance gains
+local try_add_to_house = Inhabitants.try_add_to_house
+local remove_from_house = Inhabitants.remove_from_house
 
 local function update_house(entry, delta_ticks)
     local diet_effects = Diet.evaluate(entry, delta_ticks)
@@ -97,39 +105,46 @@ local function update_house(entry, delta_ticks)
     entry.trend = entry.trend + Inhabitants.get_trend(entry, delta_ticks)
     if entry.trend >= 1 then
         -- let people move in
-        Inhabitants.try_add_to_house(entry, math.floor(entry.trend))
+        try_add_to_house(entry, math.floor(entry.trend))
         entry.trend = entry.trend - math.floor(entry.trend)
     elseif entry.trend <= -1 then
         -- let people move out
-        Inhabitants.remove(entry, -math.ceil(entry.trend))
+        remove_from_house(entry, -math.ceil(entry.trend))
         entry.trend = entry.trend - math.ceil(entry.trend)
     end
 
     Subentities.set_power_usage(entry)
 end
 
+local get_clockwork_bonus = Inhabitants.get_clockwork_bonus
+local get_aurora_bonus = Inhabitants.get_aurora_bonus
+local get_orchid_bonus = Inhabitants.get_orchid_bonus
+local set_beacon_effects = Subentities.set_beacon_effects
+local is_affected_by_clockwork = Types.is_affected_by_clockwork
+local is_affected_by_orchid = Types.is_affected_by_orchid
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
+    local _type = entry.type
     local speed_bonus = 0
     local productivity_bonus = 0
     local use_penalty_module = false
 
-    if Types.is_affected_by_clockwork(entry.type) then
-        speed_bonus = Inhabitants.get_clockwork_bonus()
+    if is_affected_by_clockwork(_type) then
+        speed_bonus = get_clockwork_bonus()
         use_penalty_module = global.use_penalty
     end
-    if entry.type == TYPE_ROCKET_SILO then
-        productivity_bonus = Inhabitants.get_aurora_bonus()
+    if _type == TYPE_ROCKET_SILO then
+        productivity_bonus = get_aurora_bonus()
     end
-    if Types.is_affected_by_orchid(entry.type) then
-        productivity_bonus = Inhabitants.get_orchid_bonus()
+    if is_affected_by_orchid(_type) then
+        productivity_bonus = get_orchid_bonus()
     end
-    if entry.type == TYPE_ORANGERY then
+    if _type == TYPE_ORANGERY then
         local age = game.tick - entry.tick_of_creation
         productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
     end
 
-    Subentities.set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
+    set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
 local update_function_lookup = {
@@ -148,24 +163,33 @@ local update_function_lookup = {
     [TYPE_ORANGERY] = update_entity_with_beacon
 }
 
+local remove_entry = Register.remove_entry
 local function update(entry)
     if not entry.entity.valid then
-        Register.remove_entry(entry)
+        remove_entry(entry)
         return
     end
 
-    local update_function = update_function_lookup[entry.type]
+    local _type = entry.type
+    local update_function = update_function_lookup[_type]
 
     if update_function ~= nil then
         local delta_ticks = game.tick - entry.last_update
-        update_function_lookup[entry.type](entry, delta_ticks)
+        update_function_lookup[_type](entry, delta_ticks)
         entry.last_update = game.tick
     end
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
+local ease_panic = Inhabitants.ease_panic
+local update_caste_bonuses = Inhabitants.update_caste_bonuses
+local update_city_info = Gui.update_city_info
+local update_details_view = Gui.update_details_view
+
 local function update_cycle()
+    ease_panic()
+
     local next = next
     local count = 0
     local register = global.register
@@ -186,11 +210,9 @@ local function update_cycle()
     end
     global.last_index = index
 
-    Inhabitants.update_caste_bonuses()
-    Inhabitants.ease_panic()
-
-    Gui.update_city_info()
-    Gui.update_details_view()
+    update_caste_bonuses()
+    update_city_info()
+    update_details_view()
 
     global.last_update = game.tick
 end
@@ -219,7 +241,6 @@ local function init()
     Technologies.init()
     Gui.init()
 end
-
 
 local function on_entity_built(event)
     -- https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
@@ -273,7 +294,7 @@ local function on_entity_mined(event)
     on_entity_removed(event)
 end
 
-local function on_configuration_change(event)
+local function on_configuration_change()
     -- Compare the stored version number with the loaded version to detect a mod update
     if game.active_mods["sosciencity"] ~= global.version then
         global.version = game.active_mods["sosciencity"]
