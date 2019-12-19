@@ -100,6 +100,7 @@ Caste.values = {
         minimum_comfort = 5
     }
 }
+local castes = Caste.values
 
 -- postprocessing
 for _, caste in pairs(Caste.values) do
@@ -113,13 +114,8 @@ end
 
 local meta = {}
 
-function meta:__call(entity)
-    -- check if it's a registered entity or a enum
-    if type(entity) == "table" then
-        return Caste.values[entity.type]
-    else
-        return Caste.values[entity]
-    end
+function meta:__call(_type)
+    return castes[_type]
 end
 
 setmetatable(Caste, meta)

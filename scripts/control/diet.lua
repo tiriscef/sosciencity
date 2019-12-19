@@ -212,7 +212,7 @@ function Diet.evaluate(entry, delta_ticks)
 
     local diet_effects = get_diet_effects(diet, entry.type)
 
-    local to_consume = Caste(entry).calorific_demand * delta_ticks * entry.inhabitants
+    local to_consume = Caste(entry.type).calorific_demand * delta_ticks * entry.inhabitants
     local hunger_satisfaction = consume_food(inventories, to_consume, diet, diet_effects)
     apply_hunger_effects(hunger_satisfaction, diet_effects)
 

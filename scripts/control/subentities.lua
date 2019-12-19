@@ -21,7 +21,8 @@ local function add(entry, _type)
 end
 
 local function add_sprite(entry, name, alt_mode)
-    local sprite_id = rendering.draw_sprite {
+    local sprite_id =
+        rendering.draw_sprite {
         sprite = name,
         target = entry.entity,
         surface = entry.entity.surface,
@@ -72,10 +73,6 @@ local PENALTY_MODULE_NAME = "sosciencity-penalty"
 
 local MAX_MODULE_STRENGTH = 14
 
-local SPEED = 1
-local PRODUCTIVITY = 2
-local PENALTY = 3
-
 -- assumes that value is an integer
 local function set_binary_modules(beacon_inventory, module_name, value)
     local new_value = value
@@ -101,7 +98,10 @@ function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
     local beacon, new = Subentities.get(entry, SUB_BEACON)
 
     -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
-    if not new and speed == entry[SPEED] and productivity == entry[PRODUCTIVITY] and add_penalty == entry[PENALTY] then
+    if
+        not new and speed == entry.speed_bonus and productivity == entry.productivity_bonus and
+            add_penalty == entry.has_penalty
+     then
         return
     end
 
@@ -120,9 +120,9 @@ function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
     end
 
     -- save the current beacon settings
-    entry[SPEED] = speed
-    entry[PRODUCTIVITY] = productivity
-    entry[PENALTY] = add_penalty
+    entry.speed_bonus = speed
+    entry.productivity_bonus = productivity
+    entry.has_penalty = add_penalty
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -144,7 +144,13 @@ end
 -- usage seems to be in W
 function Subentities.set_power_usage(entry, usage)
     usage = usage or get_residential_power_consumption(entry)
-    Subentities.get(entry, SUB_EEI).power_usage = usage
+    local eei, new = Subentities.get(entry, SUB_EEI)
+
+    -- we don't update the eei if nothing has changed to avoid unnecessary API calls
+    if new or entry.power_usage ~= usage then
+        eei.power_usage = usage
+        entry.power_usage = usage
+    end
 end
 
 return Subentities

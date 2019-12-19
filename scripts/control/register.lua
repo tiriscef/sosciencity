@@ -38,8 +38,8 @@ local function add_entry(entity, _type)
     global.register_by_type[_type][unit_number] = unit_number
 end
 
-function Register.add(entity)
-    local _type = Types(entity)
+function Register.add(entity, _type)
+    _type = _type or Types(entity)
 
     if Types.is_relevant_to_register(_type) then
         add_entry(entity, _type)
@@ -83,19 +83,24 @@ function Register.remove_entity(entity)
 end
 
 function Register.remove_entry(entry)
-    remove_entry(entry)
     Register.remove_entity(entry.entity)
 end
 
 function Register.change_type(entry, new_type)
-    if not global.register_by_type[new_type] then
-        global.register_by_type[new_type] = {}
-    end
+    Register.remove_entry(entry)
+    Register.add(entry.entity, new_type)
+end
 
-    local unit_number = entry.entity.unit_number
-    global.register_by_type[entry.type][unit_number] = nil
-    global.register_by_type[new_type][unit_number] = unit_number
-    entry.type = new_type
+function Register.try_get(unit_number)
+    local entry = global.register[unit_number]
+
+    if entry then
+        if entry.entity.valid then
+            return entry
+        else
+            Register.remove_entity(entry.entity)
+        end
+    end
 end
 
 -- Iterator for all entries of a specific type

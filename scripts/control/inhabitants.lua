@@ -36,6 +36,16 @@ local DEFAULT_HAPPINESS = 5
 local DEFAULT_HEALTHINESS = 5
 local DEFAULT_HEALTHINESS_MENTAL = 10
 
+function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
+    if entry.type == TYPE_EMPTY_HOUSE and Housing.allowes_caste(Housing(entry), caste_id) then
+        Register.change_type(entry, caste_id)
+
+        if loud then
+            -- TODO create flying text
+        end
+    end
+end
+
 -- Tries to add the specified amount of inhabitants to the house-entry
 -- Returns the number of inhabitants that were added
 function Inhabitants.try_add_to_house(entry, count, happiness, healthiness, healthiness_mental)
