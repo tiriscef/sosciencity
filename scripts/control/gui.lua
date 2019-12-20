@@ -14,43 +14,52 @@ local function get_bonus_string(caste_id)
     return string.format("%+d", bonus)
 end
 
+local function get_reasonable_number(number)
+    return string.format("%.01d", number)
+end
+
 local function get_comfort_localised_string(comfort)
-    return {
-        "",
-        comfort .. " - ",
-        {"color-scale." .. comfort, {"comfort-scale." .. comfort}}
-    }
+    return {"", comfort .. "  -  ", {"comfort-scale." .. comfort}}
+end
+
+local function get_caste_localised_string(caste_id)
+    return {"caste-name." .. Types.caste_names[caste_id]}
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << gui elements >>
 local DATA_LIST_DEFAULT_NAME = "datalist"
 local function add_data_list(container, name)
-    local flow =
+    local datatable =
         container.add {
         type = "table",
         name = name or DATA_LIST_DEFAULT_NAME,
         column_count = 2,
-        draw_vertical_lines = true
+        style = "bordered_table"
     }
-    flow.style.horizontally_stretchable = true
-    flow.style.vertically_stretchable = true
+    datatable.style.horizontally_stretchable = true
+    datatable.style.vertically_stretchable = true
+    datatable.style.right_cell_padding = 8
 
-    return flow
+    return datatable
 end
 
 local function add_kv_pair(data_list, key, key_caption, value_caption)
-    data_list.add {
+    local key_label =
+        data_list.add {
         type = "label",
         name = "key-" .. key,
         caption = key_caption
     }
-    local value = data_list.add {
+    key_label.style.font = "default-bold"
+
+    local value_label =
+        data_list.add {
         type = "label",
         name = "value-" .. key,
         caption = value_caption
     }
-    value.style.horizontally_stretchable = true
+    value_label.style.horizontally_stretchable = true
 end
 
 local function get_kv_pair(data_list, key)
@@ -240,7 +249,7 @@ local function add_caste_chooser_tab(tabbed_pane, details)
         tabbed_pane.add {
         type = "tab",
         name = "caste",
-        caption = {"sosciencity-gui.caste-choose-title"}
+        caption = {"sosciencity-gui.caste"}
     }
     local flow =
         tabbed_pane.add {
@@ -296,6 +305,7 @@ local function add_empty_house_info_tab(tabbed_pane, details)
         name = "house",
         caption = {"sosciencity-gui.building-info"}
     }
+
     local data_list = add_data_list(tabbed_pane, "house-infos")
     add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, details.room_count)
     add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, get_comfort_localised_string(details.comfort))
@@ -305,6 +315,7 @@ end
 
 local function create_empty_housing_details(container, entry)
     set_details_view_title(container, entry.entity.localised_name)
+
     local tab_pane =
         container.add {
         type = "tabbed-pane",
@@ -312,15 +323,55 @@ local function create_empty_housing_details(container, entry)
     }
     make_stretchable(tab_pane)
 
-    local details = Housing(entry)
-    add_caste_chooser_tab(tab_pane, details)
-    add_empty_house_info_tab(tab_pane, details)
+    local house_details = Housing(entry)
+    add_caste_chooser_tab(tab_pane, house_details)
+    add_empty_house_info_tab(tab_pane, house_details)
 end
 
 -- << housing details view >>
+local function add_housing_general_info(tabbed_pane, entry)
+    local tab =
+        tabbed_pane.add {
+        type = "tab",
+        name = "general",
+        caption = {"sosciencity-gui.general"}
+    }
+
+    local data_list = add_data_list(tabbed_pane, "general-infos")
+    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry.type))
+    add_kv_pair(
+        data_list,
+        "capacity",
+        {"sosciencity-gui.capacity"},
+        {"sosciencity-gui.display-capacity", entry.inhabitants, Housing.get_capacity(entry)}
+    )
+    -- TODO
+    add_kv_pair(
+        data_list,
+        "healthiness",
+        {"sosciencity-gui.healthiness"},
+        {
+            "sosciencity-gui.convergenting-value",
+            get_reasonable_number(entry.healthiness),
+            get_reasonable_number(entry.healthiness)
+        }
+    )
+
+    tabbed_pane.add_tab(tab, data_list)
+end
+
 local function create_housing_details(container, entry)
-    local title = {"", entry.entity.localised_name, " - ", "caste-name." .. Types.caste_names[entry.type]}
+    local title = {"", entry.entity.localised_name, "  -  ", get_caste_localised_string(entry.type)}
     set_details_view_title(container, title)
+
+    local tab_pane =
+        container.add {
+        type = "tabbed-pane",
+        name = "tabpane"
+    }
+    make_stretchable(tab_pane)
+
+    add_housing_general_info(tab_pane, entry)
     -- general info: building, inhabitants, happiness, health, kicking people out
     -- happiness and its sources
     -- health and its sources
@@ -343,7 +394,8 @@ function Gui.create_details_view_for(player)
     frame.style.minimal_height = 300
     set_padding(frame, 4)
 
-    local nested = frame.add {
+    local nested =
+        frame.add {
         type = "frame",
         name = "nested",
         direction = "horizontal",
@@ -397,9 +449,9 @@ local detail_view_builders = {
     [TYPE_AURORA] = create_housing_details
 }
 
-function Gui.open_details_view_for(player, entity)
+function Gui.open_details_view_for(player, unit_number)
     local details_view = get_details_view(player)
-    local entry = Register.try_get(entity.unit_number)
+    local entry = Register.try_get(unit_number)
     if not entry then
         return
     end
@@ -408,7 +460,7 @@ function Gui.open_details_view_for(player, entity)
         details_view.nested.clear()
         detail_view_builders[entry.type](details_view.nested, entry)
         details_view.visible = true
-        global.details_view[player.index] = entity.unit_number
+        global.details_view[player.index] = unit_number
     end
 end
 
@@ -420,6 +472,18 @@ function Gui.close_details_view_for(player)
     details_view.nested.clear()
 end
 
+function Gui.rebuild_details_view_for_entry(entry)
+    local unit_number = entry.entity.unit_number
+
+    for player_index, viewed_unit_number in pairs(global.details_view) do
+        if unit_number == viewed_unit_number then
+            local player = game.players[player_index]
+            Gui.close_details_view_for(player)
+            Gui.open_details_view_for(player, unit_number)
+        end
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << handlers >>
 function Gui.handle_caste_button(player_index, caste_id)
@@ -428,7 +492,10 @@ function Gui.handle_caste_button(player_index, caste_id)
         return
     end
 
-    Inhabitants.try_allow_for_caste(entry, caste_id)
+    local changed = Inhabitants.try_allow_for_caste(entry, caste_id)
+    if changed then
+        Gui.rebuild_details_view_for_entry(entry)
+    end
 end
 
 ---------------------------------------------------------------------------------------------------

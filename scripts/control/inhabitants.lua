@@ -10,7 +10,7 @@ local DEFAULT_HAPPINESS = 5
 local DEFAULT_HEALTHINESS = 5
 local DEFAULT_HEALTHINESS_MENTAL = 10
 
---- Changes the type of the entry to the given caste if it makes sense.
+--- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
 --- @param entry Entry
 --- @param caste_id integer
 --- @param loud boolean
@@ -24,6 +24,9 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         if loud then
         -- TODO create flying text
         end
+        return true
+    else
+        return false
     end
 end
 
