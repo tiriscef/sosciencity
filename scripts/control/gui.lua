@@ -337,7 +337,17 @@ local function add_housing_general_info(tabbed_pane, entry)
         caption = {"sosciencity-gui.general"}
     }
 
-    local data_list = add_data_list(tabbed_pane, "general-infos")
+    local flow =
+        tabbed_pane.add {
+        type = "flow",
+        name = "general-flow",
+        direction = "vertical"
+    }
+    make_stretchable(flow)
+    flow.style.vertical_spacing = 6
+    flow.style.horizontal_align = "right"
+
+    local data_list = add_data_list(flow, "general-infos")
     add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry.type))
     add_kv_pair(
         data_list,
@@ -357,7 +367,17 @@ local function add_housing_general_info(tabbed_pane, entry)
         }
     )
 
-    tabbed_pane.add_tab(tab, data_list)
+    local kickout_button =
+        flow.add {
+        type = "button",
+        name = Gui.UNIQUE_PREFIX .. "kickout",
+        caption = {"sosciencity-gui.kickout"},
+        tooltip = global.technologies.resettlement and {"sosciencity-gui.with-resettlement"} or
+            {"sosciencity-gui.no-resettlement"},
+        mouse_button_filter = {"left"}
+    }
+
+    tabbed_pane.add_tab(tab, flow)
 end
 
 local function create_housing_details(container, entry)
@@ -495,6 +515,25 @@ function Gui.handle_caste_button(player_index, caste_id)
     local changed = Inhabitants.try_allow_for_caste(entry, caste_id)
     if changed then
         Gui.rebuild_details_view_for_entry(entry)
+    end
+end
+
+function Gui.handle_kickout_button(player_index, button)
+    local entry = Register.try_get(global.details_view[player_index])
+    if not entry then
+        return
+    end
+
+    local caption = button.caption[1]
+    if caption == "sosciencity-gui.confirm" then
+        Inhabitants.remove_house(entry)
+        Register.change_type(entry, TYPE_EMPTY_HOUSE)
+        Gui.rebuild_details_view_for_entry(entry)
+        return
+    end
+    if caption == "sosciencity-gui.kickout" then
+        button.caption = {"sosciencity-gui.confirm"}
+        button.tooltip = {"sosciencity-gui.confirm-tooltip"}
     end
 end
 

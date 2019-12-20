@@ -347,6 +347,10 @@ local function on_gui_click(event)
             Gui.handle_caste_button(event.player_index, caste_id)
         end
     end
+
+    if name == "kickout" then
+        Gui.handle_kickout_button(event.player_index, gui_element)
+    end
 end
 
 local function on_research_finished(event)

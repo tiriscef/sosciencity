@@ -1,4 +1,4 @@
-function conditional_add_ingredient(recipe, details)
+function conditionally_add_ingredient(recipe, details)
     if recipe:results_contain_item(details.item) then
         if recipe:has_difficulties() then
             local normal_amount, expensive_amount = recipe:get_result_item_count(details.item)
@@ -22,7 +22,7 @@ end
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "automation-science-pack",
             item_to_add = "note",
@@ -35,7 +35,7 @@ table.insert(
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "logistic-science-pack",
             item_to_add = "essay",
@@ -48,7 +48,7 @@ table.insert(
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "military-science-pack",
             item_to_add = "strategic-considerations",
@@ -61,7 +61,7 @@ table.insert(
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "chemical-science-pack",
             item_to_add = "published-paper",
@@ -74,7 +74,7 @@ table.insert(
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "production-science-pack",
             item_to_add = "complex-scientific-data",
@@ -87,7 +87,7 @@ table.insert(
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "utility-science-pack",
             item_to_add = "data-collection",
@@ -100,7 +100,7 @@ table.insert(
 table.insert(
     recipe_operations,
     {
-        func = conditional_add_ingredient,
+        func = conditionally_add_ingredient,
         details = {
             item = "space-science-pack",
             item_to_add = "well-funded-scientific-thesis",
