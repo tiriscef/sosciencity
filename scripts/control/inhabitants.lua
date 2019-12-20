@@ -296,7 +296,7 @@ end
 function Inhabitants.add_inhabitants_data(entry)
     entry.happiness = 0
     entry.healthiness = 0
-    entry.healthiness_mental = 0
+    entry.mental_healthiness = 0
     entry.inhabitants = 0
     entry.trend = 0
 end

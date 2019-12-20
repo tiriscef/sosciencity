@@ -70,8 +70,12 @@ local function set_key(data_list, key, key_caption)
     data_list["key-" .. key].caption = key_caption
 end
 
-local function set_value(data_list, key, value_caption)
+local function set_datalist_value(data_list, key, value_caption)
     data_list["value-" .. key].caption = value_caption
+end
+
+local function set_datalist_value_tooltip(datalist, key, tooltip)
+    datalist["value-" .. key].tooltip = tooltip
 end
 
 local function set_padding(element, padding)
@@ -85,6 +89,17 @@ end
 local function make_stretchable(element)
     element.style.horizontally_stretchable = true
     element.style.vertically_stretchable = true
+end
+
+local function is_confirmed(button)
+    local caption = button.caption[1]
+    if caption == "sosciencity-gui.confirm" then
+        return true
+    else
+        button.caption = {"sosciencity-gui.confirm"}
+        button.tooltip = {"sosciencity-gui.confirm-tooltip"}
+        return false
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -172,7 +187,7 @@ local function add_caste_flow(container, caste_id)
     bonus_label.style.horizontal_align = "center"
 end
 
-function Gui.create_city_info_for(player)
+function Gui.create_city_info_for_player(player)
     local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
@@ -230,7 +245,7 @@ function Gui.update_city_info()
         if city_info_gui ~= nil and city_info_gui.valid then
             update_city_info(city_info_gui)
         else
-            Gui.create_city_info_for(player)
+            Gui.create_city_info_for_player(player)
         end
     end
 end
@@ -329,6 +344,48 @@ local function create_empty_housing_details(container, entry)
 end
 
 -- << housing details view >>
+local function update_housing_general_info(tabbed_pane, entry)
+    local general_list = tabbed_pane["general-flow"]["general-infos"]
+    set_datalist_value(
+        general_list,
+        "capacity",
+        {"sosciencity-gui.display-capacity", entry.inhabitants, Housing.get_capacity(entry)}
+    )
+    set_datalist_value_tooltip(
+        general_list,
+        "capacity",
+        (entry.trend > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
+    )
+
+    set_datalist_value(
+        general_list,
+        "happiness",
+        {
+            "sosciencity-gui.convergenting-value",
+            get_reasonable_number(entry.happiness),
+            get_reasonable_number(entry.happiness)
+        }
+    )
+    set_datalist_value(
+        general_list,
+        "healthiness",
+        {
+            "sosciencity-gui.convergenting-value",
+            get_reasonable_number(entry.healthiness),
+            get_reasonable_number(entry.healthiness)
+        }
+    )
+    set_datalist_value(
+        general_list,
+        "mental-healthiness",
+        {
+            "sosciencity-gui.convergenting-value",
+            get_reasonable_number(entry.mental_healthiness),
+            get_reasonable_number(entry.mental_healthiness)
+        }
+    )
+end
+
 local function add_housing_general_info(tabbed_pane, entry)
     local tab =
         tabbed_pane.add {
@@ -349,23 +406,11 @@ local function add_housing_general_info(tabbed_pane, entry)
 
     local data_list = add_data_list(flow, "general-infos")
     add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry.type))
-    add_kv_pair(
-        data_list,
-        "capacity",
-        {"sosciencity-gui.capacity"},
-        {"sosciencity-gui.display-capacity", entry.inhabitants, Housing.get_capacity(entry)}
-    )
-    -- TODO
-    add_kv_pair(
-        data_list,
-        "healthiness",
-        {"sosciencity-gui.healthiness"},
-        {
-            "sosciencity-gui.convergenting-value",
-            get_reasonable_number(entry.healthiness),
-            get_reasonable_number(entry.healthiness)
-        }
-    )
+
+    add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
+    add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
+    add_kv_pair(data_list, "healthiness", {"sosciencity-gui.healthiness"})
+    add_kv_pair(data_list, "mental-healthiness", {"sosciencity-gui.mental-healthiness"})
 
     local kickout_button =
         flow.add {
@@ -378,6 +423,9 @@ local function add_housing_general_info(tabbed_pane, entry)
     }
 
     tabbed_pane.add_tab(tab, flow)
+
+    -- call the update function to set the values
+    update_housing_general_info(tabbed_pane, entry)
 end
 
 local function create_housing_details(container, entry)
@@ -397,8 +445,13 @@ local function create_housing_details(container, entry)
     -- health and its sources
 end
 
+local function update_housing_details(container, entry)
+    local tabbed_pane = container.tabpane
+    update_housing_general_info(tabbed_pane, entry)
+end
+
 -- << general details view functions >>
-function Gui.create_details_view_for(player)
+function Gui.create_details_view_for_player(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
     if frame and frame.valid then
         return
@@ -434,13 +487,21 @@ local function get_details_view(player)
         return details_view
     else
         -- recreate it otherwise
-        Gui.create_details_view_for(player)
+        Gui.create_details_view_for_player(player)
         return get_details_view(player)
     end
 end
 
 -- table with (type, update-function) pairs
-local content_updaters = {}
+local content_updaters = {
+    [TYPE_CLOCKWORK] = update_housing_details,
+    [TYPE_EMBER] = update_housing_details,
+    [TYPE_GUNFIRE] = update_housing_details,
+    [TYPE_GLEAM] = update_housing_details,
+    [TYPE_FOUNDRY] = update_housing_details,
+    [TYPE_ORCHID] = update_housing_details,
+    [TYPE_AURORA] = update_housing_details
+}
 
 function Gui.update_details_view()
     for player_id, unit_number in pairs(global.details_view) do
@@ -448,10 +509,10 @@ function Gui.update_details_view()
 
         -- check if the entity hasn't been unregistered in the meantime
         if not entry then
-            Gui.close_details_view_for(game.players[player_id])
+            Gui.close_details_view_for_player(game.players[player_id])
         else
             if content_updaters[entry.type] then
-                content_updaters[entry.type](get_details_view(game.players[player_id]), entry)
+                content_updaters[entry.type](get_details_view(game.players[player_id]).nested, entry)
             end
         end
     end
@@ -469,7 +530,7 @@ local detail_view_builders = {
     [TYPE_AURORA] = create_housing_details
 }
 
-function Gui.open_details_view_for(player, unit_number)
+function Gui.open_details_view_for_player(player, unit_number)
     local details_view = get_details_view(player)
     local entry = Register.try_get(unit_number)
     if not entry then
@@ -484,7 +545,7 @@ function Gui.open_details_view_for(player, unit_number)
     end
 end
 
-function Gui.close_details_view_for(player)
+function Gui.close_details_view_for_player(player)
     local details_view = get_details_view(player)
     details_view.visible = false
     global.details_view[player.index] = nil
@@ -498,8 +559,8 @@ function Gui.rebuild_details_view_for_entry(entry)
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then
             local player = game.players[player_index]
-            Gui.close_details_view_for(player)
-            Gui.open_details_view_for(player, unit_number)
+            Gui.close_details_view_for_player(player)
+            Gui.open_details_view_for_player(player, unit_number)
         end
     end
 end
@@ -524,31 +585,26 @@ function Gui.handle_kickout_button(player_index, button)
         return
     end
 
-    local caption = button.caption[1]
-    if caption == "sosciencity-gui.confirm" then
+    if is_confirmed(button) then
         Inhabitants.remove_house(entry)
         Register.change_type(entry, TYPE_EMPTY_HOUSE)
         Gui.rebuild_details_view_for_entry(entry)
         return
     end
-    if caption == "sosciencity-gui.kickout" then
-        button.caption = {"sosciencity-gui.confirm"}
-        button.tooltip = {"sosciencity-gui.confirm-tooltip"}
-    end
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
-function Gui.create_guis_for(player)
-    Gui.create_city_info_for(player)
-    Gui.create_details_view_for(player)
+function Gui.create_guis_for_player(player)
+    Gui.create_city_info_for_player(player)
+    Gui.create_details_view_for_player(player)
 end
 
 function Gui.init()
     global.details_view = {}
 
     for _, player in pairs(game.players) do
-        Gui.create_guis_for(player)
+        Gui.create_guis_for_player(player)
     end
 end
 

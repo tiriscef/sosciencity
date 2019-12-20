@@ -136,7 +136,7 @@ local function get_diet_effects(diet, caste_type)
     -- evaluate features
     local mental_healthiness = 1
     -- TODO scale
-    local dietary_healthiness =
+    local healthiness =
         0.5 * (intrinsic_healthiness + get_nutrient_healthiness(fat, carbohydrates, proteins, flags))
 
     local satisfaction = (1 - 0.5 * caste.desire_for_luxury) * taste_quality + 0.5 * caste.desire_for_luxury * luxury
@@ -146,8 +146,8 @@ local function get_diet_effects(diet, caste_type)
     end
 
     return {
-        healthiness_dietary = dietary_healthiness,
-        healthiness_mental = mental_healthiness,
+        healthiness = healthiness,
+        mental_healthiness = mental_healthiness,
         satisfaction = satisfaction,
         count = count,
         flags = flags

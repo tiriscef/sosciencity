@@ -35,6 +35,8 @@ end
         -- Housing
         ["inhabitants"]: int
         ["happiness"]: float
+        ["healthiness"]: float
+        ["mental_healthiness"]: float
         ["food"]: table
 
     food: table
@@ -312,20 +314,20 @@ local function on_player_created(event)
     local index = event.player_index
     local player = game.get_player(index)
 
-    Gui.create_guis_for(player)
+    Gui.create_guis_for_player(player)
 end
 
 local function on_gui_opened(event)
     if event.gui_type == defines.gui_type.entity then
         local player = game.get_player(event.player_index)
-        Gui.open_details_view_for(player, event.entity.unit_number)
+        Gui.open_details_view_for_player(player, event.entity.unit_number)
     end
 end
 
 local function on_gui_closed(event)
     if event.gui_type == defines.gui_type.entity then
         local player = game.get_player(event.player_index)
-        Gui.close_details_view_for(player)
+        Gui.close_details_view_for_player(player)
     end
 end
 
