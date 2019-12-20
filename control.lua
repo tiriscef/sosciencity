@@ -318,7 +318,7 @@ end
 local function on_gui_opened(event)
     if event.gui_type == defines.gui_type.entity then
         local player = game.get_player(event.player_index)
-        Gui.open_details_view_for(player, event.entity)
+        Gui.open_details_view_for(player, event.entity.unit_number)
     end
 end
 

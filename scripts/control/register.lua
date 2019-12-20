@@ -96,7 +96,6 @@ end
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
     Register.add(entry.entity, new_type)
-    game.print("an entry changes its type")
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
