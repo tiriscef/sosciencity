@@ -12,7 +12,7 @@ table.insert(
                         table.insert(
                             recipe_operations,
                             {
-                                func = conditional_add_ingredient,
+                                func = conditionally_add_ingredient,
                                 details = {
                                     item = item.name,
                                     item_to_add = operation.details.item_to_add,
