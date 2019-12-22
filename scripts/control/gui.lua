@@ -23,13 +23,33 @@ local function get_comfort_localised_string(comfort)
 end
 
 local function get_caste_localised_string(caste_id)
-    return {"caste-name." .. Types.caste_names[caste_id]}
+    return {"caste-name." .. Caste(caste_id).name}
+end
+
+---------------------------------------------------------------------------------------------------
+-- << style functions >>
+local function set_padding(element, padding)
+    local style = element.style
+    style.left_padding = padding
+    style.right_padding = padding
+    style.top_padding = padding
+    style.bottom_padding = padding
+end
+
+local function make_stretchable(element)
+    element.style.horizontally_stretchable = true
+    element.style.vertically_stretchable = true
+end
+
+local function make_squashable(element)
+    element.style.horizontally_squashable = true
+    element.style.vertically_squashable = true
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << gui elements >>
 local DATA_LIST_DEFAULT_NAME = "datalist"
-local function add_data_list(container, name)
+local function create_data_list(container, name)
     local datatable =
         container.add {
         type = "table",
@@ -57,7 +77,7 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
     local value_label =
         data_list.add {
         type = "label",
-        name = "value-" .. key,
+        name = key,
         caption = value_caption
     }
     value_label.style.horizontally_stretchable = true
@@ -65,7 +85,7 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
 end
 
 local function get_kv_pair(data_list, key)
-    return data_list["key-" .. key], data_list["value-" .. key]
+    return data_list["key-" .. key], data_list[key]
 end
 
 local function set_key(data_list, key, key_caption)
@@ -73,11 +93,11 @@ local function set_key(data_list, key, key_caption)
 end
 
 local function set_datalist_value(data_list, key, value_caption)
-    data_list["value-" .. key].caption = value_caption
+    data_list[key].caption = value_caption
 end
 
 local function set_datalist_value_tooltip(datalist, key, tooltip)
-    datalist["value-" .. key].tooltip = tooltip
+    datalist[key].tooltip = tooltip
 end
 
 local function is_confirmed(button)
@@ -91,7 +111,7 @@ local function is_confirmed(button)
     end
 end
 
-local function add_caste_sprite(container, caste_id, size)
+local function create_caste_sprite(container, caste_id, size)
     local caste_name = Caste(caste_id).name
 
     local sprite =
@@ -109,24 +129,33 @@ local function add_caste_sprite(container, caste_id, size)
     return sprite
 end
 
----------------------------------------------------------------------------------------------------
--- << style functions >>
-local function set_padding(element, padding)
-    local style = element.style
-    style.left_padding = padding
-    style.right_padding = padding
-    style.top_padding = padding
-    style.bottom_padding = padding
+local function create_tab(tabbed_pane, name, caption)
+    local tab =
+        tabbed_pane.add {
+        type = "tab",
+        name = name .. "tab",
+        caption = caption
+    }
+    local scrollpane =
+        tabbed_pane.add {
+        type = "scroll-pane",
+        name = name
+    }
+    local flow =
+        scrollpane.add {
+        type = "flow",
+        name = "flow",
+        direction = "vertical"
+    }
+    make_stretchable(flow)
+
+    tabbed_pane.add_tab(tab, scrollpane)
+
+    return flow
 end
 
-local function make_stretchable(element)
-    element.style.horizontally_stretchable = true
-    element.style.vertically_stretchable = true
-end
-
-local function make_squashable(element)
-    element.style.horizontally_squashable = true
-    element.style.vertically_squashable = true
+local function get_tab_contents(tabbed_pane, name)
+    return tabbed_pane[name].flow
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -181,7 +210,7 @@ local function add_caste_flow(container, caste_id)
     frame.style.padding = 0
     frame.style.left_margin = 4
 
-    local sprite = add_caste_sprite(frame, caste_id, CITY_INFO_SPRITE_SIZE)
+    local sprite = create_caste_sprite(frame, caste_id, CITY_INFO_SPRITE_SIZE)
     sprite.style.height = CITY_INFO_SPRITE_SIZE
     sprite.style.width = CITY_INFO_SPRITE_SIZE
     sprite.style.stretch_image_to_widget_size = true
@@ -223,7 +252,7 @@ function Gui.create_city_info_for_player(player)
 
     add_population_flow(frame)
 
-    for id, _ in pairs(Types.caste_names) do
+    for id, _ in pairs(Caste.values) do
         if Inhabitants.caste_is_researched(id) then
             add_caste_flow(frame, id)
         end
@@ -241,7 +270,7 @@ local function update_caste_flow(container, caste_id)
 
     caste_frame["caste-population"].caption = global.population[caste_id]
     caste_frame["caste-bonus"].caption = {
-        "caste-bonus.display-" .. Types.caste_names[caste_id],
+        "caste-bonus.display-" .. Caste(caste_id).name,
         get_bonus_string(caste_id)
     }
 end
@@ -249,7 +278,7 @@ end
 local function update_city_info(frame)
     update_population_flow(frame)
 
-    for id, _ in pairs(Types.caste_names) do
+    for id, _ in pairs(Caste.values) do
         if Inhabitants.caste_is_researched(id) then
             update_caste_flow(frame, id)
         end
@@ -281,26 +310,17 @@ end
 
 -- << empty housing details view >>
 local function add_caste_chooser_tab(tabbed_pane, details)
-    local tab =
-        tabbed_pane.add {
-        type = "tab",
-        name = "caste",
-        caption = {"sosciencity-gui.caste"}
-    }
-    local flow =
-        tabbed_pane.add {
-        type = "flow",
-        name = "button-flow",
-        direction = "vertical"
-    }
-    make_stretchable(flow)
+    local flow = create_tab(tabbed_pane, "caste-chooser", {"sosciencity-gui.caste"})
+
     flow.style.horizontal_align = "center"
     flow.style.vertical_align = "center"
     flow.style.vertical_spacing = 6
 
     local at_least_one = false
-    for caste_id, caste_name in pairs(Types.caste_names) do
+    for caste_id, caste in pairs(Caste.values) do
         if Inhabitants.caste_is_researched(caste_id) then
+            local caste_name = caste.name
+
             local button =
                 flow.add {
                 type = "button",
@@ -330,23 +350,14 @@ local function add_caste_chooser_tab(tabbed_pane, details)
             caption = {"sosciencity-gui.no-castes-researched"}
         }
     end
-
-    tabbed_pane.add_tab(tab, flow)
 end
 
 local function add_empty_house_info_tab(tabbed_pane, details)
-    local tab =
-        tabbed_pane.add {
-        type = "tab",
-        name = "house",
-        caption = {"sosciencity-gui.building-info"}
-    }
+    local flow = create_tab(tabbed_pane, "house-info", {"sosciencity-gui.building-info"})
 
-    local data_list = add_data_list(tabbed_pane, "house-infos")
+    local data_list = create_data_list(flow, "house-infos")
     add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, details.room_count)
     add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, get_comfort_localised_string(details.comfort))
-
-    tabbed_pane.add_tab(tab, data_list)
 end
 
 local function create_empty_housing_details(container, entry)
@@ -365,7 +376,7 @@ end
 
 -- << housing details view >>
 local function update_housing_general_info_tab(tabbed_pane, entry)
-    local general_list = tabbed_pane["general-scroll-pane"]["general-flow"]["general-infos"]
+    local general_list = get_tab_contents(tabbed_pane, "general")["general-infos"]
     set_datalist_value(
         general_list,
         "capacity",
@@ -407,29 +418,12 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
 end
 
 local function add_housing_general_info_tab(tabbed_pane, entry)
-    local tab =
-        tabbed_pane.add {
-        type = "tab",
-        name = "general",
-        caption = {"sosciencity-gui.general"}
-    }
+    local flow = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
 
-    local scrollpane = 
-        tabbed_pane.add {
-            type = "scroll-pane",
-            name = "general-scroll-pane"
-    }
-
-    local flow =
-        scrollpane.add {
-        type = "flow",
-        name = "general-flow",
-        direction = "vertical"
-    }
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
 
-    local data_list = add_data_list(flow, "general-infos")
+    local data_list = create_data_list(flow, "general-infos")
     add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry.type))
 
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
@@ -448,8 +442,6 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     }
     kickout_button.style.right_margin = 4
 
-    tabbed_pane.add_tab(tab, scrollpane)
-
     -- call the update function to set the values
     update_housing_general_info_tab(tabbed_pane, entry)
 end
@@ -457,31 +449,13 @@ end
 local function add_caste_info_tab(tabbed_pane, caste_id)
     local caste = Caste(caste_id)
 
-    local tab =
-        tabbed_pane.add {
-        type = "tab",
-        name = "caste",
-        caption = {"caste-short." .. caste.name}
-    }
-
-    local scrollpane = tabbed_pane.add {
-        type = "scroll-pane",
-        name = "caste-scroll-pane"
-    }
-
-    local flow =
-        scrollpane.add {
-        type = "flow",
-        name = "caste-flow",
-        direction = "vertical"
-    }
-    make_stretchable(flow)
+    local flow = create_tab(tabbed_pane, "caste", {"caste-short." .. caste.name})
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "center"
 
-    add_caste_sprite(flow, caste_id, 128)
+    create_caste_sprite(flow, caste_id, 128)
 
-    local data_list = add_data_list(flow, "caste-infos")
+    local data_list = create_data_list(flow, "caste-infos")
     add_kv_pair(data_list, "name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
     add_kv_pair(
         data_list,
@@ -501,8 +475,6 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         {"sosciencity-gui.food-count"},
         {"sosciencity-gui.display-food-count", caste.minimum_food_count}
     )
-
-    tabbed_pane.add_tab(tab, scrollpane)
 end
 
 local function update_housing_details(container, entry)

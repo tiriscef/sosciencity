@@ -344,8 +344,8 @@ local function on_gui_click(event)
     name = name:sub(UNIQUE_PREFIX:len() + 1)
 
     -- check Caste asignment buttons
-    for caste_id, caste_name in pairs(Types.caste_names) do
-        if name == caste_name then
+    for caste_id, caste in pairs(Caste.values) do
+        if name == caste.name then
             Gui.handle_caste_button(event.player_index, caste_id)
         end
     end

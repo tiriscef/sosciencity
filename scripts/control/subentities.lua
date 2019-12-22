@@ -37,14 +37,16 @@ end
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
 function Subentities.add_all_for(entry)
-    if Types.needs_beacon(entry.type) then
+    local _type = entry.type
+
+    if Types.needs_beacon(_type) then
         add(entry, SUB_BEACON)
     end
-    if Types.needs_eei(entry.type) then
+    if Types.needs_eei(_type) then
         add(entry, SUB_EEI)
     end
-    if Types.needs_alt_mode_sprite(entry.type) then
-        add_sprite(entry, Types.caste_sprites[entry.type], true)
+    if Types.needs_alt_mode_sprite(_type) then
+        add_sprite(entry, Types.type_sprite_pairs[_type], true)
     end
 end
 

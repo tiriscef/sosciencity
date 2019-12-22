@@ -284,8 +284,8 @@ end
 function Inhabitants.get_population_count()
     local population_count = 0
 
-    for id, _ in pairs(Types.caste_names) do
-        population_count = population_count + global.population[id]
+    for caste_id, _ in pairs(Caste.values) do
+        population_count = population_count + global.population[caste_id]
     end
 
     return population_count

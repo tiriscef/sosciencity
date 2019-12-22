@@ -87,17 +87,7 @@ Types.taste_names = {
     [TASTE_UMAMI] = "umami"
 }
 
-Types.caste_names = {
-    [TYPE_CLOCKWORK] = "clockwork",
-    [TYPE_ORCHID] = "orchid",
-    [TYPE_GUNFIRE] = "gunfire",
-    [TYPE_EMBER] = "ember",
-    [TYPE_FOUNDRY] = "foundry",
-    [TYPE_GLEAM] = "gleam",
-    [TYPE_AURORA] = "aurora"
-}
-
-Types.caste_sprites = {
+Types.type_sprite_pairs = {
     [TYPE_EMPTY_HOUSE] = "empty-caste",
     [TYPE_CLOCKWORK] = "clockwork-caste",
     [TYPE_EMBER] = "ember-caste",
