@@ -39,7 +39,6 @@ local function add_data_list(container, name)
     }
     local style = datatable.style
     style.horizontally_stretchable = true
-    style.vertically_stretchable = true
     style.right_cell_padding = 6
     style.left_cell_padding = 6
 
@@ -54,8 +53,6 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
         caption = key_caption
     }
     key_label.style.font = "default-bold"
-    key_label.style.vertically_stretchable = true
-    key_label.style.vertical_align = "top"
 
     local value_label =
         data_list.add {
@@ -125,6 +122,11 @@ end
 local function make_stretchable(element)
     element.style.horizontally_stretchable = true
     element.style.vertically_stretchable = true
+end
+
+local function make_squashable(element)
+    element.style.horizontally_squashable = true
+    element.style.vertically_squashable = true
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -355,7 +357,6 @@ local function create_empty_housing_details(container, entry)
         type = "tabbed-pane",
         name = "tabpane"
     }
-    make_stretchable(tab_pane)
 
     local house_details = Housing(entry)
     add_caste_chooser_tab(tab_pane, house_details)
@@ -364,7 +365,7 @@ end
 
 -- << housing details view >>
 local function update_housing_general_info_tab(tabbed_pane, entry)
-    local general_list = tabbed_pane["general-flow"]["general-infos"]
+    local general_list = tabbed_pane["general-scroll-pane"]["general-flow"]["general-infos"]
     set_datalist_value(
         general_list,
         "capacity",
@@ -413,13 +414,18 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
         caption = {"sosciencity-gui.general"}
     }
 
-    local flow =
+    local scrollpane = 
         tabbed_pane.add {
+            type = "scroll-pane",
+            name = "general-scroll-pane"
+    }
+
+    local flow =
+        scrollpane.add {
         type = "flow",
         name = "general-flow",
         direction = "vertical"
     }
-    make_stretchable(flow)
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
 
@@ -440,8 +446,9 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
             {"sosciencity-gui.no-resettlement"},
         mouse_button_filter = {"left"}
     }
+    kickout_button.style.right_margin = 4
 
-    tabbed_pane.add_tab(tab, flow)
+    tabbed_pane.add_tab(tab, scrollpane)
 
     -- call the update function to set the values
     update_housing_general_info_tab(tabbed_pane, entry)
@@ -457,8 +464,13 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         caption = {"caste-short." .. caste.name}
     }
 
+    local scrollpane = tabbed_pane.add {
+        type = "scroll-pane",
+        name = "caste-scroll-pane"
+    }
+
     local flow =
-        tabbed_pane.add {
+        scrollpane.add {
         type = "flow",
         name = "caste-flow",
         direction = "vertical"
@@ -490,7 +502,7 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         {"sosciencity-gui.display-food-count", caste.minimum_food_count}
     )
 
-    tabbed_pane.add_tab(tab, flow)
+    tabbed_pane.add_tab(tab, scrollpane)
 end
 
 local function update_housing_details(container, entry)
@@ -533,6 +545,7 @@ function Gui.create_details_view_for_player(player)
     frame.style.minimal_height = 300
     frame.style.maximal_height = 600
     frame.style.horizontally_stretchable = true
+    make_squashable(frame)
     set_padding(frame, 4)
 
     local nested =
@@ -542,7 +555,6 @@ function Gui.create_details_view_for_player(player)
         direction = "horizontal",
         style = "inside_deep_frame_for_tabs"
     }
-    make_stretchable(nested)
 
     frame.visible = false
 end
