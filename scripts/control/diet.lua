@@ -196,10 +196,10 @@ end
 
 local function apply_hunger_effects(percentage, diet_effects)
     diet_effects.satisfaction = diet_effects.satisfaction * percentage
-    diet_effects.healthiness_dietary = diet_effects.healthiness_dietary * percentage
+    diet_effects.healthiness = diet_effects.healthiness * percentage
 
     if percentage < 0.5 then
-        diet_effects.healthiness_dietary = 0
+        diet_effects.healthiness = 0
 
         table.insert(diet_effects.flags, {FLAG_HUNGER})
     end
