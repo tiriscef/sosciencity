@@ -87,7 +87,7 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
         (2 + get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage))
 end
 
-local function get_diet_effects(diet, caste_type)
+local function get_diet_effects(diet, caste)
     -- calculate features
     local count = 0
     local intrinsic_healthiness = 0
@@ -106,7 +106,6 @@ local function get_diet_effects(diet, caste_type)
     }
     local luxury = 0
     local flags = {}
-    local caste = Caste(caste_type)
 
     for item_name, _ in pairs(diet) do
         count = count + 1
@@ -207,12 +206,13 @@ end
 
 -- Assumes the entity is a housing entity
 function Diet.evaluate(entry, delta_ticks)
+    local caste = Caste(entry.type)
     local inventories = get_food_inventories(entry)
     local diet = get_diet(inventories)
 
-    local diet_effects = get_diet_effects(diet, entry.type)
+    local diet_effects = get_diet_effects(diet, caste)
 
-    local to_consume = Caste(entry.type).calorific_demand * delta_ticks * entry.inhabitants
+    local to_consume = caste.calorific_demand * delta_ticks * entry.inhabitants
     local hunger_satisfaction = consume_food(inventories, to_consume, diet, diet_effects)
     apply_hunger_effects(hunger_satisfaction, diet_effects)
 
