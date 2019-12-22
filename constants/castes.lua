@@ -4,6 +4,7 @@ Caste = {}
 
 Caste.values = {
     [TYPE_CLOCKWORK] = {
+        name = "clockwork",
         panic_multiplier = 0.5,
         calorific_demand = 4000, -- in kcal per day
         power_demand = 10, -- in kW
@@ -16,6 +17,7 @@ Caste.values = {
         minimum_comfort = 0
     },
     [TYPE_ORCHID] = {
+        name = "orchid",
         panic_multiplier = 1,
         calorific_demand = 3500,
         power_demand = 15,
@@ -28,6 +30,7 @@ Caste.values = {
         minimum_comfort = 8
     },
     [TYPE_GUNFIRE] = {
+        name = "gunfire",
         panic_multiplier = 0,
         calorific_demand = 4600,
         power_demand = 25,
@@ -40,6 +43,7 @@ Caste.values = {
         minimum_comfort = 0
     },
     [TYPE_EMBER] = {
+        name = "ember",
         panic_multiplier = 1.2,
         calorific_demand = 2300,
         power_demand = 30,
@@ -52,6 +56,7 @@ Caste.values = {
         minimum_comfort = 1
     },
     [TYPE_FOUNDRY] = {
+        name = "foundry",
         panic_multiplier = 0.7,
         calorific_demand = 2800,
         power_demand = 50,
@@ -64,6 +69,7 @@ Caste.values = {
         minimum_comfort = 6
     },
     [TYPE_GLEAM] = {
+        name = "gleam",
         panic_multiplier = 1,
         calorific_demand = 2700,
         power_demand = 25,
@@ -76,6 +82,7 @@ Caste.values = {
         minimum_comfort = 4
     },
     [TYPE_AURORA] = {
+        name = "aurora",
         panic_multiplier = 2,
         calorific_demand = 2500,
         power_demand = 35,
@@ -88,6 +95,7 @@ Caste.values = {
         minimum_comfort = 9
     },
     [TYPE_PLASMA] = {
+        name = "plasma",
         panic_multiplier = 1,
         calorific_demand = 3000,
         power_demand = 25,

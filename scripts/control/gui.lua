@@ -37,9 +37,11 @@ local function add_data_list(container, name)
         column_count = 2,
         style = "bordered_table"
     }
-    datatable.style.horizontally_stretchable = true
-    datatable.style.vertically_stretchable = true
-    datatable.style.right_cell_padding = 8
+    local style = datatable.style
+    style.horizontally_stretchable = true
+    style.vertically_stretchable = true
+    style.right_cell_padding = 6
+    style.left_cell_padding = 6
 
     return datatable
 end
@@ -52,6 +54,8 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
         caption = key_caption
     }
     key_label.style.font = "default-bold"
+    key_label.style.vertically_stretchable = true
+    key_label.style.vertical_align = "top"
 
     local value_label =
         data_list.add {
@@ -60,6 +64,7 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
         caption = value_caption
     }
     value_label.style.horizontally_stretchable = true
+    value_label.style.single_line = false
 end
 
 local function get_kv_pair(data_list, key)
@@ -78,6 +83,37 @@ local function set_datalist_value_tooltip(datalist, key, tooltip)
     datalist["value-" .. key].tooltip = tooltip
 end
 
+local function is_confirmed(button)
+    local caption = button.caption[1]
+    if caption == "sosciencity-gui.confirm" then
+        return true
+    else
+        button.caption = {"sosciencity-gui.confirm"}
+        button.tooltip = {"sosciencity-gui.confirm-tooltip"}
+        return false
+    end
+end
+
+local function add_caste_sprite(container, caste_id, size)
+    local caste_name = Caste(caste_id).name
+
+    local sprite =
+        container.add {
+        type = "sprite",
+        name = "caste-sprite",
+        sprite = "technology/" .. caste_name .. "-caste",
+        tooltip = {"caste-name." .. caste_name}
+    }
+    local style = sprite.style
+    style.height = size
+    style.width = size
+    style.stretch_image_to_widget_size = true
+
+    return sprite
+end
+
+---------------------------------------------------------------------------------------------------
+-- << style functions >>
 local function set_padding(element, padding)
     local style = element.style
     style.left_padding = padding
@@ -89,17 +125,6 @@ end
 local function make_stretchable(element)
     element.style.horizontally_stretchable = true
     element.style.vertically_stretchable = true
-end
-
-local function is_confirmed(button)
-    local caption = button.caption[1]
-    if caption == "sosciencity-gui.confirm" then
-        return true
-    else
-        button.caption = {"sosciencity-gui.confirm"}
-        button.tooltip = {"sosciencity-gui.confirm-tooltip"}
-        return false
-    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -143,7 +168,7 @@ local function update_population_flow(frame)
 end
 
 local function add_caste_flow(container, caste_id)
-    local caste = Types.caste_names[caste_id]
+    local caste_name = Caste(caste_id).name
 
     local frame =
         container.add {
@@ -154,13 +179,7 @@ local function add_caste_flow(container, caste_id)
     frame.style.padding = 0
     frame.style.left_margin = 4
 
-    local sprite =
-        frame.add {
-        type = "sprite",
-        name = "caste-sprite",
-        sprite = "technology/" .. caste .. "-caste",
-        tooltip = {"caste-name." .. caste}
-    }
+    local sprite = add_caste_sprite(frame, caste_id, CITY_INFO_SPRITE_SIZE)
     sprite.style.height = CITY_INFO_SPRITE_SIZE
     sprite.style.width = CITY_INFO_SPRITE_SIZE
     sprite.style.stretch_image_to_widget_size = true
@@ -180,8 +199,8 @@ local function add_caste_flow(container, caste_id)
         frame.add {
         type = "label",
         name = "caste-bonus",
-        caption = {"caste-bonus.display-" .. caste, get_bonus_string(caste_id)},
-        tooltip = {"caste-bonus." .. caste}
+        caption = {"caste-bonus.display-" .. caste_name, get_bonus_string(caste_id)},
+        tooltip = {"caste-bonus." .. caste_name}
     }
     bonus_label.style.minimal_width = CITY_INFO_SPRITE_SIZE
     bonus_label.style.horizontal_align = "center"
@@ -344,7 +363,7 @@ local function create_empty_housing_details(container, entry)
 end
 
 -- << housing details view >>
-local function update_housing_general_info(tabbed_pane, entry)
+local function update_housing_general_info_tab(tabbed_pane, entry)
     local general_list = tabbed_pane["general-flow"]["general-infos"]
     set_datalist_value(
         general_list,
@@ -386,7 +405,7 @@ local function update_housing_general_info(tabbed_pane, entry)
     )
 end
 
-local function add_housing_general_info(tabbed_pane, entry)
+local function add_housing_general_info_tab(tabbed_pane, entry)
     local tab =
         tabbed_pane.add {
         type = "tab",
@@ -425,7 +444,58 @@ local function add_housing_general_info(tabbed_pane, entry)
     tabbed_pane.add_tab(tab, flow)
 
     -- call the update function to set the values
-    update_housing_general_info(tabbed_pane, entry)
+    update_housing_general_info_tab(tabbed_pane, entry)
+end
+
+local function add_caste_info_tab(tabbed_pane, caste_id)
+    local caste = Caste(caste_id)
+
+    local tab =
+        tabbed_pane.add {
+        type = "tab",
+        name = "caste",
+        caption = {"caste-short." .. caste.name}
+    }
+
+    local flow =
+        tabbed_pane.add {
+        type = "flow",
+        name = "caste-flow",
+        direction = "vertical"
+    }
+    make_stretchable(flow)
+    flow.style.vertical_spacing = 6
+    flow.style.horizontal_align = "center"
+
+    add_caste_sprite(flow, caste_id, 128)
+
+    local data_list = add_data_list(flow, "caste-infos")
+    add_kv_pair(data_list, "name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
+    add_kv_pair(
+        data_list,
+        "fav-taste",
+        {"sosciencity-gui.fav-taste"},
+        {"taste-category." .. Types.taste_names[caste.favored_taste]}
+    )
+    add_kv_pair(
+        data_list,
+        "lfav-taste",
+        {"sosciencity-gui.lfav-taste"},
+        {"taste-category." .. Types.taste_names[caste.least_favored_taste]}
+    )
+    add_kv_pair(
+        data_list,
+        "food-count",
+        {"sosciencity-gui.food-count"},
+        {"sosciencity-gui.display-food-count", caste.minimum_food_count}
+    )
+
+    tabbed_pane.add_tab(tab, flow)
+end
+
+local function update_housing_details(container, entry)
+    local tabbed_pane = container.tabpane
+    update_housing_general_info_tab(tabbed_pane, entry)
 end
 
 local function create_housing_details(container, entry)
@@ -439,15 +509,11 @@ local function create_housing_details(container, entry)
     }
     make_stretchable(tab_pane)
 
-    add_housing_general_info(tab_pane, entry)
+    add_housing_general_info_tab(tab_pane, entry)
+    add_caste_info_tab(tab_pane, entry.type)
     -- general info: building, inhabitants, happiness, health, kicking people out
     -- happiness and its sources
     -- health and its sources
-end
-
-local function update_housing_details(container, entry)
-    local tabbed_pane = container.tabpane
-    update_housing_general_info(tabbed_pane, entry)
 end
 
 -- << general details view functions >>
@@ -463,8 +529,10 @@ function Gui.create_details_view_for_player(player)
         name = DETAILS_VIEW_NAME,
         direction = "horizontal"
     }
-    frame.style.minimal_width = 250
+    frame.style.width = 350
     frame.style.minimal_height = 300
+    frame.style.maximal_height = 600
+    frame.style.horizontally_stretchable = true
     set_padding(frame, 4)
 
     local nested =
