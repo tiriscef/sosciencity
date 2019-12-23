@@ -46,7 +46,7 @@ end
         ["count"]: int
         ["flags"]: table of strings
 
-    Neighborhood. table
+    neighborhood: table
         [entity type]: table of (unit_number, entity) pairs
 
     neighborhood_data: table
