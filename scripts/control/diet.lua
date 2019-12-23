@@ -2,19 +2,21 @@ Diet = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
--- returns a list of all inventories whose food is relevant to the diet
--- markets act like additional food inventories
+--- Returns a list of all inventories whose food is relevant to the diet.
+--- Markets act like additional food inventories.
 local function get_food_inventories(entry)
     local inventories = {entry.entity.get_inventory(defines.inventory.chest)}
+    local i = 2
 
-    for _, market in pairs(Neighborhood.get_by_type(entry, TYPE_MARKET)) do
-        table.insert(inventories, market.get_inventory(defines.inventory.chest))
+    for _, market_entry in Neighborhood.all_of_type(TYPE_MARKET) do
+        table.insert(inventories, i, market_entry.entity.get_inventory(defines.inventory.chest))
+        i = i + 1
     end
 
     return inventories
 end
 
--- returns a table with every available food item type as keys
+--- Returns a table with every available food item type as keys.
 local function get_diet(inventories)
     local diet = {}
 
@@ -35,36 +37,112 @@ local function get_diet(inventories)
     return diet
 end
 
-local function get_protein_healthiness(percentage)
-    -- this is a cubic spline through the following points:
-    -- (0, -1), (0.1, -0.5), (0.2, 1), (0.3, 0), (0.5, -1)
-    if percentage < 0.1 then
-        return 447.67 * percentage ^ 3 + 0.5232 * percentage - 1
-    elseif percentage < 0.2 then
-        return -1238.37 * percentage ^ 3 + 505.81 * percentage ^ 2 - 50.05 * percentage + 0.69
-    elseif percentage < 0.3 then
-        return 1005.81 * percentage ^ 3 - 840.7 * percentage ^ 2 + 219.24 * percentage - 17.27
-    elseif percentage < 0.5 then
-        return -107.56 * percentage ^ 3 + 161.34 * percentage ^ 2 - 81.37 * percentage + 12.79
-    else
-        return -1
-    end
+--- Table with a healthiness value every 2.5%. Values between that will be interpolated linearly.
+local protein_ratio_healthiness_lookup = {
+    [00] = 0, -- 0%
+    [01] = 0.5,
+    [02] = 1,
+    [03] = 1.5,
+    [04] = 2, -- 10%
+    [05] = 3,
+    [06] = 4,
+    [07] = 5,
+    [08] = 6, -- 20% optimum
+    [09] = 6,
+    [10] = 5,
+    [11] = 5,
+    [12] = 4, -- 30%
+    [13] = 4,
+    [14] = 4,
+    [15] = 3.5,
+    [16] = 3.5, -- 40%
+    [17] = 3,
+    [18] = 3,
+    [19] = 2.5,
+    [20] = 2.5, -- 50%
+    [21] = 2,
+    [22] = 1.5,
+    [23] = 1,
+    [24] = 0.75, -- 60%
+    [25] = 0.5,
+    [26] = 0.25,
+    [27] = 0,
+    [28] = 0, -- 70%
+    [29] = 0,
+    [30] = 0,
+    [31] = 0,
+    [32] = 0, -- 80%
+    [33] = 0,
+    [34] = 0,
+    [35] = 0,
+    [36] = 0, -- 90%
+    [37] = 0,
+    [38] = 0,
+    [39] = 0,
+    [40] = 0 -- 100%
+}
+--- Returns a numerical healthiness value in the range 0 to 6 for the given protein ratio.
+local function get_protein_healthiness(ratio)
+    local index = math.floor(ratio * 40)
+    local percentage_lower_value = (ratio - 0.025 * index) * 40
+    return percentage_lower_value * protein_ratio_healthiness_lookup[index] +
+        (1 - percentage_lower_value) * protein_ratio_healthiness_lookup[index + 1]
 end
 
+--- Table with a healthiness value every 2.5%. Values between that will be interpolated linearly.
+local fat_ratio_healthiness_lookup = {
+    [00] = 0, -- 0%
+    [01] = 0,
+    [02] = 0,
+    [03] = 0.5,
+    [04] = 1, -- 10%
+    [05] = 1,
+    [06] = 1,
+    [07] = 1.5,
+    [08] = 2, -- 20%
+    [09] = 2.5,
+    [10] = 3,
+    [11] = 3,
+    [12] = 3.5, -- 30%
+    [13] = 3.5,
+    [14] = 4,
+    [15] = 4, -- optimum
+    [16] = 4, -- 40%
+    [17] = 4,
+    [18] = 3.5,
+    [19] = 3.5,
+    [20] = 3, -- 50%
+    [21] = 3,
+    [22] = 2.5,
+    [23] = 2.5,
+    [24] = 2, -- 60%
+    [25] = 2,
+    [26] = 1.5,
+    [27] = 1.5,
+    [28] = 1, -- 70%
+    [29] = 1,
+    [30] = 0.75,
+    [31] = 0.5,
+    [32] = 0.25, -- 80%
+    [33] = 0,
+    [34] = 0,
+    [35] = 0,
+    [36] = 0, -- 90%
+    [37] = 0,
+    [38] = 0,
+    [39] = 0,
+    [40] = 0 -- 100%
+}
+--- Returns a numerical healthiness value in the range 0 to 4 for the given fat ratio.
 local function get_fat_ratio_healthiness(ratio)
-    -- this is a cubic spline through the following points:
-    -- (0, -1), (0.375, 1), (0.75, -1)
-    if ratio < 0.375 then
-        return -18.96 * ratio ^ 3 + 8 * ratio - 1
-    elseif ratio < 0.75 then
-        return 18.96 * ratio ^ 3 - 42.67 * ratio ^ 2 + 24 * ratio - 3
-    else
-        return -1
-    end
+    local index = math.floor(ratio * 40)
+    local percentage_lower_value = (ratio - 0.025 * index) * 40
+    return percentage_lower_value * fat_ratio_healthiness_lookup[index] +
+        (1 - percentage_lower_value) * fat_ratio_healthiness_lookup[index + 1]
 end
 
--- returns a numerical healthiness value in the range 0 to 1 for the given nutrient combination
--- and adds flags for extreme values.
+--- Returns a numerical healthiness value in the range 0 to 10 for the given nutrient combination
+--- and adds flags for extreme values.
 local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
     -- optimal diet consists of 30% fat, 50% carbohydrates and 20% proteins
     -- we focus on a reasonable amount of protein
@@ -83,8 +161,7 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
         table.insert(flags, {FLAG_HIGH_CARBOHYDRATES, fat_to_carbohydrates_ratio})
     end
 
-    return 0.25 *
-        (2 + get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage))
+    return get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage)
 end
 
 local function get_diet_effects(diet, caste)
@@ -95,7 +172,7 @@ local function get_diet_effects(diet, caste)
     local carbohydrates = 0
     local proteins = 0
     local taste_quality = 0
-    local taste_category_counts = {
+    local taste_counts = {
         [TASTE_BITTER] = 0,
         [TASTE_NEUTRAL] = 0,
         [TASTE_SALTY] = 0,
@@ -106,24 +183,38 @@ local function get_diet_effects(diet, caste)
     }
     local luxury = 0
     local flags = {}
+    local favorite_taste = caste.favorite_taste
+    local least_favored_taste = caste.least_favored_taste
 
     for item_name, _ in pairs(diet) do
         count = count + 1
 
-        local values = Food.values[item_name]
+        local food = Food.values[item_name]
+        local taste = food.taste_category
 
-        intrinsic_healthiness = intrinsic_healthiness + values.healthiness
-        fat = fat + values.fat
-        carbohydrates = carbohydrates + values.carbohydrates
-        proteins = proteins + values.proteins
-        taste_quality = taste_quality + values.taste_quality
-        taste_category_counts[values.taste_category] = taste_category_counts[values.taste_category] + 1
-        luxury = luxury + values.luxury
+        fat = fat + food.fat
+        carbohydrates = carbohydrates + food.carbohydrates
+        proteins = proteins + food.proteins
+
+        intrinsic_healthiness = intrinsic_healthiness + food.healthiness
+        taste_counts[taste] = taste_counts[taste] + 1
+
+        if taste == favorite_taste then
+            luxury = luxury + food.luxury * 1.33
+            taste_quality = taste_quality + food.taste_quality * 1.33
+        elseif taste == least_favored_taste then
+            luxury = luxury + food.luxury * 0.66
+            taste_quality = taste_quality + food.taste_quality * 0.66
+        else
+            luxury = luxury + food.luxury
+            taste_quality = taste_quality + food.taste_quality
+        end
     end
 
+    -- determine dominant taste
     local dominant_taste = TASTE_BITTER
-    for current_taste_category, current_count in pairs(taste_category_counts) do
-        if current_count > taste_category_counts[dominant_taste] then
+    for current_taste_category, current_count in pairs(taste_counts) do
+        if current_count > taste_counts[dominant_taste] then
             dominant_taste = current_taste_category
         end
     end
@@ -133,15 +224,18 @@ local function get_diet_effects(diet, caste)
     luxury = luxury / count
 
     -- evaluate features
-    local mental_healthiness = 1
-    -- TODO scale
-    local healthiness =
-        0.5 * (intrinsic_healthiness + get_nutrient_healthiness(fat, carbohydrates, proteins, flags))
+    local healthiness = 0.5 * (intrinsic_healthiness + get_nutrient_healthiness(fat, carbohydrates, proteins, flags))
+    local satisfaction = (1 - caste.desire_for_luxury) * taste_quality + caste.desire_for_luxury * luxury
 
-    local satisfaction = (1 - 0.5 * caste.desire_for_luxury) * taste_quality + 0.5 * caste.desire_for_luxury * luxury
-
-    if count == 1 or taste_category_counts[TASTE_NEUTRAL] == count or dominant_taste == caste.least_favored_taste then
-        mental_healthiness = 0
+    local mental_healthiness = 0
+    if dominant_taste == favorite_taste then
+        mental_healthiness = 5
+    end
+    if
+        count == 1 or taste_counts[dominant_taste] == count or dominant_taste == TASTE_NEUTRAL or
+            dominant_taste == least_favored_taste
+     then
+        mental_healthiness = -5
     end
 
     return {
