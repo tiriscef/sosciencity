@@ -11,9 +11,9 @@ local function new_entry(entity, _type)
     }
 
     Subentities.add_all_for(entry)
-    if Types.needs_neighborhood(_type) then
-        Neighborhood.add_neighborhood_data(entry, _type)
-    end
+    Neighborhood.add_neighborhood(entry, _type)
+    Neighborhood.establish_new_neighbor(entry, _type)
+
     if Types.is_inhabited(_type) then
         Inhabitants.add_inhabitants_data(entry)
     end
