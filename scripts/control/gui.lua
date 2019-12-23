@@ -455,25 +455,48 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
 
     create_caste_sprite(flow, caste_id, 128)
 
-    local data_list = create_data_list(flow, "caste-infos")
-    add_kv_pair(data_list, "name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
+    local caste_general = create_data_list(flow, "caste-infos")
+    add_kv_pair(caste_general, "caste-name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
+    add_kv_pair(caste_general, "description", "", {"technology-description." .. caste.name .. "-caste"})
+
+    local caste_food = create_data_list(flow, "food-infos")
     add_kv_pair(
-        data_list,
+        caste_food,
         "fav-taste",
         {"sosciencity-gui.fav-taste"},
         {"taste-category." .. Types.taste_names[caste.favored_taste]}
     )
     add_kv_pair(
-        data_list,
+        caste_food,
         "lfav-taste",
         {"sosciencity-gui.lfav-taste"},
         {"taste-category." .. Types.taste_names[caste.least_favored_taste]}
     )
     add_kv_pair(
-        data_list,
+        caste_food,
         "food-count",
         {"sosciencity-gui.food-count"},
         {"sosciencity-gui.display-food-count", caste.minimum_food_count}
+    )
+    add_kv_pair(
+        caste_food,
+        "luxury",
+        {"sosciencity-gui.luxury"},
+        {"sosciencity-gui.display-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
+    )
+
+    local housing_needs = create_data_list(flow, "housing")
+    add_kv_pair(
+        housing_needs,
+        "room-count",
+        {"sosciencity-gui.room-needs"},
+        {"sosciencity-gui.display-room-needs", caste.required_room_count}
+    )
+    add_kv_pair(
+        housing_needs,
+        "comfort",
+        {"sosciencity-gui.comfort"},
+        {"sosciencity-gui.display-comfort-needs", caste.minimum_comfort}
     )
 end
 
