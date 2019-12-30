@@ -343,7 +343,7 @@ local function on_gui_click(event)
     -- remove the prefix
     name = name:sub(UNIQUE_PREFIX:len() + 1)
 
-    -- check Caste asignment buttons
+    -- check Caste assignment buttons
     for caste_id, caste in pairs(Caste.values) do
         if name == caste.name then
             Gui.handle_caste_button(event.player_index, caste_id)
