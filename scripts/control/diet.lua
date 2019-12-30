@@ -2,14 +2,16 @@ Diet = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
+
+local chest = defines.inventory.chest
 --- Returns a list of all inventories whose food is relevant to the diet.
 --- Markets act like additional food inventories.
 local function get_food_inventories(entry)
-    local inventories = {entry.entity.get_inventory(defines.inventory.chest)}
+    local inventories = {entry.entity.get_inventory(chest)}
     local i = 2
 
     for _, market_entry in Neighborhood.all_of_type(TYPE_MARKET) do
-        table.insert(inventories, i, market_entry.entity.get_inventory(defines.inventory.chest))
+        inventories[i] = market_entry.entity.get_inventory(chest)
         i = i + 1
     end
 
@@ -20,11 +22,11 @@ end
 local function get_diet(inventories)
     local diet = {}
 
-    for _, inventory in pairs(inventories) do
-        local inventory_size = #inventory
+    for i = 1, #inventories do
+        local inventory = inventories[i]
 
-        for i = 1, inventory_size do
-            local slot = inventory[i]
+        for j = 1, #inventory do
+            local slot = inventory[j]
             if slot.valid_for_read then -- check if the slot has an item in it
                 local item_name = slot.name
                 if Food[item_name] and not diet[item_name] then
@@ -269,8 +271,8 @@ local function consume_specific_food(inventories, amount, item_name)
     return amount - to_consume
 end
 
--- Tries to consume the given amount of calories. Returns the percentage of the amount that
--- was consumed
+--- Tries to consume the given amount of calories. Returns the percentage of the amount that
+--- was consumed
 local function consume_food(inventories, amount, diet, diet_effects)
     local count = diet_effects.count
     local items = Tirislib_Tables.get_keyset(diet)
@@ -298,7 +300,7 @@ local function apply_hunger_effects(percentage, diet_effects)
     end
 end
 
--- Assumes the entity is a housing entity
+--- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Diet.evaluate(entry, delta_ticks)
     local caste = Caste(entry.type)
     local inventories = get_food_inventories(entry)

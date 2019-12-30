@@ -39,8 +39,15 @@ local interested_entity_types = generate_interested_entity_types_lookup()
 ]]
 -- Future: implement something for entities that are not registered, e.g. trees
 
+local abs = math.abs
 local function maximum_metric_distance(v1, v2)
-    return math.max(math.abs(v1.x - v2.x), math.abs(v1.y - v2.y))
+    local dist_x = abs(v1.x - v2.x)
+    local dist_y = abs(v1.y - v2.y)
+    if dist_x > dist_y then
+        return dist_x
+    else
+        return dist_y
+    end
 end
 
 local function is_in_range(neighborhood_entry, entry)
@@ -66,7 +73,7 @@ function Neighborhood.add_neighborhood(entry, _type)
 
         for unit_number, neighbor_entry in Register.all_of_type(neighborhood_type) do
             if is_in_range(neighbor_entry, entry) then
-                entry.neighborhood[neighborhood_type][unit_number] = neighbor_entry
+                entry.neighborhood[neighborhood_type][unit_number] = unit_number
             end
         end
     end
@@ -76,8 +83,7 @@ end
 --- @param neighbor_entry Entry
 --- @param _type Type
 function Neighborhood.establish_new_neighbor(neighbor_entry, _type)
-    local range = active_neighbor_ranges[neighbor_entry.entity.name]
-    if not range then
+    if not active_neighbor_ranges[neighbor_entry.entity.name] then
         return
     end
 
@@ -89,7 +95,7 @@ function Neighborhood.establish_new_neighbor(neighbor_entry, _type)
                 if not current_entry.neighborhood[_type] then
                     current_entry.neighborhood[_type] = {}
                 end
-                current_entry.neighborhood[_type][unit_number] = neighbor_entry
+                current_entry.neighborhood[_type][unit_number] = unit_number
             end
         end
     end
@@ -104,39 +110,46 @@ function Neighborhood.get_by_type(entry, _type)
     end
 
     local ret = {}
+    local i = 1
 
-    for unit_number, current_entry in pairs(entry.neighborhood[_type]) do
-        if not current_entry.entity.valid then
-            current_entry.neighborhood[unit_number] = nil
+    for unit_number, _ in pairs(entry.neighborhood[_type]) do
+        local current_entry = Register.try_get(unit_number)
+        if current_entry then
+            ret[i] = current_entry
+            i = i + 1
         else
-            table.insert(ret, current_entry.entity)
+            entry.neighborhood[_type][unit_number] = nil
         end
     end
 
     return ret
 end
 
+local function nothing()
+end
 --- Lazy iterator over all neighbors of the given type.
 --- @param entry Entry
 --- @param _type Type
 function Neighborhood.all_of_type(entry, _type)
     if not entry.neighborhood or not entry.neighborhood[_type] then
-        return function() end
+        return nothing
     end
 
     local index, current_entry
     local table_to_iterate = entry.neighborhood[_type]
 
     local function _next()
-        index, current_entry = next(table_to_iterate, index)
-
-        if not current_entry.entity.valid then
-            table_to_iterate[index] = nil
-            -- skip this invalid entry
-            return _next()
-        end
+        index, _ = next(table_to_iterate, index)
 
         if index then
+            current_entry = Register.try_get(index)
+
+            if not current_entry then
+                table_to_iterate[index] = nil
+                -- skip this invalid entry
+                return _next()
+            end
+
             return index, current_entry
         end
     end
