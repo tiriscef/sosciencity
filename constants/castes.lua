@@ -14,7 +14,9 @@ Caste.values = {
         desire_for_luxury = 0,
         minimum_food_count = 2,
         required_room_count = 1,
-        minimum_comfort = 0
+        minimum_comfort = 0,
+        influx_threshold = 0,
+        idea_threshold = 5
     },
     [TYPE_ORCHID] = {
         name = "orchid",
@@ -27,7 +29,9 @@ Caste.values = {
         desire_for_luxury = 1,
         minimum_food_count = 10,
         required_room_count = 1,
-        minimum_comfort = 8
+        minimum_comfort = 8,
+        influx_threshold = 5,
+        idea_threshold = 5
     },
     [TYPE_GUNFIRE] = {
         name = "gunfire",
@@ -40,7 +44,9 @@ Caste.values = {
         desire_for_luxury = 0,
         minimum_food_count = 2,
         required_room_count = 0.5,
-        minimum_comfort = 0
+        minimum_comfort = 0,
+        influx_threshold = 5,
+        idea_threshold = 5
     },
     [TYPE_EMBER] = {
         name = "ember",
@@ -53,7 +59,9 @@ Caste.values = {
         desire_for_luxury = 0.1,
         minimum_food_count = 3,
         required_room_count = 1,
-        minimum_comfort = 1
+        minimum_comfort = 1,
+        influx_threshold = 5,
+        idea_threshold = 5
     },
     [TYPE_FOUNDRY] = {
         name = "foundry",
@@ -66,7 +74,9 @@ Caste.values = {
         desire_for_luxury = 0.5,
         minimum_food_count = 8,
         required_room_count = 4,
-        minimum_comfort = 6
+        minimum_comfort = 6,
+        influx_threshold = 5,
+        idea_threshold = 5
     },
     [TYPE_GLEAM] = {
         name = "gleam",
@@ -79,7 +89,9 @@ Caste.values = {
         desire_for_luxury = 0.3,
         minimum_food_count = 4,
         required_room_count = 4,
-        minimum_comfort = 4
+        minimum_comfort = 4,
+        influx_threshold = 5,
+        idea_threshold = 5
     },
     [TYPE_AURORA] = {
         name = "aurora",
@@ -92,7 +104,9 @@ Caste.values = {
         desire_for_luxury = 0.8,
         minimum_food_count = 8,
         required_room_count = 10,
-        minimum_comfort = 9
+        minimum_comfort = 9,
+        influx_threshold = 5,
+        idea_threshold = 5
     },
     [TYPE_PLASMA] = {
         name = "plasma",
@@ -105,7 +119,9 @@ Caste.values = {
         desire_for_luxury = 0.2,
         minimum_food_count = 5,
         required_room_count = 3,
-        minimum_comfort = 5
+        minimum_comfort = 5,
+        influx_threshold = 5,
+        idea_threshold = 5
     }
 }
 local castes = Caste.values

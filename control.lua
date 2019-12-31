@@ -97,26 +97,6 @@ local Gui = require("scripts.control.gui")
 -- << update functions >>
 -- entities need to be checked for validity before calling the update-function
 -- local all the frequently called functions for miniscule performance gains
-local try_add_to_house = Inhabitants.try_add_to_house
-local remove_from_house = Inhabitants.remove_from_house
-
-local function update_house(entry, delta_ticks)
-    local diet_effects = Diet.evaluate(entry, delta_ticks)
-    -- TODO happiness, healthiness, diseases, ideas, tralala
-
-    entry.trend = entry.trend + Inhabitants.get_trend(entry, delta_ticks)
-    if entry.trend >= 1 then
-        -- let people move in
-        try_add_to_house(entry, math.floor(entry.trend))
-        entry.trend = entry.trend - math.floor(entry.trend)
-    elseif entry.trend <= -1 then
-        -- let people move out
-        remove_from_house(entry, -math.ceil(entry.trend))
-        entry.trend = entry.trend - math.ceil(entry.trend)
-    end
-
-    Subentities.set_power_usage(entry)
-end
 
 local get_clockwork_bonus = Inhabitants.get_clockwork_bonus
 local get_aurora_bonus = Inhabitants.get_aurora_bonus
@@ -150,13 +130,13 @@ local function update_entity_with_beacon(entry)
 end
 
 local update_function_lookup = {
-    [TYPE_CLOCKWORK] = update_house,
-    [TYPE_EMBER] = update_house,
-    [TYPE_GUNFIRE] = update_house,
-    [TYPE_GLEAM] = update_house,
-    [TYPE_FOUNDRY] = update_house,
-    [TYPE_ORCHID] = update_house,
-    [TYPE_AURORA] = update_house,
+    [TYPE_CLOCKWORK] = Inhabitants.update_house,
+    [TYPE_EMBER] = Inhabitants.update_house,
+    [TYPE_GUNFIRE] = Inhabitants.update_house,
+    [TYPE_GLEAM] = Inhabitants.update_house,
+    [TYPE_FOUNDRY] = Inhabitants.update_house,
+    [TYPE_ORCHID] = Inhabitants.update_house,
+    [TYPE_AURORA] = Inhabitants.update_house,
     [TYPE_ASSEMBLING_MACHINE] = update_entity_with_beacon,
     [TYPE_FURNACE] = update_entity_with_beacon,
     [TYPE_ROCKET_SILO] = update_entity_with_beacon,

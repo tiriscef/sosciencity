@@ -63,5 +63,5 @@ Tirislib_Recipe.create {
     order = "aab",
 }
 
-Tirislib_RecipeGenerator.create_agriculture_recipe("pemtenn-cotton", {}, 20)
-Tirislib_RecipeGenerator.create_greenhouse_recipe("pemtenn-cotton", {}, 30)
+Tirislib_RecipeGenerator.create_agriculture_recipe("pemtenn-cotton", 20)
+Tirislib_RecipeGenerator.create_greenhouse_recipe("pemtenn-cotton", 30)

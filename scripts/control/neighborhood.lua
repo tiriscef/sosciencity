@@ -43,6 +43,8 @@ local abs = math.abs
 local function maximum_metric_distance(v1, v2)
     local dist_x = abs(v1.x - v2.x)
     local dist_y = abs(v1.y - v2.y)
+
+    -- math.max seems to be very slow
     if dist_x > dist_y then
         return dist_x
     else

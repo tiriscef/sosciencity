@@ -1,5 +1,8 @@
 require("constants.food")
 
+---------------------------------------------------------------------------------------------------
+-- << items >>
+
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local additional_prototype_data = {
     ["alien-meat"] = {
@@ -77,3 +80,20 @@ for food_name, food_details in pairs(Food.values) do
 
     Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << recipes >>
+
+-- nightshades
+Tirislib_RecipeGenerator.create_agriculture_recipe("potato", 10):add_unlock("nightshades")
+Tirislib_RecipeGenerator.create_greenhouse_recipe("potato", 20):add_unlock("nightshades")
+
+Tirislib_RecipeGenerator.create_agriculture_recipe("tomato", 10):add_unlock("nightshades")
+Tirislib_RecipeGenerator.create_greenhouse_recipe("tomato", 20):add_unlock("nightshades")
+
+Tirislib_RecipeGenerator.create_agriculture_recipe("eggplant", 10):add_unlock("nightshades")
+Tirislib_RecipeGenerator.create_greenhouse_recipe("eggplant", 20):add_unlock("nightshades")
+
+-- alien plants
+Tirislib_RecipeGenerator.create_agriculture_recipe("unnamed-fruit", 10)
+Tirislib_RecipeGenerator.create_greenhouse_recipe("unnamed-fruit", 20)

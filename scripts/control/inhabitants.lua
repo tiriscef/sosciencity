@@ -1,14 +1,13 @@
 Inhabitants = {}
 
+-- local caste constants for enormous performance gains
+local castes = Caste.values
+
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
 local function get_effective_population_multiplier(happiness)
     return math.min(1, 1 + (happiness - 5) * 0.1)
 end
-
-local DEFAULT_HAPPINESS = 5
-local DEFAULT_HEALTHINESS = 5
-local DEFAULT_HEALTHINESS_MENTAL = 10
 
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
 --- @param entry Entry
@@ -29,6 +28,10 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         return false
     end
 end
+
+local DEFAULT_HAPPINESS = 5
+local DEFAULT_HEALTHINESS = 5
+local DEFAULT_HEALTHINESS_MENTAL = 10
 
 --- Tries to add the specified amount of inhabitants to the house-entry.
 --- Returns the number of inhabitants that were added.
@@ -71,6 +74,7 @@ function Inhabitants.try_add_to_house(entry, count, happiness, healthiness, heal
 
     return count_moving_in
 end
+local try_add_to_house = Inhabitants.try_add_to_house
 
 --- Tries to remove the specified amount of inhabitants from the house-entry.
 --- Returns the number of inhabitants that were removed.
@@ -91,6 +95,7 @@ function Inhabitants.remove_from_house(entry, count)
 
     return count_moving_out
 end
+local remove_from_house = Inhabitants.remove_from_house
 
 --- Removes all the inhabitants living in the house.
 --- @param entry Entry
@@ -100,14 +105,58 @@ end
 
 --- The number of inhabitants moving in per tick at normal circumstances.
 local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
---- The happiness threshold required so people will move in.
-local HAPPINESS_THRESHOLD = 5
 
 --- Gets the trend toward the next inhabitant that moves in or out.
 --- @param entry Entry
 --- @param delta_ticks number
 function Inhabitants.get_trend(entry, delta_ticks)
-    return INFLUX_COEFFICIENT * delta_ticks * (entry.happiness - HAPPINESS_THRESHOLD)
+    local threshold = castes[entry.type].influx_threshold
+    return INFLUX_COEFFICIENT * delta_ticks * (entry.happiness - threshold)
+end
+local get_trend = Inhabitants.get_trend
+
+--- Reduce the difference between target and current value by roughly 3% per second. (98% after 2 minutes.)
+local function update_convergenting_value(target_value, current_value, delta_ticks)
+    return current_value + (target_value - current_value) * (1 - 0.9995 ^ delta_ticks)
+end
+
+local set_power_usage = Subentities.set_power_usage
+--- Updates the given housing entry.
+--- @param entry Entry
+--- @param delta_ticks integer
+function Inhabitants.update_house(entry, delta_ticks)
+    local diet_effects = Diet.evaluate(entry, delta_ticks)
+    entry.diet_effects = diet_effects
+
+    local housing = Housing(entry)
+
+    local nominal_happiness = diet_effects.satisfaction + housing.comfort - global.panic
+    entry.nominal_happiness = nominal_happiness
+    entry.happiness = update_convergenting_value(nominal_happiness, entry.happiness, delta_ticks)
+
+    local nominal_healthiness = diet_effects.healthiness
+    entry.nominal_healthiness = nominal_healthiness
+    entry.healthiness = update_convergenting_value(nominal_healthiness, entry.healthiness, delta_ticks)
+
+    local nominal_mental_healthiness = diet_effects.mental_healthiness
+    entry.nominal_mental_healthiness = nominal_mental_healthiness
+    entry.mental_healthiness = update_convergenting_value(nominal_mental_healthiness, entry.mental_healthiness, delta_ticks)
+    -- TODO diseases, ideas, tralala
+
+    local trend = entry.trend
+    trend = trend + get_trend(entry, delta_ticks)
+    if trend >= 1 then
+        -- let people move in
+        try_add_to_house(entry, math.floor(trend))
+        trend = trend - math.floor(trend)
+    elseif trend <= -1 then
+        -- let people move out
+        remove_from_house(entry, -math.ceil(trend))
+        trend = trend - math.ceil(trend)
+    end
+    entry.trend = trend
+
+    set_power_usage(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -151,7 +200,7 @@ local function set_binary_techs(value, name)
         new_value = math.floor(value / 2)
 
         -- if new_value times two doesn't equal value, then the remainder was one
-        -- which means that the current binary decimal is one and that the corresponding tech should be researched
+        -- which means that the current binary digit is one and that the corresponding tech should be researched
         techs[strength .. name].researched = (new_value * 2 ~= value)
 
         strength = strength + 1
@@ -295,10 +344,18 @@ end
 --- @param entry Entry
 function Inhabitants.add_inhabitants_data(entry)
     entry.happiness = 0
+    entry.nominal_happiness = 0
+
     entry.healthiness = 0
+    entry.nominal_healthiness = 0
+
     entry.mental_healthiness = 0
+    entry.nominal_mental_healthiness = 0
+
     entry.inhabitants = 0
     entry.trend = 0
+
+    entry.ideas = 0
 end
 
 --- Initialize the inhabitants related contents of global.
