@@ -278,8 +278,10 @@ function Tirislib_Recipe:add_ingredient_range(ingredient_prototypes_normal, ingr
     end
 
     if not self:has_difficulties() then
-        for _, entry in pairs(ingredient_prototypes_normal) do
-            add_ingredient(self, entry)
+        if ingredient_prototypes_normal then
+            for _, entry in pairs(ingredient_prototypes_normal) do
+                add_ingredient(self, entry)
+            end
         end
     else
         if ingredient_prototypes_normal and self:has_normal_difficulty() then
@@ -301,7 +303,10 @@ end
 
 local function remove_ingredient(recipe, ingredient_name, ingredient_type)
     for index, ingredient in pairs(recipe.ingredients) do
-        if Tirislib_RecipeEntry:get_name(ingredient) == ingredient_name and Tirislib_RecipeEntry:get_type(ingredient) == ingredient_type then
+        if
+            Tirislib_RecipeEntry:get_name(ingredient) == ingredient_name and
+                Tirislib_RecipeEntry:get_type(ingredient) == ingredient_type
+         then
             recipe.ingredients[index] = nil
         end
     end

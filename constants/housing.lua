@@ -6,7 +6,7 @@ Housing.houses = {
     ["test-house"] = {
         room_count = 2,
         tech_level = 0,
-        comfort = 0
+        comfort = 2
     }
 }
 local houses = Housing.houses

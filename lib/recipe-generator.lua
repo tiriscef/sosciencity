@@ -182,7 +182,7 @@ function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, addit
     return recipe
 end
 
-function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, ingredients, yield, additional_fields)
+function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, yield, ingredients, additional_fields)
     local recipe =
         Tirislib_Recipe.create {
         name = product_name .. "-agriculture",
@@ -206,7 +206,7 @@ function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, ingred
     return recipe
 end
 
-function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, ingredients, yield, additional_fields)
+function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, yield, ingredients, additional_fields)
     local min_yield = math.min(math.floor(yield / 2))
 
     local recipe =
@@ -232,7 +232,7 @@ function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, ingredi
     return recipe
 end
 
-function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, ingredients, yield, additional_fields)
+function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, yield, ingredients, additional_fields)
     local recipe =
         Tirislib_Recipe.create {
         name = product_name .. "-orangery",
@@ -256,7 +256,7 @@ function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, ingredien
     return recipe
 end
 
-function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, ingredients, yield, additional_fields)
+function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, yield, ingredients, additional_fields)
     local recipe = Tirislib_Recipe.create {
         name = product_name .. "-arboretum",
         category = "sosciencity-arboretum",

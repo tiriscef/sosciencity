@@ -113,9 +113,16 @@ function Register.try_get(unit_number)
     end
 end
 
+local function nothing()
+end
+
 --- Iterator for all entries of a specific type
 --- @param _type Type
 function Register.all_of_type(_type)
+    if not global.register_by_type[_type] then
+        return nothing
+    end
+
     local index, entry
 
     local function _next()

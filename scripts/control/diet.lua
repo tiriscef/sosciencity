@@ -10,7 +10,7 @@ local function get_food_inventories(entry)
     local inventories = {entry.entity.get_inventory(chest)}
     local i = 2
 
-    for _, market_entry in Neighborhood.all_of_type(TYPE_MARKET) do
+    for _, market_entry in Neighborhood.all_of_type(entry, TYPE_MARKET) do
         inventories[i] = market_entry.entity.get_inventory(chest)
         i = i + 1
     end
@@ -166,6 +166,14 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
     return get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage)
 end
 
+local NO_FOOD_EFFECT = {
+    healthiness = 0,
+    mental_healthiness = 5,
+    satisfaction = 0,
+    count = 0,
+    flags = {}
+}
+
 local function get_diet_effects(diet, caste)
     -- calculate features
     local count = 0
@@ -211,6 +219,11 @@ local function get_diet_effects(diet, caste)
             luxury = luxury + food.luxury
             taste_quality = taste_quality + food.taste_quality
         end
+    end
+
+    -- special case no food at all
+    if count == 0 then
+        return NO_FOOD_EFFECT
     end
 
     -- determine dominant taste
@@ -300,17 +313,21 @@ local function apply_hunger_effects(percentage, diet_effects)
     end
 end
 
+local castes = Caste.values
+
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Diet.evaluate(entry, delta_ticks)
-    local caste = Caste(entry.type)
+    local caste = castes[entry.type]
     local inventories = get_food_inventories(entry)
     local diet = get_diet(inventories)
 
     local diet_effects = get_diet_effects(diet, caste)
 
-    local to_consume = caste.calorific_demand * delta_ticks * entry.inhabitants
-    local hunger_satisfaction = consume_food(inventories, to_consume, diet, diet_effects)
-    apply_hunger_effects(hunger_satisfaction, diet_effects)
+    if diet_effects.count > 0 then
+        local to_consume = caste.calorific_demand * delta_ticks * entry.inhabitants
+        local hunger_satisfaction = consume_food(inventories, to_consume, diet, diet_effects)
+        apply_hunger_effects(hunger_satisfaction, diet_effects)
+    end
 
     return diet_effects
 end
