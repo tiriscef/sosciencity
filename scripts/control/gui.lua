@@ -26,6 +26,10 @@ local function get_caste_localised_string(caste_id)
     return {"caste-name." .. Caste(caste_id).name}
 end
 
+local function get_convergence_localised_string(current, target)
+    return {"sosciencity-gui.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << style functions >>
 local function set_padding(element, padding)
@@ -361,7 +365,7 @@ local function add_empty_house_info_tab(tabbed_pane, details)
 end
 
 local function create_empty_housing_details(container, entry)
-    set_details_view_title(container, entry.entity.localised_name)
+    set_details_view_title(container, entry[ENTITY].localised_name)
 
     local tab_pane =
         container.add {
@@ -369,7 +373,7 @@ local function create_empty_housing_details(container, entry)
         name = "tabpane"
     }
 
-    local house_details = Housing(entry)
+    local house_details = Housing.get(entry)
     add_caste_chooser_tab(tab_pane, house_details)
     add_empty_house_info_tab(tab_pane, house_details)
 end
@@ -377,43 +381,33 @@ end
 -- << housing details view >>
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local general_list = get_tab_contents(tabbed_pane, "general")["general-infos"]
+    local inhabitants = entry[INHABITANTS]
+
     set_datalist_value(
         general_list,
         "capacity",
-        {"sosciencity-gui.display-capacity", entry.inhabitants, Housing.get_capacity(entry)}
+        {"sosciencity-gui.display-capacity", inhabitants, Housing.get_capacity(entry)}
     )
     set_datalist_value_tooltip(
         general_list,
         "capacity",
-        (entry.trend > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
+        (entry[TREND] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
     )
 
     set_datalist_value(
         general_list,
         "happiness",
-        {
-            "sosciencity-gui.convergenting-value",
-            get_reasonable_number(entry.happiness),
-            get_reasonable_number(entry.happiness)
-        }
+        get_convergence_localised_string((inhabitants > 0) and entry[HAPPINESS] or 0, Inhabitants.get_nominal_happiness(entry))
     )
     set_datalist_value(
         general_list,
         "healthiness",
-        {
-            "sosciencity-gui.convergenting-value",
-            get_reasonable_number(entry.healthiness),
-            get_reasonable_number(entry.healthiness)
-        }
+        get_convergence_localised_string((inhabitants > 0) and entry[HEALTH] or 0, Inhabitants.get_nominal_health(entry))
     )
     set_datalist_value(
         general_list,
         "mental-healthiness",
-        {
-            "sosciencity-gui.convergenting-value",
-            get_reasonable_number(entry.mental_healthiness),
-            get_reasonable_number(entry.mental_healthiness)
-        }
+        get_convergence_localised_string((inhabitants > 0) and entry[MENTAL_HEALTH] or 0, Inhabitants.get_nominal_mental_health(entry))
     )
 end
 
@@ -424,7 +418,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     flow.style.horizontal_align = "right"
 
     local data_list = create_data_list(flow, "general-infos")
-    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry.type))
+    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry[TYPE]))
 
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
@@ -506,7 +500,7 @@ local function update_housing_details(container, entry)
 end
 
 local function create_housing_details(container, entry)
-    local title = {"", entry.entity.localised_name, "  -  ", get_caste_localised_string(entry.type)}
+    local title = {"", entry[ENTITY].localised_name, "  -  ", get_caste_localised_string(entry[TYPE])}
     set_details_view_title(container, title)
 
     local tab_pane =
@@ -517,7 +511,7 @@ local function create_housing_details(container, entry)
     make_stretchable(tab_pane)
 
     add_housing_general_info_tab(tab_pane, entry)
-    add_caste_info_tab(tab_pane, entry.type)
+    add_caste_info_tab(tab_pane, entry[TYPE])
     -- general info: building, inhabitants, happiness, health, kicking people out
     -- happiness and its sources
     -- health and its sources
@@ -586,8 +580,8 @@ function Gui.update_details_view()
         if not entry then
             Gui.close_details_view_for_player(game.players[player_id])
         else
-            if content_updaters[entry.type] then
-                content_updaters[entry.type](get_details_view(game.players[player_id]).nested, entry)
+            if content_updaters[entry[TYPE]] then
+                content_updaters[entry[TYPE]](get_details_view(game.players[player_id]).nested, entry)
             end
         end
     end
@@ -612,9 +606,9 @@ function Gui.open_details_view_for_player(player, unit_number)
         return
     end
 
-    if detail_view_builders[entry.type] then
+    if detail_view_builders[entry[TYPE]] then
         details_view.nested.clear()
-        detail_view_builders[entry.type](details_view.nested, entry)
+        detail_view_builders[entry[TYPE]](details_view.nested, entry)
         details_view.visible = true
         global.details_view[player.index] = unit_number
     end
@@ -629,7 +623,7 @@ function Gui.close_details_view_for_player(player)
 end
 
 function Gui.rebuild_details_view_for_entry(entry)
-    local unit_number = entry.entity.unit_number
+    local unit_number = entry[ENTITY].unit_number
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then

@@ -4,19 +4,27 @@ Housing = {}
 
 Housing.houses = {
     ["test-house"] = {
-        room_count = 2,
+        room_count = 200,
         tech_level = 0,
-        comfort = 2
+        comfort = 0,
+        caste = TYPE_CLOCKWORK, -- caste which likes this kind of housing
+        caste_bonus = 2
     }
 }
 local houses = Housing.houses
 
-function Housing.get_capacity(entry)
-    return math.floor(Housing(entry).room_count / Caste(entry.type).required_room_count)
+function Housing.get(entry)
+    return houses[entry[ENTITY].name]
 end
+local get_housing = Housing.get
+
+function Housing.get_capacity(entry)
+    return math.floor(get_housing(entry).room_count / Caste(entry[TYPE]).required_room_count)
+end
+local get_capacity = Housing.get_capacity
 
 function Housing.get_free_capacity(entry)
-    return Housing.get_capacity(entry) - entry.inhabitants
+    return get_capacity(entry) - entry[INHABITANTS]
 end
 
 function Housing.allowes_caste(house, caste_id)
@@ -24,10 +32,14 @@ function Housing.allowes_caste(house, caste_id)
     return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)
 end
 
-local meta = {}
+--- Evaluates the effect of the housing on its inhabitants.
+--- @param entry Entry
+function Housing.evaluate(entry)
+    local housing = get_housing(entry)
+    entry[HAPPINESS_FACTORS].housing = housing.comfort
+    entry[MENTAL_HEALTH_FACTORS].housing = housing.comfort
 
-function meta:__call(entry)
-    return houses[entry.entity.name]
+    if entry[TYPE] == housing.caste then
+        entry[HAPPINESS_FACTORS].caste_housing = housing.caste_bonus
+    end
 end
-
-setmetatable(Housing, meta)

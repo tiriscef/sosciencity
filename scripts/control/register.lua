@@ -4,10 +4,10 @@ Register = {}
 -- << register system >>
 local function new_entry(entity, _type)
     local entry = {
-        entity = entity,
-        type = _type,
-        last_update = game.tick,
-        subentities = {}
+        [TYPE] = _type,
+        [ENTITY] = entity,
+        [LAST_UPDATE] = game.tick,
+        [SUBENTITIES] = {}
     }
 
     Subentities.add_all_for(entry)
@@ -18,7 +18,7 @@ local function new_entry(entity, _type)
         Inhabitants.add_inhabitants_data(entry)
     end
     if _type == TYPE_ORANGERY then
-        entry.tick_of_creation = game.tick
+        entry[TICK_OF_CREATION] = game.tick
     end
 
     return entry
@@ -57,9 +57,9 @@ function Register.add(entity, _type)
 end
 
 local function remove_entry(entry)
-    local unit_number = entry.entity.unit_number
+    local unit_number = entry[ENTITY].unit_number
     global.register[unit_number] = nil
-    global.register_by_type[entry.type][unit_number] = nil
+    global.register_by_type[entry[TYPE]][unit_number] = nil
 
     Subentities.remove_all_for(entry)
 end
@@ -87,7 +87,7 @@ end
 --- Removes the given entry from the register.
 --- @param entry Entry
 function Register.remove_entry(entry)
-    Register.remove_entity(entry.entity)
+    Register.remove_entity(entry[ENTITY])
 end
 
 --- Reregisters the entity with the given type.
@@ -95,7 +95,7 @@ end
 -- -@param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
-    Register.add(entry.entity, new_type)
+    Register.add(entry[ENTITY], new_type)
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
@@ -105,10 +105,10 @@ function Register.try_get(unit_number)
     local entry = global.register[unit_number]
 
     if entry then
-        if entry.entity.valid then
+        if entry[ENTITY].valid then
             return entry
         else
-            Register.remove_entity(entry.entity)
+            Register.remove_entity(entry[ENTITY])
         end
     end
 end

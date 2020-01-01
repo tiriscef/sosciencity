@@ -1,4 +1,7 @@
--- entities
+---------------------------------------------------------------------------------------------------
+-- << enums >>
+-- (except that lua doesn't have enums and all these are just shouty globals)
+--<< entities >>
 TYPE_EMPTY_HOUSE = 0
 TYPE_CLOCKWORK = 1
 TYPE_ORCHID = 2
@@ -35,12 +38,12 @@ TYPE_LAB = 2002
 
 TYPE_NULL = 9999
 
--- subentities
+--<< subentities >>
 SUB_BEACON = 10001
 SUB_EEI = 10002
 SUB_ALT_MODE_SPRITE = 10003
 
--- tastes
+--<< tastes >>
 TASTE_BITTER = 20001
 TASTE_NEUTRAL = 20002
 TASTE_SALTY = 20003
@@ -49,14 +52,60 @@ TASTE_SPICY = 20005
 TASTE_SWEET = 20006
 TASTE_UMAMI = 20007
 
--- flags
-FLAG_LOW_PROTEIN = 30001
-FLAG_HIGH_PROTEIN = 30002
-FLAG_HIGH_FAT = 30003
-FLAG_HIGH_CARBOHYDRATES = 30004
-FLAG_HUNGER = 30005
-FLAG_NO_POWER = 30006
+--<< entry keys >>
+-- general
+TYPE = 1
+ENTITY = 2
+LAST_UPDATE = 3
+SUBENTITIES = 4
+SPRITE = 5
+-- housing
+INHABITANTS = 6
+HAPPINESS = 7
+HAPPINESS_FACTORS = 8
+HEALTH = 9
+HEALTH_FACTORS = 10
+MENTAL_HEALTH = 11
+MENTAL_HEALTH_FACTORS = 12
+TREND = 13
+IDEAS = 14
+NEIGHBORHOOD = 15
+-- subentity stuff
+ENERGY_USAGE = 16
+SPEED_BONUS = 17
+PRODUCTIVITY_BONUS = 18
+HAS_PENALTY = 19
+TICK_OF_CREATION = 20
 
+--<< happiness factors >>
+HAPPINESS_HOUSING = 1
+HAPPINESS_TASTE = 2
+HAPPINESS_FOOD_LUXURY = 3
+HAPPINESS_HUNGER = 4
+HAPPINESS_NO_POWER = 5
+HAPPINESS_POWER = 6
+HAPPINESS_STRESS = 7
+
+--<< health factors >>
+HEALTH_NUTRIENTS = 1
+HEALTH_FOOD = 2
+HEALTH_STRESS = 3
+HEALTH_HUNGER = 4
+
+--<< mental health factors >>
+MENTAL_HEALTH_HOUSING = 1
+MENTAL_HEALTH_TASTE = 2
+MENTAL_HEALTH_FAV_TASTE = 3
+MENTAL_HEALTH_NO_VARIETY = 4
+MENTAL_HEALTH_LEAST_FAV_TASTE = 5
+MENTAL_HEALTH_JUST_NEUTRAL = 6
+MENTAL_HEALTH_SINGLE_FOOD = 7
+MENTAL_HEALTH_NO_FOOD = 8
+MENTAL_HEALTH_STRESS = 9
+MENTAL_HEALTH_HUNGER = 10
+
+---------------------------------------------------------------------------------------------------
+-- << type functions >>
 Types = {}
 Types.entity_type_lookup = {
     types = {
@@ -71,8 +120,6 @@ Types.entity_type_lookup = {
         ["turret"] = TYPE_TURRET
     },
     names = {
-        -- TODO add the names from housing
-        ["test-house"] = TYPE_EMPTY_HOUSE,
         ["greenhouse"] = TYPE_FARM
     }
 }
@@ -99,7 +146,12 @@ Types.type_sprite_pairs = {
 }
 
 function Types.get_entity_type(entity)
-    return Types.entity_type_lookup.names[entity.name] or Types.entity_type_lookup.types[entity.type] or TYPE_NULL
+    local name = entity.name
+    if Housing.houses[name] then
+        return TYPE_EMPTY_HOUSE
+    end
+
+    return Types.entity_type_lookup.names[name] or Types.entity_type_lookup.types[entity.type] or TYPE_NULL
 end
 
 function Types.is_housing(_type)

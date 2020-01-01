@@ -29,7 +29,6 @@ end
         ["subentities"]: table of (subentity type, entity) pairs
         ["neighborhood"]: table
         ["neughborhood_data"]: table
-        ["flags"]: table of int/enum
         ["sprite"]: sprite id
 
         -- Housing
@@ -44,7 +43,6 @@ end
         ["healthiness_mental"]: float
         ["satisfaction"]: float
         ["count"]: int
-        ["flags"]: table of strings
 
     neighborhood: table
         [entity type]: table of (unit_number, entity) pairs
@@ -106,7 +104,7 @@ local is_affected_by_clockwork = Types.is_affected_by_clockwork
 local is_affected_by_orchid = Types.is_affected_by_orchid
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
-    local _type = entry.type
+    local _type = entry[TYPE]
     local speed_bonus = 0
     local productivity_bonus = 0
     local use_penalty_module = false
@@ -122,7 +120,7 @@ local function update_entity_with_beacon(entry)
         productivity_bonus = get_orchid_bonus()
     end
     if _type == TYPE_ORANGERY then
-        local age = game.tick - entry.tick_of_creation
+        local age = game.tick - entry[TICK_OF_CREATION]
         productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
     end
 
@@ -147,18 +145,18 @@ local update_function_lookup = {
 
 local remove_entry = Register.remove_entry
 local function update(entry)
-    if not entry.entity.valid then
+    if not entry[ENTITY].valid then
         remove_entry(entry)
         return
     end
 
-    local _type = entry.type
+    local _type = entry[TYPE]
     local update_function = update_function_lookup[_type]
 
     if update_function ~= nil then
-        local delta_ticks = game.tick - entry.last_update
+        local delta_ticks = game.tick - entry[LAST_UPDATE]
         update_function_lookup[_type](entry, delta_ticks)
-        entry.last_update = game.tick
+        entry[LAST_UPDATE] = game.tick
     end
 end
 

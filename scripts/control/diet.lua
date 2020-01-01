@@ -1,5 +1,6 @@
 Diet = {}
 
+local food_values = Food.values
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 
@@ -7,11 +8,11 @@ local chest = defines.inventory.chest
 --- Returns a list of all inventories whose food is relevant to the diet.
 --- Markets act like additional food inventories.
 local function get_food_inventories(entry)
-    local inventories = {entry.entity.get_inventory(chest)}
+    local inventories = {entry[ENTITY].get_inventory(chest)}
     local i = 2
 
     for _, market_entry in Neighborhood.all_of_type(entry, TYPE_MARKET) do
-        inventories[i] = market_entry.entity.get_inventory(chest)
+        inventories[i] = market_entry[ENTITY].get_inventory(chest)
         i = i + 1
     end
 
@@ -21,22 +22,20 @@ end
 --- Returns a table with every available food item type as keys.
 local function get_diet(inventories)
     local diet = {}
+    local count = 0
 
     for i = 1, #inventories do
-        local inventory = inventories[i]
+        local content = inventories[i].get_contents()
 
-        for j = 1, #inventory do
-            local slot = inventory[j]
-            if slot.valid_for_read then -- check if the slot has an item in it
-                local item_name = slot.name
-                if Food[item_name] and not diet[item_name] then
-                    diet[item_name] = item_name
-                end
+        for item_name, _ in pairs(content) do
+            if food_values[item_name] then
+                diet[item_name] = item_name
+                count = count + 1
             end
         end
     end
 
-    return diet
+    return diet, count
 end
 
 --- Table with a healthiness value every 2.5%. Values between that will be interpolated linearly.
@@ -143,40 +142,72 @@ local function get_fat_ratio_healthiness(ratio)
         (1 - percentage_lower_value) * fat_ratio_healthiness_lookup[index + 1]
 end
 
---- Returns a numerical healthiness value in the range 0 to 10 for the given nutrient combination
---- and adds flags for extreme values.
-local function get_nutrient_healthiness(fat, carbohydrates, proteins, flags)
+--- Returns a numerical healthiness value in the range 0 to 10 for the given nutrient combination.
+local function get_nutrient_healthiness(fat, carbohydrates, proteins)
     -- optimal diet consists of 30% fat, 50% carbohydrates and 20% proteins
     -- we focus on a reasonable amount of protein
     local protein_percentage = proteins / (fat + carbohydrates + proteins)
-    if protein_percentage < 0.1 then
-        table.insert(flags, {FLAG_LOW_PROTEIN, protein_percentage})
-    elseif protein_percentage > 0.4 then
-        table.insert(flags, {FLAG_HIGH_PROTEIN, protein_percentage})
-    end
 
     -- and the fat to carbohydrates ratio (optimum is 0.375)
     local fat_to_carbohydrates_ratio = fat / (fat + carbohydrates)
-    if fat_to_carbohydrates_ratio > 0.5 then
-        table.insert(flags, {FLAG_HIGH_FAT, fat_to_carbohydrates_ratio})
-    elseif fat_to_carbohydrates_ratio < 0.1 then
-        table.insert(flags, {FLAG_HIGH_CARBOHYDRATES, fat_to_carbohydrates_ratio})
-    end
 
     return get_fat_ratio_healthiness(fat_to_carbohydrates_ratio) + get_protein_healthiness(protein_percentage)
 end
 
-local NO_FOOD_EFFECT = {
-    healthiness = 0,
-    mental_healthiness = 5,
-    satisfaction = 0,
-    count = 0,
-    flags = {}
-}
+--- Consumes calories of the given food type in the given inventories. Returns the amount of consumed calories.
+local function consume_specific_food(inventories, amount, item_name)
+    local to_consume = amount
 
-local function get_diet_effects(diet, caste)
+    for _, inventory in pairs(inventories) do
+        for i = 1, #inventory do
+            local slot = inventory[i]
+            if slot.valid_for_read then -- check if the slot has an item in it
+                if slot.name == item_name then
+                    to_consume = to_consume - slot.drain_durability(to_consume)
+                    if to_consume < 0.001 then
+                        return amount -- everything was consumed
+                    end
+                end
+            end
+        end
+    end
+
+    return amount - to_consume
+end
+
+--- Tries to consume the given amount of calories. Returns the percentage of the amount that was consumed.
+local function consume_food(inventories, amount, diet, count)
+    local items = Tirislib_Tables.get_keyset(diet)
+    local to_consume = amount
+    Tirislib_Tables.shuffle(items)
+
+    for i = 1, count do
+        to_consume = to_consume - consume_specific_food(inventories, to_consume, items[i])
+        if to_consume < 0.001 then
+            return 1 -- 100% was consumed
+        end
+    end
+
+    return (amount - to_consume) / amount
+end
+
+local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
+    local happiness = entry[HAPPINESS_FACTORS]
+    local health = entry[HEALTH_FACTORS]
+    local mental_health = entry[MENTAL_HEALTH_FACTORS]
+
+    if hunger_satisfaction < 0.5 then
+        happiness[HAPPINESS_HUNGER] = -10
+        health[HEALTH_HUNGER] = -5
+        mental_health[MENTAL_HEALTH_HUNGER] = -5
+    end
+
+    -- handle the annoying edge case of no food at all
+    if count == 0 then
+        return
+    end
+
     -- calculate features
-    local count = 0
     local intrinsic_healthiness = 0
     local fat = 0
     local carbohydrates = 0
@@ -192,14 +223,11 @@ local function get_diet_effects(diet, caste)
         [TASTE_UMAMI] = 0
     }
     local luxury = 0
-    local flags = {}
     local favorite_taste = caste.favorite_taste
     local least_favored_taste = caste.least_favored_taste
 
     for item_name, _ in pairs(diet) do
-        count = count + 1
-
-        local food = Food.values[item_name]
+        local food = food_values[item_name]
         local taste = food.taste_category
 
         fat = fat + food.fat
@@ -221,10 +249,10 @@ local function get_diet_effects(diet, caste)
         end
     end
 
-    -- special case no food at all
-    if count == 0 then
-        return NO_FOOD_EFFECT
-    end
+    -- means
+    intrinsic_healthiness = intrinsic_healthiness / count
+    taste_quality = taste_quality / count
+    luxury = luxury / count
 
     -- determine dominant taste
     local dominant_taste = TASTE_BITTER
@@ -234,82 +262,28 @@ local function get_diet_effects(diet, caste)
         end
     end
 
-    intrinsic_healthiness = intrinsic_healthiness / count
-    taste_quality = taste_quality / count
-    luxury = luxury / count
+    -- add calculation summands
+    happiness[HAPPINESS_TASTE] = (1 - caste.desire_for_luxury) * taste_quality * hunger_satisfaction
+    happiness[HAPPINESS_FOOD_LUXURY] = caste.desire_for_luxury * luxury * hunger_satisfaction
 
-    -- evaluate features
-    local healthiness = 0.5 * (intrinsic_healthiness + get_nutrient_healthiness(fat, carbohydrates, proteins, flags))
-    local satisfaction = (1 - caste.desire_for_luxury) * taste_quality + caste.desire_for_luxury * luxury
+    health[HEALTH_NUTRIENTS] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
+    health[HEALTH_FOOD] = intrinsic_healthiness * hunger_satisfaction
 
-    local mental_healthiness = 0
+    mental_health[MENTAL_HEALTH_TASTE] = taste_quality * hunger_satisfaction * 0.5
     if dominant_taste == favorite_taste then
-        mental_healthiness = 5
+        mental_health[MENTAL_HEALTH_FAV_TASTE] = 4
     end
-    if
-        count == 1 or taste_counts[dominant_taste] == count or dominant_taste == TASTE_NEUTRAL or
-            dominant_taste == least_favored_taste
-     then
-        mental_healthiness = -5
+    if dominant_taste == least_favored_taste then
+        mental_health[MENTAL_HEALTH_LEAST_FAV_TASTE] = -4
     end
-
-    return {
-        healthiness = healthiness,
-        mental_healthiness = mental_healthiness,
-        satisfaction = satisfaction,
-        count = count,
-        flags = flags
-    }
-end
-
-local function consume_specific_food(inventories, amount, item_name)
-    local to_consume = amount
-
-    for _, inventory in pairs(inventories) do
-        local inventory_size = #inventory
-
-        for i = 1, inventory_size do
-            local slot = inventory[i]
-            if slot.valid_for_read then -- check if the slot has an item in it
-                if slot.name == item_name then
-                    to_consume = to_consume - slot.drain_durability(to_consume)
-                    if to_consume < 0.001 then
-                        return amount -- everything was consumed
-                    end
-                end
-            end
-        end
+    if count == 1 then
+        mental_health[MENTAL_HEALTH_SINGLE_FOOD] = -3
     end
-
-    return amount - to_consume
-end
-
---- Tries to consume the given amount of calories. Returns the percentage of the amount that
---- was consumed
-local function consume_food(inventories, amount, diet, diet_effects)
-    local count = diet_effects.count
-    local items = Tirislib_Tables.get_keyset(diet)
-    local to_consume = amount
-    Tirislib_Tables.shuffle(items)
-
-    for i = 1, count do
-        to_consume = to_consume - consume_specific_food(inventories, to_consume, items[i])
-        if to_consume < 0.001 then
-            return 1 -- 100% was consumed
-        end
+    if taste_counts[dominant_taste] == count then
+        mental_health[MENTAL_HEALTH_NO_VARIETY] = -3
     end
-
-    return (amount - to_consume) / amount
-end
-
-local function apply_hunger_effects(percentage, diet_effects)
-    diet_effects.satisfaction = diet_effects.satisfaction * percentage
-    diet_effects.healthiness = diet_effects.healthiness * percentage
-
-    if percentage < 0.5 then
-        diet_effects.healthiness = 0
-
-        table.insert(diet_effects.flags, {FLAG_HUNGER})
+    if dominant_taste == TASTE_NEUTRAL then
+        mental_health[MENTAL_HEALTH_JUST_NEUTRAL] = -3
     end
 end
 
@@ -317,19 +291,17 @@ local castes = Caste.values
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Diet.evaluate(entry, delta_ticks)
-    local caste = castes[entry.type]
+    local caste = castes[entry[TYPE]]
     local inventories = get_food_inventories(entry)
-    local diet = get_diet(inventories)
+    local diet, food_count = get_diet(inventories)
 
-    local diet_effects = get_diet_effects(diet, caste)
-
-    if diet_effects.count > 0 then
-        local to_consume = caste.calorific_demand * delta_ticks * entry.inhabitants
-        local hunger_satisfaction = consume_food(inventories, to_consume, diet, diet_effects)
-        apply_hunger_effects(hunger_satisfaction, diet_effects)
+    local hunger_satisfaction = 0
+    if food_count > 0 then
+        local to_consume = caste.calorific_demand * delta_ticks * entry[INHABITANTS]
+        hunger_satisfaction = consume_food(inventories, to_consume, diet, food_count)
     end
 
-    return diet_effects
+    add_diet_effects(entry, diet, caste, food_count, hunger_satisfaction)
 end
 
 return Diet

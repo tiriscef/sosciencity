@@ -13,7 +13,7 @@ function Tirislib_Tables.get_keyset(tbl)
     local index = 1
 
     for key, _ in pairs(tbl) do
-        tbl[index] = key
+        ret[index] = key
         index = index + 1
     end
 
@@ -87,4 +87,14 @@ function Tirislib_Tables.set_fields(tbl, fields)
     end
 
     return tbl
+end
+
+function Tirislib_Tables.sum(tbl)
+    local ret = 0.
+
+    for _, value in pairs(tbl) do
+        ret = ret + value
+    end
+
+    return ret
 end
