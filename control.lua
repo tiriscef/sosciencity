@@ -99,9 +99,20 @@ local Gui = require("scripts.control.gui")
 local get_clockwork_bonus = Inhabitants.get_clockwork_bonus
 local get_aurora_bonus = Inhabitants.get_aurora_bonus
 local get_orchid_bonus = Inhabitants.get_orchid_bonus
+local add_panic = Inhabitants.add_panic
+
 local set_beacon_effects = Subentities.set_beacon_effects
+
+local get_entity_type = Types.get_entity_type
 local is_affected_by_clockwork = Types.is_affected_by_clockwork
 local is_affected_by_orchid = Types.is_affected_by_orchid
+local is_civil = Types.is_civil
+local is_inhabited = Types.is_inhabited
+local is_relevant_to_register = Types.is_relevant_to_register
+
+local try_get_entry = Register.try_get
+local remove_entry = Register.remove_entry
+
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
     local _type = entry[TYPE]
@@ -143,7 +154,6 @@ local update_function_lookup = {
     [TYPE_ORANGERY] = update_entity_with_beacon
 }
 
-local remove_entry = Register.remove_entry
 local function update(entry)
     if not entry[ENTITY].valid then
         remove_entry(entry)
@@ -230,9 +240,9 @@ local function on_entity_built(event)
         return
     end
 
-    local entity_type = Types(entity)
+    local entity_type = get_entity_type(entity)
 
-    if Types.is_relevant_to_register(entity_type) then
+    if is_relevant_to_register(entity_type) then
         Register.add(entity)
     end
 end
@@ -247,14 +257,15 @@ local function on_entity_removed(event)
 end
 
 local function on_entity_died(event)
-    if not event.entity.valid then
+    local entity = event.entity
+
+    if not entity.valid then
         return
     end
 
-    local entity = event.entity
-    local entity_type = Types(entity)
-    if Types.is_civil(entity_type) then
-        Inhabitants.add_panic()
+    local entity_type = get_entity_type(entity)
+    if is_civil(entity_type) then
+        add_panic()
     end
 
     on_entity_removed(event)
@@ -266,12 +277,34 @@ local function on_entity_mined(event)
         return
     end
 
-    local entry = Register.try_get(entity.unit_number)
+    local entry = try_get_entry(entity.unit_number)
     if entry then
         Inhabitants.try_resettle(entry)
     end
 
     on_entity_removed(event)
+end
+
+local function on_entity_settings_pasted(event)
+    local source = event.source
+    local destination = event.destination
+
+    if not source.valid or not destination.valid then
+        return
+    end
+
+    local source_entry = try_get_entry(source.unit_number)
+    local destination_entry = try_get_entry(destination.unit_number)
+
+    if not source_entry or not destination_entry then
+        return
+    end
+
+    local source_type = source_entry[TYPE]
+    local destination_type = destination_entry[TYPE]
+    if is_inhabited(source_type) and destination_type == TYPE_EMPTY_HOUSE then
+        Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
+    end
 end
 
 local function on_configuration_change()
@@ -358,6 +391,9 @@ script.on_event(defines.events.on_player_mined_entity, on_entity_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_entity_mined)
 script.on_event(defines.events.on_entity_died, on_entity_died)
 script.on_event(defines.events.script_raised_destroy, on_entity_removed)
+
+-- copy-paste settings
+script.on_event(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
 
 -- mod update
 script.on_configuration_changed(on_configuration_change)

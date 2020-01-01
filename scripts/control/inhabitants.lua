@@ -2,16 +2,149 @@ Inhabitants = {}
 
 -- local often used functions for enormous performance gains
 local castes = Caste.values
-local weighted_average = Tirislib_Utils.weighted_average
-local sum = Tirislib_Tables.sum
 local evaluate_diet = Diet.evaluate
+
+local get_housing = Housing.get
 local evaluate_housing = Housing.evaluate
+local get_free_capacity = Housing.get_free_capacity
 local set_power_usage = Subentities.set_power_usage
 local has_power = Subentities.has_power
+
+local floor = math.floor
+local ceil = math.ceil
+local sqrt = math.sqrt
+local max = Tirislib_Utils.max
+local min = Tirislib_Utils.min
+local sum = Tirislib_Tables.sum
+local weighted_average = Tirislib_Utils.weighted_average
+
+---------------------------------------------------------------------------------------------------
+-- << caste bonus functions >>
+--- Returns the total number of inhabitants.
+function Inhabitants.get_population_count()
+    local population_count = 0
+
+    for caste_id, _ in pairs(Caste.values) do
+        population_count = population_count + global.population[caste_id]
+    end
+
+    return population_count
+end
+local get_population_count = Inhabitants.get_population_count
+
+--- Gets the current Clockwork caste bonus.
+function Inhabitants.get_clockwork_bonus()
+    return floor(global.effective_population[TYPE_CLOCKWORK] * 40 / max(global.machine_count, 1))
+end
+
+--- Gets the current Orchid caste bonus.
+function Inhabitants.get_orchid_bonus()
+    return floor(sqrt(global.effective_population[TYPE_ORCHID]))
+end
+
+--- Gets the current Gunfire caste bonus.
+function Inhabitants.get_gunfire_bonus()
+    return floor(global.effective_population[TYPE_GUNFIRE] * 10 / max(global.turret_count, 1)) -- TODO balancing
+end
+local get_gunfire_bonus = Inhabitants.get_gunfire_bonus
+
+--- Gets the current Ember caste bonus.
+function Inhabitants.get_ember_bonus()
+    return floor(sqrt(global.effective_population[TYPE_EMBER] / get_population_count()))
+end
+local get_ember_bonus = Inhabitants.get_ember_bonus
+
+--- Gets the current Foundry caste bonus.
+function Inhabitants.get_foundry_bonus()
+    return floor(global.effective_population[TYPE_FOUNDRY] * 5)
+end
+local get_foundry_bonus = Inhabitants.get_foundry_bonus
+
+--- Gets the current Gleam caste bonus.
+function Inhabitants.get_gleam_bonus()
+    return floor(sqrt(global.effective_population[TYPE_GLEAM]))
+end
+local get_gleam_bonus = Inhabitants.get_gleam_bonus
+
+--- Gets the current Aurora caste bonus.
+function Inhabitants.get_aurora_bonus()
+    return floor(sqrt(global.effective_population[TYPE_AURORA]))
+end
+
+-- sets the hidden caste-technologies so they encode the given value
+local function set_binary_techs(value, name)
+    local new_value = value
+    local techs = game.forces.player.technologies
+
+    for strength = 0, 20 do
+        new_value = floor(value / 2)
+
+        -- if new_value times two doesn't equal value, then the remainder was one
+        -- which means that the current binary digit is one and that the corresponding tech should be researched
+        techs[strength .. name].researched = (new_value * 2 ~= value)
+
+        strength = strength + 1
+        value = new_value
+    end
+end
+
+-- Assumes value is an integer
+local function set_gunfire_bonus(value)
+    set_binary_techs(value, "-gunfire-caste")
+    global.gunfire_bonus = value
+end
+
+-- Assumes value is an integer
+local function set_gleam_bonus(value)
+    set_binary_techs(value, "-gleam-caste")
+    global.gleam_bonus = value
+end
+
+-- Assumes value is an integer
+local function set_foundry_bonus(value)
+    set_binary_techs(value, "-foundry-caste")
+    global.foundry_bonus = value
+end
+
+--- Updates the caste bonuses that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
+function Inhabitants.update_caste_bonuses()
+    -- We check if the bonuses have actually changed to avoid unnecessary api calls
+    local current_gunfire_bonus = get_gunfire_bonus()
+    if global.gunfire_bonus ~= current_gunfire_bonus then
+        set_gunfire_bonus(current_gunfire_bonus)
+    end
+
+    local current_gleam_bonus = get_gleam_bonus()
+    if global.gleam_bonus ~= current_gleam_bonus then
+        set_gleam_bonus(current_gleam_bonus)
+    end
+
+    local current_foundry_bonus = get_foundry_bonus()
+    if global.foundry_bonus ~= current_foundry_bonus then
+        set_foundry_bonus(current_foundry_bonus)
+    end
+end
+
+local bonus_function_lookup = {
+    [TYPE_CLOCKWORK] = Inhabitants.get_clockwork_bonus,
+    [TYPE_ORCHID] = Inhabitants.get_orchid_bonus,
+    [TYPE_GUNFIRE] = Inhabitants.get_gunfire_bonus,
+    [TYPE_EMBER] = Inhabitants.get_ember_bonus,
+    [TYPE_FOUNDRY] = Inhabitants.get_foundry_bonus,
+    [TYPE_GLEAM] = Inhabitants.get_gleam_bonus,
+    [TYPE_AURORA] = Inhabitants.get_aurora_bonus
+}
+
+--- Gets the current bonus of the given caste.
+--- @param caste Type
+function Inhabitants.get_caste_bonus(caste)
+    return bonus_function_lookup[caste]()
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
 local function get_effective_population_multiplier(happiness)
-    return math.max(0.2, happiness * 0.1)
+    return max(0.2, happiness * 0.1)
 end
 
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
@@ -20,7 +153,7 @@ end
 --- @param loud boolean
 function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     if
-        entry[TYPE] == TYPE_EMPTY_HOUSE and Housing.allowes_caste(Housing.get(entry), caste_id) and
+        entry[TYPE] == TYPE_EMPTY_HOUSE and Housing.allowes_caste(get_housing(entry), caste_id) and
             Inhabitants.caste_is_researched(caste_id)
      then
         Register.change_type(entry, caste_id)
@@ -46,7 +179,7 @@ local DEFAULT_MENTAL_HEALTH = 10
 --- @param health number
 --- @param mental_health number
 function Inhabitants.try_add_to_house(entry, count, happiness, health, mental_health)
-    local count_moving_in = math.min(count, Housing.get_free_capacity(entry))
+    local count_moving_in = min(count, get_free_capacity(entry))
 
     if count_moving_in == 0 then
         return 0
@@ -85,7 +218,7 @@ local try_add_to_house = Inhabitants.try_add_to_house
 --- @param entry Entry
 --- @param count integer
 function Inhabitants.remove_from_house(entry, count)
-    local count_moving_out = math.min(entry[INHABITANTS], count)
+    local count_moving_out = min(entry[INHABITANTS], count)
 
     if count_moving_out == 0 then
         return 0
@@ -109,7 +242,7 @@ local remove_from_house = Inhabitants.remove_from_house
 --- Removes all the inhabitants living in the house.
 --- @param entry Entry
 function Inhabitants.remove_house(entry)
-    Inhabitants.remove_from_house(entry, entry[INHABITANTS])
+    remove_from_house(entry, entry[INHABITANTS])
 end
 
 --- The number of inhabitants moving in per tick at normal circumstances.
@@ -160,6 +293,11 @@ function Inhabitants.update_house(entry, delta_ticks)
         happiness_factors[HAPPINESS_NO_POWER] = -1
     end
 
+    local ember_bonus = get_ember_bonus()
+    if ember_bonus > 0 then
+        happiness_factors[HAPPINESS_EMBER] = ember_bonus
+    end
+
     -- update happiness
     local nominal_happiness = sum(happiness_factors)
     local old_happiness = entry[HAPPINESS]
@@ -186,12 +324,12 @@ function Inhabitants.update_house(entry, delta_ticks)
     trend = trend + get_trend(nominal_happiness, caste_values, delta_ticks)
     if trend >= 1 then
         -- let people move in
-        try_add_to_house(entry, math.floor(trend))
-        trend = trend - math.floor(trend)
+        try_add_to_house(entry, floor(trend))
+        trend = trend - floor(trend)
     elseif trend <= -1 then
         -- let people move out
-        remove_from_house(entry, -math.ceil(trend))
-        trend = trend - math.ceil(trend)
+        remove_from_house(entry, -ceil(trend))
+        trend = trend - ceil(trend)
     end
     entry[TREND] = trend
 end
@@ -230,116 +368,7 @@ function Inhabitants.try_resettle(entry)
     end
 
     return entry[INHABITANTS] - to_resettle
-end
-
----------------------------------------------------------------------------------------------------
--- << caste bonus functions >>
--- sets the hidden caste-technologies so they encode the given value
-local function set_binary_techs(value, name)
-    local new_value = value
-    local techs = game.forces.player.technologies
-
-    for strength = 0, 20 do
-        new_value = math.floor(value / 2)
-
-        -- if new_value times two doesn't equal value, then the remainder was one
-        -- which means that the current binary digit is one and that the corresponding tech should be researched
-        techs[strength .. name].researched = (new_value * 2 ~= value)
-
-        strength = strength + 1
-        value = new_value
-    end
-end
-
--- Assumes value is an integer
-local function set_gunfire_bonus(value)
-    set_binary_techs(value, "-gunfire-caste")
-    global.gunfire_bonus = value
-end
-
--- Assumes value is an integer
-local function set_gleam_bonus(value)
-    set_binary_techs(value, "-gleam-caste")
-    global.gleam_bonus = value
-end
-
--- Assumes value is an integer
-local function set_foundry_bonus(value)
-    set_binary_techs(value, "-foundry-caste")
-    global.foundry_bonus = value
-end
-
---- Updates the caste bonuses that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
-function Inhabitants.update_caste_bonuses()
-    -- We check if the bonuses have actually changed to avoid unnecessary api calls
-    local current_gunfire_bonus = Inhabitants.get_gunfire_bonus()
-    if global.gunfire_bonus ~= current_gunfire_bonus then
-        set_gunfire_bonus(current_gunfire_bonus)
-    end
-
-    local current_gleam_bonus = Inhabitants.get_gleam_bonus()
-    if global.gleam_bonus ~= current_gleam_bonus then
-        set_gleam_bonus(current_gleam_bonus)
-    end
-
-    local current_foundry_bonus = Inhabitants.get_foundry_bonus()
-    if global.foundry_bonus ~= current_foundry_bonus then
-        set_foundry_bonus(current_foundry_bonus)
-    end
-end
-
---- Gets the current Clockwork caste bonus.
-function Inhabitants.get_clockwork_bonus()
-    return math.floor(global.effective_population[TYPE_CLOCKWORK] * 40 / math.max(global.machine_count, 1))
-end
-
---- Gets the current Orchid caste bonus.
-function Inhabitants.get_orchid_bonus()
-    return math.floor(math.sqrt(global.effective_population[TYPE_ORCHID]))
-end
-
---- Gets the current Gunfire caste bonus.
-function Inhabitants.get_gunfire_bonus()
-    return math.floor(global.effective_population[TYPE_GUNFIRE] * 10 / math.max(global.turret_count, 1)) -- TODO balancing
-end
-
---- Gets the current Ember caste bonus.
-function Inhabitants.get_ember_bonus()
-    return math.floor(math.sqrt(global.effective_population[TYPE_EMBER] / Inhabitants.get_population_count()))
-end
-
---- Gets the current Foundry caste bonus.
-function Inhabitants.get_foundry_bonus()
-    return math.floor(global.effective_population[TYPE_FOUNDRY] * 5)
-end
-
---- Gets the current Gleam caste bonus.
-function Inhabitants.get_gleam_bonus()
-    return math.floor(math.sqrt(global.effective_population[TYPE_GLEAM]))
-end
-
---- Gets the current Aurora caste bonus.
-function Inhabitants.get_aurora_bonus()
-    return math.floor(math.sqrt(global.effective_population[TYPE_AURORA]))
-end
-
-local bonus_function_lookup = {
-    [TYPE_CLOCKWORK] = Inhabitants.get_clockwork_bonus,
-    [TYPE_ORCHID] = Inhabitants.get_orchid_bonus,
-    [TYPE_GUNFIRE] = Inhabitants.get_gunfire_bonus,
-    [TYPE_EMBER] = Inhabitants.get_ember_bonus,
-    [TYPE_FOUNDRY] = Inhabitants.get_foundry_bonus,
-    [TYPE_GLEAM] = Inhabitants.get_gleam_bonus,
-    [TYPE_AURORA] = Inhabitants.get_aurora_bonus
-}
-
---- Gets the current bonus of the given caste.
---- @param caste Type
-function Inhabitants.get_caste_bonus(caste)
-    return bonus_function_lookup[caste]()
-end
-
----------------------------------------------------------------------------------------------------
+end---------------------------------------------------------------------------------------------------
 -- << panic >>
 --- Lowers the population's panic over time.
 function Inhabitants.ease_panic()
@@ -370,17 +399,6 @@ local caste_tech_names = {
 --- @param caste_id Type
 function Inhabitants.caste_is_researched(caste_id)
     return global.technologies[caste_tech_names[caste_id]]
-end
-
---- Returns the total number of inhabitants.
-function Inhabitants.get_population_count()
-    local population_count = 0
-
-    for caste_id, _ in pairs(Caste.values) do
-        population_count = population_count + global.population[caste_id]
-    end
-
-    return population_count
 end
 
 --- Initializes the given entry so it can work as an housing entry.

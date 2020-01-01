@@ -85,6 +85,7 @@ HAPPINESS_HUNGER = 4
 HAPPINESS_NO_POWER = 5
 HAPPINESS_POWER = 6
 HAPPINESS_STRESS = 7
+HAPPINESS_EMBER = 8
 
 --<< health factors >>
 HEALTH_NUTRIENTS = 1
@@ -107,22 +108,6 @@ MENTAL_HEALTH_HUNGER = 10
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
 Types = {}
-Types.entity_type_lookup = {
-    types = {
-        ["assembling-machine"] = TYPE_ASSEMBLING_MACHINE,
-        ["mining-drill"] = TYPE_MINING_DRILL,
-        ["lab"] = TYPE_LAB,
-        ["rocket-silo"] = TYPE_ROCKET_SILO,
-        ["furnace"] = TYPE_FURNACE,
-        ["ammo-turret"] = TYPE_TURRET,
-        ["electric-turret"] = TYPE_TURRET,
-        ["fluid-turret"] = TYPE_TURRET,
-        ["turret"] = TYPE_TURRET
-    },
-    names = {
-        ["greenhouse"] = TYPE_FARM
-    }
-}
 
 Types.taste_names = {
     [TASTE_BITTER] = "bitter",
@@ -145,13 +130,30 @@ Types.type_sprite_pairs = {
     [TYPE_AURORA] = "aurora-caste"
 }
 
+local lookup_by_entity_type = {
+    ["assembling-machine"] = TYPE_ASSEMBLING_MACHINE,
+    ["mining-drill"] = TYPE_MINING_DRILL,
+    ["lab"] = TYPE_LAB,
+    ["rocket-silo"] = TYPE_ROCKET_SILO,
+    ["furnace"] = TYPE_FURNACE,
+    ["ammo-turret"] = TYPE_TURRET,
+    ["electric-turret"] = TYPE_TURRET,
+    ["fluid-turret"] = TYPE_TURRET,
+    ["turret"] = TYPE_TURRET
+}
+local lookup_by_name = {
+    ["greenhouse"] = TYPE_FARM
+}
+
+local houses = Housing.houses
+
 function Types.get_entity_type(entity)
     local name = entity.name
-    if Housing.houses[name] then
+    if houses[name] then
         return TYPE_EMPTY_HOUSE
     end
 
-    return Types.entity_type_lookup.names[name] or Types.entity_type_lookup.types[entity.type] or TYPE_NULL
+    return lookup_by_name[name] or lookup_by_entity_type[entity.type] or TYPE_NULL
 end
 
 function Types.is_housing(_type)

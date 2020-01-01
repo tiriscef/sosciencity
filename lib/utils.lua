@@ -5,6 +5,24 @@ function Tirislib_Utils.weighted_average(a, weight_a, b, weight_b)
     return (a * weight_a + b * weight_b) / (weight_a + weight_b)
 end
 
+--- Returns the higher value. Takes only two arguments for higher performance.
+function Tirislib_Utils.max(a, b)
+    if a > b then
+        return a
+    else
+        return b
+    end
+end
+
+--- Returns the lower value. Takes only two arguments for higher performance.
+function Tirislib_Utils.min(a, b)
+    if a < b then
+        return a
+    else
+        return b
+    end
+end
+
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 
