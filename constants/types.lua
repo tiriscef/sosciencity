@@ -79,18 +79,19 @@ TICK_OF_CREATION = 20
 
 --<< happiness factors >>
 HAPPINESS_HOUSING = 1
-HAPPINESS_TASTE = 2
-HAPPINESS_FOOD_LUXURY = 3
-HAPPINESS_HUNGER = 4
-HAPPINESS_NO_POWER = 5
-HAPPINESS_POWER = 6
-HAPPINESS_STRESS = 7
-HAPPINESS_EMBER = 8
+HAPPINESS_SUITABLE_HOUSING = 2
+HAPPINESS_TASTE = 3
+HAPPINESS_FOOD_LUXURY = 4
+HAPPINESS_HUNGER = 5
+HAPPINESS_NO_POWER = 6
+HAPPINESS_POWER = 7
+HAPPINESS_FEAR = 8
+HAPPINESS_EMBER = 9
 
 --<< health factors >>
 HEALTH_NUTRIENTS = 1
 HEALTH_FOOD = 2
-HEALTH_STRESS = 3
+HEALTH_FEAR = 3
 HEALTH_HUNGER = 4
 
 --<< mental health factors >>
@@ -101,9 +102,8 @@ MENTAL_HEALTH_NO_VARIETY = 4
 MENTAL_HEALTH_LEAST_FAV_TASTE = 5
 MENTAL_HEALTH_JUST_NEUTRAL = 6
 MENTAL_HEALTH_SINGLE_FOOD = 7
-MENTAL_HEALTH_NO_FOOD = 8
-MENTAL_HEALTH_STRESS = 9
-MENTAL_HEALTH_HUNGER = 10
+MENTAL_HEALTH_HUNGER = 8
+MENTAL_HEALTH_FEAR = 9
 
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
@@ -145,11 +145,9 @@ local lookup_by_name = {
     ["greenhouse"] = TYPE_FARM
 }
 
-local houses = Housing.houses
-
 function Types.get_entity_type(entity)
     local name = entity.name
-    if houses[name] then
+    if Housing.houses[name] then
         return TYPE_EMPTY_HOUSE
     end
 

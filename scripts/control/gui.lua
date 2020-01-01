@@ -15,7 +15,17 @@ local function get_bonus_string(caste_id)
 end
 
 local function get_reasonable_number(number)
-    return string.format("%.01d", number)
+    return string.format("%.1f", number)
+end
+
+local function get_factor_string(number)
+    if number > 0 then
+        return string.format("[color=0,1,0]%+.1f[/color]", number)
+    elseif number < 0 then
+        return string.format("[color=1,0,0]%+.1f[/color]", number)
+    else -- number equals 0
+        return "[color=0.8,0.8,0.8]0.0[/color]"
+    end
 end
 
 local function get_comfort_localised_string(comfort)
@@ -84,8 +94,9 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
         name = key,
         caption = value_caption
     }
-    value_label.style.horizontally_stretchable = true
-    value_label.style.single_line = false
+    local style = value_label.style
+    style.horizontally_stretchable = true
+    style.single_line = false
 end
 
 local function get_kv_pair(data_list, key)
@@ -102,6 +113,52 @@ end
 
 local function set_datalist_value_tooltip(datalist, key, tooltip)
     datalist[key].tooltip = tooltip
+end
+
+local function add_factor_entry(data_list, key, key_caption, value_caption)
+    data_list.add {
+        type = "label",
+        name = "key-" .. key,
+        caption = key_caption
+    }
+
+    local value_label =
+        data_list.add {
+        type = "label",
+        name = key,
+        caption = value_caption
+    }
+    local style = value_label.style
+    style.horizontal_align = "right"
+    style.width = 50
+end
+
+local function add_factor_entries(data_list, entries, caption_group, sum_caption)
+    local sum = Tirislib_Tables.sum(entries)
+    local sum_key =
+        data_list.add {
+        type = "label",
+        name = "key-sum",
+        caption = sum_caption
+    }
+    local style = sum_key.style
+    style.font = "default-bold"
+    style.horizontally_stretchable = true
+
+    local sum_value =
+        data_list.add {
+        type = "label",
+        name = "sum",
+        caption = get_factor_string(sum)
+    }
+    style = sum_value.style
+    style.width = 50
+    style.font = "default-bold"
+    style.horizontal_align = "right"
+
+    for key, value in pairs(entries) do
+        add_factor_entry(data_list, tostring(key), {caption_group .. key}, get_factor_string(value))
+    end
 end
 
 local function is_confirmed(button)
@@ -397,17 +454,26 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value(
         general_list,
         "happiness",
-        get_convergence_localised_string((inhabitants > 0) and entry[HAPPINESS] or 0, Inhabitants.get_nominal_happiness(entry))
+        get_convergence_localised_string(
+            (inhabitants > 0) and entry[HAPPINESS] or 0,
+            Inhabitants.get_nominal_happiness(entry)
+        )
     )
     set_datalist_value(
         general_list,
-        "healthiness",
-        get_convergence_localised_string((inhabitants > 0) and entry[HEALTH] or 0, Inhabitants.get_nominal_health(entry))
+        "health",
+        get_convergence_localised_string(
+            (inhabitants > 0) and entry[HEALTH] or 0,
+            Inhabitants.get_nominal_health(entry)
+        )
     )
     set_datalist_value(
         general_list,
-        "mental-healthiness",
-        get_convergence_localised_string((inhabitants > 0) and entry[MENTAL_HEALTH] or 0, Inhabitants.get_nominal_mental_health(entry))
+        "mental-health",
+        get_convergence_localised_string(
+            (inhabitants > 0) and entry[MENTAL_HEALTH] or 0,
+            Inhabitants.get_nominal_mental_health(entry)
+        )
     )
 end
 
@@ -422,8 +488,8 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
 
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
-    add_kv_pair(data_list, "healthiness", {"sosciencity-gui.healthiness"})
-    add_kv_pair(data_list, "mental-healthiness", {"sosciencity-gui.mental-healthiness"})
+    add_kv_pair(data_list, "health", {"sosciencity-gui.health"})
+    add_kv_pair(data_list, "mental-health", {"sosciencity-gui.mental-health"})
 
     local kickout_button =
         flow.add {
@@ -440,6 +506,46 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     update_housing_general_info_tab(tabbed_pane, entry)
 end
 
+local function update_housing_factor_tab(tabbed_pane, entry)
+    local content_flow = get_tab_contents(tabbed_pane, "details")
+
+    local happiness_list = content_flow["happiness"]
+    happiness_list.clear()
+    local happiness_factors = entry[HAPPINESS_FACTORS]
+    add_factor_entries(
+        happiness_list,
+        happiness_factors,
+        "sosciencity-happiness-factor.",
+        {"sosciencity-gui.happiness"}
+    )
+
+    local health_list = content_flow["health"]
+    health_list.clear()
+    local health_factors = entry[HEALTH_FACTORS]
+    add_factor_entries(health_list, health_factors, "sosciencity-health-factor.", {"sosciencity-gui.health"})
+
+    local mental_health_list = content_flow["mental-health"]
+    mental_health_list.clear()
+    local mental_health_factors = entry[MENTAL_HEALTH_FACTORS]
+    add_factor_entries(
+        mental_health_list,
+        mental_health_factors,
+        "sosciencity-mental-health-factor.",
+        {"sosciencity-gui.mental-health"}
+    )
+end
+
+local function add_housing_factor_tab(tabbed_pane, entry)
+    local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
+
+    create_data_list(flow, "happiness")
+    create_data_list(flow, "health")
+    create_data_list(flow, "mental-health")
+
+    -- call the update function to set the values
+    update_housing_factor_tab(tabbed_pane, entry)
+end
+
 local function add_caste_info_tab(tabbed_pane, caste_id)
     local caste = Caste(caste_id)
 
@@ -449,45 +555,41 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
 
     create_caste_sprite(flow, caste_id, 128)
 
-    local caste_general = create_data_list(flow, "caste-infos")
-    add_kv_pair(caste_general, "caste-name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
-    add_kv_pair(caste_general, "description", "", {"technology-description." .. caste.name .. "-caste"})
-
-    local caste_food = create_data_list(flow, "food-infos")
+    local caste_data = create_data_list(flow, "caste-infos")
+    add_kv_pair(caste_data, "caste-name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
+    add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
     add_kv_pair(
-        caste_food,
+        caste_data,
         "fav-taste",
         {"sosciencity-gui.fav-taste"},
         {"taste-category." .. Types.taste_names[caste.favored_taste]}
     )
     add_kv_pair(
-        caste_food,
+        caste_data,
         "lfav-taste",
         {"sosciencity-gui.lfav-taste"},
         {"taste-category." .. Types.taste_names[caste.least_favored_taste]}
     )
     add_kv_pair(
-        caste_food,
+        caste_data,
         "food-count",
         {"sosciencity-gui.food-count"},
         {"sosciencity-gui.display-food-count", caste.minimum_food_count}
     )
     add_kv_pair(
-        caste_food,
+        caste_data,
         "luxury",
         {"sosciencity-gui.luxury"},
         {"sosciencity-gui.display-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
     )
-
-    local housing_needs = create_data_list(flow, "housing")
     add_kv_pair(
-        housing_needs,
+        caste_data,
         "room-count",
         {"sosciencity-gui.room-needs"},
         {"sosciencity-gui.display-room-needs", caste.required_room_count}
     )
     add_kv_pair(
-        housing_needs,
+        caste_data,
         "comfort",
         {"sosciencity-gui.comfort"},
         {"sosciencity-gui.display-comfort-needs", caste.minimum_comfort}
@@ -497,6 +599,7 @@ end
 local function update_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     update_housing_general_info_tab(tabbed_pane, entry)
+    update_housing_factor_tab(tabbed_pane, entry)
 end
 
 local function create_housing_details(container, entry)
@@ -511,6 +614,7 @@ local function create_housing_details(container, entry)
     make_stretchable(tab_pane)
 
     add_housing_general_info_tab(tab_pane, entry)
+    add_housing_factor_tab(tab_pane, entry)
     add_caste_info_tab(tab_pane, entry[TYPE])
     -- general info: building, inhabitants, happiness, health, kicking people out
     -- happiness and its sources
@@ -642,10 +746,7 @@ function Gui.handle_caste_button(player_index, caste_id)
         return
     end
 
-    local changed = Inhabitants.try_allow_for_caste(entry, caste_id)
-    if changed then
-        Gui.rebuild_details_view_for_entry(entry)
-    end
+    Inhabitants.try_allow_for_caste(entry, caste_id)
 end
 
 function Gui.handle_kickout_button(player_index, button)

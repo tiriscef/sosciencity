@@ -1,5 +1,9 @@
 Register = {}
 
+local global
+local register
+local register_by_type
+
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
 local function new_entry(entity, _type)
@@ -27,12 +31,12 @@ end
 local function add_entity_to_register(entity, _type)
     local entry = new_entry(entity, _type)
     local unit_number = entity.unit_number
-    global.register[unit_number] = entry
+    register[unit_number] = entry
 
-    if not global.register_by_type[_type] then
-        global.register_by_type[_type] = {}
+    if not register_by_type[_type] then
+        register_by_type[_type] = {}
     end
-    global.register_by_type[_type][unit_number] = unit_number
+    register_by_type[_type][unit_number] = unit_number
 end
 
 --- Adds the given entity to the register. Optionally the type can be specified.
@@ -58,8 +62,8 @@ end
 
 local function remove_entry(entry)
     local unit_number = entry[ENTITY].unit_number
-    global.register[unit_number] = nil
-    global.register_by_type[entry[TYPE]][unit_number] = nil
+    register[unit_number] = nil
+    register_by_type[entry[TYPE]][unit_number] = nil
 
     Subentities.remove_all_for(entry)
 end
@@ -67,7 +71,7 @@ end
 --- Removes the given entity from the register.
 --- @param entity Entity
 function Register.remove_entity(entity)
-    local entry = global.register[entity.unit_number]
+    local entry = register[entity.unit_number]
     if entry then
         remove_entry(entry)
     end
@@ -96,13 +100,14 @@ end
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
     Register.add(entry[ENTITY], new_type)
+    Gui.rebuild_details_view_for_entry(entry)
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
 --- @param unit_number number
 --- @return Entry|nil
 function Register.try_get(unit_number)
-    local entry = global.register[unit_number]
+    local entry = register[unit_number]
 
     if entry then
         if entry[ENTITY].valid then
@@ -119,27 +124,35 @@ end
 --- Iterator for all entries of a specific type
 --- @param _type Type
 function Register.all_of_type(_type)
-    if not global.register_by_type[_type] then
+    if not register_by_type[_type] then
         return nothing
     end
 
     local index, entry
 
     local function _next()
-        index, entry = next(global.register_by_type[_type], index)
+        index, entry = next(register_by_type[_type], index)
 
         if index then
-            return index, global.register[index]
+            return index, register[index]
         end
     end
 
     return _next, index, entry
 end
 
+local function set_locals()
+    global = _ENV.global
+    register = global.register
+    register_by_type = global.register_by_type
+end
+
 --- Initialize the register related contents of global.
 function Register.init()
+    global = _ENV.global
     global.register = {}
     global.register_by_type = {}
+    set_locals()
 
     global.machine_count = 0
     global.turret_count = 0
@@ -175,6 +188,11 @@ function Register.init()
                 force = "player"
             }
     end
+end
+
+--- Sets local references during on_load
+function Register.load()
+    set_locals()
 end
 
 return Register

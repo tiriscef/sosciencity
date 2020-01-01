@@ -198,7 +198,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
 
     if hunger_satisfaction < 0.5 then
         happiness[HAPPINESS_HUNGER] = -10
-        health[HEALTH_HUNGER] = -5
+        health[HEALTH_HUNGER] = -10
         mental_health[MENTAL_HEALTH_HUNGER] = -5
     end
 
