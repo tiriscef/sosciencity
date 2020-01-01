@@ -8,18 +8,18 @@ function Tirislib_RecipeEntry:get_name(entry)
 end
 
 function Tirislib_RecipeEntry:yields_item(entry)
-    if entry.type then
-        return entry.type == "item"
+    if entry[TYPE] then
+        return entry[TYPE] == "item"
     end
     return true
 end
 
 function Tirislib_RecipeEntry:yields_fluid(entry)
-    return (entry.type ~= nil) and (entry.type == "fluid")
+    return (entry[TYPE] ~= nil) and (entry[TYPE] == "fluid")
 end
 
 function Tirislib_RecipeEntry:get_type(entry)
-    return entry.type or "item"
+    return entry[TYPE] or "item"
 end
 
 function Tirislib_RecipeEntry:specify_same_stuff(entry1, entry2)

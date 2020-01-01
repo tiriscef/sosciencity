@@ -1,12 +1,17 @@
 Inhabitants = {}
 
--- local caste constants for enormous performance gains
+-- local often used functions for enormous performance gains
 local castes = Caste.values
-
+local weighted_average = Tirislib_Utils.weighted_average
+local sum = Tirislib_Tables.sum
+local evaluate_diet = Diet.evaluate
+local evaluate_housing = Housing.evaluate
+local set_power_usage = Subentities.set_power_usage
+local has_power = Subentities.has_power
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
 local function get_effective_population_multiplier(happiness)
-    return math.min(1, 1 + (happiness - 5) * 0.1)
+    return math.max(0.2, happiness * 0.1)
 end
 
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
@@ -15,7 +20,7 @@ end
 --- @param loud boolean
 function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     if
-        entry.type == TYPE_EMPTY_HOUSE and Housing.allowes_caste(Housing(entry), caste_id) and
+        entry[TYPE] == TYPE_EMPTY_HOUSE and Housing.allowes_caste(Housing.get(entry), caste_id) and
             Inhabitants.caste_is_researched(caste_id)
      then
         Register.change_type(entry, caste_id)
@@ -29,48 +34,47 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     end
 end
 
-local DEFAULT_HAPPINESS = 5
-local DEFAULT_HEALTHINESS = 5
-local DEFAULT_HEALTHINESS_MENTAL = 10
+local DEFAULT_HAPPINESS = 10
+local DEFAULT_HEALTH = 10
+local DEFAULT_MENTAL_HEALTH = 10
 
 --- Tries to add the specified amount of inhabitants to the house-entry.
 --- Returns the number of inhabitants that were added.
 --- @param entry Entry
 --- @param count integer
 --- @param happiness number
---- @param healthiness number
---- @param healthiness_mental number
-function Inhabitants.try_add_to_house(entry, count, happiness, healthiness, healthiness_mental)
+--- @param health number
+--- @param mental_health number
+function Inhabitants.try_add_to_house(entry, count, happiness, health, mental_health)
     local count_moving_in = math.min(count, Housing.get_free_capacity(entry))
 
     if count_moving_in == 0 then
         return 0
     end
 
-    global.effective_population[entry.type] =
-        global.effective_population[entry.type] -
-        entry.inhabitants * get_effective_population_multiplier(entry.happiness)
+    local caste_id = entry[TYPE]
+    local inhabitants = entry[INHABITANTS]
+    local effective_population = global.effective_population
+    local population = global.population
+
+    effective_population[caste_id] =
+        effective_population[caste_id] - inhabitants * get_effective_population_multiplier(entry[HAPPINESS])
 
     happiness = happiness or DEFAULT_HAPPINESS
-    healthiness = healthiness or DEFAULT_HEALTHINESS
-    healthiness_mental = healthiness_mental or DEFAULT_HEALTHINESS_MENTAL
+    health = health or DEFAULT_HEALTH
+    mental_health = mental_health or DEFAULT_MENTAL_HEALTH
 
-    entry.happiness = Tirislib_Utils.weighted_average(entry.happiness, entry.inhabitants, happiness, count_moving_in)
-    entry.healthiness =
-        Tirislib_Utils.weighted_average(entry.healthiness, entry.inhabitants, healthiness, count_moving_in)
-    entry.healthiness_mental =
-        Tirislib_Utils.weighted_average(
-        entry.healthiness_mental,
-        entry.inhabitants,
-        healthiness_mental,
-        count_moving_in
-    )
-    entry.inhabitants = entry.inhabitants + count_moving_in
+    entry[HAPPINESS] = weighted_average(entry[HAPPINESS], inhabitants, happiness, count_moving_in)
+    entry[HEALTH] = weighted_average(entry[HEALTH], inhabitants, health, count_moving_in)
+    entry[MENTAL_HEALTH] = weighted_average(entry[MENTAL_HEALTH], inhabitants, mental_health, count_moving_in)
+    entry[INHABITANTS] = inhabitants + count_moving_in
 
-    global.population[entry.type] = global.population[entry.type] + count_moving_in
-    global.effective_population[entry.type] =
-        global.effective_population[entry.type] +
-        entry.inhabitants * get_effective_population_multiplier(entry.happiness)
+    population[caste_id] = population[caste_id] + count_moving_in
+    effective_population[caste_id] =
+        effective_population[caste_id] +
+        (inhabitants + count_moving_in) * get_effective_population_multiplier(entry[HAPPINESS])
+
+    set_power_usage(entry)
 
     return count_moving_in
 end
@@ -81,17 +85,22 @@ local try_add_to_house = Inhabitants.try_add_to_house
 --- @param entry Entry
 --- @param count integer
 function Inhabitants.remove_from_house(entry, count)
-    local count_moving_out = math.min(entry.inhabitants, count)
+    local count_moving_out = math.min(entry[INHABITANTS], count)
 
     if count_moving_out == 0 then
         return 0
     end
 
-    global.effective_population[entry.type] =
-        global.effective_population[entry.type] -
-        count_moving_out * get_effective_population_multiplier(entry.happiness)
-    global.population[entry.type] = global.population[entry.type] - count_moving_out
-    entry.inhabitants = entry.inhabitants - count_moving_out
+    local caste_id = entry[TYPE]
+    local effective_population = global.effective_population
+    local population = global.population
+
+    effective_population[caste_id] =
+        effective_population[caste_id] - count_moving_out * get_effective_population_multiplier(entry[HAPPINESS])
+    population[caste_id] = population[caste_id] - count_moving_out
+    entry[INHABITANTS] = entry[INHABITANTS] - count_moving_out
+
+    set_power_usage(entry)
 
     return count_moving_out
 end
@@ -100,51 +109,81 @@ local remove_from_house = Inhabitants.remove_from_house
 --- Removes all the inhabitants living in the house.
 --- @param entry Entry
 function Inhabitants.remove_house(entry)
-    Inhabitants.remove_from_house(entry, entry.inhabitants)
+    Inhabitants.remove_from_house(entry, entry[INHABITANTS])
 end
 
 --- The number of inhabitants moving in per tick at normal circumstances.
 local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
 
 --- Gets the trend toward the next inhabitant that moves in or out.
---- @param entry Entry
---- @param delta_ticks number
-function Inhabitants.get_trend(entry, delta_ticks)
-    local threshold = castes[entry.type].influx_threshold
-    return INFLUX_COEFFICIENT * delta_ticks * (entry.happiness - threshold)
+function Inhabitants.get_trend(nominal_happiness, caste, delta_ticks)
+    local threshold = caste.influx_threshold
+    return INFLUX_COEFFICIENT * delta_ticks * (nominal_happiness - threshold)
 end
 local get_trend = Inhabitants.get_trend
 
---- Reduce the difference between target and current value by roughly 3% per second. (98% after 2 minutes.)
-local function update_convergenting_value(target_value, current_value, delta_ticks)
-    return current_value + (target_value - current_value) * (1 - 0.9995 ^ delta_ticks)
+--- Reduce the difference between nominal and current happiness by roughly 3% per second. (~98% after 2 minutes.)
+local function update_happiness(target, current, delta_ticks)
+    return current + (target - current) * (1 - 0.9995 ^ delta_ticks)
 end
 
-local set_power_usage = Subentities.set_power_usage
+--- Reduce the difference between nominal and current health. (~98% after 10 minutes.)
+local function update_health(target, current, delta_ticks)
+    return current + (target - current) * (1 - 0.9999 ^ delta_ticks)
+end
+
+--- Reduce the difference between nominal and current mental health. (~98% after 20 minutes.)
+local function update_mental_health(target, current, delta_ticks)
+    return current + (target - current) * (1 - 0.99995 ^ delta_ticks)
+end
+
 --- Updates the given housing entry.
 --- @param entry Entry
 --- @param delta_ticks integer
 function Inhabitants.update_house(entry, delta_ticks)
-    local diet_effects = Diet.evaluate(entry, delta_ticks)
-    entry.diet_effects = diet_effects
+    local caste_id = entry[TYPE]
+    local caste_values = castes[caste_id]
 
-    local housing = Housing(entry)
+    local happiness_factors = {}
+    entry[HAPPINESS_FACTORS] = happiness_factors
+    local health_factors = {}
+    entry[HEALTH_FACTORS] = health_factors
+    local mental_health_factors = {}
+    entry[MENTAL_HEALTH_FACTORS] = mental_health_factors
 
-    local nominal_happiness = diet_effects.satisfaction + housing.comfort - global.panic
-    entry.nominal_happiness = nominal_happiness
-    entry.happiness = update_convergenting_value(nominal_happiness, entry.happiness, delta_ticks)
+    evaluate_diet(entry, delta_ticks)
+    evaluate_housing(entry)
 
-    local nominal_healthiness = diet_effects.healthiness
-    entry.nominal_healthiness = nominal_healthiness
-    entry.healthiness = update_convergenting_value(nominal_healthiness, entry.healthiness, delta_ticks)
+    if has_power(entry) then
+        happiness_factors[HAPPINESS_POWER] = 2
+    else
+        happiness_factors[HAPPINESS_NO_POWER] = -1
+    end
 
-    local nominal_mental_healthiness = diet_effects.mental_healthiness
-    entry.nominal_mental_healthiness = nominal_mental_healthiness
-    entry.mental_healthiness = update_convergenting_value(nominal_mental_healthiness, entry.mental_healthiness, delta_ticks)
+    -- update happiness
+    local nominal_happiness = sum(happiness_factors)
+    local old_happiness = entry[HAPPINESS]
+    local new_happiness = update_happiness(nominal_happiness, entry[HAPPINESS], delta_ticks)
+    entry[HAPPINESS] = new_happiness
+
+    -- update effective population because the happiness has changed (most likely)
+    local inhabitants = entry[INHABITANTS]
+    local effective_population = global.effective_population
+    effective_population[caste_id] =
+        effective_population[caste_id] - (inhabitants * get_effective_population_multiplier(old_happiness)) +
+        (inhabitants * get_effective_population_multiplier(new_happiness))
+
+    -- update health
+    local nominal_health = sum(health_factors)
+    entry[HEALTH] = update_health(nominal_health, entry[HEALTH], delta_ticks)
+
+    -- update mental health
+    local nominal_mental_health = sum(mental_health_factors)
+    entry[MENTAL_HEALTH] = update_mental_health(nominal_mental_health, entry[MENTAL_HEALTH], delta_ticks)
     -- TODO diseases, ideas, tralala
 
-    local trend = entry.trend
-    trend = trend + get_trend(entry, delta_ticks)
+    local trend = entry[TREND]
+    trend = trend + get_trend(nominal_happiness, caste_values, delta_ticks)
     if trend >= 1 then
         -- let people move in
         try_add_to_house(entry, math.floor(trend))
@@ -154,9 +193,19 @@ function Inhabitants.update_house(entry, delta_ticks)
         remove_from_house(entry, -math.ceil(trend))
         trend = trend - math.ceil(trend)
     end
-    entry.trend = trend
+    entry[TREND] = trend
+end
 
-    set_power_usage(entry)
+function Inhabitants.get_nominal_happiness(entry)
+    return sum(entry[HAPPINESS_FACTORS])
+end
+
+function Inhabitants.get_nominal_health(entry)
+    return sum(entry[HEALTH_FACTORS])
+end
+
+function Inhabitants.get_nominal_mental_health(entry)
+    return sum(entry[MENTAL_HEALTH_FACTORS])
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -165,20 +214,14 @@ end
 --- Returns the number of resettled inhabitants.
 --- @param entry Entry
 function Inhabitants.try_resettle(entry)
-    if not global.technologies["resettlement"] or not Types.is_inhabited(entry.type) then
+    if not global.technologies["resettlement"] or not Types.is_inhabited(entry[TYPE]) then
         return 0
     end
 
-    local to_resettle = entry.inhabitants
-    for _, current_entry in Register.all_of_type(entry.type) do
+    local to_resettle = entry[INHABITANTS]
+    for _, current_entry in Register.all_of_type(entry[TYPE]) do
         local resettled_count =
-            Inhabitants.try_add_to_house(
-            current_entry,
-            to_resettle,
-            entry.happiness,
-            entry.healthiness,
-            entry.mental_healthiness
-        )
+            try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[MENTAL_HEALTH])
         to_resettle = to_resettle - resettled_count
 
         if to_resettle == 0 then
@@ -186,7 +229,7 @@ function Inhabitants.try_resettle(entry)
         end
     end
 
-    return entry.inhabitants - to_resettle
+    return entry[INHABITANTS] - to_resettle
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -343,19 +386,18 @@ end
 --- Initializes the given entry so it can work as an housing entry.
 --- @param entry Entry
 function Inhabitants.add_inhabitants_data(entry)
-    entry.happiness = 0
-    entry.nominal_happiness = 0
+    entry[HAPPINESS] = 0
+    entry[HAPPINESS_FACTORS] = {}
 
-    entry.healthiness = 0
-    entry.nominal_healthiness = 0
+    entry[HEALTH] = 0
+    entry[HEALTH_FACTORS] = {}
 
-    entry.mental_healthiness = 0
-    entry.nominal_mental_healthiness = 0
+    entry[MENTAL_HEALTH] = 0
+    entry[MENTAL_HEALTH_FACTORS] = {}
 
-    entry.inhabitants = 0
-    entry.trend = 0
-
-    entry.ideas = 0
+    entry[INHABITANTS] = 0
+    entry[TREND] = 0
+    entry[IDEAS] = 0
 end
 
 --- Initialize the inhabitants related contents of global.
