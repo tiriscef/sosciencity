@@ -1,5 +1,7 @@
 Neighborhood = {}
 
+local Register = Register
+local abs = math.abs
 ---------------------------------------------------------------------------------------------------
 -- << constants >>
 --- Table with (neighborhood entity, range) pairs
@@ -38,7 +40,6 @@ local interested_entity_types = generate_interested_entity_types_lookup()
 --
 -- Future: implement something for entities that are not registered, e.g. trees
 
-local abs = math.abs
 local function maximum_metric_distance(v1, v2)
     local dist_x = abs(v1.x - v2.x)
     local dist_y = abs(v1.y - v2.y)

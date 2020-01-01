@@ -1,6 +1,11 @@
 Inhabitants = {}
 
 -- local often used functions for enormous performance gains
+local global
+local population
+local effective_population
+local Register = Register
+
 local castes = Caste.values
 local evaluate_diet = Diet.evaluate
 
@@ -24,8 +29,8 @@ local weighted_average = Tirislib_Utils.weighted_average
 function Inhabitants.get_population_count()
     local population_count = 0
 
-    for caste_id, _ in pairs(Caste.values) do
-        population_count = population_count + global.population[caste_id]
+    for caste_id, _ in pairs(castes) do
+        population_count = population_count + population[caste_id]
     end
 
     return population_count
@@ -34,41 +39,41 @@ local get_population_count = Inhabitants.get_population_count
 
 --- Gets the current Clockwork caste bonus.
 function Inhabitants.get_clockwork_bonus()
-    return floor(global.effective_population[TYPE_CLOCKWORK] * 40 / max(global.machine_count, 1))
+    return floor(effective_population[TYPE_CLOCKWORK] * 40 / max(global.machine_count, 1))
 end
 
 --- Gets the current Orchid caste bonus.
 function Inhabitants.get_orchid_bonus()
-    return floor(sqrt(global.effective_population[TYPE_ORCHID]))
+    return floor(sqrt(effective_population[TYPE_ORCHID]))
 end
 
 --- Gets the current Gunfire caste bonus.
 function Inhabitants.get_gunfire_bonus()
-    return floor(global.effective_population[TYPE_GUNFIRE] * 10 / max(global.turret_count, 1)) -- TODO balancing
+    return floor(effective_population[TYPE_GUNFIRE] * 10 / max(global.turret_count, 1)) -- TODO balancing
 end
 local get_gunfire_bonus = Inhabitants.get_gunfire_bonus
 
 --- Gets the current Ember caste bonus.
 function Inhabitants.get_ember_bonus()
-    return floor(sqrt(global.effective_population[TYPE_EMBER] / get_population_count()))
+    return floor(sqrt(effective_population[TYPE_EMBER] / get_population_count()))
 end
 local get_ember_bonus = Inhabitants.get_ember_bonus
 
 --- Gets the current Foundry caste bonus.
 function Inhabitants.get_foundry_bonus()
-    return floor(global.effective_population[TYPE_FOUNDRY] * 5)
+    return floor(effective_population[TYPE_FOUNDRY] * 5)
 end
 local get_foundry_bonus = Inhabitants.get_foundry_bonus
 
 --- Gets the current Gleam caste bonus.
 function Inhabitants.get_gleam_bonus()
-    return floor(sqrt(global.effective_population[TYPE_GLEAM]))
+    return floor(sqrt(effective_population[TYPE_GLEAM]))
 end
 local get_gleam_bonus = Inhabitants.get_gleam_bonus
 
 --- Gets the current Aurora caste bonus.
 function Inhabitants.get_aurora_bonus()
-    return floor(sqrt(global.effective_population[TYPE_AURORA]))
+    return floor(sqrt(effective_population[TYPE_AURORA]))
 end
 
 -- sets the hidden caste-technologies so they encode the given value
@@ -187,8 +192,6 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, mental_he
 
     local caste_id = entry[TYPE]
     local inhabitants = entry[INHABITANTS]
-    local effective_population = global.effective_population
-    local population = global.population
 
     effective_population[caste_id] =
         effective_population[caste_id] - inhabitants * get_effective_population_multiplier(entry[HAPPINESS])
@@ -225,8 +228,6 @@ function Inhabitants.remove_from_house(entry, count)
     end
 
     local caste_id = entry[TYPE]
-    local effective_population = global.effective_population
-    local population = global.population
 
     effective_population[caste_id] =
         effective_population[caste_id] - count_moving_out * get_effective_population_multiplier(entry[HAPPINESS])
@@ -246,7 +247,7 @@ function Inhabitants.remove_house(entry)
 end
 
 --- The number of inhabitants moving in per tick at normal circumstances.
-local INFLUX_COEFFICIENT = 1. / 60 -- TODO balance
+local INFLUX_COEFFICIENT = 1. / 600 -- TODO balance
 
 --- Gets the trend toward the next inhabitant that moves in or out.
 function Inhabitants.get_trend(nominal_happiness, caste, delta_ticks)
@@ -288,14 +289,24 @@ function Inhabitants.update_house(entry, delta_ticks)
     evaluate_housing(entry)
 
     if has_power(entry) then
-        happiness_factors[HAPPINESS_POWER] = 2
+        happiness_factors[HAPPINESS_POWER] = caste_values.power_bonus
     else
-        happiness_factors[HAPPINESS_NO_POWER] = -1
+        happiness_factors[HAPPINESS_NO_POWER] = caste_values.no_power_malus
     end
 
     local ember_bonus = get_ember_bonus()
     if ember_bonus > 0 then
         happiness_factors[HAPPINESS_EMBER] = ember_bonus
+    end
+
+    local fear_malus = global.fear * caste_values.fear_multiplier
+    if fear_malus > 0 then
+        happiness_factors[HAPPINESS_FEAR] = fear_malus
+
+        if fear_malus > 5 then
+            health_factors[HEALTH_FEAR] = fear_malus / 2
+            mental_health_factors[MENTAL_HEALTH_FEAR] = fear_malus / 2
+        end
     end
 
     -- update happiness
@@ -306,7 +317,6 @@ function Inhabitants.update_house(entry, delta_ticks)
 
     -- update effective population because the happiness has changed (most likely)
     local inhabitants = entry[INHABITANTS]
-    local effective_population = global.effective_population
     effective_population[caste_id] =
         effective_population[caste_id] - (inhabitants * get_effective_population_multiplier(old_happiness)) +
         (inhabitants * get_effective_population_multiplier(new_happiness))
@@ -369,18 +379,18 @@ function Inhabitants.try_resettle(entry)
 
     return entry[INHABITANTS] - to_resettle
 end---------------------------------------------------------------------------------------------------
--- << panic >>
---- Lowers the population's panic over time.
-function Inhabitants.ease_panic()
+-- << fear >>
+--- Lowers the population's fear over time.
+function Inhabitants.ease_fear()
     local delta_ticks = game.tick - global.last_update
 
     -- TODO
 end
 
---- Adds panic after a civil building got destroyed.
-function Inhabitants.add_panic()
-    global.last_panic_event = game.tick
-    global.panic = global.panic + 1 -- TODO balancing
+--- Adds fear after a civil building got destroyed.
+function Inhabitants.add_fear()
+    global.last_fear_event = game.tick
+    global.fear = global.fear + 1 -- TODO balancing
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -418,10 +428,14 @@ function Inhabitants.add_inhabitants_data(entry)
     entry[IDEAS] = 0
 end
 
---- Initialize the inhabitants related contents of global.
-function Inhabitants.init()
-    global.panic = 0
-    global.population = {
+local function set_locals()
+    global = _ENV.global
+    population = global.population
+    effective_population = global.effective_population
+end
+
+local function new_caste_table()
+    return {
         [TYPE_CLOCKWORK] = 0,
         [TYPE_EMBER] = 0,
         [TYPE_GUNFIRE] = 0,
@@ -431,7 +445,22 @@ function Inhabitants.init()
         [TYPE_AURORA] = 0,
         [TYPE_PLASMA] = 0
     }
-    global.effective_population = Tirislib_Tables.copy(global.population)
+end
+
+--- Initialize the inhabitants related contents of global.
+function Inhabitants.init()
+    global = _ENV.global
+
+    global.fear = 0
+    global.population = new_caste_table()
+    global.effective_population = new_caste_table()
+
+    set_locals()
+end
+
+--- Sets local references during on_load
+function Inhabitants.load()
+    set_locals()
 end
 
 return Inhabitants

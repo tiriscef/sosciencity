@@ -56,7 +56,7 @@ end
     global.effective_population: table
         [caste_type]: float
 
-    global.panic: float
+    global.fear: float
 
     global.technologies: table
         [tech name]: bool (is researched) or int (research level)
@@ -96,10 +96,12 @@ local Gui = require("scripts.control.gui")
 -- entities need to be checked for validity before calling the update-function
 -- local all the frequently called functions for miniscule performance gains
 
+local global
+
 local get_clockwork_bonus = Inhabitants.get_clockwork_bonus
 local get_aurora_bonus = Inhabitants.get_aurora_bonus
 local get_orchid_bonus = Inhabitants.get_orchid_bonus
-local add_panic = Inhabitants.add_panic
+local add_fear = Inhabitants.add_fear
 
 local set_beacon_effects = Subentities.set_beacon_effects
 
@@ -172,13 +174,13 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
-local ease_panic = Inhabitants.ease_panic
+local ease_fear = Inhabitants.ease_fear
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 
 local function update_cycle()
-    ease_panic()
+    ease_fear()
 
     local next = next
     local count = 0
@@ -222,6 +224,8 @@ local function update_settings()
 end
 
 local function init()
+    global = _ENV.global
+
     update_settings()
 
     global.last_update = game.tick
@@ -230,6 +234,13 @@ local function init()
     Register.init()
     Technologies.init()
     Gui.init()
+end
+
+local function on_load()
+    global = _ENV.global
+
+    Register.load()
+    Inhabitants.load()
 end
 
 local function on_entity_built(event)
@@ -265,7 +276,7 @@ local function on_entity_died(event)
 
     local entity_type = get_entity_type(entity)
     if is_civil(entity_type) then
-        add_panic()
+        add_fear()
     end
 
     on_entity_removed(event)
@@ -374,6 +385,9 @@ end
 -- << event handler registration >>
 -- initialisation
 script.on_init(init)
+
+-- loading
+script.on_load(on_load)
 
 -- update function
 script.on_nth_tick(cycle_frequency, update_cycle)
