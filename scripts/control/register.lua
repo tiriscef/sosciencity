@@ -100,7 +100,7 @@ end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
 --- @param unit_number number
---- @return Entry
+--- @return Entry|nil
 function Register.try_get(unit_number)
     local entry = global.register[unit_number]
 
