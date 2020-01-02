@@ -219,6 +219,14 @@ local function get_tab_contents(tabbed_pane, name)
     return tabbed_pane[name].flow
 end
 
+local function create_separator_line(container, name)
+    return container.add {
+        type = "line",
+        name = name or "line",
+        direction = "horizontal"
+    }
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << city info gui >>
 local CITY_INFO_NAME = "sosciencity-city-info"
@@ -539,7 +547,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
     local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
 
     create_data_list(flow, "happiness")
+    create_separator_line(flow)
     create_data_list(flow, "health")
+    create_separator_line(flow, "line2")
     create_data_list(flow, "mental-health")
 
     -- call the update function to set the values
@@ -616,9 +626,6 @@ local function create_housing_details(container, entry)
     add_housing_general_info_tab(tab_pane, entry)
     add_housing_factor_tab(tab_pane, entry)
     add_caste_info_tab(tab_pane, entry[TYPE])
-    -- general info: building, inhabitants, happiness, health, kicking people out
-    -- happiness and its sources
-    -- health and its sources
 end
 
 -- << general details view functions >>
