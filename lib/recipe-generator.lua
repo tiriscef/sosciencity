@@ -170,7 +170,8 @@ function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, addit
             {type = "item", name = product_name, amount = 1}
         },
         subgroup = item.subgroup,
-        order = item.order
+        order = item.order,
+        main_product = product_name
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
@@ -194,7 +195,6 @@ function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, yield,
             {type = "item", name = product_name, amount_min = 1, amount_max = yield, probability = 0.5}
         },
         subgroup = "sosciencity-agriculture",
-        main_product = ""
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
@@ -220,7 +220,6 @@ function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, yield, 
             {type = "item", name = product_name, amount_min = min_yield, amount_max = yield}
         },
         subgroup = "sosciencity-greenhouse",
-        main_product = ""
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
@@ -267,7 +266,7 @@ function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, yield, i
             {type = "item", name = product_name, amount_min = 1, amount_max = yield}
         },
         subgroup = "sosciencity-arboretum",
-        main_product = ""
+        
     }:create_difficulties()
 
     recipe:add_ingredient_range(ingredients)
