@@ -23,6 +23,16 @@ local min = Tirislib_Utils.min
 local sum = Tirislib_Tables.sum
 local weighted_average = Tirislib_Utils.weighted_average
 
+local caste_tech_names = {
+    [TYPE_CLOCKWORK] = "clockwork-caste",
+    [TYPE_EMBER] = "ember-caste",
+    [TYPE_GUNFIRE] = "gunfire-caste",
+    [TYPE_GLEAM] = "gleam-caste",
+    [TYPE_FOUNDRY] = "foundry-caste",
+    [TYPE_ORCHID] = "orchid-caste",
+    [TYPE_AURORA] = "aurora-caste"
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << caste bonus functions >>
 --- Returns the total number of inhabitants.
@@ -164,7 +174,14 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         Register.change_type(entry, caste_id)
 
         if loud then
-        -- TODO create flying text
+            Communication.create_flying_text(
+                entry,
+                {
+                    "flying-text.set-caste",
+                    "[img=technology/" .. caste_tech_names[caste_id] .. "]",
+                    {"caste-name." .. castes[caste_id].name}
+                }
+            )
         end
         return true
     else
@@ -378,7 +395,8 @@ function Inhabitants.try_resettle(entry)
     end
 
     return entry[INHABITANTS] - to_resettle
-end---------------------------------------------------------------------------------------------------
+end
+ ---------------------------------------------------------------------------------------------------
 -- << fear >>
 --- Lowers the population's fear over time.
 function Inhabitants.ease_fear()
@@ -395,15 +413,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
-local caste_tech_names = {
-    [TYPE_CLOCKWORK] = "clockwork-caste",
-    [TYPE_EMBER] = "ember-caste",
-    [TYPE_GUNFIRE] = "gunfire-caste",
-    [TYPE_GLEAM] = "gleam-caste",
-    [TYPE_FOUNDRY] = "foundry-caste",
-    [TYPE_ORCHID] = "orchid-caste",
-    [TYPE_AURORA] = "aurora-caste"
-}
 
 --- Checks if the given caste has been researched by the player.
 --- @param caste_id Type

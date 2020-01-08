@@ -90,6 +90,7 @@ local Neighborhood = require("scripts.control.neighborhood")
 local Diet = require("scripts.control.diet")
 local Inhabitants = require("scripts.control.inhabitants")
 local Gui = require("scripts.control.gui")
+local Communication = require("scripts.control.communication")
 
 ---------------------------------------------------------------------------------------------------
 -- << update functions >>

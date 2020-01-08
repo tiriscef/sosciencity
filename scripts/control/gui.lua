@@ -753,7 +753,7 @@ function Gui.handle_caste_button(player_index, caste_id)
         return
     end
 
-    Inhabitants.try_allow_for_caste(entry, caste_id)
+    Inhabitants.try_allow_for_caste(entry, caste_id, true)
 end
 
 function Gui.handle_kickout_button(player_index, button)

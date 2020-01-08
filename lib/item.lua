@@ -2,7 +2,7 @@
 -- << class for items >>
 Tirislib_Item = {}
 
--- this makes an object of this class call the class methods (if it hasn't an own method)
+-- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib_Item.__index = Tirislib_Item
 

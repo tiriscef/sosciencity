@@ -8,18 +8,18 @@ function Tirislib_RecipeEntry:get_name(entry)
 end
 
 function Tirislib_RecipeEntry:yields_item(entry)
-    if entry[TYPE] then
-        return entry[TYPE] == "item"
+    if entry.type then
+        return entry.type == "item"
     end
     return true
 end
 
 function Tirislib_RecipeEntry:yields_fluid(entry)
-    return (entry[TYPE] ~= nil) and (entry[TYPE] == "fluid")
+    return (entry.type ~= nil) and (entry.type == "fluid")
 end
 
 function Tirislib_RecipeEntry:get_type(entry)
-    return entry[TYPE] or "item"
+    return entry.type or "item"
 end
 
 function Tirislib_RecipeEntry:specify_same_stuff(entry1, entry2)
@@ -83,7 +83,7 @@ end
 -- << class for recipes >>
 Tirislib_Recipe = {}
 
--- this makes an object of this class call the class methods (if it hasn't an own method)
+-- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib_Recipe.__index = Tirislib_Recipe
 
@@ -145,37 +145,45 @@ function Tirislib_Recipe:has_difficulties()
     return self:has_normal_difficulty() or self:has_expensive_difficulty()
 end
 
+local recipe_data_keys = {
+    "ingredients",
+    "result",
+    "result_count",
+    "results",
+    "energy_required",
+    "emissions_multiplier",
+    "overload_multiplier",
+    "enabled",
+    "hidden",
+    "hide_from_stats",
+    "hide_from_player_crafting",
+    "allow_decomposition",
+    "allow_as_intermediate",
+    "allow_intermediates",
+    "always_show_made_in",
+    "show_amount_in_title",
+    "always_show_products",
+    "main_product"
+}
+
 function Tirislib_Recipe:create_difficulties()
     -- silently do nothing if they already exist
     if self:has_difficulties() then
         return self
     end
 
-    -- set ingredients
-    self.normal = {
-        ingredients = Tirislib_Tables.recursive_copy(self.ingredients)
-    }
-    self.expensive = {
-        ingredients = Tirislib_Tables.recursive_copy(self.ingredients)
-    }
-    self.ingredients = nil
+    self.normal = {}
+    self.expensive = {}
 
-    -- set result(s)
-    if self.result then
-        self.normal.result = self.result
-        self.normal.result_count = self.result_count
-        self.expensive.result = self.result
-        self.expensive.result_count = self.result_count
-
-        self.result = nil
-        self.result_count = nil
-    elseif self.results then
-        self.normal.results = Tirislib_Tables.recursive_copy(self.results)
-        self.expensive.results = Tirislib_Tables.recursive_copy(self.results)
-
-        self.results = nil
-    else
-        error("Sosciencity found a recipe without a valid result:\n" .. serpent.block(self))
+    -- copy the data that the wiki calls "recipe data" and which need to be set for both difficulty modes
+    for _, key in pairs(recipe_data_keys) do
+        if type(self[key]) == "table" then
+            self.normal[key] = Tirislib_Tables.recursive_copy(self[key])
+            self.expensive[key] = Tirislib_Tables.recursive_copy(self[key])
+        else
+            self.normal[key] = self[key]
+            self.expensive[key] = self[key]
+        end
     end
 
     return self

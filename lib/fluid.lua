@@ -2,7 +2,7 @@
 -- << class for fluids >>
 Tirislib_Fluid = {}
 
--- this makes an object of this class call the class methods (if it hasn't an own method)
+-- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib_Fluid.__index = Tirislib_Fluid
 
