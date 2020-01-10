@@ -7,6 +7,15 @@ function Tirislib_RecipeEntry:get_name(entry)
     return entry.name or entry[1]
 end
 
+function Tirislib_RecipeEntry:set_name(entry, name)
+    if entry.name then
+        entry.name = name
+    end
+    if entry[1] then
+        entry[1] = name
+    end
+end
+
 function Tirislib_RecipeEntry:yields_item(entry)
     if entry.type then
         return entry.type == "item"
@@ -134,11 +143,11 @@ end
 
 -- << manipulation >>
 function Tirislib_Recipe:has_normal_difficulty()
-    return self.normal ~= nil
+    return self.normal
 end
 
 function Tirislib_Recipe:has_expensive_difficulty()
-    return self.expensive ~= nil
+    return self.expensive
 end
 
 function Tirislib_Recipe:has_difficulties()
@@ -334,6 +343,29 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
         end
         if self.has_expensive_difficulty() then
             remove_ingredient(self.expensive, ingredient_name, ingredient_type)
+        end
+    end
+
+    return self
+end
+
+local function replace_ingredient(recipe, ingredient_name, replacement_name)
+    for _, ingredient in pairs(recipe.ingredients) do
+        if Tirislib_RecipeEntry:get_name(ingredient) == ingredient_name then
+            Tirislib_RecipeEntry:set_name(ingredient, replacement_name)
+        end
+    end
+end
+
+function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name)
+    if not self:has_difficulties() then
+        replace_ingredient(self, ingredient_name, replacement_name)
+    else
+        if self:has_normal_difficulty() then
+            replace_ingredient(self.expensive, ingredient_name, replacement_name)
+        end
+        if self:has_expensive_difficulty() then
+            replace_ingredient(self.normal, ingredient_name, replacement_name)
         end
     end
 
