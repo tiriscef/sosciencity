@@ -154,26 +154,98 @@ function Tirislib_Recipe:has_difficulties()
     return self:has_normal_difficulty() or self:has_expensive_difficulty()
 end
 
-local recipe_data_keys = {
-    "ingredients",
-    "result",
-    "result_count",
-    "results",
-    "energy_required",
-    "emissions_multiplier",
-    "overload_multiplier",
-    "enabled",
-    "hidden",
-    "hide_from_stats",
-    "hide_from_player_crafting",
-    "allow_decomposition",
-    "allow_as_intermediate",
-    "allow_intermediates",
-    "always_show_made_in",
-    "show_amount_in_title",
-    "always_show_products",
-    "main_product"
+local default_values = {
+    category = "crafting",
+    result_count = 1,
+    energy_required = 0.5,
+    emissions_multiplier = 1,
+    requester_paste_multiplier = 30,
+    overload_multiplier = 0,
+    enabled = true,
+    hidden = false,
+    hide_from_stats = false,
+    hide_from_player_crafting = false,
+    allow_decomposition = true,
+    allow_as_intermediate = true,
+    allow_intermediates = true,
+    always_show_made_in = false,
+    show_amount_in_title = true,
+    always_show_products = false
 }
+
+-- the prototype fields that the wiki calls "recipe data"
+local recipe_data_fields = {
+    ingredients = true,
+    result = true,
+    result_count = true,
+    results = true,
+    energy_required = true,
+    emissions_multiplier = true,
+    requester_paste_multiplier = true,
+    overload_multiplier = true,
+    enabled = true,
+    hidden = true,
+    hide_from_stats = true,
+    hide_from_player_crafting = true,
+    allow_decomposition = true,
+    allow_as_intermediate = true,
+    allow_intermediates = true,
+    always_show_made_in = true,
+    show_amount_in_title = true,
+    always_show_products = true,
+    main_product = true
+}
+
+function Tirislib_Recipe:set_field(key, value)
+    if recipe_data_fields[key] then
+        if not self:has_difficulties() then
+            self[key] = value
+        end
+        if self:has_normal_difficulty() then
+            self.normal[key] = value
+        end
+        if self:has_expensive_difficulty() then
+            self.expensive[key] = value
+        end
+    else
+        self[key] = value
+    end
+
+    return self
+end
+
+function Tirislib_Recipe:get_field(field, mode)
+    if mode then
+        return self[mode][field] or default_values[field]
+    else
+        return self[field] or default_values[field]
+    end
+end
+
+function Tirislib_Recipe:multiply_field(field, normal_multiplier, expensive_multiplier)
+    -- use the normal multiplier if no expensive one is given
+    expensive_multiplier = expensive_multiplier or normal_multiplier
+
+    if not self:has_difficulties() then
+        self.energy_required = self:get_field(field) * normal_multiplier
+    else
+        if self:has_normal_difficulty() then
+            self.normal.energy_required = self:get_field(field, "normal") * normal_multiplier
+        end
+        if self:has_expensive_difficulty() then
+            self.expensive.energy_required = self:get_field(field, "expensive") * expensive_multiplier
+        end
+    end
+
+    return self
+end
+
+function Tirislib_Recipe:multiply_expensive_field(field, multiplier)
+    if self:has_expensive_difficulty() then
+        self.expensive[field] = self:get_field(field, "expensive") * multiplier
+    end
+    return self
+end
 
 function Tirislib_Recipe:create_difficulties()
     -- silently do nothing if they already exist
@@ -185,14 +257,16 @@ function Tirislib_Recipe:create_difficulties()
     self.expensive = {}
 
     -- copy the data that the wiki calls "recipe data" and which need to be set for both difficulty modes
-    for _, key in pairs(recipe_data_keys) do
-        if type(self[key]) == "table" then
-            self.normal[key] = Tirislib_Tables.recursive_copy(self[key])
-            self.expensive[key] = Tirislib_Tables.recursive_copy(self[key])
+    for field, _ in pairs(recipe_data_fields) do
+        if type(self[field]) == "table" then
+            self.normal[field] = Tirislib_Tables.recursive_copy(self[field])
+            self.expensive[field] = Tirislib_Tables.recursive_copy(self[field])
         else
-            self.normal[key] = self[key]
-            self.expensive[key] = self[key]
+            self.normal[field] = self[field]
+            self.expensive[field] = self[field]
         end
+
+        self[field] = nil
     end
 
     return self
@@ -428,13 +502,15 @@ function Tirislib_Recipe:multiply_ingredients(normal_multiplier, expensive_multi
             multiply_ingredient_table_amounts(self.expensive.ingredients, expensive_multiplier or normal_multiplier)
         end
     end
+
+    return self
 end
 
 function Tirislib_Recipe:multiply_expensive_ingredients(multiplier)
-    if not self:has_difficulties() then
-        return self
+    if self:has_expensive_difficulty() then
+        multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
     end
-    multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
+
     return self
 end
 
