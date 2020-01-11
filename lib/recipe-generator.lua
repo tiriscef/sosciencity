@@ -139,7 +139,6 @@ function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
         category = "crafting",
         enabled = (details.tech_level == 0),
         energy_required = 0.5 * details.room_count,
-        ingredients = {},
         results = {
             {type = "item", name = housing_name, amount = 1}
         },
@@ -171,7 +170,6 @@ function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, addit
         category = "crafting",
         enabled = true,
         energy_required = 2,
-        ingredients = {},
         results = {
             {type = "item", name = product_name, amount = 1}
         },
@@ -196,7 +194,6 @@ function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, yield,
         category = "sosciencity-agriculture",
         enabled = true,
         energy_required = Tirislib_RecipeGenerator.agriculture_time,
-        ingredients = {},
         results = {
             {type = "item", name = product_name, amount_min = 1, amount_max = yield, probability = 0.5}
         },
@@ -208,7 +205,7 @@ function Tirislib_RecipeGenerator.create_agriculture_recipe(product_name, yield,
     recipe:add_ingredient_range(ingredients)
     recipe:add_ingredient_range(Tirislib_RecipeGenerator.agriculture_growing_ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
-    recipe:multiply_expensive_field("required_energy", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
+    recipe:multiply_expensive_field("energy_required", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
 
@@ -224,7 +221,6 @@ function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, yield, 
         category = "sosciencity-greenhouse",
         enabled = true,
         energy_required = Tirislib_RecipeGenerator.greenhouse_time,
-        ingredients = {},
         results = {
             {type = "item", name = product_name, amount_min = min_yield, amount_max = yield}
         },
@@ -236,7 +232,7 @@ function Tirislib_RecipeGenerator.create_greenhouse_recipe(product_name, yield, 
     recipe:add_ingredient_range(ingredients)
     recipe:add_ingredient_range(Tirislib_RecipeGenerator.greenhouse_growing_ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
-    recipe:multiply_expensive_field("required_energy", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
+    recipe:multiply_expensive_field("energy_required", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
 
@@ -250,7 +246,6 @@ function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, yield, in
         category = "sosciencity-orangery",
         enabled = true,
         energy_required = Tirislib_RecipeGenerator.greenhouse_time,
-        ingredients = {},
         results = {
             {type = "item", name = product_name, amount_min = 1, amount_max = yield}
         },
@@ -262,7 +257,7 @@ function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, yield, in
     recipe:add_ingredient_range(ingredients)
     recipe:add_ingredient_range(Tirislib_RecipeGenerator.orangery_growing_ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
-    recipe:multiply_expensive_field("required_energy", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
+    recipe:multiply_expensive_field("energy_required", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
 
@@ -275,7 +270,6 @@ function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, yield, i
         category = "sosciencity-arboretum",
         enabled = true,
         energy_required = Tirislib_RecipeGenerator.greenhouse_time,
-        ingredients = {},
         results = {
             {type = "item", name = product_name, amount_min = 1, amount_max = yield}
         },
@@ -287,7 +281,7 @@ function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, yield, i
     recipe:add_ingredient_range(ingredients)
     recipe:add_ingredient_range(Tirislib_RecipeGenerator.arboretum_growing_ingredients)
     recipe:multiply_expensive_ingredients(Tirislib_RecipeGenerator.expensive_farming_multiplier)
-    recipe:multiply_expensive_field("required_energy", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
+    recipe:multiply_expensive_field("energy_required", Tirislib_RecipeGenerator.expensive_farming_energy_multiplier)
 
     Tirislib_Tables.set_fields(recipe, additional_fields)
 
