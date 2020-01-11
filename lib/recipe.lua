@@ -132,10 +132,28 @@ function Tirislib_Recipe.pairs()
 end
 
 -- << creation >>
+local function add_ingredient_table(prototype)
+    local difficulties = false
+    if prototype.normal then
+        prototype.normal.ingredients = prototype.normal.ingredients or {}
+        difficulties = true
+    end
+    if prototype.expensive then
+        prototype.expensive.ingredients = prototype.expensive.ingredients or {}
+        difficulties = true
+    end
+
+    if not difficulties then
+        prototype.ingredients = prototype.ingredients or {}
+    end
+end
+
 function Tirislib_Recipe.create(prototype)
     if not prototype.type then
         prototype.type = "recipe"
     end
+
+    add_ingredient_table(prototype)
 
     data:extend {prototype}
     return Tirislib_Recipe.get(prototype)
