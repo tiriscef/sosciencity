@@ -17,6 +17,7 @@ Caste.values = {
         required_room_count = 1,
         minimum_comfort = 0,
         influx_threshold = 0,
+        influx_coefficient = 1. / 1200,
         idea_threshold = 5
     },
     [TYPE_ORCHID] = {
@@ -33,6 +34,7 @@ Caste.values = {
         required_room_count = 1,
         minimum_comfort = 8,
         influx_threshold = 5,
+        influx_coefficient = 1. / 1800,
         idea_threshold = 5
     },
     [TYPE_GUNFIRE] = {
@@ -49,6 +51,7 @@ Caste.values = {
         required_room_count = 0.5,
         minimum_comfort = 0,
         influx_threshold = 5,
+        influx_coefficient = 1. / 1800,
         idea_threshold = 5
     },
     [TYPE_EMBER] = {
@@ -65,6 +68,7 @@ Caste.values = {
         required_room_count = 1,
         minimum_comfort = 1,
         influx_threshold = 5,
+        influx_coefficient = 1. / 800,
         idea_threshold = 5
     },
     [TYPE_FOUNDRY] = {
@@ -81,6 +85,7 @@ Caste.values = {
         required_room_count = 4,
         minimum_comfort = 6,
         influx_threshold = 5,
+        influx_coefficient = 1. / 3000,
         idea_threshold = 5
     },
     [TYPE_GLEAM] = {
@@ -97,6 +102,7 @@ Caste.values = {
         required_room_count = 4,
         minimum_comfort = 4,
         influx_threshold = 5,
+        influx_coefficient = 1. / 3000,
         idea_threshold = 5
     },
     [TYPE_AURORA] = {
@@ -113,6 +119,7 @@ Caste.values = {
         required_room_count = 10,
         minimum_comfort = 9,
         influx_threshold = 5,
+        influx_coefficient = 1. / 10000,
         idea_threshold = 5
     },
     [TYPE_PLASMA] = {
@@ -129,6 +136,7 @@ Caste.values = {
         required_room_count = 3,
         minimum_comfort = 5,
         influx_threshold = 5,
+        influx_coefficient = 1. / 3000,
         idea_threshold = 5
     }
 }
