@@ -7,11 +7,18 @@ local effective_population
 local Register = Register
 
 local castes = Caste.values
+local emigration_coefficient = Caste.emigration_coefficient
+local garbage_coefficient = Caste.garbage_coefficient
+
 local evaluate_diet = Diet.evaluate
+
+local try_output_ideas = Inventories.try_output_ideas
+local produce_garbage = Inventories.produce_garbage
 
 local get_housing = Housing.get
 local evaluate_housing = Housing.evaluate
 local get_free_capacity = Housing.get_free_capacity
+
 local set_power_usage = Subentities.set_power_usage
 local has_power = Subentities.has_power
 
@@ -23,16 +30,6 @@ local min = Tirislib_Utils.min
 local sgn = Tirislib_Utils.sgn
 local sum = Tirislib_Tables.sum
 local weighted_average = Tirislib_Utils.weighted_average
-
-local caste_tech_names = {
-    [TYPE_CLOCKWORK] = "clockwork-caste",
-    [TYPE_EMBER] = "ember-caste",
-    [TYPE_GUNFIRE] = "gunfire-caste",
-    [TYPE_GLEAM] = "gleam-caste",
-    [TYPE_FOUNDRY] = "foundry-caste",
-    [TYPE_ORCHID] = "orchid-caste",
-    [TYPE_AURORA] = "aurora-caste"
-}
 
 ---------------------------------------------------------------------------------------------------
 -- << caste bonus functions >>
@@ -175,14 +172,7 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         Register.change_type(entry, caste_id)
 
         if loud then
-            Communication.create_flying_text(
-                entry,
-                {
-                    "flying-text.set-caste",
-                    "[img=technology/" .. caste_tech_names[caste_id] .. "]",
-                    {"caste-name." .. castes[caste_id].name}
-                }
-            )
+            Communication.caste_allowed_in(entry, caste_id)
         end
         return true
     else
@@ -265,10 +255,26 @@ function Inhabitants.remove_house(entry)
 end
 
 --- Gets the trend toward the next inhabitant that moves in or out.
-function Inhabitants.get_trend(nominal_happiness, caste, delta_ticks)
-    return caste.influx_coefficient * delta_ticks * (sgn(nominal_happiness) + nominal_happiness - caste.influx_threshold)
+function Inhabitants.get_population_trend(nominal_happiness, caste, delta_ticks)
+    local threshold_diff = nominal_happiness - caste.immigration_threshold
+
+    if threshold_diff > 0 then
+        return caste.immigration_coefficient * delta_ticks * (1 + threshold_diff / 4)
+    else
+        return emigration_coefficient * delta_ticks
+    end
 end
-local get_trend = Inhabitants.get_trend
+local get_trend = Inhabitants.get_population_trend
+
+function Inhabitants.get_idea_progress(happiness, inhabitants, caste, delta_ticks)
+    return max(0, happiness - caste.idea_threshold) * delta_ticks * inhabitants * caste.idea_coefficient
+end
+local get_idea_progress = Inhabitants.get_idea_progress
+
+function Inhabitants.get_garbage_progress(inhabitants, delta_ticks)
+    return garbage_coefficient * inhabitants * delta_ticks
+end
+local get_garbage_progress = Inhabitants.get_garbage_progress
 
 --- Reduce the difference between nominal and current happiness by roughly 3% per second. (~98% after 2 minutes.)
 local function update_happiness(target, current, delta_ticks)
@@ -342,7 +348,25 @@ function Inhabitants.update_house(entry, delta_ticks)
     -- update mental health
     local nominal_mental_health = sum(mental_health_factors)
     entry[MENTAL_HEALTH] = update_mental_health(nominal_mental_health, entry[MENTAL_HEALTH], delta_ticks)
-    -- TODO diseases, ideas, tralala
+    -- TODO diseases
+
+    -- check if the caste actually produces ideas
+    if caste_values.idea_item then
+        local ideas = entry[IDEAS] + get_idea_progress(new_happiness, inhabitants, caste_values, delta_ticks)
+        if ideas >= 1 then
+            local produced_ideas = floor(ideas)
+            try_output_ideas(entry, caste_values.idea_item, produced_ideas)
+            ideas = ideas - produced_ideas
+        end
+        entry[IDEAS] = ideas
+    end
+
+    local garbage = entry[GARBAGE] + get_garbage_progress(inhabitants, delta_ticks)
+    if garbage >= 1 then
+        local produced_garbage = floor(garbage)
+        produce_garbage(entry, "garbage", produced_garbage)
+        garbage = garbage - produced_garbage
+    end
 
     local trend = entry[TREND]
     trend = trend + get_trend(nominal_happiness, caste_values, delta_ticks)
@@ -393,7 +417,7 @@ function Inhabitants.try_resettle(entry)
 
     return entry[INHABITANTS] - to_resettle
 end
- ---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 -- << fear >>
 --- Lowers the population's fear over time.
 function Inhabitants.ease_fear()
@@ -414,7 +438,7 @@ end
 --- Checks if the given caste has been researched by the player.
 --- @param caste_id Type
 function Inhabitants.caste_is_researched(caste_id)
-    return global.technologies[caste_tech_names[caste_id]]
+    return global.technologies[castes[caste_id].tech_name]
 end
 
 --- Initializes the given entry so it can work as an housing entry.
@@ -432,6 +456,7 @@ function Inhabitants.add_inhabitants_data(entry)
     entry[INHABITANTS] = 0
     entry[TREND] = 0
     entry[IDEAS] = 0
+    entry[GARBAGE] = 0
 end
 
 local function set_locals()
