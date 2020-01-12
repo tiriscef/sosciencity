@@ -69,8 +69,14 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas",
+        name = "sosciencity-garbage",
         group = "sosciencity",
         order = "zaa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-ideas",
+        group = "sosciencity",
+        order = "zab"
     },
 }

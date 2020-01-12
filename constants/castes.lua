@@ -5,6 +5,7 @@ Caste = {}
 Caste.values = {
     [TYPE_CLOCKWORK] = {
         name = "clockwork",
+        tech_name = "clockwork-caste",
         fear_multiplier = 0.5,
         calorific_demand = 4000, -- in kcal per day
         power_demand = 10, -- in kW
@@ -16,12 +17,15 @@ Caste.values = {
         minimum_food_count = 2,
         required_room_count = 1,
         minimum_comfort = 0,
-        influx_threshold = 0,
-        influx_coefficient = 1. / 1200,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 1, -- immigrants per minute
+        idea_threshold = 5,
+        idea_coefficient = 0.1, -- idea-items per minute per inhabitant
+        idea_item = "note"
     },
     [TYPE_ORCHID] = {
         name = "orchid",
+        tech_name = "orchid-caste",
         fear_multiplier = 1,
         calorific_demand = 3500,
         power_demand = 15,
@@ -33,12 +37,15 @@ Caste.values = {
         minimum_food_count = 10,
         required_room_count = 1,
         minimum_comfort = 8,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 1800,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 0.7,
+        idea_threshold = 5,
+        idea_coefficient = 0.1,
+        idea_item = "essay"
     },
     [TYPE_GUNFIRE] = {
         name = "gunfire",
+        tech_name = "gunfire-caste",
         fear_multiplier = 0,
         calorific_demand = 4600,
         power_demand = 25,
@@ -50,12 +57,15 @@ Caste.values = {
         minimum_food_count = 2,
         required_room_count = 0.5,
         minimum_comfort = 0,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 1800,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 1,
+        idea_threshold = 5,
+        idea_coefficient = 0.1,
+        idea_item = "strategic-considerations"
     },
     [TYPE_EMBER] = {
         name = "ember",
+        tech_name = "ember-caste",
         fear_multiplier = 1.2,
         calorific_demand = 2300,
         power_demand = 30,
@@ -67,12 +77,15 @@ Caste.values = {
         minimum_food_count = 3,
         required_room_count = 1,
         minimum_comfort = 1,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 800,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 2,
+        idea_threshold = 5,
+        idea_coefficient = 0.01,
+        idea_item = "sketchbook"
     },
     [TYPE_FOUNDRY] = {
         name = "foundry",
+        tech_name = "foundry-caste",
         fear_multiplier = 0.7,
         calorific_demand = 2800,
         power_demand = 50,
@@ -84,12 +97,15 @@ Caste.values = {
         minimum_food_count = 8,
         required_room_count = 4,
         minimum_comfort = 6,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 3000,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 0.2,
+        idea_threshold = 5,
+        idea_coefficient = 0.2,
+        idea_item = "complex-scientific-data"
     },
     [TYPE_GLEAM] = {
         name = "gleam",
+        tech_name = "gleam-caste",
         fear_multiplier = 1,
         calorific_demand = 2700,
         power_demand = 25,
@@ -101,12 +117,15 @@ Caste.values = {
         minimum_food_count = 4,
         required_room_count = 4,
         minimum_comfort = 4,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 3000,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 0.2,
+        idea_threshold = 5,
+        idea_coefficient = 0.2,
+        idea_item = "published-paper"
     },
     [TYPE_AURORA] = {
         name = "aurora",
+        tech_name = "aurora-caste",
         fear_multiplier = 2,
         calorific_demand = 2500,
         power_demand = 35,
@@ -118,12 +137,15 @@ Caste.values = {
         minimum_food_count = 8,
         required_room_count = 10,
         minimum_comfort = 9,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 10000,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 0.1,
+        idea_threshold = 5,
+        idea_coefficient = 0.5,
+        idea_item = "well-funded-scientific-thesis"
     },
     [TYPE_PLASMA] = {
         name = "plasma",
+        tech_name = "", -- TODO
         fear_multiplier = 1,
         calorific_demand = 3000,
         power_demand = 25,
@@ -135,12 +157,17 @@ Caste.values = {
         minimum_food_count = 5,
         required_room_count = 3,
         minimum_comfort = 5,
-        influx_threshold = 5,
-        influx_coefficient = 1. / 3000,
-        idea_threshold = 5
+        immigration_threshold = 5,
+        immigration_coefficient = 0.2
     }
 }
 local castes = Caste.values
+
+--- The number of people that leave a house per minute if they are unhappy.
+Caste.emigration_coefficient = 2
+
+--- The number of general garbage an inhabitant produces per minute.
+Caste.garbage_coefficient = 0.1
 
 -- postprocessing
 for _, caste in pairs(Caste.values) do
@@ -150,7 +177,18 @@ for _, caste in pairs(Caste.values) do
 
     -- convert power demand to W
     caste.power_demand = caste.power_demand * 1000
+
+    -- convert immigration coefficients from immigrants per minute
+    -- to immigrants per tick
+    caste.immigration_coefficient = caste.immigration_coefficient / 3600.
+
+    -- same with the other coefficients
+    if caste.idea_coefficient then
+        caste.idea_coefficient = caste.idea_coefficient / 3600.
+    end
 end
+Caste.emigration_coefficient = Caste.emigration_coefficient / 3600.
+Caste.garbage_coefficient = Caste.garbage_coefficient / 3600.
 
 local meta = {}
 

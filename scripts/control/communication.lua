@@ -5,6 +5,7 @@ Communication = {}
 local global
 local item_statistics
 local fluid_statistics
+local castes = Caste.values
 
 function Communication.create_flying_text(entry, text)
     local entity = entry[ENTITY]
@@ -14,6 +15,19 @@ function Communication.create_flying_text(entry, text)
         position = entity.position,
         text = text
     }
+end
+
+function Communication.caste_allowed_in(entry, caste_id)
+    local caste = castes[caste_id]
+
+    Communication.create_flying_text(
+        entry,
+        {
+            "flying-text.set-caste",
+            "[img=technology/" .. caste.tech_name .. "]",
+            {"caste-name." .. caste.name}
+        }
+    )
 end
 
 function Communication.log_item(item, amount)

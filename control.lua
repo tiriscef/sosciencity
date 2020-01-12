@@ -3,7 +3,7 @@ local dataphase_test = false
 if dataphase_test then
     return
 end
-
+pcall(require,'__debugadapter__/debugadapter.lua')
 --[[
     TODO
         - city info gui
@@ -87,10 +87,11 @@ local Register = require("scripts.control.register")
 local Technologies = require("scripts.control.technologies")
 local Subentities = require("scripts.control.subentities")
 local Neighborhood = require("scripts.control.neighborhood")
+local Communication = require("scripts.control.communication")
+local Inventories = require("scripts.control.inventories")
 local Diet = require("scripts.control.diet")
 local Inhabitants = require("scripts.control.inhabitants")
 local Gui = require("scripts.control.gui")
-local Communication = require("scripts.control.communication")
 
 ---------------------------------------------------------------------------------------------------
 -- << update functions >>

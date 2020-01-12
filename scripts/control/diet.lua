@@ -1,6 +1,8 @@
 Diet = {}
 
 local food_values = Food.values
+local log_item = Communication.log_item
+local produce_garbage = Inventories.produce_garbage
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 
@@ -155,7 +157,7 @@ local function get_nutrient_healthiness(fat, carbohydrates, proteins)
 end
 
 --- Consumes calories of the given food type in the given inventories. Returns the amount of consumed calories.
-local function consume_specific_food(inventories, amount, item_name)
+local function consume_specific_food(entry, inventories, amount, item_name)
     local to_consume = amount
 
     for _, inventory in pairs(inventories) do
@@ -168,7 +170,8 @@ local function consume_specific_food(inventories, amount, item_name)
                     local items_consumed = count_before - slot.count
 
                     if items_consumed > 0 then
-                        Communication.log_item(item_name, -items_consumed)
+                        produce_garbage(entry, "food-leftovers", items_consumed)
+                        log_item(item_name, -items_consumed)
                     end
 
                     if to_consume < 0.001 then
@@ -183,13 +186,13 @@ local function consume_specific_food(inventories, amount, item_name)
 end
 
 --- Tries to consume the given amount of calories. Returns the percentage of the amount that was consumed.
-local function consume_food(inventories, amount, diet, count)
+local function consume_food(entry, inventories, amount, diet, count)
     local items = Tirislib_Tables.get_keyset(diet)
     local to_consume = amount
     Tirislib_Tables.shuffle(items)
 
     for i = 1, count do
-        to_consume = to_consume - consume_specific_food(inventories, to_consume, items[i])
+        to_consume = to_consume - consume_specific_food(entry, inventories, to_consume, items[i])
         if to_consume < 0.001 then
             return 1 -- 100% was consumed
         end
@@ -315,7 +318,7 @@ function Diet.evaluate(entry, delta_ticks)
     local hunger_satisfaction = 0
     if food_count > 0 then
         local to_consume = caste.calorific_demand * delta_ticks * entry[INHABITANTS]
-        hunger_satisfaction = consume_food(inventories, to_consume, diet, food_count)
+        hunger_satisfaction = consume_food(entry, inventories, to_consume, diet, food_count)
     end
 
     add_diet_effects(entry, diet, caste, food_count, hunger_satisfaction)
