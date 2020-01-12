@@ -20,6 +20,7 @@ local ceil = math.ceil
 local sqrt = math.sqrt
 local max = Tirislib_Utils.max
 local min = Tirislib_Utils.min
+local sgn = Tirislib_Utils.sgn
 local sum = Tirislib_Tables.sum
 local weighted_average = Tirislib_Utils.weighted_average
 
@@ -263,13 +264,9 @@ function Inhabitants.remove_house(entry)
     remove_from_house(entry, entry[INHABITANTS])
 end
 
---- The number of inhabitants moving in per tick at normal circumstances.
-local INFLUX_COEFFICIENT = 1. / 600 -- TODO balance
-
 --- Gets the trend toward the next inhabitant that moves in or out.
 function Inhabitants.get_trend(nominal_happiness, caste, delta_ticks)
-    local threshold = caste.influx_threshold
-    return INFLUX_COEFFICIENT * delta_ticks * (nominal_happiness - threshold)
+    return caste.influx_coefficient * delta_ticks * (sgn(nominal_happiness) + nominal_happiness - caste.influx_threshold)
 end
 local get_trend = Inhabitants.get_trend
 
