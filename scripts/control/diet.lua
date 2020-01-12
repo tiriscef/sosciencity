@@ -163,7 +163,14 @@ local function consume_specific_food(inventories, amount, item_name)
             local slot = inventory[i]
             if slot.valid_for_read then -- check if the slot has an item in it
                 if slot.name == item_name then
+                    local count_before = slot.count
                     to_consume = to_consume - slot.drain_durability(to_consume)
+                    local items_consumed = count_before - slot.count
+
+                    if items_consumed > 0 then
+                        Communication.log_item(item_name, -items_consumed)
+                    end
+
                     if to_consume < 0.001 then
                         return amount -- everything was consumed
                     end
@@ -225,6 +232,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local luxury = 0
     local favorite_taste = caste.favorite_taste
     local least_favored_taste = caste.least_favored_taste
+    local groups = {}
 
     for item_name, _ in pairs(diet) do
         local food = food_values[item_name]
@@ -247,6 +255,8 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
             luxury = luxury + food.luxury
             taste_quality = taste_quality + food.taste_quality
         end
+
+        groups[food.group] = true
     end
 
     -- means
@@ -265,6 +275,13 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     -- add calculation summands
     happiness[HAPPINESS_TASTE] = (1 - caste.desire_for_luxury) * taste_quality * hunger_satisfaction
     happiness[HAPPINESS_FOOD_LUXURY] = caste.desire_for_luxury * luxury * hunger_satisfaction
+    local variety = table_size(groups) - caste.minimum_food_count
+    if variety > 0 then
+        happiness[HAPPINESS_FOOD_VARIETY] = variety * 0.5
+    end
+    if variety < 0 then
+        happiness[HAPPINESS_NOT_ENOUGH_FOOD_VARIETY] = -10
+    end
 
     health[HEALTH_NUTRIENTS] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
     health[HEALTH_FOOD] = intrinsic_healthiness * hunger_satisfaction

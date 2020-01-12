@@ -16,7 +16,8 @@ Food.values = {
         taste_category = TASTE_SALTY,
         taste_quality = 5,
         luxury = 4,
-        portion_size = 10
+        portion_size = 10,
+        group = "biter-meat"
     },
     ["unnamed-fruit"] = {
         fat = 1,
@@ -27,7 +28,8 @@ Food.values = {
         taste_category = TASTE_UMAMI,
         taste_quality = 3,
         luxury = 3,
-        portion_size = 50
+        portion_size = 50,
+        group = "unnamed-fruit"
     },
     ["potato"] = {
         fat = 0.5,
@@ -38,7 +40,8 @@ Food.values = {
         taste_category = TASTE_UMAMI,
         taste_quality = 3,
         luxury = 3,
-        portion_size = 50
+        portion_size = 50,
+        group = "potato"
     },
     ["tomato"] = {
         fat = 0.33,
@@ -49,7 +52,8 @@ Food.values = {
         taste_category = TASTE_UMAMI,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 50
+        portion_size = 50,
+        group = "tomato"
     },
     ["eggplant"] = {
         fat = 0.33,
@@ -60,7 +64,8 @@ Food.values = {
         taste_category = TASTE_UMAMI,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 50
+        portion_size = 50,
+        group = "eggplant"
     }
 }
 
