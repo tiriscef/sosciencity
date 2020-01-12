@@ -64,7 +64,7 @@ table.insert(
         func = conditionally_add_ingredient,
         details = {
             item = "chemical-science-pack",
-            item_to_add = "published-paper",
+            item_to_add = "sketchbook",
             type = "item",
             amount_factor = 1,
             spread_to_launch_products = true
@@ -90,7 +90,7 @@ table.insert(
         func = conditionally_add_ingredient,
         details = {
             item = "utility-science-pack",
-            item_to_add = "data-collection",
+            item_to_add = "published-paper",
             type = "item",
             amount_factor = 1,
             spread_to_launch_products = true

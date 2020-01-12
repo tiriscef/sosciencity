@@ -604,6 +604,12 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         {"sosciencity-gui.comfort"},
         {"sosciencity-gui.display-comfort-needs", caste.minimum_comfort}
     )
+    add_kv_pair(
+        caste_data,
+        "power-demand",
+        {"sosciencity-gui.power-demand"},
+        {"sosciencity-gui.display-power-demand", caste.power_demand / 1000}
+    )
 end
 
 local function update_housing_details(container, entry)
