@@ -1,4 +1,5 @@
 require("constants.housing")
+require("constants.castes")
 
 local data_details = {
     ["test-house"] = {
@@ -34,7 +35,8 @@ for house_name, house in pairs(Housing.houses) do
             {"item-description." .. house_name},
             house.room_count,
             {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
-            {"description.sos-details", house.comfort}
+            {"description.sos-details", house.comfort},
+            {"caste-name." .. Caste(house.caste).name}
         }
     }
 
