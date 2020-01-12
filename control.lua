@@ -235,6 +235,7 @@ local function init()
     Register.init()
     Technologies.init()
     Gui.init()
+    Communication.init()
 end
 
 local function on_load()
@@ -242,6 +243,7 @@ local function on_load()
 
     Register.load()
     Inhabitants.load()
+    Communication.load()
 end
 
 local function on_entity_built(event)
