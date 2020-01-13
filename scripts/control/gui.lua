@@ -115,6 +115,11 @@ local function set_datalist_value_tooltip(datalist, key, tooltip)
     datalist[key].tooltip = tooltip
 end
 
+local function set_ks_pair_visibility(datalist, key, visibility)
+    datalist["key-" .. key].visible = visibility
+    datalist[key].visible = visibility
+end
+
 local function add_factor_entry(data_list, key, key_caption, value_caption)
     data_list.add {
         type = "label",
@@ -133,8 +138,7 @@ local function add_factor_entry(data_list, key, key_caption, value_caption)
     style.width = 50
 end
 
-local function add_factor_entries(data_list, entries, caption_group, sum_caption)
-    local sum = Tirislib_Tables.sum(entries)
+local function add_factor_entries(data_list, caption_group, sum_caption, factor_count)
     local sum_key =
         data_list.add {
         type = "label",
@@ -148,16 +152,32 @@ local function add_factor_entries(data_list, entries, caption_group, sum_caption
     local sum_value =
         data_list.add {
         type = "label",
-        name = "sum",
-        caption = get_factor_string(sum)
+        name = "sum"
     }
     style = sum_value.style
     style.width = 50
     style.font = "default-bold"
     style.horizontal_align = "right"
 
-    for key, value in pairs(entries) do
-        add_factor_entry(data_list, tostring(key), {caption_group .. key}, get_factor_string(value))
+    for i = 1, factor_count do
+        add_factor_entry(data_list, tostring(i), {caption_group .. i})
+    end
+end
+
+local function update_factor_entries(data_list, entries, factor_count)
+    local sum = Tirislib_Tables.sum(entries)
+    data_list["sum"].caption = get_factor_string(sum)
+
+    for i = 1, factor_count do
+        local value = entries[i]
+        local key = tostring(i)
+
+        if value then
+            set_datalist_value(data_list, key, get_factor_string(value))
+            set_ks_pair_visibility(data_list, key, true)
+        else
+            set_ks_pair_visibility(data_list, key, false)
+        end
     end
 end
 
@@ -518,39 +538,43 @@ local function update_housing_factor_tab(tabbed_pane, entry)
     local content_flow = get_tab_contents(tabbed_pane, "details")
 
     local happiness_list = content_flow["happiness"]
-    happiness_list.clear()
     local happiness_factors = entry[HAPPINESS_FACTORS]
-    add_factor_entries(
-        happiness_list,
-        happiness_factors,
-        "sosciencity-happiness-factor.",
-        {"sosciencity-gui.happiness"}
-    )
+    update_factor_entries(happiness_list, happiness_factors, Types.happiness_factor_count)
 
     local health_list = content_flow["health"]
-    health_list.clear()
     local health_factors = entry[HEALTH_FACTORS]
-    add_factor_entries(health_list, health_factors, "sosciencity-health-factor.", {"sosciencity-gui.health"})
+    update_factor_entries(health_list, health_factors, Types.health_factor_count)
 
     local mental_health_list = content_flow["mental-health"]
-    mental_health_list.clear()
     local mental_health_factors = entry[MENTAL_HEALTH_FACTORS]
-    add_factor_entries(
-        mental_health_list,
-        mental_health_factors,
-        "sosciencity-mental-health-factor.",
-        {"sosciencity-gui.mental-health"}
-    )
+    update_factor_entries(mental_health_list, mental_health_factors, Types.mental_health_factor_count)
 end
 
 local function add_housing_factor_tab(tabbed_pane, entry)
     local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
 
-    create_data_list(flow, "happiness")
+    local happiness_list = create_data_list(flow, "happiness")
+    add_factor_entries(
+        happiness_list,
+        "sosciencity-happiness-factor.",
+        {"sosciencity-gui.happiness"},
+        Types.happiness_factor_count
+    )
+
     create_separator_line(flow)
-    create_data_list(flow, "health")
+
+    local health_list = create_data_list(flow, "health")
+    add_factor_entries(health_list, "sosciencity-health-factor.", {"sosciencity-gui.health"}, Types.health_factor_count)
+
     create_separator_line(flow, "line2")
-    create_data_list(flow, "mental-health")
+
+    local mental_health_list = create_data_list(flow, "mental-health")
+    add_factor_entries(
+        mental_health_list,
+        "sosciencity-mental-health-factor.",
+        {"sosciencity-gui.mental-health"},
+        Types.mental_health_factor_count
+    )
 
     -- call the update function to set the values
     update_housing_factor_tab(tabbed_pane, entry)
@@ -678,6 +702,10 @@ local function get_details_view(player)
     end
 end
 
+local function get_nested_details_view(player)
+    return get_details_view(player).nested
+end
+
 -- table with (type, update-function) pairs
 local content_updaters = {
     [TYPE_CLOCKWORK] = update_housing_details,
@@ -690,15 +718,21 @@ local content_updaters = {
 }
 
 function Gui.update_details_view()
+    local current_tick = game.tick
+
     for player_id, unit_number in pairs(global.details_view) do
         local entry = Register.try_get(unit_number)
+        local player = game.players[player_id]
 
         -- check if the entity hasn't been unregistered in the meantime
         if not entry then
-            Gui.close_details_view_for_player(game.players[player_id])
+            Gui.close_details_view_for_player(player)
         else
-            if content_updaters[entry[TYPE]] then
-                content_updaters[entry[TYPE]](get_details_view(game.players[player_id]).nested, entry)
+            local updater = content_updaters[entry[TYPE]]
+
+            -- only update the gui if the entry got updated in this cycle
+            if updater and entry[LAST_UPDATE] == current_tick then
+                updater(get_nested_details_view(player), entry)
             end
         end
     end
@@ -717,18 +751,23 @@ local detail_view_builders = {
 }
 
 function Gui.open_details_view_for_player(player, unit_number)
-    local details_view = get_details_view(player)
     local entry = Register.try_get(unit_number)
     if not entry then
         return
     end
 
-    if detail_view_builders[entry[TYPE]] then
-        details_view.nested.clear()
-        detail_view_builders[entry[TYPE]](details_view.nested, entry)
-        details_view.visible = true
-        global.details_view[player.index] = unit_number
+    local builder = detail_view_builders[entry[TYPE]]
+    if not builder then
+        return
     end
+
+    local details_view = get_details_view(player)
+    local nested = details_view.nested
+
+    nested.clear()
+    builder(nested, entry)
+    details_view.visible = true
+    global.details_view[player.index] = unit_number
 end
 
 function Gui.close_details_view_for_player(player)
