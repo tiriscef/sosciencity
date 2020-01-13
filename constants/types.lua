@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 -- << enums >>
 -- (except that lua doesn't have enums and all these are just shouty globals)
+Types = {}
+
 --<< entities >>
 TYPE_EMPTY_HOUSE = 0
 TYPE_CLOCKWORK = 1
@@ -16,6 +18,7 @@ TYPE_MARKET = 101
 TYPE_WATER_DISTRIBUTION_FACILITY = 102
 TYPE_HOSPITAL = 103
 TYPE_PHARMACY = 104
+TYPE_GARBAGE_DISPOSAL = 105
 
 TYPE_CLUB = 201
 TYPE_SCHOOL = 202
@@ -59,23 +62,24 @@ ENTITY = 2
 LAST_UPDATE = 3
 SUBENTITIES = 4
 SPRITE = 5
+NEIGHBORHOOD = 6
 -- housing
-INHABITANTS = 6
-HAPPINESS = 7
-HAPPINESS_FACTORS = 8
-HEALTH = 9
-HEALTH_FACTORS = 10
-MENTAL_HEALTH = 11
-MENTAL_HEALTH_FACTORS = 12
-TREND = 13
-IDEAS = 14
-NEIGHBORHOOD = 15
+INHABITANTS = 7
+HAPPINESS = 8
+HAPPINESS_FACTORS = 9
+HEALTH = 10
+HEALTH_FACTORS = 11
+MENTAL_HEALTH = 12
+MENTAL_HEALTH_FACTORS = 13
+TREND = 14
+IDEAS = 15
+GARBAGE = 16
 -- subentity stuff
-ENERGY_USAGE = 16
-SPEED_BONUS = 17
-PRODUCTIVITY_BONUS = 18
-HAS_PENALTY = 19
-TICK_OF_CREATION = 20
+ENERGY_USAGE = 100
+SPEED_BONUS = 200
+PRODUCTIVITY_BONUS = 201
+HAS_PENALTY = 202
+TICK_OF_CREATION = 300
 
 --<< happiness factors >>
 HAPPINESS_HOUSING = 1
@@ -90,11 +94,15 @@ HAPPINESS_POWER = 9
 HAPPINESS_FEAR = 10
 HAPPINESS_EMBER = 11
 
+Types.happiness_factor_count = 11
+
 --<< health factors >>
 HEALTH_NUTRIENTS = 1
 HEALTH_FOOD = 2
 HEALTH_FEAR = 3
 HEALTH_HUNGER = 4
+
+Types.health_factor_count = 4
 
 --<< mental health factors >>
 MENTAL_HEALTH_HOUSING = 1
@@ -107,10 +115,10 @@ MENTAL_HEALTH_SINGLE_FOOD = 7
 MENTAL_HEALTH_HUNGER = 8
 MENTAL_HEALTH_FEAR = 9
 
----------------------------------------------------------------------------------------------------
--- << type functions >>
-Types = {}
+Types.mental_health_factor_count = 9
 
+---------------------------------------------------------------------------------------------------
+-- << lookup tables >>
 Types.taste_names = {
     [TASTE_BITTER] = "bitter",
     [TASTE_NEUTRAL] = "neutral",
@@ -143,10 +151,13 @@ local lookup_by_entity_type = {
     ["fluid-turret"] = TYPE_TURRET,
     ["turret"] = TYPE_TURRET
 }
+
 local lookup_by_name = {
     ["greenhouse"] = TYPE_FARM
 }
 
+---------------------------------------------------------------------------------------------------
+-- << type functions >>
 function Types.get_entity_type(entity)
     local name = entity.name
     if Housing.houses[name] then
