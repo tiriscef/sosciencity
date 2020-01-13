@@ -1,5 +1,7 @@
 Gui = {}
 
+local castes = Caste.values
+
 -- this should be added to every element which needs an event handler
 -- because the event handler is called for every gui in existance
 -- so I need to ensure that I'm not reacting to another mods gui
@@ -33,11 +35,15 @@ local function get_comfort_localised_string(comfort)
 end
 
 local function get_caste_localised_string(caste_id)
-    return {"caste-name." .. Caste(caste_id).name}
+    return {"caste-name." .. castes[caste_id].name}
 end
 
 local function get_convergence_localised_string(current, target)
     return {"sosciencity-gui.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
+end
+
+local function get_migration_string(number)
+    return string.format("%+.1f", number)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -193,7 +199,7 @@ local function is_confirmed(button)
 end
 
 local function create_caste_sprite(container, caste_id, size)
-    local caste_name = Caste(caste_id).name
+    local caste_name = castes[caste_id].name
 
     local sprite =
         container.add {
@@ -288,7 +294,7 @@ local function update_population_flow(frame)
 end
 
 local function add_caste_flow(container, caste_id)
-    local caste_name = Caste(caste_id).name
+    local caste_name = castes[caste_id].name
 
     local frame =
         container.add {
@@ -359,7 +365,7 @@ local function update_caste_flow(container, caste_id)
 
     caste_frame["caste-population"].caption = global.population[caste_id]
     caste_frame["caste-bonus"].caption = {
-        "caste-bonus.display-" .. Caste(caste_id).name,
+        "caste-bonus.display-" .. castes[caste_id].name,
         get_bonus_string(caste_id)
     }
 end
@@ -422,7 +428,7 @@ local function add_caste_chooser_tab(tabbed_pane, details)
 
             if Housing.allowes_caste(details, caste_id) then
                 button.tooltip = {"sosciencity-gui.move-in", caste_name}
-            elseif Caste(caste_id).required_room_count > details.room_count then
+            elseif castes[caste_id].required_room_count > details.room_count then
                 button.tooltip = {"sosciencity-gui.not-enough-room"}
             else
                 button.tooltip = {"sosciencity-gui.not-enough-comfort"}
@@ -466,12 +472,24 @@ end
 -- << housing details view >>
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local general_list = get_tab_contents(tabbed_pane, "general")["general-infos"]
+
+    local caste = castes[entry[TYPE]]
     local inhabitants = entry[INHABITANTS]
+    local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
+
+    local capacity = Housing.get_capacity(entry)
+    local migration = Inhabitants.get_population_trend(nominal_happiness, caste, 3600) -- 3600 ticks = 1 minute
+    local display_migration =
+        not (inhabitants == capacity and migration > 0) and not (inhabitants == 0 and migration < 0)
 
     set_datalist_value(
         general_list,
         "capacity",
-        {"sosciencity-gui.display-capacity", inhabitants, Housing.get_capacity(entry)}
+        {
+            "",
+            {"sosciencity-gui.display-capacity", inhabitants, capacity},
+            display_migration and {"sosciencity-gui.migration", get_migration_string(migration)}
+        }
     )
     set_datalist_value_tooltip(
         general_list,
@@ -581,7 +599,7 @@ local function add_housing_factor_tab(tabbed_pane, entry)
 end
 
 local function add_caste_info_tab(tabbed_pane, caste_id)
-    local caste = Caste(caste_id)
+    local caste = castes[caste_id]
 
     local flow = create_tab(tabbed_pane, "caste", {"caste-short." .. caste.name})
     flow.style.vertical_spacing = 6
@@ -632,7 +650,7 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         caste_data,
         "power-demand",
         {"sosciencity-gui.power-demand"},
-        {"sosciencity-gui.display-power-demand", caste.power_demand / 1000}
+        {"sosciencity-gui.display-power-demand", caste.power_demand / 1000 * 60} -- convert from J / tick to kW
     )
 end
 
