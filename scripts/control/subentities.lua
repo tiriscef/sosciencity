@@ -77,6 +77,7 @@ function Subentities.get(entry, _type)
         return add(entry, _type), true
     end
 end
+local get = Subentities.get
 
 ---------------------------------------------------------------------------------------------------
 -- << hidden beacons >>
@@ -112,7 +113,7 @@ end
 --- @param productivity number
 --- @param add_penalty boolean
 function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
-    local beacon, new = Subentities.get(entry, SUB_BEACON)
+    local beacon, new = get(entry, SUB_BEACON)
 
     -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
     if
@@ -148,8 +149,10 @@ end
 --- Checks if the entity is supplied with power. Assumes that the entry has an eei.
 --- @param entry Entry
 function Subentities.has_power(entry)
-    local eei, new = Subentities.get(entry, SUB_EEI)
+    local eei, new = get(entry, SUB_EEI)
     if new then
+        -- the new eei needs to be told its power usage
+        eei.power_usage = entry[POWER_USAGE]
         -- it had to be recreated, so we just return true
         -- (to avoid that things stop working when another mod keeps deleting the eei)
         return true
@@ -159,23 +162,16 @@ function Subentities.has_power(entry)
     end
 end
 
---- Gets the current power usage of a housing entity
-local function get_residential_power_consumption(entry)
-    local usage_per_inhabitant = Caste(entry[TYPE]).power_demand
-    return -1 * entry[INHABITANTS] * usage_per_inhabitant
-end
-
 --- Sets the power usage of the entity. Assumes that the entry has an eei.
 --- @param entry Entry
 --- @param usage number
 function Subentities.set_power_usage(entry, usage)
-    usage = usage or get_residential_power_consumption(entry)
-    local eei, new = Subentities.get(entry, SUB_EEI)
+    local eei, new = get(entry, SUB_EEI)
 
     -- we don't update the eei if nothing has changed to avoid unnecessary API calls
-    if new or entry.power_usage ~= usage then
+    if new or entry[POWER_USAGE] ~= usage then
         eei.power_usage = usage
-        entry.power_usage = usage
+        entry[POWER_USAGE] = usage
     end
 end
 

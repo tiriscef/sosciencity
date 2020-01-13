@@ -92,7 +92,8 @@ Tirislib_Entity.create {
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = 1
+        emissions_per_minute = 1,
+        drain = "0W"
     },
     working_sound = {
         -- memo: make sound files louder in the future

@@ -25,8 +25,8 @@ local has_power = Subentities.has_power
 local floor = math.floor
 local ceil = math.ceil
 local sqrt = math.sqrt
-local max = Tirislib_Utils.max
-local min = Tirislib_Utils.min
+local max = math.max
+local min = math.min
 local sgn = Tirislib_Utils.sgn
 local sum = Tirislib_Tables.sum
 local weighted_average = Tirislib_Utils.weighted_average
@@ -160,6 +160,12 @@ local function get_effective_population_multiplier(happiness)
     return max(0.2, happiness * 0.1)
 end
 
+function Inhabitants.get_power_usage(entry)
+    local caste = castes[entry[TYPE]]
+    return caste.power_demand * entry[INHABITANTS]
+end
+local get_power_usage = Inhabitants.get_power_usage
+
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
 --- @param entry Entry
 --- @param caste_id integer
@@ -218,7 +224,7 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, mental_he
         effective_population[caste_id] +
         (inhabitants + count_moving_in) * get_effective_population_multiplier(entry[HAPPINESS])
 
-    set_power_usage(entry)
+    set_power_usage(entry, get_power_usage(entry))
 
     return count_moving_in
 end
@@ -242,7 +248,7 @@ function Inhabitants.remove_from_house(entry, count)
     population[caste_id] = population[caste_id] - count_moving_out
     entry[INHABITANTS] = entry[INHABITANTS] - count_moving_out
 
-    set_power_usage(entry)
+    set_power_usage(entry, get_power_usage(entry))
 
     return count_moving_out
 end
@@ -367,6 +373,7 @@ function Inhabitants.update_house(entry, delta_ticks)
         produce_garbage(entry, "garbage", produced_garbage)
         garbage = garbage - produced_garbage
     end
+    entry[GARBAGE] = garbage
 
     local trend = entry[TREND]
     trend = trend + get_trend(nominal_happiness, caste_values, delta_ticks)

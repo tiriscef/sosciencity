@@ -18,7 +18,7 @@ Caste.values = {
         required_room_count = 1,
         minimum_comfort = 0,
         immigration_threshold = 5,
-        immigration_coefficient = 1, -- immigrants per minute
+        immigration_coefficient = 5, -- immigrants per minute
         idea_threshold = 5,
         idea_coefficient = 0.1, -- idea-items per minute per inhabitant
         idea_item = "note"
@@ -38,7 +38,7 @@ Caste.values = {
         required_room_count = 1,
         minimum_comfort = 8,
         immigration_threshold = 5,
-        immigration_coefficient = 0.7,
+        immigration_coefficient = 3.5,
         idea_threshold = 5,
         idea_coefficient = 0.1,
         idea_item = "essay"
@@ -58,7 +58,7 @@ Caste.values = {
         required_room_count = 0.5,
         minimum_comfort = 0,
         immigration_threshold = 5,
-        immigration_coefficient = 1,
+        immigration_coefficient = 5,
         idea_threshold = 5,
         idea_coefficient = 0.1,
         idea_item = "strategic-considerations"
@@ -78,7 +78,7 @@ Caste.values = {
         required_room_count = 1,
         minimum_comfort = 1,
         immigration_threshold = 5,
-        immigration_coefficient = 2,
+        immigration_coefficient = 10,
         idea_threshold = 5,
         idea_coefficient = 0.01,
         idea_item = "sketchbook"
@@ -98,7 +98,7 @@ Caste.values = {
         required_room_count = 4,
         minimum_comfort = 6,
         immigration_threshold = 5,
-        immigration_coefficient = 0.2,
+        immigration_coefficient = 1,
         idea_threshold = 5,
         idea_coefficient = 0.2,
         idea_item = "complex-scientific-data"
@@ -118,7 +118,7 @@ Caste.values = {
         required_room_count = 4,
         minimum_comfort = 4,
         immigration_threshold = 5,
-        immigration_coefficient = 0.2,
+        immigration_coefficient = 1,
         idea_threshold = 5,
         idea_coefficient = 0.2,
         idea_item = "published-paper"
@@ -138,7 +138,7 @@ Caste.values = {
         required_room_count = 10,
         minimum_comfort = 9,
         immigration_threshold = 5,
-        immigration_coefficient = 0.1,
+        immigration_coefficient = 0.4,
         idea_threshold = 5,
         idea_coefficient = 0.5,
         idea_item = "well-funded-scientific-thesis"
@@ -158,10 +158,14 @@ Caste.values = {
         required_room_count = 3,
         minimum_comfort = 5,
         immigration_threshold = 5,
-        immigration_coefficient = 0.2
+        immigration_coefficient = 0.8
     }
 }
 local castes = Caste.values
+
+function Caste.produces_ideas(caste)
+    return caste.idea_item ~= nil
+end
 
 --- The number of people that leave a house per minute if they are unhappy.
 Caste.emigration_coefficient = 2
@@ -175,8 +179,8 @@ for _, caste in pairs(Caste.values) do
     -- a day has 25000 ticks according to the wiki
     caste.calorific_demand = caste.calorific_demand / 25000.
 
-    -- convert power demand to W
-    caste.power_demand = caste.power_demand * 1000
+    -- convert power demand to J / tick: https://wiki.factorio.com/Types/Energy
+    caste.power_demand = caste.power_demand * 1000 / 60
 
     -- convert immigration coefficients from immigrants per minute
     -- to immigrants per tick
@@ -187,7 +191,7 @@ for _, caste in pairs(Caste.values) do
         caste.idea_coefficient = caste.idea_coefficient / 3600.
     end
 end
-Caste.emigration_coefficient = Caste.emigration_coefficient / 3600.
+Caste.emigration_coefficient = Caste.emigration_coefficient / 3600. * -1
 Caste.garbage_coefficient = Caste.garbage_coefficient / 3600.
 
 local meta = {}
