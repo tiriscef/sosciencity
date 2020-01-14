@@ -23,7 +23,7 @@ Tirislib_Entity.create {
     energy_usage = "0kW",
     energy_source = {
         type = "electric",
-        buffer_capacity = "10MW",
+        buffer_capacity = "1MJ",
         usage_priority = "secondary-input"
     },
     icon = "__sosciencity__/graphics/empty-caste.png",
