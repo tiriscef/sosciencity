@@ -153,6 +153,7 @@ local lookup_by_entity_type = {
 }
 
 local lookup_by_name = {
+    ["farm"] = TYPE_FARM,
     ["greenhouse"] = TYPE_FARM
 }
 
@@ -172,7 +173,7 @@ function Types.is_housing(_type)
 end
 
 function Types.is_inhabited(_type)
-    return (_type < 100) and (_type ~= 0)
+    return (_type < 100) and (_type > 0)
 end
 
 function Types.is_civil(_type)
