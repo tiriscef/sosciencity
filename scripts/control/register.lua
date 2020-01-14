@@ -49,9 +49,6 @@ function Register.add(entity, _type)
         add_entity_to_register(entity, _type)
     end
 
-    if _type == TYPE_MINING_DRILL then
-        global.machine_count = global.machine_count + 1
-    end
     if Types.is_affected_by_clockwork(_type) then
         global.machine_count = global.machine_count + 1
     end
@@ -60,8 +57,7 @@ function Register.add(entity, _type)
     end
 end
 
-local function remove_entry(entry)
-    local unit_number = entry[ENTITY].unit_number
+local function remove_entry(entry, unit_number)
     register[unit_number] = nil
     register_by_type[entry[TYPE]][unit_number] = nil
 
@@ -71,12 +67,18 @@ end
 --- Removes the given entity from the register.
 --- @param entity Entity
 function Register.remove_entity(entity)
-    local entry = register[entity.unit_number]
+    local unit_number = entity.unit_number
+    local entry = register[unit_number]
+    local entity_type = entry and entry[TYPE] or Types.get_entity_type(entity)
+
     if entry then
-        remove_entry(entry)
+        remove_entry(entry, unit_number)
+
+        if Types.is_inhabited(entity_type) then
+            Inhabitants.remove_house(entry)
+        end
     end
 
-    local entity_type = Types(entity)
     if entity_type == TYPE_MINING_DRILL then
         global.machine_count = global.machine_count - 1
     end
@@ -87,11 +89,12 @@ function Register.remove_entity(entity)
         global.turret_count = global.turret_count - 1
     end
 end
+local remove_entity = Register.remove_entity
 
 --- Removes the given entry from the register.
 --- @param entry Entry
 function Register.remove_entry(entry)
-    Register.remove_entity(entry[ENTITY])
+    remove_entity(entry[ENTITY])
 end
 
 --- Reregisters the entity with the given type.
@@ -157,36 +160,25 @@ function Register.init()
     global.machine_count = 0
     global.turret_count = 0
 
+    -- find and register all the machines that need to be registered
     for _, surface in pairs(game.surfaces) do
-        -- find and register all the machines
         for _, entity in pairs(
             surface.find_entities_filtered {
                 type = {
                     "assembling-machine",
                     "rocket-silo",
-                    "furnace"
-                }
-            }
-        ) do
-            global.machine_count = global.machine_count + 1
-            Register.add(entity)
-        end
-
-        -- count the mining drills
-        global.machine_count = global.machine_count + surface.count_entities_filtered {type = "mining-drill"}
-
-        -- count the turrets
-        global.turret_count =
-            global.turret_count +
-            surface.count_entities_filtered {
-                type = {
+                    "furnace",
                     "turret",
                     "ammo-turret",
                     "electric-turret",
-                    "fluid-turret"
+                    "fluid-turret",
+                    "mining-drill"
                 },
                 force = "player"
             }
+        ) do
+            Register.add(entity)
+        end
     end
 end
 

@@ -831,7 +831,6 @@ function Gui.handle_kickout_button(player_index, button)
     end
 
     if is_confirmed(button) then
-        Inhabitants.remove_house(entry)
         Register.change_type(entry, TYPE_EMPTY_HOUSE)
         Gui.rebuild_details_view_for_entry(entry)
         return
