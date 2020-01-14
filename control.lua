@@ -398,8 +398,10 @@ script.on_nth_tick(cycle_frequency, update_cycle)
 script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 
 -- placement
-script.on_event(defines.events.on_built_entity, on_entity_built)
-script.on_event(defines.events.on_robot_built_entity, on_entity_built)
+-- filter out ghosts because my mod has nothing to do with them
+local filter = {{filter = "ghost", invert = true}}
+script.on_event(defines.events.on_built_entity, on_entity_built, filter)
+script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_entity_cloned, on_entity_built)
 script.on_event(defines.events.script_raised_built, on_entity_built)
 script.on_event(defines.events.script_raised_revive, on_entity_built)

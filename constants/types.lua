@@ -161,11 +161,16 @@ local lookup_by_name = {
 -- << type functions >>
 function Types.get_entity_type(entity)
     local name = entity.name
+    local entity_type = entity.type
+    if entity_type == "entity-ghost" then
+        return TYPE_NULL
+    end
+
     if Housing.houses[name] then
         return TYPE_EMPTY_HOUSE
     end
 
-    return lookup_by_name[name] or lookup_by_entity_type[entity.type] or TYPE_NULL
+    return lookup_by_name[name] or lookup_by_entity_type[entity_type] or TYPE_NULL
 end
 
 function Types.is_housing(_type)
