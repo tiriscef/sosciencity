@@ -4,15 +4,17 @@ Subentities.subentity_name_lookup = {
     [SUB_BEACON] = "sosciencity-hidden-beacon",
     [SUB_EEI] = "sosciencity-hidden-eei"
 }
+local subentity_names = Subentities.subentity_name_lookup
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function add(entry, _type)
+    local entity = entry[ENTITY]
     local subentity =
-        entry[ENTITY].surface.create_entity {
-        name = Subentities.subentity_name_lookup[_type],
-        position = entry[ENTITY].position,
-        force = entry[ENTITY].force
+        entity.surface.create_entity {
+        name = subentity_names[_type],
+        position = entity.position,
+        force = entity.force
     }
 
     entry[SUBENTITIES][_type] = subentity
@@ -21,11 +23,12 @@ local function add(entry, _type)
 end
 
 local function add_sprite(entry, name, alt_mode)
+    local entity = entry[ENTITY]
     local sprite_id =
         rendering.draw_sprite {
         sprite = name,
-        target = entry[ENTITY],
-        surface = entry[ENTITY].surface,
+        target = entity,
+        surface = entity.surface,
         only_in_alt_mode = (alt_mode or false)
     }
 
@@ -65,13 +68,14 @@ end
 --- @param entry Entry
 --- @param _type Type
 function Subentities.get(entry, _type)
-    if not entry[SUBENTITIES][_type] then
+    local subentity = entry[SUBENTITIES][_type]
+    if subentity == nil then
         return
     end
 
     -- there is the possibility that the subentity gets lost
-    if entry[SUBENTITIES][_type].valid then
-        return entry[SUBENTITIES][_type], false
+    if subentity.valid then
+        return subentity, false
     else
         -- in this case we simply create a new one
         return add(entry, _type), true
