@@ -72,11 +72,11 @@ function Register.remove_entity(entity)
     local entity_type = entry and entry[TYPE] or Types.get_entity_type(entity)
 
     if entry then
-        remove_entry(entry, unit_number)
-
         if Types.is_inhabited(entity_type) then
             Inhabitants.remove_house(entry)
         end
+
+        remove_entry(entry, unit_number)
     end
 
     if entity_type == TYPE_MINING_DRILL then

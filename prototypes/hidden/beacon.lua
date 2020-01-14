@@ -55,7 +55,8 @@ Tirislib_Entity.create {
         "not-flammable",
         "not-repairable",
         "no-automated-item-removal",
-        "no-automated-item-insertion"
+        "no-automated-item-insertion",
+        "placeable-off-grid"
     },
     animation = {
         filename = "__sosciencity__/graphics/empty.png",
