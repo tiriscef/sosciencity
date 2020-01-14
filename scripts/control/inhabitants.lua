@@ -160,6 +160,10 @@ local function get_effective_population_multiplier(happiness)
     return max(0.2, happiness * 0.1)
 end
 
+function Inhabitants.get_effective_population(entry)
+    return entry[INHABITANTS] * get_effective_population_multiplier(entry[HAPPINESS])
+end
+
 function Inhabitants.get_power_usage(entry)
     local caste = castes[entry[TYPE]]
     return caste.power_demand * entry[INHABITANTS]

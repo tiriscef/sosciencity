@@ -488,7 +488,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         {
             "",
             {"sosciencity-gui.display-capacity", inhabitants, capacity},
-            display_migration and {"sosciencity-gui.migration", get_migration_string(migration)}
+            display_migration and {"sosciencity-gui.migration", get_migration_string(migration)} or ""
         }
     )
     set_datalist_value_tooltip(
@@ -497,29 +497,33 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         (entry[TREND] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
     )
 
+    local happiness = entry[HAPPINESS]
     set_datalist_value(
         general_list,
         "happiness",
-        get_convergence_localised_string(
-            (inhabitants > 0) and entry[HAPPINESS] or 0,
-            Inhabitants.get_nominal_happiness(entry)
-        )
+        (inhabitants > 0) and
+            get_convergence_localised_string(entry[HAPPINESS], Inhabitants.get_nominal_happiness(entry)) or
+            "-"
     )
     set_datalist_value(
         general_list,
         "health",
-        get_convergence_localised_string(
-            (inhabitants > 0) and entry[HEALTH] or 0,
-            Inhabitants.get_nominal_health(entry)
-        )
+        (inhabitants > 0) and get_convergence_localised_string(entry[HEALTH], Inhabitants.get_nominal_health(entry)) or
+            "-"
     )
     set_datalist_value(
         general_list,
         "mental-health",
-        get_convergence_localised_string(
-            (inhabitants > 0) and entry[MENTAL_HEALTH] or 0,
-            Inhabitants.get_nominal_mental_health(entry)
-        )
+        (inhabitants > 0) and
+            get_convergence_localised_string(entry[MENTAL_HEALTH], Inhabitants.get_nominal_mental_health(entry)) or
+            "-"
+    )
+    set_datalist_value(
+        general_list,
+        "effective-population",
+        (inhabitants > 0) and
+            {"sosciencity-gui.display-effective-population", get_reasonable_number(Inhabitants.get_effective_population(entry))} or
+            "-"
     )
 end
 
@@ -536,6 +540,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
     add_kv_pair(data_list, "health", {"sosciencity-gui.health"})
     add_kv_pair(data_list, "mental-health", {"sosciencity-gui.mental-health"})
+    add_kv_pair(data_list, "effective-population", {"sosciencity-gui.effective-population"})
 
     local kickout_button =
         flow.add {
