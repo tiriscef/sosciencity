@@ -1,11 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for entities >>
 Tirislib_Entity = {}
+Tirislib_EntityArray = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib_Entity.__index = Tirislib_Entity
+Tirislib_EntityArray.__index = Tirislib_EntityArray
 
+-- << getter functions >>
 function Tirislib_Entity.get_by_name(name)
     local entity_types = require("lib.prototype-types.entity-types")
     local new = Tirislib_Prototype.get(entity_types, name)
