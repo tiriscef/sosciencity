@@ -6,6 +6,10 @@ Subentities.subentity_name_lookup = {
 }
 local subentity_names = Subentities.subentity_name_lookup
 
+local type_needs_beacon = Types.needs_beacon
+local type_needs_eei = Types.needs_eei
+local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
+
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function add(entry, _type)
@@ -22,14 +26,14 @@ local function add(entry, _type)
     return subentity
 end
 
-local function add_sprite(entry, name, alt_mode)
+local function add_alt_mode_sprite(entry, name)
     local entity = entry[ENTITY]
     local sprite_id =
         rendering.draw_sprite {
         sprite = name,
         target = entity,
         surface = entity.surface,
-        only_in_alt_mode = (alt_mode or false)
+        only_in_alt_mode = true
     }
 
     entry[SPRITE] = sprite_id
@@ -42,14 +46,14 @@ end
 function Subentities.add_all_for(entry)
     local _type = entry[TYPE]
 
-    if Types.needs_beacon(_type) then
+    if type_needs_beacon(_type) then
         add(entry, SUB_BEACON)
     end
-    if Types.needs_eei(_type) then
+    if type_needs_eei(_type) then
         add(entry, SUB_EEI)
     end
-    if Types.needs_alt_mode_sprite(_type) then
-        add_sprite(entry, Types.type_sprite_pairs[_type], true)
+    if type_needs_alt_mode_sprite(_type) then
+        add_alt_mode_sprite(entry, Types.type_sprite_pairs[_type])
     end
 end
 
