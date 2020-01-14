@@ -150,13 +150,18 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << hidden electric energy interface >>
 
+local function set_eei_power_usage(eei, usage)
+    eei.power_usage = usage
+    eei.electric_buffer_size = usage * 600 -- 10 seconds
+end
+
 --- Checks if the entity is supplied with power. Assumes that the entry has an eei.
 --- @param entry Entry
 function Subentities.has_power(entry)
     local eei, new = get(entry, SUB_EEI)
     if new then
         -- the new eei needs to be told its power usage
-        eei.power_usage = entry[POWER_USAGE]
+        set_eei_power_usage(eei, entry[POWER_USAGE])
         -- it had to be recreated, so we just return true
         -- (to avoid that things stop working when another mod keeps deleting the eei)
         return true
@@ -174,7 +179,7 @@ function Subentities.set_power_usage(entry, usage)
 
     -- we don't update the eei if nothing has changed to avoid unnecessary API calls
     if new or entry[POWER_USAGE] ~= usage then
-        eei.power_usage = usage
+        set_eei_power_usage(eei, usage)
         entry[POWER_USAGE] = usage
     end
 end
