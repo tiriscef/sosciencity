@@ -31,17 +31,23 @@ function Communication.caste_allowed_in(entry, caste_id)
 end
 
 function Communication.log_item(item, amount)
+    if item_statistics == nil then
+        item_statistics = game.forces.player.item_production_statistics
+    end
+
     item_statistics.on_flow(item, amount)
 end
 
 function Communication.log_fluid(fluid, amount)
+    if fluid_statistics == nil then
+        fluid_statistics = game.forces.player.fluid_production_statistics
+    end
+
     fluid_statistics.on_flow(fluid, amount)
 end
 
 local function set_locals()
     global = _ENV.global
-    item_statistics = game.forces.player.item_production_statistics
-    fluid_statistics = game.forces.player.fluid_production_statistics
 end
 
 function Communication.init()
