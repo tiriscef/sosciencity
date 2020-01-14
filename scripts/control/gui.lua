@@ -258,39 +258,46 @@ end
 local CITY_INFO_NAME = "sosciencity-city-info"
 local CITY_INFO_SPRITE_SIZE = 48
 
-local function add_population_flow(container)
-    local population_count = Inhabitants.get_population_count()
+local function update_population_flow(frame)
+    local population_flow = frame["general"]
 
+    local population_count = Inhabitants.get_population_count()
+    population_flow["population"].caption = {"sosciencity-gui.population", population_count}
+
+    population_flow["machine-count"].caption = {"sosciencity-gui.machines", global.machine_count}
+
+    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", global.turret_count}
+end
+
+local function add_population_flow(container)
     local frame =
         container.add {
         type = "frame",
-        name = "population",
+        name = "general",
         direction = "vertical"
     }
-    frame.style.padding = 0
+    set_padding(frame, 2)
 
-    local head =
+    local population_label =
         frame.add {
         type = "label",
-        name = "population-head",
-        caption = {"sosciencity-gui.population"}
+        name = "population"
     }
-    head.style.horizontal_align = "center"
+    population_label.style.bottom_margin = 4
 
-    local count =
+    local machine_label =
         frame.add {
         type = "label",
-        name = "population-count",
-        caption = population_count
+        name = "machine-count"
     }
-    count.style.horizontal_align = "center"
-end
+    machine_label.style.bottom_margin = 4
 
-local function update_population_flow(frame)
-    local population_flow = frame["population"]
-    local population_count = Inhabitants.get_population_count()
+    frame.add {
+        type = "label",
+        name = "turret-count"
+    }
 
-    population_flow["population-count"].caption = population_count
+    update_population_flow(container)
 end
 
 local function add_caste_flow(container, caste_id)
@@ -363,7 +370,9 @@ local function update_caste_flow(container, caste_id)
         return
     end
 
-    caste_frame["caste-population"].caption = global.population[caste_id]
+    local caste_population = global.population[caste_id]
+    caste_frame.visible = (caste_population ~= 0)
+    caste_frame["caste-population"].caption = caste_population
     caste_frame["caste-bonus"].caption = {
         "caste-bonus.display-" .. castes[caste_id].name,
         get_bonus_string(caste_id)
@@ -378,8 +387,6 @@ local function update_city_info(frame)
             update_caste_flow(frame, id)
         end
     end
-
-    frame.visible = (Inhabitants.get_population_count() ~= 0)
 end
 
 function Gui.update_city_info()
@@ -522,7 +529,10 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         general_list,
         "effective-population",
         (inhabitants > 0) and
-            {"sosciencity-gui.display-effective-population", get_reasonable_number(Inhabitants.get_effective_population(entry))} or
+            {
+                "sosciencity-gui.display-effective-population",
+                get_reasonable_number(Inhabitants.get_effective_population(entry))
+            } or
             "-"
     )
 end
