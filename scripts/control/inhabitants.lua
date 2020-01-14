@@ -45,9 +45,27 @@ function Inhabitants.get_population_count()
 end
 local get_population_count = Inhabitants.get_population_count
 
+local function clockwork_bonus_no_penalty(effective_pop)
+    effective_pop = effective_pop or effective_population[TYPE_CLOCKWORK]
+
+    return floor(10 * sqrt(effective_pop / max(global.machine_count, 1)))
+end
+
+local function clockwork_bonus_with_penalty()
+    local effective_pop = effective_population[TYPE_CLOCKWORK]
+    local startup_costs = max(global.machine_count, 1) * 3
+
+    return min(effective_pop / startup_costs, 1) * 80 +
+        clockwork_bonus_no_penalty(max(effective_pop - startup_costs, 0))
+end
+
 --- Gets the current Clockwork caste bonus.
 function Inhabitants.get_clockwork_bonus()
-    return floor(effective_population[TYPE_CLOCKWORK] * 40 / max(global.machine_count, 1))
+    if global.use_penalty then
+        return clockwork_bonus_with_penalty()
+    else
+        return clockwork_bonus_no_penalty()
+    end
 end
 
 --- Gets the current Orchid caste bonus.
@@ -271,7 +289,7 @@ function Inhabitants.get_population_trend(nominal_happiness, caste, delta_ticks)
     if threshold_diff > 0 then
         return caste.immigration_coefficient * delta_ticks * (1 + threshold_diff / 4)
     else
-        return emigration_coefficient * delta_ticks
+        return emigration_coefficient * delta_ticks * (1 - threshold_diff / 4)
     end
 end
 local get_trend = Inhabitants.get_population_trend

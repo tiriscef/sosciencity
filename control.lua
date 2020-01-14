@@ -222,7 +222,7 @@ local function update_settings()
 
     global.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
 
-    global.use_penalty = settings.global["sosciencity-penalty-module"]
+    global.use_penalty = settings.global["sosciencity-penalty-module"].value
 end
 
 local function init()
