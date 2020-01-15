@@ -79,3 +79,19 @@ function Tirislib_Prototype.finish()
     Tirislib_Prototype.finish_postponed()
     Tirislib_Prototype.finish_productivity_modules()
 end
+
+Tirislib_PrototypeArray = {}
+
+Tirislib_PrototypeArray.__index = function(array, method)
+    return function(array, ...)
+        for _, entry in pairs(array) do
+            entry[method](entry, ...)
+        end
+    end
+end
+
+function Tirislib_PrototypeArray:for_all(method, ...)
+    for _, entry in pairs(self) do
+        entry[method](entry, ...)
+    end
+end

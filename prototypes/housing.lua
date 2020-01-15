@@ -29,7 +29,7 @@ for house_name, house in pairs(Housing.houses) do
         subgroup = "sosciencity-housing",
         order = orderstring,
         stack_size = details.stack_size or 20,
-        place_result = "placer-" .. house_name,
+        place_result = "sosciencity-placer-" .. house_name,
         localised_description = {
             "item-description.housing",
             {"item-description." .. house_name},
@@ -63,7 +63,7 @@ for house_name, house in pairs(Housing.houses) do
             filename = "__base__/sound/car-metal-impact.ogg",
             volume = 0.65
         },
-        picture = Tirislib_Entity.get_empty_pipe_picture(),
+        picture = Tirislib_Entity.get_placeholder_picture(),
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13,
