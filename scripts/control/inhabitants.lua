@@ -29,7 +29,9 @@ local max = math.max
 local min = math.min
 local sgn = Tirislib_Utils.sgn
 local sum = Tirislib_Tables.sum
+local product = Tirislib_Tables.product
 local weighted_average = Tirislib_Utils.weighted_average
+local empty_table = Tirislib_Tables.empty
 
 ---------------------------------------------------------------------------------------------------
 -- << caste bonus functions >>
@@ -319,6 +321,10 @@ local function update_mental_health(target, current, delta_ticks)
     return current + (target - current) * (1 - 0.99995 ^ delta_ticks)
 end
 
+local function get_nominal_value(influences, factors)
+    return sum(influences) * product(factors)
+end
+
 --- Updates the given housing entry.
 --- @param entry Entry
 --- @param delta_ticks integer
@@ -326,39 +332,47 @@ function Inhabitants.update_house(entry, delta_ticks)
     local caste_id = entry[TYPE]
     local caste_values = castes[caste_id]
 
-    local happiness_factors = {}
-    entry[HAPPINESS_INFLUENCES] = happiness_factors
-    local health_factors = {}
-    entry[HEALTH_INFLUENCES] = health_factors
-    local mental_health_factors = {}
-    entry[MENTAL_HEALTH_INFLUENCES] = mental_health_factors
+    local happiness_influences = entry[HAPPINESS_INFLUENCES]
+    empty_table(happiness_influences)
+    local happiness_factors = entry[HAPPINESS_FACTORS]
+    empty_table(happiness_factors)
+
+    local health_influences = entry[HEALTH_INFLUENCES]
+    empty_table(health_influences)
+    local health_factors = entry[HEALTH_FACTORS]
+    empty_table(health_factors)
+
+    local mental_health_influences = entry[MENTAL_HEALTH_INFLUENCES]
+    empty_table(mental_health_influences)
+    local mental_health_factors = entry[MENTAL_HEALTH_FACTORS]
+    empty_table(mental_health_factors)
 
     evaluate_diet(entry, delta_ticks)
     evaluate_housing(entry)
 
     if has_power(entry) then
-        happiness_factors[HAPPINESS_POWER] = caste_values.power_bonus
+        happiness_influences[HAPPINESS_POWER] = caste_values.power_bonus
     else
-        happiness_factors[HAPPINESS_NO_POWER] = caste_values.no_power_malus
+        happiness_influences[HAPPINESS_NO_POWER] = caste_values.no_power_malus
     end
 
     local ember_bonus = get_ember_bonus()
     if ember_bonus > 0 then
-        happiness_factors[HAPPINESS_EMBER] = ember_bonus
+        happiness_influences[HAPPINESS_EMBER] = ember_bonus
     end
 
     local fear_malus = global.fear * caste_values.fear_multiplier
     if fear_malus > 0 then
-        happiness_factors[HAPPINESS_FEAR] = fear_malus
+        happiness_influences[HAPPINESS_FEAR] = fear_malus
 
         if fear_malus > 5 then
-            health_factors[HEALTH_FEAR] = fear_malus / 2
-            mental_health_factors[MENTAL_HEALTH_FEAR] = fear_malus / 2
+            health_influences[HEALTH_FEAR] = fear_malus / 2
+            mental_health_influences[MENTAL_HEALTH_FEAR] = fear_malus / 2
         end
     end
 
     -- update happiness
-    local nominal_happiness = sum(happiness_factors)
+    local nominal_happiness = sum(happiness_influences) * product(happiness_factors)
     local old_happiness = entry[HAPPINESS]
     local new_happiness = update_happiness(nominal_happiness, entry[HAPPINESS], delta_ticks)
     entry[HAPPINESS] = new_happiness
@@ -370,11 +384,11 @@ function Inhabitants.update_house(entry, delta_ticks)
         (inhabitants * get_effective_population_multiplier(new_happiness))
 
     -- update health
-    local nominal_health = sum(health_factors)
+    local nominal_health = sum(health_influences) * product(health_factors)
     entry[HEALTH] = update_health(nominal_health, entry[HEALTH], delta_ticks)
 
     -- update mental health
-    local nominal_mental_health = sum(mental_health_factors)
+    local nominal_mental_health = sum(mental_health_influences) * product(mental_health_factors)
     entry[MENTAL_HEALTH] = update_mental_health(nominal_mental_health, entry[MENTAL_HEALTH], delta_ticks)
     -- TODO diseases
 
@@ -412,15 +426,15 @@ function Inhabitants.update_house(entry, delta_ticks)
 end
 
 function Inhabitants.get_nominal_happiness(entry)
-    return sum(entry[HAPPINESS_INFLUENCES])
+    return get_nominal_value(entry[HAPPINESS_INFLUENCES], entry[HAPPINESS_FACTORS])
 end
 
 function Inhabitants.get_nominal_health(entry)
-    return sum(entry[HEALTH_INFLUENCES])
+    return get_nominal_value(entry[HEALTH_INFLUENCES], entry[HEALTH_FACTORS])
 end
 
 function Inhabitants.get_nominal_mental_health(entry)
-    return sum(entry[MENTAL_HEALTH_INFLUENCES])
+    return get_nominal_value(entry[MENTAL_HEALTH_INFLUENCES], entry[MENTAL_HEALTH_INFLUENCES])
 end
 
 ---------------------------------------------------------------------------------------------------
