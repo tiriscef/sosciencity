@@ -47,7 +47,7 @@ function Inventories.produce_garbage(entry, item, amount)
     local produced_amount = 0
 
     -- try to put the garbage into a dumpster
-    for _, disposal_entry in Neighborhood.all_of_type(entry, TYPE_GARBAGE_DISPOSAL) do
+    for _, disposal_entry in Neighborhood.all_of_type(entry, TYPE_DUMPSTER) do
         local inventory = get_chest_inventory(disposal_entry)
         produced_amount = produced_amount + try_insert(inventory, item, amount - produced_amount)
 

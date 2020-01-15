@@ -15,10 +15,10 @@ TYPE_AURORA = 7
 TYPE_PLASMA = 8
 
 TYPE_MARKET = 101
-TYPE_WATER_DISTRIBUTION_FACILITY = 102
+TYPE_WATER_DISTRIBUTER = 102
 TYPE_HOSPITAL = 103
 TYPE_PHARMACY = 104
-TYPE_GARBAGE_DISPOSAL = 105
+TYPE_DUMPSTER = 105
 
 TYPE_CLUB = 201
 TYPE_SCHOOL = 202
@@ -44,7 +44,6 @@ TYPE_NULL = 9999
 --<< subentities >>
 SUB_BEACON = 10001
 SUB_EEI = 10002
-SUB_ALT_MODE_SPRITE = 10003
 
 --<< tastes >>
 TASTE_BITTER = 20001
@@ -161,16 +160,30 @@ local lookup_by_name = {
     ["greenhouse"] = TYPE_FARM
 }
 
+local houses
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
+function Types.init()
+    houses = Housing.houses
+
+    -- add the functional buildings to the lookup table
+    for _type, buildings in pairs(Buildings) do
+        for name in pairs(buildings) do
+            lookup_by_name[name] = _type
+        end
+    end
+end
+
 function Types.get_entity_type(entity)
     local name = entity.name
     local entity_type = entity.type
+
+    -- check the ghost entity type before the other, because otherwise the name lookup would give them the type of the ghosted entity
     if entity_type == "entity-ghost" then
         return TYPE_NULL
     end
 
-    if Housing.houses[name] then
+    if houses[name] then
         return TYPE_EMPTY_HOUSE
     end
 
@@ -210,11 +223,11 @@ function Types.needs_eei(_type)
 end
 
 function Types.needs_sprite(name)
-    return Housing.houses[name] ~= nil
+    return houses[name] ~= nil
 end
 
 function Types.get_sprite(name)
-    if Housing.houses[name] then
+    if houses[name] then
         return "sprite-" .. name
     end
 end
