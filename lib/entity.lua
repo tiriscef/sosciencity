@@ -1,12 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for entities >>
 Tirislib_Entity = {}
-Tirislib_EntityArray = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib_Entity.__index = Tirislib_Entity
-Tirislib_EntityArray.__index = Tirislib_EntityArray
+
+--- Class for arrays of entities. Setter-functions can be called on them.
+Tirislib_EntityArray = {}
+Tirislib_EntityArray.__index = Tirislib_PrototypeArray.__index
 
 -- << getter functions >>
 function Tirislib_Entity.get_by_name(name)
@@ -70,11 +72,18 @@ function Tirislib_Entity:set_size(width, height)
     return self
 end
 
-function Tirislib_Entity.get_empty_pipe_picture()
+function Tirislib_Entity.get_empty_picture()
     return {
         filename = "__sosciencity__/graphics/empty.png",
-        width = 1,
-        height = 1
+        size = 1
+    }
+end
+
+function Tirislib_Entity.get_placeholder_picture()
+    return {
+        filename = "__sosciencity__/graphics/placeholder.png",
+        width = 64,
+        height = 54
     }
 end
 
