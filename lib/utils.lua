@@ -118,3 +118,9 @@ function Tirislib_Tables.product(tbl)
 
     return ret
 end
+
+function Tirislib_Tables.empty(tbl)
+    for k in pairs(tbl) do
+        tbl[k] = nil
+    end
+end
