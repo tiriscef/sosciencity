@@ -2,25 +2,40 @@ Neighborhood = {}
 
 local Register = Register
 local abs = math.abs
+local max = math.max
 ---------------------------------------------------------------------------------------------------
 -- << constants >>
 --- Table with (neighborhood entity, range) pairs
-Neighborhood.active_neighbors = {
-    ["bsp"] = 42 -- range in tiles
-}
-local active_neighbor_ranges = Neighborhood.active_neighbors
+local active_neighbor_ranges
+local function generate_active_neighbor_ranges_lookup()
+    active_neighbor_ranges = {}
+
+    for _, buildings in pairs(Buildings) do
+        for building, details in pairs(buildings) do
+            active_neighbor_ranges[building] = details.range
+        end
+    end
+end
 
 --- Table with (entity type, neighborhood specification) pairs
 Neighborhood.entity_types_aware_of_neighborhood = {
-    [TYPE_CLOCKWORK] = {active_types = {TYPE_HOSPITAL, TYPE_MARKET}}
+    [TYPE_CLOCKWORK] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_ORCHID] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_GUNFIRE] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_EMBER] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_FOUNDRY] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_GLEAM] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_AURORA] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}}
 }
 local entity_types_aware_of_neighborhood = Neighborhood.entity_types_aware_of_neighborhood
 
--- generate (neighbor, interested entity types) lookup table
+--- Table with (building, interested entity types) pairs
+local interested_entity_types
 local function generate_interested_entity_types_lookup()
-    local interested_entity_types = {}
+    interested_entity_types = {}
+
     for entity_type, interests in pairs(entity_types_aware_of_neighborhood) do
-        for _, neighbor_type in pairs(interests) do
+        for _, neighbor_type in pairs(interests.active_types) do
             if not interested_entity_types[neighbor_type] then
                 interested_entity_types[neighbor_type] = {}
             end
@@ -28,7 +43,11 @@ local function generate_interested_entity_types_lookup()
         end
     end
 end
-local interested_entity_types = generate_interested_entity_types_lookup()
+
+function Neighborhood.init()
+    generate_active_neighbor_ranges_lookup()
+    generate_interested_entity_types_lookup()
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
@@ -44,17 +63,13 @@ local function maximum_metric_distance(v1, v2)
     local dist_x = abs(v1.x - v2.x)
     local dist_y = abs(v1.y - v2.y)
 
-    -- math.max seems to be very slow
-    if dist_x > dist_y then
-        return dist_x
-    else
-        return dist_y
-    end
+    return max(dist_x, dist_y)
 end
 
 local function is_in_range(neighborhood_entry, entry)
-    local range = active_neighbor_ranges[neighborhood_entry[ENTITY].name]
-    local position1 = neighborhood_entry[ENTITY].position
+    local neighbor_entity = neighborhood_entry[ENTITY]
+    local range = active_neighbor_ranges[neighbor_entity.name]
+    local position1 = neighbor_entity.position
     local position2 = entry[ENTITY].position
     return maximum_metric_distance(position1, position2) <= range
 end

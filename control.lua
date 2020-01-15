@@ -71,6 +71,7 @@ require("constants.diseases")
 require("constants.types")
 require("constants.food")
 require("constants.housing")
+require("constants.buildings")
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
@@ -230,6 +231,8 @@ end
 
 local function init()
     global = _ENV.global
+    Types.init()
+    Neighborhood.init()
 
     update_settings()
 
@@ -245,6 +248,8 @@ end
 local function on_load()
     global = _ENV.global
 
+    Types.init()
+    Neighborhood.init()
     Register.load()
     Inhabitants.load()
     Communication.load()
