@@ -202,9 +202,9 @@ local function consume_food(entry, inventories, amount, diet, count)
 end
 
 local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
-    local happiness = entry[HAPPINESS_FACTORS]
-    local health = entry[HEALTH_FACTORS]
-    local mental_health = entry[MENTAL_HEALTH_FACTORS]
+    local happiness = entry[HAPPINESS_INFLUENCES]
+    local health = entry[HEALTH_INFLUENCES]
+    local mental_health = entry[MENTAL_HEALTH_INFLUENCES]
 
     if hunger_satisfaction < 0.5 then
         happiness[HAPPINESS_HUNGER] = -10

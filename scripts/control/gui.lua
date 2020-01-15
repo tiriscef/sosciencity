@@ -571,15 +571,15 @@ local function update_housing_factor_tab(tabbed_pane, entry)
     local content_flow = get_tab_contents(tabbed_pane, "details")
 
     local happiness_list = content_flow["happiness"]
-    local happiness_factors = entry[HAPPINESS_FACTORS]
+    local happiness_factors = entry[HAPPINESS_INFLUENCES]
     update_factor_entries(happiness_list, happiness_factors, Types.happiness_factor_count)
 
     local health_list = content_flow["health"]
-    local health_factors = entry[HEALTH_FACTORS]
+    local health_factors = entry[HEALTH_INFLUENCES]
     update_factor_entries(health_list, health_factors, Types.health_factor_count)
 
     local mental_health_list = content_flow["mental-health"]
-    local mental_health_factors = entry[MENTAL_HEALTH_FACTORS]
+    local mental_health_factors = entry[MENTAL_HEALTH_INFLUENCES]
     update_factor_entries(mental_health_list, mental_health_factors, Types.mental_health_factor_count)
 end
 

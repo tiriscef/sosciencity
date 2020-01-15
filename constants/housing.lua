@@ -36,10 +36,10 @@ end
 --- @param entry Entry
 function Housing.evaluate(entry)
     local housing = get_housing(entry)
-    entry[HAPPINESS_FACTORS][HAPPINESS_HOUSING] = housing.comfort
-    entry[MENTAL_HEALTH_FACTORS][MENTAL_HEALTH_HOUSING] = housing.comfort
+    entry[HAPPINESS_INFLUENCES][HAPPINESS_HOUSING] = housing.comfort
+    entry[MENTAL_HEALTH_INFLUENCES][MENTAL_HEALTH_HOUSING] = housing.comfort
 
     if entry[TYPE] == housing.caste then
-        entry[HAPPINESS_FACTORS][HAPPINESS_SUITABLE_HOUSING] = housing.caste_bonus
+        entry[HAPPINESS_INFLUENCES][HAPPINESS_SUITABLE_HOUSING] = housing.caste_bonus
     end
 end
