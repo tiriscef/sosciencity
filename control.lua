@@ -83,6 +83,7 @@ require("lib.utils")
 ---@class Entity
 ---@class Type
 
+local Replacer = require("scripts.control.replacer")
 local Register = require("scripts.control.register")
 local Technologies = require("scripts.control.technologies")
 local Subentities = require("scripts.control.subentities")
@@ -116,6 +117,8 @@ local is_relevant_to_register = Types.is_relevant_to_register
 
 local try_get_entry = Register.try_get
 local remove_entry = Register.remove_entry
+
+local replace = Replacer.replace
 
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
@@ -252,6 +255,10 @@ local function on_entity_built(event)
     local entity = event.entity or event.created_entity or event.destination
 
     if not entity or not entity.valid then
+        return
+    end
+
+    if replace(entity) then
         return
     end
 

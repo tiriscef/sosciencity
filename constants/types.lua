@@ -206,6 +206,16 @@ function Types.needs_eei(_type)
     return _type < 1000
 end
 
+function Types.needs_sprite(name)
+    return Housing.houses[name] ~= nil
+end
+
+function Types.get_sprite(name)
+    if Housing.houses[name] then
+        return "sprite-" .. name
+    end
+end
+
 function Types.needs_alt_mode_sprite(_type)
     return _type < 100
 end
