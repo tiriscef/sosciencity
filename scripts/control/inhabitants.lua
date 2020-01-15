@@ -327,11 +327,11 @@ function Inhabitants.update_house(entry, delta_ticks)
     local caste_values = castes[caste_id]
 
     local happiness_factors = {}
-    entry[HAPPINESS_FACTORS] = happiness_factors
+    entry[HAPPINESS_INFLUENCES] = happiness_factors
     local health_factors = {}
-    entry[HEALTH_FACTORS] = health_factors
+    entry[HEALTH_INFLUENCES] = health_factors
     local mental_health_factors = {}
-    entry[MENTAL_HEALTH_FACTORS] = mental_health_factors
+    entry[MENTAL_HEALTH_INFLUENCES] = mental_health_factors
 
     evaluate_diet(entry, delta_ticks)
     evaluate_housing(entry)
@@ -412,15 +412,15 @@ function Inhabitants.update_house(entry, delta_ticks)
 end
 
 function Inhabitants.get_nominal_happiness(entry)
-    return sum(entry[HAPPINESS_FACTORS])
+    return sum(entry[HAPPINESS_INFLUENCES])
 end
 
 function Inhabitants.get_nominal_health(entry)
-    return sum(entry[HEALTH_FACTORS])
+    return sum(entry[HEALTH_INFLUENCES])
 end
 
 function Inhabitants.get_nominal_mental_health(entry)
-    return sum(entry[MENTAL_HEALTH_FACTORS])
+    return sum(entry[MENTAL_HEALTH_INFLUENCES])
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -474,13 +474,13 @@ end
 --- @param entry Entry
 function Inhabitants.add_inhabitants_data(entry)
     entry[HAPPINESS] = 0
-    entry[HAPPINESS_FACTORS] = {}
+    entry[HAPPINESS_INFLUENCES] = {}
 
     entry[HEALTH] = 0
-    entry[HEALTH_FACTORS] = {}
+    entry[HEALTH_INFLUENCES] = {}
 
     entry[MENTAL_HEALTH] = 0
-    entry[MENTAL_HEALTH_FACTORS] = {}
+    entry[MENTAL_HEALTH_INFLUENCES] = {}
 
     entry[INHABITANTS] = 0
     entry[TREND] = 0

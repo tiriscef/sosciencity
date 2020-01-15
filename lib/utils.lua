@@ -108,3 +108,13 @@ function Tirislib_Tables.sum(tbl)
 
     return ret
 end
+
+function Tirislib_Tables.product(tbl)
+    local ret = 1.
+
+    for _, value in pairs(tbl) do
+        ret = ret * value
+    end
+
+    return ret
+end
