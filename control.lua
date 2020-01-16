@@ -101,10 +101,8 @@ local Gui = require("scripts.control.gui")
 -- local all the frequently called functions for miniscule performance gains
 
 local global
+local caste_bonuses
 
-local get_clockwork_bonus = Inhabitants.get_clockwork_bonus
-local get_aurora_bonus = Inhabitants.get_aurora_bonus
-local get_orchid_bonus = Inhabitants.get_orchid_bonus
 local add_fear = Inhabitants.add_fear
 
 local set_beacon_effects = Subentities.set_beacon_effects
@@ -129,14 +127,14 @@ local function update_entity_with_beacon(entry)
     local use_penalty_module = false
 
     if is_affected_by_clockwork(_type) then
-        speed_bonus = get_clockwork_bonus()
+        speed_bonus = caste_bonuses[TYPE_CLOCKWORK]
         use_penalty_module = global.use_penalty
     end
     if _type == TYPE_ROCKET_SILO then
-        productivity_bonus = get_aurora_bonus()
+        productivity_bonus = caste_bonuses[TYPE_AURORA]
     end
     if is_affected_by_orchid(_type) then
-        productivity_bonus = get_orchid_bonus()
+        productivity_bonus = caste_bonuses[TYPE_ORCHID]
     end
     if _type == TYPE_ORANGERY then
         local age = game.tick - entry[TICK_OF_CREATION]
@@ -239,6 +237,8 @@ local function init()
     global.last_update = game.tick
 
     Inhabitants.init()
+    caste_bonuses = global.caste_bonuses
+
     Register.init()
     Technologies.init()
     Gui.init()
@@ -247,6 +247,7 @@ end
 
 local function on_load()
     global = _ENV.global
+    caste_bonuses = global.caste_bonuses
 
     Types.init()
     Neighborhood.init()
