@@ -3,6 +3,7 @@ Diet = {}
 local food_values = Food.values
 local log_item = Communication.log_item
 local produce_garbage = Inventories.produce_garbage
+local max = math.max
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 
@@ -202,18 +203,39 @@ local function consume_food(entry, inventories, amount, diet, count)
 end
 
 local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
-    local happiness = entry[HAPPINESS_INFLUENCES]
-    local health = entry[HEALTH_INFLUENCES]
-    local mental_health = entry[MENTAL_HEALTH_INFLUENCES]
+    local happiness = entry[HAPPINESS_SUMMANDS]
+    local happiness_factors = entry[HAPPINESS_FACTORS]
+    local health = entry[HEALTH_SUMMANDS]
+    local health_factors = entry[HEALTH_FACTORS]
+    local mental = entry[MENTAL_HEALTH_SUMMANDS]
+    local mental_factors = entry[MENTAL_HEALTH_FACTORS]
 
     if hunger_satisfaction < 0.5 then
-        happiness[HAPPINESS_HUNGER] = -10
-        health[HEALTH_HUNGER] = -10
-        mental_health[MENTAL_HEALTH_HUNGER] = -5
+        happiness_factors[HAPPINESS_HUNGER] = 0.
+        health_factors[HEALTH_HUNGER] = 0.
+        mental_factors[MENTAL_HEALTH_HUNGER] = 0.
+    else
+        happiness_factors[HAPPINESS_HUNGER] = 1.
+        health_factors[HEALTH_HUNGER] = 1.
+        mental_factors[MENTAL_HEALTH_HUNGER] = 1.
     end
 
     -- handle the annoying edge case of no food at all
     if count == 0 then
+        happiness[HAPPINESS_TASTE] = 0.
+        happiness[HAPPINESS_FOOD_LUXURY] = 0.
+        happiness[HAPPINESS_FOOD_VARIETY] = 0.
+        happiness_factors[HAPPINESS_NOT_ENOUGH_FOOD_VARIETY] = 1.
+
+        health[HEALTH_NUTRIENTS] = 0
+        health[HEALTH_FOOD] = 0
+
+        mental[MENTAL_TASTE] = 0
+        mental[MENTAL_FAV_TASTE] = 0
+        mental[MENTAL_LEAST_FAV_TASTE] = 0
+        mental[MENTAL_SINGLE_FOOD] = 0
+        mental[MENTAL_NO_VARIETY] = 0
+        mental[MENTAL_JUST_NEUTRAL] = 0
         return
     end
 
@@ -278,33 +300,21 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     -- add calculation summands
     happiness[HAPPINESS_TASTE] = (1 - caste.desire_for_luxury) * taste_quality * hunger_satisfaction
     happiness[HAPPINESS_FOOD_LUXURY] = caste.desire_for_luxury * luxury * hunger_satisfaction
+
     local variety = table_size(groups) - caste.minimum_food_count
-    if variety > 0 then
-        happiness[HAPPINESS_FOOD_VARIETY] = variety * 0.5
-    end
-    if variety < 0 then
-        happiness[HAPPINESS_NOT_ENOUGH_FOOD_VARIETY] = -10
-    end
+    happiness[HAPPINESS_FOOD_VARIETY] = (variety > 0) and (variety * 0.5) or 0
+
+    happiness_factors[HAPPINESS_NOT_ENOUGH_FOOD_VARIETY] = (variety < 0) and 0.6 or 1.
 
     health[HEALTH_NUTRIENTS] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
     health[HEALTH_FOOD] = intrinsic_healthiness * hunger_satisfaction
 
-    mental_health[MENTAL_HEALTH_TASTE] = taste_quality * hunger_satisfaction * 0.5
-    if dominant_taste == favorite_taste then
-        mental_health[MENTAL_HEALTH_FAV_TASTE] = 4
-    end
-    if dominant_taste == least_favored_taste then
-        mental_health[MENTAL_HEALTH_LEAST_FAV_TASTE] = -4
-    end
-    if count == 1 then
-        mental_health[MENTAL_HEALTH_SINGLE_FOOD] = -3
-    end
-    if taste_counts[dominant_taste] == count then
-        mental_health[MENTAL_HEALTH_NO_VARIETY] = -3
-    end
-    if dominant_taste == TASTE_NEUTRAL then
-        mental_health[MENTAL_HEALTH_JUST_NEUTRAL] = -3
-    end
+    mental[MENTAL_TASTE] = taste_quality * hunger_satisfaction * 0.5
+    mental[MENTAL_FAV_TASTE] = (dominant_taste == favorite_taste) and 4 or 0
+    mental[MENTAL_LEAST_FAV_TASTE] = (dominant_taste == least_favored_taste) and -4 or 0
+    mental[MENTAL_SINGLE_FOOD] = (count == 1) and -3 or 0
+    mental[MENTAL_NO_VARIETY] = (taste_counts[dominant_taste] == count) and -3 or 0
+    mental[MENTAL_JUST_NEUTRAL] = (dominant_taste == TASTE_NEUTRAL) and -3 or 0
 end
 
 local castes = Caste.values

@@ -109,6 +109,16 @@ function Tirislib_Tables.sum(tbl)
     return ret
 end
 
+function Tirislib_Tables.array_sum(tbl)
+    local ret = 0.
+
+    for i = 1, #tbl do
+        ret = ret + tbl[i]
+    end
+
+    return ret
+end
+
 function Tirislib_Tables.product(tbl)
     local ret = 1.
 
@@ -119,8 +129,28 @@ function Tirislib_Tables.product(tbl)
     return ret
 end
 
+function Tirislib_Tables.array_product(tbl)
+    local ret = 1.
+
+    for i = 1, #tbl do
+        ret = ret * tbl[i]
+    end
+
+    return ret
+end
+
 function Tirislib_Tables.empty(tbl)
     for k in pairs(tbl) do
         tbl[k] = nil
     end
+end
+
+function Tirislib_Tables.new_array(size, value)
+    local ret = {}
+
+    for i = 1, size do
+        ret[i] = value
+    end
+
+    return ret
 end
