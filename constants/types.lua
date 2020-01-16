@@ -66,13 +66,13 @@ NEIGHBORHOOD = 7
 -- housing
 INHABITANTS = 8
 HAPPINESS = 9
-HAPPINESS_INFLUENCES = 10
+HAPPINESS_SUMMANDS = 10
 HAPPINESS_FACTORS = 11
 HEALTH = 12
-HEALTH_INFLUENCES = 13
+HEALTH_SUMMANDS = 13
 HEALTH_FACTORS = 14
 MENTAL_HEALTH = 15
-MENTAL_HEALTH_INFLUENCES = 16
+MENTAL_HEALTH_SUMMANDS = 16
 MENTAL_HEALTH_FACTORS = 17
 TREND = 18
 IDEAS = 19
@@ -84,41 +84,53 @@ PRODUCTIVITY_BONUS = 201
 HAS_PENALTY = 202
 TICK_OF_CREATION = 300
 
---<< happiness factors >>
+--<< happiness summands >>
 HAPPINESS_HOUSING = 1
 HAPPINESS_SUITABLE_HOUSING = 2
 HAPPINESS_TASTE = 3
 HAPPINESS_FOOD_LUXURY = 4
 HAPPINESS_FOOD_VARIETY = 5
-HAPPINESS_NOT_ENOUGH_FOOD_VARIETY = 6
-HAPPINESS_HUNGER = 7
-HAPPINESS_NO_POWER = 8
-HAPPINESS_POWER = 9
-HAPPINESS_FEAR = 10
-HAPPINESS_EMBER = 11
+HAPPINESS_NO_POWER = 6
+HAPPINESS_POWER = 7
+HAPPINESS_FEAR = 8
+HAPPINESS_EMBER = 9
 
-Types.happiness_factor_count = 11
+Types.happiness_summands_count = 9
 
---<< health factors >>
+--<< happiness factors >>
+HAPPINESS_NOT_ENOUGH_FOOD_VARIETY = 1
+HAPPINESS_HUNGER = 2
+
+Types.happiness_factors_count = 2
+
+--<< health summands >>
 HEALTH_NUTRIENTS = 1
 HEALTH_FOOD = 2
 HEALTH_FEAR = 3
-HEALTH_HUNGER = 4
 
-Types.health_factor_count = 4
+Types.health_summands_count = 3
+
+--<< health factors >>
+HEALTH_HUNGER = 1
+
+Types.health_factors_count = 1
+
+--<< mental health summands >>
+MENTAL_HOUSING = 1
+MENTAL_TASTE = 2
+MENTAL_FAV_TASTE = 3
+MENTAL_NO_VARIETY = 4
+MENTAL_LEAST_FAV_TASTE = 5
+MENTAL_JUST_NEUTRAL = 6
+MENTAL_SINGLE_FOOD = 7
+MENTAL_FEAR = 8
+
+Types.mental_summands_count = 8
 
 --<< mental health factors >>
-MENTAL_HEALTH_HOUSING = 1
-MENTAL_HEALTH_TASTE = 2
-MENTAL_HEALTH_FAV_TASTE = 3
-MENTAL_HEALTH_NO_VARIETY = 4
-MENTAL_HEALTH_LEAST_FAV_TASTE = 5
-MENTAL_HEALTH_JUST_NEUTRAL = 6
-MENTAL_HEALTH_SINGLE_FOOD = 7
-MENTAL_HEALTH_HUNGER = 8
-MENTAL_HEALTH_FEAR = 9
+MENTAL_HEALTH_HUNGER = 1
 
-Types.mental_health_factor_count = 9
+Types.mental_factors_count = 1
 
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>

@@ -20,11 +20,21 @@ local function get_reasonable_number(number)
     return string.format("%.1f", number)
 end
 
-local function get_factor_string(number)
+local function get_summand_string(number)
     if number > 0 then
         return string.format("[color=0,1,0]%+.1f[/color]", number)
     elseif number < 0 then
         return string.format("[color=1,0,0]%+.1f[/color]", number)
+    else -- number equals 0
+        return "[color=0.8,0.8,0.8]0.0[/color]"
+    end
+end
+
+local function get_factor_string(number)
+    if number > 1 then
+        return string.format("[color=0,1,0]×%.1f[/color]", number)
+    elseif number < 1 then
+        return string.format("[color=1,0,0]×%.1f[/color]", number)
     else -- number equals 0
         return "[color=0.8,0.8,0.8]0.0[/color]"
     end
@@ -126,7 +136,29 @@ local function set_ks_pair_visibility(datalist, key, visibility)
     datalist[key].visible = visibility
 end
 
-local function add_factor_entry(data_list, key, key_caption, value_caption)
+local function add_final_value_entry(data_list, caption)
+    local sum_key =
+        data_list.add {
+        type = "label",
+        name = "key-sum",
+        caption = caption
+    }
+    local style = sum_key.style
+    style.font = "default-bold"
+    style.horizontally_stretchable = true
+
+    local sum_value =
+        data_list.add {
+        type = "label",
+        name = "sum"
+    }
+    style = sum_value.style
+    style.width = 50
+    style.font = "default-bold"
+    style.horizontal_align = "right"
+end
+
+local function add_operand_entry(data_list, key, key_caption, value_caption)
     data_list.add {
         type = "label",
         name = "key-" .. key,
@@ -144,41 +176,44 @@ local function add_factor_entry(data_list, key, key_caption, value_caption)
     style.width = 50
 end
 
-local function add_factor_entries(data_list, caption_group, sum_caption, factor_count)
-    local sum_key =
-        data_list.add {
-        type = "label",
-        name = "key-sum",
-        caption = sum_caption
-    }
-    local style = sum_key.style
-    style.font = "default-bold"
-    style.horizontally_stretchable = true
-
-    local sum_value =
-        data_list.add {
-        type = "label",
-        name = "sum"
-    }
-    style = sum_value.style
-    style.width = 50
-    style.font = "default-bold"
-    style.horizontal_align = "right"
-
-    for i = 1, factor_count do
-        add_factor_entry(data_list, tostring(i), {caption_group .. i})
+local function add_summand_entries(data_list, caption_group, count)
+    for i = 1, count do
+        add_operand_entry(data_list, tostring(i), {caption_group .. i})
     end
 end
 
-local function update_factor_entries(data_list, entries, factor_count)
-    local sum = Tirislib_Tables.sum(entries)
-    data_list["sum"].caption = get_factor_string(sum)
+local function add_factor_entries(data_list, caption_group, count)
+    for i = 1, count do
+        add_operand_entry(data_list, "*" .. i, {caption_group .. i})
+    end
+end
 
-    for i = 1, factor_count do
-        local value = entries[i]
+local function create_operand_entries(data_list, caption, summand_caption, summand_count, factor_caption, factor_count)
+    add_final_value_entry(data_list, caption)
+    add_summand_entries(data_list, summand_caption, summand_count)
+    add_factor_entries(data_list, factor_caption, factor_count)
+end
+
+local function update_operand_entries(data_list, final_value, summand_entries, factor_entries)
+    data_list["sum"].caption = get_summand_string(final_value)
+
+    for i = 1, #summand_entries do
+        local value = summand_entries[i]
         local key = tostring(i)
 
-        if value then
+        if value ~= 0 then
+            set_datalist_value(data_list, key, get_summand_string(value))
+            set_ks_pair_visibility(data_list, key, true)
+        else
+            set_ks_pair_visibility(data_list, key, false)
+        end
+    end
+
+    for i = 1, #factor_entries do
+        local value = factor_entries[i]
+        local key = "*" .. i
+
+        if value ~= 1. then
             set_datalist_value(data_list, key, get_factor_string(value))
             set_ks_pair_visibility(data_list, key, true)
         else
@@ -571,42 +606,65 @@ local function update_housing_factor_tab(tabbed_pane, entry)
     local content_flow = get_tab_contents(tabbed_pane, "details")
 
     local happiness_list = content_flow["happiness"]
-    local happiness_factors = entry[HAPPINESS_INFLUENCES]
-    update_factor_entries(happiness_list, happiness_factors, Types.happiness_factor_count)
+    update_operand_entries(
+        happiness_list,
+        Inhabitants.get_nominal_happiness(entry),
+        entry[HAPPINESS_SUMMANDS],
+        entry[HAPPINESS_FACTORS]
+    )
 
     local health_list = content_flow["health"]
-    local health_factors = entry[HEALTH_INFLUENCES]
-    update_factor_entries(health_list, health_factors, Types.health_factor_count)
+    update_operand_entries(
+        health_list,
+        Inhabitants.get_nominal_health(entry),
+        entry[HEALTH_SUMMANDS],
+        entry[HEALTH_FACTORS]
+    )
 
-    local mental_health_list = content_flow["mental-health"]
-    local mental_health_factors = entry[MENTAL_HEALTH_INFLUENCES]
-    update_factor_entries(mental_health_list, mental_health_factors, Types.mental_health_factor_count)
+    local mental_list = content_flow["mental-health"]
+    update_operand_entries(
+        mental_list,
+        Inhabitants.get_nominal_mental_health(entry),
+        entry[MENTAL_HEALTH_SUMMANDS],
+        entry[MENTAL_HEALTH_FACTORS]
+    )
 end
 
 local function add_housing_factor_tab(tabbed_pane, entry)
     local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
 
     local happiness_list = create_data_list(flow, "happiness")
-    add_factor_entries(
+    create_operand_entries(
         happiness_list,
-        "sosciencity-happiness-factor.",
         {"sosciencity-gui.happiness"},
-        Types.happiness_factor_count
+        "happiness-summand.",
+        Types.happiness_summands_count,
+        "happiness-factor.",
+        Types.happiness_factors_count
     )
 
     create_separator_line(flow)
 
     local health_list = create_data_list(flow, "health")
-    add_factor_entries(health_list, "sosciencity-health-factor.", {"sosciencity-gui.health"}, Types.health_factor_count)
+    create_operand_entries(
+        health_list,
+        {"sosciencity-gui.health"},
+        "health-summand.",
+        Types.health_summands_count,
+        "health-factor.",
+        Types.health_factors_count
+    )
 
     create_separator_line(flow, "line2")
 
-    local mental_health_list = create_data_list(flow, "mental-health")
-    add_factor_entries(
-        mental_health_list,
-        "sosciencity-mental-health-factor.",
+    local mental_list = create_data_list(flow, "mental-health")
+    create_operand_entries(
+        mental_list,
         {"sosciencity-gui.mental-health"},
-        Types.mental_health_factor_count
+        "mental-summand.",
+        Types.mental_summands_count,
+        "mental-factor.",
+        Types.mental_factors_count
     )
 
     -- call the update function to set the values
