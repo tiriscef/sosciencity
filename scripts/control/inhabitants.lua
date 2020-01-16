@@ -4,6 +4,7 @@ Inhabitants = {}
 local global
 local population
 local effective_population
+local caste_bonuses
 local Register = Register
 
 local castes = Caste.values
@@ -35,13 +36,7 @@ local weighted_average = Tirislib_Utils.weighted_average
 -- << caste bonus functions >>
 --- Returns the total number of inhabitants.
 function Inhabitants.get_population_count()
-    local population_count = 0
-
-    for caste_id, _ in pairs(castes) do
-        population_count = population_count + population[caste_id]
-    end
-
-    return population_count
+    return array_sum(population)
 end
 local get_population_count = Inhabitants.get_population_count
 
@@ -60,7 +55,7 @@ local function clockwork_bonus_with_penalty()
 end
 
 --- Gets the current Clockwork caste bonus.
-function Inhabitants.get_clockwork_bonus()
+local function get_clockwork_bonus()
     if global.use_penalty then
         return clockwork_bonus_with_penalty()
     else
@@ -69,36 +64,32 @@ function Inhabitants.get_clockwork_bonus()
 end
 
 --- Gets the current Orchid caste bonus.
-function Inhabitants.get_orchid_bonus()
+local function get_orchid_bonus()
     return floor(sqrt(effective_population[TYPE_ORCHID]))
 end
 
 --- Gets the current Gunfire caste bonus.
-function Inhabitants.get_gunfire_bonus()
+local function get_gunfire_bonus()
     return floor(effective_population[TYPE_GUNFIRE] * 10 / max(global.turret_count, 1)) -- TODO balancing
 end
-local get_gunfire_bonus = Inhabitants.get_gunfire_bonus
 
 --- Gets the current Ember caste bonus.
-function Inhabitants.get_ember_bonus()
+local function get_ember_bonus()
     return floor(sqrt(effective_population[TYPE_EMBER] / max(1, get_population_count())))
 end
-local get_ember_bonus = Inhabitants.get_ember_bonus
 
 --- Gets the current Foundry caste bonus.
-function Inhabitants.get_foundry_bonus()
+local function get_foundry_bonus()
     return floor(effective_population[TYPE_FOUNDRY] * 5)
 end
-local get_foundry_bonus = Inhabitants.get_foundry_bonus
 
 --- Gets the current Gleam caste bonus.
-function Inhabitants.get_gleam_bonus()
+local function get_gleam_bonus()
     return floor(sqrt(effective_population[TYPE_GLEAM]))
 end
-local get_gleam_bonus = Inhabitants.get_gleam_bonus
 
 --- Gets the current Aurora caste bonus.
-function Inhabitants.get_aurora_bonus()
+local function get_aurora_bonus()
     return floor(sqrt(effective_population[TYPE_AURORA]))
 end
 
@@ -122,54 +113,50 @@ end
 -- Assumes value is an integer
 local function set_gunfire_bonus(value)
     set_binary_techs(value, "-gunfire-caste")
-    global.gunfire_bonus = value
-end
-
--- Assumes value is an integer
-local function set_gleam_bonus(value)
-    set_binary_techs(value, "-gleam-caste")
-    global.gleam_bonus = value
+    caste_bonuses[TYPE_GUNFIRE] = value
 end
 
 -- Assumes value is an integer
 local function set_foundry_bonus(value)
     set_binary_techs(value, "-foundry-caste")
-    global.foundry_bonus = value
+    caste_bonuses[TYPE_FOUNDRY] = value
+end
+
+-- Assumes value is an integer
+local function set_gleam_bonus(value)
+    set_binary_techs(value, "-gleam-caste")
+    caste_bonuses[TYPE_GLEAM] = value
 end
 
 --- Updates the caste bonuses that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
 function Inhabitants.update_caste_bonuses()
+    caste_bonuses[TYPE_CLOCKWORK] = get_clockwork_bonus()
+    caste_bonuses[TYPE_ORCHID] = get_orchid_bonus()
+    caste_bonuses[TYPE_EMBER] = get_ember_bonus()
+    caste_bonuses[TYPE_AURORA] = get_aurora_bonus()
+
+    -- tech-bonus castes
     -- We check if the bonuses have actually changed to avoid unnecessary api calls
     local current_gunfire_bonus = get_gunfire_bonus()
-    if global.gunfire_bonus ~= current_gunfire_bonus then
+    if caste_bonuses[TYPE_GUNFIRE] ~= current_gunfire_bonus then
         set_gunfire_bonus(current_gunfire_bonus)
     end
 
-    local current_gleam_bonus = get_gleam_bonus()
-    if global.gleam_bonus ~= current_gleam_bonus then
-        set_gleam_bonus(current_gleam_bonus)
+    local current_foundry_bonus = get_foundry_bonus()
+    if caste_bonuses[TYPE_FOUNDRY] ~= current_foundry_bonus then
+        set_foundry_bonus(current_foundry_bonus)
     end
 
-    local current_foundry_bonus = get_foundry_bonus()
-    if global.foundry_bonus ~= current_foundry_bonus then
-        set_foundry_bonus(current_foundry_bonus)
+    local current_gleam_bonus = get_gleam_bonus()
+    if caste_bonuses[TYPE_GLEAM] ~= current_gleam_bonus then
+        set_gleam_bonus(current_gleam_bonus)
     end
 end
 
-local bonus_function_lookup = {
-    [TYPE_CLOCKWORK] = Inhabitants.get_clockwork_bonus,
-    [TYPE_ORCHID] = Inhabitants.get_orchid_bonus,
-    [TYPE_GUNFIRE] = Inhabitants.get_gunfire_bonus,
-    [TYPE_EMBER] = Inhabitants.get_ember_bonus,
-    [TYPE_FOUNDRY] = Inhabitants.get_foundry_bonus,
-    [TYPE_GLEAM] = Inhabitants.get_gleam_bonus,
-    [TYPE_AURORA] = Inhabitants.get_aurora_bonus
-}
-
 --- Gets the current bonus of the given caste.
---- @param caste Type
-function Inhabitants.get_caste_bonus(caste)
-    return bonus_function_lookup[caste]()
+--- @param caste_id Type
+function Inhabitants.get_caste_bonus(caste_id)
+    return caste_bonuses[caste_id]
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -351,7 +338,7 @@ function Inhabitants.update_house(entry, delta_ticks)
         happiness_summands[HAPPINESS_NO_POWER] = caste_values.no_power_malus
     end
 
-    happiness_summands[HAPPINESS_EMBER] = get_ember_bonus()
+    happiness_summands[HAPPINESS_EMBER] = caste_bonuses[TYPE_EMBER]
 
     local fear_malus = global.fear * caste_values.fear_multiplier
     happiness_summands[HAPPINESS_FEAR] = fear_malus
@@ -501,6 +488,7 @@ local function set_locals()
     global = _ENV.global
     population = global.population
     effective_population = global.effective_population
+    caste_bonuses = global.caste_bonuses
 end
 
 local function new_caste_table()
@@ -523,6 +511,7 @@ function Inhabitants.init()
     global.fear = 0
     global.population = new_caste_table()
     global.effective_population = new_caste_table()
+    global.caste_bonuses = new_caste_table()
 
     set_locals()
 end

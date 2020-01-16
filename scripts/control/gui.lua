@@ -9,7 +9,7 @@ Gui.UNIQUE_PREFIX = "sosciencity-"
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
 local function get_bonus_string(caste_id)
-    local bonus = Inhabitants.get_caste_bonus(caste_id)
+    local bonus = global.caste_bonuses[caste_id]
     if caste_id == TYPE_CLOCKWORK and global.use_penalty then
         bonus = bonus - 80
     end
