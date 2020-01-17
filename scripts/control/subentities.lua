@@ -73,7 +73,7 @@ function Subentities.add_all_for(entry)
         add_sprite(entry, Types.get_sprite(name))
     end
     if type_needs_alt_mode_sprite(_type) then
-        add_alt_mode_sprite(entry, Types.type_sprite_pairs[_type])
+        add_alt_mode_sprite(entry, Types.altmode_sprites[_type])
     end
 end
 
