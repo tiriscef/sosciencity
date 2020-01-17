@@ -167,7 +167,14 @@ local function consume_specific_food(entry, inventories, amount, item_name)
         while slot do -- find_item_stack returns nil if no stack was found
             local count_before = slot.count
             to_consume = to_consume - slot.drain_durability(to_consume)
-            local items_consumed = count_before - slot.count
+
+            local items_consumed
+            -- if the last item of the stack got consumed the slot becomes invalid to read
+            if slot.valid_for_read then
+                items_consumed = count_before - slot.count
+            else
+                items_consumed = count_before
+            end
 
             if items_consumed > 0 then
                 produce_garbage(entry, "food-leftovers", items_consumed)
@@ -313,7 +320,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     mental[MENTAL_LEAST_FAV_TASTE] = (dominant_taste == least_favored_taste) and -4 or 0
     mental[MENTAL_SINGLE_FOOD] = (count == 1) and -3 or 0
     mental[MENTAL_NO_VARIETY] = (taste_counts[dominant_taste] == count) and -3 or 0
-    mental[MENTAL_JUST_NEUTRAL] = (dominant_taste == TASTE_NEUTRAL) and -3 or 0
+    mental[MENTAL_JUST_NEUTRAL] = (taste_counts[TASTE_NEUTRAL] == count) and -3 or 0
 end
 
 local castes = Caste.values
