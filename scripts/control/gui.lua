@@ -35,8 +35,8 @@ local function get_factor_string(number)
         return string.format("[color=0,1,0]×%.1f[/color]", number)
     elseif number < 1 then
         return string.format("[color=1,0,0]×%.1f[/color]", number)
-    else -- number equals 0
-        return "[color=0.8,0.8,0.8]0.0[/color]"
+    else -- number equals 1
+        return "[color=0.8,0.8,0.8]1.0[/color]"
     end
 end
 

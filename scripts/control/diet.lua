@@ -162,24 +162,23 @@ local function consume_specific_food(entry, inventories, amount, item_name)
     local to_consume = amount
 
     for _, inventory in pairs(inventories) do
-        for i = 1, #inventory do
-            local slot = inventory[i]
-            if slot.valid_for_read then -- check if the slot has an item in it
-                if slot.name == item_name then
-                    local count_before = slot.count
-                    to_consume = to_consume - slot.drain_durability(to_consume)
-                    local items_consumed = count_before - slot.count
+        local slot = inventory.find_item_stack(item_name)
 
-                    if items_consumed > 0 then
-                        produce_garbage(entry, "food-leftovers", items_consumed)
-                        log_item(item_name, -items_consumed)
-                    end
+        while slot do -- find_item_stack returns nil if no stack was found
+            local count_before = slot.count
+            to_consume = to_consume - slot.drain_durability(to_consume)
+            local items_consumed = count_before - slot.count
 
-                    if to_consume < 0.001 then
-                        return amount -- everything was consumed
-                    end
-                end
+            if items_consumed > 0 then
+                produce_garbage(entry, "food-leftovers", items_consumed)
+                log_item(item_name, -items_consumed)
             end
+
+            if to_consume < 0.001 then
+                return amount -- everything was consumed
+            end
+
+            slot = inventory.find_item_stack(item_name)
         end
     end
 
