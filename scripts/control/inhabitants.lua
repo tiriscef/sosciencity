@@ -75,7 +75,7 @@ end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    return floor(sqrt(effective_population[TYPE_EMBER]))
+    return floor(10 * sqrt(effective_population[TYPE_EMBER] / max(1, get_population_count())))
 end
 
 --- Gets the current Foundry caste bonus.
@@ -421,23 +421,29 @@ end
 --- Looks for housings to move the inhabitants of this entry to.
 --- Returns the number of resettled inhabitants.
 --- @param entry Entry
-function Inhabitants.try_resettle(entry)
-    if not global.technologies["resettlement"] or not Types.is_inhabited(entry[TYPE]) then
+function Inhabitants.try_resettle(entry, unit_number)
+    if not global.technologies["resettlement"] then
         return 0
     end
 
     local to_resettle = entry[INHABITANTS]
-    for _, current_entry in Register.all_of_type(entry[TYPE]) do
-        local resettled_count =
-            try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[MENTAL_HEALTH])
-        to_resettle = to_resettle - resettled_count
+    for current_unit_number, current_entry in Register.all_of_type(entry[TYPE]) do
+        if current_unit_number ~= unit_number then
+            to_resettle = to_resettle - try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[MENTAL_HEALTH])
 
-        if to_resettle == 0 then
-            break
+            if to_resettle == 0 then
+                break
+            end
         end
     end
 
-    return entry[INHABITANTS] - to_resettle
+    local resettled = entry[INHABITANTS] - to_resettle
+
+    if resettled > 0 then
+        Communication.people_resettled(entry, resettled)
+    end
+
+    return resettled
 end
 ---------------------------------------------------------------------------------------------------
 -- << fear >>
