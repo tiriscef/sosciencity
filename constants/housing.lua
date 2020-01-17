@@ -6,7 +6,7 @@ Housing.houses = {
     ["test-house"] = {
         room_count = 200,
         tech_level = 0,
-        comfort = 0,
+        comfort = 5,
         caste = TYPE_CLOCKWORK, -- caste which likes this kind of housing
         caste_bonus = 2
     }

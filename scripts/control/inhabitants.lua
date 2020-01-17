@@ -75,12 +75,12 @@ end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    return floor(sqrt(effective_population[TYPE_EMBER] / max(1, get_population_count())))
+    return floor(sqrt(effective_population[TYPE_EMBER]))
 end
 
 --- Gets the current Foundry caste bonus.
 local function get_foundry_bonus()
-    return floor(effective_population[TYPE_FOUNDRY] * 5)
+    return floor(sqrt(effective_population[TYPE_FOUNDRY] * 5))
 end
 
 --- Gets the current Gleam caste bonus.

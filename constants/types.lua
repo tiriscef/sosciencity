@@ -144,7 +144,7 @@ Types.taste_names = {
     [TASTE_UMAMI] = "umami"
 }
 
-Types.type_sprite_pairs = {
+Types.altmode_sprites = {
     [TYPE_EMPTY_HOUSE] = "empty-caste",
     [TYPE_CLOCKWORK] = "clockwork-caste",
     [TYPE_EMBER] = "ember-caste",
@@ -154,6 +154,7 @@ Types.type_sprite_pairs = {
     [TYPE_ORCHID] = "orchid-caste",
     [TYPE_AURORA] = "aurora-caste"
 }
+local altmode_sprites = Types.altmode_sprites
 
 local lookup_by_entity_type = {
     ["assembling-machine"] = TYPE_ASSEMBLING_MACHINE,
@@ -245,7 +246,7 @@ function Types.get_sprite(name)
 end
 
 function Types.needs_alt_mode_sprite(_type)
-    return _type < 100
+    return altmode_sprites[_type] ~= nil
 end
 
 function Types.needs_neighborhood(_type) -- I might need to add more

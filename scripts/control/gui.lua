@@ -367,7 +367,7 @@ local function add_caste_flow(container, caste_id)
         frame.add {
         type = "label",
         name = "caste-bonus",
-        caption = {"caste-bonus.display-" .. caste_name, get_bonus_string(caste_id)},
+        caption = {"caste-bonus.show-" .. caste_name, get_bonus_string(caste_id)},
         tooltip = {"caste-bonus." .. caste_name}
     }
     bonus_label.style.minimal_width = CITY_INFO_SPRITE_SIZE
@@ -409,7 +409,7 @@ local function update_caste_flow(container, caste_id)
     caste_frame.visible = (caste_population ~= 0)
     caste_frame["caste-population"].caption = caste_population
     caste_frame["caste-bonus"].caption = {
-        "caste-bonus.display-" .. castes[caste_id].name,
+        "caste-bonus.show-" .. castes[caste_id].name,
         get_bonus_string(caste_id)
     }
 end
@@ -529,7 +529,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "capacity",
         {
             "",
-            {"sosciencity-gui.display-capacity", inhabitants, capacity},
+            {"sosciencity-gui.show-capacity", inhabitants, capacity},
             display_migration and {"sosciencity-gui.migration", get_migration_string(migration)} or ""
         }
     )
@@ -565,10 +565,20 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "effective-population",
         (inhabitants > 0) and
             {
-                "sosciencity-gui.display-effective-population",
+                "sosciencity-gui.show-effective-population",
                 get_reasonable_number(Inhabitants.get_effective_population(entry))
             } or
             "-"
+    )
+    set_datalist_value(
+        general_list,
+        "calorific-demand",
+        {"sosciencity-gui.show-calorific-demand", get_reasonable_number(caste.calorific_demand * 3600 * inhabitants)}
+    )
+    set_datalist_value(
+        general_list,
+        "power-demand",
+        {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * 60 * inhabitants}
     )
 end
 
@@ -586,6 +596,8 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "health", {"sosciencity-gui.health"})
     add_kv_pair(data_list, "mental-health", {"sosciencity-gui.mental-health"})
     add_kv_pair(data_list, "effective-population", {"sosciencity-gui.effective-population"})
+    add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
+    add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
 
     local kickout_button =
         flow.add {
@@ -685,45 +697,43 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
     add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
     add_kv_pair(
         caste_data,
-        "fav-taste",
-        {"sosciencity-gui.fav-taste"},
-        {"taste-category." .. Types.taste_names[caste.favored_taste]}
-    )
-    add_kv_pair(
-        caste_data,
-        "lfav-taste",
-        {"sosciencity-gui.lfav-taste"},
-        {"taste-category." .. Types.taste_names[caste.least_favored_taste]}
+        "taste",
+        {"sosciencity-gui.taste"},
+        {
+            "sosciencity-gui.show-taste",
+            {"taste-category." .. Types.taste_names[caste.favored_taste]},
+            {"taste-category." .. Types.taste_names[caste.least_favored_taste]}
+        }
     )
     add_kv_pair(
         caste_data,
         "food-count",
         {"sosciencity-gui.food-count"},
-        {"sosciencity-gui.display-food-count", caste.minimum_food_count}
+        {"sosciencity-gui.show-food-count", caste.minimum_food_count}
     )
     add_kv_pair(
         caste_data,
         "luxury",
         {"sosciencity-gui.luxury"},
-        {"sosciencity-gui.display-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
+        {"sosciencity-gui.show-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
     )
     add_kv_pair(
         caste_data,
         "room-count",
         {"sosciencity-gui.room-needs"},
-        {"sosciencity-gui.display-room-needs", caste.required_room_count}
+        {"sosciencity-gui.show-room-needs", caste.required_room_count}
     )
     add_kv_pair(
         caste_data,
         "comfort",
         {"sosciencity-gui.comfort"},
-        {"sosciencity-gui.display-comfort-needs", caste.minimum_comfort}
+        {"sosciencity-gui.show-comfort-needs", caste.minimum_comfort}
     )
     add_kv_pair(
         caste_data,
         "power-demand",
         {"sosciencity-gui.power-demand"},
-        {"sosciencity-gui.display-power-demand", caste.power_demand / 1000 * 60} -- convert from J / tick to kW
+        {"sosciencity-gui.show-power-demand", caste.power_demand / 1000 * 60} -- convert from J / tick to kW
     )
 end
 
