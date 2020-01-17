@@ -296,7 +296,7 @@ local function on_entity_died(event)
         add_fear()
     end
 
-    on_entity_removed(event)
+    Register.remove_entity(entity)
 end
 
 local function on_entity_mined(event)
@@ -305,12 +305,13 @@ local function on_entity_mined(event)
         return
     end
 
-    local entry = try_get_entry(entity.unit_number)
-    if entry then
-        Inhabitants.try_resettle(entry)
+    local unit_number = entity.unit_number
+    local entry = try_get_entry(unit_number)
+    if entry and Types.is_inhabited(entry[TYPE]) then
+        Inhabitants.try_resettle(entry, unit_number)
     end
 
-    on_entity_removed(event)
+    Register.remove_entity(entity)
 end
 
 local function on_entity_settings_pasted(event)

@@ -19,7 +19,7 @@ end
 local get_housing = Housing.get
 
 function Housing.get_capacity(entry)
-    return math.floor(get_housing(entry).room_count / Caste(entry[TYPE]).required_room_count)
+    return math.floor(get_housing(entry).room_count / Caste.values[entry[TYPE]].required_room_count)
 end
 local get_capacity = Housing.get_capacity
 

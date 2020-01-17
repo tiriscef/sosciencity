@@ -16,11 +16,12 @@ function Communication.create_flying_text(entry, text)
         text = text
     }
 end
+local create_flying_text = Communication.create_flying_text
 
 function Communication.caste_allowed_in(entry, caste_id)
     local caste = castes[caste_id]
 
-    Communication.create_flying_text(
+    create_flying_text(
         entry,
         {
             "flying-text.set-caste",
@@ -28,6 +29,10 @@ function Communication.caste_allowed_in(entry, caste_id)
             {"caste-name." .. caste.name}
         }
     )
+end
+
+function Communication.people_resettled(entry, count)
+    create_flying_text(entry, {"flying-text.resettled", count})
 end
 
 function Communication.log_item(item, amount)
