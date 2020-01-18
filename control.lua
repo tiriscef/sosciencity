@@ -97,6 +97,7 @@ local Gui = require("scripts.control.gui")
 -- local all the frequently called functions for miniscule performance gains
 
 local global
+local register
 local caste_bonuses
 
 local add_fear = Inhabitants.add_fear
@@ -150,7 +151,7 @@ local function update_entity_with_beacon(entry)
     set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
-local update_function_lookup = {
+local update_functions = {
     [TYPE_CLOCKWORK] = Inhabitants.update_house,
     [TYPE_EMBER] = Inhabitants.update_house,
     [TYPE_GUNFIRE] = Inhabitants.update_house,
@@ -166,30 +167,14 @@ local update_function_lookup = {
     [TYPE_ORANGERY] = update_entity_with_beacon
 }
 
-local function update(entry)
-    if not entry[ENTITY].valid then
-        remove_entry(entry)
-        return
-    end
-
-    local _type = entry[TYPE]
-    local update_function = update_function_lookup[_type]
-
-    if update_function ~= nil then
-        local delta_ticks = game.tick - entry[LAST_UPDATE]
-        update_function_lookup[_type](entry, delta_ticks)
-        entry[LAST_UPDATE] = game.tick
-    end
-end
-
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
 local function update_cycle()
     ease_fear()
 
-    local next = next
+    local current_tick = game.tick
+    local next_entry = Register.next
     local count = 0
-    local register = global.register
     local index = global.last_index
     local current_entry
     local number_of_checks = global.updates_per_cycle
@@ -197,12 +182,19 @@ local function update_cycle()
     if index and register[index] then
         current_entry = register[index] -- continue looping
     else
-        index, current_entry = next(register, nil) -- begin a new loop at the start (nil as a key returns the first pair)
+        index, current_entry = next_entry() -- begin a new loop at the start (nil as a key returns the first pair)
     end
 
     while index and count < number_of_checks do
-        update(current_entry)
-        index, current_entry = next(register, index)
+        local _type = current_entry[TYPE]
+        local updater = update_functions[_type]
+        if updater ~= nil then
+            local delta_ticks = game.tick - current_entry[LAST_UPDATE]
+            updater(current_entry, delta_ticks)
+            current_entry[LAST_UPDATE] = current_tick
+        end
+
+        index, current_entry = next_entry(index)
         count = count + 1
     end
     global.last_index = index
@@ -211,7 +203,7 @@ local function update_cycle()
     update_city_info()
     update_details_view()
 
-    global.last_update = game.tick
+    global.last_update = current_tick
 end
 
 local cycle_frequency = settings.global["sosciencity-entity-update-cycle-frequency"].value
@@ -228,6 +220,12 @@ local function update_settings()
     global.use_penalty = settings.global["sosciencity-penalty-module"].value
 end
 
+local function set_locals()
+    global = _ENV.global
+    caste_bonuses = global.caste_bonuses
+    register = global.register
+end
+
 local function init()
     global = _ENV.global
     Types.init()
@@ -235,20 +233,18 @@ local function init()
 
     update_settings()
 
-    global.last_update = game.tick
-
     Inhabitants.init()
-    caste_bonuses = global.caste_bonuses
-
     Register.init()
     Technologies.init()
     Gui.init()
     Communication.init()
+
+    set_locals()
+    global.last_update = game.tick
 end
 
 local function on_load()
-    global = _ENV.global
-    caste_bonuses = global.caste_bonuses
+    set_locals()
 
     Types.init()
     Neighborhood.init()
@@ -268,7 +264,6 @@ local function on_entity_built(event)
     --[[if replace(entity) then
         return
     end]]
-
     local entity_type = get_entity_type(entity)
 
     if is_relevant_to_register(entity_type) then

@@ -121,6 +121,25 @@ function Register.try_get(unit_number)
     end
 end
 
+local register_next
+--- Returns the next valid entry or nil if the loop came to an end.
+function Register.next(unit_number)
+    local entry
+    unit_number, entry = next(register, unit_number)
+
+    if not entry then
+        return nil
+    end
+
+    if entry[ENTITY].valid then
+        return unit_number, entry
+    else
+        Register.remove_entity(entry[ENTITY])
+        return register_next(unit_number)
+    end
+end
+register_next = Register.next
+
 local function nothing()
 end
 
