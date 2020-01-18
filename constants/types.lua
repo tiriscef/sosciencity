@@ -180,10 +180,8 @@ function Types.init()
     houses = Housing.houses
 
     -- add the functional buildings to the lookup table
-    for _type, buildings in pairs(Buildings) do
-        for name in pairs(buildings) do
-            lookup_by_name[name] = _type
-        end
+    for name, details in pairs(Buildings) do
+        lookup_by_name[name] = details.type
     end
 end
 
@@ -236,7 +234,7 @@ function Types.needs_eei(_type)
 end
 
 function Types.needs_sprite(name)
-    return houses[name] ~= nil
+    return false
 end
 
 function Types.get_sprite(name)

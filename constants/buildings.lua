@@ -1,15 +1,20 @@
 require("constants.types")
 
-Buildings = {}
-
-Buildings[TYPE_DUMPSTER] = {
+Buildings = {
     ["test-dumpster"] = {
+        type = TYPE_DUMPSTER,
         range = 42
-    }
-}
-
-Buildings[TYPE_MARKET] = {
+    },
     ["test-market"] = {
+        type = TYPE_MARKET,
+        range = 42
+    },
+    ["test-hospital"] = {
+        type = TYPE_HOSPITAL,
+        range = 42
+    },
+    ["test-water-distributer"] = {
+        type = TYPE_WATER_DISTRIBUTER,
         range = 42
     }
 }

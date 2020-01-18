@@ -3,7 +3,7 @@ local dataphase_test = false
 if dataphase_test then
     return
 end
-pcall(require,'__debugadapter__/debugadapter.lua')
+pcall(require, "__debugadapter__/debugadapter.lua")
 --[[
     TODO
         - city info gui
@@ -36,13 +36,6 @@ pcall(require,'__debugadapter__/debugadapter.lua')
         ["happiness"]: float
         ["healthiness"]: float
         ["mental_healthiness"]: float
-        ["food"]: table
-
-    food: table
-        ["healthiness_dietary"]: float
-        ["healthiness_mental"]: float
-        ["satisfaction"]: float
-        ["count"]: int
 
     neighborhood: table
         [entity type]: table of (unit_number, entity) pairs
@@ -63,6 +56,9 @@ pcall(require,'__debugadapter__/debugadapter.lua')
 
     global.detail_view: table
         [player_index]: unit_number (of the entity the detail view is for)
+
+    global.highlights: table
+        [player_index]: table of renderer-ids
 ]]
 ---------------------------------------------------------------------------------------------------
 -- << runtime finals >>
@@ -104,6 +100,7 @@ local global
 local caste_bonuses
 
 local add_fear = Inhabitants.add_fear
+local ease_fear = Inhabitants.ease_fear
 
 local set_beacon_effects = Subentities.set_beacon_effects
 
@@ -116,8 +113,17 @@ local is_relevant_to_register = Types.is_relevant_to_register
 
 local try_get_entry = Register.try_get
 local remove_entry = Register.remove_entry
+local add_to_register = Register.add
+
+local update_caste_bonuses = Inhabitants.update_caste_bonuses
+
+local update_city_info = Gui.update_city_info
+local update_details_view = Gui.update_details_view
 
 local replace = Replacer.replace
+
+local create_mouseover_highlights = Communication.create_mouseover_highlights
+local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
@@ -178,11 +184,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
-local ease_fear = Inhabitants.ease_fear
-local update_caste_bonuses = Inhabitants.update_caste_bonuses
-local update_city_info = Gui.update_city_info
-local update_details_view = Gui.update_details_view
-
 local function update_cycle()
     ease_fear()
 
@@ -264,14 +265,14 @@ local function on_entity_built(event)
         return
     end
 
-    if replace(entity) then
+    --[[if replace(entity) then
         return
-    end
+    end]]
 
     local entity_type = get_entity_type(entity)
 
     if is_relevant_to_register(entity_type) then
-        Register.add(entity)
+        add_to_register(entity)
     end
 end
 
@@ -399,6 +400,18 @@ local function on_research_finished(event)
     Technologies.finished(event.research.name)
 end
 
+local function on_selection_changed(event)
+    local index = event.player_index
+    local player = game.get_player(index)
+    local selected_entity = player.selected
+
+    remove_mouseover_highlights(index)
+
+    if selected_entity then
+        create_mouseover_highlights(index, selected_entity)
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
 -- initialisation
@@ -442,3 +455,6 @@ script.on_event(defines.events.on_gui_click, on_gui_click)
 
 -- keeping track of research
 script.on_event(defines.events.on_research_finished, on_research_finished)
+
+-- selection stuff
+script.on_event(defines.events.on_selected_entity_changed, on_selection_changed)
