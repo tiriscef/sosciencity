@@ -84,13 +84,15 @@ function Neighborhood.add_neighborhood(entry, _type)
     end
 
     entry[NEIGHBORHOOD] = {}
+    local neighborhood_table = entry[NEIGHBORHOOD]
 
-    for _, neighborhood_type in pairs(details.active_types) do
-        entry[NEIGHBORHOOD][neighborhood_type] = {}
+    for _, neighbor_type in pairs(details.active_types) do
+        neighborhood_table[neighbor_type] = {}
+        local type_table = neighborhood_table[neighbor_type]
 
-        for unit_number, neighbor_entry in Register.all_of_type(neighborhood_type) do
+        for unit_number, neighbor_entry in Register.all_of_type(neighbor_type) do
             if is_in_range(neighbor_entry, entry) then
-                entry[NEIGHBORHOOD][neighborhood_type][unit_number] = unit_number
+                type_table[unit_number] = neighbor_type
             end
         end
     end
@@ -112,7 +114,7 @@ function Neighborhood.establish_new_neighbor(neighbor_entry, _type)
                 if not current_entry[NEIGHBORHOOD][_type] then
                     current_entry[NEIGHBORHOOD][_type] = {}
                 end
-                current_entry[NEIGHBORHOOD][_type][unit_number] = unit_number
+                current_entry[NEIGHBORHOOD][_type][unit_number] = _type
             end
         end
     end
@@ -126,16 +128,17 @@ function Neighborhood.get_by_type(entry, _type)
         return {}
     end
 
+    local neighbor_table = entry[NEIGHBORHOOD][_type]
     local ret = {}
     local i = 1
 
-    for unit_number, _ in pairs(entry[NEIGHBORHOOD][_type]) do
+    for unit_number, _ in pairs(neighbor_table) do
         local current_entry = try_get(unit_number)
-        if current_entry then
+        if current_entry and current_entry[TYPE] == _type then
             ret[i] = current_entry
             i = i + 1
         else
-            entry[NEIGHBORHOOD][_type][unit_number] = nil
+            neighbor_table[unit_number] = nil
         end
     end
 
@@ -146,16 +149,18 @@ local function nothing()
 end
 
 local function all_of_type_iterator(neighbor_table, key)
-    key = next(neighbor_table, key)
+    local supposed_type
+    key, supposed_type = next(neighbor_table, key)
 
     if key == nil then
         return nil, nil
     end
 
     local entry = try_get(key)
-    if entry then
+    if entry and entry[TYPE] == supposed_type then
         return key, entry
     else
+        neighbor_table[key] = nil
         return all_of_type_iterator(neighbor_table, key)
     end
 end
@@ -173,6 +178,7 @@ end
 
 -- Thanks to justarandomgeek for this piece of code.
 local function all_neighbors_iterator(all_neighbors, key)
+    -- get the current neighbor table
     local neighbor_type
     local neighbor_table
     if key ~= nil then
@@ -181,11 +187,15 @@ local function all_neighbors_iterator(all_neighbors, key)
     else
         key = {}
         neighbor_type, neighbor_table = next(all_neighbors)
+        if neighbor_type == nil then
+            return nil, nil
+        end
         key[1] = neighbor_type
     end
 
+    -- get the current neighbor
     local unit_number = next(neighbor_table, key[2])
-    if unit_number == nil then
+    while unit_number == nil do
         neighbor_type, neighbor_table = next(all_neighbors, neighbor_type)
         if neighbor_type == nil then
             return nil, nil
@@ -195,14 +205,11 @@ local function all_neighbors_iterator(all_neighbors, key)
     end
     key[2] = unit_number
 
-    if unit_number == nil then
-        return nil, nil
-    end
-
     local entry = try_get(unit_number)
-    if entry then
+    if entry and entry[TYPE] == neighbor_type then
         return key, entry
     else
+        neighbor_table[unit_number] = nil
         return all_neighbors_iterator(all_neighbors, key)
     end
 end
