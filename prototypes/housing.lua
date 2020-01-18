@@ -29,7 +29,7 @@ for house_name, house in pairs(Housing.houses) do
         subgroup = "sosciencity-housing",
         order = orderstring,
         stack_size = details.stack_size or 20,
-        place_result = "sosciencity-placer-" .. house_name,
+        place_result = house_name,
         localised_description = {
             "item-description.housing",
             {"item-description." .. house_name},
@@ -63,35 +63,9 @@ for house_name, house in pairs(Housing.houses) do
             filename = "__base__/sound/car-metal-impact.ogg",
             volume = 0.65
         },
-        picture = Tirislib_Entity.get_placeholder_picture(),
+        picture = details.picture,
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
-        circuit_wire_max_distance = 13,
-        placeable_by = {item = house_name, count = 1}
+        circuit_wire_max_distance = 13
     }:set_size(details.width, details.height)
-
-    Tirislib_Entity.create {
-        type = "container",
-        name = "sosciencity-placer-" .. house_name,
-        order = orderstring,
-        icon = "__sosciencity__/graphics/icon/" .. house_name .. ".png",
-        icon_size = 64,
-        flags = {"placeable-neutral", "player-creation"},
-        minable = {mining_time = 0.5, result = house_name},
-        max_health = 500,
-        corpse = "small-remnants", -- TODO
-        inventory_size = 64,
-        vehicle_impact_sound = {
-            filename = "__base__/sound/car-metal-impact.ogg",
-            volume = 0.65
-        },
-        picture = details.picture,
-        localised_description = {"item-name." .. house_name}
-    }:set_size(details.width, details.height)
-
-    local sprite = Tirislib_Prototype.create {
-        type = "sprite",
-        name = "sprite-" .. house_name
-    }
-    Tirislib_Tables.set_fields(sprite, details.picture)
 end

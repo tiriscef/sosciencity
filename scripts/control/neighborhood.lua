@@ -1,6 +1,8 @@
 Neighborhood = {}
 
 local Register = Register
+local try_get = Register.try_get
+
 local abs = math.abs
 local max = math.max
 ---------------------------------------------------------------------------------------------------
@@ -10,10 +12,8 @@ local active_neighbor_ranges
 local function generate_active_neighbor_ranges_lookup()
     active_neighbor_ranges = {}
 
-    for _, buildings in pairs(Buildings) do
-        for building, details in pairs(buildings) do
-            active_neighbor_ranges[building] = details.range
-        end
+    for name, details in pairs(Buildings) do
+        active_neighbor_ranges[name] = details.range
     end
 end
 
@@ -130,7 +130,7 @@ function Neighborhood.get_by_type(entry, _type)
     local i = 1
 
     for unit_number, _ in pairs(entry[NEIGHBORHOOD][_type]) do
-        local current_entry = Register.try_get(unit_number)
+        local current_entry = try_get(unit_number)
         if current_entry then
             ret[i] = current_entry
             i = i + 1
@@ -144,6 +144,22 @@ end
 
 local function nothing()
 end
+
+local function all_of_type_iterator(neighbor_table, key)
+    key = next(neighbor_table, key)
+
+    if key == nil then
+        return nil, nil
+    end
+
+    local entry = try_get(key)
+    if entry then
+        return key, entry
+    else
+        return all_of_type_iterator(neighbor_table, key)
+    end
+end
+
 --- Lazy iterator over all neighbors of the given type.
 --- @param entry Entry
 --- @param _type Type
@@ -152,26 +168,53 @@ function Neighborhood.all_of_type(entry, _type)
         return nothing
     end
 
-    local index, current_entry
-    local table_to_iterate = entry[NEIGHBORHOOD][_type]
+    return all_of_type_iterator, entry[NEIGHBORHOOD][_type]
+end
 
-    local function _next()
-        index, _ = next(table_to_iterate, index)
-
-        if index then
-            current_entry = Register.try_get(index)
-
-            if not current_entry then
-                table_to_iterate[index] = nil
-                -- skip this invalid entry
-                return _next()
-            end
-
-            return index, current_entry
-        end
+-- Thanks to justarandomgeek for this piece of code.
+local function all_neighbors_iterator(all_neighbors, key)
+    local neighbor_type
+    local neighbor_table
+    if key ~= nil then
+        neighbor_type = key[1]
+        neighbor_table = all_neighbors[neighbor_type]
+    else
+        key = {}
+        neighbor_type, neighbor_table = next(all_neighbors)
+        key[1] = neighbor_type
     end
 
-    return _next, index, current_entry
+    local unit_number = next(neighbor_table, key[2])
+    if unit_number == nil then
+        neighbor_type, neighbor_table = next(all_neighbors, neighbor_type)
+        if neighbor_type == nil then
+            return nil, nil
+        end
+        key[1] = neighbor_type
+        unit_number = next(neighbor_table)
+    end
+    key[2] = unit_number
+
+    if unit_number == nil then
+        return nil, nil
+    end
+
+    local entry = try_get(unit_number)
+    if entry then
+        return key, entry
+    else
+        return all_neighbors_iterator(all_neighbors, key)
+    end
+end
+
+--- Lazy iterator over all neighbors.
+--- @param entry Entry
+function Neighborhood.all(entry)
+    if not entry[NEIGHBORHOOD] then
+        return nothing
+    end
+
+    return all_neighbors_iterator, entry[NEIGHBORHOOD]
 end
 
 return Neighborhood
