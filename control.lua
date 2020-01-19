@@ -176,12 +176,10 @@ local function update_cycle()
     local next_entry = Register.next
     local count = 0
     local index = global.last_index
-    local current_entry
+    local current_entry = try_get_entry(index)
     local number_of_checks = global.updates_per_cycle
 
-    if index and register[index] then
-        current_entry = register[index] -- continue looping
-    else
+    if not current_entry then
         index, current_entry = next_entry() -- begin a new loop at the start (nil as a key returns the first pair)
     end
 
@@ -189,7 +187,7 @@ local function update_cycle()
         local _type = current_entry[TYPE]
         local updater = update_functions[_type]
         if updater ~= nil then
-            local delta_ticks = game.tick - current_entry[LAST_UPDATE]
+            local delta_ticks = current_tick - current_entry[LAST_UPDATE]
             updater(current_entry, delta_ticks)
             current_entry[LAST_UPDATE] = current_tick
         end
