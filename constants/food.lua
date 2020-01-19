@@ -23,7 +23,7 @@ Food.values = {
         fat = 1,
         carbohydrates = 10,
         proteins = 3,
-        healthiness = 7,
+        healthiness = 8,
         food_category = "alien-vegetable",
         taste_category = TASTE_NEUTRAL,
         taste_quality = 2,
@@ -66,6 +66,18 @@ Food.values = {
         luxury = 4,
         portion_size = 50,
         group = "eggplant"
+    },
+    ["fawoxylas"] = {
+        fat = 0.5,
+        carbohydrates = 3.5,
+        proteins = 3.3,
+        healthiness = 7,
+        food_category = "alien-fungus",
+        taste_category = TASTE_UMAMI,
+        taste_quality = 6,
+        luxury = 6,
+        portion_size = 50,
+        group = "fawoxylas"
     }
 }
 
