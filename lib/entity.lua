@@ -124,10 +124,42 @@ function Tirislib_Entity:add_loot(loot)
         if current_loot.item == loot.item and current_loot.probability == loot.probability then
             current_loot.count_min = (current_loot.count_min or 1) + (loot.count_min or 1)
             current_loot.count_max = (current_loot.count_max or 1) + (loot.count_max or 1)
+
+            return self
         end
     end
 
     table.insert(self.loot, loot)
+    return self
+end
+
+function Tirislib_Entity:add_mining_result(mining_result)
+    local minable = self.minable
+
+    if not minable then
+        return self -- silently do nothing
+    end
+
+    if not minable.results then
+        if minable.result then
+            -- convert to results table
+            minable.results = {{type = "item", name = minable.result, amount = minable.count or 1}}
+            minable.result = nil
+            minable.count = nil
+        else
+            minable.results = {}
+        end
+    end
+
+    for _, result in pairs(minable.results) do
+        if Tirislib_RecipeEntry.can_be_merged(result, mining_result) then
+            Tirislib_RecipeEntry.merge_results(result, mining_result)
+            return self
+        end
+    end
+
+    table.insert(minable.results, mining_result)
+
     return self
 end
 

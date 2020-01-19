@@ -19,6 +19,9 @@ local additional_prototype_data = {
     },
     ["eggplant"] = {
         sprite_variations = {name = "eggplant-pile", count = 5}
+    },
+    ["fawoxylas"] = {
+        sprite_variations = {name = "fawoxylas-pile", count = 4}
     }
 }
 
@@ -54,11 +57,11 @@ for food_name, food_details in pairs(Food.values) do
             {"food-category." .. food_details.food_category},
             {"food-group." .. food_details.group},
             {"taste-category." .. Types.taste_names[food_details.taste_category]},
-            {"color-scale." .. taste ,{"taste-scale." .. taste}},
+            {"color-scale." .. taste, {"taste-scale." .. taste}},
             {"description.sos-details", food_details.taste_quality},
-            {"color-scale." .. health ,{"health-scale." .. health}},
+            {"color-scale." .. health, {"health-scale." .. health}},
             {"description.sos-details", food_details.healthiness},
-            {"color-scale." .. luxury ,{"luxury-scale." .. luxury}},
+            {"color-scale." .. luxury, {"luxury-scale." .. luxury}},
             {"description.sos-details", food_details.luxury},
             food_details.fat,
             {"description.sos-details", percentage(food_details.fat, calories)},
@@ -98,3 +101,6 @@ Tirislib_RecipeGenerator.create_greenhouse_recipe("eggplant", 20):add_unlock("ni
 -- alien plants
 Tirislib_RecipeGenerator.create_agriculture_recipe("unnamed-fruit", 10)
 Tirislib_RecipeGenerator.create_greenhouse_recipe("unnamed-fruit", 20)
+
+Tirislib_RecipeGenerator.create_agriculture_recipe("fawoxylas", 10, {{type = "item", name = "tiriscefing-willow-wood", amount = 2}})
+Tirislib_RecipeGenerator.create_greenhouse_recipe("fawoxylas", 20, {{type = "item", name = "tiriscefing-willow-wood", amount = 3}})
