@@ -213,17 +213,17 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local happiness_factors = entry[HAPPINESS_FACTORS]
     local health = entry[HEALTH_SUMMANDS]
     local health_factors = entry[HEALTH_FACTORS]
-    local mental = entry[MENTAL_HEALTH_SUMMANDS]
-    local mental_factors = entry[MENTAL_HEALTH_FACTORS]
+    local sanity = entry[SANITY_SUMMANDS]
+    local sanity_factors = entry[SANITY_FACTORS]
 
     if hunger_satisfaction < 0.5 then
         happiness_factors[HAPPINESS_HUNGER] = 0.
         health_factors[HEALTH_HUNGER] = 0.
-        mental_factors[MENTAL_HEALTH_HUNGER] = 0.
+        sanity_factors[SANITY_HUNGER] = 0.
     else
         happiness_factors[HAPPINESS_HUNGER] = 1.
         health_factors[HEALTH_HUNGER] = 1.
-        mental_factors[MENTAL_HEALTH_HUNGER] = 1.
+        sanity_factors[SANITY_HUNGER] = 1.
     end
 
     -- handle the annoying edge case of no food at all
@@ -236,12 +236,12 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
         health[HEALTH_NUTRIENTS] = 0
         health[HEALTH_FOOD] = 0
 
-        mental[MENTAL_TASTE] = 0
-        mental[MENTAL_FAV_TASTE] = 0
-        mental[MENTAL_LEAST_FAV_TASTE] = 0
-        mental[MENTAL_SINGLE_FOOD] = 0
-        mental[MENTAL_NO_VARIETY] = 0
-        mental[MENTAL_JUST_NEUTRAL] = 0
+        sanity[SANITY_TASTE] = 0
+        sanity[SANITY_FAV_TASTE] = 0
+        sanity[SANITY_LEAST_FAV_TASTE] = 0
+        sanity[SANITY_SINGLE_FOOD] = 0
+        sanity[SANITY_NO_VARIETY] = 0
+        sanity[SANITY_JUST_NEUTRAL] = 0
         return
     end
 
@@ -315,12 +315,12 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     health[HEALTH_NUTRIENTS] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
     health[HEALTH_FOOD] = intrinsic_healthiness * hunger_satisfaction
 
-    mental[MENTAL_TASTE] = taste_quality * hunger_satisfaction * 0.5
-    mental[MENTAL_FAV_TASTE] = (dominant_taste == favorite_taste) and 4 or 0
-    mental[MENTAL_LEAST_FAV_TASTE] = (dominant_taste == least_favored_taste) and -4 or 0
-    mental[MENTAL_SINGLE_FOOD] = (count == 1) and -3 or 0
-    mental[MENTAL_NO_VARIETY] = (taste_counts[dominant_taste] == count) and -3 or 0
-    mental[MENTAL_JUST_NEUTRAL] = (taste_counts[TASTE_NEUTRAL] == count) and -3 or 0
+    sanity[SANITY_TASTE] = taste_quality * hunger_satisfaction * 0.5
+    sanity[SANITY_FAV_TASTE] = (dominant_taste == favorite_taste) and 4 or 0
+    sanity[SANITY_LEAST_FAV_TASTE] = (dominant_taste == least_favored_taste) and -4 or 0
+    sanity[SANITY_SINGLE_FOOD] = (count == 1) and -3 or 0
+    sanity[SANITY_NO_VARIETY] = (taste_counts[dominant_taste] == count) and -3 or 0
+    sanity[SANITY_JUST_NEUTRAL] = (taste_counts[TASTE_NEUTRAL] == count) and -3 or 0
 end
 
 local castes = Caste.values

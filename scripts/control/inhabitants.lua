@@ -197,7 +197,7 @@ end
 
 local DEFAULT_HAPPINESS = 10
 local DEFAULT_HEALTH = 10
-local DEFAULT_MENTAL_HEALTH = 10
+local DEFAULT_SANITY = 10
 
 --- Tries to add the specified amount of inhabitants to the house-entry.
 --- Returns the number of inhabitants that were added.
@@ -205,8 +205,8 @@ local DEFAULT_MENTAL_HEALTH = 10
 --- @param count integer
 --- @param happiness number
 --- @param health number
---- @param mental_health number
-function Inhabitants.try_add_to_house(entry, count, happiness, health, mental_health)
+--- @param sanity number
+function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
     local count_moving_in = min(count, get_free_capacity(entry))
 
     if count_moving_in == 0 then
@@ -221,11 +221,11 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, mental_he
 
     happiness = happiness or DEFAULT_HAPPINESS
     health = health or DEFAULT_HEALTH
-    mental_health = mental_health or DEFAULT_MENTAL_HEALTH
+    sanity = sanity or DEFAULT_SANITY
 
     entry[HAPPINESS] = weighted_average(entry[HAPPINESS], inhabitants, happiness, count_moving_in)
     entry[HEALTH] = weighted_average(entry[HEALTH], inhabitants, health, count_moving_in)
-    entry[MENTAL_HEALTH] = weighted_average(entry[MENTAL_HEALTH], inhabitants, mental_health, count_moving_in)
+    entry[SANITY] = weighted_average(entry[SANITY], inhabitants, sanity, count_moving_in)
     entry[INHABITANTS] = inhabitants + count_moving_in
 
     population[caste_id] = population[caste_id] + count_moving_in
@@ -301,8 +301,8 @@ local function update_health(target, current, delta_ticks)
     return current + (target - current) * (1 - 0.9999 ^ delta_ticks)
 end
 
---- Reduce the difference between nominal and current mental health. (~98% after 20 minutes.)
-local function update_mental_health(target, current, delta_ticks)
+--- Reduce the difference between nominal and current sanity. (~98% after 20 minutes.)
+local function update_sanity(target, current, delta_ticks)
     return current + (target - current) * (1 - 0.99995 ^ delta_ticks)
 end
 
@@ -317,18 +317,21 @@ function Inhabitants.update_house(entry, delta_ticks)
     local caste_id = entry[TYPE]
     local caste_values = castes[caste_id]
 
+    local old_happiness = entry[HAPPINESS]
     local happiness_summands = entry[HAPPINESS_SUMMANDS]
     local happiness_factors = entry[HAPPINESS_FACTORS]
 
+    local old_health = entry[HEALTH]
     local health_summands = entry[HEALTH_SUMMANDS]
     local health_factors = entry[HEALTH_FACTORS]
 
-    local mental_health_summands = entry[MENTAL_HEALTH_SUMMANDS]
-    local mental_health_factors = entry[MENTAL_HEALTH_FACTORS]
+    local old_sanity = entry[SANITY]
+    local sanity_summands = entry[SANITY_SUMMANDS]
+    local sanity_factors = entry[SANITY_FACTORS]
 
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
-    evaluate_housing(entry, happiness_summands, mental_health_summands)
+    evaluate_housing(entry, happiness_summands, sanity_summands)
 
     if has_power(entry) then
         happiness_summands[HAPPINESS_POWER] = caste_values.power_bonus
@@ -344,15 +347,14 @@ function Inhabitants.update_house(entry, delta_ticks)
     happiness_summands[HAPPINESS_FEAR] = fear_malus
     if fear_malus > 5 then
         health_summands[HEALTH_FEAR] = fear_malus / 2
-        mental_health_summands[MENTAL_FEAR] = fear_malus / 2
+        sanity_summands[SANITY_FEAR] = fear_malus / 2
     else
         health_summands[HEALTH_FEAR] = 0
-        mental_health_summands[MENTAL_FEAR] = 0
+        sanity_summands[SANITY_FEAR] = 0
     end
 
     -- update happiness
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)
-    local old_happiness = entry[HAPPINESS]
     local new_happiness = update_happiness(nominal_happiness, entry[HAPPINESS], delta_ticks)
     entry[HAPPINESS] = new_happiness
 
@@ -364,11 +366,11 @@ function Inhabitants.update_house(entry, delta_ticks)
 
     -- update health
     local nominal_health = get_nominal_value(health_summands, health_factors)
-    entry[HEALTH] = update_health(nominal_health, entry[HEALTH], delta_ticks)
+    entry[HEALTH] = update_health(nominal_health, old_health, delta_ticks)
 
-    -- update mental health
-    local nominal_mental_health = get_nominal_value(mental_health_summands, mental_health_factors)
-    entry[MENTAL_HEALTH] = update_mental_health(nominal_mental_health, entry[MENTAL_HEALTH], delta_ticks)
+    -- update sanity
+    local nominal_sanity = get_nominal_value(sanity_summands, sanity_factors)
+    entry[SANITY] = update_sanity(nominal_sanity, old_sanity, delta_ticks)
     -- TODO diseases
 
     -- check if the caste actually produces ideas
@@ -412,8 +414,8 @@ function Inhabitants.get_nominal_health(entry)
     return get_nominal_value(entry[HEALTH_SUMMANDS], entry[HEALTH_FACTORS])
 end
 
-function Inhabitants.get_nominal_mental_health(entry)
-    return get_nominal_value(entry[MENTAL_HEALTH_SUMMANDS], entry[MENTAL_HEALTH_FACTORS])
+function Inhabitants.get_nominal_sanity(entry)
+    return get_nominal_value(entry[SANITY_SUMMANDS], entry[SANITY_FACTORS])
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -429,7 +431,7 @@ function Inhabitants.try_resettle(entry, unit_number)
     local to_resettle = entry[INHABITANTS]
     for current_unit_number, current_entry in Register.all_of_type(entry[TYPE]) do
         if current_unit_number ~= unit_number then
-            to_resettle = to_resettle - try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[MENTAL_HEALTH])
+            to_resettle = to_resettle - try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[SANITY])
 
             if to_resettle == 0 then
                 break
@@ -480,9 +482,9 @@ function Inhabitants.add_inhabitants_data(entry)
     entry[HEALTH_SUMMANDS] = Tirislib_Tables.new_array(Types.health_summands_count, 0.)
     entry[HEALTH_FACTORS] = Tirislib_Tables.new_array(Types.health_factors_count, 1.)
 
-    entry[MENTAL_HEALTH] = 0
-    entry[MENTAL_HEALTH_SUMMANDS] = Tirislib_Tables.new_array(Types.mental_summands_count, 0.)
-    entry[MENTAL_HEALTH_FACTORS] = Tirislib_Tables.new_array(Types.mental_factors_count, 1.)
+    entry[SANITY] = 0
+    entry[SANITY_SUMMANDS] = Tirislib_Tables.new_array(Types.sanity_summands_count, 0.)
+    entry[SANITY_FACTORS] = Tirislib_Tables.new_array(Types.sanity_factors_count, 1.)
 
     entry[INHABITANTS] = 0
     entry[TREND] = 0

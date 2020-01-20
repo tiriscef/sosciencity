@@ -555,9 +555,9 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
     set_datalist_value(
         general_list,
-        "mental-health",
+        "sanity",
         (inhabitants > 0) and
-            get_convergence_localised_string(entry[MENTAL_HEALTH], Inhabitants.get_nominal_mental_health(entry)) or
+            get_convergence_localised_string(entry[SANITY], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -594,7 +594,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
     add_kv_pair(data_list, "health", {"sosciencity-gui.health"})
-    add_kv_pair(data_list, "mental-health", {"sosciencity-gui.mental-health"})
+    add_kv_pair(data_list, "sanity", {"sosciencity-gui.sanity"})
     add_kv_pair(data_list, "effective-population", {"sosciencity-gui.effective-population"})
     add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
     add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
@@ -633,12 +633,12 @@ local function update_housing_factor_tab(tabbed_pane, entry)
         entry[HEALTH_FACTORS]
     )
 
-    local mental_list = content_flow["mental-health"]
+    local sanity_list = content_flow["sanity"]
     update_operand_entries(
-        mental_list,
-        Inhabitants.get_nominal_mental_health(entry),
-        entry[MENTAL_HEALTH_SUMMANDS],
-        entry[MENTAL_HEALTH_FACTORS]
+        sanity_list,
+        Inhabitants.get_nominal_sanity(entry),
+        entry[SANITY_SUMMANDS],
+        entry[SANITY_FACTORS]
     )
 end
 
@@ -669,14 +669,14 @@ local function add_housing_factor_tab(tabbed_pane, entry)
 
     create_separator_line(flow, "line2")
 
-    local mental_list = create_data_list(flow, "mental-health")
+    local sanity_list = create_data_list(flow, "sanity")
     create_operand_entries(
-        mental_list,
-        {"sosciencity-gui.mental-health"},
-        "mental-summand.",
-        Types.mental_summands_count,
-        "mental-factor.",
-        Types.mental_factors_count
+        sanity_list,
+        {"sosciencity-gui.sanity"},
+        "sanity-summand.",
+        Types.sanity_summands_count,
+        "sanity-factor.",
+        Types.sanity_factors_count
     )
 
     -- call the update function to set the values

@@ -35,7 +35,7 @@ pcall(require, "__debugadapter__/debugadapter.lua")
         ["inhabitants"]: int
         ["happiness"]: float
         ["healthiness"]: float
-        ["mental_healthiness"]: float
+        ["sanity"]: float
 
     neighborhood: table
         [entity type]: table of (unit_number, entity) pairs
