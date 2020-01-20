@@ -100,8 +100,10 @@ Types.happiness_summands_count = 9
 --<< happiness factors >>
 HAPPINESS_NOT_ENOUGH_FOOD_VARIETY = 1
 HAPPINESS_HUNGER = 2
+HAPPINESS_HEALTH = 3
+HAPPINESS_SANITY = 4
 
-Types.happiness_factors_count = 2
+Types.happiness_factors_count = 4
 
 --<< health summands >>
 HEALTH_NUTRIENTS = 1

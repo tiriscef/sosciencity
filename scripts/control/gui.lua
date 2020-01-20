@@ -45,7 +45,7 @@ local function get_comfort_localised_string(comfort)
 end
 
 local function get_caste_localised_string(caste_id)
-    return {"technology-name." .. castes[caste_id].name .. "-caste"}
+    return {"caste-name." .. castes[caste_id].name}
 end
 
 local function get_convergence_localised_string(current, target)
@@ -241,7 +241,7 @@ local function create_caste_sprite(container, caste_id, size)
         type = "sprite",
         name = "caste-sprite",
         sprite = "technology/" .. caste_name .. "-caste",
-        tooltip = {"technology-name." .. caste_name .. "-caste"}
+        tooltip = {"caste-name." .. caste_name}
     }
     local style = sprite.style
     style.height = size
@@ -462,7 +462,7 @@ local function add_caste_chooser_tab(tabbed_pane, details)
                 flow.add {
                 type = "button",
                 name = Gui.UNIQUE_PREFIX .. caste_name,
-                caption = {"technology-name." .. caste_name .. "-caste"},
+                caption = {"caste-name." .. caste_name},
                 tooltip = {"sosciencity-gui.move-in", caste_name},
                 mouse_button_filter = {"left"}
             }
@@ -556,8 +556,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and
-            get_convergence_localised_string(entry[SANITY], Inhabitants.get_nominal_sanity(entry)) or
+        (inhabitants > 0) and get_convergence_localised_string(entry[SANITY], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -693,7 +692,7 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
     create_caste_sprite(flow, caste_id, 128)
 
     local caste_data = create_data_list(flow, "caste-infos")
-    add_kv_pair(caste_data, "caste-name", {"sosciencity-gui.name"}, {"technology-name." .. caste.name .. "-caste"})
+    add_kv_pair(caste_data, "caste-name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
     add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
     add_kv_pair(
         caste_data,

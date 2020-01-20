@@ -321,13 +321,13 @@ function Inhabitants.update_house(entry, delta_ticks)
     local happiness_summands = entry[HAPPINESS_SUMMANDS]
     local happiness_factors = entry[HAPPINESS_FACTORS]
 
-    local old_health = entry[HEALTH]
     local health_summands = entry[HEALTH_SUMMANDS]
     local health_factors = entry[HEALTH_FACTORS]
 
-    local old_sanity = entry[SANITY]
     local sanity_summands = entry[SANITY_SUMMANDS]
     local sanity_factors = entry[SANITY_FACTORS]
+
+    local inhabitants = entry[INHABITANTS]
 
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
@@ -353,24 +353,29 @@ function Inhabitants.update_house(entry, delta_ticks)
         sanity_summands[SANITY_FEAR] = 0
     end
 
+    -- update health
+    local nominal_health = get_nominal_value(health_summands, health_factors)
+    local new_health = update_health(nominal_health, entry[HEALTH], delta_ticks)
+    entry[HEALTH] = new_health
+
+    happiness_factors[HAPPINESS_HEALTH] = (inhabitants > 0) and (new_health - 10) / 20. + 1 or 1
+
+    -- update sanity
+    local nominal_sanity = get_nominal_value(sanity_summands, sanity_factors)
+    local new_sanity = update_sanity(nominal_sanity, entry[SANITY], delta_ticks)
+    entry[SANITY] = new_sanity
+
+    happiness_factors[HAPPINESS_SANITY] = (inhabitants > 0) and (new_sanity - 10) / 15. + 1 or 1
+
     -- update happiness
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)
     local new_happiness = update_happiness(nominal_happiness, entry[HAPPINESS], delta_ticks)
     entry[HAPPINESS] = new_happiness
 
     -- update effective population because the happiness has changed (most likely)
-    local inhabitants = entry[INHABITANTS]
     effective_population[caste_id] =
         effective_population[caste_id] - (inhabitants * get_effective_population_multiplier(old_happiness)) +
         (inhabitants * get_effective_population_multiplier(new_happiness))
-
-    -- update health
-    local nominal_health = get_nominal_value(health_summands, health_factors)
-    entry[HEALTH] = update_health(nominal_health, old_health, delta_ticks)
-
-    -- update sanity
-    local nominal_sanity = get_nominal_value(sanity_summands, sanity_factors)
-    entry[SANITY] = update_sanity(nominal_sanity, old_sanity, delta_ticks)
     -- TODO diseases
 
     -- check if the caste actually produces ideas
