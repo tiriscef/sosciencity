@@ -36,7 +36,7 @@ for house_name, house in pairs(Housing.houses) do
             house.room_count,
             {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
             {"description.sos-details", house.comfort},
-            {"technology-name." .. Caste(house.caste).name .. "-caste"}
+            {"caste-name." .. Caste(house.caste).name}
         }
     }
 

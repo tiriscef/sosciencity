@@ -27,7 +27,7 @@ function Communication.caste_allowed_in(entry, caste_id)
         {
             "flying-text.set-caste",
             "[img=technology/" .. caste.tech_name .. "]",
-            {"technology-name." .. caste.name .. "-caste"}
+            {"caste-name." .. caste.name}
         }
     )
 end
