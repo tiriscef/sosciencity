@@ -34,10 +34,10 @@ end
 
 --- Evaluates the effect of the housing on its inhabitants.
 --- @param entry Entry
-function Housing.evaluate(entry, happiness_summands, mental_summands)
+function Housing.evaluate(entry, happiness_summands, sanity_summands)
     local housing = get_housing(entry)
     happiness_summands[HAPPINESS_HOUSING] = housing.comfort
-    mental_summands[MENTAL_HOUSING] = housing.comfort
+    sanity_summands[SANITY_HOUSING] = housing.comfort
 
     happiness_summands[HAPPINESS_SUITABLE_HOUSING] = (entry[TYPE] == housing.caste) and housing.caste_bonus or 0
 end

@@ -71,9 +71,9 @@ HAPPINESS_FACTORS = 11
 HEALTH = 12
 HEALTH_SUMMANDS = 13
 HEALTH_FACTORS = 14
-MENTAL_HEALTH = 15
-MENTAL_HEALTH_SUMMANDS = 16
-MENTAL_HEALTH_FACTORS = 17
+SANITY = 15
+SANITY_SUMMANDS = 16
+SANITY_FACTORS = 17
 TREND = 18
 IDEAS = 19
 GARBAGE = 20
@@ -115,22 +115,22 @@ HEALTH_HUNGER = 1
 
 Types.health_factors_count = 1
 
---<< mental health summands >>
-MENTAL_HOUSING = 1
-MENTAL_TASTE = 2
-MENTAL_FAV_TASTE = 3
-MENTAL_NO_VARIETY = 4
-MENTAL_LEAST_FAV_TASTE = 5
-MENTAL_JUST_NEUTRAL = 6
-MENTAL_SINGLE_FOOD = 7
-MENTAL_FEAR = 8
+--<< sanity summands >>
+SANITY_HOUSING = 1
+SANITY_TASTE = 2
+SANITY_FAV_TASTE = 3
+SANITY_NO_VARIETY = 4
+SANITY_LEAST_FAV_TASTE = 5
+SANITY_JUST_NEUTRAL = 6
+SANITY_SINGLE_FOOD = 7
+SANITY_FEAR = 8
 
-Types.mental_summands_count = 8
+Types.sanity_summands_count = 8
 
---<< mental health factors >>
-MENTAL_HEALTH_HUNGER = 1
+--<< sanity factors >>
+SANITY_HUNGER = 1
 
-Types.mental_factors_count = 1
+Types.sanity_factors_count = 1
 
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>
