@@ -102,6 +102,21 @@ function Tirislib_Technology:add_prerequisite(tech_name)
     return self
 end
 
+function Tirislib_Technology:remove_prerequisite(tech_name)
+    if not self.prerequisites then
+        -- nothing to do
+        return self
+    end
+
+    for index, prerequisite in pairs(self.prerequisites) do
+        if prerequisite == tech_name then
+            self.prerequisites[index] = nil
+        end
+    end
+
+    return self
+end
+
 local meta = {}
 
 function meta:__call(name)

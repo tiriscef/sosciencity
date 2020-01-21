@@ -15,19 +15,7 @@ recipe:add_unlock() --TODO tech
 local pipe_pictures = {
     north = Tirislib_Entity.get_empty_sprite(),
     east = Tirislib_Entity.get_empty_sprite(),
-    south = {
-        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-S.png",
-        width = 44,
-        height = 31,
-        shift = util.by_pixel(0, -31.5),
-        hr_version = {
-            filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-S.png",
-            width = 88,
-            height = 61,
-            shift = util.by_pixel(0, -31.25),
-            scale = 0.5
-        }
-    },
+    south = Tirislib_Entity.get_south_pipe_picture(),
     west = Tirislib_Entity.get_empty_sprite()
 }
 

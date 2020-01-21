@@ -97,12 +97,12 @@ end
 
 function Tirislib_Entity.get_south_pipe_picture()
     return {
-        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-S.png",
+        filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-S.png",
         width = 44,
         height = 31,
         shift = util.by_pixel(0, -31.5),
         hr_version = {
-            filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-S.png",
+            filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-S.png",
             width = 88,
             height = 61,
             shift = util.by_pixel(0, -31.25),
@@ -113,14 +113,14 @@ end
 
 function Tirislib_Entity.get_east_pipe_picture()
     return {
-        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-E.png",
+        filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-E.png",
         priority = "extra-high",
         width = 20,
         height = 38,
         shift = util.by_pixel(-25, 1),
         hr_version =
         {
-          filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-E.png",
+          filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-E.png",
           priority = "extra-high",
           width = 42,
           height = 76,
@@ -132,14 +132,14 @@ end
 
 function Tirislib_Entity.get_west_pipe_picture()
     return {
-        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-W.png",
+        filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-W.png",
         priority = "extra-high",
         width = 19,
         height = 37,
         shift = util.by_pixel(25.5, 1.5),
         hr_version =
         {
-          filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-W.png",
+          filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-W.png",
           priority = "extra-high",
           width = 39,
           height = 73,
