@@ -505,10 +505,25 @@ function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name)
         replace_ingredient(self, ingredient_name, replacement_name)
     else
         if self:has_normal_difficulty() then
-            replace_ingredient(self.expensive, ingredient_name, replacement_name)
+            replace_ingredient(self.normal, ingredient_name, replacement_name)
         end
         if self:has_expensive_difficulty() then
-            replace_ingredient(self.normal, ingredient_name, replacement_name)
+            replace_ingredient(self.expensive, ingredient_name, replacement_name)
+        end
+    end
+
+    return self
+end
+
+function Tirislib_Recipe:clear_ingredients()
+    if not self:has_difficulties() then
+        self.ingredients = {}
+    else
+        if self:has_normal_difficulty() then
+            self.normal.ingredients = {}
+        end
+        if self:has_expensive_difficulty() then
+            self.expensive.ingredients = {}
         end
     end
 
