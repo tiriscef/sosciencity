@@ -13,8 +13,8 @@ local recipe = Tirislib_RecipeGenerator.create_recipe("greenhouse")
 recipe:add_unlock() --TODO tech
 
 local pipe_pictures = {
-    north = Tirislib_Entity.get_empty_picture(),
-    east = Tirislib_Entity.get_empty_picture(),
+    north = Tirislib_Entity.get_empty_sprite(),
+    east = Tirislib_Entity.get_empty_sprite(),
     south = {
         filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-S.png",
         width = 44,
@@ -28,7 +28,7 @@ local pipe_pictures = {
             scale = 0.5
         }
     },
-    west = Tirislib_Entity.get_empty_picture()
+    west = Tirislib_Entity.get_empty_sprite()
 }
 
 Tirislib_Entity.create {

@@ -16,5 +16,9 @@ Buildings = {
     ["test-water-distributer"] = {
         type = TYPE_WATER_DISTRIBUTER,
         range = 42
+    },
+    ["groundwater-tower"] = {
+        type = TYPE_GROUNDWATER_DISTRIBUTER,
+        range = 40
     }
 }

@@ -1,4 +1,4 @@
-Diet = {}
+Consumption = {}
 
 local food_values = Food.values
 local log_item = Communication.log_item
@@ -326,7 +326,7 @@ end
 local castes = Caste.values
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
-function Diet.evaluate(entry, delta_ticks)
+function Consumption.evaluate_diet(entry, delta_ticks)
     local caste = castes[entry[TYPE]]
     local inventories = get_food_inventories(entry)
     local diet, food_count = get_diet(inventories)
@@ -340,4 +340,8 @@ function Diet.evaluate(entry, delta_ticks)
     add_diet_effects(entry, diet, caste, food_count, hunger_satisfaction)
 end
 
-return Diet
+function Consumption.evaluate_water(entry, delta_ticks)
+
+end
+
+return Consumption

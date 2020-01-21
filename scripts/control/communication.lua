@@ -56,6 +56,7 @@ local highlight_alpha = 0.2
 local highlight_colors = {
     [TYPE_HOSPITAL] = {r = 0.8, g = 0.1, b = 0.1, a = 1},
     [TYPE_WATER_DISTRIBUTER] = {r = 0, g = 0.8, b = 1, a = 1},
+    [TYPE_GROUNDWATER_DISTRIBUTER] = {r = 0, g = 0.8, b = 1, a = 1},
     [TYPE_MARKET] = {r = 1, g = 0.45, b = 0, a = 1},
     [TYPE_DUMPSTER] = {r = 0.8, g = 0.8, b = 0.8, a = 1}
 }

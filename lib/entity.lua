@@ -72,10 +72,18 @@ function Tirislib_Entity:set_size(width, height)
     return self
 end
 
-function Tirislib_Entity.get_empty_picture()
+function Tirislib_Entity.get_empty_sprite()
     return {
         filename = "__sosciencity__/graphics/empty.png",
         size = 1
+    }
+end
+
+function Tirislib_Entity.get_empty_animation()
+    return {
+        filename = "__sosciencity__/graphics/empty.png",
+        size = 1,
+        frame_count = 1
     }
 end
 
@@ -100,6 +108,51 @@ function Tirislib_Entity.get_south_pipe_picture()
             shift = util.by_pixel(0, -31.25),
             scale = 0.5
         }
+    }
+end
+
+function Tirislib_Entity.get_east_pipe_picture()
+    return {
+        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-E.png",
+        priority = "extra-high",
+        width = 20,
+        height = 38,
+        shift = util.by_pixel(-25, 1),
+        hr_version =
+        {
+          filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-E.png",
+          priority = "extra-high",
+          width = 42,
+          height = 76,
+          shift = util.by_pixel(-24.5, 1),
+          scale = 0.5
+        }
+      }
+end
+
+function Tirislib_Entity.get_west_pipe_picture()
+    return {
+        filename = "__base__/graphics/entity/assembling-machine-1/assembling-machine-1-pipe-W.png",
+        priority = "extra-high",
+        width = 19,
+        height = 37,
+        shift = util.by_pixel(25.5, 1.5),
+        hr_version =
+        {
+          filename = "__base__/graphics/entity/assembling-machine-1/hr-assembling-machine-1-pipe-W.png",
+          priority = "extra-high",
+          width = 39,
+          height = 73,
+          shift = util.by_pixel(25.75, 1.25),
+          scale = 0.5
+        }
+      }
+end
+
+function Tirislib_Entity.get_standard_impact_sound()
+    return {
+        filename = "__base__/sound/car-metal-impact.ogg",
+        volume = 0.65
     }
 end
 

@@ -40,7 +40,7 @@ function Tirislib_Fluid.pairs()
     return _next, index, value
 end
 
-function Tirislib_Fluid:create(prototype)
+function Tirislib_Fluid.create(prototype)
     if not prototype.type then
         prototype.type = "fluid"
     end
