@@ -25,7 +25,8 @@ Neighborhood.entity_types_aware_of_neighborhood = {
     [TYPE_EMBER] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
     [TYPE_FOUNDRY] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
     [TYPE_GLEAM] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_AURORA] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}}
+    [TYPE_AURORA] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
+    [TYPE_GROUNDWATER_DISTRIBUTER] = {active_types = {TYPE_GROUNDWATER_DISTRIBUTER}}
 }
 local entity_types_aware_of_neighborhood = Neighborhood.entity_types_aware_of_neighborhood
 
@@ -222,6 +223,27 @@ function Neighborhood.all(entry)
     end
 
     return all_neighbors_iterator, entry[NEIGHBORHOOD]
+end
+
+function Neighborhood.get_neighbor_count(entry, _type)
+    if not entry[NEIGHBORHOOD] or not entry[NEIGHBORHOOD][_type] then
+        return 0
+    end
+
+    local neighbors = entry[NEIGHBORHOOD][_type]
+    local count = 0
+
+    for unit_number in pairs(neighbors) do
+        local neighbor_entry = try_get(unit_number)
+
+        if neighbor_entry and neighbor_entry[TYPE] == _type then
+            count = count + 1
+        else
+            neighbors[unit_number] = nil
+        end
+    end
+
+    return count
 end
 
 return Neighborhood

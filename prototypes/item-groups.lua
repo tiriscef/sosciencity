@@ -69,6 +69,12 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-drinking-water",
+        group = "sosciencity",
+        order = "faa"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-garbage",
         group = "sosciencity",
         order = "zaa"

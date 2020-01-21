@@ -68,6 +68,7 @@ require("constants.types")
 require("constants.food")
 require("constants.housing")
 require("constants.buildings")
+require("constants.drinking-water")
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
@@ -87,7 +88,7 @@ local Subentities = require("scripts.control.subentities")
 local Neighborhood = require("scripts.control.neighborhood")
 local Communication = require("scripts.control.communication")
 local Inventories = require("scripts.control.inventories")
-local Diet = require("scripts.control.diet")
+local Consumption = require("scripts.control.consumption")
 local Inhabitants = require("scripts.control.inhabitants")
 local Gui = require("scripts.control.gui")
 
@@ -123,6 +124,7 @@ local update_details_view = Gui.update_details_view
 
 local replace = Replacer.replace
 
+local log_fluid = Communication.log_fluid
 local create_mouseover_highlights = Communication.create_mouseover_highlights
 local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 
@@ -151,6 +153,18 @@ local function update_entity_with_beacon(entry)
     set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
+local function update_groundwater_distributer(entry, delta_ticks)
+    local near_count = Neighborhood.get_neighbor_count(entry, TYPE_GROUNDWATER_DISTRIBUTER) + 1
+
+    local groundwater_volume = (delta_ticks * 2) / near_count
+
+    local inserted = entry[ENTITY].insert_fluid {
+        name = "groundwater",
+        amount = groundwater_volume
+    }
+    log_fluid("groundwater", inserted)
+end
+
 local update_functions = {
     [TYPE_CLOCKWORK] = Inhabitants.update_house,
     [TYPE_EMBER] = Inhabitants.update_house,
@@ -164,7 +178,8 @@ local update_functions = {
     [TYPE_ROCKET_SILO] = update_entity_with_beacon,
     [TYPE_FARM] = update_entity_with_beacon,
     [TYPE_MINING_DRILL] = update_entity_with_beacon,
-    [TYPE_ORANGERY] = update_entity_with_beacon
+    [TYPE_ORANGERY] = update_entity_with_beacon,
+    [TYPE_GROUNDWATER_DISTRIBUTER] = update_groundwater_distributer
 }
 
 ---------------------------------------------------------------------------------------------------

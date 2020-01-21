@@ -13,10 +13,10 @@ local recipe = Tirislib_RecipeGenerator.create_recipe("farm")
 recipe:add_unlock() --TODO tech
 
 local pipe_pictures = {
-    north = Tirislib_Entity.get_empty_picture(),
-    east = Tirislib_Entity.get_empty_picture(),
+    north = Tirislib_Entity.get_empty_sprite(),
+    east = Tirislib_Entity.get_empty_sprite(),
     south = Tirislib_Entity.get_south_pipe_picture(),
-    west = Tirislib_Entity.get_empty_picture()
+    west = Tirislib_Entity.get_empty_sprite()
 }
 
 Tirislib_Entity.create {

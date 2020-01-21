@@ -16,9 +16,10 @@ TYPE_PLASMA = 8
 
 TYPE_MARKET = 101
 TYPE_WATER_DISTRIBUTER = 102
-TYPE_HOSPITAL = 103
-TYPE_PHARMACY = 104
-TYPE_DUMPSTER = 105
+TYPE_GROUNDWATER_DISTRIBUTER = 103
+TYPE_HOSPITAL = 104
+TYPE_PHARMACY = 105
+TYPE_DUMPSTER = 106
 
 TYPE_CLUB = 201
 TYPE_SCHOOL = 202
@@ -100,10 +101,11 @@ Types.happiness_summands_count = 9
 --<< happiness factors >>
 HAPPINESS_NOT_ENOUGH_FOOD_VARIETY = 1
 HAPPINESS_HUNGER = 2
-HAPPINESS_HEALTH = 3
-HAPPINESS_SANITY = 4
+HAPPINESS_THRIST = 3
+HAPPINESS_HEALTH = 4
+HAPPINESS_SANITY = 5
 
-Types.happiness_factors_count = 4
+Types.happiness_factors_count = 5
 
 --<< health summands >>
 HEALTH_NUTRIENTS = 1
@@ -114,8 +116,9 @@ Types.health_summands_count = 3
 
 --<< health factors >>
 HEALTH_HUNGER = 1
+HEALTH_WATER = 2
 
-Types.health_factors_count = 1
+Types.health_factors_count = 2
 
 --<< sanity summands >>
 SANITY_HOUSING = 1
@@ -131,8 +134,9 @@ Types.sanity_summands_count = 8
 
 --<< sanity factors >>
 SANITY_HUNGER = 1
+SANITY_THIRST = 2
 
-Types.sanity_factors_count = 1
+Types.sanity_factors_count = 2
 
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>

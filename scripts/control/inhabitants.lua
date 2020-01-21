@@ -11,7 +11,7 @@ local castes = Caste.values
 local emigration_coefficient = Caste.emigration_coefficient
 local garbage_coefficient = Caste.garbage_coefficient
 
-local evaluate_diet = Diet.evaluate
+local evaluate_diet = Consumption.evaluate_diet
 
 local try_output_ideas = Inventories.try_output_ideas
 local produce_garbage = Inventories.produce_garbage
