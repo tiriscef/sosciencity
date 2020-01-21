@@ -98,8 +98,8 @@ local Gui = require("scripts.control.gui")
 -- local all the frequently called functions for miniscule performance gains
 
 local global
-local register
 local caste_bonuses
+local water_values = DrinkingWater.values
 
 local add_fear = Inhabitants.add_fear
 local ease_fear = Inhabitants.ease_fear
@@ -114,7 +114,7 @@ local is_inhabited = Types.is_inhabited
 local is_relevant_to_register = Types.is_relevant_to_register
 
 local try_get_entry = Register.try_get
-local remove_entry = Register.remove_entry
+local remove_entity = Register.remove_entity
 local add_to_register = Register.add
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
@@ -122,7 +122,7 @@ local update_caste_bonuses = Inhabitants.update_caste_bonuses
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 
-local replace = Replacer.replace
+--local replace = Replacer.replace
 
 local log_fluid = Communication.log_fluid
 local create_mouseover_highlights = Communication.create_mouseover_highlights
@@ -153,16 +153,36 @@ local function update_entity_with_beacon(entry)
     set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
 end
 
-local function update_groundwater_distributer(entry, delta_ticks)
-    local near_count = Neighborhood.get_neighbor_count(entry, TYPE_GROUNDWATER_DISTRIBUTER) + 1
+local function update_waterwell(entry, delta_ticks)
+    local near_count = Neighborhood.get_neighbor_count(entry, TYPE_WATERWELL) + 1
 
     local groundwater_volume = (delta_ticks * 2) / near_count
 
-    local inserted = entry[ENTITY].insert_fluid {
+    local inserted =
+        entry[ENTITY].insert_fluid {
         name = "groundwater",
         amount = groundwater_volume
     }
     log_fluid("groundwater", inserted)
+end
+
+local function update_water_distributer(entry)
+    local entity = entry[ENTITY]
+
+    -- determine and save the type of water that this distributer provides
+    -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
+    -- but needs to be checked often
+    for fluid_name, amount in pairs(entity.get_fluid_contents()) do
+        local water_value = water_values[fluid_name]
+
+        if amount > 100 and water_value then
+            entry[WATER_QUALITY] = water_value.health
+            entry[WATER_NAME] = fluid_name
+            return
+        end
+    end
+    entry[WATER_QUALITY] = 0
+    entry[WATER_NAME] = nil
 end
 
 local update_functions = {
@@ -179,7 +199,8 @@ local update_functions = {
     [TYPE_FARM] = update_entity_with_beacon,
     [TYPE_MINING_DRILL] = update_entity_with_beacon,
     [TYPE_ORANGERY] = update_entity_with_beacon,
-    [TYPE_GROUNDWATER_DISTRIBUTER] = update_groundwater_distributer
+    [TYPE_WATERWELL] = update_waterwell,
+    [TYPE_WATER_DISTRIBUTER] = update_water_distributer
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -236,7 +257,6 @@ end
 local function set_locals()
     global = _ENV.global
     caste_bonuses = global.caste_bonuses
-    register = global.register
 end
 
 local function init()
@@ -290,7 +310,7 @@ local function on_entity_removed(event)
         return
     end
 
-    Register.remove_entity(entity)
+    remove_entity(entity)
 end
 
 local function on_entity_died(event)
@@ -305,7 +325,7 @@ local function on_entity_died(event)
         add_fear()
     end
 
-    Register.remove_entity(entity)
+    remove_entity(entity)
 end
 
 local function on_entity_mined(event)
@@ -320,7 +340,7 @@ local function on_entity_mined(event)
         Inhabitants.try_resettle(entry, unit_number)
     end
 
-    Register.remove_entity(entity)
+    remove_entity(entity)
 end
 
 local function on_entity_settings_pasted(event)
