@@ -1,9 +1,17 @@
 Consumption = {}
 
+local sort_by_key = Tirislib_Tables.insertion_sort_by_key
+
 local food_values = Food.values
+local water_values = DrinkingWater.values
+
 local log_item = Communication.log_item
+local log_fluid = Communication.log_fluid
+
 local produce_garbage = Inventories.produce_garbage
-local max = math.max
+
+local all_neighbors_of_type = Neighborhood.all_of_type
+local get_neighbors_of_type = Neighborhood.get_by_type
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 
@@ -14,7 +22,7 @@ local function get_food_inventories(entry)
     local inventories = {entry[ENTITY].get_inventory(chest)}
     local i = 2
 
-    for _, market_entry in Neighborhood.all_of_type(entry, TYPE_MARKET) do
+    for _, market_entry in all_neighbors_of_type(entry, TYPE_MARKET) do
         inventories[i] = market_entry[ENTITY].get_inventory(chest)
         i = i + 1
     end
@@ -340,8 +348,42 @@ function Consumption.evaluate_diet(entry, delta_ticks)
     add_diet_effects(entry, diet, caste, food_count, hunger_satisfaction)
 end
 
-function Consumption.evaluate_water(entry, delta_ticks)
+local function consume_water(distributers, amount)
+    local to_consume = amount
+    local quality = 0
 
+    local i = 1
+    local distributer_count = #distributers
+
+    while to_consume > 0.000001 and i <= distributer_count do
+        local distributer = distributers[i]
+        local water_name = distributer[WATER_NAME]
+        local consumed = distributer[ENTITY].remove_fluid {name = water_name, amount = to_consume}
+        log_fluid(water_name, -consumed) -- problem: log rundet zahlen unter 1 ab
+        quality = quality + consumed * distributer[WATER_QUALITY]
+        to_consume = to_consume - consumed
+    end
+
+    return (amount - to_consume) / amount, quality / amount
+end
+
+function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
+    local water_to_consume = 0.0008 * entry[INHABITANTS] * delta_ticks -- 20 units per factorio day (25000 ticks)
+    if water_to_consume == 0 then
+        happiness_factors[HAPPINESS_THIRST] = 1
+        health_factors[HEALTH_WATER] = 1
+        sanity_factors[SANITY_THIRST] = 1
+        return
+    end
+
+    local distributers = get_neighbors_of_type(entry, TYPE_WATER_DISTRIBUTER)
+    sort_by_key(distributers, WATER_QUALITY)
+
+    local satisfaction, quality = consume_water(distributers, water_to_consume)
+
+    happiness_factors[HAPPINESS_THIRST] = satisfaction
+    health_factors[HEALTH_WATER] = quality * satisfaction
+    sanity_factors[SANITY_THIRST] = satisfaction
 end
 
 return Consumption

@@ -12,6 +12,7 @@ local emigration_coefficient = Caste.emigration_coefficient
 local garbage_coefficient = Caste.garbage_coefficient
 
 local evaluate_diet = Consumption.evaluate_diet
+local evaluate_water = Consumption.evaluate_water
 
 local try_output_ideas = Inventories.try_output_ideas
 local produce_garbage = Inventories.produce_garbage
@@ -332,6 +333,7 @@ function Inhabitants.update_house(entry, delta_ticks)
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
     evaluate_housing(entry, happiness_summands, sanity_summands)
+    evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
 
     if has_power(entry) then
         happiness_summands[HAPPINESS_POWER] = caste_values.power_bonus
@@ -436,7 +438,9 @@ function Inhabitants.try_resettle(entry, unit_number)
     local to_resettle = entry[INHABITANTS]
     for current_unit_number, current_entry in Register.all_of_type(entry[TYPE]) do
         if current_unit_number ~= unit_number then
-            to_resettle = to_resettle - try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[SANITY])
+            to_resettle =
+                to_resettle -
+                try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[SANITY])
 
             if to_resettle == 0 then
                 break

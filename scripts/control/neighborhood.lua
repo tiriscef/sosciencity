@@ -26,7 +26,7 @@ Neighborhood.entity_types_aware_of_neighborhood = {
     [TYPE_FOUNDRY] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
     [TYPE_GLEAM] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
     [TYPE_AURORA] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_GROUNDWATER_DISTRIBUTER] = {active_types = {TYPE_GROUNDWATER_DISTRIBUTER}}
+    [TYPE_WATERWELL] = {active_types = {TYPE_WATERWELL}}
 }
 local entity_types_aware_of_neighborhood = Neighborhood.entity_types_aware_of_neighborhood
 

@@ -154,3 +154,21 @@ function Tirislib_Tables.new_array(size, value)
 
     return ret
 end
+
+function Tirislib_Tables.insertion_sort_by_key(array, key)
+    local length = #array
+
+    for j = 2, length do
+        local current = array[j]
+        local current_value = array[j][key]
+        local i = j - 1
+
+        while i > 0 and array[i][key] < current_value do
+            array[i + 1] = array[i]
+            i = i - 1
+        end
+        array[i + 1] = current
+    end
+
+    return array
+end
