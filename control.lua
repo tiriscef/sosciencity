@@ -401,16 +401,17 @@ local function on_gui_closed(event)
 end
 
 local UNIQUE_PREFIX = Gui.UNIQUE_PREFIX -- greetings to LuziferSenpai
+local PREFIX_LENGTH = UNIQUE_PREFIX:len()
 local function on_gui_click(event)
     local gui_element = event.element
     local name = gui_element.name
 
     -- check if it's my gui with my prefix
-    if name:sub(1, UNIQUE_PREFIX:len()) ~= UNIQUE_PREFIX then
+    if name:sub(1, PREFIX_LENGTH) ~= UNIQUE_PREFIX then
         return
     end
     -- remove the prefix
-    name = name:sub(UNIQUE_PREFIX:len() + 1)
+    name = name:sub(PREFIX_LENGTH + 1)
 
     -- check Caste assignment buttons
     for caste_id, caste in pairs(Caste.values) do

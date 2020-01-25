@@ -21,10 +21,11 @@ for index, details in pairs(furniture_items) do
         stack_size = 100
     }
 
-    if details.sprite_variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/", details.sprite_variations)
+    local variations = details.sprite_variations
+    if variations then
+        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/" .. variations.name, variations.count)
 
-        if details.sprite_variations.include_icon then
+        if variations.include_icon then
             item_prototype:add_icon_to_sprite_variations()
         end
     end
