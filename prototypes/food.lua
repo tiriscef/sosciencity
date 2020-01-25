@@ -73,11 +73,11 @@ for food_name, food_details in pairs(Food.values) do
     }
 
     local details = additional_prototype_data[food_name] or {}
+    local variations = details.sprite_variations
+    if variations then
+        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/" .. variations.name, variations.count)
 
-    if details.sprite_variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/", details.sprite_variations)
-
-        if details.sprite_variations.include_icon then
+        if variations.include_icon then
             item_prototype:add_icon_to_sprite_variations()
         end
     end

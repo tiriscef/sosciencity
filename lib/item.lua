@@ -79,17 +79,17 @@ function Tirislib_Item:add_launch_product(product_prototype)
     return self
 end
 
-function Tirislib_Item:add_sprite_variations(size, path, variations)
+function Tirislib_Item:add_sprite_variations(size, path, count)
     if not self.pictures then
         self.pictures = {}
     end
 
-    for i = 1, variations.count do
+    for i = 1, count do
         table.insert(
             self.pictures,
             {
                 size = size,
-                filename = path .. variations.name .. "-" .. i .. ".png",
+                filename = path .. "-" .. i .. ".png",
                 scale = 16. / size
             }
         )
