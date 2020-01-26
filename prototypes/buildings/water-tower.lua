@@ -1,15 +1,15 @@
 Tirislib_Item.create {
     type = "item",
-    name = "groundwater-tower",
-    icon = "__sosciencity__/graphics/icon/groundwater-tower.png",
+    name = "water-tower",
+    icon = "__sosciencity__/graphics/icon/water-tower.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
-    place_result = "groundwater-tower",
+    place_result = "water-tower",
     stack_size = 10
 }
 
-Tirislib_RecipeGenerator.create_recipe("groundwater-tower")
+Tirislib_RecipeGenerator.create_recipe("water-tower")
 
 local pipe_pictures = {
     north = Tirislib_Entity.get_empty_sprite(),
@@ -20,11 +20,11 @@ local pipe_pictures = {
 
 Tirislib_Entity.create {
     type = "storage-tank",
-    name = "groundwater-tower",
-    icon = "__sosciencity__/graphics/icon/groundwater-tower.png",
+    name = "water-tower",
+    icon = "__sosciencity__/graphics/icon/water-tower.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "groundwater-tower"},
+    minable = {mining_time = 0.5, result = "water-tower"},
     max_health = 500,
     corpse = "medium-remnants", -- TODO
     two_direction_only = true,
@@ -44,13 +44,13 @@ Tirislib_Entity.create {
         picture = {
             sheets = {
                 {
-                    filename = "__sosciencity__/graphics/entity/groundwater-tower/groundwater-tower.png",
+                    filename = "__sosciencity__/graphics/entity/water-tower/water-tower.png",
                     width = 160,
                     height = 224,
                     frames = 1,
                     shift = {0, -2},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/groundwater-tower/groundwater-tower-hr.png",
+                        filename = "__sosciencity__/graphics/entity/water-tower/water-tower-hr.png",
                         width = 320,
                         height = 448,
                         frames = 1,
@@ -59,14 +59,14 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/groundwater-tower/groundwater-tower-shadowmap.png",
+                    filename = "__sosciencity__/graphics/entity/water-tower/water-tower-shadowmap.png",
                     width = 160,
                     height = 224,
                     frames = 1,
                     shift = {0, -2},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/groundwater-tower/groundwater-tower-shadowmap-hr.png",
+                        filename = "__sosciencity__/graphics/entity/water-tower/water-tower-shadowmap-hr.png",
                         width = 320,
                         height = 448,
                         frames = 1,
@@ -87,4 +87,4 @@ Tirislib_Entity.create {
     circuit_wire_connection_points = circuit_connector_definitions["storage-tank"].points,
     circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3)
+}:set_size(3, 3):copy_localisation_from_item()
