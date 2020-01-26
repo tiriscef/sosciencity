@@ -66,3 +66,5 @@ Tirislib_Recipe.create {
 
 Tirislib_RecipeGenerator.create_agriculture_recipe("pemtenn-cotton", 20)
 Tirislib_RecipeGenerator.create_greenhouse_recipe("pemtenn-cotton", 30)
+
+Tirislib_RecipeGenerator.create_arboretum_recipe("tiriscefing-willow-wood", 20)

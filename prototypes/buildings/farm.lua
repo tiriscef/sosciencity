@@ -39,14 +39,14 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-north.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 544,
                     height = 288,
                     shift = {0.0, 0.0},
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-north-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 1088,
                         height = 576,
                         scale = 0.5,
@@ -56,7 +56,7 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-north-shadowmap.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 544,
                     height = 288,
                     shift = {0.0, 0.0},
@@ -64,7 +64,7 @@ Tirislib_Entity.create {
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-north-shadowmap-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 1088,
                         height = 576,
                         scale = 0.5,
@@ -79,14 +79,14 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-east.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 288,
                     height = 544,
                     shift = {0.0, 0.0},
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-east-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 576,
                         height = 1088,
                         scale = 0.5,
@@ -96,7 +96,7 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-east-shadowmap.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 288,
                     height = 544,
                     shift = {0.0, 0.0},
@@ -104,7 +104,7 @@ Tirislib_Entity.create {
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-east-shadowmap-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 576,
                         height = 1088,
                         scale = 0.5,
@@ -119,14 +119,14 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-south.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 544,
                     height = 320,
                     shift = {0.0, -0.5},
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-south-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 1088,
                         height = 640,
                         scale = 0.5,
@@ -136,7 +136,7 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-south-shadowmap.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 544,
                     height = 320,
                     shift = {0.0, -0.5},
@@ -144,7 +144,7 @@ Tirislib_Entity.create {
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-south-shadowmap-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 1088,
                         height = 640,
                         scale = 0.5,
@@ -159,14 +159,14 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-west.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 288,
                     height = 576,
                     shift = {0.0, -0.5},
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-west-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 576,
                         height = 1152,
                         scale = 0.5,
@@ -176,7 +176,7 @@ Tirislib_Entity.create {
                 {
                     filename = "__sosciencity__/graphics/entity/farm/farm-west-shadowmap.png",
                     frame_count = 1,
-                    priority = "high",
+                    priority = "extra-high",
                     width = 288,
                     height = 576,
                     shift = {0.0, -0.5},
@@ -184,7 +184,7 @@ Tirislib_Entity.create {
                     hr_version = {
                         filename = "__sosciencity__/graphics/entity/farm/farm-west-shadowmap-hr.png",
                         frame_count = 1,
-                        priority = "high",
+                        priority = "extra-high",
                         width = 576,
                         height = 1152,
                         scale = 0.5,
@@ -221,7 +221,7 @@ Tirislib_Entity.create {
             production_type = "input"
         }
     }
-}:set_size(15, 7)
+}:set_size(15, 7):copy_localisation_from_item()
 
 Tirislib_Entity.create {
     type = "corpse",
@@ -292,4 +292,4 @@ Tirislib_Entity.create {
             }
         }
     }
-}:set_size(15, 7)
+}:set_size(15, 7):copy_localisation_from_item()

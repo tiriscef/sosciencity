@@ -216,6 +216,15 @@ function Tirislib_Entity:add_mining_result(mining_result)
     return self
 end
 
+function Tirislib_Entity:copy_localisation_from_item(item_name)
+    item_name = item_name or self.name
+
+    self.localised_name = {"item-name." .. item_name}
+    self.localised_description = {"item-description." .. item_name}
+
+    return self
+end
+
 local meta = {}
 
 function meta:__call(name)

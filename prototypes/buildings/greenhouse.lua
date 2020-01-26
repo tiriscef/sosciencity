@@ -127,7 +127,7 @@ Tirislib_Entity.create {
         },
         off_when_no_fluid_recipe = true
     }
-}:set_size(15, 15)
+}:set_size(15, 15):copy_localisation_from_item()
 
 Tirislib_Entity.create {
     type = "corpse",
