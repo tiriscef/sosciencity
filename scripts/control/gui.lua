@@ -539,7 +539,6 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         (entry[TREND] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
     )
 
-    local happiness = entry[HAPPINESS]
     set_datalist_value(
         general_list,
         "happiness",

@@ -138,7 +138,6 @@ function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
         name = housing_name,
         category = "crafting",
         enabled = (details.tech_level == 0),
-        energy_required = 0.5 * details.room_count,
         results = {
             {type = "item", name = housing_name, amount = 1}
         },
@@ -169,7 +168,6 @@ function Tirislib_RecipeGenerator.create_recipe(product_name, ingredients, addit
         name = product_name,
         category = "crafting",
         enabled = true,
-        energy_required = 2,
         results = {
             {type = "item", name = product_name, amount = 1}
         },
@@ -247,7 +245,7 @@ function Tirislib_RecipeGenerator.create_orangery_recipe(product_name, yield, in
         enabled = true,
         energy_required = Tirislib_RecipeGenerator.greenhouse_time,
         results = {
-            {type = "item", name = product_name, amount_min = 1, amount_max = yield}
+            {type = "item", name = product_name, amount_min = math.floor(yield / 2.), amount_max = yield}
         },
         subgroup = "sosciencity-orangery",
         show_amount_in_title = false,
@@ -271,7 +269,7 @@ function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, yield, i
         enabled = true,
         energy_required = Tirislib_RecipeGenerator.greenhouse_time,
         results = {
-            {type = "item", name = product_name, amount_min = 1, amount_max = yield}
+            {type = "item", name = product_name, amount_min = math.floor(yield / 2.), amount_max = yield}
         },
         subgroup = "sosciencity-arboretum",
         show_amount_in_title = false,
