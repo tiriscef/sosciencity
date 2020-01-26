@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "arboretum",
-    icon = "__sosciencity__/graphics/icon/note.png",
+    icon = "__sosciencity__/graphics/icon/arboretum.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -22,12 +22,12 @@ local pipe_pictures = {
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "arboretum",
-    icon = "__sosciencity__/graphics/icon/note.png",
+    icon = "__sosciencity__/graphics/icon/arboretum.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "arboretum"},
     max_health = 400,
-    corpse = "medium-remnants",
+    corpse = "arboretum-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
@@ -86,7 +86,7 @@ Tirislib_Entity.create {
         drain = "0W"
     },
     working_sound = {
-        sound = {filename = "__sosciencity__/sound/chainsaw.ogg", volume = 2},
+        sound = {filename = "__sosciencity__/sound/chainsaw.ogg", volume = 3},
         apparent_volume = 1.5
     },
     fluid_boxes = {
@@ -98,3 +98,34 @@ Tirislib_Entity.create {
         }
     }
 }:set_size(15, 15):copy_localisation_from_item()
+
+Tirislib_Entity.create {
+    type = "corpse",
+    name = "arboretum-remnants",
+    icon = "__sosciencity__/graphics/icon/arboretum.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "not-on-map"},
+    selectable_in_game = false,
+    time_before_removed = 60 * 60 * 15, -- 15 minutes
+    final_render_layer = "remnants",
+    subgroup = "remnants",
+    order = "dead-arboretum:(",
+    remove_on_tile_placement = false,
+    tile_width = 15,
+    tile_height = 7,
+    animation = {
+        filename = "__sosciencity__/graphics/entity/arboretum/arboretum-remnants.png",
+        direction_count = 1,
+        width = 544,
+        height = 576,
+        shift = {0.0, -1.0},
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/arboretum/arboretum-remnants-hr.png",
+            direction_count = 1,
+            width = 1088,
+            height = 1152,
+            shift = {0.0, -1.0},
+            scale = 0.5,
+        }
+    }
+}:set_size(15, 15)
