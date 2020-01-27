@@ -8,6 +8,7 @@ local add_inhabitants_data
 
 local add_subentities
 
+local get_entity_type = Types.get_entity_type
 local is_affected_by_clockwork = Types.is_affected_by_clockwork
 local is_inhabited = Types.is_inhabited
 
@@ -64,8 +65,8 @@ end
 --- Adds the given entity to the register. Optionally the type can be specified.
 --- @param entity Entity
 --- @param _type Type
-function Register.add_entity(entity, _type)
-    _type = _type or Types(entity)
+function Register.add(entity, _type)
+    _type = _type or get_entity_type(entity)
     local entry = new_entry(entity, _type)
 
     add_entry_to_register(entry, entity.unit_number)
@@ -79,7 +80,7 @@ function Register.add_entity(entity, _type)
 
     return entry
 end
-local add_entity = Register.add_entity
+local add_entity = Register.add
 
 --- Adds the given destination entity to the register with the same type as the source entry and copies the relevant entry data.
 --- @param source Entry
@@ -108,7 +109,7 @@ end
 function Register.remove_entity(entity, unit_number)
     unit_number = unit_number or entity.unit_number
     local entry = register[unit_number]
-    local entity_type = (entry and entry[TYPE]) or Types.get_entity_type(entity)
+    local entity_type = (entry and entry[TYPE]) or get_entity_type(entity)
 
     if entry then
         if Types.is_inhabited(entity_type) then
@@ -138,7 +139,7 @@ end
 -- -@param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
-    Register.add_entity(entry[ENTITY], new_type)
+    Register.add(entry[ENTITY], new_type)
     Gui.rebuild_details_view_for_entry(entry)
 end
 
@@ -226,7 +227,7 @@ function Register.init()
                 force = "player"
             }
         ) do
-            Register.add_entity(entity)
+            Register.add(entity)
         end
     end
 end
