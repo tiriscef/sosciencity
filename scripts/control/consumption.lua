@@ -358,6 +358,13 @@ local function consume_water(distributers, amount)
     while to_consume > 0.000001 and i <= distributer_count do
         local distributer = distributers[i]
         local water_name = distributer[WATER_NAME]
+
+        -- check if the distributer has water
+        if not water_name then
+            -- the distributers are sorted, so all the coming distributers won't have any water either
+            break
+        end
+
         local consumed = distributer[ENTITY].remove_fluid {name = water_name, amount = to_consume}
         log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[WATER_QUALITY]
