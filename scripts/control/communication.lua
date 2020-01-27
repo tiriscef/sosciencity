@@ -2,11 +2,20 @@
 -- Communication is very important in a relationship.
 Communication = {}
 
+-- local often used functions for smallish performance gains
 local global
-local item_statistics
+
 local fluid_statistics
+local fluid_consumption
+local fluid_production
+local item_statistics
+local item_consumption
+local item_production
+
 local highlights
 local castes = Caste.values
+
+local floor = math.floor
 
 function Communication.create_flying_text(entry, text)
     local entity = entry[ENTITY]
@@ -36,20 +45,50 @@ function Communication.people_resettled(entry, count)
     create_flying_text(entry, {"flying-text.resettled", count})
 end
 
+-- << production and consumption statistics >>
+-- we collect all the produced/consumed stuff and log them collectively
+-- this reduces the amount of API calls and avoids the problem that the statistics log only integer numbers
 function Communication.log_item(item, amount)
-    if item_statistics == nil then
-        item_statistics = game.forces.player.item_production_statistics
+    if amount > 0 then
+        item_production[item] = (item_production[item] or 0) + amount
+    else
+        item_consumption[item] = (item_consumption[item] or 0) - amount
     end
-
-    item_statistics.on_flow(item, amount)
 end
 
 function Communication.log_fluid(fluid, amount)
-    if fluid_statistics == nil then
+    if amount > 0 then
+        fluid_production[fluid] = (fluid_production[fluid] or 0) + amount
+    else
+        fluid_consumption[fluid] = (fluid_consumption[fluid] or 0) - amount
+    end
+end
+
+local function flush_log(list, statistic, multiplier)
+    for name, amount in pairs(list) do
+        local amount_to_log = floor(amount)
+
+        if amount_to_log > 0 then
+            statistic.on_flow(name, amount_to_log * multiplier)
+            list[name] = list[name] - amount_to_log
+
+            if list[name] == 0 then
+                list[name] = nil
+            end
+        end
+    end
+end
+
+local function flush_logs()
+    if item_statistics == nil then
+        item_statistics = game.forces.player.item_production_statistics
         fluid_statistics = game.forces.player.fluid_production_statistics
     end
 
-    fluid_statistics.on_flow(fluid, amount)
+    flush_log(item_consumption, item_statistics, -1)
+    flush_log(item_production, item_statistics, 1)
+    flush_log(fluid_consumption, fluid_statistics, -1)
+    flush_log(fluid_production, fluid_statistics, 1)
 end
 
 local highlight_alpha = 0.2
@@ -157,13 +196,28 @@ function Communication.remove_mouseover_highlights(player_id)
     global.mouseover_highlights[player_id] = nil
 end
 
+function Communication.update()
+    flush_logs()
+end
+
 local function set_locals()
     highlights = global.mouseover_highlights
+
+    fluid_consumption = global.fluid_consumption
+    fluid_production = global.fluid_production
+    item_consumption = global.item_consumption
+    item_production = global.item_production
 end
 
 function Communication.init()
     global = _ENV.global
     global.mouseover_highlights = {}
+
+    global.fluid_consumption = {}
+    global.fluid_production = {}
+    global.item_consumption = {}
+    global.item_production = {}
+
     set_locals()
 end
 

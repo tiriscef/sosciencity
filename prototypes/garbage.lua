@@ -12,4 +12,4 @@ Tirislib_Item.create {
     icon_size = 64,
     subgroup = "sosciencity-garbage",
     stack_size = 200
-}:add_sprite_variations(64, "__sosciencity__/graphics/icon/food-leftovers", 2)
+}:add_sprite_variations(64, "__sosciencity__/graphics/icon/food-leftovers", 3)
