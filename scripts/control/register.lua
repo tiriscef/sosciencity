@@ -4,35 +4,57 @@ local global
 local register
 local register_by_type
 
+local add_inhabitants_data
+
+local add_subentities
+
+local is_affected_by_clockwork = Types.is_affected_by_clockwork
+local is_inhabited = Types.is_inhabited
+
+local add_neighborhood
+local establish_new_neighbor
+
+local function set_locals()
+    global = _ENV.global
+    register = global.register
+    register_by_type = global.register_by_type
+
+    add_inhabitants_data = Inhabitants.add_inhabitants_data
+    add_subentities = Subentities.add_all_for
+
+    add_neighborhood = Neighborhood.add_neighborhood
+    establish_new_neighbor = Neighborhood.establish_new_neighbor
+end
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
 local function new_entry(entity, _type)
+    local current_tick = game.tick
+
     local entry = {
         [TYPE] = _type,
         [ENTITY] = entity,
-        [LAST_UPDATE] = game.tick,
+        [LAST_UPDATE] = current_tick,
         [SUBENTITIES] = {}
     }
 
-    Subentities.add_all_for(entry)
-    Neighborhood.add_neighborhood(entry, _type)
-    Neighborhood.establish_new_neighbor(entry, _type)
+    add_subentities(entry)
+    add_neighborhood(entry, _type)
+    establish_new_neighbor(entry, _type)
 
-    if Types.is_inhabited(_type) then
-        Inhabitants.add_inhabitants_data(entry)
+    if is_inhabited(_type) then
+        add_inhabitants_data(entry)
     end
     if _type == TYPE_ORANGERY then
-        entry[TICK_OF_CREATION] = game.tick
+        entry[TICK_OF_CREATION] = current_tick
     end
 
     return entry
 end
 
-local function add_entity_to_register(entity, _type)
-    local entry = new_entry(entity, _type)
-    local unit_number = entity.unit_number
+local function add_entry_to_register(entry, unit_number)
     register[unit_number] = entry
 
+    local _type = entry[TYPE]
     if not register_by_type[_type] then
         register_by_type[_type] = {}
     end
@@ -42,18 +64,35 @@ end
 --- Adds the given entity to the register. Optionally the type can be specified.
 --- @param entity Entity
 --- @param _type Type
-function Register.add(entity, _type)
+function Register.add_entity(entity, _type)
     _type = _type or Types(entity)
+    local entry = new_entry(entity, _type)
 
-    if Types.is_relevant_to_register(_type) then
-        add_entity_to_register(entity, _type)
-    end
+    add_entry_to_register(entry, entity.unit_number)
 
-    if Types.is_affected_by_clockwork(_type) then
+    if is_affected_by_clockwork(_type) then
         global.machine_count = global.machine_count + 1
     end
-    if _type == TYPE_TURRET and entity.force.name ~= "enemy" then
+    if _type == TYPE_TURRET then
         global.turret_count = global.turret_count + 1
+    end
+
+    return entry
+end
+local add_entity = Register.add_entity
+
+--- Adds the given destination entity to the register with the same type as the source entry and copies the relevant entry data.
+--- @param source Entry
+--- @param destination Entity
+function Register.clone(source, destination)
+    local _type = source[TYPE]
+    local destination_entry = add_entity(destination, _type)
+
+    -- Copy special entry data for some types
+    if is_inhabited(_type) then
+        Inhabitants.clone_inhabitants(source, destination_entry)
+    elseif _type == TYPE_ORANGERY then
+        destination_entry[TICK_OF_CREATION] = source[TICK_OF_CREATION]
     end
 end
 
@@ -69,7 +108,7 @@ end
 function Register.remove_entity(entity, unit_number)
     unit_number = unit_number or entity.unit_number
     local entry = register[unit_number]
-    local entity_type = entry and entry[TYPE] or Types.get_entity_type(entity)
+    local entity_type = (entry and entry[TYPE]) or Types.get_entity_type(entity)
 
     if entry then
         if Types.is_inhabited(entity_type) then
@@ -79,13 +118,10 @@ function Register.remove_entity(entity, unit_number)
         remove_entry(entry, unit_number)
     end
 
-    if entity_type == TYPE_MINING_DRILL then
+    if is_affected_by_clockwork(entity_type) then
         global.machine_count = global.machine_count - 1
     end
-    if Types.is_affected_by_clockwork(entity_type) then
-        global.machine_count = global.machine_count - 1
-    end
-    if entity_type == TYPE_TURRET and entity.force.name ~= "enemy" then
+    if entity_type == TYPE_TURRET then
         global.turret_count = global.turret_count - 1
     end
 end
@@ -102,7 +138,7 @@ end
 -- -@param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
-    Register.add(entry[ENTITY], new_type)
+    Register.add_entity(entry[ENTITY], new_type)
     Gui.rebuild_details_view_for_entry(entry)
 end
 
@@ -163,12 +199,6 @@ function Register.all_of_type(_type)
     return _next, index, entry
 end
 
-local function set_locals()
-    global = _ENV.global
-    register = global.register
-    register_by_type = global.register_by_type
-end
-
 --- Initialize the register related contents of global.
 function Register.init()
     global = _ENV.global
@@ -196,7 +226,7 @@ function Register.init()
                 force = "player"
             }
         ) do
-            Register.add(entity)
+            Register.add_entity(entity)
         end
     end
 end
