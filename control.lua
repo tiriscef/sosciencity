@@ -1,17 +1,9 @@
-local dataphase_test = false
-
-if dataphase_test then
-    return
-end
 pcall(require, "__debugadapter__/debugadapter.lua")
 --[[
     TODO
-        - city info gui
-        - house details gui
-        - caste selection (+ gui)
         - balance basicly everything
         - diseases
-        - indicators
+        - custom entity guis
 ]]
 --[[
     Data structures
@@ -115,7 +107,7 @@ local is_relevant_to_register = Types.is_relevant_to_register
 
 local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
-local add_to_register = Register.add_entity
+local add_to_register = Register.add
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
 
@@ -243,18 +235,13 @@ local function update_cycle()
     global.last_update = current_tick
 end
 
-local cycle_frequency = settings.global["sosciencity-entity-update-cycle-frequency"].value
 local function update_settings()
-    local new_frequency = settings.global["sosciencity-entity-update-cycle-frequency"].value
-    if new_frequency ~= cycle_frequency then
-        script.on_nth_tick(cycle_frequency, nil) -- unregisters the old frequency
-        script.on_nth_tick(new_frequency, update_cycle)
-        cycle_frequency = new_frequency
-    end
-
     global.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
 
     global.use_penalty = settings.global["sosciencity-penalty-module"].value
+
+    global.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
+    global.profanity = settings.global["sosciencity-allow-profanity"].value
 end
 
 local function set_locals()
@@ -487,7 +474,7 @@ script.on_init(init)
 script.on_load(on_load)
 
 -- update function
-script.on_nth_tick(cycle_frequency, update_cycle)
+script.on_nth_tick(10, update_cycle)
 script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 
 -- placement

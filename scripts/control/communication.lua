@@ -17,6 +17,15 @@ local castes = Caste.values
 
 local floor = math.floor
 
+local function set_locals()
+    highlights = global.mouseover_highlights
+
+    fluid_consumption = global.fluid_consumption
+    fluid_production = global.fluid_production
+    item_consumption = global.item_consumption
+    item_production = global.item_production
+end
+
 function Communication.create_flying_text(entry, text)
     local entity = entry[ENTITY]
 
@@ -198,15 +207,6 @@ end
 
 function Communication.update()
     flush_logs()
-end
-
-local function set_locals()
-    highlights = global.mouseover_highlights
-
-    fluid_consumption = global.fluid_consumption
-    fluid_production = global.fluid_production
-    item_consumption = global.item_consumption
-    item_production = global.item_production
 end
 
 function Communication.init()

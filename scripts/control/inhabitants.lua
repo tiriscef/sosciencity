@@ -33,6 +33,13 @@ local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
 local weighted_average = Tirislib_Utils.weighted_average
 
+local function set_locals()
+    global = _ENV.global
+    population = global.population
+    effective_population = global.effective_population
+    caste_bonuses = global.caste_bonuses
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << caste bonus functions >>
 --- Returns the total number of inhabitants.
@@ -503,13 +510,6 @@ function Inhabitants.add_inhabitants_data(entry)
     entry[TREND] = 0
     entry[IDEAS] = 0
     entry[GARBAGE] = 0
-end
-
-local function set_locals()
-    global = _ENV.global
-    population = global.population
-    effective_population = global.effective_population
-    caste_bonuses = global.caste_bonuses
 end
 
 local function new_caste_table()

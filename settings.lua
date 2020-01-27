@@ -14,6 +14,20 @@ data:extend {
         default_value = true
     },
     {
+        type = "bool-setting",
+        name = "sosciencity-allow-tiriscef",
+        order = "baa",
+        setting_type = "runtime-global",
+        default_value = true
+    },
+    {
+        type = "bool-setting",
+        name = "sosciencity-allow-profanity",
+        order = "bab",
+        setting_type = "runtime-global",
+        default_value = true
+    },
+    {
         type = "int-setting",
         name = "sosciencity-entity-updates-per-cycle",
         order = "zaa",
@@ -21,14 +35,5 @@ data:extend {
         default_value = 50,
         maximum_value = 2000,
         minimum_value = 20
-    },
-    {
-        type = "int-setting",
-        name = "sosciencity-entity-update-cycle-frequency",
-        order = "zab",
-        setting_type = "runtime-global",
-        default_value = 10,
-        maximum_value = 120,
-        minimum_value = 1
     }
 }
