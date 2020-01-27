@@ -375,18 +375,26 @@ local function consume_water(distributers, amount)
 end
 
 function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
-    local water_to_consume = 0.0008 * entry[INHABITANTS] * delta_ticks -- 20 units per factorio day (25000 ticks)
-    if water_to_consume == 0 then
-        happiness_factors[HAPPINESS_THIRST] = 1
-        health_factors[HEALTH_WATER] = 1
-        sanity_factors[SANITY_THIRST] = 1
-        return
-    end
-
     local distributers = get_neighbors_of_type(entry, TYPE_WATER_DISTRIBUTER)
     sort_by_key(distributers, WATER_QUALITY)
 
-    local satisfaction, quality = consume_water(distributers, water_to_consume)
+    local water_to_consume = 0.0008 * entry[INHABITANTS] * delta_ticks -- 20 units per factorio day (25000 ticks)
+    local satisfaction, quality
+
+    if water_to_consume >= 0 then
+        satisfaction, quality = consume_water(distributers, water_to_consume)
+    else
+        -- annoying edge case of no inhabitants
+        -- test if there is at least one distributer with water
+        local probe = distributers[1]
+        if probe and probe[WATER_NAME] then
+            satisfaction = 1
+            quality = probe[WATER_QUALITY]
+        else
+            satisfaction = 0
+            quality = 0
+        end
+    end
 
     happiness_factors[HAPPINESS_THIRST] = satisfaction
     health_factors[HEALTH_WATER] = quality * satisfaction
