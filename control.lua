@@ -115,7 +115,7 @@ local is_relevant_to_register = Types.is_relevant_to_register
 
 local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
-local add_to_register = Register.add
+local add_to_register = Register.add_entity
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
 
@@ -289,21 +289,55 @@ local function on_load()
     Communication.load()
 end
 
-local function on_entity_built(event)
-    -- https://forums.factorio.com/viewtopic.php?f=34&t=73331#p442695
-    local entity = event.entity or event.created_entity or event.destination
+local function on_filtered_built(event)
+    local entity = event.created_entity
 
     if not entity or not entity.valid then
         return
     end
 
-    --[[if replace(entity) then
-        return
-    end]]
     local entity_type = get_entity_type(entity)
 
     if is_relevant_to_register(entity_type) then
-        add_to_register(entity)
+        add_to_register(entity, entity_type)
+    end
+end
+
+local function on_clone_built(event)
+    local destination = event.destination
+
+    if not destination or not destination.valid or destination.force.name ~= "player" then
+        return
+    end
+
+    local entity_type = get_entity_type(destination)
+
+    if is_relevant_to_register(entity_type) then
+        -- try to copy the source - if possible
+        local source = event.source
+        if source and source.valid then
+            local source_entry = try_get_entry(source.unit_number)
+            if source_entry then
+                Register.clone(source_entry, destination)
+            end
+        end
+
+        -- otherwise register the destination entity on it's own
+        add_to_register(destination, entity_type)
+    end
+end
+
+local function on_script_built(event)
+    local entity = event.entity
+
+    if not entity or not entity.valid or entity.force.name ~= "player" then
+        return
+    end
+
+    local entity_type = get_entity_type(entity)
+
+    if is_relevant_to_register(entity_type) then
+        add_to_register(entity, entity_type)
     end
 end
 
@@ -459,11 +493,11 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 -- placement
 -- filter out ghosts because my mod has nothing to do with them
 local filter = {{filter = "ghost", invert = true}, {filter = "force", force = "player", mode = "and"}}
-script.on_event(defines.events.on_built_entity, on_entity_built, filter)
-script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
-script.on_event(defines.events.on_entity_cloned, on_entity_built)
-script.on_event(defines.events.script_raised_built, on_entity_built)
-script.on_event(defines.events.script_raised_revive, on_entity_built)
+script.on_event(defines.events.on_built_entity, on_filtered_built, filter)
+script.on_event(defines.events.on_robot_built_entity, on_filtered_built, filter)
+script.on_event(defines.events.on_entity_cloned, on_clone_built)
+script.on_event(defines.events.script_raised_built, on_script_built)
+script.on_event(defines.events.script_raised_revive, on_script_built)
 
 -- removement
 script.on_event(defines.events.on_player_mined_entity, on_entity_mined)

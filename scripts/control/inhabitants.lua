@@ -240,6 +240,10 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
 end
 local try_add_to_house = Inhabitants.try_add_to_house
 
+function Inhabitants.clone_inhabitants(source, destination)
+    try_add_to_house(destination, source[INHABITANTS], source[HAPPINESS], source[HEALTH], source[SANITY])
+end
+
 --- Tries to remove the specified amount of inhabitants from the house-entry.
 --- Returns the number of inhabitants that were removed.
 --- @param entry Entry
