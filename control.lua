@@ -174,12 +174,13 @@ local function update_water_distributer(entry)
     -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
     -- but needs to be checked often
     for fluid_name, amount in pairs(entity.get_fluid_contents()) do
-        local water_value = water_values[fluid_name]
-
-        if amount > 100 and water_value then
-            entry[WATER_QUALITY] = water_value.health
-            entry[WATER_NAME] = fluid_name
-            return
+        if amount > 0 then
+            local water_value = water_values[fluid_name]
+            if water_value then
+                entry[WATER_QUALITY] = water_value.health
+                entry[WATER_NAME] = fluid_name
+                return
+            end
         end
     end
     entry[WATER_QUALITY] = 0
@@ -457,7 +458,7 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 
 -- placement
 -- filter out ghosts because my mod has nothing to do with them
-local filter = {{filter = "ghost", invert = true}}
+local filter = {{filter = "ghost", invert = true}, {filter = "force", force = "player", mode = "and"}}
 script.on_event(defines.events.on_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_entity_cloned, on_entity_built)
