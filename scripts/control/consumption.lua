@@ -359,7 +359,7 @@ local function consume_water(distributers, amount)
         local distributer = distributers[i]
         local water_name = distributer[WATER_NAME]
         local consumed = distributer[ENTITY].remove_fluid {name = water_name, amount = to_consume}
-        log_fluid(water_name, -consumed) -- problem: log rundet zahlen unter 1 ab
+        log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[WATER_QUALITY]
         to_consume = to_consume - consumed
     end

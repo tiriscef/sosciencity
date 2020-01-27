@@ -124,6 +124,7 @@ local update_details_view = Gui.update_details_view
 
 --local replace = Replacer.replace
 
+local update_communication = Communication.update
 local log_fluid = Communication.log_fluid
 local create_mouseover_highlights = Communication.create_mouseover_highlights
 local remove_mouseover_highlights = Communication.remove_mouseover_highlights
@@ -236,6 +237,7 @@ local function update_cycle()
     update_caste_bonuses()
     update_city_info()
     update_details_view()
+    update_communication()
 
     global.last_update = current_tick
 end

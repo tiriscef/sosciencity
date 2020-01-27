@@ -66,8 +66,8 @@ end
 
 --- Removes the given entity from the register.
 --- @param entity Entity
-function Register.remove_entity(entity)
-    local unit_number = entity.unit_number
+function Register.remove_entity(entity, unit_number)
+    unit_number = unit_number or entity.unit_number
     local entry = register[unit_number]
     local entity_type = entry and entry[TYPE] or Types.get_entity_type(entity)
 
@@ -134,7 +134,7 @@ function Register.next(unit_number)
     if entry[ENTITY].valid then
         return unit_number, entry
     else
-        Register.remove_entity(entry[ENTITY])
+        Register.remove_entity(entry[ENTITY], unit_number)
         return register_next(unit_number)
     end
 end
