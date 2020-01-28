@@ -54,6 +54,10 @@ pcall(require, "__debugadapter__/debugadapter.lua")
         [player_index]: table of renderer-ids
 ]]
 ---------------------------------------------------------------------------------------------------
+-- << helper functions >>
+require("lib.utils")
+
+---------------------------------------------------------------------------------------------------
 -- << runtime finals >>
 require("constants.castes")
 require("constants.diseases")
@@ -63,10 +67,6 @@ require("constants.housing")
 require("constants.buildings")
 require("constants.drinking-water")
 require("constants.speakers")
-
----------------------------------------------------------------------------------------------------
--- << helper functions >>
-require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
