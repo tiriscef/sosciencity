@@ -32,6 +32,16 @@ function Tirislib_Tables.get_keyset(tbl)
     return ret
 end
 
+function Tirislib_Tables.to_lookup(array)
+    local ret = {}
+
+    for i = 1, #array do
+        ret[array[i]] = true
+    end
+
+    return ret
+end
+
 --https://gist.github.com/Uradamus/10323382
 function Tirislib_Tables.shuffle(tbl)
     for i = #tbl, 2, -1 do

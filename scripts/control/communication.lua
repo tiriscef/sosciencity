@@ -14,7 +14,9 @@ local item_production
 
 local highlights
 local castes = Caste.values
+
 local speakers = Speakers
+local speaker_schedule
 local allowed_speakers
 local function generate_speakers_list()
     allowed_speakers = {}
@@ -36,6 +38,8 @@ local function set_locals()
     fluid_production = global.fluid_production
     item_consumption = global.item_consumption
     item_production = global.item_production
+
+    speaker_schedule = global.speaker_schedule
 
     generate_speakers_list()
 end
@@ -238,6 +242,25 @@ function Communication.say_welcome(player)
     end
 end
 
+local function schedule_say(speaker, locale_key, time)
+    if not speaker_schedule[time] then
+        speaker_schedule[time] = {}
+    end
+    speaker_schedule[time][#speaker_schedule[time] + 1] = {speaker = speaker, line = locale_key}
+end
+
+local function finish_schedule(current_tick)
+    for time, schedule in pairs(speaker_schedule) do
+        if time <= current_tick then
+            for i = 1, #schedule do
+                local thing_to_say = schedule[i]
+                say(thing_to_say.speaker, thing_to_say.line)
+            end
+            speaker_schedule[time] = nil
+        end
+    end
+end
+
 function Communication.useless_banter()
     if #allowed_speakers == 0 then
         game.print {"", {"tiriscef.prefix"}, {"muted-tiriscef." .. random(10)}}
@@ -250,12 +273,13 @@ function Communication.useless_banter()
         weights[index] = speakers[name].useless_banter_count
     end
 
-    -- pick a random speaker and line until a line was found
-    local speaker, line, line_index
+    -- pick a random speaker and line until we found a line that wasn't used recently
+    local speaker_name, speaker, line, line_index
     repeat
-        speaker = allowed_speakers[Tirislib_Tables.weighted_random(weights)]
-        line = random(speakers[speaker].useless_banter_count)
-        line_index = line + speakers[speaker].index
+        speaker_name = allowed_speakers[Tirislib_Tables.weighted_random(weights)]
+        speaker = speakers[speaker_name]
+        line = random(speaker.useless_banter_count)
+        line_index = line + speaker.index
     until not Tirislib_Tables.contains(global.past_banter, line_index)
 
     -- log the chosen banter
@@ -263,15 +287,21 @@ function Communication.useless_banter()
     global.past_banter[index] = line_index
     global.past_banter_index = (index < 8) and (index + 1) or 1
 
-    say(speaker, line)
+    if speaker.lines_with_followup[line] then
+        -- schedule the followup in a second (60 ticks)
+        schedule_say(speaker_name, line .. "f", game.tick + 60)
+    end
+
+    say(speaker_name, line)
 end
 local useless_banter = Communication.useless_banter
 
 function Communication.update(current_tick)
     flush_logs()
     log_population(current_tick)
+    finish_schedule(current_tick)
 
-    if current_tick % 25200 == 25199 then -- every 7 minutes
+    if current_tick % 25200 == 7200 then -- every 7 minutes, first time after 2 minutes
         useless_banter()
     end
 end
@@ -287,6 +317,8 @@ function Communication.init()
 
     global.past_banter = {}
     global.past_banter_index = 1
+
+    global.speaker_schedule = {}
 
     set_locals()
 end
