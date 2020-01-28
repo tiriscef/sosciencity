@@ -25,7 +25,7 @@ data:extend {
         name = "sosciencity-allow-profanity",
         order = "bab",
         setting_type = "runtime-global",
-        default_value = true
+        default_value = false
     },
     {
         type = "int-setting",

@@ -1,3 +1,5 @@
+local random = math.random
+
 --<< Just some helper functions >>
 Tirislib_Utils = {}
 
@@ -33,11 +35,28 @@ end
 --https://gist.github.com/Uradamus/10323382
 function Tirislib_Tables.shuffle(tbl)
     for i = #tbl, 2, -1 do
-        local j = math.random(i)
+        local j = random(i)
         tbl[i], tbl[j] = tbl[j], tbl[i]
     end
 
     return tbl
+end
+
+function Tirislib_Tables.weighted_random(weights)
+    local sum = 0
+    for i = 1, #weights do
+        sum = sum + weights[i]
+    end
+
+    local random_index = random(sum)
+    local index = 0
+
+    repeat
+        index = index + 1
+        random_index = random_index - weights[index]
+    until random_index < 1
+
+    return index
 end
 
 -- clones the table, tables inside will be referenced

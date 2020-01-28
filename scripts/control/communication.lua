@@ -14,8 +14,20 @@ local item_production
 
 local highlights
 local castes = Caste.values
+local speakers = Speakers
+local allowed_speakers
+local function generate_speakers_list()
+    allowed_speakers = {}
+    if global.tiriscef then
+        allowed_speakers[#allowed_speakers + 1] = "tiriscef."
+    end
+    if global.profanity then
+        allowed_speakers[#allowed_speakers + 1] = "profanity."
+    end
+end
 
 local floor = math.floor
+local random = math.random
 
 local function set_locals()
     highlights = global.mouseover_highlights
@@ -24,6 +36,8 @@ local function set_locals()
     fluid_production = global.fluid_production
     item_consumption = global.item_consumption
     item_production = global.item_production
+
+    generate_speakers_list()
 end
 
 function Communication.create_flying_text(entry, text)
@@ -205,8 +219,61 @@ function Communication.remove_mouseover_highlights(player_id)
     global.mouseover_highlights[player_id] = nil
 end
 
-function Communication.update()
+local function log_population(current_tick)
+end
+
+local function say(speaker, locale_key)
+    game.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
+end
+
+local function tell(player, speaker, locale_key)
+    player.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
+end
+
+function Communication.say_welcome(player)
+    tell(player, "tiriscef.", "welcome")
+
+    if global.profanity then
+        tell(player, "profanity.", "welcome")
+    end
+end
+
+function Communication.useless_banter()
+    if #allowed_speakers == 0 then
+        game.print {"", {"tiriscef.prefix"}, {"muted-tiriscef." .. random(10)}}
+        return
+    end
+
+    -- pick a speaker, the more they have to say the higher is the probability to pick them
+    local weights = {}
+    for index, name in pairs(allowed_speakers) do
+        weights[index] = speakers[name].useless_banter_count
+    end
+
+    -- pick a random speaker and line until a line was found
+    local speaker, line, line_index
+    repeat
+        speaker = allowed_speakers[Tirislib_Tables.weighted_random(weights)]
+        line = random(speakers[speaker].useless_banter_count)
+        line_index = line + speakers[speaker].index
+    until not Tirislib_Tables.contains(global.past_banter, line_index)
+
+    -- log the chosen banter
+    local index = global.past_banter_index
+    global.past_banter[index] = line_index
+    global.past_banter_index = (index < 8) and (index + 1) or 1
+
+    say(speaker, line)
+end
+local useless_banter = Communication.useless_banter
+
+function Communication.update(current_tick)
     flush_logs()
+    log_population(current_tick)
+
+    if current_tick % 25200 == 25199 then -- every 7 minutes
+        useless_banter()
+    end
 end
 
 function Communication.init()
@@ -217,6 +284,9 @@ function Communication.init()
     global.fluid_production = {}
     global.item_consumption = {}
     global.item_production = {}
+
+    global.past_banter = {}
+    global.past_banter_index = 1
 
     set_locals()
 end

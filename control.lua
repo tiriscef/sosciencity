@@ -4,6 +4,7 @@ pcall(require, "__debugadapter__/debugadapter.lua")
         - balance basicly everything
         - diseases
         - custom entity guis
+        - city events & communication
 ]]
 --[[
     Data structures
@@ -61,6 +62,7 @@ require("constants.food")
 require("constants.housing")
 require("constants.buildings")
 require("constants.drinking-water")
+require("constants.speakers")
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
@@ -230,7 +232,7 @@ local function update_cycle()
     update_caste_bonuses()
     update_city_info()
     update_details_view()
-    update_communication()
+    update_communication(current_tick)
 
     global.last_update = current_tick
 end
@@ -408,6 +410,8 @@ local function on_player_created(event)
     local player = game.get_player(index)
 
     Gui.create_guis_for_player(player)
+
+    Communication.say_welcome(player)
 end
 
 local function on_gui_opened(event)
