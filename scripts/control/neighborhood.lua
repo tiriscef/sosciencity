@@ -60,9 +60,9 @@ end
 --
 -- Future: implement something for entities that are not registered, e.g. trees
 
-local function maximum_metric_distance(v1, v2)
-    local dist_x = abs(v1.x - v2.x)
-    local dist_y = abs(v1.y - v2.y)
+local function maximum_metric_distance(x1, y1, x2, y2)
+    local dist_x = abs(x1 - x2)
+    local dist_y = abs(y1 - y2)
 
     return max(dist_x, dist_y)
 end
@@ -70,9 +70,22 @@ end
 local function is_in_range(neighborhood_entry, entry)
     local neighbor_entity = neighborhood_entry[ENTITY]
     local range = active_neighbor_ranges[neighbor_entity.name]
-    local position1 = neighbor_entity.position
-    local position2 = entry[ENTITY].position
-    return maximum_metric_distance(position1, position2) <= range
+    local position = neighbor_entity.position
+    local x = position.x
+    local y = position.y
+
+    -- check all 4 corners of the entry if they are in range
+    local bounding_box = entry[ENTITY].selection_box
+    local position1 = bounding_box.left_top
+    local x1 = position1.x
+    local y1 = position1.y
+    local position2 = bounding_box.right_bottom
+    local x2 = position2.x
+    local y2 = position2.y
+
+    return (maximum_metric_distance(x, y, x1, y1) < range) or (maximum_metric_distance(x, y, x1, y2) < range) or
+        (maximum_metric_distance(x, y, x2, y1) < range) or
+        (maximum_metric_distance(x, y, x2, y2) < range)
 end
 
 --- Finds and adds all the neighbor entries the given entity is interested in.
