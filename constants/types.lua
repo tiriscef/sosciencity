@@ -175,7 +175,8 @@ local lookup_by_entity_type = {
 
 local lookup_by_name = {
     ["farm"] = TYPE_FARM,
-    ["greenhouse"] = TYPE_FARM
+    ["greenhouse"] = TYPE_FARM,
+    ["arboretum"] = TYPE_FARM
 }
 
 local houses
@@ -221,6 +222,15 @@ end
 function Types.is_relevant_to_register(_type)
     return _type < 2000
 end
+
+Types.types_affected_by_clockwork = {
+    TYPE_ASSEMBLING_MACHINE,
+    TYPE_FURNACE,
+    TYPE_ROCKET_SILO,
+    TYPE_MINING_DRILL,
+    TYPE_FARM,
+    TYPE_ORANGERY
+}
 
 function Types.is_affected_by_clockwork(_type)
     return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ORANGERY)

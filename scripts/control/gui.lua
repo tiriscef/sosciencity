@@ -299,9 +299,9 @@ local function update_population_flow(frame)
     local population_count = Inhabitants.get_population_count()
     population_flow["population"].caption = {"sosciencity-gui.population", population_count}
 
-    population_flow["machine-count"].caption = {"sosciencity-gui.machines", global.machine_count}
+    population_flow["machine-count"].caption = {"sosciencity-gui.machines", Register.get_machine_count()}
 
-    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", global.turret_count}
+    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", global.entry_counts[TYPE_TURRET]}
 end
 
 local function add_population_flow(container)

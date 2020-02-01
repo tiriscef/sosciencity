@@ -3,6 +3,7 @@ Register = {}
 local global
 local register
 local register_by_type
+local entry_counts
 
 local add_inhabitants_data
 
@@ -19,6 +20,7 @@ local function set_locals()
     global = _ENV.global
     register = global.register
     register_by_type = global.register_by_type
+    entry_counts = global.entry_counts
 
     add_inhabitants_data = Inhabitants.add_inhabitants_data
     add_subentities = Subentities.add_all_for
@@ -60,6 +62,12 @@ local function add_entry_to_register(entry, unit_number)
         register_by_type[_type] = {}
     end
     register_by_type[_type][unit_number] = unit_number
+
+    -- keeping track on the number of entries of this type
+    if not entry_counts[_type] then
+        entry_counts[_type] = 0
+    end
+    entry_counts[_type] = entry_counts[_type] + 1
 end
 
 --- Adds the given entity to the register. Optionally the type can be specified.
@@ -70,13 +78,6 @@ function Register.add(entity, _type)
     local entry = new_entry(entity, _type)
 
     add_entry_to_register(entry, entity.unit_number)
-
-    if is_affected_by_clockwork(_type) then
-        global.machine_count = global.machine_count + 1
-    end
-    if _type == TYPE_TURRET then
-        global.turret_count = global.turret_count + 1
-    end
 
     return entry
 end
@@ -98,10 +99,13 @@ function Register.clone(source, destination)
 end
 
 local function remove_entry(entry, unit_number)
+    local _type = entry[TYPE]
     register[unit_number] = nil
-    register_by_type[entry[TYPE]][unit_number] = nil
+    register_by_type[_type][unit_number] = nil
 
     Subentities.remove_all_for(entry)
+
+    entry_counts[_type] = entry_counts[_type] - 1
 end
 
 --- Removes the given entity from the register.
@@ -117,13 +121,6 @@ function Register.remove_entity(entity, unit_number)
         end
 
         remove_entry(entry, unit_number)
-    end
-
-    if is_affected_by_clockwork(entity_type) then
-        global.machine_count = global.machine_count - 1
-    end
-    if entity_type == TYPE_TURRET then
-        global.turret_count = global.turret_count - 1
     end
 end
 local remove_entity = Register.remove_entity
@@ -157,6 +154,7 @@ function Register.try_get(unit_number)
         end
     end
 end
+local try_get = Register.try_get
 
 local register_next
 --- Returns the next valid entry or nil if the loop came to an end.
@@ -180,24 +178,49 @@ register_next = Register.next
 local function nothing()
 end
 
+local function all_of_type_iterator(type_table, key)
+    key = next(type_table, key)
+
+    if key == nil then
+        return nil, nil
+    end
+
+    local entry = try_get(key)
+    if entry then
+        return key, entry
+    else
+        return all_of_type_iterator(type_table, key)
+    end
+end
+
 --- Iterator for all entries of a specific type
 --- @param _type Type
 function Register.all_of_type(_type)
-    if not register_by_type[_type] then
+    local tbl = register_by_type[_type]
+    if not tbl then
         return nothing
     end
 
-    local index, entry
+    return all_of_type_iterator, tbl
+end
 
-    local function _next()
-        index, entry = next(register_by_type[_type], index)
+local types_affected_by_clockwork = Types.types_affected_by_clockwork
 
-        if index then
-            return index, register[index]
-        end
+--- Returns the number of existing entries of the given type.
+function Register.get_type_count(_type)
+    return entry_counts[_type] or 0
+end
+local get_type_count = Register.get_type_count
+
+--- Returns the number of existing entries that are affected by clockwork bonuses.
+function Register.get_machine_count()
+    local ret = 0
+
+    for i = 1, #types_affected_by_clockwork do
+        ret = ret + get_type_count(types_affected_by_clockwork[i])
     end
 
-    return _next, index, entry
+    return ret
 end
 
 --- Initialize the register related contents of global.
@@ -205,10 +228,8 @@ function Register.init()
     global = _ENV.global
     global.register = {}
     global.register_by_type = {}
+    global.entry_counts = {}
     set_locals()
-
-    global.machine_count = 0
-    global.turret_count = 0
 
     -- find and register all the machines that need to be registered
     for _, surface in pairs(game.surfaces) do
