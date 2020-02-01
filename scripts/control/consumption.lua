@@ -381,7 +381,7 @@ function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, healt
     local water_to_consume = 0.0008 * entry[INHABITANTS] * delta_ticks -- 20 units per factorio day (25000 ticks)
     local satisfaction, quality
 
-    if water_to_consume >= 0 then
+    if water_to_consume > 0 then
         satisfaction, quality = consume_water(distributers, water_to_consume)
     else
         -- annoying edge case of no inhabitants

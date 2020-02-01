@@ -56,7 +56,7 @@ end
 -- This class ensures that the neighborhood aware entries have a neighborhood-table with all the neighbors that it is interested in
 -- When accessing a neighbor entry it is necessary to check if it's still valid
 -- neighborhood: table
---   [entity type]: table of (unit_number, entity) pairs
+--   [entity type]: table of (unit_number, type) pairs
 --
 -- Future: implement something for entities that are not registered, e.g. trees
 

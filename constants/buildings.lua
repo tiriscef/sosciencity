@@ -19,6 +19,6 @@ Buildings = {
     },
     ["water-tower"] = {
         type = TYPE_WATER_DISTRIBUTER,
-        range = 40
+        range = 35
     }
 }
