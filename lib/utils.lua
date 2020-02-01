@@ -184,6 +184,16 @@ function Tirislib_Tables.new_array(size, value)
     return ret
 end
 
+function Tirislib_Tables.new_array_of_arrays(count)
+    local ret = {}
+
+    for i = 1, count do
+        ret[i] = {}
+    end
+
+    return ret
+end
+
 function Tirislib_Tables.insertion_sort_by_key(array, key)
     local length = #array
 

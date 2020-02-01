@@ -296,6 +296,14 @@ function Communication.useless_banter()
 end
 local useless_banter = Communication.useless_banter
 
+function Communication.log_emigration(caste, emigrated)
+
+end
+
+function Communication.log_immigration(caste, immigrated)
+
+end
+
 function Communication.update(current_tick)
     flush_logs()
     log_population(current_tick)
