@@ -5,6 +5,8 @@ local global
 local population
 local effective_population
 local caste_bonuses
+local immigration
+local houses_with_free_capacity
 local Register = Register
 
 local castes = Caste.values
@@ -38,6 +40,8 @@ local function set_locals()
     population = global.population
     effective_population = global.effective_population
     caste_bonuses = global.caste_bonuses
+    immigration = global.immigration
+    houses_with_free_capacity = global.houses_with_free_capacity
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -78,7 +82,7 @@ end
 
 --- Gets the current Gunfire caste bonus.
 local function get_gunfire_bonus()
-    return floor(effective_population[TYPE_GUNFIRE] * 10 / max(global.entry_counts[TYPE_TURRET], 1)) -- TODO balancing
+    return floor(effective_population[TYPE_GUNFIRE] * 10 / max(Register.get_type_count(TYPE_TURRET), 1)) -- TODO balancing
 end
 
 --- Gets the current Ember caste bonus.
@@ -169,8 +173,16 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
+
+--- Checks if the given caste has been researched by the player.
+--- @param caste_id Type
+function Inhabitants.caste_is_researched(caste_id)
+    return global.technologies[castes[caste_id].tech_name]
+end
+local is_researched = Inhabitants.caste_is_researched
+
 local function get_effective_population_multiplier(happiness)
-    return max(0.2, happiness * 0.1)
+    return happiness * 0.1
 end
 
 function Inhabitants.get_effective_population(entry)
@@ -190,7 +202,7 @@ local get_power_usage = Inhabitants.get_power_usage
 function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     if
         entry[TYPE] == TYPE_EMPTY_HOUSE and Housing.allowes_caste(get_housing(entry), caste_id) and
-            Inhabitants.caste_is_researched(caste_id)
+            is_researched(caste_id)
      then
         Register.change_type(entry, caste_id)
 
@@ -243,9 +255,29 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
 
     set_power_usage(entry, get_power_usage(entry))
 
+    if get_free_capacity(entry) == 0 then
+        local unit_number = entry[ENTITY].unit_number
+        houses_with_free_capacity[caste_id][unit_number] = nil
+    end
+
     return count_moving_in
 end
 local try_add_to_house = Inhabitants.try_add_to_house
+
+local function get_next_free_house(caste_id)
+
+end
+
+function Inhabitants.distribute_inhabitants(caste_id, count, happiness, health, sanity)
+    local to_distribute = count
+    local next_house = get_next_free_house(caste_id)
+
+    while to_distribute > 0 and next_house do
+
+
+        next_house = get_next_free_house(caste_id)
+    end
+end
 
 function Inhabitants.clone_inhabitants(source, destination)
     try_add_to_house(destination, source[INHABITANTS], source[HAPPINESS], source[HEALTH], source[SANITY])
@@ -271,6 +303,11 @@ function Inhabitants.remove_from_house(entry, count)
 
     set_power_usage(entry, get_power_usage(entry))
 
+    if get_free_capacity(entry) > 0 then
+        local unit_number = entry[ENTITY].unit_number
+        houses_with_free_capacity[caste_id][unit_number] = unit_number
+    end
+
     return count_moving_out
 end
 local remove_from_house = Inhabitants.remove_from_house
@@ -282,7 +319,7 @@ function Inhabitants.remove_house(entry)
 end
 
 --- Gets the trend toward the next inhabitant that moves in or out.
-function Inhabitants.get_population_trend(nominal_happiness, caste, delta_ticks)
+function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
     local threshold_diff = nominal_happiness - caste.immigration_threshold
 
     if threshold_diff > 0 then
@@ -291,7 +328,7 @@ function Inhabitants.get_population_trend(nominal_happiness, caste, delta_ticks)
         return emigration_coefficient * delta_ticks * (1 - threshold_diff / 4)
     end
 end
-local get_trend = Inhabitants.get_population_trend
+local get_emigration_trend = Inhabitants.get_emigration_trend
 
 function Inhabitants.get_idea_progress(happiness, inhabitants, caste, delta_ticks)
     return max(0, happiness - caste.idea_threshold) * delta_ticks * inhabitants * caste.idea_coefficient
@@ -410,18 +447,19 @@ function Inhabitants.update_house(entry, delta_ticks)
     end
     entry[GARBAGE] = garbage
 
-    local trend = entry[TREND]
-    trend = trend + get_trend(nominal_happiness, caste_values, delta_ticks)
-    if trend >= 1 then
-        -- let people move in
-        try_add_to_house(entry, floor(trend))
-        trend = trend - floor(trend)
+    local trend = entry[EMIGRATION_TREND]
+    trend = trend + get_emigration_trend(nominal_happiness, caste_values, delta_ticks)
+    if trend > 1 then
+        -- buffer caps at one
+        trend = 1
     elseif trend <= -1 then
         -- let people move out
-        remove_from_house(entry, -ceil(trend))
-        trend = trend - ceil(trend)
+        local emigrating = -ceil(trend)
+        local emigrated = remove_from_house(entry, emigrating)
+        trend = trend + emigrating
+        Communication.log_emigration(caste_id, emigrated)
     end
-    entry[TREND] = trend
+    entry[EMIGRATION_TREND] = trend
 end
 
 function Inhabitants.get_nominal_happiness(entry)
@@ -434,6 +472,32 @@ end
 
 function Inhabitants.get_nominal_sanity(entry)
     return get_nominal_value(entry[SANITY_SUMMANDS], entry[SANITY_FACTORS])
+end
+
+function Inhabitants.immigration(delta_ticks)
+    for caste = 1, #immigration do
+        if is_researched(caste) then
+            local immigration_trend = immigration[caste]
+            local pop = population[caste]
+
+            if pop > 0 then
+                local average_happiness = effective_population[caste] / population[caste]
+                immigration_trend =
+                    immigration_trend + castes[caste].immigration_coefficient * delta_ticks * average_happiness
+            else
+                immigration_trend = immigration_trend + castes[caste].immigration_coefficient * delta_ticks
+            end
+
+            if immigration_trend > 1 then
+                local immigrating = floor(immigration_trend)
+                local immigrated = Inhabitants.distribute_inhabitants(caste, immigrating)
+                immigration_trend = immigration_trend - immigrating
+                Communication.log_immigration(caste, immigrated)
+            end
+
+            immigration[caste] = immigration_trend
+        end
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -485,15 +549,9 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 
---- Checks if the given caste has been researched by the player.
---- @param caste_id Type
-function Inhabitants.caste_is_researched(caste_id)
-    return global.technologies[castes[caste_id].tech_name]
-end
-
 --- Initializes the given entry so it can work as an housing entry.
 --- @param entry Entry
-function Inhabitants.add_inhabitants_data(entry)
+function Inhabitants.establish_house(caste_id, entry, unit_number)
     entry[HAPPINESS] = 0
     entry[HAPPINESS_SUMMANDS] = Tirislib_Tables.new_array(Types.happiness_summands_count, 0.)
     entry[HAPPINESS_FACTORS] = Tirislib_Tables.new_array(Types.happiness_factors_count, 1.)
@@ -507,19 +565,22 @@ function Inhabitants.add_inhabitants_data(entry)
     entry[SANITY_FACTORS] = Tirislib_Tables.new_array(Types.sanity_factors_count, 1.)
 
     entry[INHABITANTS] = 0
-    entry[TREND] = 0
+    entry[EMIGRATION_TREND] = 0
     entry[IDEAS] = 0
     entry[GARBAGE] = 0
+
+    local free_houses = houses_with_free_capacity[caste_id]
+    free_houses[unit_number] = unit_number
 end
 
 local function new_caste_table()
     return {
         [TYPE_CLOCKWORK] = 0,
-        [TYPE_EMBER] = 0,
-        [TYPE_GUNFIRE] = 0,
-        [TYPE_GLEAM] = 0,
-        [TYPE_FOUNDRY] = 0,
         [TYPE_ORCHID] = 0,
+        [TYPE_GUNFIRE] = 0,
+        [TYPE_EMBER] = 0,
+        [TYPE_FOUNDRY] = 0,
+        [TYPE_GLEAM] = 0,
         [TYPE_AURORA] = 0,
         [TYPE_PLASMA] = 0
     }
@@ -533,6 +594,8 @@ function Inhabitants.init()
     global.population = new_caste_table()
     global.effective_population = new_caste_table()
     global.caste_bonuses = new_caste_table()
+    global.immigration = new_caste_table()
+    global.houses_with_free_capacity = Tirislib_Tables.new_array_of_arrays(8)
 
     set_locals()
 end

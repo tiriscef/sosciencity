@@ -5,12 +5,11 @@ local register
 local register_by_type
 local entry_counts
 
-local add_inhabitants_data
+local establish_house
 
 local add_subentities
 
 local get_entity_type = Types.get_entity_type
-local is_affected_by_clockwork = Types.is_affected_by_clockwork
 local is_inhabited = Types.is_inhabited
 
 local add_neighborhood
@@ -22,7 +21,7 @@ local function set_locals()
     register_by_type = global.register_by_type
     entry_counts = global.entry_counts
 
-    add_inhabitants_data = Inhabitants.add_inhabitants_data
+    establish_house = Inhabitants.establish_house
     add_subentities = Subentities.add_all_for
 
     add_neighborhood = Neighborhood.add_neighborhood
@@ -30,7 +29,7 @@ local function set_locals()
 end
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
-local function new_entry(entity, _type)
+local function new_entry(entity, _type, unit_number)
     local current_tick = game.tick
 
     local entry = {
@@ -45,10 +44,13 @@ local function new_entry(entity, _type)
     establish_new_neighbor(entry, _type)
 
     if is_inhabited(_type) then
-        add_inhabitants_data(entry)
+        establish_house(_type, entry, unit_number)
     end
     if _type == TYPE_ORANGERY then
         entry[TICK_OF_CREATION] = current_tick
+    end
+    if _type == TYPE_WATER_DISTRIBUTER then
+        entry[WATER_QUALITY] = 0
     end
 
     return entry
@@ -75,9 +77,10 @@ end
 --- @param _type Type
 function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
-    local entry = new_entry(entity, _type)
+    local unit_number = entity.unit_number
+    local entry = new_entry(entity, _type, unit_number)
 
-    add_entry_to_register(entry, entity.unit_number)
+    add_entry_to_register(entry, unit_number)
 
     return entry
 end
@@ -156,9 +159,8 @@ function Register.try_get(unit_number)
 end
 local try_get = Register.try_get
 
-local register_next
 --- Returns the next valid entry or nil if the loop came to an end.
-function Register.next(unit_number)
+local function register_next(unit_number)
     local entry
     unit_number, entry = next(register, unit_number)
 
@@ -173,7 +175,7 @@ function Register.next(unit_number)
         return register_next(unit_number)
     end
 end
-register_next = Register.next
+Register.next = register_next
 
 local function nothing()
 end

@@ -112,6 +112,7 @@ local remove_entity = Register.remove_entity
 local add_to_register = Register.add
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
+local immigration = Inhabitants.immigration
 
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
@@ -229,6 +230,7 @@ local function update_cycle()
     end
     global.last_index = index
 
+    immigration()
     update_caste_bonuses()
     update_city_info()
     update_details_view()

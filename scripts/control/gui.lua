@@ -301,7 +301,7 @@ local function update_population_flow(frame)
 
     population_flow["machine-count"].caption = {"sosciencity-gui.machines", Register.get_machine_count()}
 
-    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", global.entry_counts[TYPE_TURRET]}
+    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", Register.get_type_count(TYPE_TURRET)}
 end
 
 local function add_population_flow(container)
@@ -520,9 +520,8 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
 
     local capacity = Housing.get_capacity(entry)
-    local migration = Inhabitants.get_population_trend(nominal_happiness, caste, 3600) -- 3600 ticks = 1 minute
-    local display_migration =
-        not (inhabitants == capacity and migration > 0) and not (inhabitants == 0 and migration < 0)
+    local emigration = Inhabitants.get_emigration_trend(nominal_happiness, caste, 3600) -- 3600 ticks = 1 minute
+    local display_emigration = inhabitants > 0 and emigration < 0
 
     set_datalist_value(
         general_list,
@@ -530,13 +529,13 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         {
             "",
             {"sosciencity-gui.show-capacity", inhabitants, capacity},
-            display_migration and {"sosciencity-gui.migration", get_migration_string(migration)} or ""
+            display_emigration and {"sosciencity-gui.migration", get_migration_string(emigration)} or ""
         }
     )
     set_datalist_value_tooltip(
         general_list,
         "capacity",
-        (entry[TREND] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
+        (entry[EMIGRATION_TREND] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
     )
 
     set_datalist_value(
