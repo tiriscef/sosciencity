@@ -266,18 +266,13 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
 end
 local try_add_to_house = Inhabitants.try_add_to_house
 
-local function create_next_houses_array(caste_id)
-    local next_houses_table = next_houses[caste_id]
-
-    Tirislib_Tables.merge(next_houses_table, houses_with_free_capacity[caste_id])
-    Tirislib_Tables.shuffle(next_houses_table)
-end
-
 local function get_next_free_house(caste_id)
     local next_houses_table = next_houses[caste_id]
 
     if #next_houses_table == 0 then
-        create_next_houses_array(caste_id)
+        -- create the next free houses queue
+        Tirislib_Tables.merge(next_houses_table, houses_with_free_capacity[caste_id])
+        Tirislib_Tables.shuffle(next_houses_table)
 
         -- check if there are any free houses at all
         if #next_houses_table == 0 then
@@ -513,19 +508,23 @@ function Inhabitants.get_nominal_sanity(entry)
     return get_nominal_value(entry[SANITY_SUMMANDS], entry[SANITY_FACTORS])
 end
 
+function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
+    local pop = population[caste_id]
+
+    if pop > 0 then
+        local average_happiness = effective_population[caste_id] / population[caste_id]
+        return castes[caste_id].immigration_coefficient * delta_ticks * average_happiness
+    else
+        return castes[caste_id].immigration_coefficient * delta_ticks
+    end
+end
+local get_immigration_trend = Inhabitants.get_immigration_trend
+
 function Inhabitants.immigration(delta_ticks)
     for caste = 1, #immigration do
         if is_researched(caste) then
             local immigration_trend = immigration[caste]
-            local pop = population[caste]
-
-            if pop > 0 then
-                local average_happiness = effective_population[caste] / population[caste]
-                immigration_trend =
-                    immigration_trend + castes[caste].immigration_coefficient * delta_ticks * average_happiness
-            else
-                immigration_trend = immigration_trend + castes[caste].immigration_coefficient * delta_ticks
-            end
+            immigration_trend = immigration_trend + get_immigration_trend(delta_ticks, caste)
 
             if immigration_trend > 1 then
                 local immigrating = floor(immigration_trend)
@@ -554,7 +553,7 @@ function Inhabitants.try_resettle(entry, unit_number)
     -- remove the entry from the next_houses-table so they don't try to move into the house they're already living in
     houses_with_free_capacity[caste][unit_number] = nil
     Tirislib_Tables.remove_all(next_houses[caste], unit_number)
-    local resettled = distribute_inhabitants(caste, entry[Inhabitants], entry[HAPPINESS], entry[HEALTH], entry[SANITY])
+    local resettled = distribute_inhabitants(caste, entry[INHABITANTS], entry[HAPPINESS], entry[HEALTH], entry[SANITY])
 
     if resettled > 0 then
         Communication.people_resettled(entry, resettled)

@@ -145,7 +145,7 @@ Caste.values = {
     },
     [TYPE_PLASMA] = {
         name = "plasma",
-        tech_name = "", -- TODO
+        tech_name = "plasma-caste",
         fear_multiplier = 1,
         calorific_demand = 3000,
         power_demand = 25,
@@ -168,7 +168,7 @@ function Caste.produces_ideas(caste)
 end
 
 --- The number of people that leave a house per minute if they are unhappy.
-Caste.emigration_coefficient = 2
+Caste.emigration_coefficient = 0.8
 
 --- The number of general garbage an inhabitant produces per minute.
 Caste.garbage_coefficient = 0.1

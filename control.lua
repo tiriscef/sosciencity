@@ -230,7 +230,7 @@ local function update_cycle()
     end
     global.last_index = index
 
-    immigration()
+    immigration(10) -- the time between update_cycles is always 10 ticks
     update_caste_bonuses()
     update_city_info()
     update_details_view()
