@@ -7,6 +7,7 @@ local effective_population
 local caste_bonuses
 local immigration
 local houses_with_free_capacity
+local next_houses
 local Register = Register
 
 local castes = Caste.values
@@ -42,6 +43,7 @@ local function set_locals()
     caste_bonuses = global.caste_bonuses
     immigration = global.immigration
     houses_with_free_capacity = global.houses_with_free_capacity
+    next_houses = global.next_houses
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -264,20 +266,57 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
 end
 local try_add_to_house = Inhabitants.try_add_to_house
 
-local function get_next_free_house(caste_id)
+local function create_next_houses_array(caste_id)
+    local next_houses_table = next_houses[caste_id]
 
+    Tirislib_Tables.merge(next_houses_table, houses_with_free_capacity[caste_id])
+    Tirislib_Tables.shuffle(next_houses_table)
 end
 
+local function get_next_free_house(caste_id)
+    local next_houses_table = next_houses[caste_id]
+
+    if #next_houses_table == 0 then
+        create_next_houses_array(caste_id)
+
+        -- check if there are any free houses at all
+        if #next_houses_table == 0 then
+            return nil
+        end
+    end
+
+    local unit_number = next_houses_table[#next_houses_table]
+    next_houses_table[#next_houses_table] = nil
+
+    local entry = Register.try_get(unit_number)
+    if entry then
+        return entry
+    else
+        -- skip this outdated house
+        return get_next_free_house(caste_id)
+    end
+end
+
+--- Tries to distribute the specified inhabitants to houses with free capacity.
+--- Returns the number of inhabitants that were distributed.
+--- @param caste_id Type
+--- @param count integer
+--- @param happiness number
+--- @param health number
+--- @param sanity number
 function Inhabitants.distribute_inhabitants(caste_id, count, happiness, health, sanity)
     local to_distribute = count
     local next_house = get_next_free_house(caste_id)
 
     while to_distribute > 0 and next_house do
-
+        to_distribute = to_distribute - try_add_to_house(next_house, min(to_distribute, 5), happiness, health, sanity)
 
         next_house = get_next_free_house(caste_id)
     end
+
+    return count - to_distribute
 end
+local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 function Inhabitants.clone_inhabitants(source, destination)
     try_add_to_house(destination, source[INHABITANTS], source[HAPPINESS], source[HEALTH], source[SANITY])
@@ -510,20 +549,12 @@ function Inhabitants.try_resettle(entry, unit_number)
         return 0
     end
 
-    local to_resettle = entry[INHABITANTS]
-    for current_unit_number, current_entry in Register.all_of_type(entry[TYPE]) do
-        if current_unit_number ~= unit_number then
-            to_resettle =
-                to_resettle -
-                try_add_to_house(current_entry, to_resettle, entry[HAPPINESS], entry[HEALTH], entry[SANITY])
+    local caste = entry[TYPE]
 
-            if to_resettle == 0 then
-                break
-            end
-        end
-    end
-
-    local resettled = entry[INHABITANTS] - to_resettle
+    -- remove the entry from the next_houses-table so they don't try to move into the house they're already living in
+    houses_with_free_capacity[caste][unit_number] = nil
+    Tirislib_Tables.remove_all(next_houses[caste], unit_number)
+    local resettled = distribute_inhabitants(caste, entry[Inhabitants], entry[HAPPINESS], entry[HEALTH], entry[SANITY])
 
     if resettled > 0 then
         Communication.people_resettled(entry, resettled)
@@ -596,6 +627,7 @@ function Inhabitants.init()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
     global.houses_with_free_capacity = Tirislib_Tables.new_array_of_arrays(8)
+    global.next_houses = Tirislib_Tables.new_array_of_arrays(8)
 
     set_locals()
 end
