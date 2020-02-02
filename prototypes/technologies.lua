@@ -73,6 +73,29 @@ Tirislib_Technology("military-science-pack"):add_prerequisite("gunfire-caste")
 
 Tirislib_Technology.create {
     type = "technology",
+    name = "plasma-caste",
+    icon = "__sosciencity__/graphics/plasma-caste.png",
+    icon_size = 256,
+    upgrade = false,
+    prerequisites = {"logistic-science-pack"},
+    effects = {
+        {
+            type = "nothing",
+            effect_description = {"description.plasma-caste"}
+        }
+    },
+    unit = {
+        count = 278,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
     name = "ember-caste",
     icon = "__sosciencity__/graphics/ember-caste.png",
     icon_size = 256,

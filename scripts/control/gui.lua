@@ -344,34 +344,51 @@ local function add_caste_flow(container, caste_id)
         name = "caste-" .. caste_id,
         direction = "vertical"
     }
+    make_stretchable(frame)
     frame.style.padding = 0
     frame.style.left_margin = 4
 
-    local sprite = create_caste_sprite(frame, caste_id, CITY_INFO_SPRITE_SIZE)
+    frame.visible = Inhabitants.caste_is_researched(caste_id)
+
+    local flow =
+        frame.add {
+        type = "flow",
+        name = "flow",
+        direction = "vertical"
+    }
+    make_stretchable(flow)
+    flow.style.vertical_spacing = 0
+    flow.style.horizontal_align = "center"
+
+    local sprite = create_caste_sprite(flow, caste_id, CITY_INFO_SPRITE_SIZE)
     sprite.style.height = CITY_INFO_SPRITE_SIZE
     sprite.style.width = CITY_INFO_SPRITE_SIZE
     sprite.style.stretch_image_to_widget_size = true
     sprite.style.horizontal_align = "center"
 
-    local population_label =
-        frame.add {
+    flow.add {
         type = "label",
         name = "caste-population",
         caption = global.population[caste_id],
         tooltip = "population count"
     }
-    population_label.style.minimal_width = CITY_INFO_SPRITE_SIZE
-    population_label.style.horizontal_align = "center"
 
-    local bonus_label =
-        frame.add {
+    flow.add {
+        type = "label",
+        name = "immigration",
+        tooltip = {"sosciencity-gui.immigration"},
+        caption = {
+            "sosciencity-gui.show-immigration",
+            Inhabitants.get_immigration_trend(3600, caste_id)
+        }
+    }
+
+    flow.add {
         type = "label",
         name = "caste-bonus",
         caption = {"caste-bonus.show-" .. caste_name, get_bonus_string(caste_id)},
         tooltip = {"caste-bonus." .. caste_name}
     }
-    bonus_label.style.minimal_width = CITY_INFO_SPRITE_SIZE
-    bonus_label.style.horizontal_align = "center"
 end
 
 function Gui.create_city_info_for_player(player)
@@ -386,18 +403,18 @@ function Gui.create_city_info_for_player(player)
         name = CITY_INFO_NAME,
         direction = "horizontal"
     }
+    make_stretchable(frame)
 
     add_population_flow(frame)
 
     for id, _ in pairs(Caste.values) do
-        if Inhabitants.caste_is_researched(id) then
-            add_caste_flow(frame, id)
-        end
+        add_caste_flow(frame, id)
     end
 end
 
 local function update_caste_flow(container, caste_id)
     local caste_frame = container["caste-" .. caste_id]
+    caste_frame.visible = Inhabitants.caste_is_researched(caste_id)
 
     -- the frame may not yet exist
     if caste_frame == nil then
@@ -405,10 +422,15 @@ local function update_caste_flow(container, caste_id)
         return
     end
 
+    local flow = caste_frame.flow
+
     local caste_population = global.population[caste_id]
-    caste_frame.visible = (caste_population ~= 0)
-    caste_frame["caste-population"].caption = caste_population
-    caste_frame["caste-bonus"].caption = {
+    flow["caste-population"].caption = caste_population
+    flow["immigration"].caption = {
+        "sosciencity-gui.show-immigration",
+        Inhabitants.get_immigration_trend(3600, caste_id)
+    }
+    flow["caste-bonus"].caption = {
         "caste-bonus.show-" .. castes[caste_id].name,
         get_bonus_string(caste_id)
     }
@@ -418,9 +440,7 @@ local function update_city_info(frame)
     update_population_flow(frame)
 
     for id, _ in pairs(Caste.values) do
-        if Inhabitants.caste_is_researched(id) then
-            update_caste_flow(frame, id)
-        end
+        update_caste_flow(frame, id)
     end
 end
 
