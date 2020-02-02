@@ -20,6 +20,21 @@ end
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 
+--- Removes all values of the given table that equal the given value.
+--- This function doesn't preserve the original order.
+function Tirislib_Tables.remove_all(tbl, value)
+    for i = #tbl, 1, -1 do
+        if tbl[i] == value then
+            if i == #tbl then
+                tbl[i] = nil
+            else
+                tbl[i] = tbl[#tbl]
+                tbl[#tbl] = nil
+            end
+        end
+    end
+end
+
 function Tirislib_Tables.get_keyset(tbl)
     local ret = {}
     local index = 1
@@ -112,7 +127,7 @@ end
 
 function Tirislib_Tables.merge(lh, rh)
     for _, value in pairs(rh) do
-        table.insert(lh, value)
+        lh[#lh + 1] = value
     end
 
     return lh
@@ -126,6 +141,14 @@ function Tirislib_Tables.set_fields(tbl, fields)
     end
 
     return tbl
+end
+
+function Tirislib_Tables.merge_arrays(lh, rh)
+    for i = 1, #rh do
+        lh[#lh + 1] = rh[i]
+    end
+
+    return lh
 end
 
 function Tirislib_Tables.sum(tbl)
