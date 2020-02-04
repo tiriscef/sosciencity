@@ -1,7 +1,11 @@
 -- Static class for most of the generic functions that manipulate inventories and or items.
 Inventories = {}
 
+local garbage_values = Garbage.values
+
 local log_item = Communication.log_item
+
+local has_power = Subentities.has_power
 
 local chest = defines.inventory.chest
 
@@ -48,11 +52,13 @@ function Inventories.produce_garbage(entry, item, amount)
 
     -- try to put the garbage into a dumpster
     for _, disposal_entry in Neighborhood.all_of_type(entry, TYPE_DUMPSTER) do
-        local inventory = get_chest_inventory(disposal_entry)
-        produced_amount = produced_amount + try_insert(inventory, item, amount - produced_amount)
+        if has_power(disposal_entry) then
+            local inventory = get_chest_inventory(disposal_entry)
+            produced_amount = produced_amount + try_insert(inventory, item, amount - produced_amount)
 
-        if produced_amount == amount then
-            return
+            if produced_amount == amount then
+                return
+            end
         end
     end
 
@@ -66,6 +72,21 @@ function Inventories.produce_garbage(entry, item, amount)
 
     -- spill the rest
     spill_items(entry, item, amount - produced_amount)
+end
+
+function Inventories.get_garbage_value(entry)
+    local value = 0
+    local items = get_chest_inventory(entry).get_contents()
+
+    for name, count in pairs(items) do
+        local garbage_multiplier = garbage_values[name]
+
+        if garbage_multiplier then
+            value = value + garbage_multiplier * count
+        end
+    end
+
+    return value
 end
 
 return Inventories

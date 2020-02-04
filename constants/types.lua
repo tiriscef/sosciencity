@@ -94,8 +94,9 @@ HAPPINESS_NO_POWER = 6
 HAPPINESS_POWER = 7
 HAPPINESS_FEAR = 8
 HAPPINESS_EMBER = 9
+HAPPINESS_GARBAGE = 10
 
-Types.happiness_summands_count = 9
+Types.happiness_summands_count = 10
 
 --<< happiness factors >>
 HAPPINESS_NOT_ENOUGH_FOOD_VARIETY = 1
