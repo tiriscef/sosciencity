@@ -19,6 +19,7 @@ local evaluate_water = Consumption.evaluate_water
 
 local try_output_ideas = Inventories.try_output_ideas
 local produce_garbage = Inventories.produce_garbage
+local get_garbage_value = Inventories.get_garbage_value
 
 local get_housing = Housing.get
 local evaluate_housing = Housing.evaluate
@@ -393,6 +394,10 @@ local function get_nominal_value(influences, factors)
     return max(0, array_sum(influences) * array_product(factors))
 end
 
+local function get_garbage_influence(entry)
+    return max(get_garbage_value(entry) - 20, 0) * (-0.1)
+end
+
 --- Updates the given housing entry.
 --- @param entry Entry
 --- @param delta_ticks integer
@@ -416,6 +421,8 @@ function Inhabitants.update_house(entry, delta_ticks)
     evaluate_diet(entry, delta_ticks)
     evaluate_housing(entry, happiness_summands, sanity_summands)
     evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
+
+    happiness_summands[HAPPINESS_GARBAGE] = get_garbage_influence(entry)
 
     if has_power(entry) then
         happiness_summands[HAPPINESS_POWER] = caste_values.power_bonus
