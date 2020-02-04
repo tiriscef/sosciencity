@@ -41,7 +41,7 @@ local function get_factor_string(number)
 end
 
 local function get_comfort_localised_string(comfort)
-    return {"", comfort .. "  -  ", {"comfort-scale." .. comfort}}
+    return {"", comfort, "  -  ", {"comfort-scale." .. comfort}}
 end
 
 local function get_caste_localised_string(caste_id)
@@ -379,7 +379,7 @@ local function add_caste_flow(container, caste_id)
         tooltip = {"sosciencity-gui.immigration"},
         caption = {
             "sosciencity-gui.show-immigration",
-            Inhabitants.get_immigration_trend(3600, caste_id)
+            get_reasonable_number(Inhabitants.get_immigration_trend(3600, caste_id))
         }
     }
 
@@ -428,7 +428,7 @@ local function update_caste_flow(container, caste_id)
     flow["caste-population"].caption = caste_population
     flow["immigration"].caption = {
         "sosciencity-gui.show-immigration",
-        Inhabitants.get_immigration_trend(3600, caste_id)
+        get_reasonable_number(Inhabitants.get_immigration_trend(3600, caste_id))
     }
     flow["caste-bonus"].caption = {
         "caste-bonus.show-" .. castes[caste_id].name,

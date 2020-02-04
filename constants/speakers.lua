@@ -1,7 +1,7 @@
 Speakers = {}
 
 Speakers["tiriscef."] = {
-    useless_banter_count = 15,
+    useless_banter_count = 21,
     lines_with_followup = {
         2,
         3,
@@ -11,7 +11,9 @@ Speakers["tiriscef."] = {
         7,
         8,
         9,
-        15
+        15,
+        19,
+        20
     },
     index = 0
 }
