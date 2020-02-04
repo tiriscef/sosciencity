@@ -1,8 +1,9 @@
 require("constants.types")
 
+--- Things that people live in.
 Housing = {}
 
-Housing.houses = {
+Housing.values = {
     ["test-house"] = {
         room_count = 200,
         tech_level = 0,
@@ -11,7 +12,7 @@ Housing.houses = {
         caste_bonus = 2
     }
 }
-local houses = Housing.houses
+local houses = Housing.values
 
 function Housing.get(entry)
     return houses[entry[ENTITY].name]

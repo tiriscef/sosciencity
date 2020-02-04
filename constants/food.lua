@@ -1,11 +1,10 @@
 require("constants.types")
 
---[[
-    fat, carbohydrates and proteins are in g per 100g
-    portion_size is in kg
-]]
+--- Things that people like (and need) to eat.
 Food = {}
 
+--fat, carbohydrates and proteins are in g per 100g
+--portion_size is in kg
 Food.values = {
     ["alien-meat"] = {
         fat = 17,

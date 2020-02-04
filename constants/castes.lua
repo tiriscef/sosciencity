@@ -1,5 +1,6 @@
 require("constants.types")
 
+--- Things that define different kinds of people.
 Caste = {}
 
 Caste.values = {

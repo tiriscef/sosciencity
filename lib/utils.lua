@@ -25,12 +25,10 @@ Tirislib_Tables = {}
 function Tirislib_Tables.remove_all(tbl, value)
     for i = #tbl, 1, -1 do
         if tbl[i] == value then
-            if i == #tbl then
-                tbl[i] = nil
-            else
+            if i ~= #tbl then
                 tbl[i] = tbl[#tbl]
-                tbl[#tbl] = nil
             end
+            tbl[#tbl] = nil
         end
     end
 end

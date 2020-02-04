@@ -1,5 +1,6 @@
 require("constants.types")
 
+--- Custom entities.
 Buildings = {
     ["test-dumpster"] = {
         type = TYPE_DUMPSTER,
@@ -22,3 +23,10 @@ Buildings = {
         range = 35
     }
 }
+
+for _, details in pairs(Buildings) do
+    -- convert power usages to J / tick
+    if details.power_usage then
+        details.power_usage = details.power_usage * 1000 / 60
+    end
+end
