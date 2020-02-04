@@ -6,10 +6,13 @@ Subentities.subentity_name_lookup = {
 }
 local subentity_names = Subentities.subentity_name_lookup
 
+-- local often used functions for some performance gains
 local type_needs_beacon = Types.needs_beacon
-local type_needs_eei = Types.needs_eei
 local needs_sprite = Types.needs_sprite
 local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
+local is_inhabited = Types.is_inhabited
+
+local buildings = Buildings
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
@@ -66,8 +69,13 @@ function Subentities.add_all_for(entry)
     if type_needs_beacon(_type) then
         add(entry, SUB_BEACON)
     end
-    if type_needs_eei(_type) then
+    if is_inhabited(_type) then
         add(entry, SUB_EEI)
+        entry[POWER_USAGE] = 0
+    end
+    if buildings[name] and buildings[name].power_usage then
+        add(entry, SUB_EEI)
+        entry[POWER_USAGE] = buildings[name].power_usage
     end
     if needs_sprite(name) then
         add_sprite(entry, Types.get_sprite(name))
@@ -179,13 +187,18 @@ local function set_eei_power_usage(eei, usage)
     eei.electric_buffer_size = usage * 600 -- 10 seconds
 end
 
---- Checks if the entity is supplied with power. Assumes that the entry has an eei.
+--- Checks if the entity is supplied with power. Doesn't assume that the entry has an eei.
 --- @param entry Entry
 function Subentities.has_power(entry)
+    local power_usage = entry[POWER_USAGE]
+    if not power_usage or power_usage == 0 then
+        return true
+    end
+
     local eei, new = get(entry, SUB_EEI)
     if new then
         -- the new eei needs to be told its power usage
-        set_eei_power_usage(eei, entry[POWER_USAGE])
+        set_eei_power_usage(eei, power_usage)
         -- it had to be recreated, so we just return true
         -- (to avoid that things stop working when another mod keeps deleting the eei)
         return true

@@ -352,7 +352,7 @@ function Inhabitants.remove_house(entry)
     remove_from_house(entry, entry[INHABITANTS])
 end
 
---- Gets the trend toward the next inhabitant that moves in or out.
+--- Gets the trend toward the next inhabitant that moves out.
 function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
     local threshold_diff = nominal_happiness - caste.immigration_threshold
 

@@ -1,3 +1,4 @@
+--- Things that people like (and need) to drink.
 DrinkingWater = {}
 
 DrinkingWater.values = {

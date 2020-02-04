@@ -12,6 +12,8 @@ local produce_garbage = Inventories.produce_garbage
 
 local all_neighbors_of_type = Neighborhood.all_of_type
 local get_neighbors_of_type = Neighborhood.get_by_type
+
+local has_power = Subentities.has_power
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 
@@ -20,11 +22,11 @@ local chest = defines.inventory.chest
 --- Markets act like additional food inventories.
 local function get_food_inventories(entry)
     local inventories = {entry[ENTITY].get_inventory(chest)}
-    local i = 2
 
     for _, market_entry in all_neighbors_of_type(entry, TYPE_MARKET) do
-        inventories[i] = market_entry[ENTITY].get_inventory(chest)
-        i = i + 1
+        if has_power(market_entry) then
+            inventories[#inventories + 1] = market_entry[ENTITY].get_inventory(chest)
+        end
     end
 
     return inventories

@@ -125,6 +125,8 @@ local log_fluid = Communication.log_fluid
 local create_mouseover_highlights = Communication.create_mouseover_highlights
 local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 
+local has_power = Subentities.has_power
+
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
     local _type = entry[TYPE]
@@ -169,8 +171,8 @@ local function update_water_distributer(entry)
     -- determine and save the type of water that this distributer provides
     -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
     -- but needs to be checked often
-    for fluid_name, amount in pairs(entity.get_fluid_contents()) do
-        if amount > 0 then
+    if has_power(entry) then
+        for fluid_name in pairs(entity.get_fluid_contents()) do
             local water_value = water_values[fluid_name]
             if water_value then
                 entry[WATER_QUALITY] = water_value.health

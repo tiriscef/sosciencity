@@ -183,7 +183,7 @@ local houses
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
 function Types.init()
-    houses = Housing.houses
+    houses = Housing.values
 
     -- add the functional buildings to the lookup table
     for name, details in pairs(Buildings) do
@@ -242,10 +242,6 @@ end
 
 function Types.needs_beacon(_type)
     return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ORANGERY)
-end
-
-function Types.needs_eei(_type)
-    return _type < 1000
 end
 
 function Types.needs_sprite(name)
