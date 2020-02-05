@@ -18,6 +18,10 @@ Buildings = {
         type = TYPE_WATER_DISTRIBUTER,
         range = 42
     },
+    ["trash-site"] = {
+        type = TYPE_DUMPSTER,
+        range = 25
+    },
     ["water-tower"] = {
         type = TYPE_WATER_DISTRIBUTER,
         range = 35
