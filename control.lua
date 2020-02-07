@@ -283,10 +283,10 @@ local function on_load()
     Communication.load()
 end
 
-local function on_filtered_built(event)
+local function on_entity_built(event)
     local entity = event.created_entity
 
-    if not entity or not entity.valid then
+    if not entity or not entity.valid or entity.force.name ~= "player" then
         return
     end
 
@@ -489,8 +489,8 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 -- placement
 -- filter out ghosts because my mod has nothing to do with them
 local filter = {{filter = "ghost", invert = true}, {filter = "force", force = "player", mode = "and"}}
-script.on_event(defines.events.on_built_entity, on_filtered_built, filter)
-script.on_event(defines.events.on_robot_built_entity, on_filtered_built, filter)
+script.on_event(defines.events.on_built_entity, on_entity_built, filter)
+script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_entity_cloned, on_clone_built)
 script.on_event(defines.events.script_raised_built, on_script_built)
 script.on_event(defines.events.script_raised_revive, on_script_built)
