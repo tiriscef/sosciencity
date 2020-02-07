@@ -68,6 +68,7 @@ require("constants.buildings")
 require("constants.drinking-water")
 require("constants.speakers")
 require("constants.garbage")
+require("constants.colors")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
