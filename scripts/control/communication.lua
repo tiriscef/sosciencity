@@ -31,6 +31,9 @@ end
 local floor = math.floor
 local random = math.random
 
+local is_inhabited = Types.is_inhabited
+local try_get = Register.try_get
+
 local function set_locals()
     highlights = global.mouseover_highlights
 
@@ -137,7 +140,7 @@ for _, color in pairs(highlight_colors) do
     premultiply_with_alpha(color, highlight_alpha)
 end
 
-local function highlight_range(player_id, entity, building_details)
+local function highlight_range(player_id, entity, building_details, created_highlights)
     local range = building_details.range
 
     local surface = entity.surface
@@ -145,7 +148,7 @@ local function highlight_range(player_id, entity, building_details)
     local x = position.x
     local y = position.y
 
-    local id =
+    created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle {
         color = highlight_colors[building_details.type],
         filled = true,
@@ -154,20 +157,12 @@ local function highlight_range(player_id, entity, building_details)
         surface = surface,
         players = {player_id}
     }
-
-    highlights[player_id] = {id}
 end
 
-local function highlight_neighbors(player_id, entry)
+local function highlight_neighbors(player_id, entry, created_highlights)
     local neighbors = entry[NEIGHBORHOOD]
     if not neighbors then
         return
-    end
-
-    local highlight_list = highlights[player_id]
-    if not highlight_list then
-        highlights[player_id] = {}
-        highlight_list = highlights[player_id]
     end
 
     local players = {player_id}
@@ -178,7 +173,7 @@ local function highlight_neighbors(player_id, entry)
             highlight_colors[neighbor_entry[TYPE]] or
             {r = highlight_alpha, g = highlight_alpha, b = highlight_alpha, a = highlight_alpha}
 
-        local id =
+        created_highlights[#created_highlights + 1] =
             rendering.draw_rectangle {
             color = color,
             filled = true,
@@ -188,39 +183,64 @@ local function highlight_neighbors(player_id, entry)
             players = players,
             draw_on_ground = true
         }
-
-        highlight_list[#highlight_list + 1] = id
     end
+end
+
+local function show_inhabitants(player_id, entry, created_highlights)
+    local inhabitants = entry[INHABITANTS]
+    local capacity = Housing.get_capacity(entry)
+    local entity = entry[ENTITY]
+
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_text {
+        text = inhabitants .. " / " .. capacity,
+        target = entity,
+        surface = entity.surface,
+        players = {player_id},
+        alignment = "center",
+        color = Colors.white
+    }
 end
 
 function Communication.create_mouseover_highlights(player_id, entity)
     local name = entity.name
+    local created_highlights = {}
 
     local building_details = Buildings[name]
     if building_details then
-        highlight_range(player_id, entity, building_details)
+        highlight_range(player_id, entity, building_details, created_highlights)
     end
 
-    local entry = Register.try_get(entity.unit_number)
+    local entry = try_get(entity.unit_number)
     if entry then
-        highlight_neighbors(player_id, entry)
+        highlight_neighbors(player_id, entry, created_highlights)
+
+        local _type = entry[TYPE]
+        if is_inhabited(_type) then
+            show_inhabitants(player_id, entry, created_highlights)
+        end
+    end
+
+    if #created_highlights > 0 then
+        highlights[player_id] = created_highlights
     end
 end
 
 function Communication.remove_mouseover_highlights(player_id)
-    local renders = global.mouseover_highlights[player_id]
+    local renders = highlights[player_id]
 
     if not renders then
         return
     end
 
     for i = 1, #renders do
-        if rendering.is_valid(renders[i]) then
-            rendering.destroy(renders[i])
+        local id = renders[i]
+        if rendering.is_valid(id) then
+            rendering.destroy(id)
         end
     end
 
-    global.mouseover_highlights[player_id] = nil
+    highlights[player_id] = nil
 end
 
 local function log_population(current_tick)
@@ -297,11 +317,9 @@ end
 local useless_banter = Communication.useless_banter
 
 function Communication.log_emigration(caste, emigrated)
-
 end
 
 function Communication.log_immigration(caste, immigrated)
-
 end
 
 function Communication.update(current_tick)
