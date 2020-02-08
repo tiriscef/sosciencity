@@ -130,23 +130,23 @@ local has_power = Subentities.has_power
 
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
-    local _type = entry[TYPE]
+    local _type = entry[EntryKey.type]
     local speed_bonus = 0
     local productivity_bonus = 0
     local use_penalty_module = false
 
     if is_affected_by_clockwork(_type) then
-        speed_bonus = caste_bonuses[TYPE_CLOCKWORK]
+        speed_bonus = caste_bonuses[Type.clockwork]
         use_penalty_module = global.use_penalty
     end
-    if _type == TYPE_ROCKET_SILO then
-        productivity_bonus = caste_bonuses[TYPE_AURORA]
+    if _type == Type.rocket_silo then
+        productivity_bonus = caste_bonuses[Type.aurora]
     end
     if is_affected_by_orchid(_type) then
-        productivity_bonus = caste_bonuses[TYPE_ORCHID]
+        productivity_bonus = caste_bonuses[Type.orchid]
     end
-    if _type == TYPE_ORANGERY then
-        local age = game.tick - entry[TICK_OF_CREATION]
+    if _type == Type.orangery then
+        local age = game.tick - entry[EntryKey.tick_of_creation]
         productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
     end
 
@@ -154,12 +154,12 @@ local function update_entity_with_beacon(entry)
 end
 
 local function update_waterwell(entry, delta_ticks)
-    local near_count = Neighborhood.get_neighbor_count(entry, TYPE_WATERWELL) + 1
+    local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
 
     local groundwater_volume = (delta_ticks * 2) / near_count
 
     local inserted =
-        entry[ENTITY].insert_fluid {
+        entry[EntryKey.entity].insert_fluid {
         name = "groundwater",
         amount = groundwater_volume
     }
@@ -167,7 +167,7 @@ local function update_waterwell(entry, delta_ticks)
 end
 
 local function update_water_distributer(entry)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
 
     -- determine and save the type of water that this distributer provides
     -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
@@ -176,32 +176,32 @@ local function update_water_distributer(entry)
         for fluid_name in pairs(entity.get_fluid_contents()) do
             local water_value = water_values[fluid_name]
             if water_value then
-                entry[WATER_QUALITY] = water_value.health
-                entry[WATER_NAME] = fluid_name
+                entry[EntryKey.water_quality] = water_value.health
+                entry[EntryKey.water_name] = fluid_name
                 return
             end
         end
     end
-    entry[WATER_QUALITY] = 0
-    entry[WATER_NAME] = nil
+    entry[EntryKey.water_quality] = 0
+    entry[EntryKey.water_name] = nil
 end
 
 local update_functions = {
-    [TYPE_CLOCKWORK] = Inhabitants.update_house,
-    [TYPE_EMBER] = Inhabitants.update_house,
-    [TYPE_GUNFIRE] = Inhabitants.update_house,
-    [TYPE_GLEAM] = Inhabitants.update_house,
-    [TYPE_FOUNDRY] = Inhabitants.update_house,
-    [TYPE_ORCHID] = Inhabitants.update_house,
-    [TYPE_AURORA] = Inhabitants.update_house,
-    [TYPE_ASSEMBLING_MACHINE] = update_entity_with_beacon,
-    [TYPE_FURNACE] = update_entity_with_beacon,
-    [TYPE_ROCKET_SILO] = update_entity_with_beacon,
-    [TYPE_FARM] = update_entity_with_beacon,
-    [TYPE_MINING_DRILL] = update_entity_with_beacon,
-    [TYPE_ORANGERY] = update_entity_with_beacon,
-    [TYPE_WATERWELL] = update_waterwell,
-    [TYPE_WATER_DISTRIBUTER] = update_water_distributer
+    [Type.clockwork] = Inhabitants.update_house,
+    [Type.ember] = Inhabitants.update_house,
+    [Type.gunfire] = Inhabitants.update_house,
+    [Type.gleam] = Inhabitants.update_house,
+    [Type.foundry] = Inhabitants.update_house,
+    [Type.orchid] = Inhabitants.update_house,
+    [Type.aurora] = Inhabitants.update_house,
+    [Type.assembling_machine] = update_entity_with_beacon,
+    [Type.furnace] = update_entity_with_beacon,
+    [Type.rocket_silo] = update_entity_with_beacon,
+    [Type.farm] = update_entity_with_beacon,
+    [Type.mining_drill] = update_entity_with_beacon,
+    [Type.orangery] = update_entity_with_beacon,
+    [Type.waterwell] = update_waterwell,
+    [Type.water_distributer] = update_water_distributer
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -221,12 +221,12 @@ local function update_cycle()
     end
 
     while index and count < number_of_checks do
-        local _type = current_entry[TYPE]
+        local _type = current_entry[EntryKey.type]
         local updater = update_functions[_type]
         if updater ~= nil then
-            local delta_ticks = current_tick - current_entry[LAST_UPDATE]
+            local delta_ticks = current_tick - current_entry[EntryKey.last_update]
             updater(current_entry, delta_ticks)
-            current_entry[LAST_UPDATE] = current_tick
+            current_entry[EntryKey.last_update] = current_tick
         end
 
         index, current_entry = next_entry(index)
@@ -368,7 +368,7 @@ local function on_entity_mined(event)
 
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
-    if entry and Types.is_inhabited(entry[TYPE]) then
+    if entry and Types.is_inhabited(entry[EntryKey.type]) then
         Inhabitants.try_resettle(entry, unit_number)
     end
 
@@ -390,9 +390,9 @@ local function on_entity_settings_pasted(event)
         return
     end
 
-    local source_type = source_entry[TYPE]
-    local destination_type = destination_entry[TYPE]
-    if is_inhabited(source_type) and destination_type == TYPE_EMPTY_HOUSE then
+    local source_type = source_entry[EntryKey.type]
+    local destination_type = destination_entry[EntryKey.type]
+    if is_inhabited(source_type) and destination_type == Type.empty_house then
         Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
     end
 end

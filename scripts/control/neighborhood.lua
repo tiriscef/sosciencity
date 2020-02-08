@@ -19,14 +19,14 @@ end
 
 --- Table with (entity type, neighborhood specification) pairs
 Neighborhood.entity_types_aware_of_neighborhood = {
-    [TYPE_CLOCKWORK] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_ORCHID] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_GUNFIRE] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_EMBER] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_FOUNDRY] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_GLEAM] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_AURORA] = {active_types = {TYPE_MARKET, TYPE_WATER_DISTRIBUTER, TYPE_HOSPITAL, TYPE_DUMPSTER}},
-    [TYPE_WATERWELL] = {active_types = {TYPE_WATERWELL}}
+    [Type.clockwork] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.orchid] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.gunfire] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.ember] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.foundry] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.gleam] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.aurora] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
+    [Type.waterwell] = {active_types = {Type.waterwell}}
 }
 local entity_types_aware_of_neighborhood = Neighborhood.entity_types_aware_of_neighborhood
 
@@ -68,14 +68,14 @@ local function maximum_metric_distance(x1, y1, x2, y2)
 end
 
 local function is_in_range(neighborhood_entry, entry)
-    local neighbor_entity = neighborhood_entry[ENTITY]
+    local neighbor_entity = neighborhood_entry[EntryKey.entity]
     local range = active_neighbor_ranges[neighbor_entity.name]
     local position = neighbor_entity.position
     local x = position.x
     local y = position.y
 
     -- check all 4 corners of the entry if they are in range
-    local bounding_box = entry[ENTITY].selection_box
+    local bounding_box = entry[EntryKey.entity].selection_box
     local position1 = bounding_box.left_top
     local x1 = position1.x
     local y1 = position1.y
@@ -97,8 +97,8 @@ function Neighborhood.add_neighborhood(entry, _type)
         return
     end
 
-    entry[NEIGHBORHOOD] = {}
-    local neighborhood_table = entry[NEIGHBORHOOD]
+    entry[EntryKey.neighbors] = {}
+    local neighborhood_table = entry[EntryKey.neighbors]
 
     for _, neighbor_type in pairs(details.active_types) do
         neighborhood_table[neighbor_type] = {}
@@ -116,19 +116,19 @@ end
 --- @param neighbor_entry Entry
 --- @param _type Type
 function Neighborhood.establish_new_neighbor(neighbor_entry, _type)
-    if not active_neighbor_ranges[neighbor_entry[ENTITY].name] then
+    if not active_neighbor_ranges[neighbor_entry[EntryKey.entity].name] then
         return
     end
 
-    local unit_number = neighbor_entry[ENTITY].unit_number
+    local unit_number = neighbor_entry[EntryKey.entity].unit_number
 
     for _, interested_type in pairs(interested_entity_types[_type]) do
         for _, current_entry in Register.all_of_type(interested_type) do
             if is_in_range(neighbor_entry, current_entry) then
-                if not current_entry[NEIGHBORHOOD][_type] then
-                    current_entry[NEIGHBORHOOD][_type] = {}
+                if not current_entry[EntryKey.neighbors][_type] then
+                    current_entry[EntryKey.neighbors][_type] = {}
                 end
-                current_entry[NEIGHBORHOOD][_type][unit_number] = _type
+                current_entry[EntryKey.neighbors][_type][unit_number] = _type
             end
         end
     end
@@ -138,17 +138,17 @@ end
 --- @param entry Entry
 --- @param _type Type
 function Neighborhood.get_by_type(entry, _type)
-    if not entry[NEIGHBORHOOD] or not entry[NEIGHBORHOOD][_type] then
+    if not entry[EntryKey.neighbors] or not entry[EntryKey.neighbors][_type] then
         return {}
     end
 
-    local neighbor_table = entry[NEIGHBORHOOD][_type]
+    local neighbor_table = entry[EntryKey.neighbors][_type]
     local ret = {}
     local i = 1
 
     for unit_number, _ in pairs(neighbor_table) do
         local current_entry = try_get(unit_number)
-        if current_entry and current_entry[TYPE] == _type then
+        if current_entry and current_entry[EntryKey.type] == _type then
             ret[i] = current_entry
             i = i + 1
         else
@@ -171,7 +171,7 @@ local function all_of_type_iterator(neighbor_table, key)
     end
 
     local entry = try_get(key)
-    if entry and entry[TYPE] == supposed_type then
+    if entry and entry[EntryKey.type] == supposed_type then
         return key, entry
     else
         neighbor_table[key] = nil
@@ -183,11 +183,11 @@ end
 --- @param entry Entry
 --- @param _type Type
 function Neighborhood.all_of_type(entry, _type)
-    if not entry[NEIGHBORHOOD] or not entry[NEIGHBORHOOD][_type] then
+    if not entry[EntryKey.neighbors] or not entry[EntryKey.neighbors][_type] then
         return nothing
     end
 
-    return all_of_type_iterator, entry[NEIGHBORHOOD][_type]
+    return all_of_type_iterator, entry[EntryKey.neighbors][_type]
 end
 
 -- Thanks to justarandomgeek for this piece of code.
@@ -220,7 +220,7 @@ local function all_neighbors_iterator(all_neighbors, key)
     key[2] = unit_number
 
     local entry = try_get(unit_number)
-    if entry and entry[TYPE] == neighbor_type then
+    if entry and entry[EntryKey.type] == neighbor_type then
         return key, entry
     else
         neighbor_table[unit_number] = nil
@@ -231,25 +231,25 @@ end
 --- Lazy iterator over all neighbors.
 --- @param entry Entry
 function Neighborhood.all(entry)
-    if not entry[NEIGHBORHOOD] then
+    if not entry[EntryKey.neighbors] then
         return nothing
     end
 
-    return all_neighbors_iterator, entry[NEIGHBORHOOD]
+    return all_neighbors_iterator, entry[EntryKey.neighbors]
 end
 
 function Neighborhood.get_neighbor_count(entry, _type)
-    if not entry[NEIGHBORHOOD] or not entry[NEIGHBORHOOD][_type] then
+    if not entry[EntryKey.neighbors] or not entry[EntryKey.neighbors][_type] then
         return 0
     end
 
-    local neighbors = entry[NEIGHBORHOOD][_type]
+    local neighbors = entry[EntryKey.neighbors][_type]
     local count = 0
 
     for unit_number in pairs(neighbors) do
         local neighbor_entry = try_get(unit_number)
 
-        if neighbor_entry and neighbor_entry[TYPE] == _type then
+        if neighbor_entry and neighbor_entry[EntryKey.type] == _type then
             count = count + 1
         else
             neighbors[unit_number] = nil
