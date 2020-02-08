@@ -80,6 +80,16 @@ Food.values = {
     }
 }
 
+Food.taste_names = {
+    [Taste.bitter] = "bitter",
+    [Taste.neutral] = "neutral",
+    [Taste.salty] = "salty",
+    [Taste.sour] = "sour",
+    [Taste.spicy] = "spicy",
+    [Taste.sweet] = "sweet",
+    [Taste.umami] = "umami"
+}
+
 local energy_density_fat = 9 -- kcal per g
 local energy_density_carbohydrates = 4
 local energy_density_proteins = 3.7

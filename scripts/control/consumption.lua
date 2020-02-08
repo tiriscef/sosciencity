@@ -240,7 +240,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     if count == 0 then
         happiness[HappinessSummand.taste] = 0.
         happiness[HappinessSummand.food_luxury] = 0.
-        happiness[HappinessSummand.VARIETY] = 0.
+        happiness[HappinessSummand.food_variety] = 0.
         happiness_factors[HappinessFactor.not_enough_food_variety] = 1.
 
         health[HealthSummand.nutrients] = 0

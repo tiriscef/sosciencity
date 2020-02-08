@@ -1,7 +1,15 @@
 Gui = {}
 
 local castes = Caste.values
+local global
+local population
+local effective_population
 
+local function set_locals()
+    global = _ENV.global
+    population = global.population
+    effective_population = global.effective_population
+end
 -- this should be added to every element which needs an event handler
 -- because the event handler is called for every gui in existance
 -- so I need to ensure that I'm not reacting to another mods gui
@@ -370,7 +378,7 @@ local function add_caste_flow(container, caste_id)
         type = "label",
         name = "caste-population",
         caption = global.population[caste_id],
-        tooltip = "population count"
+        tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(effective_population[caste_id])}
     }
 
     flow.add {
@@ -388,6 +396,32 @@ local function add_caste_flow(container, caste_id)
         name = "caste-bonus",
         caption = {"caste-bonus.show-" .. caste_name, get_bonus_string(caste_id)},
         tooltip = {"caste-bonus." .. caste_name}
+    }
+end
+
+local function update_caste_flow(container, caste_id)
+    local caste_frame = container["caste-" .. caste_id]
+    caste_frame.visible = Inhabitants.caste_is_researched(caste_id)
+
+    -- the frame may not yet exist
+    if caste_frame == nil then
+        add_caste_flow(container, caste_id)
+        return
+    end
+
+    local flow = caste_frame.flow
+
+    local population_label = flow["caste-population"]
+    population_label.caption = population[caste_id]
+    population_label.tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(effective_population[caste_id])}
+
+    flow["immigration"].caption = {
+        "sosciencity-gui.show-immigration",
+        get_reasonable_number(Inhabitants.get_immigration_trend(3600, caste_id))
+    }
+    flow["caste-bonus"].caption = {
+        "caste-bonus.show-" .. castes[caste_id].name,
+        get_bonus_string(caste_id)
     }
 end
 
@@ -410,30 +444,6 @@ function Gui.create_city_info_for_player(player)
     for id, _ in pairs(Caste.values) do
         add_caste_flow(frame, id)
     end
-end
-
-local function update_caste_flow(container, caste_id)
-    local caste_frame = container["caste-" .. caste_id]
-    caste_frame.visible = Inhabitants.caste_is_researched(caste_id)
-
-    -- the frame may not yet exist
-    if caste_frame == nil then
-        add_caste_flow(container, caste_id)
-        return
-    end
-
-    local flow = caste_frame.flow
-
-    local caste_population = global.population[caste_id]
-    flow["caste-population"].caption = caste_population
-    flow["immigration"].caption = {
-        "sosciencity-gui.show-immigration",
-        get_reasonable_number(Inhabitants.get_immigration_trend(3600, caste_id))
-    }
-    flow["caste-bonus"].caption = {
-        "caste-bonus.show-" .. castes[caste_id].name,
-        get_bonus_string(caste_id)
-    }
 end
 
 local function update_city_info(frame)
@@ -555,7 +565,8 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value_tooltip(
         general_list,
         "capacity",
-        (entry[EntryKey.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
+        (entry[EntryKey.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or
+            {"sosciencity-gui.negative-trend"}
     )
 
     set_datalist_value(
@@ -568,13 +579,15 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value(
         general_list,
         "health",
-        (inhabitants > 0) and get_convergence_localised_string(entry[EntryKey.health], Inhabitants.get_nominal_health(entry)) or
+        (inhabitants > 0) and
+            get_convergence_localised_string(entry[EntryKey.health], Inhabitants.get_nominal_health(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and get_convergence_localised_string(entry[EntryKey.sanity], Inhabitants.get_nominal_sanity(entry)) or
+        (inhabitants > 0) and
+            get_convergence_localised_string(entry[EntryKey.sanity], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -718,8 +731,8 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         {"sosciencity-gui.taste"},
         {
             "sosciencity-gui.show-taste",
-            {"taste-category." .. Types.taste_names[caste.favored_taste]},
-            {"taste-category." .. Types.taste_names[caste.least_favored_taste]}
+            {"taste-category." .. Food.taste_names[caste.favored_taste]},
+            {"taste-category." .. Food.taste_names[caste.least_favored_taste]}
         }
     )
     add_kv_pair(
@@ -940,11 +953,16 @@ function Gui.create_guis_for_player(player)
 end
 
 function Gui.init()
+    set_locals()
     global.details_view = {}
 
     for _, player in pairs(game.players) do
         Gui.create_guis_for_player(player)
     end
+end
+
+function Gui.load()
+    set_locals()
 end
 
 return Gui

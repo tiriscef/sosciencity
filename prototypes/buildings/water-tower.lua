@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "water-tower",
-    stack_size = 10
+    stack_size = 50
 }
 
 Tirislib_RecipeGenerator.create_recipe("water-tower")
@@ -26,7 +26,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "water-tower"},
     max_health = 500,
-    corpse = "medium-remnants", -- TODO
+    corpse = "water-tower-remnants",
     two_direction_only = true,
     fluid_box = {
         base_area = 50,
@@ -88,3 +88,32 @@ Tirislib_Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(3, 3):copy_localisation_from_item()
+
+Tirislib_Entity.create {
+    type = "corpse",
+    name = "water-tower-remnants",
+    icon = "__sosciencity__/graphics/icon/water-tower.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "not-on-map"},
+    selectable_in_game = false,
+    time_before_removed = 60 * 60 * 15, -- 15 minutes
+    final_render_layer = "remnants",
+    subgroup = "remnants",
+    order = "dead-water-tower:(",
+    remove_on_tile_placement = false,
+    animation = {
+        filename = "__sosciencity__/graphics/entity/water-tower/water-tower-remnants.png",
+        direction_count = 1,
+        width = 160,
+        height = 160,
+        shift = {0, -1},
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/water-tower/water-tower-remnants-hr.png",
+            direction_count = 1,
+            width = 320,
+            height = 320,
+            shift = {0, -1},
+            scale = 0.5
+        }
+    }
+}:set_size(3, 3)

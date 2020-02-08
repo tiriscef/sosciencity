@@ -157,7 +157,8 @@ local function highlight_range(player_id, entity, building_details, created_high
             left_top = {x - range, y - range},
             right_bottom = {x + range, y + range},
             surface = surface,
-            players = {player_id}
+            players = {player_id},
+            draw_on_ground = true
         }
     )
 end
