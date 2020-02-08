@@ -19,7 +19,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "trash-site"},
     max_health = 500,
-    corpse = "small-remnants", -- TODO
+    corpse = "trash-site-remnants",
     inventory_size = 20,
     vehicle_impact_sound = {
         filename = "__base__/sound/car-metal-impact.ogg",
@@ -50,3 +50,32 @@ Tirislib_Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(5, 5):copy_localisation_from_item()
+
+Tirislib_Entity.create {
+    type = "corpse",
+    name = "trash-site-remnants",
+    icon = "__sosciencity__/graphics/icon/trash-site.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "not-on-map"},
+    selectable_in_game = false,
+    time_before_removed = 60 * 60 * 15, -- 15 minutes
+    final_render_layer = "remnants",
+    subgroup = "remnants",
+    order = "dead-trash-site:(",
+    remove_on_tile_placement = false,
+    animation = {
+        filename = "__sosciencity__/graphics/entity/trash-site/trash-site-remnants.png",
+        direction_count = 1,
+        width = 192,
+        height = 192,
+        shift = {0.5, -0.5},
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/trash-site/trash-site-remnants-hr.png",
+            direction_count = 1,
+            width = 384,
+            height = 384,
+            shift = {0.5, -0.5},
+            scale = 0.5
+        }
+    }
+}:set_size(5, 5)
