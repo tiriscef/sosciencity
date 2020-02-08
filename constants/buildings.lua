@@ -1,29 +1,29 @@
-require("constants.types")
+require("constants.enums")
 
 --- Custom entities.
 Buildings = {
     ["test-dumpster"] = {
-        type = TYPE_DUMPSTER,
+        type = Type.dumpster,
         range = 42
     },
     ["test-market"] = {
-        type = TYPE_MARKET,
+        type = Type.market,
         range = 42
     },
     ["test-hospital"] = {
-        type = TYPE_HOSPITAL,
+        type = Type.hospital,
         range = 42
     },
     ["test-water-distributer"] = {
-        type = TYPE_WATER_DISTRIBUTER,
+        type = Type.water_distributer,
         range = 42
     },
     ["trash-site"] = {
-        type = TYPE_DUMPSTER,
+        type = Type.dumpster,
         range = 25
     },
     ["water-tower"] = {
-        type = TYPE_WATER_DISTRIBUTER,
+        type = Type.water_distributer,
         range = 35
     }
 }

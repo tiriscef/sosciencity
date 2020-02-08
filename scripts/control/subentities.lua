@@ -1,8 +1,8 @@
 Subentities = {}
 
 Subentities.subentity_name_lookup = {
-    [SUB_BEACON] = "sosciencity-hidden-beacon",
-    [SUB_EEI] = "sosciencity-hidden-eei"
+    [SubentityType.beacon] = "sosciencity-hidden-beacon",
+    [SubentityType.eei] = "sosciencity-hidden-eei"
 }
 local subentity_names = Subentities.subentity_name_lookup
 
@@ -17,7 +17,7 @@ local buildings = Buildings
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function add(entry, _type)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
     local subentity =
         entity.surface.create_entity {
         name = subentity_names[_type],
@@ -25,13 +25,13 @@ local function add(entry, _type)
         force = entity.force
     }
 
-    entry[SUBENTITIES][_type] = subentity
+    entry[EntryKey.subentities][_type] = subentity
 
     return subentity
 end
 
 local function add_sprite(entry, name)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
     local sprite_id =
         rendering.draw_sprite {
         sprite = name,
@@ -40,13 +40,13 @@ local function add_sprite(entry, name)
         render_layer = "lower-object"
     }
 
-    entry[SPRITE] = sprite_id
+    entry[EntryKey.subentities][SubentityType.sprite] = sprite_id
 
     return sprite_id
 end
 
 local function add_alt_mode_sprite(entry, name)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
     local sprite_id =
         rendering.draw_sprite {
         sprite = name,
@@ -55,7 +55,7 @@ local function add_alt_mode_sprite(entry, name)
         only_in_alt_mode = true
     }
 
-    entry[ALTMODE_SPRITE] = sprite_id
+    entry[EntryKey.subentities][SubentityType.altmode_sprite] = sprite_id
 
     return sprite_id
 end
@@ -63,19 +63,19 @@ end
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
 function Subentities.add_all_for(entry)
-    local _type = entry[TYPE]
-    local name = entry[ENTITY].name
+    local _type = entry[EntryKey.type]
+    local name = entry[EntryKey.entity].name
 
     if type_needs_beacon(_type) then
-        add(entry, SUB_BEACON)
+        add(entry, SubentityType.beacon)
     end
     if is_inhabited(_type) then
-        add(entry, SUB_EEI)
-        entry[POWER_USAGE] = 0
+        add(entry, SubentityType.eei)
+        entry[EntryKey.power_usage] = 0
     end
     if buildings[name] and buildings[name].power_usage then
-        add(entry, SUB_EEI)
-        entry[POWER_USAGE] = buildings[name].power_usage
+        add(entry, SubentityType.eei)
+        entry[EntryKey.power_usage] = buildings[name].power_usage
     end
     if needs_sprite(name) then
         add_sprite(entry, Types.get_sprite(name))
@@ -88,7 +88,7 @@ end
 --- Removes all the hidden entities.
 --- @param entry Entry
 function Subentities.remove_all_for(entry)
-    for _, subentity in pairs(entry[SUBENTITIES]) do
+    for _, subentity in pairs(entry[EntryKey.subentities]) do
         if subentity.valid then
             subentity.destroy()
         end
@@ -100,7 +100,7 @@ end
 --- @param entry Entry
 --- @param _type Type
 function Subentities.get(entry, _type)
-    local subentity = entry[SUBENTITIES][_type]
+    local subentity = entry[EntryKey.subentities][_type]
     if subentity == nil then
         return
     end
@@ -149,12 +149,12 @@ end
 --- @param productivity number
 --- @param add_penalty boolean
 function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
-    local beacon, new = get(entry, SUB_BEACON)
+    local beacon, new = get(entry, SubentityType.beacon)
 
     -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
     if
-        not new and speed == entry[SPEED_BONUS] and productivity == entry[PRODUCTIVITY_BONUS] and
-            add_penalty == entry[HAS_PENALTY]
+        not new and speed == entry[EntryKey.speed_bonus] and productivity == entry[EntryKey.productivity_bonus] and
+            add_penalty == entry[EntryKey.has_penalty_module]
      then
         return
     end
@@ -174,9 +174,9 @@ function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
     end
 
     -- save the current beacon settings
-    entry[SPEED_BONUS] = speed
-    entry[PRODUCTIVITY_BONUS] = productivity
-    entry[HAS_PENALTY] = add_penalty
+    entry[EntryKey.speed_bonus] = speed
+    entry[EntryKey.productivity_bonus] = productivity
+    entry[EntryKey.has_penalty_module] = add_penalty
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -190,12 +190,12 @@ end
 --- Checks if the entity is supplied with power. Doesn't assume that the entry has an eei.
 --- @param entry Entry
 function Subentities.has_power(entry)
-    local power_usage = entry[POWER_USAGE]
+    local power_usage = entry[EntryKey.power_usage]
     if not power_usage or power_usage == 0 then
         return true
     end
 
-    local eei, new = get(entry, SUB_EEI)
+    local eei, new = get(entry, SubentityType.eei)
     if new then
         -- the new eei needs to be told its power usage
         set_eei_power_usage(eei, power_usage)
@@ -212,12 +212,12 @@ end
 --- @param entry Entry
 --- @param usage number
 function Subentities.set_power_usage(entry, usage)
-    local eei, new = get(entry, SUB_EEI)
+    local eei, new = get(entry, SubentityType.eei)
 
     -- we don't update the eei if nothing has changed to avoid unnecessary API calls
-    if new or entry[POWER_USAGE] ~= usage then
+    if new or entry[EntryKey.power_usage] ~= usage then
         set_eei_power_usage(eei, usage)
-        entry[POWER_USAGE] = usage
+        entry[EntryKey.power_usage] = usage
     end
 end
 

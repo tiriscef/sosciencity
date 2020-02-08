@@ -12,7 +12,7 @@ local chest = defines.inventory.chest
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
 function Inventories.get_chest_inventory(entry)
-    return entry[ENTITY].get_inventory(chest)
+    return entry[EntryKey.entity].get_inventory(chest)
 end
 local get_chest_inventory = Inventories.get_chest_inventory
 
@@ -32,7 +32,7 @@ end
 local try_insert = Inventories.try_insert
 
 function Inventories.spill_items(entry, item, amount)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
     entity.surface.spill_item_stack(entity.position, {name = item, count = amount})
 
     log_item(item, amount)
@@ -51,7 +51,7 @@ function Inventories.produce_garbage(entry, item, amount)
     local produced_amount = 0
 
     -- try to put the garbage into a dumpster
-    for _, disposal_entry in Neighborhood.all_of_type(entry, TYPE_DUMPSTER) do
+    for _, disposal_entry in Neighborhood.all_of_type(entry, Type.dumpster) do
         if has_power(disposal_entry) then
             local inventory = get_chest_inventory(disposal_entry)
             produced_amount = produced_amount + try_insert(inventory, item, amount - produced_amount)

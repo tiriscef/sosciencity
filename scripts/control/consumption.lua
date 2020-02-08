@@ -21,11 +21,11 @@ local chest = defines.inventory.chest
 --- Returns a list of all inventories whose food is relevant to the diet.
 --- Markets act like additional food inventories.
 local function get_food_inventories(entry)
-    local inventories = {entry[ENTITY].get_inventory(chest)}
+    local inventories = {entry[EntryKey.entity].get_inventory(chest)}
 
-    for _, market_entry in all_neighbors_of_type(entry, TYPE_MARKET) do
+    for _, market_entry in all_neighbors_of_type(entry, Type.market) do
         if has_power(market_entry) then
-            inventories[#inventories + 1] = market_entry[ENTITY].get_inventory(chest)
+            inventories[#inventories + 1] = market_entry[EntryKey.entity].get_inventory(chest)
         end
     end
 
@@ -219,39 +219,39 @@ local function consume_food(entry, inventories, amount, diet, count)
 end
 
 local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
-    local happiness = entry[HAPPINESS_SUMMANDS]
-    local happiness_factors = entry[HAPPINESS_FACTORS]
-    local health = entry[HEALTH_SUMMANDS]
-    local health_factors = entry[HEALTH_FACTORS]
-    local sanity = entry[SANITY_SUMMANDS]
-    local sanity_factors = entry[SANITY_FACTORS]
+    local happiness = entry[EntryKey.happiness_summands]
+    local happiness_factors = entry[EntryKey.happiness_factors]
+    local health = entry[EntryKey.health_summands]
+    local health_factors = entry[EntryKey.health_factors]
+    local sanity = entry[EntryKey.sanity_summands]
+    local sanity_factors = entry[EntryKey.sanity_factors]
 
     if hunger_satisfaction < 0.5 then
-        happiness_factors[HAPPINESS_HUNGER] = 0.
-        health_factors[HEALTH_HUNGER] = 0.
-        sanity_factors[SANITY_HUNGER] = 0.
+        happiness_factors[HappinessFactor.hunger] = 0.
+        health_factors[HealthFactor.hunger] = 0.
+        sanity_factors[SanityFactor.hunger] = 0.
     else
-        happiness_factors[HAPPINESS_HUNGER] = 1.
-        health_factors[HEALTH_HUNGER] = 1.
-        sanity_factors[SANITY_HUNGER] = 1.
+        happiness_factors[HappinessFactor.hunger] = 1.
+        health_factors[HealthFactor.hunger] = 1.
+        sanity_factors[SanityFactor.hunger] = 1.
     end
 
     -- handle the annoying edge case of no food at all
     if count == 0 then
-        happiness[HAPPINESS_TASTE] = 0.
-        happiness[HAPPINESS_FOOD_LUXURY] = 0.
-        happiness[HAPPINESS_FOOD_VARIETY] = 0.
-        happiness_factors[HAPPINESS_NOT_ENOUGH_FOOD_VARIETY] = 1.
+        happiness[HappinessSummand.taste] = 0.
+        happiness[HappinessSummand.food_luxury] = 0.
+        happiness[HappinessSummand.VARIETY] = 0.
+        happiness_factors[HappinessFactor.not_enough_food_variety] = 1.
 
-        health[HEALTH_NUTRIENTS] = 0
-        health[HEALTH_FOOD] = 0
+        health[HealthSummand.nutrients] = 0
+        health[HealthSummand.food] = 0
 
-        sanity[SANITY_TASTE] = 0
-        sanity[SANITY_FAV_TASTE] = 0
-        sanity[SANITY_LEAST_FAV_TASTE] = 0
-        sanity[SANITY_SINGLE_FOOD] = 0
-        sanity[SANITY_NO_VARIETY] = 0
-        sanity[SANITY_JUST_NEUTRAL] = 0
+        sanity[SanitySummand.taste] = 0
+        sanity[SanitySummand.favorite_taste] = 0
+        sanity[SanitySummand.disliked_taste] = 0
+        sanity[SanitySummand.single_food] = 0
+        sanity[SanitySummand.no_variety] = 0
+        sanity[SanitySummand.just_neutral] = 0
         return
     end
 
@@ -262,13 +262,13 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local proteins = 0
     local taste_quality = 0
     local taste_counts = {
-        [TASTE_BITTER] = 0,
-        [TASTE_NEUTRAL] = 0,
-        [TASTE_SALTY] = 0,
-        [TASTE_SOUR] = 0,
-        [TASTE_SPICY] = 0,
-        [TASTE_SWEET] = 0,
-        [TASTE_UMAMI] = 0
+        [Taste.bitter] = 0,
+        [Taste.neutral] = 0,
+        [Taste.salty] = 0,
+        [Taste.sour] = 0,
+        [Taste.spicy] = 0,
+        [Taste.sweet] = 0,
+        [Taste.umami] = 0
     }
     local luxury = 0
     local favorite_taste = caste.favorite_taste
@@ -306,7 +306,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     luxury = luxury / count
 
     -- determine dominant taste
-    local dominant_taste = TASTE_BITTER
+    local dominant_taste = Taste.bitter
     for current_taste_category, current_count in pairs(taste_counts) do
         if current_count > taste_counts[dominant_taste] then
             dominant_taste = current_taste_category
@@ -314,36 +314,36 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     end
 
     -- add calculation summands
-    happiness[HAPPINESS_TASTE] = (1 - caste.desire_for_luxury) * taste_quality * hunger_satisfaction
-    happiness[HAPPINESS_FOOD_LUXURY] = caste.desire_for_luxury * luxury * hunger_satisfaction
+    happiness[HappinessSummand.taste] = (1 - caste.desire_for_luxury) * taste_quality * hunger_satisfaction
+    happiness[HappinessSummand.food_luxury] = caste.desire_for_luxury * luxury * hunger_satisfaction
 
     local variety = table_size(groups) - caste.minimum_food_count
-    happiness[HAPPINESS_FOOD_VARIETY] = (variety > 0) and (variety * 0.5) or 0
+    happiness[HappinessSummand.food_variety] = (variety > 0) and (variety * 0.5) or 0
 
-    happiness_factors[HAPPINESS_NOT_ENOUGH_FOOD_VARIETY] = (variety < 0) and 0.6 or 1.
+    happiness_factors[HappinessFactor.not_enough_food_variety] = (variety < 0) and 0.6 or 1.
 
-    health[HEALTH_NUTRIENTS] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
-    health[HEALTH_FOOD] = intrinsic_healthiness * hunger_satisfaction
+    health[HealthSummand.nutrients] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
+    health[HealthSummand.food] = intrinsic_healthiness * hunger_satisfaction
 
-    sanity[SANITY_TASTE] = taste_quality * hunger_satisfaction * 0.5
-    sanity[SANITY_FAV_TASTE] = (dominant_taste == favorite_taste) and 4 or 0
-    sanity[SANITY_LEAST_FAV_TASTE] = (dominant_taste == least_favored_taste) and -4 or 0
-    sanity[SANITY_SINGLE_FOOD] = (count == 1) and -3 or 0
-    sanity[SANITY_NO_VARIETY] = (taste_counts[dominant_taste] == count) and -3 or 0
-    sanity[SANITY_JUST_NEUTRAL] = (taste_counts[TASTE_NEUTRAL] == count) and -3 or 0
+    sanity[SanitySummand.taste] = taste_quality * hunger_satisfaction * 0.5
+    sanity[SanitySummand.favorite_taste] = (dominant_taste == favorite_taste) and 4 or 0
+    sanity[SanitySummand.disliked_taste] = (dominant_taste == least_favored_taste) and -4 or 0
+    sanity[SanitySummand.single_food] = (count == 1) and -3 or 0
+    sanity[SanitySummand.no_variety] = (taste_counts[dominant_taste] == count) and -3 or 0
+    sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == count) and -3 or 0
 end
 
 local castes = Caste.values
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Consumption.evaluate_diet(entry, delta_ticks)
-    local caste = castes[entry[TYPE]]
+    local caste = castes[entry[EntryKey.type]]
     local inventories = get_food_inventories(entry)
     local diet, food_count = get_diet(inventories)
 
     local hunger_satisfaction = 0
     if food_count > 0 then
-        local to_consume = caste.calorific_demand * delta_ticks * entry[INHABITANTS]
+        local to_consume = caste.calorific_demand * delta_ticks * entry[EntryKey.inhabitants]
         hunger_satisfaction = consume_food(entry, inventories, to_consume, diet, food_count)
     end
 
@@ -359,7 +359,7 @@ local function consume_water(distributers, amount)
 
     while to_consume > 0.000001 and i <= distributer_count do
         local distributer = distributers[i]
-        local water_name = distributer[WATER_NAME]
+        local water_name = distributer[EntryKey.water_name]
 
         -- check if the distributer has water
         if not water_name then
@@ -367,9 +367,9 @@ local function consume_water(distributers, amount)
             break
         end
 
-        local consumed = distributer[ENTITY].remove_fluid {name = water_name, amount = to_consume}
+        local consumed = distributer[EntryKey.entity].remove_fluid {name = water_name, amount = to_consume}
         log_fluid(water_name, -consumed)
-        quality = quality + consumed * distributer[WATER_QUALITY]
+        quality = quality + consumed * distributer[EntryKey.water_quality]
         to_consume = to_consume - consumed
     end
 
@@ -377,10 +377,10 @@ local function consume_water(distributers, amount)
 end
 
 function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
-    local distributers = get_neighbors_of_type(entry, TYPE_WATER_DISTRIBUTER)
-    sort_by_key(distributers, WATER_QUALITY)
+    local distributers = get_neighbors_of_type(entry, Type.water_distributer)
+    sort_by_key(distributers, EntryKey.water_quality)
 
-    local water_to_consume = 0.0008 * entry[INHABITANTS] * delta_ticks -- 20 units per factorio day (25000 ticks)
+    local water_to_consume = 0.0008 * entry[EntryKey.inhabitants] * delta_ticks -- 20 units per factorio day (25000 ticks)
     local satisfaction, quality
 
     if water_to_consume > 0 then
@@ -389,18 +389,18 @@ function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, healt
         -- annoying edge case of no inhabitants
         -- test if there is at least one distributer with water
         local probe = distributers[1]
-        if probe and probe[WATER_NAME] then
+        if probe and probe[EntryKey.water_name] then
             satisfaction = 1
-            quality = probe[WATER_QUALITY]
+            quality = probe[EntryKey.water_quality]
         else
             satisfaction = 0
             quality = 0
         end
     end
 
-    happiness_factors[HAPPINESS_THIRST] = satisfaction
-    health_factors[HEALTH_WATER] = quality * satisfaction
-    sanity_factors[SANITY_THIRST] = satisfaction
+    happiness_factors[HappinessFactor.thirst] = satisfaction
+    health_factors[HealthFactor.water] = quality * satisfaction
+    sanity_factors[SanityFactor.thirst] = satisfaction
 end
 
 return Consumption

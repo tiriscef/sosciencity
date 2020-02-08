@@ -48,7 +48,7 @@ local function set_locals()
 end
 
 function Communication.create_flying_text(entry, text)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
 
     entity.surface.create_entity {
         name = "flying-text",
@@ -123,10 +123,11 @@ end
 
 local highlight_alpha = 0.2
 local highlight_colors = {
-    [TYPE_HOSPITAL] = {r = 0.8, g = 0.1, b = 0.1, a = 1},
-    [TYPE_WATER_DISTRIBUTER] = {r = 0, g = 0.8, b = 1, a = 1},
-    [TYPE_MARKET] = {r = 1, g = 0.45, b = 0, a = 1},
-    [TYPE_DUMPSTER] = {r = 0.8, g = 0.8, b = 0.8, a = 1}
+    [Type.hospital] = {r = 0.8, g = 0.1, b = 0.1, a = 1},
+    [Type.market] = {r = 1, g = 0.45, b = 0, a = 1},
+    [Type.dumpster] = {r = 0.8, g = 0.8, b = 0.8, a = 1},
+    [Type.water_distributer] = {r = 0, g = 0.8, b = 1, a = 1},
+    [Type.waterwell] = {r = 0, g = 0, b = 1, a = 1}
 }
 
 local function premultiply_with_alpha(color, a)
@@ -149,57 +150,63 @@ local function highlight_range(player_id, entity, building_details, created_high
     local y = position.y
 
     created_highlights[#created_highlights + 1] =
-        rendering.draw_rectangle {
-        color = highlight_colors[building_details.type],
-        filled = true,
-        left_top = {x - range, y - range},
-        right_bottom = {x + range, y + range},
-        surface = surface,
-        players = {player_id}
-    }
+        rendering.draw_rectangle(
+        {
+            color = highlight_colors[building_details.type],
+            filled = true,
+            left_top = {x - range, y - range},
+            right_bottom = {x + range, y + range},
+            surface = surface,
+            players = {player_id}
+        }
+    )
 end
 
 local function highlight_neighbors(player_id, entry, created_highlights)
-    local neighbors = entry[NEIGHBORHOOD]
+    local neighbors = entry[EntryKey.neighbors]
     if not neighbors then
         return
     end
 
     local players = {player_id}
     for _, neighbor_entry in Neighborhood.all(entry) do
-        local entity = neighbor_entry[ENTITY]
+        local entity = neighbor_entry[EntryKey.entity]
         local bounding_box = entity.selection_box
         local color =
-            highlight_colors[neighbor_entry[TYPE]] or
+            highlight_colors[neighbor_entry[EntryKey.type]] or
             {r = highlight_alpha, g = highlight_alpha, b = highlight_alpha, a = highlight_alpha}
 
         created_highlights[#created_highlights + 1] =
-            rendering.draw_rectangle {
-            color = color,
-            filled = true,
-            left_top = bounding_box.left_top,
-            right_bottom = bounding_box.right_bottom,
-            surface = entity.surface,
-            players = players,
-            draw_on_ground = true
-        }
+            rendering.draw_rectangle(
+            {
+                color = color,
+                filled = true,
+                left_top = bounding_box.left_top,
+                right_bottom = bounding_box.right_bottom,
+                surface = entity.surface,
+                players = players,
+                draw_on_ground = true
+            }
+        )
     end
 end
 
 local function show_inhabitants(player_id, entry, created_highlights)
-    local inhabitants = entry[INHABITANTS]
+    local inhabitants = entry[EntryKey.inhabitants]
     local capacity = Housing.get_capacity(entry)
-    local entity = entry[ENTITY]
+    local entity = entry[EntryKey.entity]
 
     created_highlights[#created_highlights + 1] =
-        rendering.draw_text {
-        text = inhabitants .. " / " .. capacity,
-        target = entity,
-        surface = entity.surface,
-        players = {player_id},
-        alignment = "center",
-        color = Colors.white
-    }
+        rendering.draw_text(
+        {
+            text = inhabitants .. " / " .. capacity,
+            target = entity,
+            surface = entity.surface,
+            players = {player_id},
+            alignment = "center",
+            color = Colors.white
+        }
+    )
 end
 
 function Communication.create_mouseover_highlights(player_id, entity)
@@ -215,7 +222,7 @@ function Communication.create_mouseover_highlights(player_id, entity)
     if entry then
         highlight_neighbors(player_id, entry, created_highlights)
 
-        local _type = entry[TYPE]
+        local _type = entry[EntryKey.type]
         if is_inhabited(_type) then
             show_inhabitants(player_id, entry, created_highlights)
         end

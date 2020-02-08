@@ -1,4 +1,4 @@
-require("constants.types")
+require("constants.enums")
 
 --- Things that people live in.
 Housing = {}
@@ -8,24 +8,24 @@ Housing.values = {
         room_count = 200,
         tech_level = 0,
         comfort = 5,
-        caste = TYPE_CLOCKWORK, -- caste which likes this kind of housing
+        caste = Type.clockwork, -- caste which likes this kind of housing
         caste_bonus = 2
     }
 }
 local houses = Housing.values
 
 function Housing.get(entry)
-    return houses[entry[ENTITY].name]
+    return houses[entry[EntryKey.entity].name]
 end
 local get_housing = Housing.get
 
 function Housing.get_capacity(entry)
-    return math.floor(get_housing(entry).room_count / Caste.values[entry[TYPE]].required_room_count)
+    return math.floor(get_housing(entry).room_count / Caste.values[entry[EntryKey.type]].required_room_count)
 end
 local get_capacity = Housing.get_capacity
 
 function Housing.get_free_capacity(entry)
-    return get_capacity(entry) - entry[INHABITANTS]
+    return get_capacity(entry) - entry[EntryKey.inhabitants]
 end
 
 function Housing.allowes_caste(house, caste_id)
@@ -37,8 +37,8 @@ end
 --- @param entry Entry
 function Housing.evaluate(entry, happiness_summands, sanity_summands)
     local housing = get_housing(entry)
-    happiness_summands[HAPPINESS_HOUSING] = housing.comfort
-    sanity_summands[SANITY_HOUSING] = housing.comfort
+    happiness_summands[HappinessSummand.housing] = housing.comfort
+    sanity_summands[SanitySummand.housing] = housing.comfort
 
-    happiness_summands[HAPPINESS_SUITABLE_HOUSING] = (entry[TYPE] == housing.caste) and housing.caste_bonus or 0
+    happiness_summands[HappinessSummand.suitable_housing] = (entry[EntryKey.type] == housing.caste) and housing.caste_bonus or 0
 end

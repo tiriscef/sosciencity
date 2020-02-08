@@ -1,183 +1,46 @@
----------------------------------------------------------------------------------------------------
--- << enums >>
--- (except that lua doesn't have enums and all these are just shouty globals)
+require("constants.enums")
+
 Types = {}
-
---<< entities >>
-TYPE_EMPTY_HOUSE = 0
-TYPE_CLOCKWORK = 1
-TYPE_ORCHID = 2
-TYPE_GUNFIRE = 3
-TYPE_EMBER = 4
-TYPE_FOUNDRY = 5
-TYPE_GLEAM = 6
-TYPE_AURORA = 7
-TYPE_PLASMA = 8
-
-TYPE_MARKET = 101
-TYPE_WATER_DISTRIBUTER = 102
-TYPE_HOSPITAL = 103
-TYPE_DUMPSTER = 104
-TYPE_PHARMACY = 105
-
-TYPE_WATERWELL = 201
-
-TYPE_ASSEMBLING_MACHINE = 1001
-TYPE_FURNACE = 1002
-TYPE_ROCKET_SILO = 1003
-TYPE_MINING_DRILL = 1004
-TYPE_FARM = 1005
-TYPE_ORANGERY = 1006
-
-TYPE_TURRET = 1100
-
-TYPE_LAB = 2002
-
-TYPE_NULL = 9999
-
---<< subentities >>
-SUB_BEACON = 10001
-SUB_EEI = 10002
-
---<< tastes >>
-TASTE_BITTER = 20001
-TASTE_NEUTRAL = 20002
-TASTE_SALTY = 20003
-TASTE_SOUR = 20004
-TASTE_SPICY = 20005
-TASTE_SWEET = 20006
-TASTE_UMAMI = 20007
-
---<< entry keys >>
--- general
-TYPE = 1
-ENTITY = 2
-LAST_UPDATE = 3
-SUBENTITIES = 4
-SPRITE = 5
-ALTMODE_SPRITE = 6
-NEIGHBORHOOD = 7
-
--- housing
-INHABITANTS = 8
-HAPPINESS = 9
-HAPPINESS_SUMMANDS = 10
-HAPPINESS_FACTORS = 11
-HEALTH = 12
-HEALTH_SUMMANDS = 13
-HEALTH_FACTORS = 14
-SANITY = 15
-SANITY_SUMMANDS = 16
-SANITY_FACTORS = 17
-EMIGRATION_TREND = 18
-IDEAS = 19
-GARBAGE = 20
-
--- water distributer
-WATER_QUALITY = 8
-WATER_NAME = 9
-
--- subentity stuff
-POWER_USAGE = 100
-SPEED_BONUS = 200
-PRODUCTIVITY_BONUS = 201
-HAS_PENALTY = 202
-TICK_OF_CREATION = 300
-
---<< happiness summands >>
-HAPPINESS_HOUSING = 1
-HAPPINESS_SUITABLE_HOUSING = 2
-HAPPINESS_TASTE = 3
-HAPPINESS_FOOD_LUXURY = 4
-HAPPINESS_FOOD_VARIETY = 5
-HAPPINESS_NO_POWER = 6
-HAPPINESS_POWER = 7
-HAPPINESS_FEAR = 8
-HAPPINESS_EMBER = 9
-HAPPINESS_GARBAGE = 10
-
-Types.happiness_summands_count = 10
-
---<< happiness factors >>
-HAPPINESS_NOT_ENOUGH_FOOD_VARIETY = 1
-HAPPINESS_HUNGER = 2
-HAPPINESS_THIRST = 3
-HAPPINESS_HEALTH = 4
-HAPPINESS_SANITY = 5
-
-Types.happiness_factors_count = 5
-
---<< health summands >>
-HEALTH_NUTRIENTS = 1
-HEALTH_FOOD = 2
-HEALTH_FEAR = 3
-
-Types.health_summands_count = 3
-
---<< health factors >>
-HEALTH_HUNGER = 1
-HEALTH_WATER = 2
-
-Types.health_factors_count = 2
-
---<< sanity summands >>
-SANITY_HOUSING = 1
-SANITY_TASTE = 2
-SANITY_FAV_TASTE = 3
-SANITY_NO_VARIETY = 4
-SANITY_LEAST_FAV_TASTE = 5
-SANITY_JUST_NEUTRAL = 6
-SANITY_SINGLE_FOOD = 7
-SANITY_FEAR = 8
-
-Types.sanity_summands_count = 8
-
---<< sanity factors >>
-SANITY_HUNGER = 1
-SANITY_THIRST = 2
-
-Types.sanity_factors_count = 2
-
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>
 Types.taste_names = {
-    [TASTE_BITTER] = "bitter",
-    [TASTE_NEUTRAL] = "neutral",
-    [TASTE_SALTY] = "salty",
-    [TASTE_SOUR] = "sour",
-    [TASTE_SPICY] = "spicy",
-    [TASTE_SWEET] = "sweet",
-    [TASTE_UMAMI] = "umami"
+    [Taste.bitter] = "bitter",
+    [Taste.neutral] = "neutral",
+    [Taste.salty] = "salty",
+    [Taste.sour] = "sour",
+    [Taste.spicy] = "spicy",
+    [Taste.sweet] = "sweet",
+    [Taste.umami] = "umami"
 }
 
 Types.altmode_sprites = {
-    [TYPE_EMPTY_HOUSE] = "empty-caste",
-    [TYPE_CLOCKWORK] = "clockwork-caste",
-    [TYPE_EMBER] = "ember-caste",
-    [TYPE_GUNFIRE] = "gunfire-caste",
-    [TYPE_GLEAM] = "gleam-caste",
-    [TYPE_FOUNDRY] = "foundry-caste",
-    [TYPE_ORCHID] = "orchid-caste",
-    [TYPE_AURORA] = "aurora-caste"
+    [Type.empty_house] = "empty-caste",
+    [Type.clockwork] = "clockwork-caste",
+    [Type.ember] = "ember-caste",
+    [Type.gunfire] = "gunfire-caste",
+    [Type.gleam] = "gleam-caste",
+    [Type.foundry] = "foundry-caste",
+    [Type.orchid] = "orchid-caste",
+    [Type.aurora] = "aurora-caste"
 }
 local altmode_sprites = Types.altmode_sprites
 
 local lookup_by_entity_type = {
-    ["assembling-machine"] = TYPE_ASSEMBLING_MACHINE,
-    ["mining-drill"] = TYPE_MINING_DRILL,
-    ["lab"] = TYPE_LAB,
-    ["rocket-silo"] = TYPE_ROCKET_SILO,
-    ["furnace"] = TYPE_FURNACE,
-    ["ammo-turret"] = TYPE_TURRET,
-    ["electric-turret"] = TYPE_TURRET,
-    ["fluid-turret"] = TYPE_TURRET,
-    ["turret"] = TYPE_TURRET
+    ["assembling-machine"] = Type.assembling_machine,
+    ["mining-drill"] = Type.mining_drill,
+    ["lab"] = Type.lab,
+    ["rocket-silo"] = Type.rocket_silo,
+    ["furnace"] = Type.furnace,
+    ["ammo-turret"] = Type.turret,
+    ["electric-turret"] = Type.turret,
+    ["fluid-turret"] = Type.turret,
+    ["turret"] = Type.turret
 }
 
 local lookup_by_name = {
-    ["farm"] = TYPE_FARM,
-    ["greenhouse"] = TYPE_FARM,
-    ["arboretum"] = TYPE_FARM
+    ["farm"] = Type.farm,
+    ["greenhouse"] = Type.farm,
+    ["arboretum"] = Type.farm
 }
 
 local houses
@@ -198,14 +61,14 @@ function Types.get_entity_type(entity)
 
     -- check the ghost entity type before the other, because otherwise the name lookup would give them the type of the ghosted entity
     if entity_type == "entity-ghost" then
-        return TYPE_NULL
+        return Type.null
     end
 
     if houses[name] then
-        return TYPE_EMPTY_HOUSE
+        return Type.empty_house
     end
 
-    return lookup_by_name[name] or lookup_by_entity_type[entity_type] or TYPE_NULL
+    return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
 end
 
 function Types.is_housing(_type)
@@ -225,24 +88,24 @@ function Types.is_relevant_to_register(_type)
 end
 
 Types.types_affected_by_clockwork = {
-    TYPE_ASSEMBLING_MACHINE,
-    TYPE_FURNACE,
-    TYPE_ROCKET_SILO,
-    TYPE_MINING_DRILL,
-    TYPE_FARM,
-    TYPE_ORANGERY
+    Type.assembling_machine,
+    Type.furnace,
+    Type.rocket_silo,
+    Type.mining_drill,
+    Type.farm,
+    Type.orangery
 }
 
 function Types.is_affected_by_clockwork(_type)
-    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ORANGERY)
+    return (_type >= Type.assembling_machine) and (_type <= Type.orangery)
 end
 
 function Types.is_affected_by_orchid(_type)
-    return (_type >= TYPE_FARM) and (_type <= TYPE_ORANGERY)
+    return (_type >= Type.farm) and (_type <= Type.orangery)
 end
 
 function Types.needs_beacon(_type)
-    return (_type >= TYPE_ASSEMBLING_MACHINE) and (_type <= TYPE_ORANGERY)
+    return (_type >= Type.assembling_machine) and (_type <= Type.orangery)
 end
 
 function Types.needs_sprite(name)

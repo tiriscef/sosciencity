@@ -10,7 +10,7 @@ Gui.UNIQUE_PREFIX = "sosciencity-"
 -- << formatting functions >>
 local function get_bonus_string(caste_id)
     local bonus = global.caste_bonuses[caste_id]
-    if caste_id == TYPE_CLOCKWORK and global.use_penalty then
+    if caste_id == Type.clockwork and global.use_penalty then
         bonus = bonus - 80
     end
     return string.format("%+d", bonus)
@@ -301,7 +301,7 @@ local function update_population_flow(frame)
 
     population_flow["machine-count"].caption = {"sosciencity-gui.machines", Register.get_machine_count()}
 
-    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", Register.get_type_count(TYPE_TURRET)}
+    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", Register.get_type_count(Type.turret)}
 end
 
 local function add_population_flow(container)
@@ -518,7 +518,7 @@ local function add_empty_house_info_tab(tabbed_pane, details)
 end
 
 local function create_empty_housing_details(container, entry)
-    set_details_view_title(container, entry[ENTITY].localised_name)
+    set_details_view_title(container, entry[EntryKey.entity].localised_name)
 
     local tab_pane =
         container.add {
@@ -535,8 +535,8 @@ end
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local general_list = get_tab_contents(tabbed_pane, "general")["general-infos"]
 
-    local caste = castes[entry[TYPE]]
-    local inhabitants = entry[INHABITANTS]
+    local caste = castes[entry[EntryKey.type]]
+    local inhabitants = entry[EntryKey.inhabitants]
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
 
     local capacity = Housing.get_capacity(entry)
@@ -555,26 +555,26 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value_tooltip(
         general_list,
         "capacity",
-        (entry[EMIGRATION_TREND] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
+        (entry[EntryKey.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
     )
 
     set_datalist_value(
         general_list,
         "happiness",
         (inhabitants > 0) and
-            get_convergence_localised_string(entry[HAPPINESS], Inhabitants.get_nominal_happiness(entry)) or
+            get_convergence_localised_string(entry[EntryKey.happiness], Inhabitants.get_nominal_happiness(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "health",
-        (inhabitants > 0) and get_convergence_localised_string(entry[HEALTH], Inhabitants.get_nominal_health(entry)) or
+        (inhabitants > 0) and get_convergence_localised_string(entry[EntryKey.health], Inhabitants.get_nominal_health(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and get_convergence_localised_string(entry[SANITY], Inhabitants.get_nominal_sanity(entry)) or
+        (inhabitants > 0) and get_convergence_localised_string(entry[EntryKey.sanity], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -606,7 +606,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     flow.style.horizontal_align = "right"
 
     local data_list = create_data_list(flow, "general-infos")
-    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry[TYPE]))
+    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry[EntryKey.type]))
 
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
@@ -638,24 +638,24 @@ local function update_housing_factor_tab(tabbed_pane, entry)
     update_operand_entries(
         happiness_list,
         Inhabitants.get_nominal_happiness(entry),
-        entry[HAPPINESS_SUMMANDS],
-        entry[HAPPINESS_FACTORS]
+        entry[EntryKey.happiness_summands],
+        entry[EntryKey.happiness_factors]
     )
 
     local health_list = content_flow["health"]
     update_operand_entries(
         health_list,
         Inhabitants.get_nominal_health(entry),
-        entry[HEALTH_SUMMANDS],
-        entry[HEALTH_FACTORS]
+        entry[EntryKey.health_summands],
+        entry[EntryKey.health_factors]
     )
 
     local sanity_list = content_flow["sanity"]
     update_operand_entries(
         sanity_list,
         Inhabitants.get_nominal_sanity(entry),
-        entry[SANITY_SUMMANDS],
-        entry[SANITY_FACTORS]
+        entry[EntryKey.sanity_summands],
+        entry[EntryKey.sanity_factors]
     )
 end
 
@@ -667,9 +667,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         happiness_list,
         {"sosciencity-gui.happiness"},
         "happiness-summand.",
-        Types.happiness_summands_count,
+        HappinessSummand.count,
         "happiness-factor.",
-        Types.happiness_factors_count
+        HappinessFactor.count
     )
 
     create_separator_line(flow)
@@ -679,9 +679,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         health_list,
         {"sosciencity-gui.health"},
         "health-summand.",
-        Types.health_summands_count,
+        HealthSummand.count,
         "health-factor.",
-        Types.health_factors_count
+        HealthFactor.count
     )
 
     create_separator_line(flow, "line2")
@@ -691,9 +691,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         sanity_list,
         {"sosciencity-gui.sanity"},
         "sanity-summand.",
-        Types.sanity_summands_count,
+        SanitySummand.count,
         "sanity-factor.",
-        Types.sanity_factors_count
+        SanityFactor.count
     )
 
     -- call the update function to set the values
@@ -761,7 +761,7 @@ local function update_housing_details(container, entry)
 end
 
 local function create_housing_details(container, entry)
-    local title = {"", entry[ENTITY].localised_name, "  -  ", get_caste_localised_string(entry[TYPE])}
+    local title = {"", entry[EntryKey.entity].localised_name, "  -  ", get_caste_localised_string(entry[EntryKey.type])}
     set_details_view_title(container, title)
 
     local tab_pane =
@@ -773,7 +773,7 @@ local function create_housing_details(container, entry)
 
     add_housing_general_info_tab(tab_pane, entry)
     add_housing_factor_tab(tab_pane, entry)
-    add_caste_info_tab(tab_pane, entry[TYPE])
+    add_caste_info_tab(tab_pane, entry[EntryKey.type])
 end
 
 -- << general details view functions >>
@@ -826,13 +826,13 @@ end
 
 -- table with (type, update-function) pairs
 local content_updaters = {
-    [TYPE_CLOCKWORK] = update_housing_details,
-    [TYPE_EMBER] = update_housing_details,
-    [TYPE_GUNFIRE] = update_housing_details,
-    [TYPE_GLEAM] = update_housing_details,
-    [TYPE_FOUNDRY] = update_housing_details,
-    [TYPE_ORCHID] = update_housing_details,
-    [TYPE_AURORA] = update_housing_details
+    [Type.clockwork] = update_housing_details,
+    [Type.ember] = update_housing_details,
+    [Type.gunfire] = update_housing_details,
+    [Type.gleam] = update_housing_details,
+    [Type.foundry] = update_housing_details,
+    [Type.orchid] = update_housing_details,
+    [Type.aurora] = update_housing_details
 }
 
 function Gui.update_details_view()
@@ -846,10 +846,10 @@ function Gui.update_details_view()
         if not entry then
             Gui.close_details_view_for_player(player)
         else
-            local updater = content_updaters[entry[TYPE]]
+            local updater = content_updaters[entry[EntryKey.type]]
 
             -- only update the gui if the entry got updated in this cycle
-            if updater and entry[LAST_UPDATE] == current_tick then
+            if updater and entry[EntryKey.last_update] == current_tick then
                 updater(get_nested_details_view(player), entry)
             end
         end
@@ -858,14 +858,14 @@ end
 
 -- table with (type, build-function) pairs
 local detail_view_builders = {
-    [TYPE_EMPTY_HOUSE] = create_empty_housing_details,
-    [TYPE_CLOCKWORK] = create_housing_details,
-    [TYPE_EMBER] = create_housing_details,
-    [TYPE_GUNFIRE] = create_housing_details,
-    [TYPE_GLEAM] = create_housing_details,
-    [TYPE_FOUNDRY] = create_housing_details,
-    [TYPE_ORCHID] = create_housing_details,
-    [TYPE_AURORA] = create_housing_details
+    [Type.empty_house] = create_empty_housing_details,
+    [Type.clockwork] = create_housing_details,
+    [Type.ember] = create_housing_details,
+    [Type.gunfire] = create_housing_details,
+    [Type.gleam] = create_housing_details,
+    [Type.foundry] = create_housing_details,
+    [Type.orchid] = create_housing_details,
+    [Type.aurora] = create_housing_details
 }
 
 function Gui.open_details_view_for_player(player, unit_number)
@@ -874,7 +874,7 @@ function Gui.open_details_view_for_player(player, unit_number)
         return
     end
 
-    local builder = detail_view_builders[entry[TYPE]]
+    local builder = detail_view_builders[entry[EntryKey.type]]
     if not builder then
         return
     end
@@ -897,7 +897,7 @@ function Gui.close_details_view_for_player(player)
 end
 
 function Gui.rebuild_details_view_for_entry(entry)
-    local unit_number = entry[ENTITY].unit_number
+    local unit_number = entry[EntryKey.entity].unit_number
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then
@@ -926,7 +926,7 @@ function Gui.handle_kickout_button(player_index, button)
     end
 
     if is_confirmed(button) then
-        Register.change_type(entry, TYPE_EMPTY_HOUSE)
+        Register.change_type(entry, Type.empty_house)
         Gui.rebuild_details_view_for_entry(entry)
         return
     end
