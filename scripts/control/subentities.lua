@@ -19,11 +19,13 @@ local buildings = Buildings
 local function add(entry, _type)
     local entity = entry[EntryKey.entity]
     local subentity =
-        entity.surface.create_entity {
-        name = subentity_names[_type],
-        position = entity.position,
-        force = entity.force
-    }
+        entity.surface.create_entity(
+        {
+            name = subentity_names[_type],
+            position = entity.position,
+            force = entity.force
+        }
+    )
 
     entry[EntryKey.subentities][_type] = subentity
 
@@ -33,14 +35,14 @@ end
 local function add_sprite(entry, name)
     local entity = entry[EntryKey.entity]
     local sprite_id =
-        rendering.draw_sprite {
-        sprite = name,
-        target = entity,
-        surface = entity.surface,
-        render_layer = "lower-object"
-    }
-
-    entry[EntryKey.subentities][SubentityType.sprite] = sprite_id
+        rendering.draw_sprite(
+        {
+            sprite = name,
+            target = entity,
+            surface = entity.surface,
+            render_layer = "lower-object"
+        }
+    )
 
     return sprite_id
 end
@@ -48,14 +50,14 @@ end
 local function add_alt_mode_sprite(entry, name)
     local entity = entry[EntryKey.entity]
     local sprite_id =
-        rendering.draw_sprite {
-        sprite = name,
-        target = entity,
-        surface = entity.surface,
-        only_in_alt_mode = true
-    }
-
-    entry[EntryKey.subentities][SubentityType.altmode_sprite] = sprite_id
+        rendering.draw_sprite(
+        {
+            sprite = name,
+            target = entity,
+            surface = entity.surface,
+            only_in_alt_mode = true
+        }
+    )
 
     return sprite_id
 end

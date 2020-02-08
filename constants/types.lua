@@ -3,16 +3,6 @@ require("constants.enums")
 Types = {}
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>
-Types.taste_names = {
-    [Taste.bitter] = "bitter",
-    [Taste.neutral] = "neutral",
-    [Taste.salty] = "salty",
-    [Taste.sour] = "sour",
-    [Taste.spicy] = "spicy",
-    [Taste.sweet] = "sweet",
-    [Taste.umami] = "umami"
-}
-
 Types.altmode_sprites = {
     [Type.empty_house] = "empty-caste",
     [Type.clockwork] = "clockwork-caste",

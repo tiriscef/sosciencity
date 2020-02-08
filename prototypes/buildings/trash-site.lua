@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "trash-site",
-    stack_size = 10
+    stack_size = 50
 }
 
 Tirislib_RecipeGenerator.create_recipe("trash-site")
@@ -20,7 +20,7 @@ Tirislib_Entity.create {
     minable = {mining_time = 0.5, result = "trash-site"},
     max_health = 500,
     corpse = "small-remnants", -- TODO
-    inventory_size = 64,
+    inventory_size = 20,
     vehicle_impact_sound = {
         filename = "__base__/sound/car-metal-impact.ogg",
         volume = 0.65

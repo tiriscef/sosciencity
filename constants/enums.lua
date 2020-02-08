@@ -43,8 +43,6 @@ SubentityType = {}
 
 SubentityType.beacon = 1
 SubentityType.eei = 2
-SubentityType.sprite = 3
-SubentityType.altmode_sprite = 4
 
 --<< tastes >>
 --- Enum table for tastes.

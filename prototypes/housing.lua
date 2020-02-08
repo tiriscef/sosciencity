@@ -10,11 +10,15 @@ local data_details = {
             height = 192,
             scale = 0.5
         },
-        width = 3,
+        width = 5,
         height = 3,
         tech_level = 0
     }
 }
+
+local function get_inventory_size(house)
+    return 10 * math.floor(math.log(house.room_count, 10))
+end
 
 for house_name, house in pairs(Housing.values) do
     local orderstring = string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
@@ -58,7 +62,7 @@ for house_name, house in pairs(Housing.values) do
         corpse = "small-remnants", -- TODO
         open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65}, -- TODO sounds
         close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7}, -- TODO
-        inventory_size = 64,
+        inventory_size = get_inventory_size(house),
         vehicle_impact_sound = {
             filename = "__base__/sound/car-metal-impact.ogg",
             volume = 0.65
