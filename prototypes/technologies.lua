@@ -177,7 +177,7 @@ Tirislib_Technology.create {
     icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
     icon_size = 256,
     upgrade = false,
-    prerequisites = {"orchid-caste", "utility-science-pack", "production-science-pack"},
+    prerequisites = {"utility-science-pack", "production-science-pack"},
     effects = {
         {
             type = "nothing",
