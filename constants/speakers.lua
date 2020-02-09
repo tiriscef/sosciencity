@@ -1,7 +1,7 @@
 Speakers = {}
 
 Speakers["tiriscef."] = {
-    useless_banter_count = 21,
+    useless_banter_count = 24,
     lines_with_followup = {
         2,
         3,
@@ -13,14 +13,15 @@ Speakers["tiriscef."] = {
         9,
         15,
         19,
-        20
+        20,
+        23
     },
     index = 0
 }
 
 Speakers["profanity."] = {
-    useless_banter_count = 10,
-    lines_with_followup = {1, 7, 9},
+    useless_banter_count = 13,
+    lines_with_followup = {1, 7, 9, 13},
     index = 10000
 }
 
