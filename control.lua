@@ -98,6 +98,7 @@ local caste_bonuses
 local water_values = DrinkingWater.values
 
 local add_fear = Inhabitants.add_fear
+local add_casualty_fear = Inhabitants.add_casualty_fear
 local ease_fear = Inhabitants.ease_fear
 
 local set_beacon_effects = Subentities.set_beacon_effects
@@ -208,9 +209,9 @@ local update_functions = {
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
 local function update_cycle()
-    ease_fear()
-
     local current_tick = game.tick
+    ease_fear(current_tick)
+
     local next_entry = Register.next
     local count = 0
     local index = global.last_index
@@ -353,9 +354,16 @@ local function on_entity_died(event)
         return
     end
 
-    local entity_type = get_entity_type(entity)
-    if is_civil(entity_type) then
-        add_fear()
+    local unit_number = entity.unit_number
+    local entry = try_get_entry(unit_number)
+    if entry then
+        local _type = entry[EntryKey.type]
+
+        if is_inhabited(_type) then
+            add_casualty_fear(entry)
+        elseif is_civil(_type) then
+            add_fear()
+        end
     end
 
     remove_entity(entity)
