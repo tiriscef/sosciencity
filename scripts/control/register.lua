@@ -120,7 +120,7 @@ function Register.remove_entity(entity, unit_number)
 
     if entry then
         if Types.is_inhabited(entity_type) then
-            Inhabitants.remove_house(entry)
+            Inhabitants.remove_house(entry, unit_number)
         end
 
         remove_entry(entry, unit_number)
