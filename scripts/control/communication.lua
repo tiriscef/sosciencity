@@ -75,6 +75,9 @@ function Communication.people_resettled(entry, count)
     create_flying_text(entry, {"flying-text.resettled", count})
 end
 
+function Communication.people_died_tragic(number_of_casualties)
+end
+
 -- << production and consumption statistics >>
 -- we collect all the produced/consumed stuff and log them collectively
 -- this reduces the amount of API calls and avoids the problem that the statistics log only integer numbers

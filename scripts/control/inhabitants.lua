@@ -147,7 +147,7 @@ local function set_gleam_bonus(value)
     caste_bonuses[Type.gleam] = value
 end
 
---- Updates the caste bonuses that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
+--- Updates all the caste bonuses and sets the ones that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
 function Inhabitants.update_caste_bonuses()
     caste_bonuses[Type.clockwork] = get_clockwork_bonus()
     caste_bonuses[Type.orchid] = get_orchid_bonus()
@@ -594,17 +594,31 @@ function Inhabitants.try_resettle(entry, unit_number)
 end
 ---------------------------------------------------------------------------------------------------
 -- << fear >>
---- Lowers the population's fear over time.
-function Inhabitants.ease_fear()
-    local delta_ticks = game.tick - global.last_update
+--- Lowers the population's fear over time. Assumes an update rate of 10 ticks.
+--- The fear level decreases after 2 minutes without a tragic event and the rate is affected by the time since the event.
+--- A fear level of 10 will decrease to 0 after 12.5 minutes.
+function Inhabitants.ease_fear(current_tick)
+    local coefficient = 1e-7
+    local time_since_last_event = current_tick - (global.last_fear_event or 0)
 
-    -- TODO
+    if time_since_last_event > 7200 then -- 2 minutes
+        global.fear = max(0, global.fear - time_since_last_event * coefficient)
+    end
 end
 
 --- Adds fear after a civil building got destroyed.
 function Inhabitants.add_fear()
     global.last_fear_event = game.tick
-    global.fear = global.fear + 1 -- TODO balancing
+    global.fear = global.fear + 0.25
+end
+
+--- Adds fear after an inhabited house was destroyed.
+function Inhabitants.add_casualty_fear(destroyed_house)
+    Inhabitants.add_fear()
+
+    local casualties = destroyed_house[EntryKey.inhabitants]
+    global.fear = global.fear + 0.05 + casualties
+    Communication.people_died_tragic(casualties)
 end
 
 ---------------------------------------------------------------------------------------------------
