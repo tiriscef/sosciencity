@@ -293,6 +293,8 @@ local function get_next_free_house(caste_id)
     if entry and entry[EntryKey.type] == caste_id then
         return entry
     else
+        -- remove it from the list of free houses
+        houses_with_free_capacity[caste_id][unit_number] = nil
         -- skip this outdated house
         return get_next_free_house(caste_id)
     end
@@ -320,7 +322,13 @@ end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 function Inhabitants.clone_inhabitants(source, destination)
-    try_add_to_house(destination, source[EntryKey.inhabitants], source[EntryKey.happiness], source[EntryKey.health], source[EntryKey.sanity])
+    try_add_to_house(
+        destination,
+        source[EntryKey.inhabitants],
+        source[EntryKey.happiness],
+        source[EntryKey.health],
+        source[EntryKey.sanity]
+    )
 end
 
 --- Tries to remove the specified amount of inhabitants from the house-entry.
@@ -337,7 +345,8 @@ function Inhabitants.remove_from_house(entry, count)
     local caste_id = entry[EntryKey.type]
 
     effective_population[caste_id] =
-        effective_population[caste_id] - count_moving_out * get_effective_population_multiplier(entry[EntryKey.happiness])
+        effective_population[caste_id] -
+        count_moving_out * get_effective_population_multiplier(entry[EntryKey.happiness])
     population[caste_id] = population[caste_id] - count_moving_out
     entry[EntryKey.inhabitants] = entry[EntryKey.inhabitants] - count_moving_out
 
@@ -352,9 +361,10 @@ function Inhabitants.remove_from_house(entry, count)
 end
 local remove_from_house = Inhabitants.remove_from_house
 
---- Removes all the inhabitants living in the house.
+--- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
 --- @param entry Entry
-function Inhabitants.remove_house(entry)
+function Inhabitants.remove_house(entry, unit_number)
+    houses_with_free_capacity[entry[EntryKey.type]][unit_number] = nil
     remove_from_house(entry, entry[EntryKey.inhabitants])
 end
 
@@ -477,7 +487,8 @@ function Inhabitants.update_house(entry, delta_ticks)
 
     -- check if the caste actually produces ideas
     if caste_values.idea_item then
-        local ideas = entry[EntryKey.idea_progress] + get_idea_progress(new_happiness, inhabitants, caste_values, delta_ticks)
+        local ideas =
+            entry[EntryKey.idea_progress] + get_idea_progress(new_happiness, inhabitants, caste_values, delta_ticks)
         if ideas >= 1 then
             local produced_ideas = floor(ideas)
             try_output_ideas(entry, caste_values.idea_item, produced_ideas)
@@ -566,7 +577,14 @@ function Inhabitants.try_resettle(entry, unit_number)
     -- remove the entry from the next_houses-table so they don't try to move into the house they're already living in
     houses_with_free_capacity[caste][unit_number] = nil
     Tirislib_Tables.remove_all(next_houses[caste], unit_number)
-    local resettled = distribute_inhabitants(caste, entry[EntryKey.inhabitants], entry[EntryKey.happiness], entry[EntryKey.health], entry[EntryKey.sanity])
+    local resettled =
+        distribute_inhabitants(
+        caste,
+        entry[EntryKey.inhabitants],
+        entry[EntryKey.happiness],
+        entry[EntryKey.health],
+        entry[EntryKey.sanity]
+    )
 
     if resettled > 0 then
         Communication.people_resettled(entry, resettled)
