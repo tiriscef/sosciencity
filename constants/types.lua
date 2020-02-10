@@ -6,12 +6,13 @@ Types = {}
 Types.altmode_sprites = {
     [Type.empty_house] = "empty-caste",
     [Type.clockwork] = "clockwork-caste",
-    [Type.ember] = "ember-caste",
-    [Type.gunfire] = "gunfire-caste",
-    [Type.gleam] = "gleam-caste",
-    [Type.foundry] = "foundry-caste",
     [Type.orchid] = "orchid-caste",
-    [Type.aurora] = "aurora-caste"
+    [Type.gunfire] = "gunfire-caste",
+    [Type.ember] = "ember-caste",
+    [Type.foundry] = "foundry-caste",
+    [Type.gleam] = "gleam-caste",
+    [Type.aurora] = "aurora-caste",
+    [Type.plasma] = "plasma-caste"
 }
 local altmode_sprites = Types.altmode_sprites
 

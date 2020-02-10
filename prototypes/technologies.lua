@@ -25,7 +25,7 @@ Tirislib_Technology.create {
 Tirislib_Technology.create {
     type = "technology",
     name = "orchid-caste",
-    icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
+    icon = "__sosciencity__/graphics/orchid-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {"clockwork-caste"},
