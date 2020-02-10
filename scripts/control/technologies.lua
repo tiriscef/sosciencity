@@ -1,15 +1,13 @@
 Technologies = {}
 
 local relevant_techs = {
-    ["clockwork-caste"] = true,
-    ["orchid-caste"] = true,
-    ["gunfire-caste"] = true,
-    ["ember-caste"] = true,
-    ["foundry-caste"] = true,
-    ["gleam-caste"] = true,
-    ["aurora-caste"] = true,
     ["resettlement"] = true,
 }
+
+-- add caste techs
+for _, caste in pairs(Caste.values) do
+    relevant_techs[caste.tech_name] = true
+end
 
 local relevant_multi_level_techs = {
 

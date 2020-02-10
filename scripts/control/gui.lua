@@ -845,7 +845,8 @@ local content_updaters = {
     [Type.gleam] = update_housing_details,
     [Type.foundry] = update_housing_details,
     [Type.orchid] = update_housing_details,
-    [Type.aurora] = update_housing_details
+    [Type.aurora] = update_housing_details,
+    [Type.plasma] = update_housing_details
 }
 
 function Gui.update_details_view()
@@ -878,7 +879,8 @@ local detail_view_builders = {
     [Type.gleam] = create_housing_details,
     [Type.foundry] = create_housing_details,
     [Type.orchid] = create_housing_details,
-    [Type.aurora] = create_housing_details
+    [Type.aurora] = create_housing_details,
+    [Type.plasma] = create_housing_details,
 }
 
 function Gui.open_details_view_for_player(player, unit_number)
