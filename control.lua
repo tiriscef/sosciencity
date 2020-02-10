@@ -194,6 +194,7 @@ local update_functions = {
     [Type.foundry] = Inhabitants.update_house,
     [Type.orchid] = Inhabitants.update_house,
     [Type.aurora] = Inhabitants.update_house,
+    [Type.plasma] = Inhabitants.update_house,
     [Type.assembling_machine] = update_entity_with_beacon,
     [Type.furnace] = update_entity_with_beacon,
     [Type.rocket_silo] = update_entity_with_beacon,
@@ -448,7 +449,7 @@ local function on_gui_click(event)
     name = name:sub(PREFIX_LENGTH + 1)
 
     -- check Caste assignment buttons
-    for caste_id, caste in pairs(Caste.values) do
+    for caste_id, caste in pairs(Castes.values) do
         if name == caste.name then
             Gui.handle_caste_button(event.player_index, caste_id)
         end

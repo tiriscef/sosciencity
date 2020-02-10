@@ -1,6 +1,6 @@
 Gui = {}
 
-local castes = Caste.values
+local castes = Castes.values
 local global
 local population
 local effective_population
@@ -441,7 +441,7 @@ function Gui.create_city_info_for_player(player)
 
     add_population_flow(frame)
 
-    for id, _ in pairs(Caste.values) do
+    for id, _ in pairs(Castes.values) do
         add_caste_flow(frame, id)
     end
 end
@@ -449,7 +449,7 @@ end
 local function update_city_info(frame)
     update_population_flow(frame)
 
-    for id, _ in pairs(Caste.values) do
+    for id, _ in pairs(Castes.values) do
         update_caste_flow(frame, id)
     end
 end
@@ -484,7 +484,7 @@ local function add_caste_chooser_tab(tabbed_pane, details)
     flow.style.vertical_spacing = 6
 
     local at_least_one = false
-    for caste_id, caste in pairs(Caste.values) do
+    for caste_id, caste in pairs(Castes.values) do
         if Inhabitants.caste_is_researched(caste_id) then
             local caste_name = caste.name
 
@@ -838,16 +838,12 @@ local function get_nested_details_view(player)
 end
 
 -- table with (type, update-function) pairs
-local content_updaters = {
-    [Type.clockwork] = update_housing_details,
-    [Type.ember] = update_housing_details,
-    [Type.gunfire] = update_housing_details,
-    [Type.gleam] = update_housing_details,
-    [Type.foundry] = update_housing_details,
-    [Type.orchid] = update_housing_details,
-    [Type.aurora] = update_housing_details,
-    [Type.plasma] = update_housing_details
-}
+local content_updaters = {}
+
+-- add the castes
+for caste_id in pairs(Castes.values) do
+    content_updaters[caste_id] = update_housing_details
+end
 
 function Gui.update_details_view()
     local current_tick = game.tick
@@ -873,15 +869,12 @@ end
 -- table with (type, build-function) pairs
 local detail_view_builders = {
     [Type.empty_house] = create_empty_housing_details,
-    [Type.clockwork] = create_housing_details,
-    [Type.ember] = create_housing_details,
-    [Type.gunfire] = create_housing_details,
-    [Type.gleam] = create_housing_details,
-    [Type.foundry] = create_housing_details,
-    [Type.orchid] = create_housing_details,
-    [Type.aurora] = create_housing_details,
-    [Type.plasma] = create_housing_details,
 }
+
+-- add the castes
+for caste_id in pairs(Castes.values) do
+    detail_view_builders[caste_id] = create_housing_details
+end
 
 function Gui.open_details_view_for_player(player, unit_number)
     local entry = Register.try_get(unit_number)

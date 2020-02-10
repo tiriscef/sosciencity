@@ -1,9 +1,9 @@
 require("constants.enums")
 
 --- Things that define different kinds of people.
-Caste = {}
+Castes = {}
 
-Caste.values = {
+Castes.values = {
     [Type.clockwork] = {
         name = "clockwork",
         tech_name = "clockwork-caste",
@@ -162,20 +162,20 @@ Caste.values = {
         immigration_coefficient = 0.8
     }
 }
-local castes = Caste.values
+local castes = Castes.values
 
-function Caste.produces_ideas(caste)
+function Castes.produces_ideas(caste)
     return caste.idea_item ~= nil
 end
 
 --- The number of people that leave a house per minute if they are unhappy.
-Caste.emigration_coefficient = 0.8
+Castes.emigration_coefficient = 0.8
 
 --- The number of general garbage an inhabitant produces per minute.
-Caste.garbage_coefficient = 0.1
+Castes.garbage_coefficient = 0.1
 
 -- postprocessing
-for _, caste in pairs(Caste.values) do
+for _, caste in pairs(Castes.values) do
     -- convert calorific demand to kcal per tick
     -- a day has 25000 ticks according to the wiki
     caste.calorific_demand = caste.calorific_demand / 25000.
@@ -192,8 +192,8 @@ for _, caste in pairs(Caste.values) do
         caste.idea_coefficient = caste.idea_coefficient / 3600.
     end
 end
-Caste.emigration_coefficient = Caste.emigration_coefficient / 3600. * -1
-Caste.garbage_coefficient = Caste.garbage_coefficient / 3600.
+Castes.emigration_coefficient = Castes.emigration_coefficient / 3600. * -1
+Castes.garbage_coefficient = Castes.garbage_coefficient / 3600.
 
 local meta = {}
 
@@ -201,4 +201,4 @@ function meta:__call(_type)
     return castes[_type]
 end
 
-setmetatable(Caste, meta)
+setmetatable(Castes, meta)

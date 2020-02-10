@@ -13,7 +13,7 @@ local item_consumption
 local item_production
 
 local highlights
-local castes = Caste.values
+local castes = Castes.values
 
 local speakers = Speakers
 local speaker_schedule

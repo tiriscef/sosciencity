@@ -20,7 +20,7 @@ end
 local get_housing = Housing.get
 
 function Housing.get_capacity(entry)
-    return math.floor(get_housing(entry).room_count / Caste.values[entry[EntryKey.type]].required_room_count)
+    return math.floor(get_housing(entry).room_count / Castes.values[entry[EntryKey.type]].required_room_count)
 end
 local get_capacity = Housing.get_capacity
 
@@ -29,7 +29,7 @@ function Housing.get_free_capacity(entry)
 end
 
 function Housing.allowes_caste(house, caste_id)
-    local caste = Caste(caste_id)
+    local caste = Castes(caste_id)
     return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)
 end
 

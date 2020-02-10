@@ -129,8 +129,9 @@ HealthSummand = {}
 HealthSummand.nutrients = 1
 HealthSummand.food = 2
 HealthSummand.fear = 3
+HealthSummand.plasma = 4
 
-HealthSummand.count = 3
+HealthSummand.count = 4
 
 --<< health factors >>
 --- Enum table for health factors.

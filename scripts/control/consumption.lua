@@ -333,7 +333,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == count) and -3 or 0
 end
 
-local castes = Caste.values
+local castes = Castes.values
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Consumption.evaluate_diet(entry, delta_ticks)

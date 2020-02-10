@@ -10,9 +10,9 @@ local houses_with_free_capacity
 local next_houses
 local Register = Register
 
-local castes = Caste.values
-local emigration_coefficient = Caste.emigration_coefficient
-local garbage_coefficient = Caste.garbage_coefficient
+local castes = Castes.values
+local emigration_coefficient = Castes.emigration_coefficient
+local garbage_coefficient = Castes.garbage_coefficient
 
 local evaluate_diet = Consumption.evaluate_diet
 local evaluate_water = Consumption.evaluate_water
@@ -108,6 +108,10 @@ local function get_aurora_bonus()
     return floor(sqrt(effective_population[Type.aurora]))
 end
 
+local function get_plasma_bonus()
+    return floor(10 * sqrt(effective_population[Type.plasma] / max(1, get_population_count())))
+end
+
 -- sets the hidden caste-technologies so they encode the given value
 local function set_binary_techs(value, name)
     local new_value = value
@@ -149,6 +153,7 @@ function Inhabitants.update_caste_bonuses()
     caste_bonuses[Type.orchid] = get_orchid_bonus()
     caste_bonuses[Type.ember] = get_ember_bonus()
     caste_bonuses[Type.aurora] = get_aurora_bonus()
+    caste_bonuses[Type.plasma] = get_plasma_bonus()
 
     -- tech-bonus castes
     -- We check if the bonuses have actually changed to avoid unnecessary api calls
@@ -433,6 +438,7 @@ function Inhabitants.update_house(entry, delta_ticks)
     end
 
     happiness_summands[HappinessSummand.ember] = caste_bonuses[Type.ember]
+    health_summands[HealthSummand.plasma] = caste_bonuses[Type.plasma]
 
     local fear_malus = global.fear * caste_values.fear_multiplier
     happiness_summands[HappinessSummand.fear] = fear_malus
