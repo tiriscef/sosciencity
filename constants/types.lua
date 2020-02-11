@@ -41,7 +41,7 @@ function Types.init()
     houses = Housing.values
 
     -- add the functional buildings to the lookup table
-    for name, details in pairs(Buildings) do
+    for name, details in pairs(Buildings.values) do
         lookup_by_name[name] = details.type
     end
 end

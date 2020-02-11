@@ -73,8 +73,9 @@ require("constants.colors")
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
 -- EmmyLua stuff
----@class Entry
 ---@class Entity
+---@class Entry
+---@class Player
 ---@class Type
 
 local Replacer = require("scripts.control.replacer")
@@ -155,6 +156,10 @@ local function update_entity_with_beacon(entry)
 end
 
 local function update_waterwell(entry, delta_ticks)
+    if not has_power(entry) then
+        return
+    end
+
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
 
     local groundwater_volume = (delta_ticks * 2) / near_count

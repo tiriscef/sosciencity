@@ -10,9 +10,10 @@ local function set_locals()
     population = global.population
     effective_population = global.effective_population
 end
--- this should be added to every element which needs an event handler
--- because the event handler is called for every gui in existance
--- so I need to ensure that I'm not reacting to another mods gui
+
+--- This should be added to every gui element which needs an event handler,
+--- because the click event is fired for every gui in existance.
+--- So I need to ensure that I'm not reacting to another mods gui.
 Gui.UNIQUE_PREFIX = "sosciencity-"
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
@@ -425,7 +426,7 @@ local function update_caste_flow(container, caste_id)
     }
 end
 
-function Gui.create_city_info_for_player(player)
+local function create_city_info_for_player(player)
     local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
@@ -454,6 +455,7 @@ local function update_city_info(frame)
     end
 end
 
+--- Updates the city info gui for all existing players.
 function Gui.update_city_info()
     for _, player in pairs(game.players) do
         local city_info_gui = player.gui.top[CITY_INFO_NAME]
@@ -462,7 +464,7 @@ function Gui.update_city_info()
         if city_info_gui ~= nil and city_info_gui.valid then
             update_city_info(city_info_gui)
         else
-            Gui.create_city_info_for_player(player)
+            create_city_info_for_player(player)
         end
     end
 end
@@ -473,6 +475,13 @@ local DETAILS_VIEW_NAME = "sosciencity-details"
 
 local function set_details_view_title(container, caption)
     container.parent.caption = caption
+end
+
+local function create_tabbed_pane(container)
+    return container.add {
+        type = "tabbed-pane",
+        name = "tabpane"
+    }
 end
 
 -- << empty housing details view >>
@@ -530,15 +539,11 @@ end
 local function create_empty_housing_details(container, entry)
     set_details_view_title(container, entry[EntryKey.entity].localised_name)
 
-    local tab_pane =
-        container.add {
-        type = "tabbed-pane",
-        name = "tabpane"
-    }
+    local tabbed_pane = create_tabbed_pane(container)
 
     local house_details = Housing.get(entry)
-    add_caste_chooser_tab(tab_pane, house_details)
-    add_empty_house_info_tab(tab_pane, house_details)
+    add_caste_chooser_tab(tabbed_pane, house_details)
+    add_empty_house_info_tab(tabbed_pane, house_details)
 end
 
 -- << housing details view >>
@@ -777,20 +782,99 @@ local function create_housing_details(container, entry)
     local title = {"", entry[EntryKey.entity].localised_name, "  -  ", get_caste_localised_string(entry[EntryKey.type])}
     set_details_view_title(container, title)
 
-    local tab_pane =
-        container.add {
-        type = "tabbed-pane",
-        name = "tabpane"
-    }
-    make_stretchable(tab_pane)
+    local tabbed_pane = create_tabbed_pane(container)
+    make_stretchable(tabbed_pane)
 
-    add_housing_general_info_tab(tab_pane, entry)
-    add_housing_factor_tab(tab_pane, entry)
-    add_caste_info_tab(tab_pane, entry[EntryKey.type])
+    add_housing_general_info_tab(tabbed_pane, entry)
+    add_housing_factor_tab(tabbed_pane, entry)
+    add_caste_info_tab(tabbed_pane, entry[EntryKey.type])
+end
+
+-- << buildings details views >>
+local function create_general_building_details(container, entry)
+    local entity = entry[EntryKey.entity]
+    set_details_view_title(container, entity.localised_name)
+
+    local name = entity.name
+    local building_details = Buildings.values[name]
+    local type_details = Buildings.types[entry[EntryKey.type]]
+
+    local tabbed_pane = create_tabbed_pane(container)
+    local tab = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
+
+    local building_data = create_data_list(tab, "building")
+
+    add_kv_pair(building_data, "building-type", {"sosciencity-gui.type"}, type_details.localised_name)
+    add_kv_pair(building_data, "description", "", type_details.localised_description)
+
+    if building_details.range then
+        add_kv_pair(
+            building_data,
+            "range",
+            {"sosciencity-gui.range"},
+            {"sosciencity-gui.show-range", building_details.range}
+        )
+    end
+
+    if building_details.power_usage then
+        -- convert to kW
+        local power = get_reasonable_number(building_details.power_usage * 60 / 1000)
+        add_kv_pair(
+            building_data,
+            "power",
+            {"sosciencity-gui.power-demand"},
+            {"sosciencity-gui.current-power-demand", power}
+        )
+    end
+
+    if building_details.speed then
+        -- convert to x / minute
+        local speed = get_reasonable_number(building_details.speed * 3600)
+        add_kv_pair(
+            building_data,
+            "speed",
+            type_details.localised_speed_name,
+            {type_details.localised_speed_key, speed}
+        )
+    end
+
+    return tabbed_pane
+end
+
+local function update_waterwell_details(container, entry)
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local building_details = Buildings.get(entry)
+
+    local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
+    local productivity = 100. / (near_count + 1)
+    local speed = 36 * productivity * building_details.speed
+    set_datalist_value(
+        building_data,
+        "productivity",
+        {"sosciencity-gui.show-waterwell-productivity", near_count, get_reasonable_number(productivity)}
+    )
+    set_datalist_value(
+        building_data,
+        "speed",
+        {"sosciencity-gui.show-waterwell-speed", get_reasonable_number(speed)}
+    )
+end
+
+local function create_waterwell_details(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "productivity", {"sosciencity-gui.waterwell-productivity"})
+
+    update_waterwell_details(container, entry)
 end
 
 -- << general details view functions >>
-function Gui.create_details_view_for_player(player)
+local function create_details_view_for_player(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
     if frame and frame.valid then
         return
@@ -803,14 +887,13 @@ function Gui.create_details_view_for_player(player)
         direction = "horizontal"
     }
     frame.style.width = 350
-    frame.style.minimal_height = 300
-    frame.style.maximal_height = 600
+    --frame.style.minimal_height = 300
+    frame.style.height = 600
     frame.style.horizontally_stretchable = true
     make_squashable(frame)
     set_padding(frame, 4)
 
-    local nested =
-        frame.add {
+    frame.add {
         type = "frame",
         name = "nested",
         direction = "horizontal",
@@ -828,7 +911,7 @@ local function get_details_view(player)
         return details_view
     else
         -- recreate it otherwise
-        Gui.create_details_view_for_player(player)
+        create_details_view_for_player(player)
         return get_details_view(player)
     end
 end
@@ -838,13 +921,16 @@ local function get_nested_details_view(player)
 end
 
 -- table with (type, update-function) pairs
-local content_updaters = {}
+local content_updaters = {
+    [Type.waterwell] = update_waterwell_details
+}
 
 -- add the castes
 for caste_id in pairs(Castes.values) do
     content_updaters[caste_id] = update_housing_details
 end
 
+--- Updates the details guis for every player.
 function Gui.update_details_view()
     local current_tick = game.tick
 
@@ -869,6 +955,11 @@ end
 -- table with (type, build-function) pairs
 local detail_view_builders = {
     [Type.empty_house] = create_empty_housing_details,
+    [Type.waterwell] = create_waterwell_details,
+    [Type.dumpster] = create_general_building_details,
+    [Type.market] = create_general_building_details,
+    [Type.hospital] = create_general_building_details,
+    [Type.water_distributer] = create_general_building_details
 }
 
 -- add the castes
@@ -876,6 +967,9 @@ for caste_id in pairs(Castes.values) do
     detail_view_builders[caste_id] = create_housing_details
 end
 
+--- Builds a details gui for the given player and the given entity.
+--- @param player Player
+--- @param unit_number integer
 function Gui.open_details_view_for_player(player, unit_number)
     local entry = Register.try_get(unit_number)
     if not entry then
@@ -896,6 +990,8 @@ function Gui.open_details_view_for_player(player, unit_number)
     global.details_view[player.index] = unit_number
 end
 
+--- Closes the details view for the given player.
+--- @param player Player
 function Gui.close_details_view_for_player(player)
     local details_view = get_details_view(player)
     details_view.visible = false
@@ -904,6 +1000,8 @@ function Gui.close_details_view_for_player(player)
     details_view.nested.clear()
 end
 
+--- Closes and reopens all the Guis related to the given entry.
+--- @param entry Entry
 function Gui.rebuild_details_view_for_entry(entry)
     local unit_number = entry[EntryKey.entity].unit_number
 
@@ -918,6 +1016,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << handlers >>
+--- Event handler function for clicks on caste assign buttons.
 function Gui.handle_caste_button(player_index, caste_id)
     local entry = Register.try_get(global.details_view[player_index])
     if not entry then
@@ -927,6 +1026,7 @@ function Gui.handle_caste_button(player_index, caste_id)
     Inhabitants.try_allow_for_caste(entry, caste_id, true)
 end
 
+--- Event handler function for clicks on the kickout button.
 function Gui.handle_kickout_button(player_index, button)
     local entry = Register.try_get(global.details_view[player_index])
     if not entry then
@@ -942,11 +1042,14 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+--- Initializes the guis for the given player. Gets called after a new player gets created.
+--- @param player Player
 function Gui.create_guis_for_player(player)
-    Gui.create_city_info_for_player(player)
-    Gui.create_details_view_for_player(player)
+    create_city_info_for_player(player)
+    create_details_view_for_player(player)
 end
 
+--- Initialize the guis for all existing players.
 function Gui.init()
     set_locals()
     global.details_view = {}
