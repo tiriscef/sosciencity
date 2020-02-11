@@ -12,7 +12,7 @@ local needs_sprite = Types.needs_sprite
 local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
 local is_inhabited = Types.is_inhabited
 
-local buildings = Buildings
+local buildings = Buildings.values
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
@@ -75,9 +75,11 @@ function Subentities.add_all_for(entry)
         add(entry, SubentityType.eei)
         entry[EntryKey.power_usage] = 0
     end
-    if buildings[name] and buildings[name].power_usage then
+
+    local building_details = buildings[name]
+    if building_details and building_details.power_usage then
         add(entry, SubentityType.eei)
-        entry[EntryKey.power_usage] = buildings[name].power_usage
+        entry[EntryKey.power_usage] = building_details.power_usage
     end
     if needs_sprite(name) then
         add_sprite(entry, Types.get_sprite(name))

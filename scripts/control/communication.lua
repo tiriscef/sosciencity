@@ -31,6 +31,7 @@ end
 local floor = math.floor
 local random = math.random
 
+local buildings = Buildings.values
 local is_inhabited = Types.is_inhabited
 local try_get = Register.try_get
 
@@ -217,7 +218,7 @@ function Communication.create_mouseover_highlights(player_id, entity)
     local name = entity.name
     local created_highlights = {}
 
-    local building_details = Buildings[name]
+    local building_details = buildings[name]
     if building_details then
         highlight_range(player_id, entity, building_details, created_highlights)
     end

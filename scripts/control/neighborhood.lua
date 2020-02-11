@@ -12,7 +12,7 @@ local active_neighbor_ranges
 local function generate_active_neighbor_ranges_lookup()
     active_neighbor_ranges = {}
 
-    for name, details in pairs(Buildings) do
+    for name, details in pairs(Buildings.values) do
         active_neighbor_ranges[name] = details.range
     end
 end
