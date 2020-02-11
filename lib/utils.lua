@@ -20,6 +20,16 @@ end
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 
+function Tirislib_Tables.count(tbl)
+    local count = 0
+
+    for _ in pairs(tbl) do
+        count = count + 1
+    end
+
+    return count
+end
+
 --- Removes all values of the given table that equal the given value.
 --- This function doesn't preserve the original order.
 function Tirislib_Tables.remove_all(tbl, value)

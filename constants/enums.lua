@@ -108,8 +108,6 @@ HappinessSummand.fear = 8
 HappinessSummand.ember = 9
 HappinessSummand.garbage = 10
 
-HappinessSummand.count = 10
-
 --<< happiness factors >>
 --- Enum table for happiness factors.
 HappinessFactor = {}
@@ -120,8 +118,6 @@ HappinessFactor.thirst = 3
 HappinessFactor.health = 4
 HappinessFactor.sanity = 5
 
-HappinessFactor.count = 5
-
 --<< health summands >>
 --- Enum table for health summands.
 HealthSummand = {}
@@ -131,16 +127,12 @@ HealthSummand.food = 2
 HealthSummand.fear = 3
 HealthSummand.plasma = 4
 
-HealthSummand.count = 4
-
 --<< health factors >>
 --- Enum table for health factors.
 HealthFactor = {}
 
 HealthFactor.hunger = 1
 HealthFactor.water = 2
-
-HealthFactor.count = 2
 
 --<< sanity summands >>
 --- Enum table for sanity summands.
@@ -155,13 +147,9 @@ SanitySummand.just_neutral = 6
 SanitySummand.single_food = 7
 SanitySummand.fear = 8
 
-SanitySummand.count = 8
-
 --<< sanity factors >>
 --- Enum table for sanity factors.
 SanityFactor = {}
 
 SanityFactor.hunger = 1
 SanityFactor.thirst = 2
-
-SanityFactor.count = 2
