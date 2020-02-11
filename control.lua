@@ -227,10 +227,12 @@ local function update_cycle()
         local updater = update_functions[_type]
         if updater ~= nil then
             local delta_ticks = current_tick - current_entry[EntryKey.last_update]
-            updater(current_entry, delta_ticks)
-            current_entry[EntryKey.last_update] = current_tick
+            if delta_ticks > 0 then
+                updater(current_entry, delta_ticks)
+            end
         end
 
+        current_entry[EntryKey.last_update] = current_tick
         index, current_entry = next_entry(index)
         count = count + 1
     end

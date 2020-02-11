@@ -113,10 +113,6 @@ function Types.needs_alt_mode_sprite(_type)
     return altmode_sprites[_type] ~= nil
 end
 
-function Types.needs_neighborhood(_type) -- I might need to add more
-    return Types.is_housing(_type)
-end
-
 local meta = {}
 
 function meta:__call(entity)
