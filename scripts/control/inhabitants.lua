@@ -628,16 +628,16 @@ end
 --- @param entry Entry
 function Inhabitants.establish_house(caste_id, entry, unit_number)
     entry[EntryKey.happiness] = 0
-    entry[EntryKey.happiness_summands] = Tirislib_Tables.new_array(HappinessSummand.count, 0.)
-    entry[EntryKey.happiness_factors] = Tirislib_Tables.new_array(HappinessFactor.count, 1.)
+    entry[EntryKey.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
+    entry[EntryKey.happiness_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessFactor), 1.)
 
     entry[EntryKey.health] = 0
-    entry[EntryKey.health_summands] = Tirislib_Tables.new_array(HealthSummand.count, 0.)
-    entry[EntryKey.health_factors] = Tirislib_Tables.new_array(HealthFactor.count, 1.)
+    entry[EntryKey.health_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HealthSummand), 0.)
+    entry[EntryKey.health_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HealthFactor), 1.)
 
     entry[EntryKey.sanity] = 0
-    entry[EntryKey.sanity_summands] = Tirislib_Tables.new_array(SanitySummand.count, 0.)
-    entry[EntryKey.sanity_factors] = Tirislib_Tables.new_array(SanityFactor.count, 1.)
+    entry[EntryKey.sanity_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanitySummand), 0.)
+    entry[EntryKey.sanity_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanityFactor), 1.)
 
     entry[EntryKey.inhabitants] = 0
     entry[EntryKey.emigration_trend] = 0

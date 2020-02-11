@@ -680,9 +680,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         happiness_list,
         {"sosciencity-gui.happiness"},
         "happiness-summand.",
-        HappinessSummand.count,
+        Tirislib_Tables.count(HappinessSummand),
         "happiness-factor.",
-        HappinessFactor.count
+        Tirislib_Tables.count(HappinessFactor)
     )
 
     create_separator_line(flow)
@@ -692,9 +692,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         health_list,
         {"sosciencity-gui.health"},
         "health-summand.",
-        HealthSummand.count,
+        Tirislib_Tables.count(HealthSummand),
         "health-factor.",
-        HealthFactor.count
+        Tirislib_Tables.count(HealthFactor)
     )
 
     create_separator_line(flow, "line2")
@@ -704,9 +704,9 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         sanity_list,
         {"sosciencity-gui.sanity"},
         "sanity-summand.",
-        SanitySummand.count,
+        Tirislib_Tables.count(SanitySummand),
         "sanity-factor.",
-        SanityFactor.count
+        Tirislib_Tables.count(SanityFactor)
     )
 
     -- call the update function to set the values

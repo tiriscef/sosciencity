@@ -174,7 +174,7 @@ Tirislib_Technology("utility-science-pack"):add_prerequisite("gleam-caste")
 Tirislib_Technology.create {
     type = "technology",
     name = "aurora-caste",
-    icon = "__sosciencity__/graphics/empty-caste.png", -- TODO create icon
+    icon = "__sosciencity__/graphics/aurora-caste.png",
     icon_size = 256,
     upgrade = false,
     prerequisites = {"utility-science-pack", "production-science-pack"},
