@@ -160,9 +160,9 @@ local function update_waterwell(entry, delta_ticks)
         return
     end
 
+    local building_details = Buildings.get(entry)
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-
-    local groundwater_volume = (delta_ticks * 2) / near_count
+    local groundwater_volume = (delta_ticks * building_details.speed) / near_count
 
     local inserted =
         entry[EntryKey.entity].insert_fluid {
@@ -289,6 +289,7 @@ local function on_load()
     Types.init()
     Neighborhood.init()
     Register.load()
+    Gui.load()
     Inhabitants.load()
     Communication.load()
 end
