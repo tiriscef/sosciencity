@@ -237,20 +237,14 @@ function Register.init()
     for _, surface in pairs(game.surfaces) do
         for _, entity in pairs(
             surface.find_entities_filtered {
-                type = {
-                    "assembling-machine",
-                    "rocket-silo",
-                    "furnace",
-                    "turret",
-                    "ammo-turret",
-                    "electric-turret",
-                    "fluid-turret",
-                    "mining-drill"
-                },
                 force = "player"
             }
         ) do
-            Register.add(entity)
+            local _type = get_entity_type(entity)
+
+            if Types.is_relevant_to_register(_type) then
+                add_entity(entity)
+            end
         end
     end
 end

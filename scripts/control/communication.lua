@@ -307,7 +307,7 @@ function Communication.useless_banter()
     -- pick a random speaker and line until we found a line that wasn't used recently
     local speaker_name, speaker, line, line_index
     repeat
-        speaker_name = allowed_speakers[Tirislib_Tables.weighted_random(weights)]
+        speaker_name = allowed_speakers[Tirislib_Utils.weighted_random(weights)]
         speaker = speakers[speaker_name]
         line = random(speaker.useless_banter_count)
         line_index = line + speaker.index

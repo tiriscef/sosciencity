@@ -17,6 +17,23 @@ function Tirislib_Utils.sgn(x)
     end
 end
 
+function Tirislib_Utils.weighted_random(weights)
+    local sum = 0
+    for i = 1, #weights do
+        sum = sum + weights[i]
+    end
+
+    local random_index = random(sum)
+    local index = 0
+
+    repeat
+        index = index + 1
+        random_index = random_index - weights[index]
+    until random_index < 1
+
+    return index
+end
+
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 
@@ -73,23 +90,6 @@ function Tirislib_Tables.shuffle(tbl)
     end
 
     return tbl
-end
-
-function Tirislib_Tables.weighted_random(weights)
-    local sum = 0
-    for i = 1, #weights do
-        sum = sum + weights[i]
-    end
-
-    local random_index = random(sum)
-    local index = 0
-
-    repeat
-        index = index + 1
-        random_index = random_index - weights[index]
-    until random_index < 1
-
-    return index
 end
 
 -- clones the table, tables inside will be referenced

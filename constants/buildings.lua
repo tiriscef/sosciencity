@@ -25,6 +25,10 @@ Buildings = {
     ["water-tower"] = {
         type = Type.water_distributer,
         range = 35
+    },
+    ["groundwater-pump"] = {
+        type = Type.waterwell,
+        range = 64
     }
 }
 
