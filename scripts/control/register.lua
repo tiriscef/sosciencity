@@ -1,5 +1,19 @@
+--- Static class that stores entities in hopefully performant ways.
 Register = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    global.register: table
+        [unit_number]: Entry
+
+    global.register_by_type: table
+        [type]: unit_number-lookup-table
+
+    global.entry_counts:
+        [type]: int (total number)
+]]
+-- local often used functions for almost non-existant performance gains
 local global
 local register
 local register_by_type

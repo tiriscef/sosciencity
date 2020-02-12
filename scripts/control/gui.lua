@@ -1,5 +1,13 @@
+--- Static class for all the gui stuff.
 Gui = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    global.details_view: table
+        [player_id]: unit_number (of the entity whose details are watched by the player)
+]]
+-- local often used functions for microscopic performance gains
 local castes = Castes.values
 local global
 local population

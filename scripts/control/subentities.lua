@@ -1,5 +1,12 @@
+--- Static class that handles hidden entities that hack additional behaviours.
 Subentities = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    nothing
+]]
+-- local often used functions for extreme performance gains
 Subentities.subentity_name_lookup = {
     [SubentityType.beacon] = "sosciencity-hidden-beacon",
     [SubentityType.eei] = "sosciencity-hidden-eei"
