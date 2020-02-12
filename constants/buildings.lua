@@ -38,31 +38,6 @@ Buildings.values = {
 }
 local buildings = Buildings.values
 
-Buildings.types = {
-    [Type.dumpster] = {
-        localised_name = {"sosciencity-gui.dumpster"},
-        localised_description = {"sosciencity-gui.explain-dumpster"}
-    },
-    [Type.market] = {
-        localised_name = {"sosciencity-gui.market"},
-        localised_description = {"sosciencity-gui.explain-market"}
-    },
-    [Type.hospital] = {
-        localised_name = {"sosciencity-gui.hospital"},
-        localised_description = {"sosciencity-gui.explain-hospital"}
-    },
-    [Type.water_distributer] = {
-        localised_name = {"sosciencity-gui.water-distributer"},
-        localised_description = {"sosciencity-gui.explain-water-distributer"}
-    },
-    [Type.waterwell] = {
-        localised_name = {"sosciencity-gui.waterwell"},
-        localised_description = {"sosciencity-gui.explain-waterwell"},
-        localised_speed_name = {"sosciencity-gui.waterwell-speed"},
-        localised_speed_key = "sosciencity-gui.show-waterwell-speed"
-    }
-}
-
 -- values postprocessing
 for _, details in pairs(Buildings.values) do
     -- convert power usages to J / tick

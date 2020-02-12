@@ -805,7 +805,7 @@ local function create_general_building_details(container, entry)
 
     local name = entity.name
     local building_details = Buildings.values[name]
-    local type_details = Buildings.types[entry[EntryKey.type]]
+    local type_details = Types.definitions[entry[EntryKey.type]]
 
     local tabbed_pane = create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
