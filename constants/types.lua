@@ -1,21 +1,44 @@
 require("constants.enums")
 
 Types = {}
+
+Types.definitions = {
+    [Type.empty_house] = {altmode_sprite = "empty-caste"},
+    [Type.clockwork] = {altmode_sprite = "clockwork-caste"},
+    [Type.orchid] = {altmode_sprite = "orchid-caste"},
+    [Type.gunfire] = {altmode_sprite = "gunfire-caste"},
+    [Type.ember] = {altmode_sprite = "ember-caste"},
+    [Type.foundry] = {altmode_sprite = "foundry-caste"},
+    [Type.gleam] = {altmode_sprite = "gleam-caste"},
+    [Type.aurora] = {altmode_sprite = "aurora-caste"},
+    [Type.plasma] = {altmode_sprite = "plasma-caste"},
+    [Type.dumpster] = {
+        localised_name = {"sosciencity-gui.dumpster"},
+        localised_description = {"sosciencity-gui.explain-dumpster"}
+    },
+    [Type.market] = {
+        localised_name = {"sosciencity-gui.market"},
+        localised_description = {"sosciencity-gui.explain-market"}
+    },
+    [Type.hospital] = {
+        localised_name = {"sosciencity-gui.hospital"},
+        localised_description = {"sosciencity-gui.explain-hospital"}
+    },
+    [Type.water_distributer] = {
+        localised_name = {"sosciencity-gui.water-distributer"},
+        localised_description = {"sosciencity-gui.explain-water-distributer"}
+    },
+    [Type.waterwell] = {
+        localised_name = {"sosciencity-gui.waterwell"},
+        localised_description = {"sosciencity-gui.explain-waterwell"},
+        localised_speed_name = {"sosciencity-gui.waterwell-speed"},
+        localised_speed_key = "sosciencity-gui.show-waterwell-speed"
+    }
+}
+local definitions = Types.definitions
+
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>
-Types.altmode_sprites = {
-    [Type.empty_house] = "empty-caste",
-    [Type.clockwork] = "clockwork-caste",
-    [Type.orchid] = "orchid-caste",
-    [Type.gunfire] = "gunfire-caste",
-    [Type.ember] = "ember-caste",
-    [Type.foundry] = "foundry-caste",
-    [Type.gleam] = "gleam-caste",
-    [Type.aurora] = "aurora-caste",
-    [Type.plasma] = "plasma-caste"
-}
-local altmode_sprites = Types.altmode_sprites
-
 local lookup_by_entity_type = {
     ["assembling-machine"] = Type.assembling_machine,
     ["mining-drill"] = Type.mining_drill,
@@ -35,8 +58,6 @@ local lookup_by_name = {
 }
 
 local houses
----------------------------------------------------------------------------------------------------
--- << type functions >>
 function Types.init()
     houses = Housing.values
 
@@ -46,6 +67,8 @@ function Types.init()
     end
 end
 
+---------------------------------------------------------------------------------------------------
+-- << type functions >>
 function Types.get_entity_type(entity)
     local name = entity.name
     local entity_type = entity.type
@@ -110,7 +133,7 @@ function Types.get_sprite(name)
 end
 
 function Types.needs_alt_mode_sprite(_type)
-    return altmode_sprites[_type] ~= nil
+    return definitions[_type].altmode_sprite ~= nil
 end
 
 local meta = {}
