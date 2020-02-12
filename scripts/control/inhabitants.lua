@@ -1,5 +1,32 @@
+--- Static class that handles the behaviour of the people.
 Inhabitants = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    global.population: table
+        [caste_id]: int (inhabitants count)
+
+    global.effective_population: table
+        [caste_id]: float (total caste bonus points)
+
+    global.caste_bonuses: table
+        [caste_id]: float (caste bonus value)
+
+    global.immigration: table
+        [caste_id]: float (progress toward the next immigrant)
+
+    global.houses_with_free_capacity: table
+        [caste_id]: table
+            [unit_number]: truthy (lookup)
+
+    global.next_houses: table
+        [caste_id]: shuffled array of unit_numbers
+
+    global.fear: float (fear level)
+
+    global.last_fear_event: tick
+]]
 -- local often used functions for enormous performance gains
 local global
 local population

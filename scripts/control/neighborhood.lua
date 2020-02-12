@@ -1,5 +1,19 @@
+--- Static class that takes care of the relations between entities.
 Neighborhood = {}
 
+-- Some entities need to know if there are neighborhood entities (like hospitals) nearby.
+-- This class ensures that the neighborhood aware entries have a neighborhood-table with all the neighbors that it is interested in
+-- When accessing a neighbor entry it is necessary to check if it's still valid
+-- neighborhood: table
+--   [entity type]: table of (unit_number, type) pairs
+--
+-- Future: implement something for entities that are not registered, e.g. trees
+--[[
+    Data this class stores in global
+    --------------------------------
+    nothing
+]]
+-- local often used functions for giant performance gains
 local Register = Register
 local try_get = Register.try_get
 
@@ -53,14 +67,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
--- Some entities need to know if there are neighborhood entities (like hospitals) nearby.
--- This class ensures that the neighborhood aware entries have a neighborhood-table with all the neighbors that it is interested in
--- When accessing a neighbor entry it is necessary to check if it's still valid
--- neighborhood: table
---   [entity type]: table of (unit_number, type) pairs
---
--- Future: implement something for entities that are not registered, e.g. trees
-
 local function maximum_metric_distance(x1, y1, x2, y2)
     local dist_x = abs(x1 - x2)
     local dist_y = abs(y1 - y2)

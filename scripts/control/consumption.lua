@@ -1,5 +1,12 @@
+--- Static class that handles the consumption logic and the effect on the inhabitants.
 Consumption = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    nothing
+]]
+-- local often used functions for humongous performance gains
 local sort_by_key = Tirislib_Tables.insertion_sort_by_key
 
 local food_values = Food.values

@@ -1,6 +1,12 @@
 -- Static class for most of the generic functions that manipulate inventories and or items.
 Inventories = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    nothing
+]]
+-- local often used functions for great performance gains
 local garbage_values = Garbage.values
 
 local log_item = Communication.log_item

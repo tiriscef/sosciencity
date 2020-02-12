@@ -1,7 +1,25 @@
--- Static class for all the functions that tell the player something through various means.
--- Communication is very important in a relationship.
+--- Static class for all the functions that tell the player something through various means.
+--- Communication is very important in a relationship.
 Communication = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    global.mouseover_highlights: table
+        [player_index]: table of render_ids
+
+    global.(fluid/item)_(consumption/production): table
+        [name]: amount consumed/produced
+
+    global.speaker_schedule: table
+        [tick]: array of lines to say
+
+    global.past_banter: array of recent lines said (up to 8)
+
+    global.past_banter_index: int
+
+    global.(tiriscef/profanity): bool (if they are enabled)
+]]
 -- local often used functions for smallish performance gains
 local global
 

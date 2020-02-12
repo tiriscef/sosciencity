@@ -1,5 +1,13 @@
+--- Static class that keeps track of the research state of important technologies.
 Technologies = {}
 
+--[[
+    Data this class stores in global
+    --------------------------------
+    global.technologies: table
+        [tech_name]: bool or int (level)
+]]
+-- local often used functions for humongous performance gains
 local relevant_techs = {
     ["resettlement"] = true,
 }
@@ -33,6 +41,7 @@ local function determine_multi_level_tech_level(name)
     global.technologies[name] = (level > 0) and level or false
 end
 
+--- Event handler function for finished technologies.
 function Technologies.finished(name)
     if relevant_techs[name] then
         global.technologies[name] = true
@@ -43,6 +52,7 @@ function Technologies.finished(name)
     end
 end
 
+--- Initialize the technology related contents of global.
 function Technologies.init()
     global.technologies = {}
     local techs = game.forces.player.technologies
