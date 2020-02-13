@@ -820,7 +820,7 @@ local function create_general_building_details(container, entry)
             building_data,
             "range",
             {"sosciencity-gui.range"},
-            {"sosciencity-gui.show-range", building_details.range}
+            {"sosciencity-gui.show-range", building_details.range * 2}
         )
     end
 

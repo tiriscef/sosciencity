@@ -12,12 +12,8 @@ Tirislib_Item.create {
 local recipe = Tirislib_RecipeGenerator.create_recipe("arboretum")
 recipe:add_unlock() --TODO tech
 
-local pipe_pictures = {
-    north = Tirislib_Entity.get_empty_sprite(),
-    east = Tirislib_Entity.get_empty_sprite(),
-    south = Tirislib_Entity.get_south_pipe_picture(),
-    west = Tirislib_Entity.get_empty_sprite()
-}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
+local pipe_covers = Tirislib_Entity.get_standard_pipe_cover{"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",
@@ -91,7 +87,7 @@ Tirislib_Entity.create {
     },
     fluid_boxes = {
         {
-            pipe_covers = pipecoverspictures(),
+            pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {8.0, 0.0}}},
             production_type = "input"

@@ -384,4 +384,9 @@ function Communication.load()
     set_locals()
 end
 
+function Communication.settings_update()
+    global = _ENV.global
+    generate_speakers_list()
+end
+
 return Communication

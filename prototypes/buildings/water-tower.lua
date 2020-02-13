@@ -11,12 +11,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create_recipe("water-tower")
 
-local pipe_pictures = {
-    north = Tirislib_Entity.get_empty_sprite(),
-    east = Tirislib_Entity.get_empty_sprite(),
-    south = Tirislib_Entity.get_south_pipe_picture(),
-    west = Tirislib_Entity.get_empty_sprite()
-}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
 
 Tirislib_Entity.create {
     type = "storage-tank",
