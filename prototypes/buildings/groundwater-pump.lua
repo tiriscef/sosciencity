@@ -20,8 +20,8 @@ Tirislib_Entity.create {
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "groundwater-pump"},
-    max_health = 500,
-    corpse = "small-remnants", -- TODO
+    max_health = 150,
+    corpse = "groundwater-pump-remnants",
     fluid_box = {
         base_area = 2,
         filter = "groundwater",
@@ -81,7 +81,7 @@ Tirislib_Entity.create {
     circuit_wire_max_distance = 13
 }:set_size(3, 3):copy_localisation_from_item()
 
---[[Tirislib_Entity.create {
+Tirislib_Entity.create {
     type = "corpse",
     name = "groundwater-pump-remnants",
     icon = "__sosciencity__/graphics/icon/groundwater-pump.png",
@@ -96,16 +96,16 @@ Tirislib_Entity.create {
     animation = {
         filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-remnants.png",
         direction_count = 1,
-        width = 160,
+        width = 128,
         height = 160,
-        shift = {0, -1},
+        shift = {0.5, -1},
         hr_version = {
             filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-remnants-hr.png",
             direction_count = 1,
-            width = 320,
+            width = 256,
             height = 320,
-            shift = {0, -1},
+            shift = {0.5, -1},
             scale = 0.5
         }
     }
-}:set_size(3, 3)]]
+}:set_size(3, 3)
