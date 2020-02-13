@@ -213,6 +213,8 @@ local function update_settings()
 
     global.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
     global.profanity = settings.global["sosciencity-allow-profanity"].value
+
+    Communication.settings_update()
 end
 
 local function set_locals()

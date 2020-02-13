@@ -95,8 +95,58 @@ function Tirislib_Entity.get_placeholder_picture()
     }
 end
 
-function Tirislib_Entity.get_south_pipe_picture()
-    return {
+local all_directions = {"north", "east", "south", "west"}
+
+local function copy_directions(definition, directions)
+    if not directions then
+        directions = all_directions
+    end
+
+    local ret = {}
+
+    for _, direction in pairs(directions) do
+        ret[direction] = definition[direction]
+    end
+
+    for _, direction in pairs(all_directions) do
+        ret[direction] = ret[direction] or Tirislib_Entity.get_empty_sprite()
+    end
+
+    return ret
+end
+
+local pipepictures = {
+    north = {
+        filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-N.png",
+        priority = "extra-high",
+        width = 35,
+        height = 18,
+        shift = util.by_pixel(2.5, 14),
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-N.png",
+            priority = "extra-high",
+            width = 71,
+            height = 38,
+            shift = util.by_pixel(2.25, 13.5),
+            scale = 0.5
+        }
+    },
+    east = {
+        filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-E.png",
+        priority = "extra-high",
+        width = 20,
+        height = 38,
+        shift = util.by_pixel(-25, 1),
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-E.png",
+            priority = "extra-high",
+            width = 42,
+            height = 76,
+            shift = util.by_pixel(-24.5, 1),
+            scale = 0.5
+        }
+    },
+    south = {
         filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-S.png",
         width = 44,
         height = 31,
@@ -108,45 +158,41 @@ function Tirislib_Entity.get_south_pipe_picture()
             shift = util.by_pixel(0, -31.25),
             scale = 0.5
         }
-    }
-end
-
-function Tirislib_Entity.get_east_pipe_picture()
-    return {
-        filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-E.png",
-        priority = "extra-high",
-        width = 20,
-        height = 38,
-        shift = util.by_pixel(-25, 1),
-        hr_version =
-        {
-          filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-E.png",
-          priority = "extra-high",
-          width = 42,
-          height = 76,
-          shift = util.by_pixel(-24.5, 1),
-          scale = 0.5
-        }
-      }
-end
-
-function Tirislib_Entity.get_west_pipe_picture()
-    return {
+    },
+    west = {
         filename = "__sosciencity__/graphics/entity/assembling-machine-1-pipe-W.png",
         priority = "extra-high",
         width = 19,
         height = 37,
         shift = util.by_pixel(25.5, 1.5),
-        hr_version =
-        {
-          filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-W.png",
-          priority = "extra-high",
-          width = 39,
-          height = 73,
-          shift = util.by_pixel(25.75, 1.25),
-          scale = 0.5
+        hr_version = {
+            filename = "__sosciencity__/graphics/entity/hr-assembling-machine-1-pipe-W.png",
+            priority = "extra-high",
+            width = 39,
+            height = 73,
+            shift = util.by_pixel(25.75, 1.25),
+            scale = 0.5
         }
-      }
+    }
+}
+
+function Tirislib_Entity.get_standard_pipe_pictures(directions)
+    return copy_directions(pipepictures, directions)
+end
+
+local pipecovers = pipecoverspictures()
+
+-- remove the shadows because they never seem to look appropriate
+for _, direction in pairs(pipecovers) do
+    for i, layer in pairs(direction.layers) do
+        if layer.draw_as_shadow then
+            direction.layers[i] = nil
+        end
+    end
+end
+
+function Tirislib_Entity.get_standard_pipe_cover(directions)
+    return copy_directions(pipecovers, directions)
 end
 
 function Tirislib_Entity.get_standard_impact_sound()
