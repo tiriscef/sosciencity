@@ -5,8 +5,8 @@ local furniture_items = {
     {name = "stool"},
     {name = "table"},
     {name = "furniture", sprite_variations = {name = "furniture", count = 1, include_icon = true}},
-    {name = "carpet"}
-    --    {name = "sofa"},
+    {name = "carpet"},
+    {name = "sofa"},
     --    {name = "curtain"}
 }
 
