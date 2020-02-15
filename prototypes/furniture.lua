@@ -2,9 +2,9 @@
 -- << items >>
 local furniture_items = {
     {name = "bed"},
-    {name = "stool"},
+    {name = "chair"},
     {name = "table"},
-    {name = "furniture", sprite_variations = {name = "furniture", count = 1, include_icon = true}},
+    {name = "cupboard", sprite_variations = {name = "cupboard", count = 1, include_icon = true}},
     {name = "carpet"},
     {name = "sofa"},
     --    {name = "curtain"}

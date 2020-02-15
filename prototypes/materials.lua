@@ -3,9 +3,9 @@
 local material_items = {
     {name = "lumber"},
     {name = "tiriscefing-willow-wood"},
-    {name = "pemtenn-cotton", sprite_variations = {name = "pemtenn-cotton-pile", count = 4}},
+    {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}},
-    --{name = "yarn"}
+    {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}}
 }
 
 for index, details in pairs(material_items) do
@@ -34,7 +34,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 Tirislib_Recipe.create {
-    type = "recipe",
     name = "lumber-from-wood",
     category = "crafting",
     enabled = true,
@@ -50,7 +49,6 @@ Tirislib_Recipe.create {
 }
 
 Tirislib_Recipe.create {
-    type = "recipe",
     name = "lumber-from-tiris",
     category = "crafting",
     enabled = true,
@@ -65,7 +63,7 @@ Tirislib_Recipe.create {
     order = "aab",
 }
 
-Tirislib_RecipeGenerator.create_agriculture_recipe("pemtenn-cotton", 20)
-Tirislib_RecipeGenerator.create_greenhouse_recipe("pemtenn-cotton", 30)
+Tirislib_RecipeGenerator.create_agriculture_recipe("plemnemm-cotton", 20)
+Tirislib_RecipeGenerator.create_greenhouse_recipe("plemnemm-cotton", 30)
 
 Tirislib_RecipeGenerator.create_arboretum_recipe("tiriscefing-willow-wood", 20)
