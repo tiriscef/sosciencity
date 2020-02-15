@@ -63,7 +63,22 @@ Tirislib_Recipe.create {
     order = "aab",
 }
 
-Tirislib_RecipeGenerator.create_agriculture_recipe("plemnemm-cotton", 20)
-Tirislib_RecipeGenerator.create_greenhouse_recipe("plemnemm-cotton", 30)
+Tirislib_Recipe.create {
+    name = "yarn-from-plemnemm",
+    category = "crafting",
+    enabled = true,
+    energy_required = 2,
+    ingredients = {
+        {type = "item", name = "plemnemm-cotton", amount = 2}
+    },
+    results = {
+        {type = "item", name = "yarn", amount = 1}
+    },
+    subgroup = "sosciencity-materials",
+    order = "aac",
+}
 
-Tirislib_RecipeGenerator.create_arboretum_recipe("tiriscefing-willow-wood", 20)
+Tirislib_RecipeGenerator.create_agriculture_recipe("plemnemm-cotton", 40)
+Tirislib_RecipeGenerator.create_greenhouse_recipe("plemnemm-cotton", 50)
+
+Tirislib_RecipeGenerator.create_arboretum_recipe("tiriscefing-willow-wood", 10)

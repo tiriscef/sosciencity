@@ -124,11 +124,12 @@ Tirislib_RecipeGenerator.arboretum_growing_ingredients = {
 
 Tirislib_RecipeGenerator.expensive_multiplier = 3
 Tirislib_RecipeGenerator.expensive_farming_multiplier = 1.5
-Tirislib_RecipeGenerator.expensive_farming_energy_multiplier = 2
+Tirislib_RecipeGenerator.expensive_farming_energy_multiplier = 1.2
 
 Tirislib_RecipeGenerator.agriculture_time = 120
 Tirislib_RecipeGenerator.greenhouse_time = 100
-Tirislib_RecipeGenerator.orangery_time = 120
+Tirislib_RecipeGenerator.orangery_time = 20
+Tirislib_RecipeGenerator.arboretum_time = 30
 
 function Tirislib_RecipeGenerator.create_housing_recipe(housing_name, details)
     local item = Tirislib_Item.get(housing_name)
@@ -267,7 +268,7 @@ function Tirislib_RecipeGenerator.create_arboretum_recipe(product_name, yield, i
         name = product_name .. "-arboretum",
         category = "sosciencity-arboretum",
         enabled = true,
-        energy_required = Tirislib_RecipeGenerator.greenhouse_time,
+        energy_required = Tirislib_RecipeGenerator.arboretum_time,
         results = {
             {type = "item", name = product_name, amount_min = math.floor(yield / 2.), amount_max = yield}
         },
