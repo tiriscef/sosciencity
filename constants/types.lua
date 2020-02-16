@@ -12,28 +12,40 @@ Types.definitions = {
     [Type.gleam] = {altmode_sprite = "gleam-caste"},
     [Type.aurora] = {altmode_sprite = "aurora-caste"},
     [Type.plasma] = {altmode_sprite = "plasma-caste"},
-    [Type.dumpster] = {
-        localised_name = {"sosciencity-gui.dumpster"},
-        localised_description = {"sosciencity-gui.explain-dumpster"}
-    },
     [Type.market] = {
         localised_name = {"sosciencity-gui.market"},
         localised_description = {"sosciencity-gui.explain-market"}
+    },
+    [Type.water_distributer] = {
+        localised_name = {"sosciencity-gui.water-distributer"},
+        localised_description = {"sosciencity-gui.explain-water-distributer"}
     },
     [Type.hospital] = {
         localised_name = {"sosciencity-gui.hospital"},
         localised_description = {"sosciencity-gui.explain-hospital"}
     },
-    [Type.water_distributer] = {
-        localised_name = {"sosciencity-gui.water-distributer"},
-        localised_description = {"sosciencity-gui.explain-water-distributer"}
+    [Type.dumpster] = {
+        localised_name = {"sosciencity-gui.dumpster"},
+        localised_description = {"sosciencity-gui.explain-dumpster"}
+    },
+    [Type.pharmacy] = {
+        localised_name = {"sosciencity-gui.pharmacy"},
+        localised_description = {"sosciencity-gui.explain-pharmacy"}
     },
     [Type.waterwell] = {
         localised_name = {"sosciencity-gui.waterwell"},
         localised_description = {"sosciencity-gui.explain-waterwell"},
         localised_speed_name = {"sosciencity-gui.waterwell-speed"},
         localised_speed_key = "sosciencity-gui.show-waterwell-speed"
-    }
+    },
+    [Type.assembling_machine] = {},
+    [Type.furnace] = {},
+    [Type.rocket_silo] = {},
+    [Type.mining_drill] = {},
+    [Type.farm] = {},
+    [Type.orangery] = {},
+    [Type.turret] = {},
+    [Type.lab] = {}
 }
 local definitions = Types.definitions
 

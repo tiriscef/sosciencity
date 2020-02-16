@@ -815,14 +815,13 @@ local function create_general_building_details(container, entry)
     add_kv_pair(building_data, "building-type", {"sosciencity-gui.type"}, type_details.localised_name)
     add_kv_pair(building_data, "description", "", type_details.localised_description)
 
-    if building_details.range then
-        add_kv_pair(
-            building_data,
-            "range",
-            {"sosciencity-gui.range"},
-            {"sosciencity-gui.show-range", building_details.range * 2}
-        )
-    end
+    add_kv_pair(
+        building_data,
+        "range",
+        {"sosciencity-gui.range"},
+        (building_details.range and {"sosciencity-gui.show-range", building_details.range * 2}) or
+            {"sosciencity-gui.global-range"}
+    )
 
     if building_details.power_usage then
         -- convert to kW
@@ -863,11 +862,7 @@ local function update_waterwell_details(container, entry)
         "productivity",
         {"sosciencity-gui.show-waterwell-productivity", near_count, get_reasonable_number(productivity)}
     )
-    set_datalist_value(
-        building_data,
-        "speed",
-        {"sosciencity-gui.show-waterwell-speed", get_reasonable_number(speed)}
-    )
+    set_datalist_value(building_data, "speed", {"sosciencity-gui.show-waterwell-speed", get_reasonable_number(speed)})
 end
 
 local function create_waterwell_details(container, entry)
