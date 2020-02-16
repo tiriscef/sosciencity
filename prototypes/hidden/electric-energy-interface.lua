@@ -13,7 +13,7 @@ Tirislib_Entity.create {
         "placeable-off-grid"
     },
     base_picture = {
-        filename = "__sosciencity__/graphics/empty.png",
+        filename = "__sosciencity-graphics__/graphics/empty.png",
         width = 1,
         height = 1
     },
@@ -26,7 +26,7 @@ Tirislib_Entity.create {
         buffer_capacity = "1MJ",
         usage_priority = "secondary-input"
     },
-    icon = "__sosciencity__/graphics/empty-caste.png",
+    icon = "__sosciencity-graphics__/graphics/empty-caste.png",
     icon_size = 256
 }
 -- TODO icon

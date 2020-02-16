@@ -1,7 +1,7 @@
 Tirislib_Fluid.create {
     type = "fluid",
     name = "groundwater",
-    icon = "__sosciencity__/graphics/icon/groundwater.png",
+    icon = "__sosciencity-graphics__/graphics/icon/groundwater.png",
     icon_size = 64,
     default_temperature = 10,
     max_temperature = 100,

@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "trash-site",
-    icon = "__sosciencity__/graphics/icon/trash-site.png",
+    icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -14,7 +14,7 @@ Tirislib_RecipeGenerator.create_recipe("trash-site")
 Tirislib_Entity.create {
     type = "container",
     name = "trash-site",
-    icon = "__sosciencity__/graphics/icon/trash-site.png",
+    icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "trash-site"},
@@ -28,7 +28,7 @@ Tirislib_Entity.create {
     picture = {
         layers = {
             {
-                filename = "__sosciencity__/graphics/entity/trash-site/trash-site-hr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-hr.png",
                 priority = "high",
                 width = 384,
                 height = 384,
@@ -36,7 +36,7 @@ Tirislib_Entity.create {
                 scale = 0.5
             },
             {
-                filename = "__sosciencity__/graphics/entity/trash-site/trash-site-shadowmap-hr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-shadowmap-hr.png",
                 priority = "high",
                 width = 384,
                 height = 384,
@@ -54,7 +54,7 @@ Tirislib_Entity.create {
 Tirislib_Entity.create {
     type = "corpse",
     name = "trash-site-remnants",
-    icon = "__sosciencity__/graphics/icon/trash-site.png",
+    icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",
     icon_size = 64,
     flags = {"placeable-neutral", "not-on-map"},
     selectable_in_game = false,
@@ -64,13 +64,13 @@ Tirislib_Entity.create {
     order = "dead-trash-site:(",
     remove_on_tile_placement = false,
     animation = {
-        filename = "__sosciencity__/graphics/entity/trash-site/trash-site-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-remnants.png",
         direction_count = 1,
         width = 192,
         height = 192,
         shift = {0.5, -0.5},
         hr_version = {
-            filename = "__sosciencity__/graphics/entity/trash-site/trash-site-remnants-hr.png",
+            filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-remnants-hr.png",
             direction_count = 1,
             width = 384,
             height = 384,

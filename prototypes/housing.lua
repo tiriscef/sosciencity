@@ -4,7 +4,7 @@ require("constants.castes")
 local data_details = {
     ["test-house"] = {
         picture = {
-            filename = "__sosciencity__/graphics/entity/placeholder.png",
+            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
             priority = "high",
             width = 192,
             height = 192,
@@ -28,7 +28,7 @@ for house_name, house in pairs(Housing.values) do
         Tirislib_Item.create {
         type = "item",
         name = house_name,
-        icon = "__sosciencity__/graphics/icon/" .. house_name .. ".png",
+        icon = "__sosciencity-graphics__/graphics/icon/" .. house_name .. ".png",
         icon_size = 64,
         subgroup = "sosciencity-housing",
         order = orderstring,
@@ -54,7 +54,7 @@ for house_name, house in pairs(Housing.values) do
         type = "container",
         name = house_name,
         order = orderstring,
-        icon = "__sosciencity__/graphics/icon/" .. house_name .. ".png",
+        icon = "__sosciencity-graphics__/graphics/icon/" .. house_name .. ".png",
         icon_size = 64,
         flags = {"placeable-neutral", "player-creation"},
         minable = {mining_time = 0.5, result = house_name},

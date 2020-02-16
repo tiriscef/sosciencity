@@ -4,7 +4,7 @@ data:extend {
         name = "sosciencity",
         inventory_order = "za",
         order = "za",
-        icon = "__sosciencity__/graphics/icon/note.png", -- TODO create icon
+        icon = "__sosciencity-graphics__/graphics/icon/note.png", -- TODO create icon
         icon_size = 64 --144
     },
     {

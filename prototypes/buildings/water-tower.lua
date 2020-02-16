@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "water-tower",
-    icon = "__sosciencity__/graphics/icon/water-tower.png",
+    icon = "__sosciencity-graphics__/graphics/icon/water-tower.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -16,7 +16,7 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
 Tirislib_Entity.create {
     type = "storage-tank",
     name = "water-tower",
-    icon = "__sosciencity__/graphics/icon/water-tower.png",
+    icon = "__sosciencity-graphics__/graphics/icon/water-tower.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "water-tower"},
@@ -39,13 +39,13 @@ Tirislib_Entity.create {
         picture = {
             sheets = {
                 {
-                    filename = "__sosciencity__/graphics/entity/water-tower/water-tower.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower.png",
                     width = 160,
                     height = 224,
                     frames = 1,
                     shift = {0, -2},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/water-tower/water-tower-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-hr.png",
                         width = 320,
                         height = 448,
                         frames = 1,
@@ -54,14 +54,14 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/water-tower/water-tower-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-shadowmap.png",
                     width = 160,
                     height = 224,
                     frames = 1,
                     shift = {0, -2},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/water-tower/water-tower-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-shadowmap-hr.png",
                         width = 320,
                         height = 448,
                         frames = 1,
@@ -87,7 +87,7 @@ Tirislib_Entity.create {
 Tirislib_Entity.create {
     type = "corpse",
     name = "water-tower-remnants",
-    icon = "__sosciencity__/graphics/icon/water-tower.png",
+    icon = "__sosciencity-graphics__/graphics/icon/water-tower.png",
     icon_size = 64,
     flags = {"placeable-neutral", "not-on-map"},
     selectable_in_game = false,
@@ -97,13 +97,13 @@ Tirislib_Entity.create {
     order = "dead-water-tower:(",
     remove_on_tile_placement = false,
     animation = {
-        filename = "__sosciencity__/graphics/entity/water-tower/water-tower-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants.png",
         direction_count = 1,
         width = 160,
         height = 160,
         shift = {0, -1},
         hr_version = {
-            filename = "__sosciencity__/graphics/entity/water-tower/water-tower-remnants-hr.png",
+            filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants-hr.png",
             direction_count = 1,
             width = 320,
             height = 320,

@@ -13,7 +13,7 @@ for _, name in pairs(sprites_to_create) do
                 scale = 1.5 * 64. / 53.
             },
             {
-                filename = "__sosciencity__/graphics/" .. name .. "-caste.png",
+                filename = "__sosciencity-graphics__/graphics/" .. name .. "-caste.png",
                 size = 256,
                 scale = 0.25
             }

@@ -14,7 +14,7 @@ for index, details in pairs(idea_items) do
     local item_prototype =
         Tirislib_Item.create {
         name = details.name,
-        icon = "__sosciencity__/graphics/icon/" .. details.name .. ".png",
+        icon = "__sosciencity-graphics__/graphics/icon/" .. details.name .. ".png",
         icon_size = 64,
         subgroup = "sosciencity-ideas",
         order = string.format("%02d", index),
@@ -23,7 +23,7 @@ for index, details in pairs(idea_items) do
 
     local variations = details.sprite_variations
     if variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/" .. variations.name, variations.count)
+        item_prototype:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/" .. variations.name, variations.count)
 
         if variations.include_icon then
             item_prototype:add_icon_to_sprite_variations()
@@ -45,7 +45,7 @@ Tirislib_Recipe.create {
     results = {
         {type = "item", name = "note", amount_min = 2, amount_max = 4}
     },
-    icon = "__sosciencity__/graphics/icon/note.png",
+    icon = "__sosciencity-graphics__/graphics/icon/note.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas",
     order = "aaa",
@@ -62,7 +62,7 @@ Tirislib_Recipe.create {
     results = {
         {type = "item", name = "essay", amount = 1}
     },
-    icon = "__sosciencity__/graphics/icon/essay.png",
+    icon = "__sosciencity-graphics__/graphics/icon/essay.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas",
     order = "aab",

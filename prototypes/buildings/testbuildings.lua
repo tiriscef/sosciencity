@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "test-market",
-    icon = "__sosciencity__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -14,7 +14,7 @@ Tirislib_RecipeGenerator.create_recipe("test-market")
 Tirislib_Entity.create {
     type = "container",
     name = "test-market",
-    icon = "__sosciencity__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "test-market"},
@@ -26,7 +26,7 @@ Tirislib_Entity.create {
         volume = 0.65
     },
     picture = {
-        filename = "__sosciencity__/graphics/entity/placeholder.png",
+        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
         priority = "high",
         width = 192,
         height = 192,
@@ -40,7 +40,7 @@ Tirislib_Entity.create {
 Tirislib_Item.create {
     type = "item",
     name = "test-hospital",
-    icon = "__sosciencity__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -53,7 +53,7 @@ Tirislib_RecipeGenerator.create_recipe("test-hospital")
 Tirislib_Entity.create {
     type = "container",
     name = "test-hospital",
-    icon = "__sosciencity__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "test-hospital"},
@@ -65,7 +65,7 @@ Tirislib_Entity.create {
         volume = 0.65
     },
     picture = {
-        filename = "__sosciencity__/graphics/entity/placeholder.png",
+        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
         priority = "high",
         width = 192,
         height = 192,

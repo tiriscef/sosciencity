@@ -41,7 +41,7 @@ for food_name, food_details in pairs(Food.values) do
         type = "tool",
         name = food_name,
         enabled = true,
-        icon = "__sosciencity__/graphics/icon/" .. food_name .. ".png",
+        icon = "__sosciencity-graphics__/graphics/icon/" .. food_name .. ".png",
         icon_size = 64,
         flags = {},
         subgroup = "sosciencity-food",
@@ -75,7 +75,7 @@ for food_name, food_details in pairs(Food.values) do
     local details = additional_prototype_data[food_name] or {}
     local variations = details.sprite_variations
     if variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity__/graphics/icon/" .. variations.name, variations.count)
+        item_prototype:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/" .. variations.name, variations.count)
 
         if variations.include_icon then
             item_prototype:add_icon_to_sprite_variations()

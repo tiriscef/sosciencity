@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "greenhouse",
-    icon = "__sosciencity__/graphics/icon/greenhouse.png",
+    icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -17,7 +17,7 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "greenhouse",
-    icon = "__sosciencity__/graphics/icon/greenhouse.png",
+    icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "greenhouse"},
@@ -34,14 +34,14 @@ Tirislib_Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse.png",
+                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse.png",
                 frame_count = 1,
                 priority = "high",
                 width = 544,
                 height = 544,
                 shift = {0.0, -1.0},
                 hr_version = {
-                    filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-hr.png",
                     frame_count = 1,
                     priority = "high",
                     width = 1088,
@@ -51,14 +51,14 @@ Tirislib_Entity.create {
                 }
             },
             {
-                filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap.png",
                 frame_count = 1,
                 width = 544,
                 height = 544,
                 shift = {0.0, -1.0},
                 draw_as_shadow = true,
                 hr_version = {
-                    filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-shadowmap-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap-hr.png",
                     frame_count = 1,
                     width = 1088,
                     height = 1088,
@@ -80,7 +80,7 @@ Tirislib_Entity.create {
     },
     working_sound = {
         -- memo: make sound files louder in the future
-        sound = {filename = "__sosciencity__/sound/greenhouse-watering.ogg", volume = 3},
+        sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
         apparent_volume = 1.5
     },
     fluid_boxes = {
@@ -127,7 +127,7 @@ Tirislib_Entity.create {
 Tirislib_Entity.create {
     type = "corpse",
     name = "greenhouse-remnants",
-    icon = "__sosciencity__/graphics/icon/greenhouse.png",
+    icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",
     icon_size = 64,
     flags = {"placeable-neutral", "not-on-map"},
     selectable_in_game = false,
@@ -139,13 +139,13 @@ Tirislib_Entity.create {
     tile_width = 15,
     tile_height = 7,
     animation = {
-        filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-remnants.png",
         direction_count = 1,
         width = 544,
         height = 544,
         shift = {0.0, -1.0},
         hr_version = {
-            filename = "__sosciencity__/graphics/entity/greenhouse/greenhouse-remnants-hr.png",
+            filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-remnants-hr.png",
             direction_count = 1,
             width = 1088,
             height = 1088,
