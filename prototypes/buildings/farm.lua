@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "farm",
-    icon = "__sosciencity__/graphics/icon/farm.png",
+    icon = "__sosciencity-graphics__/graphics/icon/farm.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aaa",
@@ -17,7 +17,7 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "farm",
-    icon = "__sosciencity__/graphics/icon/farm.png",
+    icon = "__sosciencity-graphics__/graphics/icon/farm.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "farm"},
@@ -32,14 +32,14 @@ Tirislib_Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-north.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 544,
                     height = 288,
                     shift = {0.0, 0.0},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-north-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 1088,
@@ -49,7 +49,7 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-north-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-shadowmap.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 544,
@@ -57,7 +57,7 @@ Tirislib_Entity.create {
                     shift = {0.0, 0.0},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-north-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-shadowmap-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 1088,
@@ -72,14 +72,14 @@ Tirislib_Entity.create {
         east = {
             layers = {
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-east.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 288,
                     height = 544,
                     shift = {0.0, 0.0},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-east-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 576,
@@ -89,7 +89,7 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-east-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-shadowmap.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 288,
@@ -97,7 +97,7 @@ Tirislib_Entity.create {
                     shift = {0.0, 0.0},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-east-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-shadowmap-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 576,
@@ -112,14 +112,14 @@ Tirislib_Entity.create {
         south = {
             layers = {
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-south.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 544,
                     height = 320,
                     shift = {0.0, -0.5},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-south-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 1088,
@@ -129,7 +129,7 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-south-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-shadowmap.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 544,
@@ -137,7 +137,7 @@ Tirislib_Entity.create {
                     shift = {0.0, -0.5},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-south-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-shadowmap-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 1088,
@@ -152,14 +152,14 @@ Tirislib_Entity.create {
         west = {
             layers = {
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-west.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 288,
                     height = 576,
                     shift = {0.0, -0.5},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-west-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 576,
@@ -169,7 +169,7 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-west-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-shadowmap.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = 288,
@@ -177,7 +177,7 @@ Tirislib_Entity.create {
                     shift = {0.0, -0.5},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/farm/farm-west-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-shadowmap-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = 576,
@@ -199,7 +199,7 @@ Tirislib_Entity.create {
     },
     working_sound = {
         -- memo: make sound files louder in the future
-        sound = {filename = "__sosciencity__/sound/greenhouse-watering.ogg", volume = 3},
+        sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
         apparent_volume = 1.5
     },
     fluid_boxes = {
@@ -221,7 +221,7 @@ Tirislib_Entity.create {
 Tirislib_Entity.create {
     type = "corpse",
     name = "farm-remnants",
-    icon = "__sosciencity__/graphics/icon/farm.png",
+    icon = "__sosciencity-graphics__/graphics/icon/farm.png",
     icon_size = 64,
     flags = {"placeable-neutral", "not-on-map"},
     selectable_in_game = false,
@@ -238,22 +238,22 @@ Tirislib_Entity.create {
         height = 544,
         stripes = {
             {
-                filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-remnants.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             },
             {
-                filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-remnants.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             },
             {
-                filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-remnants.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             },
             {
-                filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-remnants.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             }
@@ -265,22 +265,22 @@ Tirislib_Entity.create {
             scale = 0.5,
             stripes = {
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-north-remnants-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-remnants-hr.png",
                     width_in_frames = 1,
                     height_in_frames = 1
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-east-remnants-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-remnants-hr.png",
                     width_in_frames = 1,
                     height_in_frames = 1
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-south-remnants-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-remnants-hr.png",
                     width_in_frames = 1,
                     height_in_frames = 1
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/farm/farm-west-remnants-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-remnants-hr.png",
                     width_in_frames = 1,
                     height_in_frames = 1
                 }

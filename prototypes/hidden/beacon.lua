@@ -2,7 +2,7 @@
 Tirislib_Item.create {
     type = "module",
     name = "sosciencity-penalty",
-    icon = "__sosciencity__/graphics/empty.png",
+    icon = "__sosciencity-graphics__/graphics/empty.png",
     icon_size = 1,
     flags = {"hidden", "hide-from-bonus-gui"},
     subgroup = "module",
@@ -18,7 +18,7 @@ for i = 0, 14 do
     Tirislib_Item.create {
         type = "module",
         name = i .. "-sosciencity-speed",
-        icon = "__sosciencity__/graphics/empty.png",
+        icon = "__sosciencity-graphics__/graphics/empty.png",
         icon_size = 1,
         flags = {"hidden", "hide-from-bonus-gui"},
         subgroup = "module",
@@ -31,7 +31,7 @@ for i = 0, 14 do
     Tirislib_Item.create {
         type = "module",
         name = i .. "-sosciencity-productivity",
-        icon = "__sosciencity__/graphics/empty.png",
+        icon = "__sosciencity-graphics__/graphics/empty.png",
         icon_size = 1,
         flags = {"hidden", "hide-from-bonus-gui"},
         subgroup = "module",
@@ -59,14 +59,14 @@ Tirislib_Entity.create {
         "placeable-off-grid"
     },
     animation = {
-        filename = "__sosciencity__/graphics/empty.png",
+        filename = "__sosciencity-graphics__/graphics/empty.png",
         width = 1,
         height = 1,
         line_length = 8,
         frame_count = 1
     },
     animation_shadow = {
-        filename = "__sosciencity__/graphics/empty.png",
+        filename = "__sosciencity-graphics__/graphics/empty.png",
         width = 1,
         height = 1,
         line_length = 8,
@@ -76,13 +76,13 @@ Tirislib_Entity.create {
         type = "void"
     },
     base_picture = {
-        filename = "__sosciencity__/graphics/empty.png",
+        filename = "__sosciencity-graphics__/graphics/empty.png",
         width = 1,
         height = 1
     },
     supply_area_distance = 0,
     radius_visualisation_picture = {
-        filename = "__sosciencity__/graphics/empty.png",
+        filename = "__sosciencity-graphics__/graphics/empty.png",
         width = 1,
         height = 1
     },
@@ -98,6 +98,6 @@ Tirislib_Entity.create {
     },
     selection_box = nil,
     collision_box = nil,
-    icon = "__sosciencity__/graphics/empty-caste.png",
+    icon = "__sosciencity-graphics__/graphics/empty-caste.png",
     icon_size = 256
 }

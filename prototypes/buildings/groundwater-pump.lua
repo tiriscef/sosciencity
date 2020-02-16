@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "groundwater-pump",
-    icon = "__sosciencity__/graphics/icon/groundwater-pump.png",
+    icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
@@ -16,7 +16,7 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
 Tirislib_Entity.create {
     type = "storage-tank",
     name = "groundwater-pump",
-    icon = "__sosciencity__/graphics/icon/groundwater-pump.png",
+    icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "groundwater-pump"},
@@ -36,13 +36,13 @@ Tirislib_Entity.create {
         picture = {
             sheets = {
                 {
-                    filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump.png",
                     width = 128,
                     height = 160,
                     frames = 1,
                     shift = {0.5, -1},
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-hr.png",
                         width = 256,
                         height = 320,
                         frames = 1,
@@ -51,14 +51,14 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap.png",
                     width = 128,
                     height = 160,
                     frames = 1,
                     shift = {0.5, -1},
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap-hr.png",
                         width = 256,
                         height = 320,
                         frames = 1,
@@ -84,7 +84,7 @@ Tirislib_Entity.create {
 Tirislib_Entity.create {
     type = "corpse",
     name = "groundwater-pump-remnants",
-    icon = "__sosciencity__/graphics/icon/groundwater-pump.png",
+    icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
     icon_size = 64,
     flags = {"placeable-neutral", "not-on-map"},
     selectable_in_game = false,
@@ -94,13 +94,13 @@ Tirislib_Entity.create {
     order = "dead-groundwater-pump:(",
     remove_on_tile_placement = false,
     animation = {
-        filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-remnants.png",
         direction_count = 1,
         width = 128,
         height = 160,
         shift = {0.5, -1},
         hr_version = {
-            filename = "__sosciencity__/graphics/entity/groundwater-pump/groundwater-pump-remnants-hr.png",
+            filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-remnants-hr.png",
             direction_count = 1,
             width = 256,
             height = 320,

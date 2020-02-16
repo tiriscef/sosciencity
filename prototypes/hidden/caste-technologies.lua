@@ -4,7 +4,7 @@ for i = 0, 20 do
     Tirislib_Technology.create {
         type = "technology",
         name = i .. "-gleam-caste",
-        icon = "__sosciencity__/graphics/empty.png",
+        icon = "__sosciencity-graphics__/graphics/empty.png",
         icon_size = 1,
         effects = {
             {
@@ -29,7 +29,7 @@ for i = 0, 20 do
     Tirislib_Technology.create {
         type = "technology",
         name = i .. "-foundry-caste",
-        icon = "__sosciencity__/graphics/empty.png",
+        icon = "__sosciencity-graphics__/graphics/empty.png",
         icon_size = 1,
         effects = {
             {
@@ -54,7 +54,7 @@ for i = 0, 20 do
     Tirislib_Technology.create {
         type = "technology",
         name = i .. "-gunfire-caste",
-        icon = "__sosciencity__/graphics/empty.png",
+        icon = "__sosciencity-graphics__/graphics/empty.png",
         icon_size = 1,
         effects = {}, -- will be filled in data-final-fixes
         unit = {
