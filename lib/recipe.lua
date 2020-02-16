@@ -13,6 +13,9 @@ function Tirislib_RecipeEntry.convert_to_named_keys(entry)
         entry.amount = entry[2]
         entry[2] = nil
     end
+    if not entry.type then
+        entry.type = "item"
+    end
 end
 
 function Tirislib_RecipeEntry.get_name(entry)

@@ -1,9 +1,7 @@
 -- initialisation
 require("lib.init")
+require("recipe-generator")
 require("integrations")
-
--- require the pipe stuff functions, just in case another mod deletes or modifies it
-require("__base__.prototypes.entity.demo-pipecovers")
 
 -- create prototypes
 require("prototypes.item-groups")
