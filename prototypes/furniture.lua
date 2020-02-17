@@ -8,7 +8,9 @@ local furniture_items = {
     {name = "carpet"},
     {name = "sofa"},
     {name = "curtain", sprite_variations = {name = "curtain-on-belt", count = 4}},
-    {name = "air-conditioner"}
+    {name = "air-conditioner"},
+    {name = "stove"},
+    {name = "refridgerator"}
 }
 
 for index, details in pairs(furniture_items) do

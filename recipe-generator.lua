@@ -19,20 +19,18 @@ local RG = Tirislib_RecipeGenerator
 RG.room_ingredients = {
     [0] = {
         {type = "item", name = "lumber", amount = 2},
-        {type = "item", name = "iron-plate", amount = 4}
+        {type = "item", name = "stone-brick", amount = 5}
     },
     [1] = {
         {type = "item", name = "lumber", amount = 2},
-        {type = "item", name = "iron-plate", amount = 6},
         {type = "item", name = "stone-brick", amount = 5}
     },
     [2] = {
         {type = "item", name = "lumber", amount = 4},
-        {type = "item", name = "iron-plate", amount = 8},
         {type = "item", name = "stone-brick", amount = 10}
     },
     [3] = {
-        {type = "item", name = "steel-plate", amount = 5},
+        {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "stone-brick", amount = 10},
         {type = "item", name = "mineral-wool", amount = 2}
     },

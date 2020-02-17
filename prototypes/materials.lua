@@ -3,6 +3,7 @@
 local material_items = {
     {name = "lumber"},
     {name = "tiriscefing-willow-wood"},
+    {name = "tiriscefing-willow-barrel"},
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}},
     {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}},
