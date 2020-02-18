@@ -286,6 +286,16 @@ function Tirislib_Recipe:set_field(key, value)
     return self
 end
 
+function Tirislib_Recipe:set_fields(fields)
+    if fields then
+        for key, value in pairs(fields) do
+            self:set_field(key, value)
+        end
+    end
+
+    return self
+end
+
 function Tirislib_Recipe:get_field(field, mode)
     if mode then
         return self[mode][field] or default_values[field]
