@@ -254,16 +254,14 @@ RG.expensive_multiplier = 2
 
 -- << generation >>
 local function get_nearest_level(theme_definition, level)
-    -- make sure there is at least one numeric key that will eventually be found
-    if not Tirislib_Tables.has_numeric_key(theme_definition) then
-        return nil
-    end
-
-    local i = 1
     local ingredients
-    while not ingredients do
-        ingredients = theme_definition[level + i] or theme_definition[level - i]
-        i = i + 1
+    local distance = math.huge
+
+    for key, value in pairs(theme_definition) do
+        if math.abs(level - key) < distance then
+            ingredients = value
+            distance = math.abs(level - key)
+        end
     end
 
     return ingredients
