@@ -9,11 +9,10 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-local recipe = Tirislib_RecipeGenerator.create_recipe("arboretum")
-recipe:add_unlock() --TODO tech
+Tirislib_RecipeGenerator.create_recipe("arboretum", {{"soil", 10}, {"tank_small", 1}, {"piping", 1}})
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover{"south"}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib_Entity.get_standard_pipe_cover {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",
@@ -121,7 +120,7 @@ Tirislib_Entity.create {
             width = 1088,
             height = 1152,
             shift = {0.0, -1.0},
-            scale = 0.5,
+            scale = 0.5
         }
     }
 }:set_size(15, 15)

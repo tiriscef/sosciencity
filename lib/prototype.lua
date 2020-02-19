@@ -80,6 +80,20 @@ function Tirislib_Prototype.finish()
     Tirislib_Prototype.finish_productivity_modules()
 end
 
+function Tirislib_Prototype.get_unique_name(name, _type)
+    if not data.raw[_type][name] then
+        return name
+    end
+
+    local i = 1
+    while true do
+        if not data.raw[_type][name .. "-" .. i] then
+            return name .. "-" .. i
+        end
+        i = i + 1
+    end
+end
+
 Tirislib_PrototypeArray = {}
 
 Tirislib_PrototypeArray.__index = function(array, method)

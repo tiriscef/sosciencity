@@ -354,11 +354,11 @@ function Tirislib_Recipe:create_difficulties()
     return self
 end
 
-local function recipe_results_contain_item(recipe, item_name)
-    if recipe.result then
-        return recipe.result == item_name
-    elseif recipe.results then
-        for _, result in pairs(recipe.results) do
+local function recipe_results_contain_item(recipe_data, item_name)
+    if recipe_data.result then
+        return recipe_data.result == item_name
+    elseif recipe_data.results then
+        for _, result in pairs(recipe_data.results) do
             if result.type == "item" and (result.name == item_name or result[1] == item_name) then
                 return true
             end
@@ -377,22 +377,22 @@ function Tirislib_Recipe:results_contain_item(item_name)
     end
 end
 
-local function recipe_result_count(recipe, name)
-    if recipe.result then
-        if recipe.result == name then
-            return recipe.result_count or 1 -- factorio defaults to 1 if no result_count is specified
+local function recipe_result_count(recipe_data, name)
+    if recipe_data.result then
+        if recipe_data.result == name then
+            return recipe_data.result_count or 1 -- factorio defaults to 1 if no result_count is specified
         else
             return 0
         end
-    elseif recipe.results then
-        for _, result in pairs(recipe.results) do
+    elseif recipe_data.results then
+        for _, result in pairs(recipe_data.results) do
             if Tirislib_RecipeEntry.get_name(result) == name and Tirislib_RecipeEntry.get_type(result) then
                 return Tirislib_RecipeEntry.get_average_yield(result)
             end
         end
         return 0 -- item doesn't occur in this table
     end
-    error("Sosciencity found a recipe without a valid result:\n" .. serpent.block(recipe))
+    error("Sosciencity found a recipe without a valid result:\n" .. serpent.block(recipe_data))
 end
 
 function Tirislib_Recipe:get_result_item_count(item_name)
@@ -410,9 +410,9 @@ function Tirislib_Recipe:get_result_item_count(item_name)
     end
 end
 
-local function add_ingredient(recipe, ingredient_prototype)
+local function add_ingredient(recipe_data, ingredient_prototype)
     -- check if the recipe already has an entry for this ingredient
-    for _, ingredient in pairs(recipe.ingredients) do
+    for _, ingredient in pairs(recipe_data.ingredients) do
         if Tirislib_RecipeEntry.specify_same_stuff(ingredient, ingredient_prototype) then
             local ingredient_amount = Tirislib_RecipeEntry.get_ingredient_amount(ingredient_prototype)
             Tirislib_RecipeEntry.add_ingredient_amount(ingredient, ingredient_amount)
@@ -425,7 +425,7 @@ local function add_ingredient(recipe, ingredient_prototype)
     end
 
     -- create a copy to avoid reference bugs
-    table.insert(recipe.ingredients, Tirislib_Tables.copy(ingredient_prototype))
+    table.insert(recipe_data.ingredients, Tirislib_Tables.copy(ingredient_prototype))
 end
 
 function Tirislib_Recipe:add_ingredient(ingredient_prototype_normal, ingredient_prototype_expensive)
@@ -474,13 +474,13 @@ function Tirislib_Recipe:add_ingredient_range(ingredient_prototypes_normal, ingr
     return self
 end
 
-local function remove_ingredient(recipe, ingredient_name, ingredient_type)
-    for index, ingredient in pairs(recipe.ingredients) do
+local function remove_ingredient(recipe_data, ingredient_name, ingredient_type)
+    for index, ingredient in pairs(recipe_data.ingredients) do
         if
             Tirislib_RecipeEntry.get_name(ingredient) == ingredient_name and
                 Tirislib_RecipeEntry.get_type(ingredient) == ingredient_type
          then
-            recipe.ingredients[index] = nil
+            recipe_data.ingredients[index] = nil
         end
     end
 end
@@ -505,8 +505,8 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
     return self
 end
 
-local function replace_ingredient(recipe, ingredient_name, replacement_name)
-    for _, ingredient in pairs(recipe.ingredients) do
+local function replace_ingredient(recipe_data, ingredient_name, replacement_name)
+    for _, ingredient in pairs(recipe_data.ingredients) do
         if Tirislib_RecipeEntry.get_name(ingredient) == ingredient_name then
             Tirislib_RecipeEntry.set_name(ingredient, replacement_name)
         end
