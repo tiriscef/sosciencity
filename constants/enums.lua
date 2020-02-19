@@ -21,6 +21,7 @@ Type.water_distributer = 102
 Type.hospital = 103
 Type.dumpster = 104
 Type.pharmacy = 105
+Type.immigration_port = 106
 
 Type.waterwell = 201
 

@@ -38,6 +38,10 @@ Types.definitions = {
         localised_speed_name = {"sosciencity-gui.waterwell-speed"},
         localised_speed_key = "sosciencity-gui.show-waterwell-speed"
     },
+    [Type.immigration_port] = {
+        localised_name = {"sosciencity-gui.immigration-port"},
+        localised_description = {"sosciencity-gui.explain-immigration-port"}
+    },
     [Type.assembling_machine] = {},
     [Type.furnace] = {},
     [Type.rocket_silo] = {},

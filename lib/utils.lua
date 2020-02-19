@@ -242,3 +242,13 @@ function Tirislib_Tables.insertion_sort_by_key(array, key)
 
     return array
 end
+
+function Tirislib_Tables.has_numeric_key(tbl)
+    for key in pairs(tbl) do
+        if type(key) == "number" then
+            return true
+        end
+    end
+
+    return false
+end

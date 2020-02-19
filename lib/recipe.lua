@@ -74,7 +74,7 @@ function Tirislib_RecipeEntry.add_result_amount(entry, min, max)
             entry[2] = entry[2] + min
         else
             -- I don't actually know if ResultPrototypes without a specified amount are valid
-            -- I will just asume they default to 1
+            -- I will just assume they default to 1
             Entries.convert_to_named_keys(entry)
             entry.amount = min + 1
         end
@@ -101,6 +101,16 @@ function Tirislib_RecipeEntry.multiply_ingredient_amount(entry, multiplier)
         entry.amount = entry.amount * multiplier
     elseif entry[2] then
         entry[2] = entry[2] * multiplier
+    else
+        error("Sosciencity found a IngredientPrototype without a valid amount:\n" .. serpent.block(entry))
+    end
+end
+
+function Tirislib_RecipeEntry.ceil_ingredient_amount(entry)
+    if entry.amount then
+        entry.amount = math.ceil(entry.amount)
+    elseif entry[2] then
+        entry[2] = math.ceil(entry[2])
     else
         error("Sosciencity found a IngredientPrototype without a valid amount:\n" .. serpent.block(entry))
     end
@@ -224,6 +234,18 @@ end
 
 function Tirislib_Recipe:has_difficulties()
     return self:has_normal_difficulty() or self:has_expensive_difficulty()
+end
+
+function Tirislib_Recipe:call_on_recipe_data(func, ...)
+    if not self:has_difficulties() then
+        func(self, ...)
+    end
+    if self:has_normal_difficulty() then
+        func(self.normal, ...)
+    end
+    if self:has_expensive_difficulty() then
+        func(self.expensive, ...)
+    end
 end
 
 local default_values = {
@@ -582,8 +604,8 @@ function Tirislib_Recipe:add_unlock(technology_name)
     return self
 end
 
-local function multiply_ingredient_table_amounts(table, multiplier)
-    for _, ingredient in pairs(table) do
+local function multiply_ingredient_table_amounts(ingredients, multiplier)
+    for _, ingredient in pairs(ingredients) do
         Tirislib_RecipeEntry.multiply_ingredient_amount(ingredient, multiplier)
     end
 end
@@ -607,6 +629,18 @@ function Tirislib_Recipe:multiply_expensive_ingredients(multiplier)
     if self:has_expensive_difficulty() then
         multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
     end
+
+    return self
+end
+
+local function ceil_ingredient_amounts(recipe_data)
+    for _, ingredient in pairs(recipe_data.ingredients) do
+        Tirislib_RecipeEntry.ceil_ingredient_amount(ingredient)
+    end
+end
+
+function Tirislib_Recipe:ceil_ingredients()
+    self:call_on_recipe_data(ceil_ingredient_amounts)
 
     return self
 end
