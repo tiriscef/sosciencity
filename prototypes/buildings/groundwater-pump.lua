@@ -11,7 +11,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create_recipe("groundwater-pump")
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "storage-tank",

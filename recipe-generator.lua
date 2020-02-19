@@ -7,6 +7,7 @@ Tirislib_RecipeGenerator = {}
 -- shorthand alias for more readability
 local RG = Tirislib_RecipeGenerator
 
+-- << definitions >>
 --- table with tech_level -> array of IngredientPrototypes
 --- 0: Start of the game, nothing researched
 --- 1: automation science
@@ -56,17 +57,6 @@ RG.room_ingredients = {
     }
 }
 
-RG.housing_unlocking_tech = {
-    [0] = nil,
-    [1] = "architecture-1",
-    [2] = "architecture-2",
-    [3] = "architecture-3",
-    [4] = "architecture-4",
-    [5] = "architecture-5",
-    [6] = "architecture-6",
-    [7] = "architecture-7"
-}
-
 --- table with comfort -> array of IngredientPrototypes
 RG.furniture_ingredients = {
     [0] = {},
@@ -81,12 +71,27 @@ RG.furniture_ingredients = {
         {type = "item", name = "cupboard", amount = 2},
         {type = "item", name = "chair", amount = 2}
     },
-    [4] = {},
-    [5] = {},
-    [6] = {},
-    [7] = {},
-    [8] = {},
-    [9] = {},
+    [4] = {
+        {type = "item", name = "stove", amount = 1},
+        {type = "item", name = "sofa", amount = 1}
+    },
+    [5] = {
+        {type = "item", name = "carpet", amount = 1}
+    },
+    [6] = {
+        {type = "item", name = "curtain", amount = 1}
+    },
+    [7] = {
+        {type = "item", name = "refrigerator", amount = 1},
+        {type = "item", name = "sofa", amount = 1}
+    },
+    [8] = {
+        {type = "item", name = "air-conditioner", amount = 1},
+        {type = "item", name = "carpet", amount = 1}
+    },
+    [9] = {
+        {type = "item", name = "bed", amount = 1}
+    },
     [10] = {}
 }
 
@@ -183,6 +188,9 @@ RG.ingredient_themes = {
         {type = "item", name = "iron-plate", amount = 5},
         {type = "item", name = "pipe", amount = 10}
     },
+    fiber = {
+        {type = "item", name = "pemtenn-cotton", amount = 2}
+    },
     windows = {
         {type = "item", name = "iron-plate", amount = 1}
     },
@@ -203,6 +211,7 @@ RG.greenhouse_time = 100
 RG.orangery_time = 20
 RG.arboretum_time = 30
 
+-- << generation >>
 function RG.add_ingredient_theme(recipe, theme)
     local ingredients = RG.ingredient_themes[theme[1]]
     ingredients = Tirislib_Tables.recursive_copy(ingredients)
@@ -252,7 +261,43 @@ function RG.create_housing_recipe(housing_name, details)
     return recipe
 end
 
-function RG.create_recipe(product_name, product_amount, ingredient_themes, additional_fields, byproducts)
+function RG.create(details)
+    local product = Tirislib_Item.get(details.product)
+
+    local main_product = {type = details.result_type or "item", name = product.name, probability = details.result_probability}
+
+    if details.result_amount then
+        main_product.amount = details.result_amount
+    elseif details.result_min then
+        main_product.amount_min = details.result_min
+        main_product.amount_max = details.result_max
+    else
+        main_product.amount = 1
+    end
+
+    local recipe =
+        Tirislib_Recipe.create {
+        name = Tirislib_Prototype.get_unique_name(product.name, "recipe"),
+        category = details.category or "crafting",
+        enabled = true,
+        energy_required = details.energy_required or 0.5,
+        results = {main_product},
+        subgroup = product.subgroup,
+        order = product.order,
+        main_product = product.name
+    }:create_difficulties()
+
+    RG.add_ingredient_theme_range(recipe, details.themes)
+
+    recipe:multiply_expensive_ingredients(details.expensive_multiplier or RG.expensive_multiplier)
+    recipe:multiply_expensive_field("energy_required", details.expensive_energy_multiplier or 1)
+
+    recipe:set_fields(details.additional_fields)
+
+    return recipe
+end
+
+function RG.create_recipe(product_name, ingredient_themes, product_amount, additional_fields, byproducts)
     local item = Tirislib_Item.get(product_name)
 
     local recipe =
@@ -261,7 +306,7 @@ function RG.create_recipe(product_name, product_amount, ingredient_themes, addit
         category = "crafting",
         enabled = true,
         results = {
-            {type = "item", name = product_name, amount = product_amount}
+            {type = "item", name = product_name, amount = product_amount or 1}
         },
         subgroup = item.subgroup,
         order = item.order,
@@ -291,8 +336,9 @@ function RG.create_agriculture_recipe(product_name, yield, ingredients, addition
         always_show_products = true
     }:create_difficulties()
 
+    RG.add_ingredient_theme(recipe, "agriculture_cycle")
+
     recipe:add_ingredient_range(ingredients)
-    recipe:add_ingredient_range(RG.agriculture_growing_ingredients)
     recipe:multiply_expensive_ingredients(RG.expensive_farming_multiplier)
     recipe:multiply_expensive_field("energy_required", RG.expensive_farming_energy_multiplier)
 
@@ -318,8 +364,9 @@ function RG.create_greenhouse_recipe(product_name, yield, ingredients, additiona
         always_show_products = true
     }:create_difficulties()
 
+    RG.add_ingredient_theme(recipe, "greenhouse_cycle")
+
     recipe:add_ingredient_range(ingredients)
-    recipe:add_ingredient_range(RG.greenhouse_growing_ingredients)
     recipe:multiply_expensive_ingredients(RG.expensive_farming_multiplier)
     recipe:multiply_expensive_field("energy_required", RG.expensive_farming_energy_multiplier)
 
@@ -343,8 +390,9 @@ function RG.create_orangery_recipe(product_name, yield, ingredients, additional_
         always_show_products = true
     }:create_difficulties()
 
+    RG.add_ingredient_theme(recipe, "orangery_cycle")
+
     recipe:add_ingredient_range(ingredients)
-    recipe:add_ingredient_range(RG.orangery_growing_ingredients)
     recipe:multiply_expensive_ingredients(RG.expensive_farming_multiplier)
     recipe:multiply_expensive_field("energy_required", RG.expensive_farming_energy_multiplier)
 
@@ -368,8 +416,9 @@ function RG.create_arboretum_recipe(product_name, yield, ingredients, additional
         always_show_products = true
     }:create_difficulties()
 
+    RG.add_ingredient_theme(recipe, "arboretum_cycle")
+
     recipe:add_ingredient_range(ingredients)
-    recipe:add_ingredient_range(RG.arboretum_growing_ingredients)
     recipe:multiply_expensive_ingredients(RG.expensive_farming_multiplier)
     recipe:multiply_expensive_field("energy_required", RG.expensive_farming_energy_multiplier)
 

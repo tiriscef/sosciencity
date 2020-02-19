@@ -16,6 +16,17 @@ local data_details = {
     }
 }
 
+local housing_unlocking_tech = {
+    [0] = nil,
+    [1] = "architecture-1",
+    [2] = "architecture-2",
+    [3] = "architecture-3",
+    [4] = "architecture-4",
+    [5] = "architecture-5",
+    [6] = "architecture-6",
+    [7] = "architecture-7"
+}
+
 local function get_inventory_size(house)
     return 10 * math.floor(math.log(house.room_count, 10))
 end
@@ -46,9 +57,13 @@ for house_name, house in pairs(Housing.values) do
 
     Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 
-    Tirislib_RecipeGenerator.create_housing_recipe(house_name, house):add_unlock(
-        Tirislib_RecipeGenerator.housing_unlocking_tech[details.tech_level]
-    )
+    local ingredient_themes = {{"building_lvl" .. details.tech_level, house.room_count}}
+
+
+    Tirislib_RecipeGenerator.create {
+        product = house_name,
+        themes = ingredient_themes
+    }:add_unlock(housing_unlocking_tech[details.tech_level])
 
     Tirislib_Entity.create {
         type = "container",

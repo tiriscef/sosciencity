@@ -9,10 +9,9 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-local recipe = Tirislib_RecipeGenerator.create_recipe("farm")
-recipe:add_unlock() --TODO tech
+Tirislib_RecipeGenerator.create_recipe("farm", {{"soil", 50}, {"tank_small", 1}, {"piping", 2}})
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",
