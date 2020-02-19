@@ -9,7 +9,10 @@ Tirislib_Item.create {
     stack_size = 50
 }
 
-Tirislib_RecipeGenerator.create_recipe("zeppelin-port")
+Tirislib_RecipeGenerator.create {
+    product = "zeppelin-port",
+    themes = {{"building_lvl0", 3}, {"fabric", 50}, {"rope", 20}, {"framework", 10}}
+}
 
 Tirislib_Entity.create {
     type = "container",
@@ -18,7 +21,7 @@ Tirislib_Entity.create {
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "zeppelin-port"},
-    max_health = 500,
+    max_health = 200,
     corpse = "medium-remnants",
     inventory_size = 10,
     vehicle_impact_sound = {
@@ -28,21 +31,36 @@ Tirislib_Entity.create {
     picture = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-hr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port.png",
                 priority = "high",
-                width = 768,
-                height = 384,
+                width = 384,
+                height = 192,
                 shift = {0.5, -0.5},
-                scale = 0.5
+                hr_version = {
+                    filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-hr.png",
+                    priority = "high",
+                    width = 768,
+                    height = 384,
+                    shift = {0.5, -0.5},
+                    scale = 0.5
+                }
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap-hr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap.png",
                 priority = "high",
-                width = 768,
-                height = 384,
+                width = 384,
+                height = 192,
                 shift = {0.5, -0.5},
-                scale = 0.5,
-                draw_as_shadow = true
+                draw_as_shadow = true,
+                hr_version = {
+                    filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap-hr.png",
+                    priority = "high",
+                    width = 768,
+                    height = 384,
+                    shift = {0.5, -0.5},
+                    scale = 0.5,
+                    draw_as_shadow = true
+                }
             }
         }
     }
