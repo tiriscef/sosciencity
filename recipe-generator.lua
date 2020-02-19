@@ -169,6 +169,13 @@ RG.ingredient_themes = {
         {type = "item", name = "advanced-circuit", amount = 4},
         {type = "item", name = "processing-unit ", amount = 1}
     },
+    fabric = {
+        {type = "item", name = "cloth", amount = 1},
+        {type = "item", name = "yarn", amount = 0.1}
+    },
+    framework = {
+        {type = "item", name = "iron-plate", amount = 2}
+    },
     electronics_lvl7 = {
         {type = "item", name = "processing-unit", amount = 5}
     },
@@ -213,7 +220,7 @@ RG.arboretum_time = 30
 
 -- << generation >>
 function RG.add_ingredient_theme(recipe, theme)
-    local ingredients = RG.ingredient_themes[theme[1]]
+    local ingredients = RG.ingredient_themes[theme[1]] or {}
     ingredients = Tirislib_Tables.recursive_copy(ingredients)
 
     for _, ingredient in pairs(ingredients) do
