@@ -9,7 +9,10 @@ Tirislib_Item.create {
     stack_size = 50
 }
 
-Tirislib_RecipeGenerator.create_recipe("groundwater-pump")
+Tirislib_RecipeGenerator.create {
+    product = "groundwater-pump",
+    themes = {{"building", 1, 1}, {"boring", 1}, {"piping", 5}, {"machine", 1, 1}, {"electronics", 3, 1}}
+}
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
