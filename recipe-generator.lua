@@ -8,7 +8,8 @@ Tirislib_RecipeGenerator = {}
 local RG = Tirislib_RecipeGenerator
 
 -- << definitions >>
---- table with tech_level -> array of IngredientPrototypes
+--- Table with IngredientTheme -> table with (level, array of IngredientPrototypes) pairs
+--- Most of the time level is defined by the research stage at which the player should be able to use this recipe.
 --- 0: Start of the game, nothing researched
 --- 1: automation science
 --- 2: logistic science
@@ -17,85 +18,6 @@ local RG = Tirislib_RecipeGenerator
 --- 5: utility science
 --- 6: space science
 --- 7: post space science
-RG.room_ingredients = {
-    [0] = {
-        {type = "item", name = "lumber", amount = 2},
-        {type = "item", name = "stone-brick", amount = 5}
-    },
-    [1] = {
-        {type = "item", name = "lumber", amount = 2},
-        {type = "item", name = "stone-brick", amount = 5}
-    },
-    [2] = {
-        {type = "item", name = "lumber", amount = 4},
-        {type = "item", name = "stone-brick", amount = 10}
-    },
-    [3] = {
-        {type = "item", name = "lumber", amount = 5},
-        {type = "item", name = "stone-brick", amount = 10},
-        {type = "item", name = "mineral-wool", amount = 2}
-    },
-    [4] = {
-        {type = "item", name = "steel-plate", amount = 6},
-        {type = "item", name = "concrete", amount = 10},
-        {type = "item", name = "mineral-wool", amount = 2}
-    },
-    [5] = {
-        {type = "item", name = "steel-plate", amount = 6},
-        {type = "item", name = "concrete", amount = 10},
-        {type = "item", name = "mineral-wool", amount = 2}
-    },
-    [6] = {
-        {type = "item", name = "steel-plate", amount = 8},
-        {type = "item", name = "refined-concrete", amount = 10},
-        {type = "item", name = "mineral-wool", amount = 2}
-    },
-    [7] = {
-        {type = "item", name = "steel-plate", amount = 8},
-        {type = "item", name = "refined-concrete", amount = 10},
-        {type = "item", name = "mineral-wool", amount = 2}
-    }
-}
-
---- table with comfort -> array of IngredientPrototypes
-RG.furniture_ingredients = {
-    [0] = {},
-    [1] = {
-        {type = "item", name = "chair", amount = 1},
-        {type = "item", name = "table", amount = 1}
-    },
-    [2] = {
-        {type = "item", name = "bed", amount = 1}
-    },
-    [3] = {
-        {type = "item", name = "cupboard", amount = 2},
-        {type = "item", name = "chair", amount = 2}
-    },
-    [4] = {
-        {type = "item", name = "stove", amount = 1},
-        {type = "item", name = "sofa", amount = 1}
-    },
-    [5] = {
-        {type = "item", name = "carpet", amount = 1}
-    },
-    [6] = {
-        {type = "item", name = "curtain", amount = 1}
-    },
-    [7] = {
-        {type = "item", name = "refrigerator", amount = 1},
-        {type = "item", name = "sofa", amount = 1}
-    },
-    [8] = {
-        {type = "item", name = "air-conditioner", amount = 1},
-        {type = "item", name = "carpet", amount = 1}
-    },
-    [9] = {
-        {type = "item", name = "bed", amount = 1}
-    },
-    [10] = {}
-}
-
---- table with IngredientTheme -> array of IngredientPrototypes
 RG.ingredient_themes = {
     agriculture_cycle = {
         {
@@ -239,8 +161,14 @@ RG.ingredient_themes = {
         }
     },
     wood = {
-        {
+        [0] = {
+            {type = "item", name = "wood", amount = 1}
+        },
+        [1] = {
             {type = "item", name = "tiricefing-willow-wood", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "cherry-wood", amount = 1}
         }
     },
     woodwork = {
@@ -319,10 +247,13 @@ end
 --- product_min: minimal amount of the main product (if the recipe should use a range)
 --- product_max: maximal amount of the main product (if the recipe should use a range)
 --- product_probability: probability of the main product
+--- category: RecipeCategory of the recipe
 --- themes: array of ingredient themes
 --- expensive_multiplier: ingredient multiplier for expensive mode (defaults to a global value)
 --- energy_required: energy_required field for the recipe (defaults to 0.5)
 --- expensive_energy_multiplier: multiplier for expensive mode (defaults to 1)
+--- unlock: technology that unlocks the recipe
+--- additional_fields: other fields that should be set for the recipe
 function RG.create(details)
     local product =
         (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
@@ -359,6 +290,8 @@ function RG.create(details)
 
     recipe:multiply_expensive_ingredients(details.expensive_multiplier or RG.expensive_multiplier)
     recipe:multiply_expensive_field("energy_required", details.expensive_energy_multiplier or 1)
+
+    recipe:add_unlock(details.unlock)
 
     recipe:set_fields(details.additional_fields)
 
