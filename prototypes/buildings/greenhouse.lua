@@ -9,8 +9,10 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-local recipe = Tirislib_RecipeGenerator.create_recipe("greenhouse")
-recipe:add_unlock() --TODO tech
+Tirislib_RecipeGenerator.create {
+    product = "greenhouse",
+    themes = {{"windows", 150, 4}, {"piping", 20, 4}, {"soil", 100, 4}}
+}
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 

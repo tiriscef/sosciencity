@@ -42,6 +42,10 @@ Types.definitions = {
         localised_name = {"sosciencity-gui.immigration-port"},
         localised_description = {"sosciencity-gui.explain-immigration-port"}
     },
+    [Type.manufactory] = {
+        localised_name = {"sosciencity-gui.manufactory"},
+        localised_description = {"sosciencity-gui.explain-manufactory"}
+    },
     [Type.assembling_machine] = {},
     [Type.furnace] = {},
     [Type.rocket_silo] = {},
@@ -68,7 +72,7 @@ local lookup_by_entity_type = {
 }
 
 local lookup_by_name = {
-    ["farm"] = Type.farm,
+    ["farm"] = Type.manufactory,
     ["greenhouse"] = Type.farm,
     ["arboretum"] = Type.farm
 }
@@ -84,7 +88,32 @@ function Types.init()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << type groups >>
+TypeGroup = {}
+
+TypeGroup.all_castes = {
+    Type.clockwork,
+    Type.orchid,
+    Type.gunfire,
+    Type.ember,
+    Type.foundry,
+    Type.gleam,
+    Type.aurora,
+    Type.plasma
+}
+
+TypeGroup.affected_by_clockwork = {
+    Type.assembling_machine,
+    Type.furnace,
+    Type.rocket_silo,
+    Type.mining_drill,
+    Type.farm,
+    Type.orangery
+}
+
+---------------------------------------------------------------------------------------------------
 -- << type functions >>
+--- Returns the internal type for the given entity.
 function Types.get_entity_type(entity)
     local name = entity.name
     local entity_type = entity.type
@@ -101,10 +130,6 @@ function Types.get_entity_type(entity)
     return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
 end
 
-function Types.is_housing(_type)
-    return _type < 100
-end
-
 function Types.is_inhabited(_type)
     return (_type < 100) and (_type > 0)
 end
@@ -117,15 +142,6 @@ function Types.is_relevant_to_register(_type)
     return _type < 2000
 end
 
-Types.types_affected_by_clockwork = {
-    Type.assembling_machine,
-    Type.furnace,
-    Type.rocket_silo,
-    Type.mining_drill,
-    Type.farm,
-    Type.orangery
-}
-
 function Types.is_affected_by_clockwork(_type)
     return (_type >= Type.assembling_machine) and (_type <= Type.orangery)
 end
@@ -135,11 +151,7 @@ function Types.is_affected_by_orchid(_type)
 end
 
 function Types.needs_beacon(_type)
-    return (_type >= Type.assembling_machine) and (_type <= Type.orangery)
-end
-
-function Types.needs_sprite(name)
-    return false
+    return (_type >= Type.manufactory) and (_type <= Type.orangery)
 end
 
 function Types.get_sprite(name)

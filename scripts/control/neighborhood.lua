@@ -33,15 +33,19 @@ end
 
 --- Table with (entity type, neighborhood specification) pairs
 Neighborhood.entity_types_aware_of_neighborhood = {
-    [Type.clockwork] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.orchid] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.gunfire] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.ember] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.foundry] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.gleam] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.aurora] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.plasma] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster}},
-    [Type.waterwell] = {active_types = {Type.waterwell}}
+    [Type.clockwork] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.orchid] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.gunfire] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.ember] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.foundry] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.gleam] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.aurora] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.plasma] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
+    [Type.waterwell] = {active_types = {Type.waterwell}},
+    [Type.manufactory] = {
+        active_types = Tirislib_Tables.copy(TypeGroup.all_castes),
+        defined_in_building_details = true
+    }
 }
 local entity_types_aware_of_neighborhood = Neighborhood.entity_types_aware_of_neighborhood
 

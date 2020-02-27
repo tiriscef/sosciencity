@@ -146,6 +146,10 @@ local function update_water_distributer(entry)
     entry[EntryKey.water_name] = nil
 end
 
+local function update_manufactory(entry)
+
+end
+
 local update_functions = {
     [Type.clockwork] = Inhabitants.update_house,
     [Type.ember] = Inhabitants.update_house,
@@ -162,7 +166,8 @@ local update_functions = {
     [Type.mining_drill] = update_entity_with_beacon,
     [Type.orangery] = update_entity_with_beacon,
     [Type.waterwell] = update_waterwell,
-    [Type.water_distributer] = update_water_distributer
+    [Type.water_distributer] = update_water_distributer,
+    [Type.manufactory] = update_manufactory
 }
 
 ---------------------------------------------------------------------------------------------------

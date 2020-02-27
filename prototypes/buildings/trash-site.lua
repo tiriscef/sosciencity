@@ -9,7 +9,9 @@ Tirislib_Item.create {
     stack_size = 50
 }
 
-Tirislib_RecipeGenerator.create_recipe("trash-site")
+Tirislib_RecipeGenerator.create {
+    product = "trash-site"
+}
 
 Tirislib_Entity.create {
     type = "container",

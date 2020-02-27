@@ -9,9 +9,11 @@ Tirislib_Item.create {
     stack_size = 50
 }
 
-Tirislib_RecipeGenerator.create_recipe("water-tower")
+Tirislib_RecipeGenerator.create {
+    product = "water-tower"
+}
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures{"south"}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "storage-tank",

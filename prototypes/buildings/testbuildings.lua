@@ -9,7 +9,9 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-Tirislib_RecipeGenerator.create_recipe("test-market")
+Tirislib_RecipeGenerator.create {
+    product = "test-market"
+}
 
 Tirislib_Entity.create {
     type = "container",
@@ -48,7 +50,9 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-Tirislib_RecipeGenerator.create_recipe("test-hospital")
+Tirislib_RecipeGenerator.create {
+    product = "test-hospital"
+}
 
 Tirislib_Entity.create {
     type = "container",

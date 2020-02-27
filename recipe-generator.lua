@@ -206,7 +206,7 @@ local function get_theme_ingredients(name, level)
             ingredients = get_nearest_level(theme_definition, level)
         end
     else
-        print("Tirislib RecipeGenerator was told to generate a recipe with an undefined theme: " .. name)
+        log("Tirislib RecipeGenerator was told to generate a recipe with an undefined theme: " .. name)
     end
     ingredients = ingredients and Tirislib_Tables.recursive_copy(ingredients)
 
