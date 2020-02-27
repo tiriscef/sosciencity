@@ -308,6 +308,16 @@ function Tirislib_Recipe:set_field(key, value)
     return self
 end
 
+function Tirislib_Recipe:set_expensive_field(key, value)
+    if recipe_data_fields[key] then
+        if self:has_expensive_difficulty() then
+            self.expensive[key] = value
+        end
+    end
+
+    return self
+end
+
 function Tirislib_Recipe:set_fields(fields)
     if fields then
         for key, value in pairs(fields) do

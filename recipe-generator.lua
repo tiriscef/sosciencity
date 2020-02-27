@@ -251,7 +251,7 @@ end
 --- themes: array of ingredient themes
 --- expensive_multiplier: ingredient multiplier for expensive mode (defaults to a global value)
 --- energy_required: energy_required field for the recipe (defaults to 0.5)
---- expensive_energy_multiplier: multiplier for expensive mode (defaults to 1)
+--- expensive_energy_required: energy_required field for the expensive recipe (defaults to energy_required)
 --- unlock: technology that unlocks the recipe
 --- additional_fields: other fields that should be set for the recipe
 function RG.create(details)
@@ -289,7 +289,7 @@ function RG.create(details)
     RG.add_ingredient_theme_range(recipe, details.themes)
 
     recipe:multiply_expensive_ingredients(details.expensive_multiplier or RG.expensive_multiplier)
-    recipe:multiply_expensive_field("energy_required", details.expensive_energy_multiplier or 1)
+    recipe:set_expensive_field("energy_required", details.expensive_energy_multiplier or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)
 
