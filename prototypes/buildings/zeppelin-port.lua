@@ -11,7 +11,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "zeppelin-port",
-    themes = {{"building_lvl0", 3}, {"fabric", 50}, {"rope", 20}, {"framework", 10}}
+    themes = {{"building", 3, 0}, {"fabric", 50, 0}, {"rope", 20, 0}, {"framework", 10, 0}}
 }
 
 Tirislib_Entity.create {

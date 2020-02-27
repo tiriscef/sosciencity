@@ -9,7 +9,10 @@ Tirislib_Item.create {
     stack_size = 10
 }
 
-Tirislib_RecipeGenerator.create_recipe("arboretum", {{"soil", 10}, {"tank_small", 1}, {"piping", 1}})
+Tirislib_RecipeGenerator.create {
+    product = "arboretum",
+    themes = {{"soil", 10}, {"tank_small", 1}, {"piping", 1}}
+}
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 local pipe_covers = Tirislib_Entity.get_standard_pipe_cover {"south"}

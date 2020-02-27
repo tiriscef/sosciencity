@@ -13,6 +13,7 @@
         "rendering",
         "pipecoverspictures",
         "assembler2pipepictures",
-        "util"
+        "util",
+        "log"
     ]
 }

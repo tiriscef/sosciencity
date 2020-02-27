@@ -26,5 +26,5 @@ Speakers["profanity."] = {
 }
 
 for _, speaker in pairs(Speakers) do
-    speaker.lines_with_followup = Tirislib_Tables.to_lookup(speaker.lines_with_followup)
+    speaker.lines_with_followup = Tirislib_Tables.array_to_lookup(speaker.lines_with_followup)
 end

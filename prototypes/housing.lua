@@ -55,15 +55,16 @@ for house_name, house in pairs(Housing.values) do
         }
     }
 
+    local tech_level = details.tech_level
     Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 
-    local ingredient_themes = {{"building_lvl" .. details.tech_level, house.room_count}}
-
+    local ingredient_themes = {{"buildinger", house.room_count, tech_level}}
 
     Tirislib_RecipeGenerator.create {
         product = house_name,
-        themes = ingredient_themes
-    }:add_unlock(housing_unlocking_tech[details.tech_level])
+        themes = ingredient_themes,
+        unlock = housing_unlocking_tech[tech_level]
+    }
 
     Tirislib_Entity.create {
         type = "container",

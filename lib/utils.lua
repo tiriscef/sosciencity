@@ -60,6 +60,7 @@ function Tirislib_Tables.remove_all(tbl, value)
     end
 end
 
+--- Returns an array with all the keys of the given table.
 function Tirislib_Tables.get_keyset(tbl)
     local ret = {}
     local index = 1
@@ -71,8 +72,10 @@ function Tirislib_Tables.get_keyset(tbl)
 
     return ret
 end
+local get_keyset = Tirislib_Tables.get_keyset
 
-function Tirislib_Tables.to_lookup(array)
+--- Returns a table with the elements of the given array as keys.
+function Tirislib_Tables.array_to_lookup(array)
     local ret = {}
 
     for i = 1, #array do
@@ -251,4 +254,17 @@ function Tirislib_Tables.has_numeric_key(tbl)
     end
 
     return false
+end
+
+function Tirislib_Tables.union_array(lhs, rhs)
+    local ret = {}
+
+    for _, value in pairs(lhs) do
+        ret[value] = value
+    end
+    for _, value in pairs(rhs) do
+        ret[value] = value
+    end
+
+    return get_keyset(ret)
 end

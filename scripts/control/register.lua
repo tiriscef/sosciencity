@@ -220,7 +220,7 @@ function Register.all_of_type(_type)
     return all_of_type_iterator, tbl
 end
 
-local types_affected_by_clockwork = Types.types_affected_by_clockwork
+local types_affected_by_clockwork = TypeGroup.affected_by_clockwork
 
 --- Returns the number of existing entries of the given type.
 function Register.get_type_count(_type)

@@ -15,7 +15,6 @@ local subentity_names = Subentities.subentity_name_lookup
 
 -- local often used functions for some performance gains
 local type_needs_beacon = Types.needs_beacon
-local needs_sprite = Types.needs_sprite
 local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
 local is_inhabited = Types.is_inhabited
 
@@ -88,9 +87,9 @@ function Subentities.add_all_for(entry)
         add(entry, SubentityType.eei)
         entry[EntryKey.power_usage] = building_details.power_usage
     end
-    if needs_sprite(name) then
+    --[[if needs_sprite(name) then
         add_sprite(entry, Types.get_sprite(name))
-    end
+    end]]
     if type_needs_alt_mode_sprite(_type) then
         add_alt_mode_sprite(entry, Types.altmode_sprites[_type])
     end

@@ -22,9 +22,11 @@ Type.hospital = 103
 Type.dumpster = 104
 Type.pharmacy = 105
 Type.immigration_port = 106
+Type.transportation = 107
 
 Type.waterwell = 201
 
+Type.manufactory = 1000
 Type.assembling_machine = 1001
 Type.furnace = 1002
 Type.rocket_silo = 1003
