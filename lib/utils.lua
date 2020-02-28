@@ -34,6 +34,13 @@ function Tirislib_Utils.weighted_random(weights)
     return index
 end
 
+--<< Just some string helper functions >>
+Tirislib_String = {}
+
+function Tirislib_String.begins_with(str, prefix)
+    return str:sub(1, prefix:len()) == prefix
+end
+
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 
