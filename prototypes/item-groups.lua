@@ -39,33 +39,21 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-flora",
+        group = "sosciencity",
+        order = "eaa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-fauna",
+        group = "sosciencity",
+        order = "eba"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-food",
         group = "sosciencity",
-        order = "eaa"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-agriculture",
-        group = "sosciencity",
-        order = "eaa"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-greenhouse",
-        group = "sosciencity",
-        order = "eab"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-orangery",
-        group = "sosciencity",
-        order = "eac"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-arboretum",
-        group = "sosciencity",
-        order = "ead"
+        order = "eca"
     },
     {
         type = "item-subgroup",
