@@ -1,7 +1,22 @@
+---------------------------------------------------------------------------------------------------
+-- << items >>
+local animals = {
+    {name = "primal-quackling"},
+    {name = "primal-quacker"},
+    {name = "primal-quackpa"},
+    {name = "nan-swanling"},
+    {name = "nan-swan"}
+}
+
+Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
+
+---------------------------------------------------------------------------------------------------
+-- << entities >>
+-- 'fish' entity to have ducks swimming on water bodies
 Tirislib_Entity.create {
     type = "fish",
     name = "primal-quacker",
-    icon = "__base__/graphics/icons/fish.png",
+    icon = "__sosciencity-graphics__/graphics/icon/primal-quacker.png",
     icon_size = 64,
     flags = {"placeable-neutral", "not-on-map"},
     minable = {mining_time = 0.4, result = "primal-quacker", count = 1},
@@ -13,11 +28,10 @@ Tirislib_Entity.create {
     pictures = {
         {
             filename = "__sosciencity-graphics__/graphics/entity/primal-quacker/primal-quacker.png",
-            priority = "extra-high",
             width = 64,
             height = 128,
-            scale = 1./4.
-        },
+            scale = 1. / 4.
+        }
     },
     autoplace = {influence = 0.01}
 }
