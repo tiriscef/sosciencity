@@ -28,11 +28,11 @@ local chest = defines.inventory.chest
 --- Returns a list of all inventories whose food is relevant to the diet.
 --- Markets act like additional food inventories.
 local function get_food_inventories(entry)
-    local inventories = {entry[EntryKey.entity].get_inventory(chest)}
+    local inventories = {entry[EK.entity].get_inventory(chest)}
 
     for _, market_entry in all_neighbors_of_type(entry, Type.market) do
         if has_power(market_entry) then
-            inventories[#inventories + 1] = market_entry[EntryKey.entity].get_inventory(chest)
+            inventories[#inventories + 1] = market_entry[EK.entity].get_inventory(chest)
         end
     end
 
@@ -226,12 +226,12 @@ local function consume_food(entry, inventories, amount, diet, count)
 end
 
 local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
-    local happiness = entry[EntryKey.happiness_summands]
-    local happiness_factors = entry[EntryKey.happiness_factors]
-    local health = entry[EntryKey.health_summands]
-    local health_factors = entry[EntryKey.health_factors]
-    local sanity = entry[EntryKey.sanity_summands]
-    local sanity_factors = entry[EntryKey.sanity_factors]
+    local happiness = entry[EK.happiness_summands]
+    local happiness_factors = entry[EK.happiness_factors]
+    local health = entry[EK.health_summands]
+    local health_factors = entry[EK.health_factors]
+    local sanity = entry[EK.sanity_summands]
+    local sanity_factors = entry[EK.sanity_factors]
 
     if hunger_satisfaction < 0.5 then
         happiness_factors[HappinessFactor.hunger] = 0.
@@ -344,13 +344,13 @@ local castes = Castes.values
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Consumption.evaluate_diet(entry, delta_ticks)
-    local caste = castes[entry[EntryKey.type]]
+    local caste = castes[entry[EK.type]]
     local inventories = get_food_inventories(entry)
     local diet, food_count = get_diet(inventories)
 
     local hunger_satisfaction = 0
     if food_count > 0 then
-        local to_consume = caste.calorific_demand * delta_ticks * entry[EntryKey.inhabitants]
+        local to_consume = caste.calorific_demand * delta_ticks * entry[EK.inhabitants]
         hunger_satisfaction = consume_food(entry, inventories, to_consume, diet, food_count)
     end
 
@@ -366,7 +366,7 @@ local function consume_water(distributers, amount)
 
     while to_consume > 0.000001 and i <= distributer_count do
         local distributer = distributers[i]
-        local water_name = distributer[EntryKey.water_name]
+        local water_name = distributer[EK.water_name]
 
         -- check if the distributer has water
         if not water_name then
@@ -374,9 +374,9 @@ local function consume_water(distributers, amount)
             break
         end
 
-        local consumed = distributer[EntryKey.entity].remove_fluid {name = water_name, amount = to_consume}
+        local consumed = distributer[EK.entity].remove_fluid {name = water_name, amount = to_consume}
         log_fluid(water_name, -consumed)
-        quality = quality + consumed * distributer[EntryKey.water_quality]
+        quality = quality + consumed * distributer[EK.water_quality]
         to_consume = to_consume - consumed
     end
 
@@ -385,9 +385,9 @@ end
 
 function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
     local distributers = get_neighbors_of_type(entry, Type.water_distributer)
-    sort_by_key(distributers, EntryKey.water_quality)
+    sort_by_key(distributers, EK.water_quality)
 
-    local water_to_consume = 0.0008 * entry[EntryKey.inhabitants] * delta_ticks -- 20 units per factorio day (25000 ticks)
+    local water_to_consume = 0.0008 * entry[EK.inhabitants] * delta_ticks -- 20 units per factorio day (25000 ticks)
     local satisfaction, quality
 
     if water_to_consume > 0 then
@@ -396,9 +396,9 @@ function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, healt
         -- annoying edge case of no inhabitants
         -- test if there is at least one distributer with water
         local probe = distributers[1]
-        if probe and probe[EntryKey.water_name] then
+        if probe and probe[EK.water_name] then
             satisfaction = 1
-            quality = probe[EntryKey.water_quality]
+            quality = probe[EK.water_quality]
         else
             satisfaction = 0
             quality = 0

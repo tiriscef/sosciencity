@@ -18,7 +18,7 @@ local chest = defines.inventory.chest
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
 function Inventories.get_chest_inventory(entry)
-    return entry[EntryKey.entity].get_inventory(chest)
+    return entry[EK.entity].get_inventory(chest)
 end
 local get_chest_inventory = Inventories.get_chest_inventory
 
@@ -38,7 +38,7 @@ end
 local try_insert = Inventories.try_insert
 
 function Inventories.spill_items(entry, item, amount)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
     entity.surface.spill_item_stack(entity.position, {name = item, count = amount})
 
     log_item(item, amount)

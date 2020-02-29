@@ -47,10 +47,12 @@ local function new_entry(entity, _type, unit_number)
     local current_tick = game.tick
 
     local entry = {
-        [EntryKey.type] = _type,
-        [EntryKey.entity] = entity,
-        [EntryKey.last_update] = current_tick,
-        [EntryKey.subentities] = {}
+        [EK.type] = _type,
+        [EK.entity] = entity,
+        [EK.unit_number] = unit_number,
+        [EK.last_update] = current_tick,
+        [EK.tick_of_creation] = current_tick,
+        [EK.subentities] = {},
     }
 
     add_subentities(entry)
@@ -61,10 +63,10 @@ local function new_entry(entity, _type, unit_number)
         establish_house(_type, entry, unit_number)
     end
     if _type == Type.orangery then
-        entry[EntryKey.tick_of_creation] = current_tick
+        entry[EK.tick_of_creation] = current_tick
     end
     if _type == Type.water_distributer then
-        entry[EntryKey.water_quality] = 0
+        entry[EK.water_quality] = 0
     end
 
     return entry
@@ -73,7 +75,7 @@ end
 local function add_entry_to_register(entry, unit_number)
     register[unit_number] = entry
 
-    local _type = entry[EntryKey.type]
+    local _type = entry[EK.type]
     if not register_by_type[_type] then
         register_by_type[_type] = {}
     end
@@ -104,19 +106,19 @@ local add_entity = Register.add
 --- @param source Entry
 --- @param destination Entity
 function Register.clone(source, destination)
-    local _type = source[EntryKey.type]
+    local _type = source[EK.type]
     local destination_entry = add_entity(destination, _type)
 
     -- Copy special entry data for some types
     if is_inhabited(_type) then
         Inhabitants.clone_inhabitants(source, destination_entry)
     elseif _type == Type.orangery then
-        destination_entry[EntryKey.tick_of_creation] = source[EntryKey.tick_of_creation]
+        destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
     end
 end
 
 local function remove_entry(entry, unit_number)
-    local _type = entry[EntryKey.type]
+    local _type = entry[EK.type]
     register[unit_number] = nil
     register_by_type[_type][unit_number] = nil
 
@@ -130,7 +132,7 @@ end
 function Register.remove_entity(entity, unit_number)
     unit_number = unit_number or entity.unit_number
     local entry = register[unit_number]
-    local entity_type = (entry and entry[EntryKey.type]) or get_entity_type(entity)
+    local entity_type = (entry and entry[EK.type]) or get_entity_type(entity)
 
     if entry then
         if Types.is_inhabited(entity_type) then
@@ -145,7 +147,7 @@ local remove_entity = Register.remove_entity
 --- Removes the given entry from the register.
 --- @param entry Entry
 function Register.remove_entry(entry)
-    remove_entity(entry[EntryKey.entity])
+    remove_entity(entry[EK.entity])
 end
 
 --- Reregisters the entity with the given type.
@@ -153,7 +155,7 @@ end
 -- -@param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
-    Register.add(entry[EntryKey.entity], new_type)
+    Register.add(entry[EK.entity], new_type)
     Gui.rebuild_details_view_for_entry(entry)
 end
 
@@ -164,10 +166,10 @@ function Register.try_get(unit_number)
     local entry = register[unit_number]
 
     if entry then
-        if entry[EntryKey.entity].valid then
+        if entry[EK.entity].valid then
             return entry
         else
-            Register.remove_entity(entry[EntryKey.entity])
+            Register.remove_entity(entry[EK.entity])
         end
     end
 end
@@ -182,10 +184,10 @@ local function register_next(unit_number)
         return nil
     end
 
-    if entry[EntryKey.entity].valid then
+    if entry[EK.entity].valid then
         return unit_number, entry
     else
-        Register.remove_entity(entry[EntryKey.entity], unit_number)
+        Register.remove_entity(entry[EK.entity], unit_number)
         return register_next(unit_number)
     end
 end

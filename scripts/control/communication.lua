@@ -67,7 +67,7 @@ local function set_locals()
 end
 
 function Communication.create_flying_text(entry, text)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
 
     entity.surface.create_entity {
         name = "flying-text",
@@ -186,17 +186,17 @@ local function highlight_range(player_id, entity, building_details, created_high
 end
 
 local function highlight_neighbors(player_id, entry, created_highlights)
-    local neighbors = entry[EntryKey.neighbors]
+    local neighbors = entry[EK.neighbors]
     if not neighbors then
         return
     end
 
     local players = {player_id}
     for _, neighbor_entry in Neighborhood.all(entry) do
-        local entity = neighbor_entry[EntryKey.entity]
+        local entity = neighbor_entry[EK.entity]
         local bounding_box = entity.selection_box
         local color =
-            highlight_colors[neighbor_entry[EntryKey.type]] or
+            highlight_colors[neighbor_entry[EK.type]] or
             {r = highlight_alpha, g = highlight_alpha, b = highlight_alpha, a = highlight_alpha}
 
         created_highlights[#created_highlights + 1] =
@@ -215,9 +215,9 @@ local function highlight_neighbors(player_id, entry, created_highlights)
 end
 
 local function show_inhabitants(player_id, entry, created_highlights)
-    local inhabitants = entry[EntryKey.inhabitants]
+    local inhabitants = entry[EK.inhabitants]
     local capacity = Housing.get_capacity(entry)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
 
     created_highlights[#created_highlights + 1] =
         rendering.draw_text(
@@ -245,7 +245,7 @@ function Communication.create_mouseover_highlights(player_id, entity)
     if entry then
         highlight_neighbors(player_id, entry, created_highlights)
 
-        local _type = entry[EntryKey.type]
+        local _type = entry[EK.type]
         if is_inhabited(_type) then
             show_inhabitants(player_id, entry, created_highlights)
         end
