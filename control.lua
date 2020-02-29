@@ -52,6 +52,8 @@ local global
 local caste_bonuses
 local water_values = DrinkingWater.values
 
+local floor = math.floor
+
 local add_fear = Inhabitants.add_fear
 local add_casualty_fear = Inhabitants.add_casualty_fear
 local ease_fear = Inhabitants.ease_fear
@@ -82,11 +84,13 @@ local log_fluid = Communication.log_fluid
 local create_mouseover_highlights = Communication.create_mouseover_highlights
 local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 
+local get_building_details = Buildings.get
+
 local has_power = Subentities.has_power
 
 -- Assumes that the entity has a beacon
 local function update_entity_with_beacon(entry)
-    local _type = entry[EntryKey.type]
+    local _type = entry[EK.type]
     local speed_bonus = 0
     local productivity_bonus = 0
     local use_penalty_module = false
@@ -102,7 +106,7 @@ local function update_entity_with_beacon(entry)
         productivity_bonus = caste_bonuses[Type.orchid]
     end
     if _type == Type.orangery then
-        local age = game.tick - entry[EntryKey.tick_of_creation]
+        local age = game.tick - entry[EK.tick_of_creation]
         productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
     end
 
@@ -114,12 +118,12 @@ local function update_waterwell(entry, delta_ticks)
         return
     end
 
-    local building_details = Buildings.get(entry)
+    local building_details = get_building_details(entry)
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
     local groundwater_volume = (delta_ticks * building_details.speed) / near_count
 
     local inserted =
-        entry[EntryKey.entity].insert_fluid {
+        entry[EK.entity].insert_fluid {
         name = "groundwater",
         amount = groundwater_volume
     }
@@ -127,7 +131,7 @@ local function update_waterwell(entry, delta_ticks)
 end
 
 local function update_water_distributer(entry)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
 
     -- determine and save the type of water that this distributer provides
     -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
@@ -136,18 +140,24 @@ local function update_water_distributer(entry)
         for fluid_name in pairs(entity.get_fluid_contents()) do
             local water_value = water_values[fluid_name]
             if water_value then
-                entry[EntryKey.water_quality] = water_value.health
-                entry[EntryKey.water_name] = fluid_name
+                entry[EK.water_quality] = water_value.health
+                entry[EK.water_name] = fluid_name
                 return
             end
         end
     end
-    entry[EntryKey.water_quality] = 0
-    entry[EntryKey.water_name] = nil
+    entry[EK.water_quality] = 0
+    entry[EK.water_name] = nil
 end
 
 local function update_manufactory(entry)
+    local details = get_building_details(entry).workforce
+    local performance = Inhabitants.evaluate_workforce(entry, details)
 
+    entry[EK.entity].active = performance > 0.4
+
+    local speed = performance > 0.4 and floor(100 * performance - 20) or 0
+    set_beacon_effects(entry, speed, nil, true)
 end
 
 local update_functions = {
@@ -187,16 +197,16 @@ local function update_cycle()
     end
 
     while index and count < number_of_checks do
-        local _type = current_entry[EntryKey.type]
+        local _type = current_entry[EK.type]
         local updater = update_functions[_type]
         if updater ~= nil then
-            local delta_ticks = current_tick - current_entry[EntryKey.last_update]
+            local delta_ticks = current_tick - current_entry[EK.last_update]
             if delta_ticks > 0 then
                 updater(current_entry, delta_ticks)
             end
         end
 
-        current_entry[EntryKey.last_update] = current_tick
+        current_entry[EK.last_update] = current_tick
         index, current_entry = next_entry(index)
         count = count + 1
     end
@@ -326,7 +336,7 @@ local function on_entity_died(event)
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
     if entry then
-        local _type = entry[EntryKey.type]
+        local _type = entry[EK.type]
 
         if is_inhabited(_type) then
             add_casualty_fear(entry)
@@ -346,7 +356,7 @@ local function on_entity_mined(event)
 
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
-    if entry and Types.is_inhabited(entry[EntryKey.type]) then
+    if entry and Types.is_inhabited(entry[EK.type]) then
         Inhabitants.try_resettle(entry, unit_number)
     end
 
@@ -368,8 +378,8 @@ local function on_entity_settings_pasted(event)
         return
     end
 
-    local source_type = source_entry[EntryKey.type]
-    local destination_type = destination_entry[EntryKey.type]
+    local source_type = source_entry[EK.type]
+    local destination_type = destination_entry[EK.type]
     if is_inhabited(source_type) and destination_type == Type.empty_house then
         Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
     end

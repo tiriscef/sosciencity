@@ -23,7 +23,7 @@ local buildings = Buildings.values
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function add(entry, _type)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
     local subentity =
         entity.surface.create_entity(
         {
@@ -33,13 +33,13 @@ local function add(entry, _type)
         }
     )
 
-    entry[EntryKey.subentities][_type] = subentity
+    entry[EK.subentities][_type] = subentity
 
     return subentity
 end
 
 local function add_sprite(entry, name)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
     local sprite_id =
         rendering.draw_sprite(
         {
@@ -54,7 +54,7 @@ local function add_sprite(entry, name)
 end
 
 local function add_alt_mode_sprite(entry, name)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
     local sprite_id =
         rendering.draw_sprite(
         {
@@ -71,21 +71,21 @@ end
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
 function Subentities.add_all_for(entry)
-    local _type = entry[EntryKey.type]
-    local name = entry[EntryKey.entity].name
+    local _type = entry[EK.type]
+    local name = entry[EK.entity].name
 
     if type_needs_beacon(_type) then
         add(entry, SubentityType.beacon)
     end
     if is_inhabited(_type) then
         add(entry, SubentityType.eei)
-        entry[EntryKey.power_usage] = 0
+        entry[EK.power_usage] = 0
     end
 
     local building_details = buildings[name]
     if building_details and building_details.power_usage then
         add(entry, SubentityType.eei)
-        entry[EntryKey.power_usage] = building_details.power_usage
+        entry[EK.power_usage] = building_details.power_usage
     end
     --[[if needs_sprite(name) then
         add_sprite(entry, Types.get_sprite(name))
@@ -98,7 +98,7 @@ end
 --- Removes all the hidden entities.
 --- @param entry Entry
 function Subentities.remove_all_for(entry)
-    for _, subentity in pairs(entry[EntryKey.subentities]) do
+    for _, subentity in pairs(entry[EK.subentities]) do
         if subentity.valid then
             subentity.destroy()
         end
@@ -110,7 +110,7 @@ end
 --- @param entry Entry
 --- @param _type Type
 function Subentities.get(entry, _type)
-    local subentity = entry[EntryKey.subentities][_type]
+    local subentity = entry[EK.subentities][_type]
     if subentity == nil then
         return
     end
@@ -163,8 +163,8 @@ function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
 
     -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
     if
-        not new and speed == entry[EntryKey.speed_bonus] and productivity == entry[EntryKey.productivity_bonus] and
-            add_penalty == entry[EntryKey.has_penalty_module]
+        not new and speed == entry[EK.speed_bonus] and productivity == entry[EK.productivity_bonus] and
+            add_penalty == entry[EK.has_penalty_module]
      then
         return
     end
@@ -184,9 +184,9 @@ function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
     end
 
     -- save the current beacon settings
-    entry[EntryKey.speed_bonus] = speed
-    entry[EntryKey.productivity_bonus] = productivity
-    entry[EntryKey.has_penalty_module] = add_penalty
+    entry[EK.speed_bonus] = speed
+    entry[EK.productivity_bonus] = productivity
+    entry[EK.has_penalty_module] = add_penalty
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ end
 --- Checks if the entity is supplied with power. Doesn't assume that the entry has an eei.
 --- @param entry Entry
 function Subentities.has_power(entry)
-    local power_usage = entry[EntryKey.power_usage]
+    local power_usage = entry[EK.power_usage]
     if not power_usage or power_usage == 0 then
         return true
     end
@@ -225,9 +225,9 @@ function Subentities.set_power_usage(entry, usage)
     local eei, new = get(entry, SubentityType.eei)
 
     -- we don't update the eei if nothing has changed to avoid unnecessary API calls
-    if new or entry[EntryKey.power_usage] ~= usage then
+    if new or entry[EK.power_usage] ~= usage then
         set_eei_power_usage(eei, usage)
-        entry[EntryKey.power_usage] = usage
+        entry[EK.power_usage] = usage
     end
 end
 

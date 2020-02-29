@@ -15,17 +15,17 @@ Housing.values = {
 local houses = Housing.values
 
 function Housing.get(entry)
-    return houses[entry[EntryKey.entity].name]
+    return houses[entry[EK.entity].name]
 end
 local get_housing = Housing.get
 
 function Housing.get_capacity(entry)
-    return math.floor(get_housing(entry).room_count / Castes.values[entry[EntryKey.type]].required_room_count)
+    return math.floor(get_housing(entry).room_count / Castes.values[entry[EK.type]].required_room_count)
 end
 local get_capacity = Housing.get_capacity
 
 function Housing.get_free_capacity(entry)
-    return get_capacity(entry) - entry[EntryKey.inhabitants]
+    return get_capacity(entry) - entry[EK.inhabitants]
 end
 
 function Housing.allowes_caste(house, caste_id)
@@ -40,5 +40,5 @@ function Housing.evaluate(entry, happiness_summands, sanity_summands)
     happiness_summands[HappinessSummand.housing] = housing.comfort
     sanity_summands[SanitySummand.housing] = housing.comfort
 
-    happiness_summands[HappinessSummand.suitable_housing] = (entry[EntryKey.type] == housing.caste) and housing.caste_bonus or 0
+    happiness_summands[HappinessSummand.suitable_housing] = (entry[EK.type] == housing.caste) and housing.caste_bonus or 0
 end

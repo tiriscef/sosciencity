@@ -61,40 +61,48 @@ Taste.umami = 7
 
 --<< entry keys >>
 --- Enum table for entry table keys.
-EntryKey = {}
+EK = {}
 
 -- general
-EntryKey.type = 1
-EntryKey.entity = 2
-EntryKey.last_update = 3
-EntryKey.subentities = 4
-EntryKey.neighbors = 5
+EK.type = 1
+EK.entity = 2
+EK.unit_number = 3
+EK.last_update = 4
+EK.tick_of_creation = 5
+EK.subentities = 6
+EK.neighbors = 7
 
--- housing
-EntryKey.inhabitants = 6
-EntryKey.happiness = 7
-EntryKey.happiness_summands = 8
-EntryKey.happiness_factors = 9
-EntryKey.health = 10
-EntryKey.health_summands = 11
-EntryKey.health_factors = 12
-EntryKey.sanity = 13
-EntryKey.sanity_summands = 14
-EntryKey.sanity_factors = 15
-EntryKey.emigration_trend = 16
-EntryKey.idea_progress = 17
-EntryKey.garbage_progress = 18
-
--- water distributer
-EntryKey.water_quality = 6
-EntryKey.water_name = 7
+-- workforce
+EK.worker_count = 50
+EK.workers = 51
+EK.worker_specification = 52
 
 -- subentity stuff
-EntryKey.power_usage = 100
-EntryKey.speed_bonus = 200
-EntryKey.productivity_bonus = 201
-EntryKey.has_penalty_module = 202
-EntryKey.tick_of_creation = 300
+EK.power_usage = 100
+EK.speed_bonus = 101
+EK.productivity_bonus = 102
+EK.has_penalty_module = 103
+
+-- type specific stuff
+-- housing
+EK.inhabitants = 206
+EK.happiness = 207
+EK.happiness_summands = 208
+EK.happiness_factors = 209
+EK.health = 210
+EK.health_summands = 211
+EK.health_factors = 212
+EK.sanity = 213
+EK.sanity_summands = 214
+EK.sanity_factors = 215
+EK.emigration_trend = 216
+EK.idea_progress = 217
+EK.garbage_progress = 218
+EK.occupations = 219
+
+-- water distributer
+EK.water_quality = 300
+EK.water_name = 301
 
 --<< happiness summands >>
 --- Enum table for happiness summands.

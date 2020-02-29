@@ -24,7 +24,9 @@ Buildings.values = {
         type = Type.manufactory,
         range = 20,
         workforce = {
-            {count_needed = 10, count_max = 20, castes = {Type.ember}}
+            count_needed = 10,
+            count_max = 20,
+            castes = {Type.ember}
         }
     },
     ["trash-site"] = {
@@ -67,5 +69,5 @@ for _, details in pairs(Buildings.values) do
 end
 
 function Buildings.get(entry)
-    return buildings[entry[EntryKey.entity].name]
+    return buildings[entry[EK.entity].name]
 end

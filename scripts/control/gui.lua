@@ -545,7 +545,7 @@ local function add_empty_house_info_tab(tabbed_pane, details)
 end
 
 local function create_empty_housing_details(container, entry)
-    set_details_view_title(container, entry[EntryKey.entity].localised_name)
+    set_details_view_title(container, entry[EK.entity].localised_name)
 
     local tabbed_pane = create_tabbed_pane(container)
 
@@ -558,8 +558,8 @@ end
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local general_list = get_tab_contents(tabbed_pane, "general")["general-infos"]
 
-    local caste = castes[entry[EntryKey.type]]
-    local inhabitants = entry[EntryKey.inhabitants]
+    local caste = castes[entry[EK.type]]
+    local inhabitants = entry[EK.inhabitants]
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
 
     local capacity = Housing.get_capacity(entry)
@@ -578,7 +578,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value_tooltip(
         general_list,
         "capacity",
-        (entry[EntryKey.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or
+        (entry[EK.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or
             {"sosciencity-gui.negative-trend"}
     )
 
@@ -586,21 +586,21 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         general_list,
         "happiness",
         (inhabitants > 0) and
-            get_convergence_localised_string(entry[EntryKey.happiness], Inhabitants.get_nominal_happiness(entry)) or
+            get_convergence_localised_string(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "health",
         (inhabitants > 0) and
-            get_convergence_localised_string(entry[EntryKey.health], Inhabitants.get_nominal_health(entry)) or
+            get_convergence_localised_string(entry[EK.health], Inhabitants.get_nominal_health(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "sanity",
         (inhabitants > 0) and
-            get_convergence_localised_string(entry[EntryKey.sanity], Inhabitants.get_nominal_sanity(entry)) or
+            get_convergence_localised_string(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -632,7 +632,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     flow.style.horizontal_align = "right"
 
     local data_list = create_data_list(flow, "general-infos")
-    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry[EntryKey.type]))
+    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry[EK.type]))
 
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
@@ -664,24 +664,24 @@ local function update_housing_factor_tab(tabbed_pane, entry)
     update_operand_entries(
         happiness_list,
         Inhabitants.get_nominal_happiness(entry),
-        entry[EntryKey.happiness_summands],
-        entry[EntryKey.happiness_factors]
+        entry[EK.happiness_summands],
+        entry[EK.happiness_factors]
     )
 
     local health_list = content_flow["health"]
     update_operand_entries(
         health_list,
         Inhabitants.get_nominal_health(entry),
-        entry[EntryKey.health_summands],
-        entry[EntryKey.health_factors]
+        entry[EK.health_summands],
+        entry[EK.health_factors]
     )
 
     local sanity_list = content_flow["sanity"]
     update_operand_entries(
         sanity_list,
         Inhabitants.get_nominal_sanity(entry),
-        entry[EntryKey.sanity_summands],
-        entry[EntryKey.sanity_factors]
+        entry[EK.sanity_summands],
+        entry[EK.sanity_factors]
     )
 end
 
@@ -787,7 +787,7 @@ local function update_housing_details(container, entry)
 end
 
 local function create_housing_details(container, entry)
-    local title = {"", entry[EntryKey.entity].localised_name, "  -  ", get_caste_localised_string(entry[EntryKey.type])}
+    local title = {"", entry[EK.entity].localised_name, "  -  ", get_caste_localised_string(entry[EK.type])}
     set_details_view_title(container, title)
 
     local tabbed_pane = create_tabbed_pane(container)
@@ -795,17 +795,17 @@ local function create_housing_details(container, entry)
 
     add_housing_general_info_tab(tabbed_pane, entry)
     add_housing_factor_tab(tabbed_pane, entry)
-    add_caste_info_tab(tabbed_pane, entry[EntryKey.type])
+    add_caste_info_tab(tabbed_pane, entry[EK.type])
 end
 
 -- << buildings details views >>
 local function create_general_building_details(container, entry)
-    local entity = entry[EntryKey.entity]
+    local entity = entry[EK.entity]
     set_details_view_title(container, entity.localised_name)
 
     local name = entity.name
     local building_details = Buildings.values[name]
-    local type_details = Types.definitions[entry[EntryKey.type]]
+    local type_details = Types.definitions[entry[EK.type]]
 
     local tabbed_pane = create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
@@ -945,10 +945,10 @@ function Gui.update_details_view()
         if not entry then
             Gui.close_details_view_for_player(player)
         else
-            local updater = content_updaters[entry[EntryKey.type]]
+            local updater = content_updaters[entry[EK.type]]
 
             -- only update the gui if the entry got updated in this cycle
-            if updater and entry[EntryKey.last_update] == current_tick then
+            if updater and entry[EK.last_update] == current_tick then
                 updater(get_nested_details_view(player), entry)
             end
         end
@@ -979,7 +979,7 @@ function Gui.open_details_view_for_player(player, unit_number)
         return
     end
 
-    local builder = detail_view_builders[entry[EntryKey.type]]
+    local builder = detail_view_builders[entry[EK.type]]
     if not builder then
         return
     end
@@ -1006,7 +1006,7 @@ end
 --- Closes and reopens all the Guis related to the given entry.
 --- @param entry Entry
 function Gui.rebuild_details_view_for_entry(entry)
-    local unit_number = entry[EntryKey.entity].unit_number
+    local unit_number = entry[EK.entity].unit_number
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then
