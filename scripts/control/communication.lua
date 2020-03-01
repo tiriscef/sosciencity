@@ -150,7 +150,7 @@ local function premultiply_with_alpha(color, a)
     color.a = color.a * a
 end
 
-local highlight_alpha = 0.2
+local highlight_alpha = 0.1
 local highlight_colors = {
     [Type.hospital] = {r = 0.8, g = 0.1, b = 0.1, a = 1},
     [Type.market] = {r = 1, g = 0.45, b = 0, a = 1},

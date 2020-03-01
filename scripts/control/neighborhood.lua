@@ -11,80 +11,27 @@ Neighborhood = {}
 --[[
     Data this class stores in global
     --------------------------------
-    nothing
+    global.subscriptions: table
+        [type]: unit_number-lookup table
 ]]
 -- local often used functions for giant performance gains
 local Register = Register
 local try_get = Register.try_get
+local get_type = Types.get
+local distance = Tirislib_Utils.maximum_metric_distance
+local subscriptions
 
-local abs = math.abs
-local max = math.max
 ---------------------------------------------------------------------------------------------------
 -- << constants >>
---- Table with (neighborhood entity, range) pairs
-local active_neighbor_ranges
-local function generate_active_neighbor_ranges_lookup()
-    active_neighbor_ranges = {}
-
-    for name, details in pairs(Buildings.values) do
-        active_neighbor_ranges[name] = details.range
-    end
-end
-
---- Table with (entity type, neighborhood specification) pairs
-Neighborhood.entity_types_aware_of_neighborhood = {
-    [Type.clockwork] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.orchid] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.gunfire] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.ember] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.foundry] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.gleam] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.aurora] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.plasma] = {active_types = {Type.market, Type.water_distributer, Type.hospital, Type.dumpster, Type.manufactory}},
-    [Type.waterwell] = {active_types = {Type.waterwell}},
-    [Type.manufactory] = {
-        active_types = Tirislib_Tables.copy(TypeGroup.all_castes),
-        defined_in_building_details = true
-    }
-}
-local entity_types_aware_of_neighborhood = Neighborhood.entity_types_aware_of_neighborhood
-
---- Table with (building, interested entity types) pairs
-local interested_entity_types
-local function generate_interested_entity_types_lookup()
-    interested_entity_types = {}
-
-    for entity_type, interests in pairs(entity_types_aware_of_neighborhood) do
-        for _, neighbor_type in pairs(interests.active_types) do
-            if not interested_entity_types[neighbor_type] then
-                interested_entity_types[neighbor_type] = {}
-            end
-            table.insert(interested_entity_types[neighbor_type], entity_type)
-        end
-    end
-end
-
-function Neighborhood.init()
-    generate_active_neighbor_ranges_lookup()
-    generate_interested_entity_types_lookup()
+local function set_locals()
+    subscriptions = global.subscriptions
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
-local function get_range(entry)
-    return active_neighbor_ranges[entry[EK.name]] or 0
-end
 
-local function maximum_metric_distance(x1, y1, x2, y2)
-    local dist_x = abs(x1 - x2)
-    local dist_y = abs(y1 - y2)
-
-    return max(dist_x, dist_y)
-end
-
-local function is_in_range(neighbor, entry)
+local function is_in_range(neighbor, entry, range)
     local neighbor_entity = neighbor[EK.entity]
-    local range = max(get_range(neighbor), get_range(entry))
     local position = neighbor_entity.position
     local x = position.x
     local y = position.y
@@ -98,55 +45,108 @@ local function is_in_range(neighbor, entry)
     local x2 = position2.x
     local y2 = position2.y
 
-    return (maximum_metric_distance(x, y, x1, y1) < range) or (maximum_metric_distance(x, y, x1, y2) < range) or
-        (maximum_metric_distance(x, y, x2, y1) < range) or
-        (maximum_metric_distance(x, y, x2, y2) < range)
+    return (distance(x, y, x1, y1) < range) or (distance(x, y, x1, y2) < range) or (distance(x, y, x2, y1) < range) or
+        (distance(x, y, x2, y2) < range)
 end
 
---- Finds and adds all the neighbor entries the given entity is interested in.
+local function can_connect(entry1, entry2)
+    local range = entry1[EK.range]
+    if range and is_in_range(entry1, entry2, range) then
+        return true
+    end
+
+    range = entry2[EK.range]
+    if range and is_in_range(entry2, entry1, range) then
+        return true
+    end
+
+    return false
+end
+
+function Neighborhood.subscribe_to(entry, _type)
+    local unit_number = entry[EK.unit_number]
+
+    -- note subscription
+    if not subscriptions[_type] then
+        subscriptions[_type] = {}
+    end
+    subscriptions[_type][unit_number] = true
+
+    -- get the neighbors table (and initialise it when needed)
+    entry[EK.neighbors] = entry[EK.neighbors] or {}
+    local neighbors = entry[EK.neighbors]
+    neighbors[_type] = neighbors[_type] or {}
+    local neighbors_of_this_type = neighbors[_type]
+
+    -- find all the entries of the given type
+    for _, possible_neighbor in Register.all_of_type(_type) do
+        if can_connect(entry, possible_neighbor) then
+            neighbors_of_this_type[possible_neighbor[EK.unit_number]] = _type
+        end
+    end
+end
+local subscribe_to = Neighborhood.subscribe_to
+
+--- Unsubscribes the given entry from the given type.
 --- @param entry Entry
 --- @param _type Type
-function Neighborhood.add_neighborhood(entry, _type)
-    local details = entity_types_aware_of_neighborhood[_type]
-    if not details then
+function Neighborhood.unsubscribe_to(entry, _type)
+    local neighbors = entry[EK.neighbors]
+    local unit_number = entry[EK.unit_number]
+
+    -- delete neighbors
+    neighbors[_type] = nil
+
+    -- delete subscriptions
+    subscriptions[_type][unit_number] = nil
+end
+
+--- Removes all the subscriptions of this entry. Must be called when an entry gets deconstructed.
+--- @param entry Entry
+function Neighborhood.unsubscribe_all(entry)
+    local unit_number = entry[EK.unit_number]
+
+    -- delete subscriptions
+    for _, subscribers in pairs(subscriptions) do
+        subscribers[unit_number] = nil
+    end
+
+    -- delete neighbors
+    entry[EK.neighbors] = {}
+end
+
+--- Adds the given entry to all the entries that are in range and subscribe to the type.
+--- @param entry Entry
+local function notify_subscribers(entry)
+    local _type = entry[EK.type]
+    local subscribers = subscriptions[_type]
+    if not subscribers then
         return
     end
 
-    entry[EK.neighbors] = {}
-    local neighborhood_table = entry[EK.neighbors]
+    local unit_number = entry[EK.unit_number]
 
-    for _, neighbor_type in pairs(details.active_types) do
-        neighborhood_table[neighbor_type] = {}
-        local type_table = neighborhood_table[neighbor_type]
-
-        for unit_number, neighbor_entry in Register.all_of_type(neighbor_type) do
-            if is_in_range(neighbor_entry, entry) then
-                type_table[unit_number] = neighbor_type
-            end
+    for subscriber_number in pairs(subscribers) do
+        local subscriber = try_get(subscriber_number)
+        if subscriber then
+            subscriber[EK.neighbors][_type][unit_number] = _type
         end
     end
 end
 
 --- Adds the given neighbor to every interested entity in range.
---- @param neighbor_entry Entry
---- @param _type Type
-function Neighborhood.establish_new_neighbor(neighbor_entry, _type)
-    if not active_neighbor_ranges[neighbor_entry[EK.name]] then
-        return
-    end
+--- @param entry Entry
+function Neighborhood.establish_new_neighbor(entry)
+    -- Subscribe to the neighbors this entry needs
+    local type_details = get_type(entry)
 
-    local unit_number = neighbor_entry[EK.entity].unit_number
-
-    for _, interested_type in pairs(interested_entity_types[_type]) do
-        for _, current_entry in Register.all_of_type(interested_type) do
-            if is_in_range(neighbor_entry, current_entry) then
-                if not current_entry[EK.neighbors][_type] then
-                    current_entry[EK.neighbors][_type] = {}
-                end
-                current_entry[EK.neighbors][_type][unit_number] = _type
-            end
+    if type_details.subscriptions then
+        for _, _type in pairs(type_details.subscriptions) do
+            subscribe_to(entry, _type)
         end
     end
+
+    notify_subscribers(entry)
 end
 
 --- Returns a complete list of all neighbors of the given type.
@@ -272,6 +272,15 @@ function Neighborhood.get_neighbor_count(entry, _type)
     end
 
     return count
+end
+
+function Neighborhood.load()
+    set_locals()
+end
+
+function Neighborhood.init()
+    global.subscriptions = {}
+    set_locals()
 end
 
 return Neighborhood
