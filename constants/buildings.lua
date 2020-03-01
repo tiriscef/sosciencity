@@ -20,13 +20,12 @@ Buildings.values = {
         type = Type.water_distributer,
         range = 42
     },
-    ["test-manufactory"] = {
+    ["assembling-machine-2"] = {
         type = Type.manufactory,
         range = 20,
         workforce = {
-            count_needed = 10,
-            count_max = 20,
-            castes = {Type.ember}
+            count = 20,
+            castes = {Type.clockwork}
         }
     },
     ["trash-site"] = {
@@ -57,14 +56,6 @@ for _, details in pairs(Buildings.values) do
     -- convert speed from x / sec to x / tick
     if details.speed then
         details.speed = details.speed / 60.
-    end
-
-    if details.type == Type.manufactory then
-        details.interested_types = {}
-
-        for _, definition in pairs(details.workforce) do
-            definition.castes = Tirislib_Tables.array_to_lookup(definition.castes)
-        end
     end
 end
 

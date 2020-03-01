@@ -152,6 +152,7 @@ local function update_water_distributer(entry)
 end
 
 local function update_manufactory(entry)
+    Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
 
     entry[EK.entity].active = performance > 0.4

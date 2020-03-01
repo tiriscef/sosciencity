@@ -13,6 +13,8 @@ local global
 local population
 local effective_population
 
+local ceil = math.ceil
+
 local function set_locals()
     global = _ENV.global
     population = global.population
@@ -578,8 +580,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value_tooltip(
         general_list,
         "capacity",
-        (entry[EK.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or
-            {"sosciencity-gui.negative-trend"}
+        (entry[EK.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
     )
 
     set_datalist_value(
@@ -592,15 +593,13 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value(
         general_list,
         "health",
-        (inhabitants > 0) and
-            get_convergence_localised_string(entry[EK.health], Inhabitants.get_nominal_health(entry)) or
+        (inhabitants > 0) and get_convergence_localised_string(entry[EK.health], Inhabitants.get_nominal_health(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and
-            get_convergence_localised_string(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or
+        (inhabitants > 0) and get_convergence_localised_string(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -845,6 +844,25 @@ local function create_general_building_details(container, entry)
         )
     end
 
+    local worker_specification = entry[EK.worker_specification]
+    if worker_specification then
+        local count_needed = worker_specification.count
+        add_kv_pair(
+            building_data,
+            "workforce",
+            {"sosciencity-gui.workforce"},
+            {"sosciencity-gui.show-workforce", entry[EK.worker_count], count_needed}
+        )
+        local performance = Inhabitants.evaluate_workforce(entry)
+        add_kv_pair(
+            building_data,
+            "performance",
+            "",
+            performance > 0.4 and {"sosciencity-gui.workforce-performance", ceil(performance * 100)} or
+                {"sosciencity-gui.not-enough-workforce", ceil(0.4 * count_needed)}
+        )
+    end
+
     return tabbed_pane
 end
 
@@ -962,7 +980,8 @@ local detail_view_builders = {
     [Type.dumpster] = create_general_building_details,
     [Type.market] = create_general_building_details,
     [Type.hospital] = create_general_building_details,
-    [Type.water_distributer] = create_general_building_details
+    [Type.water_distributer] = create_general_building_details,
+    [Type.manufactory] = create_general_building_details
 }
 
 -- add the castes
