@@ -1,4 +1,6 @@
 local random = math.random
+local abs = math.abs
+local max = math.max
 
 --<< Just some helper functions >>
 Tirislib_Utils = {}
@@ -32,6 +34,13 @@ function Tirislib_Utils.weighted_random(weights)
     until random_index < 1
 
     return index
+end
+
+function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
+    local dist_x = abs(x1 - x2)
+    local dist_y = abs(y1 - y2)
+
+    return max(dist_x, dist_y)
 end
 
 --<< Just some string helper functions >>

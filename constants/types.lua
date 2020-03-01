@@ -2,16 +2,75 @@ require("constants.enums")
 
 Types = {}
 
+---------------------------------------------------------------------------------------------------
+-- << type groups >>
+TypeGroup = {}
+
+TypeGroup.all_castes = {
+    Type.clockwork,
+    Type.orchid,
+    Type.gunfire,
+    Type.ember,
+    Type.foundry,
+    Type.gleam,
+    Type.aurora,
+    Type.plasma
+}
+
+TypeGroup.affected_by_clockwork = {
+    Type.assembling_machine,
+    Type.furnace,
+    Type.rocket_silo,
+    Type.mining_drill,
+    Type.farm,
+    Type.orangery
+}
+
+TypeGroup.inhabitant_subscriptions = {
+    Type.market,
+    Type.water_distributer,
+    Type.hospital,
+    Type.dumpster
+}
+
+---------------------------------------------------------------------------------------------------
+-- << definitions >>
 Types.definitions = {
-    [Type.empty_house] = {altmode_sprite = "empty-caste"},
-    [Type.clockwork] = {altmode_sprite = "clockwork-caste"},
-    [Type.orchid] = {altmode_sprite = "orchid-caste"},
-    [Type.gunfire] = {altmode_sprite = "gunfire-caste"},
-    [Type.ember] = {altmode_sprite = "ember-caste"},
-    [Type.foundry] = {altmode_sprite = "foundry-caste"},
-    [Type.gleam] = {altmode_sprite = "gleam-caste"},
-    [Type.aurora] = {altmode_sprite = "aurora-caste"},
-    [Type.plasma] = {altmode_sprite = "plasma-caste"},
+    [Type.empty_house] = {
+        altmode_sprite = "empty-caste"
+    },
+    [Type.clockwork] = {
+        altmode_sprite = "clockwork-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.orchid] = {
+        altmode_sprite = "orchid-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.gunfire] = {
+        altmode_sprite = "gunfire-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.ember] = {
+        altmode_sprite = "ember-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.foundry] = {
+        altmode_sprite = "foundry-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.gleam] = {
+        altmode_sprite = "gleam-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.aurora] = {
+        altmode_sprite = "aurora-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
+    [Type.plasma] = {
+        altmode_sprite = "plasma-caste",
+        subscriptions = TypeGroup.inhabitant_subscriptions
+    },
     [Type.market] = {
         localised_name = {"sosciencity-gui.market"},
         localised_description = {"sosciencity-gui.explain-market"}
@@ -37,7 +96,8 @@ Types.definitions = {
         localised_name = {"sosciencity-gui.waterwell"},
         localised_description = {"sosciencity-gui.explain-waterwell"},
         localised_speed_name = {"sosciencity-gui.waterwell-speed"},
-        localised_speed_key = "sosciencity-gui.show-waterwell-speed"
+        localised_speed_key = "sosciencity-gui.show-waterwell-speed",
+        subscriptions = {Type.waterwell}
     },
     [Type.immigration_port] = {
         localised_name = {"sosciencity-gui.immigration-port"},
@@ -45,7 +105,8 @@ Types.definitions = {
     },
     [Type.manufactory] = {
         localised_name = {"sosciencity-gui.manufactory"},
-        localised_description = {"sosciencity-gui.explain-manufactory"}
+        localised_description = {"sosciencity-gui.explain-manufactory"},
+        subscriptions = TypeGroup.all_castes
     },
     [Type.assembling_machine] = {},
     [Type.furnace] = {},
@@ -79,7 +140,7 @@ local lookup_by_name = {
 }
 
 local houses
-function Types.init()
+function Types.load()
     houses = Housing.values
 
     -- add the functional buildings to the lookup table
@@ -87,30 +148,6 @@ function Types.init()
         lookup_by_name[name] = details.type
     end
 end
-
----------------------------------------------------------------------------------------------------
--- << type groups >>
-TypeGroup = {}
-
-TypeGroup.all_castes = {
-    Type.clockwork,
-    Type.orchid,
-    Type.gunfire,
-    Type.ember,
-    Type.foundry,
-    Type.gleam,
-    Type.aurora,
-    Type.plasma
-}
-
-TypeGroup.affected_by_clockwork = {
-    Type.assembling_machine,
-    Type.furnace,
-    Type.rocket_silo,
-    Type.mining_drill,
-    Type.farm,
-    Type.orangery
-}
 
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
@@ -171,6 +208,10 @@ function Types.initialise_entry(entry, _type)
     if definition then
         copy_fields(entry, definition.initial_values)
     end
+end
+
+function Types.get(entry)
+    return definitions[entry[EK.type]]
 end
 
 local meta = {}

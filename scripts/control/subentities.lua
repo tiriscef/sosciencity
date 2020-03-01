@@ -18,11 +18,15 @@ local type_needs_beacon = Types.needs_beacon
 local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
 local is_inhabited = Types.is_inhabited
 
-local buildings = Buildings.values
+local get_building_details = Buildings.get
+
+local max = math.max
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function add(entry, _type)
+    entry[EK.subentities] = entry[EK.subentities] or {}
+
     local entity = entry[EK.entity]
     local subentity =
         entity.surface.create_entity(
@@ -36,21 +40,6 @@ local function add(entry, _type)
     entry[EK.subentities][_type] = subentity
 
     return subentity
-end
-
-local function add_sprite(entry, name)
-    local entity = entry[EK.entity]
-    local sprite_id =
-        rendering.draw_sprite(
-        {
-            sprite = name,
-            target = entity,
-            surface = entity.surface,
-            render_layer = "lower-object"
-        }
-    )
-
-    return sprite_id
 end
 
 local function add_alt_mode_sprite(entry, name)
@@ -70,7 +59,7 @@ end
 
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
-function Subentities.add_all_for(entry, building_details)
+function Subentities.add_all_for(entry)
     local _type = entry[EK.type]
 
     if type_needs_beacon(_type) then
@@ -81,13 +70,11 @@ function Subentities.add_all_for(entry, building_details)
         entry[EK.power_usage] = 0
     end
 
+    local building_details = get_building_details(entry)
     if building_details and building_details.power_usage then
         add(entry, SubentityType.eei)
         entry[EK.power_usage] = building_details.power_usage
     end
-    --[[if needs_sprite(name) then
-        add_sprite(entry, Types.get_sprite(name))
-    end]]
     if type_needs_alt_mode_sprite(_type) then
         add_alt_mode_sprite(entry, Types.definitions[_type].altmode_sprite)
     end
@@ -96,7 +83,12 @@ end
 --- Removes all the hidden entities.
 --- @param entry Entry
 function Subentities.remove_all_for(entry)
-    for _, subentity in pairs(entry[EK.subentities]) do
+    local subentities = entry[EK.subentities]
+    if not subentities then
+        return
+    end
+
+    for _, subentity in pairs(subentities) do
         if subentity.valid then
             subentity.destroy()
         end
@@ -192,7 +184,7 @@ end
 
 local function set_eei_power_usage(eei, usage)
     eei.power_usage = usage
-    eei.electric_buffer_size = usage * 600 -- 10 seconds
+    eei.electric_buffer_size = max(1, usage * 600) -- 10 seconds
 end
 
 --- Checks if the entity is supplied with power. Doesn't assume that the entry has an eei.

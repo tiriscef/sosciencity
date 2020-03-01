@@ -71,7 +71,10 @@ EK.name = 4
 EK.last_update = 5
 EK.tick_of_creation = 6
 EK.subentities = 7
-EK.neighbors = 8
+
+-- neighbor stuff
+EK.neighbors = 40
+EK.range = 41
 
 -- workforce
 EK.worker_count = 50

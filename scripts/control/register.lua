@@ -19,7 +19,7 @@ local register
 local register_by_type
 local entry_counts
 
-local establish_house
+local initialise_house
 local remove_house
 local fire_all_workers
 
@@ -28,12 +28,12 @@ local remove_subentities
 
 local get_entity_type = Types.get_entity_type
 local is_inhabited = Types.is_inhabited
-local initialise_entry = Types.initialise_entry
+local initialise_type = Types.initialise_entry
 
 local get_building_details = Buildings.get
 
-local add_neighborhood
 local establish_new_neighbor
+local unsubscribe_all
 
 local function set_locals()
     global = _ENV.global
@@ -42,19 +42,19 @@ local function set_locals()
     entry_counts = global.entry_counts
 
     -- These systems are loaded after the register, so we local them during on_load
-    establish_house = Inhabitants.establish_house
+    initialise_house = Inhabitants.establish_house
     remove_house = Inhabitants.remove_house
     fire_all_workers = Inhabitants.unemploy_all_workers
 
     add_subentities = Subentities.add_all_for
     remove_subentities = Subentities.remove_all_for
 
-    add_neighborhood = Neighborhood.add_neighborhood
     establish_new_neighbor = Neighborhood.establish_new_neighbor
+    unsubscribe_all = Neighborhood.unsubscribe_all
 end
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
-local function add_building_stuff(entry)
+local function initialise_building(entry)
     local building_details = get_building_details(entry)
 
     if not building_details then
@@ -66,9 +66,17 @@ local function add_building_stuff(entry)
         entry[EK.workers] = {}
         entry[EK.worker_specification] = Tirislib_Tables.recursive_copy(building_details.workforce)
     end
+
+    entry[EK.range] = building_details.range
 end
 
+--- Returns a new entry for the given entity with the given type.
+--- @param entity Entity
+--- @param _type Type
+--- @param unit_number integer
+--- @return Entry
 local function new_entry(entity, _type, unit_number)
+    unit_number = unit_number or entity.unit_number
     local current_tick = game.tick
     local name = entity.name
 
@@ -79,18 +87,14 @@ local function new_entry(entity, _type, unit_number)
         [EK.name] = name,
         [EK.last_update] = current_tick,
         [EK.tick_of_creation] = current_tick,
-        [EK.subentities] = {}
     }
 
-    add_subentities(entry)
-    add_neighborhood(entry, _type)
-    establish_new_neighbor(entry, _type)
-    add_building_stuff(entry)
+    initialise_building(entry)
 
     if is_inhabited(_type) then
-        establish_house(_type, entry, unit_number)
+        initialise_house(_type, entry, unit_number)
     end
-    initialise_entry(entry, _type)
+    initialise_type(entry, _type)
 
     return entry
 end
@@ -118,6 +122,9 @@ function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
     local unit_number = entity.unit_number
     local entry = new_entry(entity, _type, unit_number)
+
+    add_subentities(entry)
+    establish_new_neighbor(entry)
 
     add_entry_to_register(entry, unit_number)
 
@@ -152,6 +159,7 @@ function Register.remove_entry(entry)
         fire_all_workers(entry)
     end
     remove_subentities(entry)
+    unsubscribe_all(entry)
 
     register[unit_number] = nil
     register_by_type[_type][unit_number] = nil
@@ -180,7 +188,7 @@ function Register.change_type(entry, new_type)
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
---- @param unit_number number
+--- @param unit_number integer
 --- @return Entry|nil
 function Register.try_get(unit_number)
     local entry = register[unit_number]

@@ -240,11 +240,11 @@ end
 
 local function init()
     global = _ENV.global
-    Types.init()
-    Neighborhood.init()
+    Types.load()
 
     update_settings()
 
+    Neighborhood.init()
     Inhabitants.init()
     Register.init()
     Technologies.init()
@@ -258,8 +258,8 @@ end
 local function on_load()
     set_locals()
 
-    Types.init()
-    Neighborhood.init()
+    Types.load()
+    Neighborhood.load()
     Register.load()
     Gui.load()
     Inhabitants.load()
