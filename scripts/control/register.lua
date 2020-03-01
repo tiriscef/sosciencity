@@ -20,11 +20,17 @@ local register_by_type
 local entry_counts
 
 local establish_house
+local remove_house
+local fire_all_workers
 
 local add_subentities
+local remove_subentities
 
 local get_entity_type = Types.get_entity_type
 local is_inhabited = Types.is_inhabited
+local initialise_entry = Types.initialise_entry
+
+local get_building_details = Buildings.get
 
 local add_neighborhood
 local establish_new_neighbor
@@ -35,39 +41,56 @@ local function set_locals()
     register_by_type = global.register_by_type
     entry_counts = global.entry_counts
 
+    -- These systems are loaded after the register, so we local them during on_load
     establish_house = Inhabitants.establish_house
+    remove_house = Inhabitants.remove_house
+    fire_all_workers = Inhabitants.unemploy_all_workers
+
     add_subentities = Subentities.add_all_for
+    remove_subentities = Subentities.remove_all_for
 
     add_neighborhood = Neighborhood.add_neighborhood
     establish_new_neighbor = Neighborhood.establish_new_neighbor
 end
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
+local function add_building_stuff(entry)
+    local building_details = get_building_details(entry)
+
+    if not building_details then
+        return
+    end
+
+    if building_details.workforce then
+        entry[EK.worker_count] = 0
+        entry[EK.workers] = {}
+        entry[EK.worker_specification] = Tirislib_Tables.recursive_copy(building_details.workforce)
+    end
+end
+
 local function new_entry(entity, _type, unit_number)
     local current_tick = game.tick
+    local name = entity.name
 
     local entry = {
         [EK.type] = _type,
         [EK.entity] = entity,
         [EK.unit_number] = unit_number,
+        [EK.name] = name,
         [EK.last_update] = current_tick,
         [EK.tick_of_creation] = current_tick,
-        [EK.subentities] = {},
+        [EK.subentities] = {}
     }
 
     add_subentities(entry)
     add_neighborhood(entry, _type)
     establish_new_neighbor(entry, _type)
+    add_building_stuff(entry)
 
     if is_inhabited(_type) then
         establish_house(_type, entry, unit_number)
     end
-    if _type == Type.orangery then
-        entry[EK.tick_of_creation] = current_tick
-    end
-    if _type == Type.water_distributer then
-        entry[EK.water_quality] = 0
-    end
+    initialise_entry(entry, _type)
 
     return entry
 end
@@ -108,46 +131,43 @@ local add_entity = Register.add
 function Register.clone(source, destination)
     local _type = source[EK.type]
     local destination_entry = add_entity(destination, _type)
+    destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
 
     -- Copy special entry data for some types
     if is_inhabited(_type) then
         Inhabitants.clone_inhabitants(source, destination_entry)
-    elseif _type == Type.orangery then
-        destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
     end
 end
 
-local function remove_entry(entry, unit_number)
+--- Removes the given entry from the register.
+--- @param entry Entry
+function Register.remove_entry(entry)
     local _type = entry[EK.type]
+    local unit_number = entry[EK.unit_number]
+
+    if is_inhabited(_type) then
+        remove_house(entry, unit_number)
+    end
+    if entry[EK.worker_specification] then
+        fire_all_workers(entry)
+    end
+    remove_subentities(entry)
+
     register[unit_number] = nil
     register_by_type[_type][unit_number] = nil
-
-    Subentities.remove_all_for(entry)
-
     entry_counts[_type] = entry_counts[_type] - 1
 end
+local remove_entry = Register.remove_entry
 
 --- Removes the given entity from the register.
 --- @param entity Entity
 function Register.remove_entity(entity, unit_number)
     unit_number = unit_number or entity.unit_number
+
     local entry = register[unit_number]
-    local entity_type = (entry and entry[EK.type]) or get_entity_type(entity)
-
     if entry then
-        if Types.is_inhabited(entity_type) then
-            Inhabitants.remove_house(entry, unit_number)
-        end
-
-        remove_entry(entry, unit_number)
+        remove_entry(entry)
     end
-end
-local remove_entity = Register.remove_entity
-
---- Removes the given entry from the register.
---- @param entry Entry
-function Register.remove_entry(entry)
-    remove_entity(entry[EK.entity])
 end
 
 --- Reregisters the entity with the given type.
@@ -169,7 +189,7 @@ function Register.try_get(unit_number)
         if entry[EK.entity].valid then
             return entry
         else
-            Register.remove_entity(entry[EK.entity])
+            remove_entry(entry)
         end
     end
 end
@@ -187,7 +207,7 @@ local function register_next(unit_number)
     if entry[EK.entity].valid then
         return unit_number, entry
     else
-        Register.remove_entity(entry[EK.entity], unit_number)
+        remove_entry(entry)
         return register_next(unit_number)
     end
 end

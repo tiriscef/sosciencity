@@ -70,9 +70,8 @@ end
 
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
-function Subentities.add_all_for(entry)
+function Subentities.add_all_for(entry, building_details)
     local _type = entry[EK.type]
-    local name = entry[EK.entity].name
 
     if type_needs_beacon(_type) then
         add(entry, SubentityType.beacon)
@@ -82,7 +81,6 @@ function Subentities.add_all_for(entry)
         entry[EK.power_usage] = 0
     end
 
-    local building_details = buildings[name]
     if building_details and building_details.power_usage then
         add(entry, SubentityType.eei)
         entry[EK.power_usage] = building_details.power_usage
@@ -91,7 +89,7 @@ function Subentities.add_all_for(entry)
         add_sprite(entry, Types.get_sprite(name))
     end]]
     if type_needs_alt_mode_sprite(_type) then
-        add_alt_mode_sprite(entry, Types.altmode_sprites[_type])
+        add_alt_mode_sprite(entry, Types.definitions[_type].altmode_sprite)
     end
 end
 

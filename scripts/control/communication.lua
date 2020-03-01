@@ -143,6 +143,13 @@ local function flush_logs()
     flush_log(fluid_production, fluid_statistics, 1)
 end
 
+local function premultiply_with_alpha(color, a)
+    color.r = color.r * a
+    color.g = color.g * a
+    color.b = color.b * a
+    color.a = color.a * a
+end
+
 local highlight_alpha = 0.2
 local highlight_colors = {
     [Type.hospital] = {r = 0.8, g = 0.1, b = 0.1, a = 1},
@@ -152,16 +159,12 @@ local highlight_colors = {
     [Type.waterwell] = {r = 0, g = 0, b = 1, a = 1}
 }
 
-local function premultiply_with_alpha(color, a)
-    color.r = color.r * a
-    color.g = color.g * a
-    color.b = color.b * a
-    color.a = color.a * a
-end
-
 for _, color in pairs(highlight_colors) do
     premultiply_with_alpha(color, highlight_alpha)
 end
+
+local default_highlight_color = {r = 1, g = 1, b = 1, a = 1}
+premultiply_with_alpha(default_highlight_color, highlight_alpha)
 
 local function highlight_range(player_id, entity, building_details, created_highlights)
     local range = building_details.range
@@ -174,7 +177,7 @@ local function highlight_range(player_id, entity, building_details, created_high
     created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle(
         {
-            color = highlight_colors[building_details.type],
+            color = highlight_colors[building_details.type] or default_highlight_color,
             filled = true,
             left_top = {x - range, y - range},
             right_bottom = {x + range, y + range},

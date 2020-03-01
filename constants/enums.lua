@@ -67,10 +67,11 @@ EK = {}
 EK.type = 1
 EK.entity = 2
 EK.unit_number = 3
-EK.last_update = 4
-EK.tick_of_creation = 5
-EK.subentities = 6
-EK.neighbors = 7
+EK.name = 4
+EK.last_update = 5
+EK.tick_of_creation = 6
+EK.subentities = 7
+EK.neighbors = 8
 
 -- workforce
 EK.worker_count = 50
@@ -98,7 +99,10 @@ EK.sanity_factors = 215
 EK.emigration_trend = 216
 EK.idea_progress = 217
 EK.garbage_progress = 218
-EK.occupations = 219
+EK.employed = 219
+EK.employments = 220
+EK.ill = 221
+EK.illnesses = 222
 
 -- water distributer
 EK.water_quality = 300
