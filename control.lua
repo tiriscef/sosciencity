@@ -69,6 +69,7 @@ local is_relevant_to_register = Types.is_relevant_to_register
 
 local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
+local remove_entry = Register.remove_entry
 local add_to_register = Register.add
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
@@ -151,13 +152,12 @@ local function update_water_distributer(entry)
 end
 
 local function update_manufactory(entry)
-    local details = get_building_details(entry).workforce
-    local performance = Inhabitants.evaluate_workforce(entry, details)
+    local performance = Inhabitants.evaluate_workforce(entry)
 
     entry[EK.entity].active = performance > 0.4
 
     local speed = performance > 0.4 and floor(100 * performance - 20) or 0
-    set_beacon_effects(entry, speed, nil, true)
+    set_beacon_effects(entry, speed, 0, true)
 end
 
 local update_functions = {
@@ -343,9 +343,9 @@ local function on_entity_died(event)
         elseif is_civil(_type) then
             add_fear()
         end
-    end
 
-    remove_entity(entity)
+        remove_entry(entry)
+    end
 end
 
 local function on_entity_mined(event)
@@ -356,11 +356,13 @@ local function on_entity_mined(event)
 
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
-    if entry and Types.is_inhabited(entry[EK.type]) then
-        Inhabitants.try_resettle(entry, unit_number)
-    end
+    if entry then
+        if Types.is_inhabited(entry[EK.type]) then
+            Inhabitants.try_resettle(entry, unit_number)
+        end
 
-    remove_entity(entity)
+        remove_entry(entry)
+    end
 end
 
 local function on_entity_settings_pasted(event)

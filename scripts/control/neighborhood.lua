@@ -71,6 +71,10 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+local function get_range(entry)
+    return active_neighbor_ranges[entry[EK.name]] or 0
+end
+
 local function maximum_metric_distance(x1, y1, x2, y2)
     local dist_x = abs(x1 - x2)
     local dist_y = abs(y1 - y2)
@@ -78,9 +82,9 @@ local function maximum_metric_distance(x1, y1, x2, y2)
     return max(dist_x, dist_y)
 end
 
-local function is_in_range(neighborhood_entry, entry)
-    local neighbor_entity = neighborhood_entry[EK.entity]
-    local range = active_neighbor_ranges[neighbor_entity.name]
+local function is_in_range(neighbor, entry)
+    local neighbor_entity = neighbor[EK.entity]
+    local range = max(get_range(neighbor), get_range(entry))
     local position = neighbor_entity.position
     local x = position.x
     local y = position.y
@@ -127,7 +131,7 @@ end
 --- @param neighbor_entry Entry
 --- @param _type Type
 function Neighborhood.establish_new_neighbor(neighbor_entry, _type)
-    if not active_neighbor_ranges[neighbor_entry[EK.entity].name] then
+    if not active_neighbor_ranges[neighbor_entry[EK.name]] then
         return
     end
 

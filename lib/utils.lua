@@ -128,6 +128,7 @@ function Tirislib_Tables.recursive_copy(tbl)
 
     return ret
 end
+local rec_copy = Tirislib_Tables.recursive_copy
 
 function Tirislib_Tables.contains(tbl, element)
     for _, value in pairs(tbl) do
@@ -155,6 +156,20 @@ function Tirislib_Tables.set_fields(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
             tbl[key] = value
+        end
+    end
+
+    return tbl
+end
+
+function Tirislib_Tables.copy_fields(tbl, fields)
+    if fields ~= nil then
+        for key, value in pairs(fields) do
+            if type(value) == "table" then
+                tbl[key] = rec_copy(value)
+            else
+                tbl[key] = value
+            end
         end
     end
 
@@ -274,4 +289,21 @@ function Tirislib_Tables.union_array(lhs, rhs)
     end
 
     return get_keyset(ret)
+end
+
+function Tirislib_Tables.pick_random_key(tbl)
+    local keys = get_keyset(tbl)
+    return keys[random(#keys)]
+end
+
+function Tirislib_Tables.pick_n_random_keys(tbl, n)
+    local keys = get_keyset(tbl)
+    local key_count = #keys
+    local ret = {}
+
+    for i = 1, n do
+        ret[i] = keys[random(key_count)]
+    end
+
+    return ret
 end

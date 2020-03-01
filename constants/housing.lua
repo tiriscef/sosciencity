@@ -15,7 +15,7 @@ Housing.values = {
 local houses = Housing.values
 
 function Housing.get(entry)
-    return houses[entry[EK.entity].name]
+    return houses[entry[EK.name]]
 end
 local get_housing = Housing.get
 

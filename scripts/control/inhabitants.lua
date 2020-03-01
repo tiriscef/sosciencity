@@ -215,11 +215,15 @@ end
 -- On the housing side there is a table with the occupations of the inhabitants.
 -- If they work at a manufactory, then the occupation is a (manufactory, count) pair.
 
+local function get_employable_count(entry)
+    return entry[EK.inhabitants] - entry[EK.employed] - entry[EK.ill]
+end
+
 --- Tries to employ the given number of people from the house for the manufactory and
 --- returns the number of actually employed workers.
-local function try_employ(manufactory, housing, count)
-    local occupations = housing[EK.occupations]
-    local unemployed_inhabitants = occupations.unemployed
+local function try_employ(manufactory, house, count)
+    local employments = house[EK.employments]
+    local unemployed_inhabitants = get_employable_count(house)
 
     if unemployed_inhabitants == 0 then
         return 0
@@ -227,12 +231,13 @@ local function try_employ(manufactory, housing, count)
 
     -- establish the employment
     local employed = min(count, unemployed_inhabitants)
-    local housing_number = housing[EK.unit_number]
+
+    local housing_number = house[EK.unit_number]
     local manufactory_number = manufactory[EK.unit_number]
 
     -- housing side
-    occupations.unemployed = occupations.unemployed - employed
-    occupations[manufactory_number] = (occupations[manufactory_number] or 0) + employed
+    house[EK.employed] = house[EK.employed] + employed
+    employments[manufactory_number] = (employments[manufactory_number] or 0) + employed
 
     -- manufactory side
     local workers = manufactory[EK.workers]
@@ -246,49 +251,71 @@ local function look_for_workers(manufactory, castes, count)
     local workers_found = 0
 
     for i = 1, #castes do
-        for _, house in Neighborhood.all_of_type(castes[i]) do
+        for _, house in Neighborhood.all_of_type(manufactory, castes[i]) do
             workers_found = workers_found + try_employ(manufactory, house, count - workers_found)
 
             if workers_found == count then
-                break
+                return
             end
         end
     end
 end
 
---- Must be called if a manufacture gets deconstructed.
---- Manufactory -> Housing
-function Inhabitants.free_workers(manufactory)
+--- Fires all the workers working in this building.
+--- Must be called if a building with workforce gets deconstructed.
+function Inhabitants.unemploy_all_workers(manufactory)
     local workers = manufactory[EK.workers]
     local manufactory_number = manufactory[EK.unit_number]
 
     for unit_number, count in pairs(workers) do
         local house = try_get(unit_number)
         if house then
-            local occupations = house[EK.occupations]
-            occupations[manufactory_number] = nil
-            occupations.unemployed = occupations.unemployed + count
+            local employments = house[EK.employments]
+            employments[manufactory_number] = nil
+            house[EK.employed] = house[EK.employed] - count
         end
     end
 
+    manufactory[EK.worker_count] = 0
     manufactory[EK.workers] = {}
 end
 
---- Must be called if an employed inhabitant stops working for whatever reason.
---- Housing -> Manufactory
-local function fire_inhabitants(entry, count)
+--- Tries to free the given number of inhabitants from their employment.
+--- Returns the number of fired inhabitants.
+local function unemploy_inhabitants(house, count)
+    count = min(count, house[EK.employed])
+    local to_fire = count
+    local employments = house[EK.employments]
+    local house_number = house[EK.unit_number]
 
-end
+    for unit_number, employed_count in pairs(employments) do
+        local fired = min(employed_count, to_fire)
+        to_fire = to_fire - fired
 
---- Must be called if a manufacture gets deconstructed.
-local function fire_all_inhabitants(house)
-    local occupations = house[EK.occupations]
-    for unit_number, count in pairs(occupations) do
+        -- housing side
+        employments[unit_number] = (fired == employed_count) and nil or (employed_count - fired)
 
+        -- manufactory side
+        local manufactory = try_get(unit_number)
+        if manufactory then
+            manufactory[EK.workers][house_number] = nil
+            manufactory[EK.worker_count] = manufactory[EK.worker_count] - fired
+        end
     end
+
+    house[EK.employed] = house[EK.employed] - count
+
+    return count
 end
 
-function Inhabitants.evaluate_workforce(manufactory, workforce)
+--- Ends the employment of all employed inhabitants of this house.
+--- Must be called if a house gets deconstructed.
+local function unemploy_all_inhabitants(house)
+    unemploy_inhabitants(house, house[EK.employed])
+end
+
+function Inhabitants.evaluate_workforce(manufactory)
+    local workforce = manufactory[EK.worker_specification]
     local nominal_count = workforce.count_max
     local current_workers = manufactory[EK.worker_count]
 
@@ -486,6 +513,7 @@ local remove_from_house = Inhabitants.remove_from_house
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
 --- @param entry Entry
 function Inhabitants.remove_house(entry, unit_number)
+    unemploy_all_inhabitants(entry)
     houses_with_free_capacity[entry[EK.type]][unit_number] = nil
     remove_from_house(entry, entry[EK.inhabitants])
 end
@@ -766,8 +794,12 @@ function Inhabitants.establish_house(caste_id, entry, unit_number)
     entry[EK.idea_progress] = 0
     entry[EK.garbage_progress] = 0
 
-    local free_houses = houses_with_free_capacity[caste_id]
-    free_houses[unit_number] = unit_number
+    entry[EK.employed] = 0
+    entry[EK.employments] = {}
+    entry[EK.ill] = 0
+    entry[EK.illnesses] = {}
+
+    houses_with_free_capacity[caste_id][unit_number] = unit_number
 end
 
 local function new_caste_table()

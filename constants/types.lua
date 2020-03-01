@@ -18,7 +18,8 @@ Types.definitions = {
     },
     [Type.water_distributer] = {
         localised_name = {"sosciencity-gui.water-distributer"},
-        localised_description = {"sosciencity-gui.explain-water-distributer"}
+        localised_description = {"sosciencity-gui.explain-water-distributer"},
+        initial_values = {[EK.water_quality] = 0}
     },
     [Type.hospital] = {
         localised_name = {"sosciencity-gui.hospital"},
@@ -162,6 +163,14 @@ end
 
 function Types.needs_alt_mode_sprite(_type)
     return definitions[_type].altmode_sprite ~= nil
+end
+
+local copy_fields = Tirislib_Tables.copy_fields
+function Types.initialise_entry(entry, _type)
+    local definition = definitions[_type]
+    if definition then
+        copy_fields(entry, definition.initial_values)
+    end
 end
 
 local meta = {}
