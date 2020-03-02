@@ -134,7 +134,7 @@ local lookup_by_entity_type = {
 }
 
 local lookup_by_name = {
-    ["farm"] = Type.manufactory,
+    ["farm"] = Type.farm,
     ["greenhouse"] = Type.farm,
     ["arboretum"] = Type.farm
 }

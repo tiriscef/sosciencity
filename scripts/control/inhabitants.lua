@@ -215,9 +215,10 @@ end
 -- On the housing side there is a table with the occupations of the inhabitants.
 -- If they work at a manufactory, then the occupation is a (manufactory, count) pair.
 
-local function get_employable_count(entry)
+function Inhabitants.get_employable_count(entry)
     return entry[EK.inhabitants] - entry[EK.employed] - entry[EK.ill]
 end
+local get_employable_count = Inhabitants.get_employable_count
 
 --- Tries to employ the given number of people from the house for the manufactory and
 --- returns the number of actually employed workers.
