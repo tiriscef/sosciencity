@@ -12,6 +12,8 @@ local castes = Castes.values
 local global
 local population
 local effective_population
+local Register = Register
+local Inhabitants = Inhabitants
 
 local ceil = math.ceil
 
@@ -160,6 +162,12 @@ local function set_datalist_value_tooltip(datalist, key, tooltip)
     datalist[key].tooltip = tooltip
 end
 
+local function set_kv_pair_tooltip(datalist, key, tooltip)
+    local key_element, value_element = get_kv_pair(datalist, key)
+    key_element.tooltip = tooltip
+    value_element.tooltip = tooltip
+end
+
 local function set_ks_pair_visibility(datalist, key, visibility)
     datalist["key-" .. key].visible = visibility
     datalist[key].visible = visibility
@@ -188,11 +196,15 @@ local function add_final_value_entry(data_list, caption)
 end
 
 local function add_operand_entry(data_list, key, key_caption, value_caption)
-    data_list.add {
+    local key_label =
+        data_list.add {
         type = "label",
         name = "key-" .. key,
         caption = key_caption
     }
+    local key_style = key_label.style
+    key_style.horizontally_stretchable = true
+    key_style.single_line = false
 
     local value_label =
         data_list.add {
@@ -200,9 +212,9 @@ local function add_operand_entry(data_list, key, key_caption, value_caption)
         name = key,
         caption = value_caption
     }
-    local style = value_label.style
-    style.horizontal_align = "right"
-    style.width = 50
+    local value_style = value_label.style
+    value_style.horizontal_align = "right"
+    value_style.width = 50
 end
 
 local function add_summand_entries(data_list, caption_group, count)
@@ -315,6 +327,25 @@ local function create_separator_line(container, name)
         name = name or "line",
         direction = "horizontal"
     }
+end
+
+local function add_header_label(container, name, caption)
+    local flow =
+        container.add {
+        type = "flow",
+        name = name,
+        direction = "horizontal"
+    }
+    flow.style.horizontally_stretchable = true
+    flow.style.horizontal_align = "center"
+
+    local header =
+        flow.add {
+        type = "label",
+        name = name,
+        caption = caption
+    }
+    header.style.font = "default-bold"
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -567,8 +598,45 @@ local function create_empty_housing_details(container, entry)
 end
 
 -- << housing details view >>
+local function update_occupations_list(flow, entry)
+    local occupations_list = flow.occupations
+
+    occupations_list.clear()
+
+    add_operand_entry(
+        occupations_list,
+        "unoccupied",
+        {"sosciencity-gui.unemployed"},
+        Inhabitants.get_employable_count(entry)
+    )
+    set_kv_pair_tooltip(occupations_list, "unoccupied", {"sosciencity-gui.explain-unemployed"})
+
+    local employments = entry[EK.employments]
+    for building_number, count in pairs(employments) do
+        local building = Register.try_get(building_number)
+        if building then
+            add_operand_entry(
+                occupations_list,
+                building_number,
+                {"sosciencity-gui.employed", get_entry_representation(building)},
+                count
+            )
+        end
+    end
+
+    local diseases = entry[EK.illnesses]
+    for disease_number, count in pairs(diseases) do
+        -- TODO diseases
+    end
+
+    local visible = (entry[EK.inhabitants] > 0)
+    occupations_list.visible = visible
+    flow["header-occupations"].visible = visible
+end
+
 local function update_housing_general_info_tab(tabbed_pane, entry)
-    local general_list = get_tab_contents(tabbed_pane, "general")["general-infos"]
+    local flow = get_tab_contents(tabbed_pane, "general")
+    local general_list = flow["general-infos"]
 
     local caste = castes[entry[EK.type]]
     local inhabitants = entry[EK.inhabitants]
@@ -632,6 +700,8 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "power-demand",
         {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * 60 * inhabitants}
     )
+
+    update_occupations_list(flow, entry)
 end
 
 local function add_housing_general_info_tab(tabbed_pane, entry)
@@ -650,6 +720,9 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "effective-population", {"sosciencity-gui.effective-population"})
     add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
     add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
+
+    add_header_label(flow, "header-occupations", {"sosciencity-gui.occupations"})
+    create_data_list(flow, "occupations")
 
     local kickout_button =
         flow.add {
@@ -812,13 +885,19 @@ local function update_worker_list(list, entry)
     local workers = entry[EK.workers]
 
     list.clear()
-    add_kv_pair(list, "header", "", {"sosciencity-gui.worker-header"}, nil, "default-bold")
 
+    local at_least_one = false
     for unit_number, count in pairs(workers) do
         local house = Register.try_get(unit_number)
         if house then
-            add_kv_pair(list, unit_number, get_entry_representation(house), count, "default")
+            add_operand_entry(list, unit_number, get_entry_representation(house), count)
+
+            at_least_one = true
         end
+    end
+
+    if not at_least_one then
+        add_operand_entry(list, "no-one", {"sosciencity-gui.no-employees"}, "-")
     end
 end
 
@@ -895,16 +974,10 @@ local function create_general_building_details(container, entry)
 
     local worker_specification = entry[EK.worker_specification]
     if worker_specification then
-        add_kv_pair(
-            building_data,
-            "workforce",
-            {"sosciencity-gui.workforce"}
-        )
-        add_kv_pair(
-            building_data,
-            "performance"
-        )
+        add_kv_pair(building_data, "workforce", {"sosciencity-gui.workforce"})
+        add_kv_pair(building_data, "performance")
 
+        add_header_label(tab, "worker-header", {"sosciencity-gui.worker-header"})
         create_data_list(tab, "workers")
     end
 
