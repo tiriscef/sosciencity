@@ -175,17 +175,64 @@ local function highlight_range(player_id, entity, building_details, created_high
     local y = position.y
 
     created_highlights[#created_highlights + 1] =
-        rendering.draw_rectangle(
-        {
-            color = highlight_colors[building_details.type] or default_highlight_color,
-            filled = true,
-            left_top = {x - range, y - range},
-            right_bottom = {x + range, y + range},
-            surface = surface,
-            players = {player_id},
-            draw_on_ground = true
-        }
-    )
+        rendering.draw_rectangle {
+        color = highlight_colors[building_details.type] or default_highlight_color,
+        filled = true,
+        left_top = {x - range, y - range},
+        right_bottom = {x + range, y + range},
+        surface = surface,
+        players = {player_id},
+        draw_on_ground = true
+    }
+end
+
+local function create_neighbor_highlights(players, entry, created_highlights)
+    local type_details = Types.get(entry)
+    local tint = type_details.signature_color
+
+    local entity = entry[EK.entity]
+    local bounding_box = entity.selection_box
+    local left_top = bounding_box.left_top
+    local right_bottom = bounding_box.right_bottom
+
+    local surface = entity.surface
+
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "highlight-left-top",
+        tint = tint,
+        surface = surface,
+        players = players,
+        target = left_top
+    }
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "highlight-right-bottom",
+        tint = tint,
+        surface = surface,
+        players = players,
+        target = right_bottom
+    }
+
+    -- convert left_top to left_bottom and right_bottom to right_top
+    left_top.y, right_bottom.y = right_bottom.y, left_top.y
+
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "highlight-left-bottom",
+        tint = tint,
+        surface = surface,
+        players = players,
+        target = left_top
+    }
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "highlight-right-top",
+        tint = tint,
+        surface = surface,
+        players = players,
+        target = right_bottom
+    }
 end
 
 local function highlight_neighbors(player_id, entry, created_highlights)
@@ -196,24 +243,7 @@ local function highlight_neighbors(player_id, entry, created_highlights)
 
     local players = {player_id}
     for _, neighbor_entry in Neighborhood.all(entry) do
-        local entity = neighbor_entry[EK.entity]
-        local bounding_box = entity.selection_box
-        local color =
-            highlight_colors[neighbor_entry[EK.type]] or
-            {r = highlight_alpha, g = highlight_alpha, b = highlight_alpha, a = highlight_alpha}
-
-        created_highlights[#created_highlights + 1] =
-            rendering.draw_rectangle(
-            {
-                color = color,
-                filled = true,
-                left_top = bounding_box.left_top,
-                right_bottom = bounding_box.right_bottom,
-                surface = entity.surface,
-                players = players,
-                draw_on_ground = true
-            }
-        )
+        create_neighbor_highlights(players, neighbor_entry, created_highlights)
     end
 end
 
@@ -223,16 +253,14 @@ local function show_inhabitants(player_id, entry, created_highlights)
     local entity = entry[EK.entity]
 
     created_highlights[#created_highlights + 1] =
-        rendering.draw_text(
-        {
-            text = inhabitants .. " / " .. capacity,
-            target = entity,
-            surface = entity.surface,
-            players = {player_id},
-            alignment = "center",
-            color = Colors.white
-        }
-    )
+        rendering.draw_text {
+        text = inhabitants .. " / " .. capacity,
+        target = entity,
+        surface = entity.surface,
+        players = {player_id},
+        alignment = "center",
+        color = Colors.white
+    }
 end
 
 function Communication.create_mouseover_highlights(player_id, entity)
