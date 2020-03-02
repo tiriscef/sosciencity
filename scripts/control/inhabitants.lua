@@ -292,14 +292,19 @@ local function unemploy_inhabitants(house, count)
         local fired = min(employed_count, to_fire)
         to_fire = to_fire - fired
 
-        -- housing side
-        employments[unit_number] = (fired == employed_count) and nil or (employed_count - fired)
+        -- set to nil if all employees got fired to delete the link
+        local new_employment_count = (fired == employed_count) and nil or (employed_count - fired)
 
-        -- manufactory side
+        -- housing side
+        employments[unit_number] = new_employment_count
+
         local manufactory = try_get(unit_number)
         if manufactory then
-            manufactory[EK.workers][house_number] = nil
+            -- manufactory side
+            manufactory[EK.workers][house_number] = new_employment_count
             manufactory[EK.worker_count] = manufactory[EK.worker_count] - fired
+        else
+            -- the manufactory got lost without unemploying the workers
         end
     end
 
@@ -475,13 +480,7 @@ end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 function Inhabitants.clone_inhabitants(source, destination)
-    try_add_to_house(
-        destination,
-        source[EK.inhabitants],
-        source[EK.happiness],
-        source[EK.health],
-        source[EK.sanity]
-    )
+    try_add_to_house(destination, source[EK.inhabitants], source[EK.happiness], source[EK.health], source[EK.sanity])
 end
 
 --- Tries to remove the specified amount of inhabitants from the house-entry.
@@ -498,8 +497,7 @@ function Inhabitants.remove_from_house(entry, count)
     local caste_id = entry[EK.type]
 
     effective_population[caste_id] =
-        effective_population[caste_id] -
-        count_moving_out * get_effective_population_multiplier(entry[EK.happiness])
+        effective_population[caste_id] - count_moving_out * get_effective_population_multiplier(entry[EK.happiness])
     population[caste_id] = population[caste_id] - count_moving_out
     entry[EK.inhabitants] = entry[EK.inhabitants] - count_moving_out
 
@@ -641,8 +639,7 @@ function Inhabitants.update_house(entry, delta_ticks)
 
     -- check if the caste actually produces ideas
     if caste_values.idea_item then
-        local ideas =
-            entry[EK.idea_progress] + get_idea_progress(new_happiness, inhabitants, caste_values, delta_ticks)
+        local ideas = entry[EK.idea_progress] + get_idea_progress(new_happiness, inhabitants, caste_values, delta_ticks)
         if ideas >= 1 then
             local produced_ideas = floor(ideas)
             try_output_ideas(entry, caste_values.idea_item, produced_ideas)
@@ -732,13 +729,7 @@ function Inhabitants.try_resettle(entry, unit_number)
     houses_with_free_capacity[caste][unit_number] = nil
     Tirislib_Tables.remove_all(next_houses[caste], unit_number)
     local resettled =
-        distribute_inhabitants(
-        caste,
-        entry[EK.inhabitants],
-        entry[EK.happiness],
-        entry[EK.health],
-        entry[EK.sanity]
-    )
+        distribute_inhabitants(caste, entry[EK.inhabitants], entry[EK.happiness], entry[EK.health], entry[EK.sanity])
 
     if resettled > 0 then
         Communication.people_resettled(entry, resettled)
