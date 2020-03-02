@@ -73,20 +73,24 @@ Types.definitions = {
     },
     [Type.market] = {
         localised_name = {"sosciencity-gui.market"},
-        localised_description = {"sosciencity-gui.explain-market"}
+        localised_description = {"sosciencity-gui.explain-market"},
+        signature_color = {r = 1, g = 0.45, b = 0, a = 1}
     },
     [Type.water_distributer] = {
         localised_name = {"sosciencity-gui.water-distributer"},
         localised_description = {"sosciencity-gui.explain-water-distributer"},
-        initial_values = {[EK.water_quality] = 0}
+        initial_values = {[EK.water_quality] = 0},
+        signature_color = {r = 0, g = 0.8, b = 1, a = 1}
     },
     [Type.hospital] = {
         localised_name = {"sosciencity-gui.hospital"},
-        localised_description = {"sosciencity-gui.explain-hospital"}
+        localised_description = {"sosciencity-gui.explain-hospital"},
+        signature_color = {r = 0.8, g = 0.1, b = 0.1, a = 1}
     },
     [Type.dumpster] = {
         localised_name = {"sosciencity-gui.dumpster"},
-        localised_description = {"sosciencity-gui.explain-dumpster"}
+        localised_description = {"sosciencity-gui.explain-dumpster"},
+        signature_color = {r = 0.8, g = 0.8, b = 0.8, a = 1}
     },
     [Type.pharmacy] = {
         localised_name = {"sosciencity-gui.pharmacy"},
@@ -97,7 +101,8 @@ Types.definitions = {
         localised_description = {"sosciencity-gui.explain-waterwell"},
         localised_speed_name = {"sosciencity-gui.waterwell-speed"},
         localised_speed_key = "sosciencity-gui.show-waterwell-speed",
-        subscriptions = {Type.waterwell}
+        subscriptions = {Type.waterwell},
+        signature_color = {r = 0, g = 0, b = 1, a = 1}
     },
     [Type.immigration_port] = {
         localised_name = {"sosciencity-gui.immigration-port"},

@@ -1,4 +1,14 @@
-local sprites_to_create = {"empty", "clockwork", "ember", "gunfire", "gleam", "foundry", "orchid", "aurora", "plasma"}
+local sprites_to_create = {
+    "empty",
+    "clockwork",
+    "ember",
+    "gunfire",
+    "gleam",
+    "foundry",
+    "orchid",
+    "aurora",
+    "plasma"
+}
 
 for _, name in pairs(sprites_to_create) do
     Tirislib_Prototype.create {
@@ -20,3 +30,39 @@ for _, name in pairs(sprites_to_create) do
         }
     }
 end
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "highlight-left-top",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-left-top.png",
+    size = 64,
+    scale = 0.5,
+    shift = {0.4, 0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "highlight-right-top",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-right-top.png",
+    size = 64,
+    scale = 0.5,
+    shift = {-0.4, 0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "highlight-left-bottom",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-left-bottom.png",
+    size = 64,
+    scale = 0.5,
+    shift = {0.4, -0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "highlight-right-bottom",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-right-bottom.png",
+    size = 64,
+    scale = 0.5,
+    shift = {-0.4, -0.4}
+}
