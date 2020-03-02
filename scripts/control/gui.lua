@@ -75,6 +75,12 @@ local function get_migration_string(number)
     return string.format("%+.1f", number)
 end
 
+local function get_entry_representation(entry)
+    local entity = entry[EK.entity]
+    local position = entity.position
+    return {"sosciencity-gui.entry-representation", entity.localised_name, position.x, position.y}
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << style functions >>
 local function set_padding(element, padding)
@@ -114,14 +120,14 @@ local function create_data_list(container, name)
     return datatable
 end
 
-local function add_kv_pair(data_list, key, key_caption, value_caption)
+local function add_kv_pair(data_list, key, key_caption, value_caption, key_font, value_font)
     local key_label =
         data_list.add {
         type = "label",
         name = "key-" .. key,
         caption = key_caption
     }
-    key_label.style.font = "default-bold"
+    key_label.style.font = key_font or "default-bold"
 
     local value_label =
         data_list.add {
@@ -132,6 +138,10 @@ local function add_kv_pair(data_list, key, key_caption, value_caption)
     local style = value_label.style
     style.horizontally_stretchable = true
     style.single_line = false
+
+    if value_font then
+        style.font = value_font
+    end
 end
 
 local function get_kv_pair(data_list, key)
@@ -798,12 +808,51 @@ local function create_housing_details(container, entry)
 end
 
 -- << buildings details views >>
+local function update_worker_list(list, entry)
+    local workers = entry[EK.workers]
+
+    list.clear()
+    add_kv_pair(list, "header", "", {"sosciencity-gui.worker-header"}, nil, "default-bold")
+
+    for unit_number, count in pairs(workers) do
+        local house = Register.try_get(unit_number)
+        if house then
+            add_kv_pair(list, unit_number, get_entry_representation(house), count, "default")
+        end
+    end
+end
+
+local function update_general_building_details(container, entry)
+    local tabbed_pane = container.tabpane
+    local tab = get_tab_contents(tabbed_pane, "general")
+    local building_data = tab.building
+    local worker_specification = entry[EK.worker_specification]
+
+    if worker_specification then
+        local count_needed = worker_specification.count
+        set_datalist_value(
+            building_data,
+            "workforce",
+            {"sosciencity-gui.show-workforce", entry[EK.worker_count], count_needed}
+        )
+        local performance = Inhabitants.evaluate_workforce(entry)
+        set_datalist_value(
+            building_data,
+            "performance",
+            performance >= 0.4 and {"sosciencity-gui.workforce-performance", ceil(performance * 100)} or
+                {"sosciencity-gui.not-enough-workforce", ceil(0.4 * count_needed)}
+        )
+
+        local worker_data = tab.workers
+        update_worker_list(worker_data, entry)
+    end
+end
+
 local function create_general_building_details(container, entry)
     local entity = entry[EK.entity]
     set_details_view_title(container, entity.localised_name)
 
-    local name = entity.name
-    local building_details = Buildings.values[name]
+    local building_details = Buildings.get(entry)
     local type_details = Types.definitions[entry[EK.type]]
 
     local tabbed_pane = create_tabbed_pane(container)
@@ -846,22 +895,20 @@ local function create_general_building_details(container, entry)
 
     local worker_specification = entry[EK.worker_specification]
     if worker_specification then
-        local count_needed = worker_specification.count
         add_kv_pair(
             building_data,
             "workforce",
-            {"sosciencity-gui.workforce"},
-            {"sosciencity-gui.show-workforce", entry[EK.worker_count], count_needed}
+            {"sosciencity-gui.workforce"}
         )
-        local performance = Inhabitants.evaluate_workforce(entry)
         add_kv_pair(
             building_data,
-            "performance",
-            "",
-            performance > 0.4 and {"sosciencity-gui.workforce-performance", ceil(performance * 100)} or
-                {"sosciencity-gui.not-enough-workforce", ceil(0.4 * count_needed)}
+            "performance"
         )
+
+        create_data_list(tab, "workers")
     end
+
+    update_general_building_details(container, entry)
 
     return tabbed_pane
 end
@@ -943,7 +990,12 @@ end
 
 -- table with (type, update-function) pairs
 local content_updaters = {
-    [Type.waterwell] = update_waterwell_details
+    [Type.waterwell] = update_waterwell_details,
+    [Type.dumpster] = update_general_building_details,
+    [Type.market] = update_general_building_details,
+    [Type.hospital] = update_general_building_details,
+    [Type.water_distributer] = update_general_building_details,
+    [Type.manufactory] = update_general_building_details
 }
 
 -- add the castes
