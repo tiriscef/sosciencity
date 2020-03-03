@@ -321,10 +321,25 @@ local function get_tab_contents(tabbed_pane, name)
     return tabbed_pane[name].flow
 end
 
+local function get_unused_name(container, name)
+    if not container[name] then
+        return name
+    end
+
+    local i = 1
+    while true do
+        local possible_name = name .. i
+        if not container[possible_name] then
+            return possible_name
+        end
+        i = i + 1
+    end
+end
+
 local function create_separator_line(container, name)
     return container.add {
         type = "line",
-        name = name or "line",
+        name = get_unused_name(name or "line"),
         direction = "horizontal"
     }
 end
@@ -721,8 +736,12 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
     add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
 
+    create_separator_line(flow)
+
     add_header_label(flow, "header-occupations", {"sosciencity-gui.occupations"})
     create_data_list(flow, "occupations")
+
+    create_separator_line(flow)
 
     local kickout_button =
         flow.add {

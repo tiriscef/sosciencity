@@ -150,21 +150,14 @@ local function premultiply_with_alpha(color, a)
     color.a = color.a * a
 end
 
-local highlight_alpha = 0.15
-local highlight_colors = {
-    [Type.hospital] = {r = 0.8, g = 0.1, b = 0.1, a = 1},
-    [Type.market] = {r = 1, g = 0.45, b = 0, a = 1},
-    [Type.dumpster] = {r = 0.8, g = 0.8, b = 0.8, a = 1},
-    [Type.water_distributer] = {r = 0, g = 0.8, b = 1, a = 1},
-    [Type.waterwell] = {r = 0, g = 0, b = 1, a = 1}
-}
+local range_highlight_alpha = 0.15
+local range_highlight_colors = {}
 
-for _, color in pairs(highlight_colors) do
-    premultiply_with_alpha(color, highlight_alpha)
+for _type, definition in pairs(Types.definitions) do
+    local color = Tirislib_Tables.copy(definition.signature_color or Colors.white)
+    premultiply_with_alpha(color, range_highlight_alpha)
+    range_highlight_colors[_type] = color
 end
-
-local default_highlight_color = {r = 1, g = 1, b = 1, a = 1}
-premultiply_with_alpha(default_highlight_color, highlight_alpha)
 
 local function highlight_range(player_id, entity, building_details, created_highlights)
     local range = building_details.range
@@ -176,7 +169,7 @@ local function highlight_range(player_id, entity, building_details, created_high
 
     created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle {
-        color = highlight_colors[building_details.type] or default_highlight_color,
+        color = range_highlight_colors[building_details.type],
         filled = true,
         left_top = {x - range, y - range},
         right_bottom = {x + range, y + range},
