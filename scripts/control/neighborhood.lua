@@ -50,6 +50,14 @@ local function is_in_range(neighbor, entry, range)
 end
 
 local function can_connect(entry1, entry2)
+    -- first check if they are on the same surface
+    local surface1 = entry1[EK.entity].surface.index
+    local surface2 = entry2[EK.entity].surface.index
+    if surface1 ~= surface2 then
+        return false
+    end
+
+    -- check if one of the entries can reach the other
     local range = entry1[EK.range]
     if range and is_in_range(entry1, entry2, range) then
         return true
