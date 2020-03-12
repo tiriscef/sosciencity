@@ -14,7 +14,8 @@ Speakers["tiriscef."] = {
         15,
         19,
         20,
-        23
+        23,
+        24
     },
     index = 0
 }
