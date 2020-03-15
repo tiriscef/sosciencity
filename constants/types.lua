@@ -144,9 +144,11 @@ local lookup_by_name = {
     ["arboretum"] = Type.farm
 }
 
-local houses
 function Types.load()
-    houses = Housing.values
+    -- add the houses to the lookup table
+    for name in pairs(Housing.values) do
+        lookup_by_name[name] = Type.null
+    end
 
     -- add the functional buildings to the lookup table
     for name, details in pairs(Buildings.values) do
@@ -164,10 +166,6 @@ function Types.get_entity_type(entity)
     -- check the ghost entity type before the other, because otherwise the name lookup would give them the type of the ghosted entity
     if entity_type == "entity-ghost" then
         return Type.null
-    end
-
-    if houses[name] then
-        return Type.empty_house
     end
 
     return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
@@ -195,12 +193,6 @@ end
 
 function Types.needs_beacon(_type)
     return (_type >= Type.manufactory) and (_type <= Type.orangery)
-end
-
-function Types.get_sprite(name)
-    if houses[name] then
-        return "sprite-" .. name
-    end
 end
 
 function Types.needs_alt_mode_sprite(_type)

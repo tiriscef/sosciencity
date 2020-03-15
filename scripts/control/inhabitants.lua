@@ -14,7 +14,7 @@ Inhabitants = {}
         [caste_id]: float (caste bonus value)
 
     global.immigration: table
-        [caste_id]: float (progress toward the next immigrant)
+        [caste_id]: float (number of immigrants in the next wave)
 
     global.houses_with_free_capacity: table
         [caste_id]: table
@@ -356,6 +356,15 @@ function Inhabitants.get_effective_population(entry)
     return entry[EK.inhabitants] * get_effective_population_multiplier(entry[EK.happiness])
 end
 
+local function update_caste_bonus_points(entry)
+    local new_points = get_effective_population_multiplier(entry[EK.happiness]) * get_employable_count(entry)
+    local caste_id = entry[EK.type]
+
+    -- substract the old value, add the new
+    effective_population[caste_id] = effective_population[caste_id] + new_points - entry[EK.points]
+    entry[EK.points] = new_points
+end
+
 function Inhabitants.get_power_usage(entry)
     local caste = castes[entry[EK.type]]
     return caste.power_demand * entry[EK.inhabitants]
@@ -403,8 +412,6 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
     local caste_id = entry[EK.type]
     local inhabitants = entry[EK.inhabitants]
 
-    effective_population[caste_id] =
-        effective_population[caste_id] - inhabitants * get_effective_population_multiplier(entry[EK.happiness])
 
     happiness = happiness or DEFAULT_HAPPINESS
     health = health or DEFAULT_HEALTH
@@ -416,9 +423,8 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
     entry[EK.inhabitants] = inhabitants + count_moving_in
 
     population[caste_id] = population[caste_id] + count_moving_in
-    effective_population[caste_id] =
-        effective_population[caste_id] +
-        (inhabitants + count_moving_in) * get_effective_population_multiplier(entry[EK.happiness])
+
+    update_caste_bonus_points(entry)
 
     set_power_usage(entry, get_power_usage(entry))
 
@@ -497,10 +503,10 @@ function Inhabitants.remove_from_house(entry, count)
 
     local caste_id = entry[EK.type]
 
-    effective_population[caste_id] =
-        effective_population[caste_id] - count_moving_out * get_effective_population_multiplier(entry[EK.happiness])
     population[caste_id] = population[caste_id] - count_moving_out
     entry[EK.inhabitants] = entry[EK.inhabitants] - count_moving_out
+    -- TODO delete diseases/employments if needed
+    update_caste_bonus_points(entry)
 
     set_power_usage(entry, get_power_usage(entry))
 
@@ -633,9 +639,7 @@ function Inhabitants.update_house(entry, delta_ticks)
     entry[EK.happiness] = new_happiness
 
     -- update effective population because the happiness has changed (most likely)
-    effective_population[caste_id] =
-        effective_population[caste_id] - (inhabitants * get_effective_population_multiplier(old_happiness)) +
-        (inhabitants * get_effective_population_multiplier(new_happiness))
+    update_caste_bonus_points(entry)
     -- TODO diseases
 
     -- check if the caste actually produces ideas
@@ -688,6 +692,7 @@ function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
     local pop = population[caste_id]
 
     if pop > 0 then
+        -- TODO this method to get the average happiness doesn't work anymore because the meaning of effective population changed
         local average_happiness = effective_population[caste_id] / population[caste_id]
         return castes[caste_id].immigration_coefficient * delta_ticks * average_happiness
     else
@@ -696,22 +701,34 @@ function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
 end
 local get_immigration_trend = Inhabitants.get_immigration_trend
 
-function Inhabitants.immigration(delta_ticks)
+function Inhabitants.update_immigration(delta_ticks)
     for caste = 1, #immigration do
         if is_researched(caste) then
-            local immigration_trend = immigration[caste]
-            immigration_trend = immigration_trend + get_immigration_trend(delta_ticks, caste)
-
-            if immigration_trend > 1 then
-                local immigrating = floor(immigration_trend)
-                local immigrated = Inhabitants.distribute_inhabitants(caste, immigrating)
-                immigration_trend = immigration_trend - immigrating
-                Communication.log_immigration(caste, immigrated)
-            end
-
-            immigration[caste] = immigration_trend
+            --if immigration_trend > 1 then
+            --    local immigrating = floor(immigration_trend)
+            --    local immigrated = Inhabitants.distribute_inhabitants(caste, immigrating)
+            --    immigration_trend = immigration_trend - immigrating
+            --    Communication.log_immigration(caste, immigrated)
+            --end
+            immigration[caste] = immigration[caste] + get_immigration_trend(delta_ticks, caste)
         end
     end
+end
+
+function Inhabitants.do_an_immigration_wave(immigration_port)
+    local capacity = immigration_port.capacity
+    local immigrant_count = array_sum(immigration)
+
+    local percentage = max(capacity / immigrant_count, 1)
+
+    local total_immigrated = 0
+    for caste = 1, #immigration do
+        local to_immigrate = ceil(percentage * immigration(caste))
+        local actually_immigrated
+        
+    end
+
+    Communication.immigration_wave()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -785,6 +802,7 @@ function Inhabitants.establish_house(caste_id, entry, unit_number)
     entry[EK.sanity_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanitySummand), 0.)
     entry[EK.sanity_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanityFactor), 1.)
 
+    entry[EK.points] = 0
     entry[EK.inhabitants] = 0
     entry[EK.emigration_trend] = 0
     entry[EK.idea_progress] = 0
