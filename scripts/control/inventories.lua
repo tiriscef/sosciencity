@@ -37,6 +37,18 @@ function Inventories.try_insert(inventory, item, amount)
 end
 local try_insert = Inventories.try_insert
 
+function Inventories.try_remove(inventory, item, amount)
+    local removed_amount =
+        inventory.remove {
+        name = item,
+        count = amount
+    }
+
+    log_item(item, -removed_amount)
+
+    return removed_amount
+end
+
 function Inventories.spill_items(entry, item, amount)
     local entity = entry[EK.entity]
     entity.surface.spill_item_stack(entity.position, {name = item, count = amount})
@@ -93,6 +105,25 @@ function Inventories.get_garbage_value(entry)
     end
 
     return value
+end
+
+--- Tries to remove the given list of items if a full set is available in the inventory.
+--- Returns true if it removed the items.
+function Consumption.try_remove_item_range(entry, items)
+    local inventory = get_chest_inventory(entry)
+    local contents = inventory.get_contents()
+
+    for name, desired_amount in pairs(items) do
+        if desired_amount > contents[name] then
+            return false
+        end
+    end
+
+    for name, desired_amount in pairs(items) do
+        inventory.remove {name = name, count = desired_amount}
+    end
+
+    return true
 end
 
 return Inventories

@@ -53,6 +53,7 @@ local caste_bonuses
 local water_values = DrinkingWater.values
 
 local floor = math.floor
+local random = math.random
 
 local add_fear = Inhabitants.add_fear
 local add_casualty_fear = Inhabitants.add_casualty_fear
@@ -73,7 +74,7 @@ local remove_entry = Register.remove_entry
 local add_to_register = Register.add
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
-local immigration = Inhabitants.immigration
+local immigration = Inhabitants.update_immigration
 
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
@@ -161,6 +162,19 @@ local function update_manufactory(entry)
     set_beacon_effects(entry, speed, 0, true)
 end
 
+local function update_immigration_port(entry, delta_ticks, current_tick)
+    local tick_next_wave = entry[EK.next_wave]
+    if current_tick >= tick_next_wave then
+        local building_details = get_building_details(entry)
+        if Inventories.try_remove_item_range(building_details.materials) then
+            Inhabitants.do_an_immigration_wave(building_details)
+        end
+
+        -- schedule the next wave
+        entry[EK.next_wave] = tick_next_wave + building_details.interval + random(building_details.random_interval) - 1
+    end
+end
+
 local update_functions = {
     [Type.clockwork] = Inhabitants.update_house,
     [Type.ember] = Inhabitants.update_house,
@@ -178,7 +192,8 @@ local update_functions = {
     [Type.orangery] = update_entity_with_beacon,
     [Type.waterwell] = update_waterwell,
     [Type.water_distributer] = update_water_distributer,
-    [Type.manufactory] = update_manufactory
+    [Type.manufactory] = update_manufactory,
+    [Type.immigration_port] = update_immigration_port
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -203,7 +218,7 @@ local function update_cycle()
         if updater ~= nil then
             local delta_ticks = current_tick - current_entry[EK.last_update]
             if delta_ticks > 0 then
-                updater(current_entry, delta_ticks)
+                updater(current_entry, delta_ticks, current_tick)
             end
         end
 

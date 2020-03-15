@@ -105,6 +105,8 @@ EK.has_penalty_module = 103
 
 -- type specific stuff
 -- housing
+--- points this house provides to the caste bonus
+EK.points = 205
 --- inhabitant count of this entry
 EK.inhabitants = 206
 --- current happiness of this entries inhabitants
@@ -144,6 +146,10 @@ EK.illnesses = 222
 EK.water_quality = 300
 --- name of the water this distributer provides
 EK.water_name = 301
+
+-- immigration port
+--- tick of the next immigration wave
+EK.next_wave = 400
 
 --<< happiness summands >>
 --- Enum table for happiness summands.

@@ -21,6 +21,7 @@ local all_neighbors_of_type = Neighborhood.all_of_type
 local get_neighbors_of_type = Neighborhood.get_by_type
 
 local has_power = Subentities.has_power
+
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 

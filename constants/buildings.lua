@@ -42,6 +42,15 @@ Buildings.values = {
         range = 64,
         power_usage = 250,
         speed = 120
+    },
+    ["zeppelin-port"] = {
+        type = Type.immigration_port,
+        interval = 1000,
+        random_interval = 1000,
+        capacity = 100,
+        materials = {
+            ["rope"] = 20
+        }
     }
 }
 local buildings = Buildings.values
