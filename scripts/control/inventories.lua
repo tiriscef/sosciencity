@@ -109,7 +109,7 @@ end
 
 --- Tries to remove the given list of items if a full set is available in the inventory.
 --- Returns true if it removed the items.
-function Consumption.try_remove_item_range(entry, items)
+function Inventories.try_remove_item_range(entry, items)
     local inventory = get_chest_inventory(entry)
     local contents = inventory.get_contents()
 

@@ -6,6 +6,10 @@ Tirislib_Item = {}
 -- lua is weird
 Tirislib_Item.__index = Tirislib_Item
 
+--- Class for arrays of items. Setter-functions can be called on them.
+Tirislib_ItemArray = {}
+Tirislib_ItemArray.__index = Tirislib_PrototypeArray.__index
+
 -- << getter functions >>
 function Tirislib_Item.get_by_name(name)
     local item_types = require("lib.prototype-types.item-types")
@@ -59,6 +63,7 @@ function Tirislib_Item.batch_create(item_detail_array, batch_details)
     local subgroup = batch_details.subgroup
     local stack_size = batch_details.stack_size or 200
 
+    local created_items = {}
     for index, details in pairs(item_detail_array) do
         local item =
             Tirislib_Item.create {
@@ -81,7 +86,12 @@ function Tirislib_Item.batch_create(item_detail_array, batch_details)
         end
 
         Tirislib_Tables.set_fields(item, details.distinctions)
+
+        created_items[#created_items + 1] = item
     end
+
+    setmetatable(created_items, Tirislib_ItemArray)
+    return created_items
 end
 
 -- << manipulation >>
