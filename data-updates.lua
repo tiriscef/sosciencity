@@ -28,20 +28,12 @@ for _, current_recipe in Tirislib_Recipe.pairs() do
 end
 
 --<< handcrafting category >>
--- add it when no other mod did so
-if not data.raw["recipe-category"]["handcrafting"] then
-    data:extend {
-        {
-            type = "recipe-category",
-            name = "handcrafting"
-        }
-    }
-
-    for _, character in Tirislib_Entity.pairs("character") do
-        character:add_crafting_category("handcrafting")
-    end
-    for _, controller in Tirislib_Entity.pairs("god-controller") do
-        -- technically a god controller isn't an entity, but adding a category works the same for them
-        controller:add_crafting_category("handcrafting")
-    end
+-- add it to all the prototypes the player can be in
+-- this is in data-updates to give other mods a chance to add their own characters and or god controllers
+for _, character in Tirislib_Entity.pairs("character") do
+    character:add_crafting_category("handcrafting")
+end
+for _, controller in Tirislib_Entity.pairs("god-controller") do
+    -- technically a god controller isn't an entity, but adding a category works the same for them
+    controller:add_crafting_category("handcrafting")
 end

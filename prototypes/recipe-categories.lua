@@ -14,5 +14,9 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-arboretum"
+    },
+    {
+        type = "recipe-category",
+        name = "handcrafting"
     }
 }
