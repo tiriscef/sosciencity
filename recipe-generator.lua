@@ -77,6 +77,9 @@ RG.ingredient_themes = {
             {type = "item", name = "mineral-wool", amount = 2}
         }
     },
+    can = {
+        {type = "item", name = "iron-plate", amount = 1}
+    },
     electronics = {
         [0] = {
             {type = "item", name = "copper-cable", amount = 2}
@@ -182,35 +185,30 @@ RG.expensive_multiplier = 2
 
 -- << generation >>
 local function get_nearest_level(theme_definition, level)
-    local ingredients
+    local ret
     local distance = math.huge
 
-    for key, value in pairs(theme_definition) do
-        if math.abs(level - key) < distance then
-            ingredients = value
-            distance = math.abs(level - key)
+    for defined_level, defined_ingredients in pairs(theme_definition) do
+        if math.abs(level - defined_level) < distance then
+            ret = defined_ingredients
+            distance = math.abs(level - defined_level)
         end
     end
 
-    return ingredients
+    return ret
 end
 
 local function get_theme_ingredients(name, level)
-    local ingredients
+    local ret
 
     local theme_definition = RG.ingredient_themes[name]
     if theme_definition then
-        ingredients = theme_definition[level]
-
-        if not ingredients then
-            ingredients = get_nearest_level(theme_definition, level)
-        end
+        ret = get_nearest_level(theme_definition, level)
     else
         log("Tirislib RecipeGenerator was told to generate a recipe with an undefined theme: " .. name)
     end
-    ingredients = ingredients and Tirislib_Tables.recursive_copy(ingredients)
 
-    return ingredients
+    return ret and Tirislib_Tables.recursive_copy(ret)
 end
 
 function RG.add_ingredient_theme(recipe, theme)
