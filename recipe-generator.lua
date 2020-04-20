@@ -184,14 +184,18 @@ RG.ingredient_themes = {
 RG.expensive_multiplier = 2
 
 -- << generation >>
+--- Returns the entry in the theme definition that is the closest to the given level.
+--- It doesn't return a definition with a higher level to avoid creating progression deadlocks.
 local function get_nearest_level(theme_definition, level)
     local ret
     local distance = math.huge
 
     for defined_level, defined_ingredients in pairs(theme_definition) do
-        if math.abs(level - defined_level) < distance then
+        local current_distance = level - defined_level
+
+        if current_distance >= 0 and current_distance < distance then
             ret = defined_ingredients
-            distance = math.abs(level - defined_level)
+            distance = current_distance
         end
     end
 
