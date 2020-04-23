@@ -5,7 +5,8 @@ local animals = {
     {name = "primal-quacker"},
     {name = "primal-quackpa"},
     {name = "nan-swanling"},
-    {name = "nan-swan"}
+    {name = "nan-swan"},
+    {name = "elder-nan"}
 }
 
 Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
