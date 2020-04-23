@@ -1,8 +1,8 @@
 require("constants.enums")
 
+--- Defines the general custom properties for various entities.
 Buildings = {}
 
---- Custom entities.
 Buildings.values = {
     ["test-dumpster"] = {
         type = Type.dumpster,
@@ -19,14 +19,6 @@ Buildings.values = {
     ["test-water-distributer"] = {
         type = Type.water_distributer,
         range = 42
-    },
-    ["assembling-machine-2"] = {
-        type = Type.manufactory,
-        range = 20,
-        workforce = {
-            count = 20,
-            castes = {Type.clockwork}
-        }
     },
     ["trash-site"] = {
         type = Type.dumpster,
