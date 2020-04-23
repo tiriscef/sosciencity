@@ -486,7 +486,7 @@ function Inhabitants.distribute_inhabitants(caste_id, count, happiness, health, 
 end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
-function Inhabitants.clone_inhabitants(source, destination)
+function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source[EK.inhabitants], source[EK.happiness], source[EK.health], source[EK.sanity])
 end
 
@@ -814,6 +814,13 @@ function Inhabitants.establish_house(caste_id, entry, unit_number)
     entry[EK.illnesses] = {}
 
     houses_with_free_capacity[caste_id][unit_number] = unit_number
+end
+
+for _, caste in pairs(TypeGroup.all_castes) do
+    Register.set_entity_creation_handler(caste, Inhabitants.establish_house)
+    Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
+    Register.set_entity_updater(caste, Inhabitants.update_house)
+    Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
 end
 
 local function new_caste_table()

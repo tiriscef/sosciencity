@@ -1,12 +1,8 @@
+---------------------------------------------------------------------------------------------------
+-- << development tools >>
 pcall(require, "__debugadapter__/debugadapter.lua")
 pcall(require, "__profiler__/profiler.lua")
---[[
-    TODO
-        - balance basicly everything
-        - diseases
-        - custom entity guis
-        - city events & communication
-]]
+
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
 require("lib.utils")
@@ -26,44 +22,34 @@ require("constants.colors")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
+require("scripts.control.replacer")
+require("scripts.control.register")
+require("scripts.control.technologies")
+require("scripts.control.subentities")
+require("scripts.control.neighborhood")
+require("scripts.control.communication")
+require("scripts.control.inventories")
+require("scripts.control.consumption")
+require("scripts.control.inhabitants")
+require("scripts.control.entity")
+require("scripts.control.gui")
+
+---------------------------------------------------------------------------------------------------
 -- EmmyLua stuff
 ---@class Entity
 ---@class Entry
 ---@class Player
 ---@class Type
 
-local Replacer = require("scripts.control.replacer")
-local Register = require("scripts.control.register")
-local Technologies = require("scripts.control.technologies")
-local Subentities = require("scripts.control.subentities")
-local Neighborhood = require("scripts.control.neighborhood")
-local Communication = require("scripts.control.communication")
-local Inventories = require("scripts.control.inventories")
-local Consumption = require("scripts.control.consumption")
-local Inhabitants = require("scripts.control.inhabitants")
-local Gui = require("scripts.control.gui")
-
 ---------------------------------------------------------------------------------------------------
--- << update functions >>
--- entities need to be checked for validity before calling the update-function
 -- local all the frequently called functions for miniscule performance gains
-
 local global
-local caste_bonuses
-local water_values = DrinkingWater.values
-
-local floor = math.floor
-local random = math.random
 
 local add_fear = Inhabitants.add_fear
 local add_casualty_fear = Inhabitants.add_casualty_fear
 local ease_fear = Inhabitants.ease_fear
 
-local set_beacon_effects = Subentities.set_beacon_effects
-
 local get_entity_type = Types.get_entity_type
-local is_affected_by_clockwork = Types.is_affected_by_clockwork
-local is_affected_by_orchid = Types.is_affected_by_orchid
 local is_civil = Types.is_civil
 local is_inhabited = Types.is_inhabited
 local is_relevant_to_register = Types.is_relevant_to_register
@@ -72,163 +58,25 @@ local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
 local remove_entry = Register.remove_entry
 local add_to_register = Register.add
+local entity_update_cycle = Register.entity_update_cycle
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
-local immigration = Inhabitants.update_immigration
+local update_immigration = Inhabitants.update_immigration
 
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 
---local replace = Replacer.replace
-
 local update_communication = Communication.update
-local log_fluid = Communication.log_fluid
 local create_mouseover_highlights = Communication.create_mouseover_highlights
 local remove_mouseover_highlights = Communication.remove_mouseover_highlights
-
-local get_building_details = Buildings.get
-
-local has_power = Subentities.has_power
-
--- Assumes that the entity has a beacon
-local function update_entity_with_beacon(entry)
-    local _type = entry[EK.type]
-    local speed_bonus = 0
-    local productivity_bonus = 0
-    local use_penalty_module = false
-
-    if is_affected_by_clockwork(_type) then
-        speed_bonus = caste_bonuses[Type.clockwork]
-        use_penalty_module = global.use_penalty
-    end
-    if _type == Type.rocket_silo then
-        productivity_bonus = caste_bonuses[Type.aurora]
-    end
-    if is_affected_by_orchid(_type) then
-        productivity_bonus = caste_bonuses[Type.orchid]
-    end
-    if _type == Type.orangery then
-        local age = game.tick - entry[EK.tick_of_creation]
-        productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
-    end
-
-    set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
-end
-
-local function update_waterwell(entry, delta_ticks)
-    if not has_power(entry) then
-        return
-    end
-
-    local building_details = get_building_details(entry)
-    local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    local groundwater_volume = (delta_ticks * building_details.speed) / near_count
-
-    local inserted =
-        entry[EK.entity].insert_fluid {
-        name = "groundwater",
-        amount = groundwater_volume
-    }
-    log_fluid("groundwater", inserted)
-end
-
-local function update_water_distributer(entry)
-    local entity = entry[EK.entity]
-
-    -- determine and save the type of water that this distributer provides
-    -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
-    -- but needs to be checked often
-    if has_power(entry) then
-        for fluid_name in pairs(entity.get_fluid_contents()) do
-            local water_value = water_values[fluid_name]
-            if water_value then
-                entry[EK.water_quality] = water_value.health
-                entry[EK.water_name] = fluid_name
-                return
-            end
-        end
-    end
-    entry[EK.water_quality] = 0
-    entry[EK.water_name] = nil
-end
-
-local function update_manufactory(entry)
-    Inhabitants.update_workforce(entry)
-    local performance = Inhabitants.evaluate_workforce(entry)
-
-    entry[EK.entity].active = performance > 0.4
-
-    local speed = performance > 0.4 and floor(100 * performance - 20) or 0
-    set_beacon_effects(entry, speed, 0, true)
-end
-
-local function update_immigration_port(entry, delta_ticks, current_tick)
-    local tick_next_wave = entry[EK.next_wave]
-    if current_tick >= tick_next_wave then
-        local building_details = get_building_details(entry)
-        if Inventories.try_remove_item_range(building_details.materials) then
-            Inhabitants.do_an_immigration_wave(building_details)
-        end
-
-        -- schedule the next wave
-        entry[EK.next_wave] = tick_next_wave + building_details.interval + random(building_details.random_interval) - 1
-    end
-end
-
-local update_functions = {
-    [Type.clockwork] = Inhabitants.update_house,
-    [Type.ember] = Inhabitants.update_house,
-    [Type.gunfire] = Inhabitants.update_house,
-    [Type.gleam] = Inhabitants.update_house,
-    [Type.foundry] = Inhabitants.update_house,
-    [Type.orchid] = Inhabitants.update_house,
-    [Type.aurora] = Inhabitants.update_house,
-    [Type.plasma] = Inhabitants.update_house,
-    [Type.assembling_machine] = update_entity_with_beacon,
-    [Type.furnace] = update_entity_with_beacon,
-    [Type.rocket_silo] = update_entity_with_beacon,
-    [Type.farm] = update_entity_with_beacon,
-    [Type.mining_drill] = update_entity_with_beacon,
-    [Type.orangery] = update_entity_with_beacon,
-    [Type.waterwell] = update_waterwell,
-    [Type.water_distributer] = update_water_distributer,
-    [Type.manufactory] = update_manufactory,
-    [Type.immigration_port] = update_immigration_port
-}
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
 local function update_cycle()
     local current_tick = game.tick
     ease_fear(current_tick)
-
-    local next_entry = Register.next
-    local count = 0
-    local index = global.last_index
-    local current_entry = try_get_entry(index)
-    local number_of_checks = global.updates_per_cycle
-
-    if not current_entry then
-        index, current_entry = next_entry() -- begin a new loop at the start (nil as a key returns the first pair)
-    end
-
-    while index and count < number_of_checks do
-        local _type = current_entry[EK.type]
-        local updater = update_functions[_type]
-        if updater ~= nil then
-            local delta_ticks = current_tick - current_entry[EK.last_update]
-            if delta_ticks > 0 then
-                updater(current_entry, delta_ticks, current_tick)
-            end
-        end
-
-        current_entry[EK.last_update] = current_tick
-        index, current_entry = next_entry(index)
-        count = count + 1
-    end
-    global.last_index = index
-
-    immigration(10) -- the time between update_cycles is always 10 ticks
+    entity_update_cycle(current_tick)
+    update_immigration(10) -- the time between update_cycles is always 10 ticks
     update_caste_bonuses()
     update_city_info()
     update_details_view()
@@ -250,7 +98,6 @@ end
 
 local function set_locals()
     global = _ENV.global
-    caste_bonuses = global.caste_bonuses
 end
 
 local function init()
@@ -265,6 +112,7 @@ local function init()
     Technologies.init()
     Gui.init()
     Communication.init()
+    Entity.init()
 
     set_locals()
     global.last_update = game.tick
@@ -279,6 +127,7 @@ local function on_load()
     Gui.load()
     Inhabitants.load()
     Communication.load()
+    Entity.init()
 end
 
 local function on_entity_built(event)

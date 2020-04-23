@@ -1,4 +1,4 @@
---- Static class that stores entities in hopefully performant ways.
+--- Static class that stores and manages entities in hopefully performant ways.
 Register = {}
 
 --[[
@@ -19,21 +19,17 @@ local register
 local register_by_type
 local entry_counts
 
-local initialise_house
-local remove_house
 local fire_all_workers
 
 local add_subentities
 local remove_subentities
 
 local get_entity_type = Types.get_entity_type
-local is_inhabited = Types.is_inhabited
-local initialise_type = Types.initialise_entry
 
 local get_building_details = Buildings.get
 
 local establish_new_neighbor
-local unsubscribe_all
+local unsubscribe_neighborhood
 
 local function set_locals()
     global = _ENV.global
@@ -42,19 +38,91 @@ local function set_locals()
     entry_counts = global.entry_counts
 
     -- These systems are loaded after the register, so we local them during on_load
-    initialise_house = Inhabitants.establish_house
-    remove_house = Inhabitants.remove_house
     fire_all_workers = Inhabitants.unemploy_all_workers
 
     add_subentities = Subentities.add_all_for
     remove_subentities = Subentities.remove_all_for
 
     establish_new_neighbor = Neighborhood.establish_new_neighbor
-    unsubscribe_all = Neighborhood.unsubscribe_all
+    unsubscribe_neighborhood = Neighborhood.unsubscribe_all
 end
+
 ---------------------------------------------------------------------------------------------------
--- << register system >>
-local function initialise_building(entry)
+-- << entity lifetime function lookup >>
+local on_creation_lookup = {}
+
+--- Sets the function that gets called when an entity of the given type gets created.
+--- @param _type Type
+--- @param fn function
+function Register.set_entity_creation_handler(_type, fn)
+    on_creation_lookup[_type] = fn
+end
+
+local function on_creation(_type, entry)
+    local fn = on_creation_lookup[_type]
+
+    if fn then
+        fn(entry)
+    end
+end
+
+local on_copy_lookup = {}
+
+--- Sets the function that gets called when an entity of the given type gets copied.
+--- The creation function is called before this.
+--- @param _type Type
+--- @param fn function
+function Register.set_entity_copy_handler(_type, fn)
+    on_copy_lookup[_type] = fn
+end
+
+local function on_copy(_type, source, destination)
+    local fn = on_copy_lookup[_type]
+
+    if fn then
+        fn(source, destination)
+    end
+end
+
+local update_lookup = {}
+
+--- Sets the function that gets called when an entity of the given type gets updated during an entity update cycle.
+--- @param _type Type
+--- @param fn function
+function Register.set_entity_updater(_type, fn)
+    update_lookup[_type] = fn
+end
+
+local function on_update(entry, current_tick)
+    local updater = update_lookup[entry[EK.type]]
+    if updater ~= nil then
+        local delta_ticks = current_tick - entry[EK.last_update]
+        if delta_ticks > 0 then
+            updater(entry, delta_ticks, current_tick)
+        end
+    end
+end
+
+local on_destroyed_lookup = {}
+
+--- Sets the function that gets called when an entity of the given type gets destroyed.
+--- @param _type Type
+--- @param fn function
+function Register.set_entity_destruction_handler(_type, fn)
+    on_destroyed_lookup[_type] = fn
+end
+
+local function on_destruction(_type, entry)
+    local fn = on_destroyed_lookup[_type]
+
+    if fn then
+        fn(entry)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << general building systems >>
+local function init_general_building(entry)
     local building_details = get_building_details(entry)
 
     if not building_details then
@@ -70,49 +138,73 @@ local function initialise_building(entry)
     entry[EK.range] = building_details.range
 end
 
---- Returns a new entry for the given entity with the given type.
---- @param entity Entity
---- @param _type Type
---- @param unit_number integer
---- @return Entry
-local function new_entry(entity, _type, unit_number)
-    unit_number = unit_number or entity.unit_number
-    local current_tick = game.tick
-    local name = entity.name
+local function destroy_general_building(entry)
+    local building_details = get_building_details(entry)
 
-    local entry = {
-        [EK.type] = _type,
-        [EK.entity] = entity,
-        [EK.unit_number] = unit_number,
-        [EK.name] = name,
-        [EK.last_update] = current_tick,
-        [EK.tick_of_creation] = current_tick,
-    }
-
-    initialise_building(entry)
-
-    if is_inhabited(_type) then
-        initialise_house(_type, entry, unit_number)
+    if not building_details then
+        return
     end
-    initialise_type(entry, _type)
 
-    return entry
+    if building_details.workforce then
+        fire_all_workers(entry)
+    end
 end
 
-local function add_entry_to_register(entry, unit_number)
+---------------------------------------------------------------------------------------------------
+-- << register system >>
+
+local function add_entry_to_register(entry)
+    local unit_number = entry[EK.unit_number]
+
+    -- general
     register[unit_number] = entry
 
+    -- by type
     local _type = entry[EK.type]
     if not register_by_type[_type] then
         register_by_type[_type] = {}
     end
     register_by_type[_type][unit_number] = unit_number
 
-    -- keeping track on the number of entries of this type
+    -- type counts
     if not entry_counts[_type] then
         entry_counts[_type] = 0
     end
     entry_counts[_type] = entry_counts[_type] + 1
+end
+
+local function remove_entry_from_register(entry)
+    local _type = entry[EK.type]
+    local unit_number = entry[EK.unit_number]
+
+    -- general
+    register[unit_number] = nil
+
+    -- by type
+    register_by_type[_type][unit_number] = nil
+
+    -- type counts
+    entry_counts[_type] = entry_counts[_type] - 1
+end
+
+--- Returns a new entry for the given entity with the given type.
+--- @param entity Entity
+--- @param _type Type
+--- @return Entry
+local function new_entry(entity, _type)
+    local current_tick = game.tick
+    local name = entity.name
+
+    local entry = {
+        [EK.type] = _type,
+        [EK.entity] = entity,
+        [EK.unit_number] = entity.unit_number,
+        [EK.name] = name,
+        [EK.last_update] = current_tick,
+        [EK.tick_of_creation] = current_tick
+    }
+
+    return entry
 end
 
 --- Adds the given entity to the register. Optionally the type can be specified.
@@ -120,13 +212,14 @@ end
 --- @param _type Type
 function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
-    local unit_number = entity.unit_number
-    local entry = new_entry(entity, _type, unit_number)
+    local entry = new_entry(entity, _type)
 
+    init_general_building(entry)
+    on_creation(_type, entry)
     add_subentities(entry)
     establish_new_neighbor(entry)
 
-    add_entry_to_register(entry, unit_number)
+    add_entry_to_register(entry)
 
     return entry
 end
@@ -140,30 +233,20 @@ function Register.clone(source, destination)
     local destination_entry = add_entity(destination, _type)
     destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
 
-    -- Copy special entry data for some types
-    if is_inhabited(_type) then
-        Inhabitants.clone_inhabitants(source, destination_entry)
-    end
+    on_copy(_type, source, destination)
 end
 
 --- Removes the given entry from the register.
 --- @param entry Entry
 function Register.remove_entry(entry)
     local _type = entry[EK.type]
-    local unit_number = entry[EK.unit_number]
 
-    if is_inhabited(_type) then
-        remove_house(entry, unit_number)
-    end
-    if entry[EK.worker_specification] then
-        fire_all_workers(entry)
-    end
+    destroy_general_building(entry)
+    on_destruction(_type, entry)
     remove_subentities(entry)
-    unsubscribe_all(entry)
+    unsubscribe_neighborhood(entry)
 
-    register[unit_number] = nil
-    register_by_type[_type][unit_number] = nil
-    entry_counts[_type] = entry_counts[_type] - 1
+    remove_entry_from_register(entry)
 end
 local remove_entry = Register.remove_entry
 
@@ -183,7 +266,9 @@ end
 -- -@param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry)
-    Register.add(entry[EK.entity], new_type)
+    local new_entry = Register.add(entry[EK.entity], new_type)
+    new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
+
     Gui.rebuild_details_view_for_entry(entry)
 end
 
@@ -220,6 +305,27 @@ local function register_next(unit_number)
     end
 end
 Register.next = register_next
+
+function Register.entity_update_cycle(current_tick)
+    local next_entry = Register.next
+    local count = 0
+    local index = global.last_index
+    local current_entry = try_get(index)
+    local number_of_checks = global.updates_per_cycle
+
+    if not current_entry then
+        index, current_entry = next_entry() -- begin a new loop at the start (nil as a key returns the first pair)
+    end
+
+    while index and count < number_of_checks do
+        on_update(current_entry, current_tick)
+        current_entry[EK.last_update] = current_tick
+
+        index, current_entry = next_entry(index)
+        count = count + 1
+    end
+    global.last_index = index
+end
 
 local function nothing()
 end

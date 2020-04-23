@@ -10,7 +10,6 @@ Consumption = {}
 local sort_by_key = Tirislib_Tables.insertion_sort_by_key
 
 local food_values = Food.values
-local water_values = DrinkingWater.values
 
 local log_item = Communication.log_item
 local log_fluid = Communication.log_fluid
