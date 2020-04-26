@@ -31,6 +31,8 @@ local get_building_details = Buildings.get
 local establish_new_neighbor
 local unsubscribe_neighborhood
 
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
 local function set_locals()
     global = _ENV.global
     register = global.register
@@ -47,8 +49,37 @@ local function set_locals()
     unsubscribe_neighborhood = Neighborhood.unsubscribe_all
 end
 
+--- Initialize the register related contents of global.
+function Register.init()
+    global = _ENV.global
+    global.register = {}
+    global.register_by_type = {}
+    global.entry_counts = {}
+    set_locals()
+
+    -- find and register all the machines that need to be registered
+    for _, surface in pairs(game.surfaces) do
+        for _, entity in pairs(
+            surface.find_entities_filtered {
+                force = "player"
+            }
+        ) do
+            local _type = get_entity_type(entity)
+
+            if Types.is_relevant_to_register(_type) then
+                Register.add(entity)
+            end
+        end
+    end
+end
+
+--- Sets local references during on_load
+function Register.load()
+    set_locals()
+end
+
 ---------------------------------------------------------------------------------------------------
--- << entity lifetime function lookup >>
+-- << entity event handler lookup >>
 local on_creation_lookup = {}
 
 --- Sets the function that gets called when an entity of the given type gets created.
@@ -373,35 +404,6 @@ function Register.get_machine_count()
     end
 
     return ret
-end
-
---- Initialize the register related contents of global.
-function Register.init()
-    global = _ENV.global
-    global.register = {}
-    global.register_by_type = {}
-    global.entry_counts = {}
-    set_locals()
-
-    -- find and register all the machines that need to be registered
-    for _, surface in pairs(game.surfaces) do
-        for _, entity in pairs(
-            surface.find_entities_filtered {
-                force = "player"
-            }
-        ) do
-            local _type = get_entity_type(entity)
-
-            if Types.is_relevant_to_register(_type) then
-                add_entity(entity)
-            end
-        end
-    end
-end
-
---- Sets local references during on_load
-function Register.load()
-    set_locals()
 end
 
 return Register
