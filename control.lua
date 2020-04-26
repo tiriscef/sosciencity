@@ -22,6 +22,7 @@ require("constants.colors")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
+require("scripts.control.scheduler")
 require("scripts.control.replacer")
 require("scripts.control.register")
 require("scripts.control.technologies")
@@ -62,11 +63,11 @@ local entity_update_cycle = Register.entity_update_cycle
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
 local update_immigration = Inhabitants.update_immigration
-
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
-
+local update_scheduler = Scheduler.update
 local update_communication = Communication.update
+
 local create_mouseover_highlights = Communication.create_mouseover_highlights
 local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 
@@ -81,6 +82,7 @@ local function update_cycle()
     update_city_info()
     update_details_view()
     update_communication(current_tick)
+    update_scheduler(current_tick)
 
     global.last_update = current_tick
 end
@@ -106,6 +108,7 @@ local function init()
 
     update_settings()
 
+    Scheduler.init()
     Neighborhood.init()
     Inhabitants.init()
     Register.init()
@@ -121,6 +124,7 @@ end
 local function on_load()
     set_locals()
 
+    Scheduler.load()
     Types.load()
     Neighborhood.load()
     Register.load()

@@ -11,9 +11,6 @@ Communication = {}
     global.(fluid/item)_(consumption/production): table
         [name]: amount consumed/produced
 
-    global.speaker_schedule: table
-        [tick]: array of lines to say
-
     global.past_banter: array of recent lines said (up to 8)
 
     global.past_banter_index: int
@@ -34,7 +31,6 @@ local highlights
 local castes = Castes.values
 
 local speakers = Speakers
-local speaker_schedule
 local allowed_speakers
 local function generate_speakers_list()
     allowed_speakers = {}
@@ -61,9 +57,27 @@ local function set_locals()
     item_consumption = global.item_consumption
     item_production = global.item_production
 
-    speaker_schedule = global.speaker_schedule
-
     generate_speakers_list()
+end
+
+function Communication.init()
+    global = _ENV.global
+    global.mouseover_highlights = {}
+
+    global.fluid_consumption = {}
+    global.fluid_production = {}
+    global.item_consumption = {}
+    global.item_production = {}
+
+    global.past_banter = {}
+    global.past_banter_index = 1
+
+    set_locals()
+end
+
+function Communication.load()
+    global = _ENV.global
+    set_locals()
 end
 
 function Communication.create_flying_text(entry, text)
@@ -303,6 +317,7 @@ end
 local function say(speaker, locale_key)
     game.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
 end
+Scheduler.set_event("say", say)
 
 local function tell(player, speaker, locale_key)
     player.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
@@ -313,25 +328,6 @@ function Communication.say_welcome(player)
 
     if global.profanity then
         tell(player, "profanity.", "welcome")
-    end
-end
-
-local function schedule_say(speaker, locale_key, time)
-    if not speaker_schedule[time] then
-        speaker_schedule[time] = {}
-    end
-    speaker_schedule[time][#speaker_schedule[time] + 1] = {speaker = speaker, line = locale_key}
-end
-
-local function finish_schedule(current_tick)
-    for time, schedule in pairs(speaker_schedule) do
-        if time <= current_tick then
-            for i = 1, #schedule do
-                local thing_to_say = schedule[i]
-                say(thing_to_say.speaker, thing_to_say.line)
-            end
-            speaker_schedule[time] = nil
-        end
     end
 end
 
@@ -362,8 +358,8 @@ function Communication.useless_banter()
     global.past_banter_index = (index < 8) and (index + 1) or 1
 
     if speaker.lines_with_followup[line] then
-        -- schedule the followup in a second (60 ticks)
-        schedule_say(speaker_name, line .. "f", game.tick + 60)
+        -- schedule the followup in 2 seconds (120 ticks)
+        Scheduler.plan_event("say", game.tick + 120, speaker_name, line .. "f")
     end
 
     say(speaker_name, line)
@@ -379,33 +375,10 @@ end
 function Communication.update(current_tick)
     flush_logs()
     log_population(current_tick)
-    finish_schedule(current_tick)
 
     if current_tick % 25200 == 7200 then -- every 7 minutes, first time after 2 minutes
         useless_banter()
     end
-end
-
-function Communication.init()
-    global = _ENV.global
-    global.mouseover_highlights = {}
-
-    global.fluid_consumption = {}
-    global.fluid_production = {}
-    global.item_consumption = {}
-    global.item_production = {}
-
-    global.past_banter = {}
-    global.past_banter_index = 1
-
-    global.speaker_schedule = {}
-
-    set_locals()
-end
-
-function Communication.load()
-    global = _ENV.global
-    set_locals()
 end
 
 function Communication.settings_update()
