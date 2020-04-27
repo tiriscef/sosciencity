@@ -13,7 +13,7 @@ Scheduler = {}
         [2]: arguments
 ]]
 -- local often used functions for heavy performance gains
-local floor = math.floor
+local ceil = math.ceil
 local schedule
 
 ---------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ end
 
 -- Sosciencity updates once every 10 frames.
 local function get_update_index(tick)
-    return floor(tick / 10) + 1
+    return ceil(tick / 10)
 end
 
 --- Schedules an event of the given name for the given tick

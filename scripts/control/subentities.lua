@@ -13,7 +13,6 @@ Subentities.subentity_name_lookup = {
 }
 local subentity_names = Subentities.subentity_name_lookup
 
--- local often used functions for some performance gains
 local type_needs_beacon = Types.needs_beacon
 local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
 local is_inhabited = Types.is_inhabited
