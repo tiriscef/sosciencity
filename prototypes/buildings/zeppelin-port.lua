@@ -33,38 +33,38 @@ Tirislib_Entity.create {
             {
                 filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port.png",
                 priority = "high",
-                width = 384,
-                height = 192,
-                shift = {0.5, -0.5},
+                width = 544,
+                height = 256,
+                shift = {0, -0.5},
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-hr.png",
                     priority = "high",
-                    width = 768,
-                    height = 384,
-                    shift = {0.5, -0.5},
+                    width = 1088,
+                    height = 512,
+                    shift = {0, -0.5},
                     scale = 0.5
                 }
             },
             {
                 filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap.png",
                 priority = "high",
-                width = 384,
-                height = 192,
-                shift = {0.5, -0.5},
+                width = 544,
+                height = 256,
+                shift = {0, -0.5},
                 draw_as_shadow = true,
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap-hr.png",
                     priority = "high",
-                    width = 768,
-                    height = 384,
-                    shift = {0.5, -0.5},
+                    width = 1088,
+                    height = 512,
+                    shift = {0, -0.5},
                     scale = 0.5,
                     draw_as_shadow = true
                 }
             }
         }
     }
-}:set_size(11, 5):copy_localisation_from_item()
+}:set_size(15, 5):copy_localisation_from_item()
 
 --[[Tirislib_Entity.create {
     type = "corpse",

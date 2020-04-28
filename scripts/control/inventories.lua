@@ -114,7 +114,8 @@ function Inventories.try_remove_item_range(entry, items)
     local contents = inventory.get_contents()
 
     for name, desired_amount in pairs(items) do
-        if desired_amount > contents[name] then
+        local available_amount = contents[name] or 0
+        if desired_amount > available_amount then
             return false
         end
     end

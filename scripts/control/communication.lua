@@ -193,6 +193,20 @@ local function highlight_range(player_id, entity, building_details, created_high
     }
 end
 
+local building_details_visualization_lookup = {
+    range = highlight_range
+}
+
+local function visualize_building_details(player_id, entity, building_details, created_highlights)
+    for key in pairs(building_details) do
+        local fn = building_details_visualization_lookup[key]
+
+        if fn then
+            fn(player_id, entity, building_details, created_highlights)
+        end
+    end
+end
+
 local function create_neighbor_highlights(players, entry, created_highlights)
     local type_details = Types.get(entry)
     local tint = type_details.signature_color
@@ -276,7 +290,7 @@ function Communication.create_mouseover_highlights(player_id, entity)
 
     local building_details = buildings[name]
     if building_details then
-        highlight_range(player_id, entity, building_details, created_highlights)
+        visualize_building_details(player_id, entity, building_details, created_highlights)
     end
 
     local entry = try_get(entity.unit_number)

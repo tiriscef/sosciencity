@@ -246,9 +246,9 @@ function Register.add(entity, _type)
     local entry = new_entry(entity, _type)
 
     init_general_building(entry)
-    on_creation(_type, entry)
     add_subentities(entry)
     establish_new_neighbor(entry)
+    on_creation(_type, entry)
 
     add_entry_to_register(entry)
 
