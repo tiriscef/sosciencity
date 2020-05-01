@@ -9,31 +9,12 @@ local material_items = {
     {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}},
     {name = "mineral-wool"},
     {name = "rope"},
-    {name = "cherry-wood"}
+    {name = "cherry-wood"},
+    {name = "feather"}, -- TODO belt pile sprite for feathers (looks aweful)
+    {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}}
 }
 
-for index, details in pairs(material_items) do
-    local item_prototype =
-        Tirislib_Item.create {
-        name = details.name,
-        icon = "__sosciencity-graphics__/graphics/icon/" .. details.name .. ".png",
-        icon_size = 64,
-        subgroup = "sosciencity-materials",
-        order = string.format("%03d", index),
-        stack_size = 200
-    }
-
-    local variations = details.sprite_variations
-    if variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/" .. variations.name, variations.count)
-
-        if variations.include_icon then
-            item_prototype:add_icon_to_sprite_variations()
-        end
-    end
-
-    Tirislib_Tables.set_fields(item_prototype, details.distinctions)
-end
+Tirislib_Item.batch_create(material_items, {subgroup = "sosciencity-materials", stack_size = 200})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
