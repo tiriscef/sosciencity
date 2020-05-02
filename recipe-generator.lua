@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 -- << static class for recipe generation >>
--- generic recipes with configurable ingredients to facilitate integration/compatibility with other mods
--- assumes the result items already exist
+--- Generator for generic recipes with configurable ingredients to facilitate integration/compatibility with other mods.
+--- Assumes the result items already exist.
 Tirislib_RecipeGenerator = {}
 
 -- shorthand alias for more readability
