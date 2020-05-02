@@ -1,7 +1,7 @@
 data:extend {
     {
         type = "item-group",
-        name = "sosciencity",
+        name = "sosciencity-infrastructure",
         inventory_order = "za",
         order = "za",
         icon = "__sosciencity-graphics__/graphics/icon/note.png", -- TODO create icon
@@ -10,67 +10,75 @@ data:extend {
     {
         type = "item-subgroup",
         name = "sosciencity-buildings",
-        group = "sosciencity",
+        group = "sosciencity-infrastructure",
         order = "aaa"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-infrastructure",
-        group = "sosciencity",
-        order = "aab"
+        group = "sosciencity-infrastructure",
+        order = "aba"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-housing",
-        group = "sosciencity",
-        order = "baa"
+        group = "sosciencity-infrastructure",
+        order = "aca"
+    },
+    {
+        type = "item-group",
+        name = "sosciencity-production",
+        inventory_order = "zb",
+        order = "za",
+        icon = "__sosciencity-graphics__/graphics/icon/production-group.png",
+        icon_size = 128
     },
     {
         type = "item-subgroup",
         name = "sosciencity-furniture",
-        group = "sosciencity",
-        order = "caa"
+        group = "sosciencity-production",
+        order = "aaa"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-materials",
-        group = "sosciencity",
-        order = "daa"
+        group = "sosciencity-production",
+        order = "aba"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-flora",
-        group = "sosciencity",
-        order = "eaa"
+        group = "sosciencity-production",
+        order = "aca"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-fauna",
-        group = "sosciencity",
-        order = "eba"
+        group = "sosciencity-production",
+        order = "ada"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-food",
-        group = "sosciencity",
-        order = "eca"
+        group = "sosciencity-production",
+        order = "aea"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-drinking-water",
-        group = "sosciencity",
-        order = "faa"
+        group = "sosciencity-production",
+        order = "afa"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-garbage",
-        group = "sosciencity",
-        order = "zaa"
+        group = "sosciencity-production",
+        order = "aga"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-ideas",
-        group = "sosciencity",
-        order = "zab"
+        group = "sosciencity-production",
+        order = "aha"
     },
 }

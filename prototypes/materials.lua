@@ -10,7 +10,7 @@ local material_items = {
     {name = "mineral-wool"},
     {name = "rope"},
     {name = "cherry-wood"},
-    {name = "feather"}, -- TODO belt pile sprite for feathers (looks aweful)
+    {name = "feather", sprite_variations = {name = "feather-pile", count = 4}},
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}}
 }
 
