@@ -2,16 +2,12 @@
 -- << items >>
 local material_items = {
     {name = "lumber"},
-    {name = "tiriscefing-willow-wood"},
     {name = "tiriscefing-willow-barrel"},
-    {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}},
     {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}},
     {name = "mineral-wool"},
     {name = "rope"},
-    {name = "cherry-wood"},
-    {name = "feather", sprite_variations = {name = "feather-pile", count = 4}},
-    {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}}
+    {name = "feather", sprite_variations = {name = "feather-pile", count = 4}}
 }
 
 Tirislib_Item.batch_create(material_items, {subgroup = "sosciencity-materials", stack_size = 200})

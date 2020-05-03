@@ -10,28 +10,7 @@ local idea_items = {
     {name = "well-funded-scientific-thesis"}
 }
 
-for index, details in pairs(idea_items) do
-    local item_prototype =
-        Tirislib_Item.create {
-        name = details.name,
-        icon = "__sosciencity-graphics__/graphics/icon/" .. details.name .. ".png",
-        icon_size = 64,
-        subgroup = "sosciencity-ideas",
-        order = string.format("%02d", index),
-        stack_size = 100
-    }
-
-    local variations = details.sprite_variations
-    if variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/" .. variations.name, variations.count)
-
-        if variations.include_icon then
-            item_prototype:add_icon_to_sprite_variations()
-        end
-    end
-
-    Tirislib_Tables.set_fields(item_prototype, details.distinctions)
-end
+Tirislib_Item.batch_create(idea_items, {subgroup = "sosciencity-ideas", stack_size = 100})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
