@@ -12,6 +12,9 @@ local animals = {
 Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
 
 ---------------------------------------------------------------------------------------------------
+-- << hunting recipes >>
+
+---------------------------------------------------------------------------------------------------
 -- << entities >>
 -- 'fish' entity to have ducks swimming on water bodies
 -- it seems like the factorio engine treads the order-string of the autoplace definition as some kind of ID, so I'm giving them a distinct one to be sure

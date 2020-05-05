@@ -56,6 +56,11 @@ function Tirislib_Item.create(prototype)
     return Tirislib_Item.get_by_name(prototype.name)
 end
 
+--- Creates a bunch of item prototypes.
+--- Item specification:
+--- name: name of the item prototype
+--- sprite_variations: sprite variations for the prototype to use
+--- distinctions: table of prototype fields that should be different from the batch specification
 function Tirislib_Item.batch_create(item_detail_array, batch_details)
     local prototype_type = batch_details.type or "item"
     local path = batch_details.icon_path or "__sosciencity-graphics__/graphics/icon/"

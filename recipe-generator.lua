@@ -261,6 +261,13 @@ function RG.create(details)
         (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
         Tirislib_Item.get_by_name(details.product)
 
+    if not product.name then
+        error(
+            "Tirislib RecipeGenerator was told to create a recipe for a non-existant item. A task it's unable to complete. The item's name is " ..
+                details.product
+        )
+    end
+
     local main_product = {
         type = details.product_type or "item",
         name = product.name,
@@ -285,13 +292,14 @@ function RG.create(details)
         results = {main_product},
         subgroup = product.subgroup,
         order = product.order,
-        main_product = product.name
+        main_product = product.name,
+        always_show_products = true
     }:create_difficulties()
 
     RG.add_ingredient_theme_range(recipe, details.themes)
 
     recipe:multiply_expensive_ingredients(details.expensive_multiplier or RG.expensive_multiplier)
-    recipe:set_expensive_field("energy_required", details.expensive_energy_multiplier or details.energy_required or 0.5)
+    recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)
 
