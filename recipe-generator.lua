@@ -249,8 +249,12 @@ end
 --- product_min: minimal amount of the main product (if the recipe should use a range)
 --- product_max: maximal amount of the main product (if the recipe should use a range)
 --- product_probability: probability of the main product
---- category: RecipeCategory of the recipe
+--- byproducts: array of ResultPrototypes
+--- expensive_byproducts: array of ResultPrototypes (defaults to the byproducts field)
+--- category: RecipeCategory of the recipe (defaults to "crafting")
 --- themes: array of ingredient themes
+--- ingredients: array of IngredientPrototypes
+--- expensive_ingredients: array of IngredientPrototypes (defaults to the ingredient field)
 --- expensive_multiplier: ingredient multiplier for expensive mode (defaults to a global value)
 --- energy_required: energy_required field for the recipe (defaults to 0.5)
 --- expensive_energy_required: energy_required field for the expensive recipe (defaults to energy_required)
@@ -297,6 +301,8 @@ function RG.create(details)
     }:create_difficulties()
 
     RG.add_ingredient_theme_range(recipe, details.themes)
+    recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
+    recipe:add_result_range(details.byproducts, details.expensive_byproducts)
 
     recipe:multiply_expensive_ingredients(details.expensive_multiplier or RG.expensive_multiplier)
     recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)

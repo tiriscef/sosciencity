@@ -3,8 +3,8 @@
 local flora_items = {
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
-    {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ"}},
-    {name = "cherry-wood", distinctions = {fuel_value = "1MJ"}}
+    {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
+    {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
 }
 
 Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
@@ -58,6 +58,13 @@ local farmables = {
         greenhouse = {
             product_min = 20,
             product_max = 30
+        }
+    },
+    ["tiriscefing-willow-wood"] = {
+        arboretum = {
+            energy_required = 100,
+            product_min = 5,
+            product_max = 15
         }
     }
 }

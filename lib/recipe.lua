@@ -4,7 +4,7 @@
 Tirislib_RecipeEntry = {}
 local Entries = Tirislib_RecipeEntry
 
-function Tirislib_RecipeEntry.convert_to_named_keys(entry)
+function Entries.convert_to_named_keys(entry)
     if entry[1] then
         entry.name = entry[1]
         entry[1] = nil
@@ -18,44 +18,43 @@ function Tirislib_RecipeEntry.convert_to_named_keys(entry)
     end
 end
 
-function Tirislib_RecipeEntry.get_name(entry)
+function Entries.get_name(entry)
     return entry.name or entry[1]
 end
 
-function Tirislib_RecipeEntry.set_name(entry, name)
-    if entry.name then
-        entry.name = name
-    end
+function Entries.set_name(entry, name)
     if entry[1] then
         entry[1] = name
+    else
+        entry.name = name
     end
 end
 
-function Tirislib_RecipeEntry.yields_item(entry)
+function Entries.yields_item(entry)
     if entry.type then
         return entry.type == "item"
     end
     return true
 end
 
-function Tirislib_RecipeEntry.yields_fluid(entry)
+function Entries.yields_fluid(entry)
     return (entry.type ~= nil) and (entry.type == "fluid")
 end
 
-function Tirislib_RecipeEntry.get_type(entry)
+function Entries.get_type(entry)
     return entry.type or "item"
 end
 
-function Tirislib_RecipeEntry.specify_same_stuff(entry1, entry2)
+function Entries.specify_same_stuff(entry1, entry2)
     return (Entries.get_name(entry1) == Entries.get_name(entry2)) and
         (Entries.get_type(entry1) == Entries.get_type(entry2))
 end
 
-function Tirislib_RecipeEntry.has_catalyst(entry)
+function Entries.has_catalyst(entry)
     return entry.catalyst_amount ~= nil
 end
 
-function Tirislib_RecipeEntry.get_ingredient_amount(entry)
+function Entries.get_ingredient_amount(entry)
     local ret = entry.amount or entry[2]
     if not ret then
         error("Sosciencity found a IngredientPrototype without a valid amount:\n" .. serpent.block(entry))
@@ -63,7 +62,7 @@ function Tirislib_RecipeEntry.get_ingredient_amount(entry)
     return ret
 end
 
-function Tirislib_RecipeEntry.add_result_amount(entry, min, max)
+function Entries.add_result_amount(entry, min, max)
     if not max or min == max then
         if entry.amount_min then
             entry.amount_min = entry.amount_min + min
@@ -86,7 +85,7 @@ function Tirislib_RecipeEntry.add_result_amount(entry, min, max)
     end
 end
 
-function Tirislib_RecipeEntry.add_ingredient_amount(entry, amount)
+function Entries.add_ingredient_amount(entry, amount)
     if entry.amount then
         entry.amount = entry.amount + amount
     elseif entry[2] then
@@ -96,7 +95,7 @@ function Tirislib_RecipeEntry.add_ingredient_amount(entry, amount)
     end
 end
 
-function Tirislib_RecipeEntry.multiply_ingredient_amount(entry, multiplier)
+function Entries.multiply_ingredient_amount(entry, multiplier)
     if entry.amount then
         entry.amount = entry.amount * multiplier
     elseif entry[2] then
@@ -106,7 +105,7 @@ function Tirislib_RecipeEntry.multiply_ingredient_amount(entry, multiplier)
     end
 end
 
-function Tirislib_RecipeEntry.ceil_ingredient_amount(entry)
+function Entries.ceil_ingredient_amount(entry)
     if entry.amount then
         entry.amount = math.ceil(entry.amount)
     elseif entry[2] then
@@ -116,7 +115,7 @@ function Tirislib_RecipeEntry.ceil_ingredient_amount(entry)
     end
 end
 
-function Tirislib_RecipeEntry.add_catalyst_amount(entry, amount)
+function Entries.add_catalyst_amount(entry, amount)
     entry.catalyst_amount = (entry.catalyst_amount or 0) + amount
 
     if entry[2] then
@@ -125,7 +124,7 @@ function Tirislib_RecipeEntry.add_catalyst_amount(entry, amount)
     end
 end
 
-function Tirislib_RecipeEntry.get_average_yield(entry)
+function Entries.get_average_yield(entry)
     local probability = entry.probability or 1
 
     if entry.amount_min then
@@ -136,16 +135,16 @@ function Tirislib_RecipeEntry.get_average_yield(entry)
     return amount * probability
 end
 
-function Tirislib_RecipeEntry.get_probability(entry)
+function Entries.get_probability(entry)
     return entry.probability or 1
 end
 
-function Tirislib_RecipeEntry.can_be_merged(entry1, entry2)
+function Entries.can_be_merged(entry1, entry2)
     return Entries.specify_same_stuff(entry1, entry2) and
         Entries.get_probability(entry1) == Entries.get_probability(entry2)
 end
 
-function Tirislib_RecipeEntry.merge_results(entry1, entry2)
+function Entries.merge_results(entry1, entry2)
     local min = entry2.amount_min or entry2.amount or entry2[2]
     local max = entry2.amount_max or entry2.amount or entry2[2]
 
@@ -267,7 +266,8 @@ local default_values = {
     always_show_products = false
 }
 
--- the prototype fields that the wiki calls "recipe data"
+--- The prototype fields that the wiki calls "recipe data".
+--- These are defined for each difficulty.
 local recipe_data_fields = {
     ingredients = true,
     result = true,
@@ -442,64 +442,129 @@ function Tirislib_Recipe:get_result_item_count(item_name)
     end
 end
 
-local function add_ingredient(recipe_data, ingredient_prototype)
-    -- check if the recipe already has an entry for this ingredient
-    for _, ingredient in pairs(recipe_data.ingredients) do
-        if Tirislib_RecipeEntry.specify_same_stuff(ingredient, ingredient_prototype) then
-            local ingredient_amount = Tirislib_RecipeEntry.get_ingredient_amount(ingredient_prototype)
-            Tirislib_RecipeEntry.add_ingredient_amount(ingredient, ingredient_amount)
+local function convert_to_results_table(recipe_data)
+    if recipe_data.result and not recipe_data.results then
+        recipe_data.results = {
+            {type = "item", name = recipe_data.result, amount = recipe_data.result_count or 1}
+        }
 
-            if Tirislib_RecipeEntry.has_catalyst(ingredient) and Tirislib_Recipe:has_catalyst(ingredient_prototype) then
-                Tirislib_RecipeEntry.add_catalyst_amount(ingredient, ingredient_prototype.catalyst_amount)
+        recipe_data.result = nil
+        recipe_data.result_count = nil
+    end
+end
+
+local function add_result(recipe_data, result)
+    convert_to_results_table(recipe_data)
+
+    for _, current_result in pairs(recipe_data_fields) do
+        if Entries.can_be_merged(current_result, result) then
+            Entries.merge_results(current_result, result)
+            return
+        end
+    end
+
+    table.insert(recipe_data.results, Tirislib_Tables.copy(result))
+end
+
+function Tirislib_Recipe:add_result(result, expensive_result)
+    if not self:has_difficulties() and result then
+        add_result(self, result)
+        return self
+    end
+
+    if self:has_normal_difficulty() and result then
+        add_result(self.normal, result)
+    end
+    if self:has_expensive_difficulty() then
+        add_result(self.expensive, expensive_result or result)
+    end
+    return self
+end
+
+local function add_results(recipe_data, results)
+    for _, entry in pairs(results) do
+        add_result(recipe_data, entry)
+    end
+end
+
+function Tirislib_Recipe:add_result_range(results, expensive_results)
+    if not results and not expensive_results then
+        return self
+    end
+
+    if not self:has_difficulties() and results then
+        add_results(self, results)
+        return self
+    end
+
+    if self:has_normal_difficulty() and results then
+        add_results(self.normal, results)
+    end
+    if self:has_expensive_difficulty() then
+        add_results(self.expensive, expensive_results or results)
+    end
+    return self
+end
+
+local function add_ingredient(recipe_data, ingredient)
+    -- check if the recipe already has an entry for this ingredient
+    for _, current_ingredient in pairs(recipe_data.ingredients) do
+        if Tirislib_RecipeEntry.specify_same_stuff(current_ingredient, ingredient) then
+            local ingredient_amount = Tirislib_RecipeEntry.get_ingredient_amount(ingredient)
+            Tirislib_RecipeEntry.add_ingredient_amount(current_ingredient, ingredient_amount)
+
+            if Tirislib_RecipeEntry.has_catalyst(current_ingredient) and Tirislib_RecipeEntry.has_catalyst(ingredient) then
+                Tirislib_RecipeEntry.add_catalyst_amount(current_ingredient, ingredient.catalyst_amount)
             end
             return
         end
     end
 
     -- create a copy to avoid reference bugs
-    table.insert(recipe_data.ingredients, Tirislib_Tables.copy(ingredient_prototype))
+    table.insert(recipe_data.ingredients, Tirislib_Tables.copy(ingredient))
 end
 
-function Tirislib_Recipe:add_ingredient(ingredient_prototype_normal, ingredient_prototype_expensive)
-    -- figuring out if this recipe has difficulties defined
+function Tirislib_Recipe:add_ingredient(ingredient, expensive_ingredient)
     if not self:has_difficulties() then
-        add_ingredient(self, ingredient_prototype_normal)
-    else
-        if ingredient_prototype_normal and self:has_normal_difficulty() then
-            add_ingredient(self.normal, ingredient_prototype_normal)
-        end
-        if self:has_expensive_difficulty() then
-            local ingredient_to_add = ingredient_prototype_expensive or ingredient_prototype_normal
-            add_ingredient(self.expensive, ingredient_to_add)
-        end
+        add_ingredient(self, ingredient)
+        return self
+    end
+
+    if ingredient and self:has_normal_difficulty() then
+        add_ingredient(self.normal, ingredient)
+    end
+    if self:has_expensive_difficulty() then
+        local ingredient_to_add = expensive_ingredient or ingredient
+        add_ingredient(self.expensive, ingredient_to_add)
     end
 
     return self
 end
 
-function Tirislib_Recipe:add_ingredient_range(ingredient_prototypes_normal, ingredient_prototypes_expensive)
-    if ingredient_prototypes_normal == nil and ingredient_prototypes_expensive == nil then
+function Tirislib_Recipe:add_ingredient_range(ingredients, expensive_ingredients)
+    if ingredients == nil and expensive_ingredients == nil then
         return self
     end
 
     if not self:has_difficulties() then
-        if ingredient_prototypes_normal then
-            for _, entry in pairs(ingredient_prototypes_normal) do
+        if ingredients then
+            for _, entry in pairs(ingredients) do
                 add_ingredient(self, entry)
             end
         end
-    else
-        if ingredient_prototypes_normal and self:has_normal_difficulty() then
-            for _, entry in pairs(ingredient_prototypes_normal) do
-                add_ingredient(self.normal, entry)
-            end
-        end
-        if self:has_expensive_difficulty() then
-            local ingredients = ingredient_prototypes_expensive or ingredient_prototypes_normal
+        return self
+    end
 
-            for _, entry in pairs(ingredients) do
-                add_ingredient(self.expensive, entry)
-            end
+    if ingredients and self:has_normal_difficulty() then
+        for _, entry in pairs(ingredients) do
+            add_ingredient(self.normal, entry)
+        end
+    end
+    if self:has_expensive_difficulty() then
+        local ingredients_to_do = expensive_ingredients or ingredients
+
+        for _, entry in pairs(ingredients_to_do) do
+            add_ingredient(self.expensive, entry)
         end
     end
 
