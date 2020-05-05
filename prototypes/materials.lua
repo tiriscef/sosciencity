@@ -58,16 +58,3 @@ Tirislib_Recipe.create {
     subgroup = "sosciencity-materials",
     order = "aac",
 }
-
-Tirislib_RecipeGenerator.create {
-    product = "plemnemm-cotton",
-    product_min = 1,
-    product_max = 40,
-    product_probability = 0.5,
-    category = "sosciencity-agriculture"
-}--[[
-Tirislib_RecipeGenerator.create_agriculture_recipe("plemnemm-cotton", 40)
-Tirislib_RecipeGenerator.create_greenhouse_recipe("plemnemm-cotton", 50)
-
-Tirislib_RecipeGenerator.create_arboretum_recipe("tiriscefing-willow-wood", 10)
-]]
