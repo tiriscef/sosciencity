@@ -46,6 +46,21 @@ local farmables = {
             product_max = 60
         }
     },
+    ["eggplant"] = {
+        general = {
+            energy_required = 150,
+            unlock = "nightshades"
+        },
+        agriculture = {
+            product_min = 5,
+            product_max = 50,
+            product_probability = 0.5
+        },
+        greenhouse = {
+            product_min = 40,
+            product_max = 60
+        }
+    },
     ["plemnemm-cotton"] = {
         general = {
             energy_required = 60
@@ -64,7 +79,8 @@ local farmables = {
         arboretum = {
             energy_required = 100,
             product_min = 5,
-            product_max = 15
+            product_max = 15,
+            byproducts = {{type = "item", name = "fawoxylas", amount = 2, probability = 0.5}}
         }
     }
 }
