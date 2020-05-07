@@ -252,7 +252,7 @@ function Tirislib_Entity:add_mining_result(mining_result)
 
     for _, result in pairs(minable.results) do
         if Tirislib_RecipeEntry.can_be_merged(result, mining_result) then
-            Tirislib_RecipeEntry.merge_results(result, mining_result)
+            Tirislib_RecipeEntry.merge(result, mining_result)
             return self
         end
     end

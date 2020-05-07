@@ -9,8 +9,12 @@ end
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local foods = {
     {name = "alien-meat", sprite_variations = {name = "alien-meat", count = 2, include_icon = true}},
-    {name = "potato", sprite_variations = {name = "potato-pile", count = 4}},
     {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
+    {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
+    {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
+    {name = "cherry", sprite_variations = {name = "cherry-pile", count = 3}},
+    {name = "olive"}, -- TODO sprite variations
+    {name = "potato", sprite_variations = {name = "potato-pile", count = 4}},
     {name = "tomato", sprite_variations = {name = "tomato-pile", count = 4}},
     {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},
     {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}}

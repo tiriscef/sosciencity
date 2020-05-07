@@ -4,7 +4,8 @@ local flora_items = {
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
+    {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
+    {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
 }
 
 Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
@@ -16,6 +17,40 @@ Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 -- << farming recipes >>
 --- Table with (product, table of recipe specification) pairs
 local farmables = {
+    ["brutal-pumpkin"] = {
+        general = {
+            energy_required = 100
+        },
+        agriculture = {
+            product_min = 5,
+            product_max = 50,
+            product_probability = 0.5
+        },
+        greenhouse = {
+            product_min = 40,
+            product_max = 60
+        }
+    },
+    ["cherry"] = {
+        general = {
+            energy_required = 20,
+            byproducts = {{type = "item", name = "cherry-wood", amount = 1, probability = 0.2}}
+        },
+        arboretum = {
+            product_probability = 0.5,
+        },
+        orangery = {}
+    },
+    ["olive"] = {
+        general = {
+            energy_required = 20,
+            byproducts = {{type = "item", name = "olive-wood", amount = 1, probability = 0.2}}
+        },
+        arboretum = {
+            product_probability = 0.5
+        },
+        orangery = {}
+    },
     ["potato"] = {
         general = {
             energy_required = 100,
@@ -77,10 +112,24 @@ local farmables = {
     },
     ["tiriscefing-willow-wood"] = {
         arboretum = {
-            energy_required = 100,
+            energy_required = 20,
             product_min = 5,
             product_max = 15,
             byproducts = {{type = "item", name = "fawoxylas", amount = 2, probability = 0.5}}
+        }
+    },
+    ["unnamed-fruit"] = {
+        general = {
+            energy_required = 100
+        },
+        agriculture = {
+            product_min = 5,
+            product_max = 50,
+            product_probability = 0.5
+        },
+        greenhouse = {
+            product_min = 40,
+            product_max = 60
         }
     }
 }

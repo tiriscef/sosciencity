@@ -144,7 +144,7 @@ function Entries.can_be_merged(entry1, entry2)
         Entries.get_probability(entry1) == Entries.get_probability(entry2)
 end
 
-function Entries.merge_results(entry1, entry2)
+function Entries.merge(entry1, entry2)
     local min = entry2.amount_min or entry2.amount or entry2[2]
     local max = entry2.amount_max or entry2.amount or entry2[2]
 
@@ -456,9 +456,9 @@ end
 local function add_result(recipe_data, result)
     convert_to_results_table(recipe_data)
 
-    for _, current_result in pairs(recipe_data_fields) do
+    for _, current_result in pairs(recipe_data.results) do
         if Entries.can_be_merged(current_result, result) then
-            Entries.merge_results(current_result, result)
+            Entries.merge(current_result, result)
             return
         end
     end

@@ -30,6 +30,54 @@ Food.values = {
         portion_size = 50,
         group = "unnamed-fruit"
     },
+    ["brutal-pumpkin"] = {
+        fat = 0.6,
+        carbohydrates = 6.9,
+        proteins = 0.6,
+        healthiness = 6,
+        food_category = "alien-vegetable",
+        taste_category = Taste.umami,
+        taste_quality = 4,
+        luxury = 2,
+        portion_size = 50,
+        group = "brutal-pumpkin"
+    },
+    ["blue-grapes"] = {
+        fat = 0.3,
+        carbohydrates = 17,
+        proteins = 0.6,
+        healthiness = 6,
+        food_category = "fruit",
+        taste_category = Taste.sweet,
+        taste_quality = 7,
+        luxury = 5,
+        portion_size = 50,
+        group = "grapes"
+    },
+    ["cherry"] = {
+        fat = 0.4,
+        carbohydrates = 12,
+        proteins = 1,
+        healthiness = 7,
+        food_category = "fruit",
+        taste_category = Taste.sweet,
+        taste_quality = 7,
+        luxury = 4,
+        portion_size = 50,
+        group = "cherry"
+    },
+    ["olive"] = {
+        fat = 11,
+        carbohydrates = 6,
+        proteins = 0.8,
+        healthiness = 7,
+        food_category = "fruit",
+        taste_category = Taste.salty,
+        taste_quality = 7,
+        luxury = 6,
+        portion_size = 50,
+        group = "olive"
+    },
     ["potato"] = {
         fat = 0.5,
         carbohydrates = 17,
