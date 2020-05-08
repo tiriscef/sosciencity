@@ -14,6 +14,7 @@ local foods = {
     {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
     {name = "cherry", sprite_variations = {name = "cherry-pile", count = 3}},
     {name = "olive"}, -- TODO sprite variations
+    {name = "bell-pepper", sprite_variations = {name = "bell-pepper-pile", count = 4}},
     {name = "potato", sprite_variations = {name = "potato-pile", count = 4}},
     {name = "tomato", sprite_variations = {name = "tomato-pile", count = 4}},
     {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},

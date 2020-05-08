@@ -21,22 +21,22 @@ local RG = Tirislib_RecipeGenerator
 RG.ingredient_themes = {
     agriculture = {
         {
-            {type = "fluid", name = "water", amount = 500}
+            {type = "fluid", name = "water", amount = 5}
         }
     },
     greenhouse = {
         {
-            {type = "fluid", name = "water", amount = 500}
+            {type = "fluid", name = "water", amount = 5}
         }
     },
     arboretum = {
         {
-            {type = "fluid", name = "water", amount = 100}
+            {type = "fluid", name = "water", amount = 5}
         }
     },
     orangery = {
         {
-            {type = "fluid", name = "water", amount = 100}
+            {type = "fluid", name = "water", amount = 5}
         }
     },
     building = {
