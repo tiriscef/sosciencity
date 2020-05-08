@@ -153,18 +153,20 @@ function Tirislib_Tables.contains_key(tbl, key)
     return tbl[key] ~= nil
 end
 
-function Tirislib_Tables.merge(lh, rh)
-    for _, value in pairs(rh) do
-        lh[#lh + 1] = value
-    end
-
-    return lh
-end
-
 function Tirislib_Tables.set_fields(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
             tbl[key] = value
+        end
+    end
+
+    return tbl
+end
+
+function Tirislib_Tables.set_fields_passively(tbl, fields)
+    if fields ~= nil then
+        for key, value in pairs(fields) do
+            tbl[key] = tbl[key] or value
         end
     end
 
@@ -183,6 +185,14 @@ function Tirislib_Tables.copy_fields(tbl, fields)
     end
 
     return tbl
+end
+
+function Tirislib_Tables.merge(lh, rh)
+    for _, value in pairs(rh) do
+        lh[#lh + 1] = value
+    end
+
+    return lh
 end
 
 function Tirislib_Tables.merge_arrays(lh, rh)

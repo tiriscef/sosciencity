@@ -17,6 +17,14 @@ Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 -- << farming recipes >>
 --- Table with (product, table of recipe specification) pairs
 local farmables = {
+    ["bell-pepper"] = {
+        general = {
+            energy_required = 100,
+            unlock = "nightshades"
+        },
+        agriculture = {},
+        greenhouse = {}
+    },
     ["brutal-pumpkin"] = {
         general = {
             energy_required = 100
@@ -36,9 +44,7 @@ local farmables = {
             energy_required = 20,
             byproducts = {{type = "item", name = "cherry-wood", amount = 1, probability = 0.2}}
         },
-        arboretum = {
-            product_probability = 0.5,
-        },
+        arboretum = {},
         orangery = {}
     },
     ["olive"] = {
@@ -46,9 +52,7 @@ local farmables = {
             energy_required = 20,
             byproducts = {{type = "item", name = "olive-wood", amount = 1, probability = 0.2}}
         },
-        arboretum = {
-            product_probability = 0.5
-        },
+        arboretum = {},
         orangery = {}
     },
     ["potato"] = {
@@ -58,8 +62,7 @@ local farmables = {
         },
         agriculture = {
             product_min = 5,
-            product_max = 50,
-            product_probability = 0.5
+            product_max = 50
         },
         greenhouse = {
             product_min = 40,
@@ -73,8 +76,7 @@ local farmables = {
         },
         agriculture = {
             product_min = 5,
-            product_max = 50,
-            product_probability = 0.5
+            product_max = 50
         },
         greenhouse = {
             product_min = 40,
@@ -88,8 +90,7 @@ local farmables = {
         },
         agriculture = {
             product_min = 5,
-            product_max = 50,
-            product_probability = 0.5
+            product_max = 50
         },
         greenhouse = {
             product_min = 40,
@@ -102,8 +103,7 @@ local farmables = {
         },
         agriculture = {
             product_min = 10,
-            product_max = 20,
-            product_probability = 0.5
+            product_max = 20
         },
         greenhouse = {
             product_min = 20,
@@ -113,6 +113,7 @@ local farmables = {
     ["tiriscefing-willow-wood"] = {
         arboretum = {
             energy_required = 20,
+            product_probability = 1,
             product_min = 5,
             product_max = 15,
             byproducts = {{type = "item", name = "fawoxylas", amount = 2, probability = 0.5}}
@@ -124,8 +125,7 @@ local farmables = {
         },
         agriculture = {
             product_min = 5,
-            product_max = 50,
-            product_probability = 0.5
+            product_max = 50
         },
         greenhouse = {
             product_min = 40,
@@ -134,22 +134,42 @@ local farmables = {
     }
 }
 
--- generation code that should minimize repeating
+local farm_specific_defaults = {
+    agriculture = {
+        product_probability = 0.5
+    },
+    arboretum = {
+        product_probability = 0.5
+    },
+    greenhouse = {},
+    orangery = {}
+}
+
+-- generation code that should minimize dublications
 local function get_category_theme(category, specification)
     return {{category, specification.energy_required or 0.5, specification.level}}
 end
 
-local function get_general_table(product)
-    return farmables[product]["general"] or {}
+local function merge_with_category_specification(specification, category)
+    local category_table = farm_specific_defaults[category]
+    Tirislib_Tables.set_fields_passively(specification, category_table)
+
+    specification.themes =
+        Tirislib_Tables.merge_arrays(specification.themes or {}, get_category_theme(category, specification))
+end
+
+local function merge_with_product_specification(specification, product)
+    local general_table = farmables[product]["general"]
+
+    Tirislib_Tables.set_fields(specification, general_table)
 end
 
 local function create_farming_recipe(product, category, specification)
-    Tirislib_Tables.set_fields(specification, get_general_table(product))
+    merge_with_product_specification(specification, product)
+    merge_with_category_specification(specification, category)
 
     specification.product = product
     specification.category = "sosciencity-" .. category
-    specification.themes =
-        Tirislib_Tables.merge_arrays(specification.themes or {}, get_category_theme(category, specification))
 
     Tirislib_RecipeGenerator.create(specification)
 end

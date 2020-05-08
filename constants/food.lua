@@ -78,6 +78,18 @@ Food.values = {
         portion_size = 50,
         group = "olive"
     },
+    ["bell-pepper"] = {
+        fat = 0.2,
+        carbohydrates = 8,
+        proteins = 2,
+        healthiness = 6,
+        food_category = "vegetable",
+        taste_category = Taste.spicy,
+        taste_quality = 7,
+        luxury = 4,
+        portion_size = 50,
+        group = "bell-pepper"
+    },
     ["potato"] = {
         fat = 0.5,
         carbohydrates = 17,
