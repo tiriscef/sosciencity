@@ -288,5 +288,6 @@ Tirislib_Entity.create {
                 }
             }
         }
-    }
+    },
+    localised_name = {"item-name.farm"}
 }:set_size(15, 7):copy_localisation_from_item()

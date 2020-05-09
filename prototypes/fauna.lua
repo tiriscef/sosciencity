@@ -41,7 +41,8 @@ Tirislib_Entity.create {
     autoplace = {
         order = "sosciencity-a",
         influence = 0.01
-    }
+    },
+    localised_name = {"item-name.primal-quacker"}
 }
 
 Tirislib_Entity.create {
@@ -67,5 +68,6 @@ Tirislib_Entity.create {
     autoplace = {
         order = "sosciencity-b",
         influence = 0.005
-    }
+    },
+    localised_name = {"item-name.nan-swan"}
 }
