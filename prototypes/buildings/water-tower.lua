@@ -112,5 +112,6 @@ Tirislib_Entity.create {
             shift = {0, -1},
             scale = 0.5
         }
-    }
+    },
+    localised_name = {"item-name.water-tower"}
 }:set_size(3, 3)

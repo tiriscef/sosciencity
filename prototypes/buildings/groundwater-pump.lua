@@ -110,5 +110,6 @@ Tirislib_Entity.create {
             shift = {0.5, -1},
             scale = 0.5
         }
-    }
+    },
+    localised_name = {"item-name.groundwater-pump"}
 }:set_size(3, 3)
