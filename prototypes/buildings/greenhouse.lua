@@ -154,5 +154,6 @@ Tirislib_Entity.create {
             shift = {0.0, -1.0},
             scale = 0.5
         }
-    }
+    },
+    localised_name = {"item-name.greenhouse"}
 }:set_size(15, 15)
