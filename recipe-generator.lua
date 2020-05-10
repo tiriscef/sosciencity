@@ -260,6 +260,7 @@ end
 --- expensive_energy_required: energy_required field for the expensive recipe (defaults to energy_required)
 --- unlock: technology that unlocks the recipe
 --- additional_fields: other fields that should be set for the recipe
+--- allow_productivity: bool
 function RG.create(details)
     local product =
         (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
@@ -310,6 +311,10 @@ function RG.create(details)
     recipe:add_unlock(details.unlock)
 
     recipe:set_fields(details.additional_fields)
+
+    if details.allow_productivity then
+        recipe:allow_productivity_modules()
+    end
 
     return recipe
 end
