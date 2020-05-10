@@ -30,6 +30,8 @@ local item_production
 local highlights
 local castes = Castes.values
 
+local Scheduler = Scheduler
+
 local speakers = Speakers
 local allowed_speakers
 local function generate_speakers_list()
@@ -328,14 +330,27 @@ end
 local function log_population(current_tick)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << speakers >>
+local FOLLOWUP_DELAY = 120 -- 2 seconds
+
 local function say(speaker, locale_key)
     game.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
+
+    if speakers[speaker].lines_with_followup[locale_key] then
+        Scheduler.plan_event("say", game.tick + FOLLOWUP_DELAY, locale_key .. "f")
+    end
 end
 Scheduler.set_event("say", say)
 
 local function tell(player, speaker, locale_key)
     player.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
+
+    if speakers[speaker].lines_with_followup[locale_key] then
+        Scheduler.plan_event("tell", player, speaker, locale_key .. "f")
+    end
 end
+Scheduler.set_event("tell", tell)
 
 function Communication.say_welcome(player)
     tell(player, "tiriscef.", "welcome")
@@ -370,11 +385,6 @@ function Communication.useless_banter()
     local index = global.past_banter_index
     global.past_banter[index] = line_index
     global.past_banter_index = (index < 8) and (index + 1) or 1
-
-    if speaker.lines_with_followup[line] then
-        -- schedule the followup in 2 seconds (120 ticks)
-        Scheduler.plan_event("say", game.tick + 120, speaker_name, line .. "f")
-    end
 
     say(speaker_name, line)
 end
