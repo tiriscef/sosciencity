@@ -9,5 +9,5 @@
     "dependencies": [
         "sosciencity-graphics"
     ],
-    "description": "TODO"
+    "description": "Adds citizens to the game. Attract various castes to your city in order to progress the game."
 }

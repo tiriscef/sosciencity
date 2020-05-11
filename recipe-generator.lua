@@ -242,6 +242,40 @@ function RG.add_ingredient_theme_range(recipe, themes)
     end
 end
 
+local function get_product(details)
+    local product =
+        (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
+        Tirislib_Item.get_by_name(details.product)
+
+    if not product.name then
+        error(
+            "Tirislib RecipeGenerator was told to create a recipe for a non-existant item. A task it's unable to complete. The item's name is " ..
+                details.product
+        )
+    end
+
+    return product
+end
+
+local function get_main_product_entry(product, details)
+    local main_product = {
+        type = details.product_type or "item",
+        name = product.name,
+        probability = details.product_probability
+    }
+
+    if details.product_amount then
+        main_product.amount = details.product_amount
+    elseif details.product_min then
+        main_product.amount_min = details.product_min
+        main_product.amount_max = details.product_max
+    else
+        main_product.amount = 1
+    end
+
+    return main_product
+end
+
 --- Creates a dynamic recipe.
 --- product: name of the main product
 --- product_type: type of the main product (defaults to "item")
@@ -262,31 +296,8 @@ end
 --- additional_fields: other fields that should be set for the recipe
 --- allow_productivity: bool
 function RG.create(details)
-    local product =
-        (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
-        Tirislib_Item.get_by_name(details.product)
-
-    if not product.name then
-        error(
-            "Tirislib RecipeGenerator was told to create a recipe for a non-existant item. A task it's unable to complete. The item's name is " ..
-                details.product
-        )
-    end
-
-    local main_product = {
-        type = details.product_type or "item",
-        name = product.name,
-        probability = details.product_probability
-    }
-
-    if details.product_amount then
-        main_product.amount = details.product_amount
-    elseif details.product_min then
-        main_product.amount_min = details.product_min
-        main_product.amount_max = details.product_max
-    else
-        main_product.amount = 1
-    end
+    local product = get_product(details)
+    local main_product = get_main_product_entry(product, details)
 
     local recipe =
         Tirislib_Recipe.create {
