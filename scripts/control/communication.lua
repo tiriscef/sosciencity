@@ -334,20 +334,20 @@ end
 -- << speakers >>
 local FOLLOWUP_DELAY = 120 -- 2 seconds
 
-local function say(speaker, locale_key)
-    game.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
+local function say(speaker, line)
+    game.print {"", {speaker .. "prefix"}, {speaker .. line}}
 
-    if speakers[speaker].lines_with_followup[locale_key] then
-        Scheduler.plan_event("say", game.tick + FOLLOWUP_DELAY, locale_key .. "f")
+    if speakers[speaker].lines_with_followup[line] then
+        Scheduler.plan_event("say", game.tick + FOLLOWUP_DELAY, speaker, line .. "f")
     end
 end
 Scheduler.set_event("say", say)
 
-local function tell(player, speaker, locale_key)
-    player.print {"", {speaker .. "prefix"}, {speaker .. locale_key}}
+local function tell(player, speaker, line)
+    player.print {"", {speaker .. "prefix"}, {speaker .. line}}
 
-    if speakers[speaker].lines_with_followup[locale_key] then
-        Scheduler.plan_event("tell", player, speaker, locale_key .. "f")
+    if speakers[speaker].lines_with_followup[line] then
+        Scheduler.plan_event("tell", game.tick + FOLLOWUP_DELAY, player, speaker, line .. "f")
     end
 end
 Scheduler.set_event("tell", tell)
