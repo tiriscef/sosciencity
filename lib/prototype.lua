@@ -1,5 +1,14 @@
 Tirislib_Prototype = {}
 
+--- Removes all of my metatables so other mods don't call them accidentally.
+local function remove_metatables()
+    for _, prototypes in pairs(data.raw) do
+        for _, prototype in pairs(prototypes) do
+            setmetatable(prototype, nil)
+        end
+    end
+end
+
 -- gets the prototype of the specified type (or one of the specified types) out of data.raw
 -- returns an empty table if no one was found, so that I can manipulate prototypes without
 -- checking if they exist
@@ -23,6 +32,7 @@ function Tirislib_Prototype.create(prototype)
 
     return Tirislib_Prototype.get(prototype.type, prototype.name)
 end
+ --
 
 --[[
     Some functions (mainly those who make changes to another prototype which might not
@@ -32,8 +42,7 @@ end
 
     A call to finish_postponed will iterate repeatedly over the table and execute the
     stored functions.
-]] --
-Tirislib_Prototype.postponed_functions = {}
+]] Tirislib_Prototype.postponed_functions = {}
 
 function Tirislib_Prototype.postpone(func)
     table.insert(Tirislib_Prototype.postponed_functions, func)
@@ -78,6 +87,8 @@ end
 function Tirislib_Prototype.finish()
     Tirislib_Prototype.finish_postponed()
     Tirislib_Prototype.finish_productivity_modules()
+
+    remove_metatables()
 end
 
 function Tirislib_Prototype.get_unique_name(name, _type)

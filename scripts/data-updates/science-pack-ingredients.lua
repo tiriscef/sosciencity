@@ -16,6 +16,7 @@ function conditionally_add_ingredient(recipe, details)
 
         local ingredient_amount = recipe:get_result_item_count(details.item) * details.amount_factor
         recipe:add_ingredient {type = details.type, name = details.item_to_add, amount = ingredient_amount}
+        recipe:ceil_ingredients()
     end
 end
 
