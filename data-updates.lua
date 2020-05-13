@@ -37,3 +37,5 @@ for _, controller in Tirislib_Entity.pairs("god-controller") do
     -- technically a god controller isn't an entity, but adding a category works the same for them
     controller:add_crafting_category("handcrafting")
 end
+
+Tirislib_Prototype.finish()

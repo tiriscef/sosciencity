@@ -594,7 +594,7 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
         if self:has_normal_difficulty() then
             remove_ingredient(self.normal, ingredient_name, ingredient_type)
         end
-        if self.has_expensive_difficulty() then
+        if self:has_expensive_difficulty() then
             remove_ingredient(self.expensive, ingredient_name, ingredient_type)
         end
     end
