@@ -11,11 +11,9 @@ Tirislib_ItemArray = {}
 Tirislib_ItemArray.__index = Tirislib_PrototypeArray.__index
 
 -- << getter functions >>
+local item_types = require("lib.prototype-types.item-types")
 function Tirislib_Item.get_by_name(name)
-    local item_types = require("lib.prototype-types.item-types")
-    local new = Tirislib_Prototype.get(item_types, name)
-    setmetatable(new, Tirislib_Item)
-    return new
+    return Tirislib_Prototype.get(item_types, name, Tirislib_Item)
 end
 
 function Tirislib_Item.get_from_prototype(prototype)

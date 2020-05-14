@@ -11,11 +11,9 @@ Tirislib_EntityArray = {}
 Tirislib_EntityArray.__index = Tirislib_PrototypeArray.__index
 
 -- << getter functions >>
+local entity_types = require("lib.prototype-types.entity-types")
 function Tirislib_Entity.get_by_name(name)
-    local entity_types = require("lib.prototype-types.entity-types")
-    local new = Tirislib_Prototype.get(entity_types, name)
-    setmetatable(new, Tirislib_Entity)
-    return new
+    return Tirislib_Prototype.get(entity_types, name, Tirislib_Entity)
 end
 
 function Tirislib_Entity.get_from_prototype(prototype)

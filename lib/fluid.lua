@@ -7,9 +7,7 @@ Tirislib_Fluid = {}
 Tirislib_Fluid.__index = Tirislib_Fluid
 
 function Tirislib_Fluid.get_by_name(name)
-    local new = Tirislib_Prototype.get("fluid", name)
-    setmetatable(new, Tirislib_Fluid)
-    return new
+    return Tirislib_Prototype.get("fluid", name, Tirislib_Fluid)
 end
 
 function Tirislib_Fluid.get_from_prototype(prototype)
