@@ -1,18 +1,4 @@
 ---------------------------------------------------------------------------------------------------
--- << static class for technology effects >>
-Tirislib_TechnologyEffect = {}
-
-function Tirislib_TechnologyEffect:equal(effect1, effect2)
-    for key, value in pairs(effect1) do
-        if value ~= effect2[key] then
-            return false
-        end
-    end
-
-    return true
-end
-
----------------------------------------------------------------------------------------------------
 -- << class for technologies >>
 Tirislib_Technology = {}
 
@@ -21,9 +7,7 @@ Tirislib_Technology = {}
 Tirislib_Technology.__index = Tirislib_Technology
 
 function Tirislib_Technology.get_by_name(name)
-    local new = Tirislib_Prototype.get("technology", name)
-    setmetatable(new, Tirislib_Technology)
-    return new
+    return Tirislib_Prototype.get("technology", name, Tirislib_Technology)
 end
 
 function Tirislib_Technology.get_from_prototype(prototype)
@@ -70,7 +54,7 @@ function Tirislib_Technology:add_effect(effect)
 
     -- check if the Technology already has this effect
     for _, current_effect in pairs(self.effects) do
-        if Tirislib_TechnologyEffect:equal(effect, current_effect) then
+        if Tirislib_Tables.equal(effect, current_effect) then
             -- return without doing anything in this case
             return self
         end

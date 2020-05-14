@@ -105,13 +105,16 @@ function Entries.multiply_ingredient_amount(entry, multiplier)
     end
 end
 
-function Entries.ceil_ingredient_amount(entry)
+function Entries.transform_amount(entry, fn)
     if entry.amount then
-        entry.amount = math.ceil(entry.amount)
+        entry.amount = fn(entry.amount)
     elseif entry[2] then
-        entry[2] = math.ceil(entry[2])
+        entry[2] = fn(entry[2])
+    elseif entry.amount_min then
+        entry.amount_min = fn(entry.amount_min)
+        entry.amount_max = fn(entry.amount_max)
     else
-        error("Sosciencity found a IngredientPrototype without a valid amount:\n" .. serpent.block(entry))
+        error("Sosciencity found a RecipeEntry without a valid amount:\n" .. serpent.block(entry))
     end
 end
 
@@ -161,9 +164,7 @@ Tirislib_Recipe.__index = Tirislib_Recipe
 
 -- << getter functions >>
 function Tirislib_Recipe.get_by_name(name)
-    local new = Tirislib_Prototype.get("recipe", name)
-    setmetatable(new, Tirislib_Recipe)
-    return new
+    return Tirislib_Prototype.get("recipe", name, Tirislib_Recipe)
 end
 
 function Tirislib_Recipe.get_from_prototype(prototype)
@@ -710,12 +711,60 @@ end
 
 local function ceil_ingredient_amounts(recipe_data)
     for _, ingredient in pairs(recipe_data.ingredients) do
-        Tirislib_RecipeEntry.ceil_ingredient_amount(ingredient)
+        Entries.transform_amount(ingredient, math.ceil)
     end
 end
 
 function Tirislib_Recipe:ceil_ingredients()
     self:call_on_recipe_data(ceil_ingredient_amounts)
+
+    return self
+end
+
+local function floor_savely(n)
+    return math.max(math.floor(n), 1)
+end
+
+local function floor_ingredient_amounts(recipe_data)
+    for _, ingredient in pairs(recipe_data.results) do
+        Entries.transform_amount(ingredient, floor_savely)
+    end
+end
+
+function Tirislib_Recipe:floor_ingredients()
+    self:call_on_recipe_data(floor_ingredient_amounts)
+
+    return self
+end
+
+local function ceil_result_amounts(recipe_data)
+    if recipe_data.results then
+        for _, result in pairs(recipe_data.results) do
+            Entries.transform_amount(result, math.ceil)
+        end
+    elseif recipe_data.result_count then
+        recipe_data.result_count = math.ceil(recipe_data.result_count)
+    end
+end
+
+function Tirislib_Recipe:ceil_results()
+    self:call_on_recipe_data(ceil_result_amounts)
+
+    return self
+end
+
+local function floor_result_amounts(recipe_data)
+    if recipe_data.results then
+        for _, result in pairs(recipe_data.results) do
+            Entries.transform_amount(result, floor_savely)
+        end
+    elseif recipe_data.result_count then
+        recipe_data.result_count = floor_savely(recipe_data.result_count)
+    end
+end
+
+function Tirislib_Recipe:floor_results()
+    self:call_on_recipe_data(floor_result_amounts)
 
     return self
 end

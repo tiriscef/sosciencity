@@ -202,7 +202,7 @@ local function get_nearest_level(theme_definition, level)
     return ret
 end
 
-local function get_theme_ingredients(name, level)
+local function get_theme_definition(name, level)
     local ret
 
     local theme_definition = RG.ingredient_themes[name]
@@ -215,30 +215,57 @@ local function get_theme_ingredients(name, level)
     return ret and Tirislib_Tables.recursive_copy(ret)
 end
 
-function RG.add_ingredient_theme(recipe, theme)
+function RG.add_ingredient_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local level = theme[3] or 1
+    local level = theme[3] or default_level or 1
 
-    local ingredients = get_theme_ingredients(name, level)
+    local theme_definition = get_theme_definition(name, level)
+    if not theme_definition then
+        return
+    end
+
+    for _, entry in pairs(theme_definition) do
+        entry.amount = entry.amount * amount
+    end
+
+    recipe:add_ingredient_range(theme_definition)
+end
+
+function RG.add_ingredient_theme_range(recipe, themes, default_level)
+    if themes then
+        for _, theme in pairs(themes) do
+            RG.add_ingredient_theme(recipe, theme, default_level)
+        end
+
+        recipe:floor_ingredients()
+    end
+end
+
+function RG.add_result_theme(recipe, theme, default_level)
+    local name = theme[1]
+    local amount = theme[2]
+    local level = theme[3] or default_level or 1
+
+    local ingredients = get_theme_definition(name, level)
     if not ingredients then
         return
     end
 
-    for _, ingredient in pairs(ingredients) do
-        ingredient.amount = ingredient.amount * amount
+    for _, entry in pairs(ingredients) do
+        entry.amount = entry.amount * amount
     end
 
-    recipe:add_ingredient_range(ingredients)
+    recipe:add_result_range(ingredients)
 end
 
-function RG.add_ingredient_theme_range(recipe, themes)
+function RG.add_result_theme_range(recipe, themes, default_level)
     if themes then
         for _, theme in pairs(themes) do
-            RG.add_ingredient_theme(recipe, theme)
+            RG.add_result_theme(recipe, theme, default_level)
         end
 
-        recipe:ceil_ingredients()
+        recipe:floor_results()
     end
 end
 
@@ -247,7 +274,7 @@ local function get_product(details)
         (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
         Tirislib_Item.get_by_name(details.product)
 
-    if not product.name then
+    if Tirislib_Prototype.is_dummy(product) then
         error(
             "Tirislib RecipeGenerator was told to create a recipe for a non-existant item. A task it's unable to complete. The item's name is " ..
                 details.product
@@ -286,7 +313,9 @@ end
 --- byproducts: array of ResultPrototypes
 --- expensive_byproducts: array of ResultPrototypes (defaults to the byproducts field)
 --- category: RecipeCategory of the recipe (defaults to "crafting")
---- themes: array of ingredient themes
+--- themes: array of themes
+--- result_themes: array of themes
+--- default_theme_level: number
 --- ingredients: array of IngredientPrototypes
 --- expensive_ingredients: array of IngredientPrototypes (defaults to the ingredient field)
 --- expensive_multiplier: ingredient multiplier for expensive mode (defaults to a global value)
@@ -312,7 +341,11 @@ function RG.create(details)
         always_show_products = true
     }:create_difficulties()
 
-    RG.add_ingredient_theme_range(recipe, details.themes)
+    -- theme defined
+    RG.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
+    RG.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
+
+    -- explicit defined
     recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
     recipe:add_result_range(details.byproducts, details.expensive_byproducts)
 

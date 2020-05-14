@@ -13,28 +13,46 @@ local furniture_items = {
     {name = "refrigerator"}
 }
 
-for index, details in pairs(furniture_items) do
-    local item_prototype =
-        Tirislib_Item.create {
-        name = details.name,
-        icon = "__sosciencity-graphics__/graphics/icon/" .. details.name .. ".png",
-        icon_size = 64,
-        subgroup = "sosciencity-furniture",
-        order = string.format("%03d", index),
-        stack_size = 100
-    }
-
-    local variations = details.sprite_variations
-    if variations then
-        item_prototype:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/" .. variations.name, variations.count)
-
-        if variations.include_icon then
-            item_prototype:add_icon_to_sprite_variations()
-        end
-    end
-
-    Tirislib_Tables.set_fields(item_prototype, details.distinctions)
-end
+Tirislib_Item.batch_create(furniture_items, {subgroup = "sosciencity-furniture", stack_size = 100})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+Tirislib_RecipeGenerator.create {
+    product = "air-conditioner"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "bed"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "carpet"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "chair"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "cupboard"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "curtain"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "refrigerator"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "sofa"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "stove"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "table"
+}

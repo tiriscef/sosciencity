@@ -53,6 +53,32 @@ end
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 
+function Tirislib_Tables.equal(lh, rh)
+    if type(lh) ~= "table" or type(rh) ~= "table" then
+        return false
+    end
+
+    for k, v in pairs(lh) do
+        if type(v) == "table" then
+            if not Tirislib_Tables.equal(v, rh[k]) then
+                return false
+            end
+        else
+            if v ~= rh[k] then
+                return false
+            end
+        end
+    end
+
+    for k in pairs(rh) do
+        if lh[k] == nil then
+            return false
+        end
+    end
+
+    return true
+end
+
 function Tirislib_Tables.count(tbl)
     local count = 0
 

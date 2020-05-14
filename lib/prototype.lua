@@ -9,22 +9,44 @@ local function remove_metatables()
     end
 end
 
--- gets the prototype of the specified type (or one of the specified types) out of data.raw
--- returns an empty table if no one was found, so that I can manipulate prototypes without
--- checking if they exist
-function Tirislib_Prototype.get(prototype_type, name)
+local function nothing()
+end
+
+local dummy_metatable = {
+    __index = function()
+        return nothing
+    end
+}
+
+local dummy_prototype = {}
+setmetatable(dummy_prototype, dummy_metatable)
+
+function Tirislib_Prototype.is_dummy(prototype)
+    return prototype == dummy_prototype
+end
+
+--- Gets the prototype of the specified type (or one of the specified types) out of data.raw.
+--- Returns a dummy prototype if no one was found, so that I can manipulate prototypes without
+--- checking if they exist.
+function Tirislib_Prototype.get(prototype_type, name, mt)
+    local res
     if type(prototype_type) == "string" then
-        return data.raw[prototype_type][name] or {}
+        res = data.raw[prototype_type][name]
     elseif type(prototype_type) == "table" then
         for _, ctype in pairs(prototype_type) do
-            local res = data.raw[ctype][name]
+            res = data.raw[ctype][name]
             if res then
-                return res
+                break
             end
         end
     end
 
-    return {}
+    if res then
+        setmetatable(res, mt)
+        return res
+    else
+        return dummy_prototype
+    end
 end
 
 function Tirislib_Prototype.create(prototype)
@@ -32,17 +54,14 @@ function Tirislib_Prototype.create(prototype)
 
     return Tirislib_Prototype.get(prototype.type, prototype.name)
 end
- --
 
---[[
-    Some functions (mainly those who make changes to another prototype which might not
-    yet be created) might postpone their execution.
-    So they will add a table with all the necessary data and a execute-function to the
-    Prototype.postpones_functions table.
-
-    A call to finish_postponed will iterate repeatedly over the table and execute the
-    stored functions.
-]] Tirislib_Prototype.postponed_functions = {}
+--- Some functions (mainly those who make changes to another prototype which might not
+--- yet be created) might postpone their execution.
+--- So they will add a table with all the necessary data and a execute-function to the
+--- Prototype.postpones_functions table.
+--- A call to finish_postponed will iterate repeatedly over the table and execute the
+--- stored functions.
+Tirislib_Prototype.postponed_functions = {}
 
 function Tirislib_Prototype.postpone(func)
     table.insert(Tirislib_Prototype.postponed_functions, func)
