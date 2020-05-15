@@ -31,6 +31,7 @@ local highlights
 local castes = Castes.values
 
 local Scheduler = Scheduler
+local Tirislib_Tables = Tirislib_Tables
 
 local speakers = Speakers
 local allowed_speakers
