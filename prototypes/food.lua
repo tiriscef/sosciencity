@@ -18,7 +18,8 @@ local foods = {
     {name = "potato", sprite_variations = {name = "potato-pile", count = 4}},
     {name = "tomato", sprite_variations = {name = "tomato-pile", count = 4}},
     {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},
-    {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}}
+    {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}},
+    {name = "avocado", sprite_variations = {name = "avocado-pile", count = 4}}
 }
 
 -- add the food values to the... prototype prototype
