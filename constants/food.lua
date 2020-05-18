@@ -137,6 +137,18 @@ Food.values = {
         luxury = 6,
         portion_size = 50,
         group = "fawoxylas"
+    },
+    ["avocado"] = {
+        fat = 15,
+        carbohydrates = 9,
+        proteins = 2,
+        healthiness = 8,
+        food_category = "vegetable",
+        taste_category = Taste.neutral,
+        taste_quality = 8,
+        luxury = 8,
+        portion_size = 50,
+        group = "avocado"
     }
 }
 

@@ -5,7 +5,8 @@ local flora_items = {
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
+    {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
+    {name = "avocado-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
 }
 
 Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
@@ -17,6 +18,14 @@ Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 -- << farming recipes >>
 --- Table with (product, table of recipe specification) pairs
 local farmables = {
+    ["avocado"] = {
+        general = {
+            energy_required = 30,
+            byproducts = {{type = "item", name = "avocado-wood", amount = 1, probability = 0.2}}
+        },
+        arboretum = {},
+        orangery = {}
+    },
     ["bell-pepper"] = {
         general = {
             energy_required = 100,
