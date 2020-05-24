@@ -10,7 +10,8 @@ local furniture_items = {
     {name = "curtain", sprite_variations = {name = "curtain-on-belt", count = 4}},
     {name = "air-conditioner"},
     {name = "stove"},
-    {name = "refrigerator"}
+    {name = "refrigerator"},
+    {name = "painting", sprite_variations = {name = "painting-on-belt", count = 6}}
 }
 
 Tirislib_Item.batch_create(furniture_items, {subgroup = "sosciencity-furniture", stack_size = 100})
@@ -39,6 +40,10 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "curtain"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "painting"
 }
 
 Tirislib_RecipeGenerator.create {
