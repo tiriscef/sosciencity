@@ -6,9 +6,14 @@ Housing = {}
 Housing.values = {
     ["test-house"] = {
         room_count = 200,
-        tech_level = 0,
         comfort = 10,
         caste = Type.clockwork, -- caste which likes this kind of housing
+        caste_bonus = 2
+    },
+    ["improvised-hut"] = {
+        room_count = 4,
+        comfort = 0,
+        caste = Type.clockwork,
         caste_bonus = 2
     }
 }
