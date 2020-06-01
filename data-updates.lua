@@ -32,10 +32,12 @@ end
 -- this is in data-updates to give other mods a chance to add their own characters and or god controllers
 for _, character in Tirislib_Entity.pairs("character") do
     character:add_crafting_category("handcrafting")
+    character:add_crafting_category("sosciencity-architecture")
 end
 for _, controller in Tirislib_Entity.pairs("god-controller") do
     -- technically a god controller isn't an entity, but adding a category works the same for them
     controller:add_crafting_category("handcrafting")
+    controller:add_crafting_category("sosciencity-architecture")
 end
 
 Tirislib_Prototype.finish()

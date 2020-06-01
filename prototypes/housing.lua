@@ -13,6 +13,48 @@ local data_details = {
         width = 5,
         height = 3,
         tech_level = 0
+    },
+    ["improvised-hut"] = {
+        picture = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-1.png",
+                    priority = "high",
+                    width = 96,
+                    height = 96,
+                    shift = {0.5, -0.5},
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-hr-1.png",
+                        priority = "high",
+                        width = 192,
+                        height = 192,
+                        shift = {0.5, -0.5},
+                        scale = 0.5
+                    }
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-1.png",
+                    priority = "high",
+                    width = 96,
+                    height = 96,
+                    shift = {0.5, -0.5},
+                    draw_as_shadow = true,
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-hr-1.png",
+                        priority = "high",
+                        width = 192,
+                        height = 192,
+                        shift = {0.5, -0.5},
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        width = 2,
+        height = 2,
+        tech_level = 0,
+        improvised = true
     }
 }
 
@@ -63,7 +105,8 @@ for house_name, house in pairs(Housing.values) do
     Tirislib_RecipeGenerator.create {
         product = house_name,
         themes = ingredient_themes,
-        unlock = housing_unlocking_tech[tech_level]
+        unlock = housing_unlocking_tech[tech_level],
+        category = "sosciencity-architecture"
     }
 
     Tirislib_Entity.create {

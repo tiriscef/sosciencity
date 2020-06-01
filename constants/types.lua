@@ -147,7 +147,7 @@ local lookup_by_name = {
 function Types.load()
     -- add the houses to the lookup table
     for name in pairs(Housing.values) do
-        lookup_by_name[name] = Type.null
+        lookup_by_name[name] = Type.empty_house
     end
 
     -- add the functional buildings to the lookup table
