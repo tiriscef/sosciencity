@@ -20,14 +20,14 @@ local data_details = {
                 {
                     filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-1.png",
                     priority = "high",
-                    width = 96,
-                    height = 96,
+                    width = 128,
+                    height = 128,
                     shift = {0.5, -0.5},
                     hr_version = {
                         filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-hr-1.png",
                         priority = "high",
-                        width = 192,
-                        height = 192,
+                        width = 256,
+                        height = 256,
                         shift = {0.5, -0.5},
                         scale = 0.5
                     }
@@ -35,15 +35,15 @@ local data_details = {
                 {
                     filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-1.png",
                     priority = "high",
-                    width = 96,
-                    height = 96,
+                    width = 128,
+                    height = 128,
                     shift = {0.5, -0.5},
                     draw_as_shadow = true,
                     hr_version = {
                         filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-hr-1.png",
                         priority = "high",
-                        width = 192,
-                        height = 192,
+                        width = 256,
+                        height = 256,
                         shift = {0.5, -0.5},
                         scale = 0.5,
                         draw_as_shadow = true
@@ -51,8 +51,8 @@ local data_details = {
                 }
             }
         },
-        width = 2,
-        height = 2,
+        width = 3,
+        height = 3,
         tech_level = 0,
         improvised = true
     }
@@ -73,10 +73,11 @@ local function get_inventory_size(house)
     return 10 * math.floor(math.log(house.room_count, 10))
 end
 
-for house_name, house in pairs(Housing.values) do
-    local orderstring = string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
-    local details = data_details[house_name]
+local function get_order(house)
+    return string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
+end
 
+local function create_item(house_name, house, details)
     local item_prototype =
         Tirislib_Item.create {
         type = "item",
@@ -84,7 +85,7 @@ for house_name, house in pairs(Housing.values) do
         icon = "__sosciencity-graphics__/graphics/icon/" .. house_name .. ".png",
         icon_size = 64,
         subgroup = "sosciencity-housing",
-        order = orderstring,
+        order = get_order(house),
         stack_size = details.stack_size or 20,
         place_result = house_name,
         localised_description = {
@@ -97,9 +98,11 @@ for house_name, house in pairs(Housing.values) do
         }
     }
 
-    local tech_level = details.tech_level
     Tirislib_Tables.set_fields(item_prototype, details.distinctions)
+end
 
+local function create_recipe(house_name, house, details)
+    local tech_level = details.tech_level
     local ingredient_themes = {{"buildinger", house.room_count, tech_level}}
 
     Tirislib_RecipeGenerator.create {
@@ -108,15 +111,18 @@ for house_name, house in pairs(Housing.values) do
         unlock = housing_unlocking_tech[tech_level],
         category = "sosciencity-architecture"
     }
+end
 
-    Tirislib_Entity.create {
+local function create_entity(house_name, house, details)
+    local entity =
+        Tirislib_Entity.create {
         type = "container",
         name = house_name,
-        order = orderstring,
+        order = get_order(house),
         icon = "__sosciencity-graphics__/graphics/icon/" .. house_name .. ".png",
         icon_size = 64,
         flags = {"placeable-neutral", "player-creation"},
-        minable = {mining_time = 0.5, result = house_name},
+        minable = {mining_time = 0.5},
         max_health = 500,
         corpse = "small-remnants", -- TODO
         open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65}, -- TODO sounds
@@ -131,4 +137,19 @@ for house_name, house in pairs(Housing.values) do
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13
     }:set_size(details.width, details.height)
+
+    if not details.improvised then
+        entity:add_mining_result({name = house_name, amount = 1})
+    end
+end
+
+for house_name, house in pairs(Housing.values) do
+    local details = data_details[house_name]
+
+    if not details.improvised then
+        create_item(house_name, house, details)
+        create_recipe(house_name, house, details)
+    end
+
+    create_entity(house_name, house, details)
 end

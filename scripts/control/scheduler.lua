@@ -39,6 +39,7 @@ local event_lookup = {}
 --- @param name any
 --- @param fn function
 function Scheduler.set_event(name, fn)
+    Tirislib_Utils.desync_protection()
     event_lookup[name] = fn
 end
 
@@ -55,16 +56,12 @@ local function get_update_index(tick)
     return ceil(tick / 10)
 end
 
---- Schedules an event of the given name for the given tick
+--- Schedules an event of the given name after the given amount of ticks.
 --- (or up to 9 ticks later because the system checks once every 10 ticks).
 --- @param name any
---- @param tick integer
-function Scheduler.plan_event(name, tick, ...)
-    local current_tick = game.tick
-    if tick < current_tick then
-        error("Sosciencity got confused with its grasp on linear time and tried to schedule an event for the past.")
-    end
-
+--- @param ticks integer
+function Scheduler.plan_event_in(name, ticks, ...)
+    local tick = game.tick + ticks
     local index = get_update_index(tick)
     local schedule_table = schedule[index]
 
@@ -74,6 +71,21 @@ function Scheduler.plan_event(name, tick, ...)
     end
 
     schedule_table[#schedule_table + 1] = {name, {...}}
+end
+local schedule_in = Scheduler.plan_event_in
+
+--- Schedules an event of the given name for the given tick
+--- (or up to 9 ticks later because the system checks once every 10 ticks).
+--- @param name any
+--- @param tick integer
+function Scheduler.plan_event(name, tick, ...)
+    local current_tick = game.tick
+    local ticks = tick - current_tick
+    if ticks <= 0 then
+        error("Sosciencity got confused with its grasp on linear time and tried to schedule an event for the past.")
+    end
+
+    schedule_in(name, ticks, ...)
 end
 
 --- Looks for and fires all planned events for this update cycle.

@@ -105,5 +105,7 @@ Tirislib_Entity.create {
     selection_box = nil,
     collision_box = nil,
     icon = "__sosciencity-graphics__/graphics/empty-caste.png",
-    icon_size = 256
+    icon_size = 256,
+    localised_name = {"entity-name.hidden-entity"},
+    localised_description = {"entity-description.hidden-entity"}
 }

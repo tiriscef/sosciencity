@@ -43,6 +43,12 @@ function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
     return max(dist_x, dist_y)
 end
 
+function Tirislib_Utils.desync_protection()
+    if game then
+        error("A function that is supposed to only be called during the control initialization stage got called at a later stage.")
+    end
+end
+
 --<< Just some string helper functions >>
 Tirislib_String = {}
 
