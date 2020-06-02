@@ -29,13 +29,14 @@ Tirislib_Entity.create {
     },
     picture = {
         layers = {
+            -- TODO low res sprites
             {
                 filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-hr.png",
                 priority = "high",
                 width = 384,
                 height = 384,
                 shift = {0.5, -0.5},
-                scale = 0.5
+                scale = 0.5 * 0.8
             },
             {
                 filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-shadowmap-hr.png",
@@ -43,7 +44,7 @@ Tirislib_Entity.create {
                 width = 384,
                 height = 384,
                 shift = {0.5, -0.5},
-                scale = 0.5,
+                scale = 0.5 * 0.8,
                 draw_as_shadow = true
             }
         }
@@ -51,7 +52,7 @@ Tirislib_Entity.create {
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(5, 5):copy_localisation_from_item()
+}:set_size(4, 4):copy_localisation_from_item()
 
 Tirislib_Entity.create {
     type = "corpse",
@@ -71,14 +72,15 @@ Tirislib_Entity.create {
         width = 192,
         height = 192,
         shift = {0.5, -0.5},
+        scale = 0.8,
         hr_version = {
             filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-remnants-hr.png",
             direction_count = 1,
             width = 384,
             height = 384,
             shift = {0.5, -0.5},
-            scale = 0.5
+            scale = 0.5 * 0.8
         }
     },
     localised_name = {"item-name.trash-site"}
-}:set_size(5, 5)
+}:set_size(4, 4)

@@ -521,7 +521,8 @@ local remove_from_house = Inhabitants.remove_from_house
 
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
 --- @param entry Entry
-function Inhabitants.remove_house(entry, unit_number)
+function Inhabitants.remove_house(entry)
+    local unit_number = entry[EK.unit_number]
     unemploy_all_inhabitants(entry)
     houses_with_free_capacity[entry[EK.type]][unit_number] = nil
     remove_from_house(entry, entry[EK.inhabitants])
@@ -579,7 +580,6 @@ function Inhabitants.update_house(entry, delta_ticks)
     local caste_id = entry[EK.type]
     local caste_values = castes[caste_id]
 
-    local old_happiness = entry[EK.happiness]
     local happiness_summands = entry[EK.happiness_summands]
     local happiness_factors = entry[EK.happiness_factors]
 
@@ -725,7 +725,7 @@ function Inhabitants.do_an_immigration_wave(immigration_port)
     for caste = 1, #immigration do
         local to_immigrate = ceil(percentage * immigration(caste))
         local actually_immigrated
-        
+        -- TODO
     end
 
     Communication.immigration_wave()
@@ -789,7 +789,7 @@ end
 
 --- Initializes the given entry so it can work as an housing entry.
 --- @param entry Entry
-function Inhabitants.establish_house(caste_id, entry, unit_number)
+function Inhabitants.establish_house(entry)
     entry[EK.happiness] = 0
     entry[EK.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
     entry[EK.happiness_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessFactor), 1.)
@@ -813,6 +813,8 @@ function Inhabitants.establish_house(caste_id, entry, unit_number)
     entry[EK.ill] = 0
     entry[EK.illnesses] = {}
 
+    local caste_id = entry[EK.type]
+    local unit_number = entry[EK.unit_number]
     houses_with_free_capacity[caste_id][unit_number] = unit_number
 end
 

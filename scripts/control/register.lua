@@ -86,6 +86,7 @@ local on_creation_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_creation_handler(_type, fn)
+    Tirislib_Utils.desync_protection()
     on_creation_lookup[_type] = fn
 end
 
@@ -104,6 +105,7 @@ local on_copy_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_copy_handler(_type, fn)
+    Tirislib_Utils.desync_protection()
     on_copy_lookup[_type] = fn
 end
 
@@ -121,6 +123,7 @@ local update_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_updater(_type, fn)
+    Tirislib_Utils.desync_protection()
     update_lookup[_type] = fn
 end
 
@@ -140,6 +143,7 @@ local on_destroyed_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_destruction_handler(_type, fn)
+    Tirislib_Utils.desync_protection()
     on_destroyed_lookup[_type] = fn
 end
 
@@ -152,8 +156,8 @@ local function on_destruction(_type, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << general building systems >>
-local function init_general_building(entry)
+-- << custom building systems >>
+local function init_custom_building(entry)
     local building_details = get_building_details(entry)
 
     if not building_details then
@@ -169,7 +173,7 @@ local function init_general_building(entry)
     entry[EK.range] = building_details.range
 end
 
-local function destroy_general_building(entry)
+local function destroy_custom_building(entry)
     local building_details = get_building_details(entry)
 
     if not building_details then
@@ -183,7 +187,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
-
 local function add_entry_to_register(entry)
     local unit_number = entry[EK.unit_number]
 
@@ -245,7 +248,7 @@ function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
     local entry = new_entry(entity, _type)
 
-    init_general_building(entry)
+    init_custom_building(entry)
     add_subentities(entry)
     establish_new_neighbor(entry)
     on_creation(_type, entry)
@@ -272,7 +275,7 @@ end
 function Register.remove_entry(entry)
     local _type = entry[EK.type]
 
-    destroy_general_building(entry)
+    destroy_custom_building(entry)
     on_destruction(_type, entry)
     remove_subentities(entry)
     unsubscribe_neighborhood(entry)
