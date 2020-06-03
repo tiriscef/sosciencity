@@ -55,6 +55,49 @@ local data_details = {
         height = 3,
         tech_level = 0,
         improvised = true
+    },
+    ["improvised-hut-2"] = {
+        picture = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-2.png",
+                    priority = "high",
+                    width = 128,
+                    height = 128,
+                    shift = {0.5, -0.5},
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-hr-2.png",
+                        priority = "high",
+                        width = 256,
+                        height = 256,
+                        shift = {0.5, -0.5},
+                        scale = 0.5
+                    }
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-2.png",
+                    priority = "high",
+                    width = 128,
+                    height = 128,
+                    shift = {0.5, -0.5},
+                    draw_as_shadow = true,
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-hr-2.png",
+                        priority = "high",
+                        width = 256,
+                        height = 256,
+                        shift = {0.5, -0.5},
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        width = 3,
+        height = 3,
+        tech_level = 0,
+        icon = "improvised-hut",
+        improvised = true
     }
 }
 
@@ -70,7 +113,7 @@ local housing_unlocking_tech = {
 }
 
 local function get_inventory_size(house)
-    return 10 * math.floor(math.log(house.room_count, 10))
+    return 5 * math.ceil(math.log(house.room_count, 10))
 end
 
 local function get_order(house)
@@ -82,7 +125,7 @@ local function create_item(house_name, house, details)
         Tirislib_Item.create {
         type = "item",
         name = house_name,
-        icon = "__sosciencity-graphics__/graphics/icon/" .. house_name .. ".png",
+        icon = "__sosciencity-graphics__/graphics/icon/" .. (details.icon or house_name) .. ".png",
         icon_size = 64,
         subgroup = "sosciencity-housing",
         order = get_order(house),
@@ -119,7 +162,7 @@ local function create_entity(house_name, house, details)
         type = "container",
         name = house_name,
         order = get_order(house),
-        icon = "__sosciencity-graphics__/graphics/icon/" .. house_name .. ".png",
+        icon = "__sosciencity-graphics__/graphics/icon/" .. (details.icon or house_name) .. ".png",
         icon_size = 64,
         flags = {"placeable-neutral", "player-creation"},
         minable = {mining_time = 0.5},
@@ -146,6 +189,7 @@ end
 for house_name, house in pairs(Housing.values) do
     local details = data_details[house_name]
 
+    -- TODO this doesn't work for alternatives of not improvised houses do far
     if not details.improvised then
         create_item(house_name, house, details)
         create_recipe(house_name, house, details)
