@@ -166,6 +166,7 @@ local energy_density_fat = 9 -- kcal per g
 local energy_density_carbohydrates = 4
 local energy_density_proteins = 3.7
 
+-- values postprocessing
 for _, food in pairs(Food.values) do
     -- convert nutrients from g per 100g to kcal per 100g
     food.fat = food.fat * energy_density_fat
