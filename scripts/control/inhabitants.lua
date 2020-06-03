@@ -818,6 +818,7 @@ function Inhabitants.establish_house(entry)
     houses_with_free_capacity[caste_id][unit_number] = unit_number
 end
 
+-- Set event handlers for the housing entities.
 for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_creation_handler(caste, Inhabitants.establish_house)
     Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
