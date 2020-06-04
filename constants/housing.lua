@@ -41,17 +41,6 @@ function Housing.allowes_caste(house, caste_id)
     return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)
 end
 
---- Evaluates the effect of the housing on its inhabitants.
---- @param entry Entry
-function Housing.evaluate(entry, happiness_summands, sanity_summands)
-    local housing = get_housing(entry)
-    happiness_summands[HappinessSummand.housing] = housing.comfort
-    sanity_summands[SanitySummand.housing] = housing.comfort
-
-    happiness_summands[HappinessSummand.suitable_housing] =
-        (entry[EK.type] == housing.caste) and housing.caste_bonus or 0
-end
-
 -- values postprocessing
 do
     local to_add = {}
