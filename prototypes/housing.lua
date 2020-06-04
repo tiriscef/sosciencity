@@ -1,6 +1,7 @@
 require("constants.housing")
 require("constants.castes")
 
+-- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local data_details = {
     ["test-house"] = {
         picture = {
@@ -12,7 +13,8 @@ local data_details = {
         },
         width = 5,
         height = 3,
-        tech_level = 0
+        tech_level = 0,
+        placeable_by = "test-house"
     },
     ["improvised-hut"] = {
         picture = {
@@ -53,8 +55,7 @@ local data_details = {
         },
         width = 3,
         height = 3,
-        tech_level = 0,
-        improvised = true
+        tech_level = 0
     },
     ["improvised-hut-2"] = {
         picture = {
@@ -96,8 +97,7 @@ local data_details = {
         width = 3,
         height = 3,
         tech_level = 0,
-        icon = "improvised-hut",
-        improvised = true
+        icon = "improvised-hut"
     }
 }
 
@@ -181,16 +181,15 @@ local function create_entity(house_name, house, details)
         circuit_wire_max_distance = 13
     }:set_size(details.width, details.height)
 
-    if not details.improvised then
-        entity:add_mining_result({name = house_name, amount = 1})
+    if details.placeable_by then
+        entity:add_mining_result({name = details.placeable_by, amount = 1})
     end
 end
 
 for house_name, house in pairs(Housing.values) do
     local details = data_details[house_name]
 
-    -- TODO this doesn't work for alternatives of not improvised houses do far
-    if not details.improvised then
+    if details.placeable_by == house_name then
         create_item(house_name, house, details)
         create_recipe(house_name, house, details)
     end

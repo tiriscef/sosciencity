@@ -51,7 +51,6 @@ local produce_garbage = Inventories.produce_garbage
 local get_garbage_value = Inventories.get_garbage_value
 
 local get_housing = Housing.get
-local evaluate_housing = Housing.evaluate
 local get_free_capacity = Housing.get_free_capacity
 
 local set_power_usage = Subentities.set_power_usage
@@ -571,6 +570,17 @@ end
 
 local function get_garbage_influence(entry)
     return max(get_garbage_value(entry) - 20, 0) * (-0.1)
+end
+
+--- Evaluates the effect of the housing on its inhabitants.
+--- @param entry Entry
+local function evaluate_housing(entry, happiness_summands, sanity_summands)
+    local housing = get_housing(entry)
+    happiness_summands[HappinessSummand.housing] = housing.comfort
+    sanity_summands[SanitySummand.housing] = housing.comfort
+
+    happiness_summands[HappinessSummand.suitable_housing] =
+        (entry[EK.type] == housing.caste) and housing.caste_bonus or 0
 end
 
 --- Updates the given housing entry.
