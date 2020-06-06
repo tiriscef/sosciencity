@@ -86,7 +86,7 @@ local function update_immigration_port(entry, delta_ticks, current_tick)
     if current_tick >= tick_next_wave then
         local building_details = get_building_details(entry)
         if Inventories.try_remove_item_range(entry, building_details.materials) then
-            Inhabitants.do_an_immigration_wave(building_details)
+            Inhabitants.migration_wave(building_details)
         end
 
         schedule_immigration_wave(entry, building_details)

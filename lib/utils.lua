@@ -358,3 +358,13 @@ function Tirislib_Tables.pick_n_random_keys(tbl, n)
 
     return ret
 end
+
+function Tirislib_Tables.sequence(start, finish)
+    local ret = {}
+
+    for i = 0, finish - start do
+        ret[i + 1] = start + i
+    end
+
+    return ret
+end
