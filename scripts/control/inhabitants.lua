@@ -26,6 +26,9 @@ Inhabitants = {}
     global.fear: float (fear level)
 
     global.last_fear_event: tick
+
+    global.homeless: table
+        [caste_id]: InhabitantGroup
 ]]
 -- local often used functions for enormous performance gains
 local global
@@ -63,6 +66,8 @@ local max = math.max
 local min = math.min
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
+local copy = Tirislib_Tables.copy
+local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
 
 local function set_locals()
@@ -75,8 +80,139 @@ local function set_locals()
     next_houses = global.next_houses
 end
 
+local function new_caste_table()
+    return {
+        [Type.clockwork] = 0,
+        [Type.orchid] = 0,
+        [Type.gunfire] = 0,
+        [Type.ember] = 0,
+        [Type.foundry] = 0,
+        [Type.gleam] = 0,
+        [Type.aurora] = 0,
+        [Type.plasma] = 0
+    }
+end
+
+--- Initialize the inhabitants related contents of global.
+function Inhabitants.init()
+    global = _ENV.global
+
+    global.fear = 0
+    global.population = new_caste_table()
+    global.effective_population = new_caste_table()
+    global.caste_bonuses = new_caste_table()
+    global.immigration = new_caste_table()
+    global.houses_with_free_capacity = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    global.next_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    global.homeless = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+
+    set_locals()
+end
+
+--- Sets local references during on_load
+function Inhabitants.load()
+    set_locals()
+end
+
 ---------------------------------------------------------------------------------------------------
--- << caste bonus functions >>
+-- << diseases >>
+--- Object class for holding the diseases of a group of inhabitants.
+IllnessGroup = {}
+-- TODO disease implementation
+function IllnessGroup.new(count)
+    return {{count}}
+end
+
+function IllnessGroup.merge(lh, rh)
+
+end
+
+function IllnessGroup.take(group, count)
+
+end
+
+---------------------------------------------------------------------------------------------------
+-- << inhabitant groups >>
+--- Object class for holding groups of inhabitants outside of the housing.
+InhabitantGroup = {}
+
+--<< inhabitant keys >>
+InhabitantGroup.caste = 1
+InhabitantGroup.count = 2
+InhabitantGroup.happiness = 3
+InhabitantGroup.health = 4
+InhabitantGroup.sanity = 5
+InhabitantGroup.illnesses = 6
+
+local DEFAULT_HAPPINESS = 10
+local DEFAULT_HEALTH = 10
+local DEFAULT_SANITY = 10
+
+--- Constructs a new InhabitantGroup object
+function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses)
+    return {
+        [InhabitantGroup.caste] = caste,
+        [InhabitantGroup.count] = count or 0,
+        [InhabitantGroup.happiness] = happiness or DEFAULT_HAPPINESS,
+        [InhabitantGroup.health] = health or DEFAULT_HEALTH,
+        [InhabitantGroup.sanity] = sanity or DEFAULT_SANITY,
+        [InhabitantGroup.illnesses] = illnesses or IllnessGroup.new(count or 0)
+    }
+end
+local new_group = InhabitantGroup.new
+
+function InhabitantGroup.from_housing(entry)
+    return {
+        [InhabitantGroup.caste] = entry[EK.type],
+        [InhabitantGroup.count] = entry[EK.inhabitants],
+        [InhabitantGroup.happiness] = entry[EK.happiness],
+        [InhabitantGroup.health] = entry[EK.health],
+        [InhabitantGroup.sanity] = entry[EK.sanity],
+        [InhabitantGroup.illnesses] = entry[EK.illnesses]
+    }
+end
+
+function InhabitantGroup.can_be_merged(lh, rh)
+    return lh[InhabitantGroup.caste] == rh[InhabitantGroup.caste]
+end
+
+function InhabitantGroup.merge(lh, rh)
+    local count_left = lh[InhabitantGroup.count]
+    local count_right = rh[InhabitantGroup.count]
+
+    lh[InhabitantGroup.count] = count_left + count_right
+
+    lh[InhabitantGroup.happiness] = weighted_average(lh[InhabitantGroup.happiness], count_left, rh[InhabitantGroup.happiness], count_right)
+    lh[InhabitantGroup.health] = weighted_average(lh[InhabitantGroup.health], count_left, rh[InhabitantGroup.health], count_right)
+    lh[InhabitantGroup.sanity] = weighted_average(lh[InhabitantGroup.sanity], count_left, rh[InhabitantGroup.sanity], count_right)
+
+    lh[InhabitantGroup.illnesses] = IllnessGroup.merge(lh[InhabitantGroup.illnesses], rh[InhabitantGroup.illnesses])
+end
+
+function InhabitantGroup.take(group, count)
+    local existing_count = group[InhabitantGroup.count]
+    local taken_count = min(existing_count, count)
+
+    group[InhabitantGroup.count] = existing_count - taken_count
+
+    local taken_illnesses = IllnessGroup.take(group[InhabitantGroup.illnesses])
+
+    local ret = copy(group)
+    ret[InhabitantGroup.count] = taken_count
+    ret[InhabitantGroup.illnesses] = taken_illnesses
+    return ret
+end
+
+---------------------------------------------------------------------------------------------------
+-- << castes >>
+
+--- Checks if the given caste has been researched by the player.
+--- @param caste_id Type
+function Inhabitants.caste_is_researched(caste_id)
+    return global.technologies[castes[caste_id].tech_name]
+end
+local is_researched = Inhabitants.caste_is_researched
+
 --- Returns the total number of inhabitants.
 function Inhabitants.get_population_count()
     return array_sum(population)
@@ -214,6 +350,7 @@ end
 -- On the housing side there is a table with the occupations of the inhabitants.
 -- If they work at a manufactory, then the occupation is a (manufactory, count) pair.
 
+--- Returns the number of employable inhabitants living in the housing entry.
 function Inhabitants.get_employable_count(entry)
     return entry[EK.inhabitants] - entry[EK.employed] - entry[EK.ill]
 end
@@ -340,13 +477,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
 
---- Checks if the given caste has been researched by the player.
---- @param caste_id Type
-function Inhabitants.caste_is_researched(caste_id)
-    return global.technologies[castes[caste_id].tech_name]
-end
-local is_researched = Inhabitants.caste_is_researched
-
 local function get_effective_population_multiplier(happiness)
     return happiness * 0.1
 end
@@ -390,10 +520,6 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     end
 end
 
-local DEFAULT_HAPPINESS = 10
-local DEFAULT_HEALTH = 10
-local DEFAULT_SANITY = 10
-
 --- Tries to add the specified amount of inhabitants to the house-entry.
 --- Returns the number of inhabitants that were added.
 --- @param entry Entry
@@ -410,7 +536,6 @@ function Inhabitants.try_add_to_house(entry, count, happiness, health, sanity)
 
     local caste_id = entry[EK.type]
     local inhabitants = entry[EK.inhabitants]
-
 
     happiness = happiness or DEFAULT_HAPPINESS
     health = health or DEFAULT_HEALTH
@@ -442,7 +567,7 @@ local function get_next_free_house(caste_id)
     if #next_houses_table == 0 then
         -- create the next free houses queue
         Tirislib_Tables.merge(next_houses_table, houses_with_free_capacity[caste_id])
-        Tirislib_Tables.shuffle(next_houses_table)
+        shuffle(next_houses_table)
 
         -- check if there are any free houses at all
         if #next_houses_table == 0 then
@@ -485,10 +610,6 @@ function Inhabitants.distribute_inhabitants(caste_id, count, happiness, health, 
 end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
-function Inhabitants.copy_house(source, destination)
-    try_add_to_house(destination, source[EK.inhabitants], source[EK.happiness], source[EK.health], source[EK.sanity])
-end
-
 --- Tries to remove the specified amount of inhabitants from the house-entry.
 --- Returns the number of inhabitants that were removed.
 --- @param entry Entry
@@ -518,14 +639,9 @@ function Inhabitants.remove_from_house(entry, count)
 end
 local remove_from_house = Inhabitants.remove_from_house
 
---- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
---- @param entry Entry
-function Inhabitants.remove_house(entry)
-    local unit_number = entry[EK.unit_number]
-    unemploy_all_inhabitants(entry)
-    houses_with_free_capacity[entry[EK.type]][unit_number] = nil
-    remove_from_house(entry, entry[EK.inhabitants])
-end
+---------------------------------------------------------------------------------------------------
+-- << housing update >>
+-- it's so complex, it got his own section
 
 --- Gets the trend toward the next inhabitant that moves out.
 function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
@@ -725,20 +841,22 @@ function Inhabitants.update_immigration(delta_ticks)
     end
 end
 
-function Inhabitants.do_an_immigration_wave(immigration_port)
-    local capacity = immigration_port.capacity
-    local immigrant_count = array_sum(immigration)
+function Inhabitants.migration_wave(immigration_port_details)
+    local capacity = immigration_port_details.capacity
+    local order = Tirislib_Tables.sequence(1, #immigration)
+    shuffle(order)
 
-    local percentage = max(capacity / immigrant_count, 1)
+    for i = 1, #immigration do
+        local immigrating = min(floor(immigration(i)), capacity)
+        local caste = order[i]
+        local integrated = immigrating - distribute_inhabitants(caste, immigrating)
 
-    local total_immigrated = 0
-    for caste = 1, #immigration do
-        local to_immigrate = ceil(percentage * immigration(caste))
-        local actually_immigrated
-        -- TODO
+        Inhabitants.add_homeless(new_group(caste, immigrating - integrated))
+
+        if capacity == 0 then
+            break
+        end
     end
-
-    Communication.immigration_wave()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -765,6 +883,7 @@ function Inhabitants.try_resettle(entry, unit_number)
 
     return resettled
 end
+
 ---------------------------------------------------------------------------------------------------
 -- << fear >>
 --- Lowers the population's fear over time. Assumes an update rate of 10 ticks.
@@ -795,7 +914,19 @@ function Inhabitants.add_casualty_fear(destroyed_house)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << general >>
+-- << homeless inhabitants >>
+local function create_improvised_huts(group)
+    local to_distribute = group[InhabitantGroup.count]
+end
+
+function Inhabitants.add_homeless(group)
+end
+
+function Inhabitants.update_homeless()
+end
+
+---------------------------------------------------------------------------------------------------
+-- << housing event handlers >>
 
 --- Initializes the given entry so it can work as an housing entry.
 --- @param entry Entry
@@ -828,45 +959,25 @@ function Inhabitants.establish_house(entry)
     houses_with_free_capacity[caste_id][unit_number] = unit_number
 end
 
+function Inhabitants.copy_house(source, destination)
+    try_add_to_house(destination, source[EK.inhabitants], source[EK.happiness], source[EK.health], source[EK.sanity])
+end
+
+--- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
+--- @param entry Entry
+function Inhabitants.remove_house(entry)
+    local unit_number = entry[EK.unit_number]
+    unemploy_all_inhabitants(entry)
+    houses_with_free_capacity[entry[EK.type]][unit_number] = nil
+    remove_from_house(entry, entry[EK.inhabitants])
+end
+
 -- Set event handlers for the housing entities.
 for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_creation_handler(caste, Inhabitants.establish_house)
     Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
     Register.set_entity_updater(caste, Inhabitants.update_house)
     Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
-end
-
-local function new_caste_table()
-    return {
-        [Type.clockwork] = 0,
-        [Type.orchid] = 0,
-        [Type.gunfire] = 0,
-        [Type.ember] = 0,
-        [Type.foundry] = 0,
-        [Type.gleam] = 0,
-        [Type.aurora] = 0,
-        [Type.plasma] = 0
-    }
-end
-
---- Initialize the inhabitants related contents of global.
-function Inhabitants.init()
-    global = _ENV.global
-
-    global.fear = 0
-    global.population = new_caste_table()
-    global.effective_population = new_caste_table()
-    global.caste_bonuses = new_caste_table()
-    global.immigration = new_caste_table()
-    global.houses_with_free_capacity = Tirislib_Tables.new_array_of_arrays(8)
-    global.next_houses = Tirislib_Tables.new_array_of_arrays(8)
-
-    set_locals()
-end
-
---- Sets local references during on_load
-function Inhabitants.load()
-    set_locals()
 end
 
 return Inhabitants

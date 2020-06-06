@@ -41,6 +41,8 @@ require("scripts.control.gui")
 ---@class Entry
 ---@class Player
 ---@class Type
+---@class InhabitantGroup
+---@class DiseaseGroup
 
 ---------------------------------------------------------------------------------------------------
 -- local all the frequently called functions for miniscule performance gains
@@ -63,6 +65,7 @@ local entity_update_cycle = Register.entity_update_cycle
 
 local update_caste_bonuses = Inhabitants.update_caste_bonuses
 local update_immigration = Inhabitants.update_immigration
+local update_homeless = Inhabitants.update_homeless
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 local update_scheduler = Scheduler.update
@@ -78,6 +81,7 @@ local function update_cycle()
     ease_fear(current_tick)
     entity_update_cycle(current_tick)
     update_immigration(10) -- the time between update_cycles is always 10 ticks
+    update_homeless()
     update_caste_bonuses()
     update_city_info()
     update_details_view()
