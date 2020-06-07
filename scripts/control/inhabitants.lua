@@ -61,12 +61,14 @@ local has_power = Subentities.has_power
 
 local floor = math.floor
 local ceil = math.ceil
+local round = Tirislib_Utils.round
 local sqrt = math.sqrt
 local max = math.max
 local min = math.min
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
 local copy = Tirislib_Tables.copy
+local equals = Tirislib_Tables.equal
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
 
@@ -118,17 +120,84 @@ end
 -- << diseases >>
 --- Object class for holding the diseases of a group of inhabitants.
 IllnessGroup = {}
--- TODO disease implementation
+
+local HEALTHY = {}
+IllnessGroup.healthy = 1
+IllnessGroup.diseases = 1
+IllnessGroup.count = 2
+
 function IllnessGroup.new(count)
-    return {{count}}
+    return {{{}, count}}
+end
+local new_illness_group = IllnessGroup.new
+
+function IllnessGroup.add_persons(group, count, diseases)
+    diseases = diseases or HEALTHY
+
+    for i = 1, #group do
+        local entry = group[i]
+        if equals(entry[IllnessGroup.diseases], diseases) then
+            entry[IllnessGroup.count] = entry[IllnessGroup.count] + count
+            return
+        end
+    end
+
+    group[#group + 1] = {diseases, count}
+end
+local add_persons = IllnessGroup.add_persons
+
+local function remove_empty_disease_entries(group)
+    for i = 2, #group do
+        if group[i][IllnessGroup.count] == 0 then
+            group[i] = group[#group]
+            group[#group] = nil
+        end
+    end
+end
+
+function IllnessGroup.remove_persons(group, count, diseases)
+    diseases = diseases or HEALTHY
+    for i = 1, #group do
+
+    end
 end
 
 function IllnessGroup.merge(lh, rh)
-
+    for i = 1, #rh do
+        local entry = rh[i]
+        add_persons(lh, entry[IllnessGroup.count], entry[IllnessGroup.diseases])
+    end
 end
 
-function IllnessGroup.take(group, count)
+function IllnessGroup.take(group, count, total_count)
+    if not total_count then
+        total_count = 0
+        for i = 1, #group do
+            total_count = total_count + group[i][IllnessGroup.count]
+        end
+    end
 
+    local ret = new_illness_group(0)
+    local percentage = count / total_count
+    local taken = 0
+
+    for i = 1, #group do
+        local entry = group[i]
+        local current_count = entry[IllnessGroup.count]
+
+        local to_take
+        if count - taken < total_count - taken then
+            to_take = round(current_count * percentage)
+        else
+            to_take = current_count
+        end
+
+        entry[IllnessGroup.count] = current_count - to_take
+        add_persons(ret, to_take, entry[IllnessGroup.diseases])
+    end
+    remove_empty_disease_entries(group)
+
+    return ret
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -195,7 +264,7 @@ function InhabitantGroup.take(group, count)
 
     group[InhabitantGroup.count] = existing_count - taken_count
 
-    local taken_illnesses = IllnessGroup.take(group[InhabitantGroup.illnesses])
+    local taken_illnesses = IllnessGroup.take(group[InhabitantGroup.illnesses], taken_count)
 
     local ret = copy(group)
     ret[InhabitantGroup.count] = taken_count

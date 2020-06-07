@@ -1,9 +1,14 @@
 local random = math.random
 local abs = math.abs
 local max = math.max
+local floor = math.floor
 
 --<< Just some helper functions >>
 Tirislib_Utils = {}
+
+function Tirislib_Utils.round(number)
+    return floor(number + 0.5)
+end
 
 function Tirislib_Utils.weighted_average(a, weight_a, b, weight_b)
     return (a * weight_a + b * weight_b) / (weight_a + weight_b)
@@ -100,9 +105,7 @@ end
 function Tirislib_Tables.remove_all(tbl, value)
     for i = #tbl, 1, -1 do
         if tbl[i] == value then
-            if i ~= #tbl then
-                tbl[i] = tbl[#tbl]
-            end
+            tbl[i] = tbl[#tbl]
             tbl[#tbl] = nil
         end
     end
