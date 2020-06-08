@@ -90,6 +90,22 @@ function Tirislib_Tables.equal(lh, rh)
     return true
 end
 
+function Tirislib_Tables.shallow_equal(lh, rh)
+    for k, v in pairs(lh) do
+        if v ~= rh[k] then
+            return false
+        end
+    end
+
+    for k in pairs(rh) do
+        if lh[k] == nil then
+            return false
+        end
+    end
+
+    return true
+end
+
 function Tirislib_Tables.count(tbl)
     local count = 0
 

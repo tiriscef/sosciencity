@@ -68,7 +68,7 @@ local min = math.min
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
 local copy = Tirislib_Tables.copy
-local equals = Tirislib_Tables.equal
+local shallow_equal = Tirislib_Tables.shallow_equal
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
 
@@ -122,7 +122,7 @@ end
 IllnessGroup = {}
 
 local HEALTHY = {}
-IllnessGroup.healthy = 1
+IllnessGroup.healthy_entry = 1
 IllnessGroup.diseases = 1
 IllnessGroup.count = 2
 
@@ -136,7 +136,7 @@ function IllnessGroup.add_persons(group, count, diseases)
 
     for i = 1, #group do
         local entry = group[i]
-        if equals(entry[IllnessGroup.diseases], diseases) then
+        if shallow_equal(entry[IllnessGroup.diseases], diseases) then
             entry[IllnessGroup.count] = entry[IllnessGroup.count] + count
             return
         end
@@ -147,7 +147,7 @@ end
 local add_persons = IllnessGroup.add_persons
 
 local function remove_empty_disease_entries(group)
-    for i = 2, #group do
+    for i = #group, 2, -1 do
         if group[i][IllnessGroup.count] == 0 then
             group[i] = group[#group]
             group[#group] = nil
@@ -158,7 +158,18 @@ end
 function IllnessGroup.remove_persons(group, count, diseases)
     diseases = diseases or HEALTHY
     for i = 1, #group do
-
+        local entry = group[i]
+        if shallow_equal(entry[IllnessGroup.diseases], diseases) then
+            local new_count = entry[IllnessGroup.count] - count
+            if new_count > 0 then
+                entry[IllnessGroup.count] = new_count
+            else
+                if i ~= IllnessGroup.healthy_entry then
+                    group[i] = group[#group]
+                    group[#group] = nil
+                end
+            end
+        end
     end
 end
 
