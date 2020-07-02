@@ -8,16 +8,16 @@ Tirislib_RecipeGenerator = {}
 local RG = Tirislib_RecipeGenerator
 
 -- << definitions >>
---- Table with IngredientTheme -> table with (level, array of IngredientPrototypes) pairs
---- Most of the time level is defined by the research stage at which the player should be able to use this recipe.
---- 0: Start of the game, nothing researched
---- 1: automation science
---- 2: logistic science
---- 3: chemical science
---- 4: production science
---- 5: utility science
---- 6: space science
---- 7: post space science
+--- Table with IngredientTheme -> table with (level, array of IngredientPrototypes) pairs\
+--- Most of the time level is defined by the research stage at which the player should be able to use this recipe.\
+--- **0:** Start of the game, nothing researched\
+--- **1:** automation science\
+--- **2:** logistic science\
+--- **3:** chemical science\
+--- **4:** production science\
+--- **5:** utility science\
+--- **6:** space science\
+--- **7:** post space science
 RG.ingredient_themes = {
     agriculture = {
         {
@@ -303,41 +303,41 @@ local function get_main_product_entry(product, details)
     return main_product
 end
 
---- Creates a dynamic recipe.
---- product: name of the main product
---- product_type: type of the main product (defaults to "item")
---- product_amount: amount of the main product (defaults to 1)
---- product_min: minimal amount of the main product (if the recipe should use a range)
---- product_max: maximal amount of the main product (if the recipe should use a range)
---- product_probability: probability of the main product
---- byproducts: array of ResultPrototypes
---- expensive_byproducts: array of ResultPrototypes (defaults to the byproducts field)
---- category: RecipeCategory of the recipe (defaults to "crafting")
---- themes: array of themes
---- result_themes: array of themes
---- default_theme_level: number
---- ingredients: array of IngredientPrototypes
---- expensive_ingredients: array of IngredientPrototypes (defaults to the ingredient field)
---- expensive_multiplier: ingredient multiplier for expensive mode (defaults to a global value)
---- energy_required: energy_required field for the recipe (defaults to 0.5)
---- expensive_energy_required: energy_required field for the expensive recipe (defaults to energy_required)
---- unlock: technology that unlocks the recipe
---- additional_fields: other fields that should be set for the recipe
---- allow_productivity: bool
+--- Creates a dynamic recipe.\
+--- **product:** name of the main product\
+--- **product_type:** type of the main product (defaults to "item")\
+--- **product_amount:** amount of the main product (defaults to 1)\
+--- **product_min:** minimal amount of the main product (if the recipe should use a range)\
+--- **product_max:** maximal amount of the main product (if the recipe should use a range)\
+--- **product_probability:** probability of the main product\
+--- **byproducts:** array of ResultPrototypes\
+--- **expensive_byproducts:** array of ResultPrototypes (defaults to the byproducts field)\
+--- **category:** RecipeCategory of the recipe (defaults to "crafting")\
+--- **themes:** array of themes\
+--- **result_themes:** array of themes\
+--- **default_theme_level:** number\
+--- **ingredients:** array of IngredientPrototypes\
+--- **expensive_ingredients:** array of IngredientPrototypes (defaults to the ingredient field)\
+--- **expensive_multiplier:** ingredient multiplier for expensive mode (defaults to a global value)\
+--- **energy_required:** energy_required field for the recipe (defaults to 0.5)\
+--- **expensive_energy_required:** energy_required field for the expensive recipe (defaults to energy_required)\
+--- **unlock:** technology that unlocks the recipe\
+--- **additional_fields:** other fields that should be set for the recipe\
+--- **allow_productivity:** bool
 function RG.create(details)
-    local product = get_product(details)
-    local main_product = get_main_product_entry(product, details)
+    local product_prototype = get_product(details)
+    local main_product = get_main_product_entry(product_prototype, details)
 
     local recipe =
         Tirislib_Recipe.create {
-        name = Tirislib_Prototype.get_unique_name(product.name, "recipe"),
+        name = Tirislib_Prototype.get_unique_name(product_prototype.name, "recipe"),
         category = details.category or "crafting",
         enabled = true,
         energy_required = details.energy_required or 0.5,
         results = {main_product},
-        subgroup = product.subgroup,
-        order = product.order,
-        main_product = product.name,
+        subgroup = product_prototype.subgroup,
+        order = product_prototype.order,
+        main_product = product_prototype.name,
         always_show_products = true
     }:create_difficulties()
 
