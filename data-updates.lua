@@ -28,16 +28,7 @@ for _, current_recipe in Tirislib_Recipe.pairs() do
 end
 
 --<< handcrafting category >>
--- add it to all the prototypes the player can be in
--- this is in data-updates to give other mods a chance to add their own characters and or god controllers
-for _, character in Tirislib_Entity.pairs("character") do
-    character:add_crafting_category("handcrafting")
-    character:add_crafting_category("sosciencity-architecture")
-end
-for _, controller in Tirislib_Entity.pairs("god-controller") do
-    -- technically a god controller isn't an entity, but adding a category works the same for them
-    controller:add_crafting_category("handcrafting")
-    controller:add_crafting_category("sosciencity-architecture")
-end
+Tirislib_RecipeCategory("handcrafting"):make_hand_craftable()
+Tirislib_RecipeCategory("sosciencity-architecture"):make_hand_craftable()
 
 Tirislib_Prototype.finish()
