@@ -54,6 +54,14 @@ function Entries.has_catalyst(entry)
     return entry.catalyst_amount ~= nil
 end
 
+function Entries.set_amount(entry, value)
+    entry.amount = value
+    entry[2] = nil
+    entry.amount_min = nil
+    entry.amount_max = nil
+    entry.catalyst_amount = entry.catalyst_amount and value or nil
+end
+
 function Entries.get_ingredient_amount(entry)
     local ret = entry.amount or entry[2]
     if not ret then
@@ -243,6 +251,21 @@ function Tirislib_Recipe:call_on_recipe_data(func, ...)
     if self:has_normal_difficulty() then
         func(self.normal, ...)
     end
+    if self:has_expensive_difficulty() then
+        func(self.expensive, ...)
+    end
+end
+
+function Tirislib_Recipe:call_on_normal_recipe_data(func, ...)
+    if not self:has_difficulties() then
+        func(self, ...)
+    end
+    if self:has_normal_difficulty() then
+        func(self.normal, ...)
+    end
+end
+
+function Tirislib_Recipe:call_on_expensive_recipe_data(func, ...)
     if self:has_expensive_difficulty() then
         func(self.expensive, ...)
     end
@@ -589,16 +612,31 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
         ingredient_type = "item"
     end
 
-    if not self:has_difficulties() then
-        remove_ingredient(self, ingredient_name, ingredient_type)
-    else
-        if self:has_normal_difficulty() then
-            remove_ingredient(self.normal, ingredient_name, ingredient_type)
-        end
-        if self:has_expensive_difficulty() then
-            remove_ingredient(self.expensive, ingredient_name, ingredient_type)
+    self:call_on_recipe_data(remove_ingredient, ingredient_name, ingredient_type)
+
+    return self
+end
+
+local function remove_result(recipe_data, ingredient_name, ingredient_type)
+    convert_to_results_table(recipe_data)
+
+    for index, result in pairs(recipe_data.results) do
+        if
+            Tirislib_RecipeEntry.get_name(result) == ingredient_name and
+                Tirislib_RecipeEntry.get_type(result) == ingredient_type
+         then
+            recipe_data.results[index] = nil
         end
     end
+end
+
+function Tirislib_Recipe:remove_result(ingredient_name, ingredient_type)
+    -- default to item if no type is given
+    if not ingredient_type then
+        ingredient_type = "item"
+    end
+
+    self:call_on_recipe_data(remove_result, ingredient_name, ingredient_type)
 
     return self
 end
@@ -612,31 +650,28 @@ local function replace_ingredient(recipe_data, ingredient_name, replacement_name
 end
 
 function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name)
-    if not self:has_difficulties() then
-        replace_ingredient(self, ingredient_name, replacement_name)
-    else
-        if self:has_normal_difficulty() then
-            replace_ingredient(self.normal, ingredient_name, replacement_name)
-        end
-        if self:has_expensive_difficulty() then
-            replace_ingredient(self.expensive, ingredient_name, replacement_name)
-        end
-    end
+    self:call_on_recipe_data(replace_ingredient, ingredient_name, replacement_name)
 
     return self
 end
 
+local function clear_ingredients(recipe_data)
+    recipe_data.ingredients = {}
+end
+
 function Tirislib_Recipe:clear_ingredients()
-    if not self:has_difficulties() then
-        self.ingredients = {}
-    else
-        if self:has_normal_difficulty() then
-            self.normal.ingredients = {}
-        end
-        if self:has_expensive_difficulty() then
-            self.expensive.ingredients = {}
-        end
-    end
+    self:call_on_recipe_data(clear_ingredients)
+
+    return self
+end
+
+local function clear_results(recipe_data)
+    convert_to_results_table(recipe_data)
+    recipe_data.results = {}
+end
+
+function Tirislib_Recipe:clear_results()
+    self:call_on_recipe_data(clear_results)
 
     return self
 end
@@ -676,6 +711,34 @@ function Tirislib_Recipe:add_unlock(technology_name)
             end
         }
     end
+
+    return self
+end
+
+local function set_ingredient_amounts(recipe_data, value)
+    for _, entry in pairs(recipe_data.ingredients) do
+        Tirislib_RecipeEntry.set_amount(entry, value)
+    end
+end
+
+function Tirislib_Recipe:set_ingredient_amounts(value, expensive_value)
+    self:call_on_normal_recipe_data(set_ingredient_amounts, value)
+    self:call_on_expensive_recipe_data(set_ingredient_amounts, expensive_value or value)
+
+    return self
+end
+
+local function set_result_amounts(recipe_data, value)
+    convert_to_results_table(recipe_data)
+
+    for _, entry in pairs(recipe_data.results) do
+        Tirislib_RecipeEntry.set_amount(entry, value)
+    end
+end
+
+function Tirislib_Recipe:set_result_amounts(value, expensive_value)
+    self:call_on_normal_recipe_data(set_result_amounts, value)
+    self:call_on_expensive_recipe_data(set_result_amounts, expensive_value or value)
 
     return self
 end
