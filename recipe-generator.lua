@@ -78,47 +78,31 @@ RG.ingredient_themes = {
         }
     },
     can = {
-        {type = "item", name = "iron-plate", amount = 1}
+        [0] = {{type = "item", name = "iron-plate", amount = 1}}
     },
     electronics = {
-        [0] = {
-            {type = "item", name = "copper-cable", amount = 2}
-        },
-        [1] = {
-            {type = "item", name = "electronic-circuit", amount = 1}
-        },
-        [2] = {
-            {type = "item", name = "electronic-circuit", amount = 1}
-        },
-        [3] = {
-            {type = "item", name = "electronic-circuit", amount = 1}
-        },
-        [4] = {
-            {type = "item", name = "advanced-circuit", amount = 1}
-        },
-        [5] = {
-            {type = "item", name = "advanced-circuit", amount = 1}
-        },
-        [6] = {
-            {type = "item", name = "processing-unit ", amount = 1}
-        },
-        [7] = {
-            {type = "item", name = "processing-unit ", amount = 1}
-        }
+        [0] = {{type = "item", name = "copper-cable", amount = 2}},
+        [1] = {{type = "item", name = "electronic-circuit", amount = 1}},
+        [2] = {{type = "item", name = "electronic-circuit", amount = 1}},
+        [3] = {{type = "item", name = "electronic-circuit", amount = 1}},
+        [4] = {{type = "item", name = "advanced-circuit", amount = 1}},
+        [5] = {{type = "item", name = "advanced-circuit", amount = 1}},
+        [6] = {{type = "item", name = "processing-unit ", amount = 1}},
+        [7] = {{type = "item", name = "processing-unit ", amount = 1}}
     },
     fabric = {
-        {
+        [0] = {
             {type = "item", name = "cloth", amount = 1},
             {type = "item", name = "yarn", amount = 0.1}
         }
     },
     framework = {
-        {
+        [0] = {
             {type = "item", name = "iron-plate", amount = 2}
         }
     },
     lamp = {
-        {
+        [0] = {
             {type = "item", name = "small-lamp", amount = 1}
         }
     },
@@ -133,33 +117,31 @@ RG.ingredient_themes = {
         [7] = {}
     },
     piping = {
-        {
+        [0] = {
             {type = "item", name = "pipe", amount = 10}
         }
     },
     soil = {
-        {
+        [0] = {
             {type = "item", name = "stone", amount = 1}
         }
     },
-    tank_big = {
-        {
+    tank = {
+        [0] = {
+            {type = "item", name = "iron-plate", amount = 5},
+            {type = "item", name = "pipe", amount = 10}
+        },
+        [2] = {
             {type = "item", name = "storage-tank", amount = 1}
         }
     },
-    tank_small = {
-        {
-            {type = "item", name = "iron-plate", amount = 5},
-            {type = "item", name = "pipe", amount = 10}
-        }
-    },
     fiber = {
-        {
+        [0] = {
             {type = "item", name = "pemtenn-cotton", amount = 2}
         }
     },
     windows = {
-        {
+        [0] = {
             {type = "item", name = "iron-plate", amount = 1}
         }
     },
@@ -175,7 +157,7 @@ RG.ingredient_themes = {
         }
     },
     woodwork = {
-        {
+        [0] = {
             {type = "item", name = "lumber", amount = 1}
         }
     }
@@ -218,7 +200,7 @@ end
 function RG.add_ingredient_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local level = theme[3] or default_level or 1
+    local level = theme[3] or default_level or 0
 
     local theme_definition = get_theme_definition(name, level)
     if not theme_definition then
