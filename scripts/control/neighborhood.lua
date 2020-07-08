@@ -18,6 +18,7 @@ Neighborhood = {}
 local Register = Register
 local try_get = Register.try_get
 local get_type = Types.get
+local get_building_details = Buildings.get
 local distance = Tirislib_Utils.maximum_metric_distance
 local subscriptions
 
@@ -101,6 +102,12 @@ function Neighborhood.subscribe_to(entry, _type)
 end
 local subscribe_to = Neighborhood.subscribe_to
 
+local function subscribe_to_range(entry, types)
+    for _, _type in pairs(types) do
+        subscribe_to(entry, _type)
+    end
+end
+
 --- Unsubscribes the given entry from the given type.
 --- @param entry Entry
 --- @param _type Type
@@ -151,12 +158,19 @@ end
 --- Adds the given neighbor to every interested entity in range.
 --- @param entry Entry
 function Neighborhood.establish_new_neighbor(entry)
-    -- Subscribe to the neighbors this entry needs
-    local type_details = get_type(entry)
+    -- Subscribe to the neighbors this entry type needs
+    local type_subscriptions = get_type(entry).subscriptions
 
-    if type_details.subscriptions then
-        for _, _type in pairs(type_details.subscriptions) do
-            subscribe_to(entry, _type)
+    if type_subscriptions then
+        subscribe_to_range(entry, type_subscriptions)
+    end
+
+    -- Subscribe to the neighbors this custom building needs
+    local building_details = get_building_details(entry)
+    if building_details then
+        local workforce = building_details.workforce
+        if workforce then
+            subscribe_to_range(workforce.castes)
         end
     end
 

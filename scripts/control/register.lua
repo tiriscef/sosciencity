@@ -167,7 +167,6 @@ local function init_custom_building(entry)
     if building_details.workforce then
         entry[EK.worker_count] = 0
         entry[EK.workers] = {}
-        entry[EK.worker_specification] = Tirislib_Tables.recursive_copy(building_details.workforce)
     end
 
     entry[EK.range] = building_details.range
@@ -227,13 +226,12 @@ end
 --- @return Entry
 local function new_entry(entity, _type)
     local current_tick = game.tick
-    local name = entity.name
 
     local entry = {
         [EK.type] = _type,
         [EK.entity] = entity,
         [EK.unit_number] = entity.unit_number,
-        [EK.name] = name,
+        [EK.name] = entity.name,
         [EK.last_update] = current_tick,
         [EK.tick_of_creation] = current_tick
     }
