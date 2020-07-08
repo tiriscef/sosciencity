@@ -7,4 +7,6 @@ require("buildings.trash-site")
 require("buildings.water-tower")
 require("buildings.zeppelin-port")
 
-require("buildings.testbuildings")
+if Sosciencity_Globals.DEBUG then
+    require("buildings.testbuildings")
+end
