@@ -11,7 +11,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "arboretum",
-    themes = {{"soil", 10}, {"tank_small", 1}, {"piping", 1}}
+    themes = {{"soil", 10}, {"tank", 1, 0}, {"piping", 1}}
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
