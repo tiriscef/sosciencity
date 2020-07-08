@@ -21,15 +21,21 @@ local get_type = Types.get
 local distance = Tirislib_Utils.maximum_metric_distance
 local subscriptions
 
----------------------------------------------------------------------------------------------------
--- << constants >>
 local function set_locals()
     subscriptions = global.subscriptions
 end
 
+function Neighborhood.load()
+    set_locals()
+end
+
+function Neighborhood.init()
+    global.subscriptions = {}
+    set_locals()
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << general >>
-
 local function is_in_range(neighbor, entry, range)
     local neighbor_entity = neighbor[EK.entity]
     local position = neighbor_entity.position
@@ -280,15 +286,6 @@ function Neighborhood.get_neighbor_count(entry, _type)
     end
 
     return count
-end
-
-function Neighborhood.load()
-    set_locals()
-end
-
-function Neighborhood.init()
-    global.subscriptions = {}
-    set_locals()
 end
 
 return Neighborhood
