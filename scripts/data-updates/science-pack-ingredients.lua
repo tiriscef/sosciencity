@@ -25,7 +25,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "automation-science-pack",
+            item = Sosciencity_Globals.clockwork_pack,
             item_to_add = "note",
             type = "item",
             amount_factor = 1,
@@ -38,7 +38,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "logistic-science-pack",
+            item = Sosciencity_Globals.orchid_pack,
             item_to_add = "essay",
             type = "item",
             amount_factor = 1,
@@ -51,7 +51,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "military-science-pack",
+            item = Sosciencity_Globals.gunfire_pack,
             item_to_add = "strategic-considerations",
             type = "item",
             amount_factor = 1,
@@ -64,7 +64,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "chemical-science-pack",
+            item = Sosciencity_Globals.ember_pack,
             item_to_add = "sketchbook",
             type = "item",
             amount_factor = 1,
@@ -77,7 +77,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "production-science-pack",
+            item = Sosciencity_Globals.foundry_pack,
             item_to_add = "complex-scientific-data",
             type = "item",
             amount_factor = 1,
@@ -90,7 +90,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "utility-science-pack",
+            item = Sosciencity_Globals.gleam_pack,
             item_to_add = "published-paper",
             type = "item",
             amount_factor = 1,
@@ -103,7 +103,7 @@ table.insert(
     {
         func = conditionally_add_ingredient,
         details = {
-            item = "space-science-pack",
+            item = Sosciencity_Globals.aurora_pack,
             item_to_add = "well-funded-scientific-thesis",
             type = "item",
             amount_factor = 0.1,
