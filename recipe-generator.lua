@@ -20,22 +20,7 @@ local RG = Tirislib_RecipeGenerator
 --- **7:** post space science
 RG.ingredient_themes = {
     agriculture = {
-        {
-            {type = "fluid", name = "water", amount = 5}
-        }
-    },
-    greenhouse = {
-        {
-            {type = "fluid", name = "water", amount = 5}
-        }
-    },
-    arboretum = {
-        {
-            {type = "fluid", name = "water", amount = 5}
-        }
-    },
-    orangery = {
-        {
+        [0] = {
             {type = "fluid", name = "water", amount = 5}
         }
     },

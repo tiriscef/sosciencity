@@ -155,8 +155,8 @@ local farm_specific_defaults = {
 }
 
 -- generation code that should minimize dublications
-local function get_category_theme(category, specification)
-    return {{category, specification.energy_required or 0.5, specification.level}}
+local function get_main_theme(specification)
+    return {{"agriculture", specification.energy_required or 0.5, specification.level}}
 end
 
 local function merge_with_category_specification(specification, category)
@@ -164,7 +164,7 @@ local function merge_with_category_specification(specification, category)
     Tirislib_Tables.set_fields_passively(specification, category_table)
 
     specification.themes =
-        Tirislib_Tables.merge_arrays(specification.themes or {}, get_category_theme(category, specification))
+        Tirislib_Tables.merge_arrays(specification.themes or {}, get_main_theme(specification))
 end
 
 local function merge_with_product_specification(specification, product)
