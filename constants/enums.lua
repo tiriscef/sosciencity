@@ -93,8 +93,6 @@ EK.last_tile_update = 42
 EK.worker_count = 50
 --- workers as a table of (housing_number, count)-pairs
 EK.workers = 51
---- table with the desired staff of this entry
-EK.worker_specification = 52
 
 -- subentity stuff
 --- the current power usage of this entries eei

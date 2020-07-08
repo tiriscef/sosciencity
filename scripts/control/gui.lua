@@ -14,6 +14,7 @@ local population
 local effective_population
 local Register = Register
 local Inhabitants = Inhabitants
+local Buildings = Buildings
 
 local ceil = math.ceil
 
@@ -924,7 +925,7 @@ local function update_general_building_details(container, entry)
     local tabbed_pane = container.tabpane
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
-    local worker_specification = entry[EK.worker_specification]
+    local worker_specification = Buildings.get(entry).workforce
 
     if worker_specification then
         local count_needed = worker_specification.count
@@ -991,7 +992,7 @@ local function create_general_building_details(container, entry)
         )
     end
 
-    local worker_specification = entry[EK.worker_specification]
+    local worker_specification = building_details.workforce
     if worker_specification then
         add_kv_pair(building_data, "workforce", {"sosciencity-gui.workforce"})
         add_kv_pair(building_data, "performance")

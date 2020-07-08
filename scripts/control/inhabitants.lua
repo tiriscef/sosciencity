@@ -42,6 +42,8 @@ local next_houses
 local Register = Register
 local try_get = Register.try_get
 
+local get_building_details = Buildings.get
+
 local castes = Castes.values
 local emigration_coefficient = Castes.emigration_coefficient
 local garbage_coefficient = Castes.garbage_coefficient
@@ -538,7 +540,7 @@ end
 
 --- Looks for employees if this entry needs then.
 function Inhabitants.update_workforce(manufactory)
-    local workforce = manufactory[EK.worker_specification]
+    local workforce = get_building_details(manufactory).workforce
 
     if not workforce then
         return
@@ -553,7 +555,7 @@ function Inhabitants.update_workforce(manufactory)
 end
 
 function Inhabitants.evaluate_workforce(manufactory)
-    local workforce = manufactory[EK.worker_specification]
+    local workforce = get_building_details(manufactory).workforce
 
     if not workforce then
         return 1

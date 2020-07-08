@@ -70,5 +70,5 @@ for _, details in pairs(Buildings.values) do
 end
 
 function Buildings.get(entry)
-    return buildings[entry[EK.entity].name]
+    return buildings[entry[EK.name]]
 end
