@@ -57,9 +57,10 @@ function Tirislib_Entity.get_selection_box(width, height)
 end
 
 function Tirislib_Entity.get_collision_box(width, height)
+    local margin = 0.25
     return {
-        {-width / 2. + 0.2, -height / 2. + 0.2},
-        {width / 2. - 0.2, height / 2. - 0.2}
+        {-width / 2. + margin, -height / 2. + margin},
+        {width / 2. - margin, height / 2. - margin}
     }
 end
 

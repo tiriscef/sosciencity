@@ -16,6 +16,12 @@ Housing.values = {
         caste = Type.clockwork,
         caste_bonus = 2,
         alternatives = {"improvised-hut-2"}
+    },
+    ["house-1"] = {
+        room_count = 24,
+        comfort = 5,
+        caste = Type.ember,
+        caste_bonus = 2
     }
 }
 local houses = Housing.values

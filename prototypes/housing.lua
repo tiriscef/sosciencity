@@ -98,6 +98,49 @@ local data_details = {
         height = 3,
         tech_level = 0,
         icon = "improvised-hut"
+    },
+    ["house-1"] = {
+        picture = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/house/house-1.png",
+                    priority = "high",
+                    width = 320,
+                    height = 256,
+                    shift = {1, -1},
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/house/house-1-hr.png",
+                        priority = "high",
+                        width = 640,
+                        height = 512,
+                        shift = {1, -1},
+                        scale = 0.5
+                    }
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap.png",
+                    priority = "high",
+                    width = 320,
+                    height = 256,
+                    shift = {1, -1},
+                    scale = 0.5,
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap-hr.png",
+                        priority = "high",
+                        width = 640,
+                        height = 512,
+                        shift = {1, -1},
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        width = 8,
+        height = 6,
+        tech_level = 2,
+        icon = "improvised-hut",
+        placeable_by = "house-1"
     }
 }
 
@@ -146,7 +189,7 @@ end
 
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
-    local ingredient_themes = {{"buildinger", house.room_count, tech_level}}
+    local ingredient_themes = {{"building", house.room_count, tech_level}}
 
     Tirislib_RecipeGenerator.create {
         product = house_name,
@@ -178,7 +221,8 @@ local function create_entity(house_name, house, details)
         picture = details.picture,
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
-        circuit_wire_max_distance = 13
+        circuit_wire_max_distance = 13,
+        enable_inventory_bar = false
     }:set_size(details.width, details.height)
 
     if details.placeable_by then
