@@ -22,5 +22,13 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-architecture"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-hunting"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-fishery"
     }
 }

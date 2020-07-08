@@ -48,6 +48,14 @@ function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
     return max(dist_x, dist_y)
 end
 
+function Tirislib_Utils.get_range_bounding_box(position, range)
+    local x = position.x
+    local y = position.y
+    range = range / 2
+
+    return {{x - range, y - range}, {x + range, y + range}}
+end
+
 function Tirislib_Utils.desync_protection()
     if game then
         error("A function that is supposed to only be called during the control initialization stage got called at a later stage.")

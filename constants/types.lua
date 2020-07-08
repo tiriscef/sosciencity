@@ -79,7 +79,6 @@ Types.definitions = {
     [Type.water_distributer] = {
         localised_name = {"sosciencity-gui.water-distributer"},
         localised_description = {"sosciencity-gui.explain-water-distributer"},
-        --initial_values = {[EK.water_quality] = 0},
         signature_color = {r = 0, g = 0.8, b = 1, a = 1}
     },
     [Type.hospital] = {
@@ -107,6 +106,11 @@ Types.definitions = {
     [Type.immigration_port] = {
         localised_name = {"sosciencity-gui.immigration-port"},
         localised_description = {"sosciencity-gui.explain-immigration-port"}
+    },
+    [Type.fishery] = {
+        localised_name = {"sosciencity-gui.fishery"},
+        localised_description = {"sosciencity-gui.explain-fishery"},
+        subscriptions = {Type.fishery}
     },
     [Type.manufactory] = {
         localised_name = {"sosciencity-gui.manufactory"},
@@ -171,6 +175,7 @@ function Types.get_entity_type(entity)
     return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
 end
 
+-- TODO change these functions, because they are really bad code
 function Types.is_inhabited(_type)
     return (_type < 100) and (_type > 0)
 end
@@ -192,7 +197,7 @@ function Types.is_affected_by_orchid(_type)
 end
 
 function Types.needs_beacon(_type)
-    return (_type >= Type.manufactory) and (_type <= Type.orangery)
+    return (_type >= Type.fishery) and (_type <= Type.orangery)
 end
 
 function Types.needs_alt_mode_sprite(_type)
