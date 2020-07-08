@@ -536,8 +536,14 @@ local function unemploy_all_inhabitants(house)
     unemploy_inhabitants(house, house[EK.employed])
 end
 
+--- Looks for employees if this entry needs then.
 function Inhabitants.update_workforce(manufactory)
     local workforce = manufactory[EK.worker_specification]
+
+    if not workforce then
+        return
+    end
+
     local nominal_count = workforce.count
     local current_workers = manufactory[EK.worker_count]
 
@@ -548,6 +554,11 @@ end
 
 function Inhabitants.evaluate_workforce(manufactory)
     local workforce = manufactory[EK.worker_specification]
+
+    if not workforce then
+        return 1
+    end
+
     local current_workers = manufactory[EK.worker_count]
 
     -- TODO let happiness and or health affect performance

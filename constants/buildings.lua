@@ -20,6 +20,15 @@ Buildings.values = {
         type = Type.water_distributer,
         range = 42
     },
+    ["test-fishery"] = {
+        type = Type.fishery,
+        range = 30,
+        water_tiles = 300,
+        workforce = {
+            count = 10,
+            castes = {Type.clockwork}
+        }
+    },
     ["trash-site"] = {
         type = Type.dumpster,
         range = 25

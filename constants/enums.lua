@@ -26,6 +26,7 @@ Type.transportation = 107
 
 Type.waterwell = 201
 
+Type.fishery = 999
 Type.manufactory = 1000
 Type.assembling_machine = 1001
 Type.furnace = 1002
@@ -79,11 +80,13 @@ EK.tick_of_creation = 6
 --- table with (subentity_type, subentity)-pairs
 EK.subentities = 7
 
--- neighbor stuff
+-- neighborhood stuff
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs
 EK.neighbors = 40
 --- the range this entry looks connects with other neighbor entries
 EK.range = 41
+--- tick of the last time this entity updated it's surrounding tile information
+EK.last_tile_update = 42
 
 -- workforce
 --- the number of workers employed by this entry
@@ -150,6 +153,10 @@ EK.water_name = 301
 -- immigration port
 --- tick of the next immigration wave
 EK.next_wave = 400
+
+-- fishery
+--- water tile count in environment
+EK.water_tiles = 500
 
 --<< happiness summands >>
 --- Enum table for happiness summands.

@@ -12,6 +12,7 @@ local caste_bonuses
 local water_values = DrinkingWater.values
 
 local floor = math.floor
+local min = math.min
 local random = math.random
 
 local set_beacon_effects = Subentities.set_beacon_effects
@@ -73,7 +74,8 @@ Register.set_entity_updater(Type.orangery, update_entity_with_beacon)
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>
 local function schedule_immigration_wave(entry, building_details)
-    entry[EK.next_wave] = (entry[EK.next_wave] or game.tick) + building_details.interval + random(building_details.random_interval) - 1
+    entry[EK.next_wave] =
+        (entry[EK.next_wave] or game.tick) + building_details.interval + random(building_details.random_interval) - 1
 end
 
 local function create_immigration_port(entry)
@@ -96,16 +98,64 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 
 ---------------------------------------------------------------------------------------------------
 -- << manufactory >>
+local function get_speed_from_performance(performance)
+    return floor(100 * performance - 20)
+end
+
 local function update_manufactory(entry)
     Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
 
-    entry[EK.entity].active = performance > 0.4
+    local can_work = performance > 0.2
+    entry[EK.entity].active = can_work
 
-    local speed = performance > 0.4 and floor(100 * performance - 20) or 0
+    local speed = can_work and get_speed_from_performance or 0
     set_beacon_effects(entry, speed, 0, true)
 end
 Register.set_entity_updater(Type.manufactory, update_manufactory)
+
+---------------------------------------------------------------------------------------------------
+-- << fishery >>
+local function get_water_tiles(entry, surface, area)
+    if global.last_tile_update > (entry[EK.last_tile_update] or -1) then
+        local water_tiles = surface.count_tiles_filtered {area = area, collision_mask = "water-tile"}
+
+        entry[EK.water_tiles] = water_tiles
+        entry[EK.last_tile_update] = game.tick
+        return water_tiles
+    else
+        -- nothing could possibly have changed, return the cached value
+        return entry[EK.water_tiles]
+    end
+end
+
+local function get_fishery_performance(entry, entity)
+    local building_details = get_building_details(entry)
+
+    local worker_performance = Inhabitants.evaluate_workforce(entry)
+
+    local surface = entity.surface
+    local position = entity.position
+    local water_tiles = get_water_tiles(entry, surface, Tirislib_Utils.get_range_bounding_box(position, building_details.range))
+    local water_performance = min(water_tiles / building_details.water_tiles, 1)
+
+    local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.fishery) + 1)
+
+    return worker_performance * water_performance * neighborhood_performance
+end
+
+local function update_fishery(entry)
+    Inhabitants.update_workforce(entry)
+    local entity = entry[EK.entity]
+    local performance = get_fishery_performance(entry, entity)
+
+    local can_work = performance > 0.2
+    entity.active = can_work
+
+    local speed = can_work and floor(100 * performance - 20) or 0
+    set_beacon_effects(entry, speed, 0, true)
+end
+Register.set_entity_updater(Type.fishery, update_fishery)
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>

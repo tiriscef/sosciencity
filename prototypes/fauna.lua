@@ -15,6 +15,20 @@ Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size 
 -- << hunting recipes >>
 
 ---------------------------------------------------------------------------------------------------
+-- << fishing recipes >>
+Tirislib_Recipe.create {
+    name = "general-fishing", -- TODO this is just a testing recipe
+    category = "sosciencity-fishery",
+    energy_required = 10,
+    ingredients = {},
+    results = {
+        {type = "item", name = "elder-nan", amount_min = 2, amount_max = 4}
+    },
+    subgroup = "sosciencity-fauna",
+    main_product = "elder-nan"
+}
+
+---------------------------------------------------------------------------------------------------
 -- << entities >>
 -- 'fish' entity to have ducks swimming on water bodies
 -- it seems like the factorio engine treads the order-string of the autoplace definition as some kind of ID, so I'm giving them a distinct one to be sure

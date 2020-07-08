@@ -44,6 +44,12 @@ require("scripts.control.gui")
 ---@class InhabitantGroup
 ---@class DiseaseGroup
 
+--[[
+    Data this script stores in global
+    --------------------------------
+    global.last_tile_update: tick
+]]
+
 ---------------------------------------------------------------------------------------------------
 -- local all the frequently called functions for miniscule performance gains
 local global
@@ -108,6 +114,8 @@ end
 
 local function init()
     global = _ENV.global
+    global.last_tile_update = 0
+
     Types.load()
 
     update_settings()
@@ -338,6 +346,12 @@ local function on_selection_changed(event)
     end
 end
 
+local function on_tile_update()
+    -- just notes the tick of the last tile-change
+    -- this allowes me to expensively update tile information only when it's necessary
+    global.last_tile_update = game.tick
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
 -- initialisation
@@ -364,6 +378,13 @@ script.on_event(defines.events.on_player_mined_entity, on_entity_mined)
 script.on_event(defines.events.on_robot_mined_entity, on_entity_mined)
 script.on_event(defines.events.on_entity_died, on_entity_died)
 script.on_event(defines.events.script_raised_destroy, on_entity_removed)
+
+-- tile updates
+script.on_event(defines.events.on_player_built_tile, on_tile_update)
+script.on_event(defines.events.on_player_mined_tile, on_tile_update)
+script.on_event(defines.events.on_robot_built_tile, on_tile_update)
+script.on_event(defines.events.on_robot_mined_tile, on_tile_update)
+script.on_event(defines.events.script_raised_set_tiles, on_tile_update)
 
 -- copy-paste settings
 script.on_event(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
