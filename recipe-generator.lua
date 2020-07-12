@@ -81,10 +81,85 @@ RG.ingredient_themes = {
             {type = "item", name = "yarn", amount = 0.1}
         }
     },
+    fiber = {
+        [0] = {
+            {type = "item", name = "pemtenn-cotton", amount = 2}
+        }
+    },
     framework = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 2}
         }
+    },
+    furnishing = {
+        [0] = {},
+        [1] = {
+            {type = "item", name = "bed", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1},
+            {type = "item", name = "table", amount = 1}
+        },
+        [3] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1}
+
+        },
+        [4] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1.5}
+
+        },
+        [5] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 2}
+
+        },
+        [6] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 2}
+
+        },
+        [7] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 2}
+
+        },
+        [8] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1.5},
+            {type = "item", name = "cupboard", amount = 2}
+
+        },
+        [9] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2.5},
+            {type = "item", name = "table", amount = 2},
+            {type = "item", name = "cupboard", amount = 3}
+
+        },
+        [10] = {
+            {type = "item", name = "bed", amount = 3},
+            {type = "item", name = "chair", amount = 5},
+            {type = "item", name = "table", amount = 3},
+            {type = "item", name = "cupboard", amount = 4}
+
+        }
+    },
+    grating = {
+        [0] = {{type = "item", name = "iron-stick", amount = 10}}
     },
     lamp = {
         [0] = {
@@ -100,6 +175,12 @@ RG.ingredient_themes = {
         [5] = {},
         [6] = {},
         [7] = {}
+    },
+    mechanic = {
+        [0] = {
+            {type = "item", name = "iron-stick", amount = 1},
+            {type = "item", name = "iron-gear-wheel", amount = 1}
+        }
     },
     piping = {
         [0] = {
@@ -118,11 +199,6 @@ RG.ingredient_themes = {
         },
         [2] = {
             {type = "item", name = "storage-tank", amount = 1}
-        }
-    },
-    fiber = {
-        [0] = {
-            {type = "item", name = "pemtenn-cotton", amount = 2}
         }
     },
     windows = {

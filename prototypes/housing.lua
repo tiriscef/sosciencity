@@ -123,7 +123,6 @@ local data_details = {
                     width = 320,
                     height = 256,
                     shift = {1, -1},
-                    scale = 0.5,
                     hr_version = {
                         filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap-hr.png",
                         priority = "high",
@@ -139,7 +138,6 @@ local data_details = {
         width = 8,
         height = 6,
         tech_level = 2,
-        icon = "improvised-hut",
         placeable_by = "house-1"
     }
 }
@@ -189,7 +187,10 @@ end
 
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
-    local ingredient_themes = {{"building", house.room_count, tech_level}}
+    local ingredient_themes = {
+        {"building", house.room_count, tech_level}, 
+        {"furnishing", house.room_count, house.comfort}
+    }
 
     Tirislib_RecipeGenerator.create {
         product = house_name,

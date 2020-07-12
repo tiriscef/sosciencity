@@ -204,28 +204,24 @@ function Tirislib_Recipe.pairs()
 end
 
 -- << creation >>
-local function add_ingredient_table(prototype)
-    local difficulties = false
-    if prototype.normal then
-        prototype.normal.ingredients = prototype.normal.ingredients or {}
-        difficulties = true
-    end
-    if prototype.expensive then
-        prototype.expensive.ingredients = prototype.expensive.ingredients or {}
-        difficulties = true
-    end
+local function add_ingredients_table(recipe_data)
+    recipe_data.ingredients = recipe_data.ingredients or {}
+end
 
-    if not difficulties then
-        prototype.ingredients = prototype.ingredients or {}
+local function add_results_table(recipe_data)
+    if not recipe_data.result and not recipe_data.results then
+        recipe_data.results = {}
     end
 end
 
-function Tirislib_Recipe.create(prototype)
-    if not prototype.type then
-        prototype.type = "recipe"
-    end
+local function add_basic_structure(prototype)
+    prototype.type = "recipe"
+    Tirislib_Recipe.call_on_recipe_data(prototype, add_ingredients_table)
+    Tirislib_Recipe.call_on_recipe_data(prototype, add_results_table)
+end
 
-    add_ingredient_table(prototype)
+function Tirislib_Recipe.create(prototype)
+    add_basic_structure(prototype)
 
     data:extend {prototype}
     return Tirislib_Recipe.get(prototype)
@@ -241,17 +237,17 @@ function Tirislib_Recipe:has_expensive_difficulty()
 end
 
 function Tirislib_Recipe:has_difficulties()
-    return self:has_normal_difficulty() or self:has_expensive_difficulty()
+    return Tirislib_Recipe.has_normal_difficulty(self) or Tirislib_Recipe.has_expensive_difficulty(self)
 end
 
 function Tirislib_Recipe:call_on_recipe_data(func, ...)
-    if not self:has_difficulties() then
+    if not Tirislib_Recipe.has_difficulties(self) then
         func(self, ...)
     end
-    if self:has_normal_difficulty() then
+    if Tirislib_Recipe.has_normal_difficulty(self) then
         func(self.normal, ...)
     end
-    if self:has_expensive_difficulty() then
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
         func(self.expensive, ...)
     end
 end
@@ -549,18 +545,13 @@ local function add_ingredient(recipe_data, ingredient)
 end
 
 function Tirislib_Recipe:add_ingredient(ingredient, expensive_ingredient)
-    if not self:has_difficulties() then
-        add_ingredient(self, ingredient)
-        return self
-    end
+    expensive_ingredient = expensive_ingredient or ingredient
 
-    if ingredient and self:has_normal_difficulty() then
-        add_ingredient(self.normal, ingredient)
-    end
-    if self:has_expensive_difficulty() then
-        local ingredient_to_add = expensive_ingredient or ingredient
-        add_ingredient(self.expensive, ingredient_to_add)
-    end
+    Tirislib_RecipeEntry.convert_to_named_keys(ingredient)
+    Tirislib_RecipeEntry.convert_to_named_keys(expensive_ingredient)
+
+    self:call_on_normal_recipe_data(add_ingredient, ingredient)
+    self:call_on_expensive_recipe_data(add_ingredient, expensive_ingredient)
 
     return self
 end
@@ -651,6 +642,51 @@ end
 
 function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name)
     self:call_on_recipe_data(replace_ingredient, ingredient_name, replacement_name)
+
+    return self
+end
+
+function Tirislib_Recipe:add_catalyst(catalyst, catalyst_type, retrieval, expensive_retrieval, amount, expensive_amount)
+    catalyst_type = catalyst_type or "item"
+
+    retrieval = retrieval or 1
+    expensive_retrieval = expensive_retrieval or retrieval
+
+    amount = amount or 1
+    expensive_amount = expensive_amount or amount
+
+    Tirislib_Recipe.add_ingredient(
+        self,
+        {
+            type = catalyst_type,
+            name = catalyst,
+            amount = amount,
+            catalyst_amount = amount
+        },
+        {
+            type = catalyst_type,
+            name = catalyst,
+            amount = expensive_amount,
+            catalyst_amount = expensive_amount
+        }
+    )
+    Tirislib_Recipe.add_result(
+        self,
+        {
+            type = catalyst_type,
+            name = catalyst,
+            amount = amount,
+            catalyst_amount = amount,
+            probability = retrieval
+        },
+        {
+            type = catalyst_type,
+            name = catalyst,
+            amount = expensive_amount,
+            catalyst_amount = expensive_amount,
+            probability = expensive_retrieval
+        }
+    )
 
     return self
 end

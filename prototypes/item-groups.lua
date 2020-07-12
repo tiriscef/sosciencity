@@ -59,6 +59,12 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-slaughter",
+        group = "sosciencity-production",
+        order = "adb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-food",
         group = "sosciencity-production",
         order = "aea"
