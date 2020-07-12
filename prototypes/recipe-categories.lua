@@ -30,5 +30,9 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-fishery"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-slaughter"
     }
 }

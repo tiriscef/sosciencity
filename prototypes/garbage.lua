@@ -1,18 +1,10 @@
-Tirislib_Item.create {
-    name = "garbage",
-    icon = "__sosciencity-graphics__/graphics/icon/garbage-1.png",
-    icon_size = 64,
-    subgroup = "sosciencity-garbage",
-    stack_size = 200
-}:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/garbage", 4)
+local garbage_items = {
+    {name = "garbage", sprite_variations = {name = "garbage", count = 3, include_icon = true}},
+    {name = "food-leftovers", sprite_variations = {name = "food-leftovers", count = 2, include_icon = true}},
+    {name = "slaughter-waste"}
+}
 
-Tirislib_Item.create {
-    name = "food-leftovers",
-    icon = "__sosciencity-graphics__/graphics/icon/food-leftovers-1.png",
-    icon_size = 64,
-    subgroup = "sosciencity-garbage",
-    stack_size = 200
-}:add_sprite_variations(64, "__sosciencity-graphics__/graphics/icon/food-leftovers", 3)
+Tirislib_Item.batch_create(garbage_items, {subgroup = "sosciencity-garbage", stack_size = 200})
 
 Tirislib_Recipe.create {
     name = "garbage-to-landfill",
