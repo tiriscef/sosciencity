@@ -8,6 +8,9 @@ end
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local foods = {
+    {name = "mammal-meat"},
+    {name = "bird-meat"},
+    {name = "fish-meat"},
     {name = "alien-meat", sprite_variations = {name = "alien-meat", count = 2, include_icon = true}},
     {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
     {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},

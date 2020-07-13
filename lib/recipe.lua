@@ -162,6 +162,25 @@ function Entries.merge(entry1, entry2)
     Entries.add_result_amount(entry1, min, max)
 end
 
+function Entries.create_result_prototype(product, amount, _type)
+    if amount > 0 then
+        local ret = {type = _type or "item", name = product}
+
+        if amount < 1 then
+            ret.amount = 1
+            ret.probability = amount
+        elseif math.floor(amount) == amount then -- amount doesn't have decimals
+            ret.amount = amount
+        else
+            -- close enough solution
+            ret.amount_min = math.floor(amount)
+            ret.amount_max = math.ceil(amount)
+        end
+
+        return ret
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << class for recipes >>
 Tirislib_Recipe = {}
@@ -524,6 +543,11 @@ function Tirislib_Recipe:add_result_range(results, expensive_results)
         add_results(self.expensive, expensive_results or results)
     end
     return self
+end
+
+--- Adds a newly constructed ResultPrototype to the recipe.
+function Tirislib_Recipe:add_new_result(result, amount, _type)
+    Tirislib_Recipe.add_result(self, Tirislib_RecipeEntry.create_result_prototype(result, amount, _type))
 end
 
 local function add_ingredient(recipe_data, ingredient)

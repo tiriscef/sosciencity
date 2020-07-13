@@ -6,6 +6,42 @@ Food = {}
 --fat, carbohydrates and proteins are in g per 100g
 --portion_size is in kg
 Food.values = {
+    ["mammal-meat"] = {
+        fat = 15,
+        carbohydrates = 0.2,
+        proteins = 19.6,
+        healthiness = 5,
+        food_category = "meat",
+        taste_category = Taste.umami,
+        taste_quality = 7,
+        luxury = 7,
+        portion_size = 10,
+        group = "meat"
+    },
+    ["bird-meat"] = {
+        fat = 14,
+        carbohydrates = 0.1,
+        proteins = 20.6,
+        healthiness = 3,
+        food_category = "meat",
+        taste_category = Taste.neutral,
+        taste_quality = 5,
+        luxury = 6,
+        portion_size = 10,
+        group = "bird-meat"
+    },
+    ["fish-meat"] = {
+        fat = 17,
+        carbohydrates = 1,
+        proteins = 21,
+        healthiness = 3,
+        food_category = "meat",
+        taste_category = Taste.salty,
+        taste_quality = 7,
+        luxury = 5,
+        portion_size = 10,
+        group = "fish-meat"
+    },
     ["alien-meat"] = {
         fat = 17,
         carbohydrates = 1,
