@@ -164,6 +164,14 @@ function Tirislib_Item:set_min_stack_size(size)
     return self
 end
 
+function Tirislib_Item:get_localised_name()
+    return self.localised_name or {"item-name." .. self.name}
+end
+
+function Tirislib_Item:get_localised_description()
+    return self.localised_description or {"item-description." .. self.name}
+end
+
 local meta = {}
 
 function meta:__call(name)

@@ -1,18 +1,23 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local animals = {
-    {name = "primal-quackling", size = 0.2, bird = true, probability = 0.05, group_size = 4},
-    {name = "primal-quacker", size = 1, bird = true, probability = 0.12},
-    {name = "primal-quackpa", size = 0.8, bird = true},
+    {name = "primal-quackling", size = 0.4, bird = true, probability = 0.05, group_size = 4},
+    {name = "primal-quacker", size = 1.2, bird = true, probability = 0.12},
+    {name = "primal-quackpa", size = 1, bird = true},
     {name = "nan-swanling", size = 1, bird = true, probability = 0.04, group_size = 3},
-    {name = "nan-swan", size = 1, bird = true, probability = 0.1},
-    {name = "elder-nan", size = 1, bird = true},
-    {name = "ostrich", size = 1, bird = true, probability = 0.08},
-    {name = "young-petunial", size = 1, water_animal = true, probability = 0.05},
-    {name = "petunial", size = 1, water_animal = true, probability = 0.05},
-    {name = "dolphin", size = 1, water_animal = true, probability = 0.09},
-    {name = "myfish", size = 1, fish = true, probability = 0.1, group_size = 5},
-    {name = "puffer", size = 1, fish = true, probability = 0.2}
+    {name = "nan-swan", size = 12, bird = true, probability = 0.1},
+    {name = "elder-nan", size = 10, bird = true},
+    {name = "bonesnake", size = 100, bird = true, probability = 0.08},
+    {name = "young-petunial", size = 2500, water_animal = true, probability = 0.05},
+    {name = "petunial", size = 15000, water_animal = true, probability = 0.05},
+    {name = "hellfin", size = 190, water_animal = true, probability = 0.09, group_size = 2},
+    {name = "warnal", size = 1000, water_animal = true, probability = 0.09},
+    {name = "shellscript", size = 50, water_animal = true, probability = 0.15},
+    {name = "dodkopus", size = 40, water_animal = true, probability = 0.15},
+    {name = "boofish", size = 3, fish = true, probability = 0.3, group_size = 5},
+    {name = "fupper", size = 5, fish = true, probability = 0.5},
+    {name = "ultra-squibbel", size = 50, water_animal = true, probability = 0.20},
+    {name = "miniscule-squibbel", size = 150, water_animal = true, probability = 0.15}
 }
 
 Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
@@ -22,11 +27,20 @@ local function is_bird(animal)
 end
 
 local function is_land_animal(animal)
-    return animal.bird
+    return animal.land_animal
 end
 
 local function is_water_animal(animal)
     return animal.water_animal or animal.fish
+end
+
+local function get_meat_type(animal)
+    -- option to specify it
+    if animal.meat then
+        return animal.meat
+    end
+
+    return (is_bird(animal) and "bird-meat") or (animal.fish and "fish-meat") or "mammal-meat"
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -42,7 +56,7 @@ local hunting =
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
-}:add_catalyst("trap", "item", 0.8, 5)
+}:add_catalyst("trap", "item", 0.8, 0.7, 5, 6)
 
 local bird_hunting =
     Tirislib_Recipe.create {
@@ -55,7 +69,7 @@ local bird_hunting =
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
-}:add_catalyst("bird-trap", "item", 0.9, 5)
+}:add_catalyst("bird-trap", "item", 0.9, 0.8, 2, 3)
 
 local fishing =
     Tirislib_Recipe.create {
@@ -68,10 +82,14 @@ local fishing =
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
-}:add_catalyst("fishing-net", "item", 0.8, 5)
+}:add_catalyst("fishing-net", "item", 0.8, 0.7, 2, 3)
+
+local function get_result_prototype(animal)
+    return {name = animal.name, amount = animal.group_size or 1, probability = animal.probability}
+end
 
 local function add_to_gather_recipe(animal)
-    local result_prototype = {name = animal.name, amount = 1, probability = animal.probability}
+    local result_prototype = get_result_prototype(animal)
 
     if is_land_animal(animal) then
         hunting:add_result(result_prototype)
@@ -96,22 +114,29 @@ local function get_required_energy(animal)
     return animal.size ^ 0.5
 end
 
+-- the meat, offal and waste products are about 10kg each
+-- the size of the animals is in kg
 local function get_meat_amount(animal)
-
+    return animal.size * 0.05
 end
 
 local function get_offal_amount(animal)
-
+    return animal.size * 0.03
 end
 
 local function get_slaughter_waste_amount(animal)
-
+    return animal.size * 0.02
 end
 
-local function create_slaughter_recipe(animal)
+local function get_feather_amount(animal)
+    return animal.size ^ 0.7
+end
+
+local function create_slaughter_recipe(animal, index)
     local item = Tirislib_Item.get_by_name(animal.name)
 
-    Tirislib_Recipe.create {
+    local recipe =
+        Tirislib_Recipe.create {
         name = "slaughter-" .. animal.name,
         category = "sosciencity-slaughter",
         energy_required = get_required_energy(animal),
@@ -124,13 +149,26 @@ local function create_slaughter_recipe(animal)
         },
         icon_size = 64,
         subgroup = "sosciencity-slaughter",
-        main_product = ""
+        main_product = "",
+        order = string.format("%03d", index),
+        localised_name = {"recipe-name.slaughter", item:get_localised_name()},
+        localised_description = {"recipe-description.slaughter"}
     }
-    -- TODO results
+
+    local meat = get_meat_type(animal)
+    recipe:add_new_result(meat, get_meat_amount(animal))
+    recipe:add_new_result("offal", get_offal_amount(animal))
+    recipe:add_new_result("slaughter-waste", get_slaughter_waste_amount(animal))
+
+    if is_bird(animal) then
+        recipe:add_new_result("feathers", get_feather_amount(animal))
+    end
+
+    -- TODO bones
 end
 
-for _, animal in pairs(animals) do
-    create_slaughter_recipe(animal)
+for index, animal in pairs(animals) do
+    create_slaughter_recipe(animal, index)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -203,7 +241,8 @@ Tirislib_Entity.create {
     localised_name = {"item-name.nan-swan"}
 }
 
-Tirislib_Entity.create {
+local fishwhirl =
+    Tirislib_Entity.create {
     type = "fish",
     name = "fishwhirl",
     icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl.png",
@@ -211,10 +250,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "not-on-map"},
     minable = {
         mining_time = 0.4,
-        results = {
-            {name = "petunial", amount = 1, probability = 0.02},
-            {name = "myfish", amount_min = 2, amount_max = 6, probability = 0.3}
-        }
+        results = {}
     },
     max_health = 40,
     subgroup = "creatures",
@@ -234,3 +270,10 @@ Tirislib_Entity.create {
         influence = 0.007
     }
 }
+
+for _, animal in pairs(animals) do
+    if animal.probability and is_water_animal(animal) then
+        local result_prototype = get_result_prototype(animal)
+        fishwhirl:add_mining_result(result_prototype)
+    end
+end

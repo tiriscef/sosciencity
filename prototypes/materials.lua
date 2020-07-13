@@ -7,7 +7,7 @@ local material_items = {
     {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}},
     {name = "mineral-wool"},
     {name = "rope"},
-    {name = "feather", sprite_variations = {name = "feather-pile", count = 4}},
+    {name = "feathers", sprite_variations = {name = "feather-pile", count = 4}},
     {name = "trap"},
     {name = "bird-trap"},
     {name = "fishing-net"},
@@ -76,7 +76,7 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "fish-net",
+    product = "fishing-net",
     ingredients = {
         {name = "rope", amount = 5},
         {name = "yarn", amount = 1},
