@@ -4,8 +4,8 @@ data:extend {
         name = "sosciencity-infrastructure",
         inventory_order = "za",
         order = "za",
-        icon = "__sosciencity-graphics__/graphics/icon/note.png", -- TODO create icon
-        icon_size = 64 --144
+        icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
+        icon_size = 128
     },
     {
         type = "item-subgroup",

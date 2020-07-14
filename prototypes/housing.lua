@@ -174,7 +174,6 @@ local function create_item(house_name, house, details)
         place_result = house_name,
         localised_description = {
             "item-description.housing",
-            {"item-description." .. house_name},
             house.room_count,
             {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
             {"description.sos-details", house.comfort},
