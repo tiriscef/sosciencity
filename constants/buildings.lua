@@ -69,6 +69,7 @@ for _, details in pairs(Buildings.values) do
     end
 end
 
+--- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
 function Buildings.get(entry)
-    return buildings[entry[EK.name]]
+    return buildings[entry[EK.name]] or {}
 end
