@@ -141,7 +141,7 @@ local function get_fishery_performance(entry, entity)
 
     local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.fishery) + 1)
 
-    return worker_performance * water_performance * neighborhood_performance
+    return min(worker_performance, water_performance) * neighborhood_performance
 end
 
 local function update_fishery(entry)

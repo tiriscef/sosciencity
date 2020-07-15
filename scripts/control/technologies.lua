@@ -5,7 +5,7 @@ Technologies = {}
     Data this class stores in global
     --------------------------------
     global.technologies: table
-        [tech_name]: bool or int (level)
+        [tech_name]: bool (researched) or int (level)
 ]]
 -- local often used functions for humongous performance gains
 local relevant_techs = {
@@ -21,10 +21,16 @@ local relevant_multi_level_techs = {
 
 }
 
+local techs
+local floor = math.floor
+
+local function set_locals()
+    techs = game.force.player.technologies
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function determine_multi_level_tech_level(name)
-    local techs = game.force.player.technologies
     local level = 0
     local details = relevant_multi_level_techs[name]
 
@@ -41,6 +47,22 @@ local function determine_multi_level_tech_level(name)
     global.technologies[name] = (level > 0) and level or false
 end
 
+--- Sets the given binary technologies so they encode the given value.
+function Technologies.set_binary_techs(value, name)
+    local new_value = value
+
+    for strength = 0, 20 do
+        new_value = floor(value / 2)
+
+        -- if new_value times two doesn't equal value, then the remainder was one
+        -- which means that the current binary digit is one and that the corresponding tech should be researched
+        techs[strength .. name].researched = (new_value * 2 ~= value)
+
+        strength = strength + 1
+        value = new_value
+    end
+end
+
 --- Event handler function for finished technologies.
 function Technologies.finished(name)
     if relevant_techs[name] then
@@ -54,8 +76,8 @@ end
 
 --- Initialize the technology related contents of global.
 function Technologies.init()
+    set_locals()
     global.technologies = {}
-    local techs = game.forces.player.technologies
 
     for name, _ in pairs(relevant_techs) do
         global.technologies[name] = techs[name].researched
@@ -64,6 +86,10 @@ function Technologies.init()
     for name, _ in pairs(relevant_multi_level_techs) do
         determine_multi_level_tech_level(name)
     end
+end
+
+function Technologies.load()
+    set_locals()
 end
 
 return Technologies

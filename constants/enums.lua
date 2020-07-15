@@ -130,7 +130,6 @@ EK.sanity_summands = 214
 EK.sanity_factors = 215
 --- the trend toward the next emigrating inhabitant
 EK.emigration_trend = 216
-EK.idea_progress = 217
 --- the progress toward the next produced garbage item
 EK.garbage_progress = 218
 --- the count of inhabitants that are employed
@@ -139,7 +138,7 @@ EK.employed = 219
 EK.employments = 220
 --- the count of inhabitants that are ill
 EK.ill = 221
---- the illnesses of this entry as a table of (disease number, count)-pairs
+--- the illnesses of this entry as a DiseaseGroup object
 EK.illnesses = 222
 
 -- water distributer

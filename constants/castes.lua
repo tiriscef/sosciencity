@@ -20,9 +20,6 @@ Castes.values = {
         minimum_comfort = 0,
         immigration_threshold = 5,
         immigration_coefficient = 1.5, -- immigrants per minute
-        idea_threshold = 5,
-        idea_coefficient = 0.04, -- idea-items per minute per inhabitant
-        idea_item = "note"
     },
     [Type.orchid] = {
         name = "orchid",
@@ -39,10 +36,7 @@ Castes.values = {
         required_room_count = 1,
         minimum_comfort = 8,
         immigration_threshold = 5,
-        immigration_coefficient = 1.1,
-        idea_threshold = 5,
-        idea_coefficient = 0.04,
-        idea_item = "essay"
+        immigration_coefficient = 1.1
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -59,10 +53,7 @@ Castes.values = {
         required_room_count = 0.5,
         minimum_comfort = 0,
         immigration_threshold = 5,
-        immigration_coefficient = 1.5,
-        idea_threshold = 5,
-        idea_coefficient = 0.04,
-        idea_item = "strategic-considerations"
+        immigration_coefficient = 1.5
     },
     [Type.ember] = {
         name = "ember",
@@ -79,10 +70,7 @@ Castes.values = {
         required_room_count = 1,
         minimum_comfort = 1,
         immigration_threshold = 5,
-        immigration_coefficient = 2,
-        idea_threshold = 5,
-        idea_coefficient = 0.01,
-        idea_item = "sketchbook"
+        immigration_coefficient = 2
     },
     [Type.foundry] = {
         name = "foundry",
@@ -99,10 +87,7 @@ Castes.values = {
         required_room_count = 4,
         minimum_comfort = 6,
         immigration_threshold = 5,
-        immigration_coefficient = 0.5,
-        idea_threshold = 5,
-        idea_coefficient = 0.2,
-        idea_item = "complex-scientific-data"
+        immigration_coefficient = 0.5
     },
     [Type.gleam] = {
         name = "gleam",
@@ -119,10 +104,7 @@ Castes.values = {
         required_room_count = 4,
         minimum_comfort = 4,
         immigration_threshold = 5,
-        immigration_coefficient = 0.5,
-        idea_threshold = 5,
-        idea_coefficient = 0.2,
-        idea_item = "published-paper"
+        immigration_coefficient = 0.5
     },
     [Type.aurora] = {
         name = "aurora",
@@ -139,10 +121,7 @@ Castes.values = {
         required_room_count = 10,
         minimum_comfort = 9,
         immigration_threshold = 5,
-        immigration_coefficient = 0.2,
-        idea_threshold = 5,
-        idea_coefficient = 0.5,
-        idea_item = "well-funded-scientific-thesis"
+        immigration_coefficient = 0.2
     },
     [Type.plasma] = {
         name = "plasma",
@@ -163,10 +142,6 @@ Castes.values = {
     }
 }
 local castes = Castes.values
-
-function Castes.produces_ideas(caste)
-    return caste.idea_item ~= nil
-end
 
 --- The number of people that leave a house per minute if they are unhappy.
 Castes.emigration_coefficient = 0.8
