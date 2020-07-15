@@ -6,7 +6,8 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aaa",
     place_result = "farm",
-    stack_size = 10
+    stack_size = 10,
+    pictures = Sosciencity_Globals.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {
@@ -290,4 +291,4 @@ Tirislib_Entity.create {
         }
     },
     localised_name = {"item-name.farm"}
-}:set_size(15, 7):copy_localisation_from_item()
+}:set_size(15, 7)

@@ -47,7 +47,7 @@ end
 -- << gathering recipes >>
 local hunting =
     Tirislib_Recipe.create {
-    name = "general-hunting",
+    name = "hunting-for-mammals",
     category = "sosciencity-hunting",
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",

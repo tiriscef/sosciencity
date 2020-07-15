@@ -6,7 +6,8 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "greenhouse",
-    stack_size = 10
+    stack_size = 10,
+    pictures = Sosciencity_Globals.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {

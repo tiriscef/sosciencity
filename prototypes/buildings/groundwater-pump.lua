@@ -6,7 +6,8 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "groundwater-pump",
-    stack_size = 50
+    stack_size = 50,
+    pictures = Sosciencity_Globals.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {

@@ -14,7 +14,7 @@ local data_details = {
         width = 5,
         height = 3,
         tech_level = 0,
-        placeable_by = "test-house"
+        main_entity = "test-house"
     },
     ["improvised-hut"] = {
         picture = {
@@ -55,7 +55,8 @@ local data_details = {
         },
         width = 3,
         height = 3,
-        tech_level = 0
+        tech_level = 0,
+        main_entity = "improvised-hut"
     },
     ["improvised-hut-2"] = {
         picture = {
@@ -97,7 +98,8 @@ local data_details = {
         width = 3,
         height = 3,
         tech_level = 0,
-        icon = "improvised-hut"
+        icon = "improvised-hut",
+        main_entity = "improvised-hut"
     },
     ["house-1"] = {
         picture = {
@@ -138,7 +140,7 @@ local data_details = {
         width = 8,
         height = 6,
         tech_level = 2,
-        placeable_by = "house-1"
+        main_entity = "house-1"
     }
 }
 
@@ -172,6 +174,7 @@ local function create_item(house_name, house, details)
         order = get_order(house),
         stack_size = details.stack_size or 20,
         place_result = house_name,
+        pictures = Sosciencity_Globals.blueprint_on_belt,
         localised_description = {
             "item-description.housing",
             house.room_count,
@@ -222,18 +225,20 @@ local function create_entity(house_name, house, details)
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13,
-        enable_inventory_bar = false
+        enable_inventory_bar = false,
+        localised_name = {"entity-name." .. details.main_entity},
+        localised_description = {"entity-description." .. details.main_entity}
     }:set_size(details.width, details.height)
 
-    if details.placeable_by then
-        entity:add_mining_result({name = details.placeable_by, amount = 1})
+    if details.main_entity ~= "improvised-hut" then
+        entity:add_mining_result({name = details.main_entity, amount = 1})
     end
 end
 
 for house_name, house in pairs(Housing.values) do
     local details = data_details[house_name]
 
-    if details.placeable_by == house_name then
+    if details.main_entity == house_name and house_name ~= "improvised-hut" then
         create_item(house_name, house, details)
         create_recipe(house_name, house, details)
     end
