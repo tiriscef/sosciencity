@@ -6,7 +6,8 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "silo",
-    stack_size = 10
+    stack_size = 10,
+    pictures = Sosciencity_Globals.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {
@@ -66,4 +67,4 @@ Tirislib_Entity.create {
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3)
+}:set_size(3, 3):copy_localisation_from_item()

@@ -11,7 +11,13 @@ local default_values = {
     ember_pack = "chemical-science-pack",
     foundry_pack = "production-science-pack",
     gleam_pack = "utility-science-pack",
-    aurora_pack = "space-science-pack"
+    aurora_pack = "space-science-pack",
+    blueprint_on_belt = {
+        {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-1.png", scale = 0.25},
+        {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-2.png", scale = 0.25},
+        {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-3.png", scale = 0.25},
+        {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
+    }
 }
 
 default_values.__index = default_values

@@ -106,56 +106,48 @@ RG.ingredient_themes = {
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1}
-
         },
         [4] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1.5}
-
         },
         [5] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 2}
-
         },
         [6] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 2}
-
         },
         [7] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 2}
-
         },
         [8] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1.5},
             {type = "item", name = "cupboard", amount = 2}
-
         },
         [9] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2.5},
             {type = "item", name = "table", amount = 2},
             {type = "item", name = "cupboard", amount = 3}
-
         },
         [10] = {
             {type = "item", name = "bed", amount = 3},
             {type = "item", name = "chair", amount = 5},
             {type = "item", name = "table", amount = 3},
             {type = "item", name = "cupboard", amount = 4}
-
         }
     },
     grating = {
@@ -167,14 +159,46 @@ RG.ingredient_themes = {
         }
     },
     machine = {
-        [0] = {},
-        [1] = {},
-        [2] = {},
-        [3] = {},
-        [4] = {},
-        [5] = {},
-        [6] = {},
-        [7] = {}
+        [0] = {
+            {type = "item", name = "copper-plate", amount = 10},
+            {type = "item", name = "iron-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 5}
+        },
+        [1] = {
+            {type = "item", name = "copper-plate", amount = 1},
+            {type = "item", name = "iron-plate", amount = 1},
+            {type = "item", name = "iron-gear-wheel", amount = 5}
+        },
+        [2] = {
+            {type = "item", name = "copper-plate", amount = 10},
+            {type = "item", name = "iron-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 10}
+        },
+        [3] = {
+            {type = "item", name = "engine-unit", amount = 5},
+            {type = "item", name = "steel-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 10}
+        },
+        [4] = {
+            {type = "item", name = "engine-unit", amount = 5},
+            {type = "item", name = "steel-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 10}
+        },
+        [5] = {
+            {type = "item", name = "electric-engine-unit", amount = 5},
+            {type = "item", name = "steel-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 10}
+        },
+        [6] = {
+            {type = "item", name = "electric-engine-unit", amount = 5},
+            {type = "item", name = "steel-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 10}
+        },
+        [7] = {
+            {type = "item", name = "electric-engine-unit", amount = 5},
+            {type = "item", name = "steel-plate", amount = 10},
+            {type = "item", name = "iron-gear-wheel", amount = 10}
+        }
     },
     mechanic = {
         [0] = {
@@ -189,7 +213,7 @@ RG.ingredient_themes = {
     },
     soil = {
         [0] = {
-            {type = "item", name = "stone", amount = 1}
+            {type = "item", name = "humus", amount = 1}
         }
     },
     tank = {
