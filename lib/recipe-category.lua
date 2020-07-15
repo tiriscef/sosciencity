@@ -48,6 +48,9 @@ function Tirislib_RecipeCategory.create(prototype)
 end
 
 -- << manipulation >>
+--- Entity types that can have crafting categories
+local crafters = {"character", "god-controller", "assembling-machine", "furnace", "rocket-silo"}
+
 function Tirislib_RecipeCategory:make_hand_craftable()
     -- add it to all the prototypes the player can be in
     for _, character in Tirislib_Entity.pairs("character") do
@@ -56,6 +59,17 @@ function Tirislib_RecipeCategory:make_hand_craftable()
     for _, controller in Tirislib_Entity.pairs("god-controller") do
         -- technically a god controller isn't an entity, but adding a category works the same for them
         controller:add_crafting_category(self.name)
+    end
+end
+
+--- Adds the recipe category to every entity that has also the given category.
+function Tirislib_RecipeCategory:pair_with(category)
+    for _, _type in pairs(crafters) do
+        for _, entity in Tirislib_Entity.pairs(_type) do
+            if entity:has_crafting_category(category) then
+                entity:add_crafting_category(self.name)
+            end
+        end
     end
 end
 

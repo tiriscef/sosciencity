@@ -213,6 +213,12 @@ function Tirislib_Entity:add_crafting_category(category_name)
     return self
 end
 
+function Tirislib_Entity:has_crafting_category(category_name)
+    local categories = self.crafting_categories
+
+    return categories ~= nil and Tirislib_Tables.contains(categories, category_name)
+end
+
 function Tirislib_Entity:add_loot(loot)
     if not self.loot then
         self.loot = {}

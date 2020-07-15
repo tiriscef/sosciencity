@@ -145,7 +145,12 @@ local function create_slaughter_recipe(animal, index)
         },
         icons = {
             {icon = item.icon},
-            {icon = "__sosciencity-graphics__/graphics/icon/slaughter-this.png"}
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/slaughter.png",
+                scale = 0.25,
+                shift = {-8, -8},
+                tint = {r = 1, g = 0.2, b = 0.2, a = 0.8}
+            }
         },
         icon_size = 64,
         subgroup = "sosciencity-slaughter",
