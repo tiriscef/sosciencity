@@ -107,10 +107,6 @@ function Communication.caste_allowed_in(entry, caste_id)
     )
 end
 
-function Communication.people_resettled(entry, count)
-    create_flying_text(entry, {"flying-text.resettled", count})
-end
-
 function Communication.people_died_tragic(number_of_casualties)
 end
 
@@ -391,10 +387,10 @@ function Communication.useless_banter()
 end
 local useless_banter = Communication.useless_banter
 
-function Communication.log_emigration(caste, emigrated)
+function Communication.log_emigration(group, cause)
 end
 
-function Communication.log_immigration(caste, immigrated)
+function Communication.log_immigration(group)
 end
 
 function Communication.update(current_tick)
