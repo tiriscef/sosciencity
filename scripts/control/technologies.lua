@@ -21,18 +21,14 @@ local relevant_multi_level_techs = {
 
 }
 
-local techs
 local floor = math.floor
-
-local function set_locals()
-    techs = game.force.player.technologies
-end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function determine_multi_level_tech_level(name)
     local level = 0
     local details = relevant_multi_level_techs[name]
+    local techs = game.forces.player.technologies
 
     while techs[name .. "-" .. (level + 1)].researched do
         level = level + 1
@@ -50,6 +46,7 @@ end
 --- Sets the given binary technologies so they encode the given value.
 function Technologies.set_binary_techs(value, name)
     local new_value = value
+    local techs = game.forces.player.technologies
 
     for strength = 0, 20 do
         new_value = floor(value / 2)
@@ -76,8 +73,8 @@ end
 
 --- Initialize the technology related contents of global.
 function Technologies.init()
-    set_locals()
     global.technologies = {}
+    local techs = game.forces.player.technologies
 
     for name, _ in pairs(relevant_techs) do
         global.technologies[name] = techs[name].researched
@@ -86,10 +83,6 @@ function Technologies.init()
     for name, _ in pairs(relevant_multi_level_techs) do
         determine_multi_level_tech_level(name)
     end
-end
-
-function Technologies.load()
-    set_locals()
 end
 
 return Technologies

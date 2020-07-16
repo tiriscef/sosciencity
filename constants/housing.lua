@@ -15,6 +15,7 @@ Housing.values = {
         comfort = 0,
         caste = Type.clockwork,
         caste_bonus = 2,
+        one_room_per_inhabitant = true,
         alternatives = {"improvised-hut-2"}
     },
     ["house-1"] = {
@@ -34,7 +35,14 @@ end
 local get_housing = Housing.get
 
 function Housing.get_capacity(entry)
-    return math.floor(get_housing(entry).room_count / Castes.values[entry[EK.type]].required_room_count)
+    local housing_details = get_housing(entry)
+    local room_count = housing_details.room_count
+
+    if housing_details.one_room_per_inhabitant then
+        return room_count
+    else
+        return math.floor(room_count / Castes.values[entry[EK.type]].required_room_count)
+    end
 end
 local get_capacity = Housing.get_capacity
 
@@ -52,17 +60,18 @@ do
     local to_add = {}
 
     for house_name, house in pairs(houses) do
-        if house.alternatives then
-            local alternatives = house.alternatives
+        house.main_entity = house_name
+        local alternatives = house.alternatives
+        if alternatives then
             for i = 1, #alternatives do
-                to_add[house.alternatives[i]] = house
-                Housing.next[house.alternatives[i]] = house.alternatives[i + 1] or house_name
+                to_add[alternatives[i]] = house
+                Housing.next[alternatives[i]] = alternatives[i + 1] or house_name
             end
 
-            Housing.next[house_name] = house.alternatives[1]
-            table.insert(house.alternatives, house_name)
+            Housing.next[house_name] = alternatives[1]
+            table.insert(alternatives, house_name)
 
-            house.alternatives = Tirislib_Tables.array_to_lookup(house.alternatives)
+            alternatives = Tirislib_Tables.array_to_lookup(house.alternatives)
         end
     end
 

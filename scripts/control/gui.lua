@@ -702,7 +702,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         (inhabitants > 0) and
             {
                 "sosciencity-gui.show-effective-population",
-                get_reasonable_number(InhabitantGroup.get_effective_population(entry))
+                get_reasonable_number(entry[EK.points])
             } or
             "-"
     )

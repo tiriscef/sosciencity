@@ -106,6 +106,10 @@ EK.has_penalty_module = 103
 
 -- type specific stuff
 -- housing
+--- if this house is an improvised hut
+EK.is_improvised = 203
+--- inhabitants this house has during the last update
+EK.official_inhabitants = 204
 --- points this house provides to the caste bonus
 EK.points = 205
 --- inhabitant count of this entry
@@ -154,6 +158,22 @@ EK.next_wave = 400
 -- fishery
 --- water tile count in environment
 EK.water_tiles = 500
+
+--<< causes >>
+--- Enum table for destruction causes
+DestructionCause = {}
+
+DestructionCause.unknown = 0
+DestructionCause.mined = 1
+DestructionCause.destroyed = 2
+DestructionCause.type_change = 3
+
+--- Enum table for emigration causes
+EmigrationCause = {}
+
+EmigrationCause.unknown = 0
+EmigrationCause.unhappy = 1
+EmigrationCause.homeless = 2
 
 --<< happiness summands >>
 --- Enum table for happiness summands.

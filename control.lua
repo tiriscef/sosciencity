@@ -55,7 +55,6 @@ require("scripts.control.gui")
 local global
 
 local add_fear = Inhabitants.add_fear
-local add_casualty_fear = Inhabitants.add_casualty_fear
 local ease_fear = Inhabitants.ease_fear
 
 local get_entity_type = Types.get_entity_type
@@ -69,9 +68,7 @@ local remove_entry = Register.remove_entry
 local add_to_register = Register.add
 local entity_update_cycle = Register.entity_update_cycle
 
-local update_caste_bonuses = Inhabitants.update_caste_bonuses
-local update_immigration = Inhabitants.update_immigration
-local update_homeless = Inhabitants.update_homeless
+local update_inhabitants = Inhabitants.update
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 local update_scheduler = Scheduler.update
@@ -85,10 +82,8 @@ local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 local function update_cycle()
     local current_tick = game.tick
     ease_fear(current_tick)
+    update_inhabitants(current_tick)
     entity_update_cycle(current_tick)
-    update_immigration(10) -- the time between update_cycles is always 10 ticks
-    update_homeless()
-    update_caste_bonuses()
     update_city_info()
     update_details_view()
     update_communication(current_tick)
@@ -140,7 +135,6 @@ local function on_load()
     Types.load()
     Neighborhood.load()
     Register.load()
-    Technologies.load()
     Gui.load()
     Inhabitants.load()
     Communication.load()
@@ -177,6 +171,7 @@ local function on_clone_built(event)
             local source_entry = try_get_entry(source.unit_number)
             if source_entry then
                 Register.clone(source_entry, destination)
+                return
             end
         end
 
@@ -205,7 +200,7 @@ local function on_entity_removed(event)
         return
     end
 
-    remove_entity(entity)
+    remove_entity(entity, DestructionCause.unknown)
 end
 
 local function on_entity_died(event)
@@ -220,13 +215,11 @@ local function on_entity_died(event)
     if entry then
         local _type = entry[EK.type]
 
-        if is_inhabited(_type) then
-            add_casualty_fear(entry)
-        elseif is_civil(_type) then
+        if is_civil(_type) then
             add_fear()
         end
 
-        remove_entry(entry)
+        remove_entry(entry, DestructionCause.destroyed)
     end
 end
 
@@ -239,11 +232,7 @@ local function on_entity_mined(event)
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
     if entry then
-        if Types.is_inhabited(entry[EK.type]) then
-            Inhabitants.try_resettle(entry, unit_number)
-        end
-
-        remove_entry(entry)
+        remove_entry(entry, DestructionCause.mined)
     end
 end
 

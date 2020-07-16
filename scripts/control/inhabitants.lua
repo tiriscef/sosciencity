@@ -36,6 +36,7 @@ local population
 local effective_population
 local caste_bonuses
 local immigration
+local homeless
 local houses_with_free_capacity
 local next_houses
 
@@ -51,11 +52,10 @@ local garbage_coefficient = Castes.garbage_coefficient
 local evaluate_diet = Consumption.evaluate_diet
 local evaluate_water = Consumption.evaluate_water
 
-local try_output_ideas = Inventories.try_output_ideas
 local produce_garbage = Inventories.produce_garbage
 local get_garbage_value = Inventories.get_garbage_value
 
-local get_housing = Housing.get
+local get_housing_details = Housing.get
 local get_free_capacity = Housing.get_free_capacity
 
 local set_power_usage = Subentities.set_power_usage
@@ -82,6 +82,7 @@ local function set_locals()
     effective_population = global.effective_population
     caste_bonuses = global.caste_bonuses
     immigration = global.immigration
+    homeless = global.homeless
     houses_with_free_capacity = global.houses_with_free_capacity
     next_houses = global.next_houses
 end
@@ -110,9 +111,13 @@ function Inhabitants.init()
     global.immigration = new_caste_table()
     global.houses_with_free_capacity = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
     global.next_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
-    global.homeless = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    global.homeless = {}
 
     set_locals()
+
+    for _, caste_id in pairs(TypeGroup.all_castes) do
+        homeless[caste_id] = InhabitantGroup.new(caste_id)
+    end
 end
 
 --- Sets local references during on_load
@@ -224,7 +229,7 @@ local DEFAULT_HAPPINESS = 10
 local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
---- Constructs a new InhabitantGroup object
+--- Constructs a new InhabitantGroup object.
 function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses)
     return {
         [EK.type] = caste,
@@ -237,12 +242,13 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses)
 end
 local new_group = InhabitantGroup.new
 
+--- Adds the necessary data so this house can also work as an InhabitantGroup.
 function InhabitantGroup.new_house(house)
     house[EK.inhabitants] = 0
     house[EK.happiness] = 0
     house[EK.health] = 0
     house[EK.sanity] = 0
-    house[EK.inhabitants] = new_illness_group(0)
+    house[EK.illnesses] = new_illness_group(0)
 end
 
 function InhabitantGroup.can_be_merged(lh, rh)
@@ -281,7 +287,7 @@ function InhabitantGroup.take(group, count)
     return ret
 end
 
-function InhabitantGroup.add_partially(lh, rh, count)
+function InhabitantGroup.merge_partially(lh, rh, count)
     InhabitantGroup.merge(lh, InhabitantGroup.take(rh, count))
 end
 
@@ -305,10 +311,6 @@ end
 
 local function get_effective_population_multiplier(happiness)
     return happiness * 0.1
-end
-
-function InhabitantGroup.get_effective_population(group)
-    return group[EK.inhabitants] * get_effective_population_multiplier(group[EK.happiness])
 end
 
 function InhabitantGroup.get_power_usage(group)
@@ -408,7 +410,7 @@ local function set_gleam_bonus(value)
 end
 
 --- Updates all the caste bonuses and sets the ones that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
-function Inhabitants.update_caste_bonuses()
+local function update_caste_bonuses()
     caste_bonuses[Type.clockwork] = get_clockwork_bonus()
     caste_bonuses[Type.orchid] = get_orchid_bonus()
     caste_bonuses[Type.ember] = get_ember_bonus()
@@ -578,46 +580,36 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
---- Updates the points this house provides toward the caste bonus. This is so the centrally saved sum gets updated.
-local function update_caste_bonus_points(entry)
-    local new_points = InhabitantGroup.get_effective_population(entry)
-    local caste_id = entry[EK.type]
-
-    -- substract the old value, add the new
-    effective_population[caste_id] = effective_population[caste_id] + new_points - entry[EK.points]
-    entry[EK.points] = new_points
+local function get_nominal_value(influences, factors)
+    return max(0, array_sum(influences) * array_product(factors))
 end
 
---- Tries to add the specified amount of inhabitants to the house-entry.
---- Returns the number of inhabitants that were added.
---- @param entry Entry
---- @param group InhabitantGroup
-function Inhabitants.try_add_to_house(entry, group)
-    local count_moving_in = min(group[EK.inhabitants], get_free_capacity(entry))
+function Inhabitants.get_nominal_happiness(entry)
+    return get_nominal_value(entry[EK.happiness_summands], entry[EK.happiness_factors])
+end
 
-    if count_moving_in == 0 then
-        return 0
+function Inhabitants.get_nominal_health(entry)
+    return get_nominal_value(entry[EK.health_summands], entry[EK.health_factors])
+end
+
+function Inhabitants.get_nominal_sanity(entry)
+    return get_nominal_value(entry[EK.sanity_summands], entry[EK.sanity_factors])
+end
+
+local function update_free_space_status(entry)
+    if entry[EK.is_improvised] then
+        return
     end
 
-    InhabitantGroup.add_partially(entry, group, count_moving_in)
-
     local caste_id = entry[EK.type]
-    local inhabitants = entry[EK.inhabitants]
+    local unit_number = entry[EK.unit_number]
 
-    population[caste_id] = population[caste_id] + count_moving_in
-
-    update_caste_bonus_points(entry)
-
-    set_power_usage(entry, InhabitantGroup.get_power_usage(inhabitants))
-
-    if get_free_capacity(entry) == 0 then
-        local unit_number = entry[EK.unit_number]
+    if get_free_capacity(entry) > 0 then
         houses_with_free_capacity[caste_id][unit_number] = nil
+    else
+        houses_with_free_capacity[caste_id][unit_number] = unit_number
     end
-
-    return count_moving_in
 end
-local try_add_to_house = Inhabitants.try_add_to_house
 
 local function get_next_free_house(caste_id)
     local next_houses_table = next_houses[caste_id]
@@ -647,6 +639,24 @@ local function get_next_free_house(caste_id)
     end
 end
 
+--- Tries to add the specified amount of inhabitants to the house-entry.
+--- Returns the number of inhabitants that were added.
+--- @param entry Entry
+--- @param group InhabitantGroup
+function Inhabitants.try_add_to_house(entry, group)
+    local count_moving_in = min(group[EK.inhabitants], get_free_capacity(entry))
+
+    if count_moving_in == 0 then
+        return 0
+    end
+
+    InhabitantGroup.merge_partially(entry, group, count_moving_in)
+    update_free_space_status(entry)
+
+    return count_moving_in
+end
+local try_add_to_house = Inhabitants.try_add_to_house
+
 --- Tries to distribute the specified inhabitants to houses with free capacity.
 --- Returns the number of inhabitants that were distributed.
 --- @param group InhabitantGroup
@@ -666,38 +676,49 @@ function Inhabitants.distribute_inhabitants(group)
 end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
---- Tries to remove the specified amount of inhabitants from the house-entry.
---- Returns the number of inhabitants that were removed.
---- @param entry Entry
---- @param count integer
-function Inhabitants.remove_from_house(entry, count)
-    local count_moving_out = min(entry[EK.inhabitants], count)
-
-    if count_moving_out == 0 then
-        return 0
-    end
-
-    local caste_id = entry[EK.type]
-
-    population[caste_id] = population[caste_id] - count_moving_out
-    entry[EK.inhabitants] = entry[EK.inhabitants] - count_moving_out
-    -- TODO delete diseases/employments if needed
-    update_caste_bonus_points(entry)
-
-    set_power_usage(entry, get_power_usage(entry))
-
-    if get_free_capacity(entry) > 0 then
-        local unit_number = entry[EK.entity].unit_number
-        houses_with_free_capacity[caste_id][unit_number] = unit_number
-    end
-
-    return count_moving_out
-end
-local remove_from_house = Inhabitants.remove_from_house
-
 ---------------------------------------------------------------------------------------------------
 -- << housing update >>
 -- it's so complex, it got his own section
+
+local function get_garbage_influence(entry)
+    return max(get_garbage_value(entry) - 20, 0) * (-0.1)
+end
+
+--- Evaluates the effect of the housing on its inhabitants.
+--- @param entry Entry
+local function evaluate_housing(entry, happiness_summands, sanity_summands, caste)
+    local housing = get_housing_details(entry)
+    happiness_summands[HappinessSummand.housing] = housing.comfort
+    sanity_summands[SanitySummand.housing] = housing.comfort
+
+    happiness_summands[HappinessSummand.suitable_housing] =
+        (entry[EK.type] == housing.caste) and housing.caste_bonus or 0
+
+    happiness_summands[HappinessSummand.garbage] = get_garbage_influence(entry)
+
+    if has_power(entry) then
+        happiness_summands[HappinessSummand.power] = caste.power_bonus
+        happiness_summands[HappinessSummand.no_power] = 0
+    else
+        happiness_summands[HappinessSummand.power] = 0
+        happiness_summands[HappinessSummand.no_power] = caste.no_power_malus
+    end
+end
+
+local function evaluate_sosciety(happiness_summands, health_summands, sanity_summands, caste)
+    happiness_summands[HappinessSummand.ember] = caste_bonuses[Type.ember]
+    health_summands[HealthSummand.plasma] = caste_bonuses[Type.plasma]
+
+    local fear_malus = global.fear * caste.fear_multiplier
+    happiness_summands[HappinessSummand.fear] = fear_malus
+    if fear_malus > 5 then
+        health_summands[HealthSummand.fear] = fear_malus / 2
+        sanity_summands[SanitySummand.fear] = fear_malus / 2
+    else
+        health_summands[HealthSummand.fear] = 0
+        sanity_summands[SanitySummand.fear] = 0
+    end
+end
 
 --- Gets the trend toward the next inhabitant that moves out.
 function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
@@ -711,36 +732,61 @@ function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
 end
 local get_emigration_trend = Inhabitants.get_emigration_trend
 
+local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
+    local trend = entry[EK.emigration_trend]
+    trend = trend + get_emigration_trend(nominal_happiness, castes[caste_id], delta_ticks)
+    if trend > 1 then
+        -- buffer caps at one
+        trend = 1
+    elseif trend <= -1 then
+        -- let people move out
+        local emigrating = -ceil(trend)
+        trend = trend + emigrating
+
+        local emigrants = InhabitantGroup.take(entry, emigrating)
+        Communication.log_emigration(emigrants, EmigrationCause.unhappy)
+    end
+    entry[EK.emigration_trend] = trend
+end
+
 function Inhabitants.get_garbage_progress(inhabitants, delta_ticks)
     return garbage_coefficient * inhabitants * delta_ticks
 end
 local get_garbage_progress = Inhabitants.get_garbage_progress
 
-local function get_nominal_value(influences, factors)
-    return max(0, array_sum(influences) * array_product(factors))
+local function update_garbage_output(entry, delta_ticks)
+    local garbage = entry[EK.garbage_progress] + get_garbage_progress(entry[EK.inhabitants], delta_ticks)
+    if garbage >= 1 then
+        local produced_garbage = floor(garbage)
+        produce_garbage(entry, "garbage", produced_garbage)
+        garbage = garbage - produced_garbage
+    end
+    entry[EK.garbage_progress] = garbage
 end
 
-local function get_garbage_influence(entry)
-    return max(get_garbage_value(entry) - 20, 0) * (-0.1)
-end
+local function update_housing_census(entry, caste_id)
+    local inhabitants = entry[EK.inhabitants]
+    local official_inhabitants = entry[EK.official_inhabitants]
 
---- Evaluates the effect of the housing on its inhabitants.
---- @param entry Entry
-local function evaluate_housing(entry, happiness_summands, sanity_summands)
-    local housing = get_housing(entry)
-    happiness_summands[HappinessSummand.housing] = housing.comfort
-    sanity_summands[SanitySummand.housing] = housing.comfort
+    if inhabitants ~= official_inhabitants then
+        population[caste_id] = population[caste_id] - official_inhabitants + inhabitants
+        entry[EK.official_inhabitants] = inhabitants
 
-    happiness_summands[HappinessSummand.suitable_housing] =
-        (entry[EK.type] == housing.caste) and housing.caste_bonus or 0
+        set_power_usage(entry, get_power_usage(entry))
+    end
+
+    -- caste bonus points
+    local points = get_employable_count(entry) * get_effective_population_multiplier(entry[EK.happiness])
+    effective_population[caste_id] = effective_population[caste_id] - entry[EK.points] + points
+    entry[EK.points] = points
 end
 
 --- Updates the given housing entry.
 --- @param entry Entry
 --- @param delta_ticks integer
-function Inhabitants.update_house(entry, delta_ticks)
+local function update_house(entry, delta_ticks)
     local caste_id = entry[EK.type]
-    local caste_values = castes[caste_id]
+    local caste = castes[caste_id]
 
     local happiness_summands = entry[EK.happiness_summands]
     local happiness_factors = entry[EK.happiness_factors]
@@ -755,31 +801,9 @@ function Inhabitants.update_house(entry, delta_ticks)
 
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
-    evaluate_housing(entry, happiness_summands, sanity_summands)
+    evaluate_housing(entry, happiness_summands, sanity_summands, caste)
     evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
-
-    happiness_summands[HappinessSummand.garbage] = get_garbage_influence(entry)
-
-    if has_power(entry) then
-        happiness_summands[HappinessSummand.power] = caste_values.power_bonus
-        happiness_summands[HappinessSummand.no_power] = 0
-    else
-        happiness_summands[HappinessSummand.power] = 0
-        happiness_summands[HappinessSummand.no_power] = caste_values.no_power_malus
-    end
-
-    happiness_summands[HappinessSummand.ember] = caste_bonuses[Type.ember]
-    health_summands[HealthSummand.plasma] = caste_bonuses[Type.plasma]
-
-    local fear_malus = global.fear * caste_values.fear_multiplier
-    happiness_summands[HappinessSummand.fear] = fear_malus
-    if fear_malus > 5 then
-        health_summands[HealthSummand.fear] = fear_malus / 2
-        sanity_summands[SanitySummand.fear] = fear_malus / 2
-    else
-        health_summands[HealthSummand.fear] = 0
-        sanity_summands[SanitySummand.fear] = 0
-    end
+    evaluate_sosciety(happiness_summands, health_summands, sanity_summands, caste)
 
     -- update health
     local nominal_health = get_nominal_value(health_summands, health_factors)
@@ -797,45 +821,17 @@ function Inhabitants.update_house(entry, delta_ticks)
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)
     update_happiness(entry, nominal_happiness, delta_ticks)
 
-    -- update effective population because the happiness has changed (most likely)
-    update_caste_bonus_points(entry)
     -- TODO diseases
 
-    local garbage = entry[EK.garbage_progress] + get_garbage_progress(inhabitants, delta_ticks)
-    if garbage >= 1 then
-        local produced_garbage = floor(garbage)
-        produce_garbage(entry, "garbage", produced_garbage)
-        garbage = garbage - produced_garbage
-    end
-    entry[EK.garbage_progress] = garbage
+    update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
 
-    local trend = entry[EK.emigration_trend]
-    trend = trend + get_emigration_trend(nominal_happiness, caste_values, delta_ticks)
-    if trend > 1 then
-        -- buffer caps at one
-        trend = 1
-    elseif trend <= -1 then
-        -- let people move out
-        local emigrating = -ceil(trend)
-        local emigrated = remove_from_house(entry, emigrating)
-        trend = trend + emigrating
-        Communication.log_emigration(caste_id, emigrated)
-    end
-    entry[EK.emigration_trend] = trend
+    update_housing_census(entry, caste_id)
+
+    update_garbage_output(entry, delta_ticks)
 end
 
-function Inhabitants.get_nominal_happiness(entry)
-    return get_nominal_value(entry[EK.happiness_summands], entry[EK.happiness_factors])
-end
-
-function Inhabitants.get_nominal_health(entry)
-    return get_nominal_value(entry[EK.health_summands], entry[EK.health_factors])
-end
-
-function Inhabitants.get_nominal_sanity(entry)
-    return get_nominal_value(entry[EK.sanity_summands], entry[EK.sanity_factors])
-end
-
+---------------------------------------------------------------------------------------------------
+-- << immigration >>
 function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
     local pop = population[caste_id]
 
@@ -849,15 +845,9 @@ function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
 end
 local get_immigration_trend = Inhabitants.get_immigration_trend
 
-function Inhabitants.update_immigration(delta_ticks)
+local function update_immigration(delta_ticks)
     for caste = 1, #immigration do
         if is_researched(caste) then
-            --if immigration_trend > 1 then
-            --    local immigrating = floor(immigration_trend)
-            --    local immigrated = Inhabitants.distribute_inhabitants(caste, immigrating)
-            --    immigration_trend = immigration_trend - immigrating
-            --    Communication.log_immigration(caste, immigrated)
-            --end
             immigration[caste] = immigration[caste] + get_immigration_trend(delta_ticks, caste)
         end
     end
@@ -869,41 +859,16 @@ function Inhabitants.migration_wave(immigration_port_details)
     shuffle(order)
 
     for i = 1, #immigration do
-        local immigrating = min(floor(immigration(i)), capacity)
         local caste = order[i]
-        local integrated = immigrating - distribute_inhabitants(caste, immigrating)
+        local count_immigrated = min(floor(immigration(caste)), capacity)
 
-        Inhabitants.add_homeless(new_group(caste, immigrating - integrated))
+        capacity = capacity - count_immigrated
+        immigration[caste] = immigration[caste] - count_immigrated
 
-        if capacity == 0 then
-            break
-        end
+        local immigrants = new_group(caste, count_immigrated)
+
+        Inhabitants.add_to_homeless_pool(immigrants)
     end
-end
-
----------------------------------------------------------------------------------------------------
--- << resettlement >>
---- Looks for housings to move the inhabitants of this entry to.
---- Returns the number of resettled inhabitants.
---- @param entry Entry
-function Inhabitants.try_resettle(entry, unit_number)
-    if not global.technologies["resettlement"] then
-        return 0
-    end
-
-    local caste = entry[EK.type]
-
-    -- remove the entry from the next_houses-table so they don't try to move into the house they're already living in
-    houses_with_free_capacity[caste][unit_number] = nil
-    Tirislib_Tables.remove_all(next_houses[caste], unit_number)
-    local resettled =
-        distribute_inhabitants(caste, entry[EK.inhabitants], entry[EK.happiness], entry[EK.health], entry[EK.sanity])
-
-    if resettled > 0 then
-        Communication.people_resettled(entry, resettled)
-    end
-
-    return resettled
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -937,14 +902,85 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << homeless inhabitants >>
-local function create_improvised_huts(group)
-    local to_distribute = group[EK.inhabitants]
+local hut_details = Housing.values["improvised-hut"]
+local function create_improvised_huts(group, to_distribute)
+    local caste_id = group[EK.type]
+
+    for _, market in Register.all_of_type(Type.market) do
+        local entity = market[EK.entity]
+        local position = entity.position
+        local surface = entity.surface
+        local range = get_building_details(market).range
+
+        local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
+
+        while to_distribute > 0 do
+            local possible_position =
+                surface.find_non_colliding_position_in_box("improvised-hut", bounding_box, 2, true)
+            if not possible_position then
+                break
+            end
+
+            local new_hut =
+                surface.create_entity {
+                name = "improvised-hut",
+                position = possible_position,
+                force = "player"
+            }
+            local entry = Register.add(new_hut, caste_id)
+
+            local count_moving_in = min(to_distribute, hut_details.room_count)
+            InhabitantGroup.merge_partially(entry, group, count_moving_in)
+        end
+    end
 end
 
-function Inhabitants.add_homeless(group)
+local function try_house_homeless()
+    for _, group in pairs(homeless) do
+        distribute_inhabitants(group)
+    end
 end
 
-function Inhabitants.update_homeless()
+--- Adds people without a home to the global homeless pool.
+function Inhabitants.add_to_homeless_pool(group)
+    local caste_id = group[EK.type]
+    InhabitantGroup.merge(homeless[caste_id], group)
+
+    if global.technologies["resettlement"] then
+        try_house_homeless()
+    end
+end
+
+local function update_homelessness()
+    local resettlement = global.technologies["resettlement"]
+
+    for _, homeless_group in pairs(homeless) do
+        update_happiness(homeless_group, 0, 1800)
+        update_health(homeless_group, 0, 1800)
+        update_sanity(homeless_group, 0, 1800)
+        -- TODO diseases
+
+        local count = homeless_group[EK.inhabitants]
+        local staying = ceil(count * (resettlement and 0.8 or 0.5))
+
+        local emigrating = count - staying
+        local emigrated = InhabitantGroup.take(homeless_group, emigrating)
+        Communication.log_emigration(emigrated, EmigrationCause.homeless)
+
+
+        create_improvised_huts(homeless_group)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << general update >>
+function Inhabitants.update(current_tick)
+    update_caste_bonuses()
+    update_immigration(10)
+
+    if current_tick % 3600 == 0 then
+        update_homelessness()
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -956,8 +992,8 @@ end
 --- @param loud boolean
 function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     if
-        entry[EK.type] == Type.empty_house and Housing.allowes_caste(get_housing(entry), caste_id) and
-            is_researched(caste_id)
+        entry[EK.type] == Type.empty_house and is_researched(caste_id) and
+            Housing.allowes_caste(get_housing_details(entry), caste_id)
      then
         Register.change_type(entry, caste_id)
 
@@ -974,6 +1010,10 @@ end
 --- @param entry Entry
 function Inhabitants.create_house(entry)
     InhabitantGroup.new_house(entry)
+    entry[EK.official_inhabitants] = 0
+    entry[EK.points] = 0
+
+    entry[EK.is_improvised] = (get_housing_details(entry).main_entity == "improvised-hut")
 
     entry[EK.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
     entry[EK.happiness_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessFactor), 1.)
@@ -984,7 +1024,6 @@ function Inhabitants.create_house(entry)
     entry[EK.sanity_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanitySummand), 0.)
     entry[EK.sanity_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanityFactor), 1.)
 
-    entry[EK.points] = 0
     entry[EK.emigration_trend] = 0
     entry[EK.idea_progress] = 0
     entry[EK.garbage_progress] = 0
@@ -993,29 +1032,34 @@ function Inhabitants.create_house(entry)
     entry[EK.employments] = {}
     entry[EK.ill] = 0
 
-    local caste_id = entry[EK.type]
-    local unit_number = entry[EK.unit_number]
-    houses_with_free_capacity[caste_id][unit_number] = unit_number
+    update_free_space_status(entry)
 end
 
 function Inhabitants.copy_house(source, destination)
-    try_add_to_house(destination, source[EK.inhabitants], source[EK.happiness], source[EK.health], source[EK.sanity])
+    try_add_to_house(destination, source)
 end
 
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
 --- @param entry Entry
-function Inhabitants.remove_house(entry)
-    local unit_number = entry[EK.unit_number]
+function Inhabitants.remove_house(entry, cause)
     unemploy_all_inhabitants(entry)
+
+    local unit_number = entry[EK.unit_number]
     houses_with_free_capacity[entry[EK.type]][unit_number] = nil
-    remove_from_house(entry, entry[EK.inhabitants])
+    Tirislib_Tables.remove_all(next_houses, unit_number)
+
+    if cause == DestructionCause.destroyed then
+        Inhabitants.add_casualty_fear(entry)
+    else
+        Inhabitants.add_to_homeless_pool(entry)
+    end
 end
 
 -- Set event handlers for the housing entities.
 for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_creation_handler(caste, Inhabitants.create_house)
     Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
-    Register.set_entity_updater(caste, Inhabitants.update_house)
+    Register.set_entity_updater(caste, update_house)
     Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
 end
 
