@@ -251,12 +251,20 @@ function InhabitantGroup.new_house(house)
     house[EK.illnesses] = new_illness_group(0)
 end
 
+function InhabitantGroup.empty(group)
+    group[EK.inhabitants] = 0
+    group[EK.happiness] = 0
+    group[EK.health] = 0
+    group[EK.sanity] = 0
+    group[EK.illnesses] = new_illness_group(0)
+end
+
 function InhabitantGroup.can_be_merged(lh, rh)
     return lh[EK.type] == rh[EK.type]
 end
 local groups_can_merge = InhabitantGroup.can_be_merged
 
-function InhabitantGroup.merge(lh, rh)
+function InhabitantGroup.merge(lh, rh, keep_rh)
     if not groups_can_merge(lh, rh) then
         error("Sosciencity tried to merge two incompatible InhabitantGroup objects.")
     end
@@ -271,6 +279,10 @@ function InhabitantGroup.merge(lh, rh)
     lh[EK.sanity] = weighted_average(lh[EK.sanity], count_left, rh[EK.sanity], count_right)
 
     lh[EK.illnesses] = IllnessGroup.merge(lh[EK.illnesses], rh[EK.illnesses])
+
+    if not keep_rh then
+        InhabitantGroup.empty(rh)
+    end
 end
 
 function InhabitantGroup.take(group, count)
@@ -768,9 +780,12 @@ local function update_housing_census(entry, caste_id)
     local inhabitants = entry[EK.inhabitants]
     local official_inhabitants = entry[EK.official_inhabitants]
 
+    -- inhabitant count
     if inhabitants ~= official_inhabitants then
         population[caste_id] = population[caste_id] - official_inhabitants + inhabitants
         entry[EK.official_inhabitants] = inhabitants
+
+        update_free_space_status(entry)
 
         set_power_usage(entry, get_power_usage(entry))
     end
@@ -779,6 +794,13 @@ local function update_housing_census(entry, caste_id)
     local points = get_employable_count(entry) * get_effective_population_multiplier(entry[EK.happiness])
     effective_population[caste_id] = effective_population[caste_id] - entry[EK.points] + points
     entry[EK.points] = points
+end
+
+local function remove_housing_census(entry)
+    local caste_id = entry[EK.type]
+
+    population[caste_id] = population[caste_id] - entry[EK.official_inhabitants]
+    effective_population[caste_id] = effective_population[caste_id] - entry[EK.points]
 end
 
 --- Updates the given housing entry.
@@ -961,12 +983,11 @@ local function update_homelessness()
         -- TODO diseases
 
         local count = homeless_group[EK.inhabitants]
-        local staying = ceil(count * (resettlement and 0.8 or 0.5))
+        local staying = ceil(count * (resettlement and 0.9 or 0.7))
 
         local emigrating = count - staying
         local emigrated = InhabitantGroup.take(homeless_group, emigrating)
         Communication.log_emigration(emigrated, EmigrationCause.homeless)
-
 
         create_improvised_huts(homeless_group)
     end
@@ -1025,7 +1046,6 @@ function Inhabitants.create_house(entry)
     entry[EK.sanity_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanityFactor), 1.)
 
     entry[EK.emigration_trend] = 0
-    entry[EK.idea_progress] = 0
     entry[EK.garbage_progress] = 0
 
     entry[EK.employed] = 0
@@ -1043,6 +1063,7 @@ end
 --- @param entry Entry
 function Inhabitants.remove_house(entry, cause)
     unemploy_all_inhabitants(entry)
+    remove_housing_census(entry)
 
     local unit_number = entry[EK.unit_number]
     houses_with_free_capacity[entry[EK.type]][unit_number] = nil

@@ -104,6 +104,9 @@ EK.productivity_bonus = 102
 --- if this entries beacon has a penalty module
 EK.has_penalty_module = 103
 
+-- general Custom Building related stuff
+EK.performance = 150
+
 -- type specific stuff
 -- housing
 --- if this house is an improvised hut

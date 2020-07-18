@@ -52,10 +52,9 @@ function Technologies.set_binary_techs(value, name)
         new_value = floor(value / 2)
 
         -- if new_value times two doesn't equal value, then the remainder was one
-        -- which means that the current binary digit is one and that the corresponding tech should be researched
+        -- which means that the current lowest binary digit is one and that the corresponding tech should be researched
         techs[strength .. name].researched = (new_value * 2 ~= value)
 
-        strength = strength + 1
         value = new_value
     end
 end
