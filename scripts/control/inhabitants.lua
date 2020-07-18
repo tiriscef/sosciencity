@@ -182,10 +182,14 @@ function IllnessGroup.remove_persons(group, count, diseases)
     end
 end
 
-function IllnessGroup.merge(lh, rh)
+function IllnessGroup.merge(lh, rh, keep_rh)
     for i = 1, #rh do
         local entry = rh[i]
         add_persons(lh, entry[IllnessGroup.count], entry[IllnessGroup.diseases])
+
+        if not keep_rh then
+            IllnessGroup.remove_persons(rh, entry[IllnessGroup.count], entry[IllnessGroup.diseases])
+        end
     end
 end
 
@@ -278,7 +282,7 @@ function InhabitantGroup.merge(lh, rh, keep_rh)
     lh[EK.health] = weighted_average(lh[EK.health], count_left, rh[EK.health], count_right)
     lh[EK.sanity] = weighted_average(lh[EK.sanity], count_left, rh[EK.sanity], count_right)
 
-    lh[EK.illnesses] = IllnessGroup.merge(lh[EK.illnesses], rh[EK.illnesses])
+    IllnessGroup.merge(lh[EK.illnesses], rh[EK.illnesses], keep_rh)
 
     if not keep_rh then
         InhabitantGroup.empty(rh)
@@ -882,7 +886,7 @@ function Inhabitants.migration_wave(immigration_port_details)
 
     for i = 1, #immigration do
         local caste = order[i]
-        local count_immigrated = min(floor(immigration(caste)), capacity)
+        local count_immigrated = min(floor(immigration[caste]), capacity)
 
         capacity = capacity - count_immigrated
         immigration[caste] = immigration[caste] - count_immigrated
@@ -925,7 +929,9 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << homeless inhabitants >>
 local hut_details = Housing.values["improvised-hut"]
-local function create_improvised_huts(group, to_distribute)
+local hut_variations = copy(hut_details.alternatives)
+hut_variations[#hut_variations+1] = "improvised-hut"
+local function create_improvised_huts(group)
     local caste_id = group[EK.type]
 
     for _, market in Register.all_of_type(Type.market) do
@@ -936,7 +942,7 @@ local function create_improvised_huts(group, to_distribute)
 
         local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
 
-        while to_distribute > 0 do
+        while group[EK.inhabitants] > 0 do
             local possible_position =
                 surface.find_non_colliding_position_in_box("improvised-hut", bounding_box, 2, true)
             if not possible_position then
@@ -945,13 +951,13 @@ local function create_improvised_huts(group, to_distribute)
 
             local new_hut =
                 surface.create_entity {
-                name = "improvised-hut",
+                name = hut_variations[math.random(#hut_variations)],
                 position = possible_position,
                 force = "player"
             }
             local entry = Register.add(new_hut, caste_id)
 
-            local count_moving_in = min(to_distribute, hut_details.room_count)
+            local count_moving_in = min(group[EK.inhabitants], hut_details.room_count)
             InhabitantGroup.merge_partially(entry, group, count_moving_in)
         end
     end
@@ -983,12 +989,11 @@ local function update_homelessness()
         -- TODO diseases
 
         local count = homeless_group[EK.inhabitants]
-        local staying = ceil(count * (resettlement and 0.9 or 0.7))
-
-        local emigrating = count - staying
+        local emigrating = floor(count * (resettlement and 0.1 or 0.3))
         local emigrated = InhabitantGroup.take(homeless_group, emigrating)
         Communication.log_emigration(emigrated, EmigrationCause.homeless)
 
+        distribute_inhabitants(homeless_group)
         create_improvised_huts(homeless_group)
     end
 end

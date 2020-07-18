@@ -388,6 +388,8 @@ end
 local useless_banter = Communication.useless_banter
 
 function Communication.log_emigration(group, cause)
+    -- TODO this is debug code
+    game.print(group[EK.inhabitants] .. " people emigrated because of " .. cause)
 end
 
 function Communication.log_immigration(group)

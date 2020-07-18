@@ -11,6 +11,9 @@ function Tirislib_Utils.round(number)
 end
 
 function Tirislib_Utils.weighted_average(a, weight_a, b, weight_b)
+    if weight_a == 0 and weight_b == 0 then
+        return 0
+    end
     return (a * weight_a + b * weight_b) / (weight_a + weight_b)
 end
 

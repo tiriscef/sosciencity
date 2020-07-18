@@ -17,6 +17,8 @@ local Inhabitants = Inhabitants
 local Buildings = Buildings
 
 local ceil = math.ceil
+local floor = math.floor
+local format = string.format
 
 local function set_locals()
     global = _ENV.global
@@ -35,18 +37,18 @@ local function get_bonus_string(caste_id)
     if caste_id == Type.clockwork and global.use_penalty then
         bonus = bonus - 80
     end
-    return string.format("%+d", bonus)
+    return format("%+d", bonus)
 end
 
 local function get_reasonable_number(number)
-    return string.format("%.1f", number)
+    return format("%.1f", number)
 end
 
 local function get_summand_string(number)
     if number > 0 then
-        return string.format("[color=0,1,0]%+.1f[/color]", number)
+        return format("[color=0,1,0]%+.1f[/color]", number)
     elseif number < 0 then
-        return string.format("[color=1,0,0]%+.1f[/color]", number)
+        return format("[color=1,0,0]%+.1f[/color]", number)
     else -- number equals 0
         return "[color=0.8,0.8,0.8]0.0[/color]"
     end
@@ -54,9 +56,9 @@ end
 
 local function get_factor_string(number)
     if number > 1 then
-        return string.format("[color=0,1,0]×%.1f[/color]", number)
+        return format("[color=0,1,0]×%.1f[/color]", number)
     elseif number < 1 then
-        return string.format("[color=1,0,0]×%.1f[/color]", number)
+        return format("[color=1,0,0]×%.1f[/color]", number)
     else -- number equals 1
         return "[color=0.8,0.8,0.8]1.0[/color]"
     end
@@ -71,7 +73,7 @@ local function display_caste(caste_id)
 end
 
 local function get_migration_string(number)
-    return string.format("%+.1f", number)
+    return format("%+.1f", number)
 end
 
 local function get_entry_representation(entry)
@@ -90,6 +92,43 @@ end
 
 local function display_convergence(current, target)
     return {"sosciencity-gui.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
+end
+
+local mult = " × "
+local function display_materials(materials)
+    local ret = {""}
+    local first = true
+
+    for material, count in pairs(materials) do
+        local entry = {""}
+
+        if not first then
+            entry[#entry + 1] = "\n"
+        end
+        first = false
+
+        entry[#entry + 1] = count
+        entry[#entry + 1] = mult
+
+        entry[#entry + 1] = format("[item=%s] ", material)
+
+        local item_prototype = game.item_prototypes[material]
+        entry[#entry + 1] = item_prototype.localised_name
+
+        ret[#ret + 1] = entry
+    end
+
+    return ret
+end
+
+local function display_time(ticks)
+    local seconds = ceil(ticks / 60)
+    local minutes = floor(seconds / 60)
+    seconds = seconds % 60
+    local hours = floor(minutes / 60)
+    minutes = minutes % 60
+
+    return {"sosciencity-gui.time", hours, minutes, seconds}
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -688,21 +727,17 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value(
         general_list,
         "happiness",
-        (inhabitants > 0) and
-            display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry)) or
-            "-"
+        (inhabitants > 0) and display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry)) or "-"
     )
     set_datalist_value(
         general_list,
         "health",
-        (inhabitants > 0) and display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry)) or
-            "-"
+        (inhabitants > 0) and display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry)) or "-"
     )
     set_datalist_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or
-            "-"
+        (inhabitants > 0) and display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or "-"
     )
     set_datalist_value(
         general_list,
@@ -937,11 +972,7 @@ local function update_general_building_details(container, entry)
     local worker_specification = Buildings.get(entry).workforce
     if worker_specification then
         local count_needed = worker_specification.count
-        set_datalist_value(
-            building_data,
-            "staff",
-            {"sosciencity-gui.show-staff", entry[EK.worker_count], count_needed}
-        )
+        set_datalist_value(building_data, "staff", {"sosciencity-gui.show-staff", entry[EK.worker_count], count_needed})
         local staff_performance = Inhabitants.evaluate_workforce(entry)
         set_datalist_value(
             building_data,
@@ -980,13 +1011,16 @@ local function create_general_building_details(container, entry)
     add_kv_pair(building_data, "building-type", {"sosciencity-gui.type"}, type_details.localised_name)
     add_kv_pair(building_data, "description", "", type_details.localised_description)
 
-    add_kv_pair(
-        building_data,
-        "range",
-        {"sosciencity-gui.range"},
-        (building_details.range and {"sosciencity-gui.show-range", building_details.range * 2}) or
-            {"sosciencity-gui.global-range"}
-    )
+    if building_details.range then
+        local range = building_details.range
+        add_kv_pair(
+            building_data,
+            "range",
+            {"sosciencity-gui.range"},
+            (range ~= "global" and {"sosciencity-gui.show-range", building_details.range * 2}) or
+                {"sosciencity-gui.global-range"}
+        )
+    end
 
     if building_details.power_usage then
         -- convert to kW
@@ -1084,6 +1118,34 @@ local function create_fishery_details(container, entry)
     update_fishery_details(container, entry)
 end
 
+local function update_immigration_port_details(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local ticks_to_next_wave = entry[EK.next_wave] - game.tick
+    set_datalist_value(building_data, "next-wave", display_time(ticks_to_next_wave))
+end
+
+local function create_immigration_port_details(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+    local building_details = Buildings.get(entry)
+
+    add_kv_pair(building_data, "next-wave", {"sosciencity-gui.next-wave"})
+    add_kv_pair(
+        building_data,
+        "materials",
+        {"sosciencity-gui.materials"},
+        display_materials(building_details.materials)
+    )
+
+    update_immigration_port_details(container, entry)
+end
+
 -- << general details view functions >>
 local function create_details_view_for_player(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
@@ -1131,20 +1193,48 @@ local function get_nested_details_view(player)
     return get_details_view(player).nested
 end
 
--- table with (type, update-function) pairs
-local content_updaters = {
-    [Type.fishery] = update_fishery_details,
-    [Type.waterwell] = update_waterwell_details,
-    [Type.dumpster] = update_general_building_details,
-    [Type.market] = update_general_building_details,
-    [Type.hospital] = update_general_building_details,
-    [Type.water_distributer] = update_general_building_details,
-    [Type.manufactory] = update_general_building_details
+local type_gui_specifications = {
+    [Type.dumpster] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.fishery] = {
+        creater = create_fishery_details,
+        updater = update_fishery_details
+    },
+    [Type.hospital] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.immigration_port] = {
+        creater = create_immigration_port_details,
+        updater = update_immigration_port_details,
+        always_update = true
+    },
+    [Type.manufactory] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.market] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.water_distributer] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.waterwell] = {
+        creater = create_waterwell_details,
+        updater = update_waterwell_details
+    }
 }
 
--- add the castes
+-- add the caste specifications
 for caste_id in pairs(Castes.values) do
-    content_updaters[caste_id] = update_housing_details
+    type_gui_specifications[caste_id] = {
+        creater = create_housing_details,
+        updater = update_housing_details
+    }
 end
 
 --- Updates the details guis for every player.
@@ -1159,31 +1249,15 @@ function Gui.update_details_view()
         if not entry then
             Gui.close_details_view_for_player(player)
         else
-            local updater = content_updaters[entry[EK.type]]
+            local gui_spec = type_gui_specifications[entry[EK.type]]
+            local updater = gui_spec and gui_spec.updater
 
             -- only update the gui if the entry got updated in this cycle
-            if updater and entry[EK.last_update] == current_tick then
+            if updater and (entry[EK.last_update] == current_tick or updater.always_update) then
                 updater(get_nested_details_view(player), entry)
             end
         end
     end
-end
-
--- table with (type, build-function) pairs
-local detail_view_builders = {
-    [Type.fishery] = create_fishery_details,
-    [Type.empty_house] = create_empty_housing_details,
-    [Type.waterwell] = create_waterwell_details,
-    [Type.dumpster] = create_general_building_details,
-    [Type.market] = create_general_building_details,
-    [Type.hospital] = create_general_building_details,
-    [Type.water_distributer] = create_general_building_details,
-    [Type.manufactory] = create_general_building_details
-}
-
--- add the castes
-for caste_id in pairs(Castes.values) do
-    detail_view_builders[caste_id] = create_housing_details
 end
 
 --- Builds a details gui for the given player and the given entity.
@@ -1195,8 +1269,9 @@ function Gui.open_details_view_for_player(player, unit_number)
         return
     end
 
-    local builder = detail_view_builders[entry[EK.type]]
-    if not builder then
+    local gui_spec = type_gui_specifications[entry[EK.type]]
+    local creater = gui_spec and gui_spec.creater
+    if not creater then
         return
     end
 
@@ -1204,7 +1279,7 @@ function Gui.open_details_view_for_player(player, unit_number)
     local nested = details_view.nested
 
     nested.clear()
-    builder(nested, entry)
+    creater(nested, entry)
     details_view.visible = true
     global.details_view[player.index] = unit_number
 end
