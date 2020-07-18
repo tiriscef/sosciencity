@@ -62,16 +62,12 @@ local function get_factor_string(number)
     end
 end
 
-local function get_comfort_localised_string(comfort)
+local function display_comfort(comfort)
     return {"", comfort, "  -  ", {"comfort-scale." .. comfort}}
 end
 
-local function get_caste_localised_string(caste_id)
+local function display_caste(caste_id)
     return {"caste-name." .. castes[caste_id].name}
-end
-
-local function get_convergence_localised_string(current, target)
-    return {"sosciencity-gui.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
 end
 
 local function get_migration_string(number)
@@ -82,6 +78,18 @@ local function get_entry_representation(entry)
     local entity = entry[EK.entity]
     local position = entity.position
     return {"sosciencity-gui.entry-representation", entity.localised_name, position.x, position.y}
+end
+
+local function display_percentage(percentage)
+    return {"sosciencity-gui.percentage", ceil(percentage * 100)}
+end
+
+local function display_fraction(numerator, denominator, localised_name)
+    return {"sosciencity-gui.fraction", numerator, denominator, localised_name}
+end
+
+local function display_convergence(current, target)
+    return {"sosciencity-gui.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -600,7 +608,7 @@ local function add_empty_house_info_tab(tabbed_pane, details)
 
     local data_list = create_data_list(flow, "house-infos")
     add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, details.room_count)
-    add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, get_comfort_localised_string(details.comfort))
+    add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, display_comfort(details.comfort))
 end
 
 local function create_empty_housing_details(container, entry)
@@ -681,19 +689,19 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         general_list,
         "happiness",
         (inhabitants > 0) and
-            get_convergence_localised_string(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry)) or
+            display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "health",
-        (inhabitants > 0) and get_convergence_localised_string(entry[EK.health], Inhabitants.get_nominal_health(entry)) or
+        (inhabitants > 0) and display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry)) or
             "-"
     )
     set_datalist_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and get_convergence_localised_string(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or
+        (inhabitants > 0) and display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or
             "-"
     )
     set_datalist_value(
@@ -727,7 +735,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     flow.style.horizontal_align = "right"
 
     local data_list = create_data_list(flow, "general-infos")
-    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, get_caste_localised_string(entry[EK.type]))
+    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, display_caste(entry[EK.type]))
 
     add_kv_pair(data_list, "capacity", {"sosciencity-gui.capacity"})
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
@@ -889,7 +897,7 @@ local function update_housing_details(container, entry)
 end
 
 local function create_housing_details(container, entry)
-    local title = {"", entry[EK.entity].localised_name, "  -  ", get_caste_localised_string(entry[EK.type])}
+    local title = {"", entry[EK.entity].localised_name, "  -  ", display_caste(entry[EK.type])}
     set_details_view_title(container, title)
 
     local tabbed_pane = create_tabbed_pane(container)
@@ -925,25 +933,35 @@ local function update_general_building_details(container, entry)
     local tabbed_pane = container.tabpane
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
-    local worker_specification = Buildings.get(entry).workforce
 
+    local worker_specification = Buildings.get(entry).workforce
     if worker_specification then
         local count_needed = worker_specification.count
         set_datalist_value(
             building_data,
-            "workforce",
-            {"sosciencity-gui.show-workforce", entry[EK.worker_count], count_needed}
+            "staff",
+            {"sosciencity-gui.show-staff", entry[EK.worker_count], count_needed}
         )
-        local performance = Inhabitants.evaluate_workforce(entry)
+        local staff_performance = Inhabitants.evaluate_workforce(entry)
         set_datalist_value(
             building_data,
-            "performance",
-            performance >= 0.4 and {"sosciencity-gui.workforce-performance", ceil(performance * 100)} or
-                {"sosciencity-gui.not-enough-workforce", ceil(0.4 * count_needed)}
+            "staff-performance",
+            staff_performance >= 0.2 and {"sosciencity-gui.staff-performance", ceil(staff_performance * 100)} or
+                {"sosciencity-gui.not-enough-staff", ceil(0.2 * count_needed)}
         )
 
         local worker_data = tab.workers
         update_worker_list(worker_data, entry)
+    end
+
+    local performance = entry[EK.performance]
+    if performance then
+        set_datalist_value(
+            building_data,
+            "general-performance",
+            performance >= 0.2 and {"sosciencity-gui.percentage", ceil(performance * 100)} or
+                {"sosciencity-gui.not-working"}
+        )
     end
 end
 
@@ -992,10 +1010,14 @@ local function create_general_building_details(container, entry)
         )
     end
 
+    if entry[EK.performance] then
+        add_kv_pair(building_data, "general-performance", {"sosciencity-gui.general-performance"})
+    end
+
     local worker_specification = building_details.workforce
     if worker_specification then
-        add_kv_pair(building_data, "workforce", {"sosciencity-gui.workforce"})
-        add_kv_pair(building_data, "performance")
+        add_kv_pair(building_data, "staff", {"sosciencity-gui.staff"})
+        add_kv_pair(building_data, "staff-performance")
 
         add_header_label(tab, "worker-header", {"sosciencity-gui.worker-header"})
         create_data_list(tab, "workers")
@@ -1007,20 +1029,23 @@ local function create_general_building_details(container, entry)
 end
 
 local function update_waterwell_details(container, entry)
+    update_general_building_details(container, entry)
+
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
     local building_details = Buildings.get(entry)
 
+    local performance = entry[EK.performance]
+    local speed = 36 * performance * building_details.speed
+    set_datalist_value(building_data, "speed", {"sosciencity-gui.show-waterwell-speed", get_reasonable_number(speed)})
+
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
-    local productivity = 100. / (near_count + 1)
-    local speed = 36 * productivity * building_details.speed
     set_datalist_value(
         building_data,
-        "productivity",
-        {"sosciencity-gui.show-waterwell-productivity", near_count, get_reasonable_number(productivity)}
+        "competition",
+        {"sosciencity-gui.show-waterwell-competition", near_count, display_percentage(performance)}
     )
-    set_datalist_value(building_data, "speed", {"sosciencity-gui.show-waterwell-speed", get_reasonable_number(speed)})
 end
 
 local function create_waterwell_details(container, entry)
@@ -1029,9 +1054,34 @@ local function create_waterwell_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "productivity", {"sosciencity-gui.waterwell-productivity"})
+    add_kv_pair(building_data, "competition", {"sosciencity-gui.competition"})
 
     update_waterwell_details(container, entry)
+end
+
+local function update_fishery_details(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local building_details = Buildings.get(entry)
+    set_datalist_value(
+        building_data,
+        "water-tiles",
+        display_fraction(entry[EK.water_tiles], building_details.water_tiles, {"sosciencity-gui.tiles"})
+    )
+end
+
+local function create_fishery_details(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "water-tiles", {"sosciencity-gui.water-tiles"})
+
+    update_fishery_details(container, entry)
 end
 
 -- << general details view functions >>
@@ -1083,6 +1133,7 @@ end
 
 -- table with (type, update-function) pairs
 local content_updaters = {
+    [Type.fishery] = update_fishery_details,
     [Type.waterwell] = update_waterwell_details,
     [Type.dumpster] = update_general_building_details,
     [Type.market] = update_general_building_details,
@@ -1120,6 +1171,7 @@ end
 
 -- table with (type, build-function) pairs
 local detail_view_builders = {
+    [Type.fishery] = create_fishery_details,
     [Type.empty_house] = create_empty_housing_details,
     [Type.waterwell] = create_waterwell_details,
     [Type.dumpster] = create_general_building_details,

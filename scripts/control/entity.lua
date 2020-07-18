@@ -39,8 +39,13 @@ function Entity.load()
     set_locals()
 end
 
+local function get_speed_from_performance(performance)
+    return floor(100 * performance - 20)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << beaconed machine >>
+-- TODO give them separate functions because wtf am I even doing here
 local function update_entity_with_beacon(entry)
     local _type = entry[EK.type]
     local speed_bonus = 0
@@ -98,10 +103,6 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 
 ---------------------------------------------------------------------------------------------------
 -- << manufactory >>
-local function get_speed_from_performance(performance)
-    return floor(100 * performance - 20)
-end
-
 local function update_manufactory(entry)
     Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
@@ -136,7 +137,8 @@ local function get_fishery_performance(entry, entity)
 
     local surface = entity.surface
     local position = entity.position
-    local water_tiles = get_water_tiles(entry, surface, Tirislib_Utils.get_range_bounding_box(position, building_details.range))
+    local water_tiles =
+        get_water_tiles(entry, surface, Tirislib_Utils.get_range_bounding_box(position, building_details.range))
     local water_performance = min(water_tiles / building_details.water_tiles, 1)
 
     local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.fishery) + 1)
@@ -154,8 +156,15 @@ local function update_fishery(entry)
 
     local speed = can_work and floor(100 * performance - 20) or 0
     set_beacon_effects(entry, speed, 0, true)
+
+    entry[EK.performance] = performance
 end
 Register.set_entity_updater(Type.fishery, update_fishery)
+
+local function create_fishery(entry)
+    entry[EK.performance] = 1
+end
+Register.set_entity_creation_handler(Type.fishery, create_fishery)
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
@@ -183,19 +192,24 @@ Register.set_entity_updater(Type.water_distributer, update_water_distributer)
 ---------------------------------------------------------------------------------------------------
 -- << waterwell >>
 local function update_waterwell(entry, delta_ticks)
-    if not has_power(entry) then
-        return
-    end
-
     local building_details = get_building_details(entry)
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
     local groundwater_volume = (delta_ticks * building_details.speed) / near_count
 
-    local inserted =
-        entry[EK.entity].insert_fluid {
-        name = "groundwater",
-        amount = groundwater_volume
-    }
-    log_fluid("groundwater", inserted)
+    if has_power(entry) then
+        local inserted =
+            entry[EK.entity].insert_fluid {
+            name = "groundwater",
+            amount = groundwater_volume
+        }
+        log_fluid("groundwater", inserted)
+    end
+
+    entry[EK.performance] = 1. / near_count
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
+
+local function create_waterwell(entry)
+    entry[EK.performance] = 1
+end
+Register.set_entity_creation_handler(Type.waterwell, create_waterwell)

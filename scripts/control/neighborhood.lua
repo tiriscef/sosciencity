@@ -170,7 +170,7 @@ function Neighborhood.establish_new_neighbor(entry)
     if building_details then
         local workforce = building_details.workforce
         if workforce then
-            subscribe_to_range(workforce.castes)
+            subscribe_to_range(entry, workforce.castes)
         end
     end
 

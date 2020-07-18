@@ -8,8 +8,7 @@
             "type": "factoriomod",
             "request": "launch",
             "name": "Factorio Mod Debug",
-            "modsPath": "C:\\Users\\tiriscef\\Desktop\\Factorio_0.17.78\\mods",
-            "factorioPath": "C:\\Users\\tiriscef\\Desktop\\Factorio_0.17.78\\bin\\x64\\factorio.exe"
+            "factorioPath": ""
         }
     ]
 }
