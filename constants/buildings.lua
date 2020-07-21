@@ -3,6 +3,10 @@ require("constants.enums")
 --- Defines the general custom properties for various entities.
 Buildings = {}
 
+--- Values of various custom behaviours I implemented for the Custom Buildings.\
+--- **range:** number (tiles) or "global"\
+--- **power_usage:** number (kW)\
+--- **speed:** number (1/s)
 Buildings.values = {
     ["test-dumpster"] = {
         type = Type.dumpster,
@@ -28,6 +32,10 @@ Buildings.values = {
             count = 10,
             castes = {Type.clockwork}
         }
+    },
+    ["market-hall"] = {
+        type = Type.market,
+        range = 42
     },
     ["trash-site"] = {
         type = Type.dumpster,

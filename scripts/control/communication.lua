@@ -175,6 +175,11 @@ end
 local function highlight_range(player_id, entity, building_details, created_highlights)
     local range = building_details.range
 
+    if range == "global" then
+        -- TODO highlight that somehow
+        return
+    end
+
     local surface = entity.surface
     local position = entity.position
     local x = position.x
