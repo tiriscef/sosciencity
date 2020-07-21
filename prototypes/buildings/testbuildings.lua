@@ -34,7 +34,7 @@ Tirislib_Entity.create {
         height = 192,
         scale = 0.5
     },
-    circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
+    circuit_wire_connection_point = circuit_connector_definitions["chest"].points,
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(3, 3)
@@ -75,7 +75,7 @@ Tirislib_Entity.create {
         height = 192,
         scale = 0.5
     },
-    circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
+    circuit_wire_connection_point = circuit_connector_definitions["chest"].points,
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(3, 3)
@@ -128,9 +128,51 @@ Tirislib_Entity.create {
         usage_priority = "secondary-input",
         emissions_per_minute = 1,
         drain = "0W"
+    }
+}:set_size(3, 3)
+
+
+Tirislib_Item.create {
+    type = "item",
+    name = "test-night-club",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon_size = 64,
+    subgroup = "sosciencity-infrastructure",
+    order = "aab",
+    place_result = "test-night-club",
+    stack_size = 10
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "test-night-club"
+}
+
+Tirislib_Entity.create {
+    type = "container",
+    name = "test-night-club",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "player-creation"},
+    minable = {mining_time = 0.5, result = "test-night-club"},
+    max_health = 500,
+    corpse = "small-remnants",
+    inventory_size = 64,
+    vehicle_impact_sound = {
+        filename = "__base__/sound/car-metal-impact.ogg",
+        volume = 0.65
     },
+    picture = {
+        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+        priority = "high",
+        width = 192,
+        height = 192,
+        scale = 0.5
+    },
+    circuit_wire_connection_point = circuit_connector_definitions["chest"].points,
+    circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
+    circuit_wire_max_distance = 13,
     working_sound = {
-        sound = {filename = "__sosciencity-graphics__/sound/chainsaw.ogg", volume = 3},
+        sound = {filename = "__sosciencity-graphics__/sound/night-club.ogg", volume = 1},
         apparent_volume = 1.5
     }
 }:set_size(3, 3)
