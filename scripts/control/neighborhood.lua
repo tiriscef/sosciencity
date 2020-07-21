@@ -38,6 +38,10 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 local function is_in_range(neighbor, entry, range)
+    if range == "global" then
+        return true
+    end
+
     local neighbor_entity = neighbor[EK.entity]
     local position = neighbor_entity.position
     local x = position.x

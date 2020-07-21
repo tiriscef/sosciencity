@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "industrial-animal-farm",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/industrial-animal-farm.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aaa",
@@ -20,7 +20,7 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "industrial-animal-farm",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/industrial-animal-farm.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "industrial-animal-farm"},
