@@ -1,15 +1,15 @@
 data:extend {
     {
         type = "recipe-category",
+        name = "handcrafting"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-agriculture"
     },
     {
         type = "recipe-category",
-        name = "sosciencity-greenhouse"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-orangery"
+        name = "sosciencity-animal-farming"
     },
     {
         type = "recipe-category",
@@ -17,11 +17,15 @@ data:extend {
     },
     {
         type = "recipe-category",
-        name = "handcrafting"
+        name = "sosciencity-architecture"
     },
     {
         type = "recipe-category",
-        name = "sosciencity-architecture"
+        name = "sosciencity-fishery"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-greenhouse"
     },
     {
         type = "recipe-category",
@@ -29,7 +33,7 @@ data:extend {
     },
     {
         type = "recipe-category",
-        name = "sosciencity-fishery"
+        name = "sosciencity-orangery"
     },
     {
         type = "recipe-category",

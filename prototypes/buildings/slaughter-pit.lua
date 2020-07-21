@@ -82,7 +82,7 @@ Tirislib_Entity.create {
         drain = "5kW"
     },
     working_sound = {
-        filename = "__base__/sound/assembling-machine-t1-1.ogg",
+        filename = "__sosciencity-graphics__/sound//slaughter-pit.ogg",
         volume = 0.5
     }
 }:set_size(3, 3):copy_localisation_from_item()

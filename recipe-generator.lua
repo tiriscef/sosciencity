@@ -24,6 +24,14 @@ RG.ingredient_themes = {
             {type = "fluid", name = "water", amount = 5}
         }
     },
+    boring = {
+        [0] = {
+            {type = "item", name = "burner-mining-drill", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "electric-mining-drill", amount = 1}
+        }
+    },
     building = {
         [0] = {
             {type = "item", name = "lumber", amount = 2},
@@ -165,8 +173,8 @@ RG.ingredient_themes = {
             {type = "item", name = "iron-gear-wheel", amount = 5}
         },
         [1] = {
-            {type = "item", name = "copper-plate", amount = 1},
-            {type = "item", name = "iron-plate", amount = 1},
+            {type = "item", name = "copper-plate", amount = 10},
+            {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "iron-gear-wheel", amount = 5}
         },
         [2] = {
