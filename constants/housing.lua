@@ -23,6 +23,12 @@ Housing.values = {
         comfort = 5,
         caste = Type.ember,
         caste_bonus = 2
+    },
+    ["khrushchyovka"] = {
+        room_count = 20,
+        comfort = 4,
+        caste = Type.clockwork,
+        caste_bonus = 4
     }
 }
 local houses = Housing.values

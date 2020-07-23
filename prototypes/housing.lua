@@ -125,6 +125,7 @@ local data_details = {
                     width = 320,
                     height = 256,
                     shift = {1, -1},
+                    draw_as_shadow = true,
                     hr_version = {
                         filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap-hr.png",
                         priority = "high",
@@ -141,6 +142,48 @@ local data_details = {
         height = 6,
         tech_level = 2,
         main_entity = "house-1"
+    },
+    ["khrushchyovka"] = {
+        picture = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka.png",
+                    priority = "high",
+                    width = 256,
+                    height = 320,
+                    shift = {0.5, -2.5},
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka-hr.png",
+                        priority = "high",
+                        width = 512,
+                        height = 640,
+                        shift = {0.5, -2.5},
+                        scale = 0.5
+                    }
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka-shadowmap.png",
+                    priority = "high",
+                    width = 256,
+                    height = 320,
+                    shift = {0.5, -2.5},
+                    draw_as_shadow = true,
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka-shadowmap-hr.png",
+                        priority = "high",
+                        width = 512,
+                        height = 640,
+                        shift = {0.5, -2.5},
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        width = 5,
+        height = 3,
+        tech_level = 1,
+        main_entity = "khrushchyovka"
     }
 }
 
