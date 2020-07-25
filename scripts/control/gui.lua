@@ -1198,6 +1198,9 @@ local type_gui_specifications = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },
+    [Type.empty_house] = {
+        creater = create_empty_housing_details
+    },
     [Type.fishery] = {
         creater = create_fishery_details,
         updater = update_fishery_details

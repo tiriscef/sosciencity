@@ -11,7 +11,12 @@ local material_items = {
     {name = "trap"},
     {name = "bird-trap"},
     {name = "fishing-net"},
-    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}}
+    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
+    {name = "ink"},
+    {name = "bird-food"},
+    {name = "fish-food"},
+    {name = "carnivore-food"},
+    {name = "herbivore-food"}
 }
 
 Tirislib_Item.batch_create(material_items, {subgroup = "sosciencity-materials", stack_size = 200})

@@ -72,6 +72,28 @@ function Tirislib_String.begins_with(str, prefix)
     return str:sub(1, prefix:len()) == prefix
 end
 
+local function string_join(separator, lh, rh)
+    if lh then
+        return lh .. separator .. rh
+    else
+        return rh
+    end
+end
+
+function Tirislib_String.join(separator, ...)
+    local ret
+
+    for _, current in pairs({...}) do
+        if type(current) == "table" then
+            ret = string_join(separator, ret, Tirislib_String.join(separator, unpack(current)))
+        else
+            ret = string_join(separator, ret, current)
+        end
+    end
+
+    return ret
+end
+
 --<< Just some table helper functions >>
 Tirislib_Tables = {}
 

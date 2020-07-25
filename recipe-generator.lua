@@ -32,6 +32,37 @@ RG.ingredient_themes = {
             {type = "item", name = "electric-mining-drill", amount = 1}
         }
     },
+    breed_birds = {
+        [0] = {
+            {type = "item", name = "bird-food", amount = 1},
+            {type = "fluid", name = "water", amount = 5}
+        }
+    },
+    breed_carnivores = {
+        [0] = {
+            {type = "item", name = "carnivore-food", amount = 1},
+            {type = "fluid", name = "water", amount = 5}
+        }
+    },
+    breed_fish = {
+        [0] = {
+            {type = "item", name = "fish-food", amount = 1},
+            {type = "fluid", name = "water", amount = 20}
+        }
+    },
+    breed_herbivores = {
+        [0] = {
+            {type = "item", name = "herbivore-food", amount = 1},
+            {type = "fluid", name = "water", amount = 5}
+        }
+    },
+    breed_omnivores = {
+        [0] = {
+            {type = "item", name = "herbivore-food", amount = 2./3},
+            {type = "item", name = "carnivore-food", amount = 1./3},
+            {type = "fluid", name = "water", amount = 5}
+        }
+    },
     building = {
         [0] = {
             {type = "item", name = "lumber", amount = 2},
