@@ -1,30 +1,136 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local animals = {
-    {name = "primal-quackling", size = 0.4, bird = true, probability = 0.05, group_size = 4},
-    {name = "primal-quacker", size = 1.2, bird = true, probability = 0.12},
-    {name = "primal-quackpa", size = 1, bird = true},
-    {name = "nan-swanling", size = 1, bird = true, probability = 0.04, group_size = 3},
-    {name = "nan-swan", size = 12, bird = true, probability = 0.1},
-    {name = "elder-nan", size = 10, bird = true},
-    {name = "bonesnake", size = 100, bird = true, probability = 0.08},
-    {name = "young-petunial", size = 2500, water_animal = true, probability = 0.05},
-    {name = "petunial", size = 15000, water_animal = true, probability = 0.05},
-    {name = "hellfin", size = 190, water_animal = true, probability = 0.09, group_size = 2},
-    {name = "warnal", size = 1000, water_animal = true, probability = 0.09},
-    {name = "shellscript", size = 50, water_animal = true, probability = 0.15},
-    {name = "dodkopus", size = 40, water_animal = true, probability = 0.15},
-    {name = "boofish", size = 3, fish = true, probability = 0.3, group_size = 5},
-    {name = "fupper", size = 5, fish = true, probability = 0.5},
-    {name = "ultra-squibbel", size = 50, water_animal = true, probability = 0.20},
-    {name = "miniscule-squibbel", size = 150, water_animal = true, probability = 0.15}
+    {
+        name = "primal-quackling",
+        size = 5,
+        bird = true,
+        probability = 0.15,
+        group_size = 7,
+        preform = "primal-egg",
+        metabolism_coefficient = 1.7
+    },
+    {
+        name = "primal-quacker",
+        size = 24,
+        bird = true,
+        probability = 0.12,
+        preform = "primal-quackling",
+        metabolism_coefficient = 1.5
+    },
+    {
+        name = "primal-quackpa",
+        size = 28,
+        bird = true,
+        preform = "primal-quacker",
+        metabolism_coefficient = 4,
+        breeding_byproducts = {{name = "primal-egg", amount = 5}}
+    },
+    {
+        name = "nan-swanling",
+        size = 10,
+        bird = true,
+        probability = 0.1,
+        group_size = 3,
+        preform = "nan-egg",
+        metabolism_coefficient = 1.7
+    },
+    {
+        name = "nan-swan",
+        size = 40,
+        bird = true,
+        probability = 0.2,
+        preform = "nan-swanling",
+        metabolism_coefficient = 1.5
+    },
+    {
+        name = "elder-nan",
+        size = 45,
+        bird = true,
+        preform = "nan-swan",
+        metabolism_coefficient = 3.5,
+        breeding_byproducts = {{name = "nan-egg", amount = 3}}
+    },
+    {
+        name = "bonesnake",
+        -- TODO younger forms
+        size = 100,
+        bird = true,
+        probability = 0.15
+    },
+    {
+        name = "young-petunial",
+        size = 2500,
+        water_animal = true,
+        probability = 0.05,
+        metabolism_coefficient = 1.2
+    },
+    {
+        name = "petunial",
+        size = 15000,
+        water_animal = true,
+        probability = 0.05,
+        preform = "young-petunial"
+    },
+    {
+        name = "hellfin",
+        size = 190,
+        water_animal = true,
+        probability = 0.09,
+        group_size = 4
+    },
+    {
+        name = "warnal",
+        size = 1000,
+        water_animal = true,
+        probability = 0.09
+    },
+    {
+        name = "shellscript",
+        size = 50,
+        water_animal = true,
+        probability = 0.15,
+        group_size = 4
+    },
+    {
+        name = "boofish",
+        size = 3,
+        fish = true,
+        probability = 0.3,
+        group_size = 5
+    },
+    {
+        name = "fupper",
+        size = 5,
+        fish = true,
+        probability = 0.5
+    },
+    {
+        name = "dodkopus",
+        size = 40,
+        water_animal = true,
+        probability = 0.15,
+        slaughter_byproducts = {{name = "ink", amount = 3}}
+    },
+    {
+        name = "ultra-squibbel",
+        size = 50,
+        water_animal = true,
+        probability = 0.20,
+        slaughter_byproducts = {{name = "ink", amount = 10}},
+        not_breedable = true
+    },
+    {
+        name = "miniscule-squibbel",
+        size = 150,
+        water_animal = true,
+        probability = 0.15,
+        slaughter_byproducts = {{name = "ink", amount = 4}},
+        breeding_byproducts = {{name = "ultra-squibbel", amount = 0.5}}
+    }
 }
 
 Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
-
-local function is_bird(animal)
-    return animal.bird
-end
 
 local function is_land_animal(animal)
     return animal.land_animal
@@ -40,8 +146,21 @@ local function get_meat_type(animal)
         return animal.meat
     end
 
-    return (is_bird(animal) and "bird-meat") or (animal.fish and "fish-meat") or "mammal-meat"
+    return (animal.bird and "bird-meat") or (animal.fish and "fish-meat") or "mammal-meat"
 end
+
+local function get_preform(animal)
+    local preform_name = animal.preform
+    if preform_name then
+        for _, current_animal in pairs(animals) do
+            if current_animal.name == preform_name then
+                return current_animal
+            end
+        end
+    end
+end
+
+local fauna_producing_recipes = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << gathering recipes >>
@@ -52,11 +171,14 @@ local hunting =
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
     icon_size = 64,
-    subgroup = "sosciencity-fauna",
+    subgroup = "sosciencity-gathering",
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
-}:add_catalyst("trap", "item", 0.8, 0.7, 5, 6)
+}:create_difficulties()
+hunting:multiply_expensive_field("energy_required", 2)
+hunting:add_catalyst("trap", "item", 0.8, 0.7, 5, 6)
+table.insert(fauna_producing_recipes, hunting)
 
 local bird_hunting =
     Tirislib_Recipe.create {
@@ -65,11 +187,14 @@ local bird_hunting =
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
     icon_size = 64,
-    subgroup = "sosciencity-fauna",
+    subgroup = "sosciencity-gathering",
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
-}:add_catalyst("bird-trap", "item", 0.9, 0.8, 2, 3)
+}:create_difficulties()
+bird_hunting:multiply_expensive_field("energy_required", 2)
+bird_hunting:add_catalyst("bird-trap", "item", 0.9, 0.8, 2, 3)
+table.insert(fauna_producing_recipes, bird_hunting)
 
 local fishing =
     Tirislib_Recipe.create {
@@ -78,11 +203,14 @@ local fishing =
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/fishing.png",
     icon_size = 64,
-    subgroup = "sosciencity-fauna",
+    subgroup = "sosciencity-gathering",
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
-}:add_catalyst("fishing-net", "item", 0.8, 0.7, 2, 3)
+}:create_difficulties()
+fishing:multiply_expensive_field("energy_required", 2)
+fishing:add_catalyst("fishing-net", "item", 0.8, 0.7, 2, 3)
+table.insert(fauna_producing_recipes, fishing)
 
 local function get_result_prototype(animal)
     return {name = animal.name, amount = animal.group_size or 1, probability = animal.probability}
@@ -94,7 +222,7 @@ local function add_to_gather_recipe(animal)
     if is_land_animal(animal) then
         hunting:add_result(result_prototype)
     end
-    if is_bird(animal) then
+    if animal.bird then
         bird_hunting:add_result(result_prototype)
     end
     if is_water_animal(animal) then
@@ -110,8 +238,8 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << slaughter recipes >>
-local function get_required_energy(animal)
-    return animal.size ^ 0.5
+local function get_required_energy_slaughter(animal)
+    return math.ceil(animal.size ^ 0.5)
 end
 
 -- the meat, offal and waste products are about 10kg each
@@ -139,7 +267,7 @@ local function create_slaughter_recipe(animal, index)
         Tirislib_Recipe.create {
         name = "slaughter-" .. animal.name,
         category = "sosciencity-slaughter",
-        energy_required = get_required_energy(animal),
+        energy_required = get_required_energy_slaughter(animal),
         ingredients = {
             {type = "item", name = animal.name, amount = 1}
         },
@@ -165,8 +293,12 @@ local function create_slaughter_recipe(animal, index)
     recipe:add_new_result("offal", get_offal_amount(animal))
     recipe:add_new_result("slaughter-waste", get_slaughter_waste_amount(animal))
 
-    if is_bird(animal) then
+    if animal.bird then
         recipe:add_new_result("feathers", get_feather_amount(animal))
+    end
+
+    if animal.slaughter_byproducts then
+        recipe:add_result_range(animal.slaughter_byproducts)
     end
 
     -- TODO bones
@@ -174,6 +306,84 @@ end
 
 for index, animal in pairs(animals) do
     create_slaughter_recipe(animal, index)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << breeding recipes >>
+local food_item_weight = 50
+local farm_size = 2000
+
+local function get_weight_gain(animal)
+    local weight = animal.size
+    local preform = get_preform(animal)
+    if preform then
+        weight = weight - preform.size
+    end
+
+    return weight
+end
+
+local function get_food_amount(animal, count)
+    return math.ceil(count * get_weight_gain(animal) * (animal.metabolism_coefficient or 2) / food_item_weight)
+end
+
+local function get_cycle_animal_amount(animal)
+    return math.ceil(farm_size / (10 * animal.size ^ (2 / 3)))
+end
+
+local function get_required_energy_breeding(animal)
+    return 30 * math.max(1, math.ceil(math.log(animal.size)))
+end
+
+local function get_food_theme(animal, count)
+    local theme
+    if animal.carnivore then
+        theme = "breed_carnivores"
+    elseif animal.omnivore then
+        theme = "breed_omnivores"
+    elseif animal.bird then
+        theme = "breed_birds"
+    elseif animal.fish then
+        theme = "breed_fish"
+    else
+        theme = "breed_herbivores"
+    end
+
+    return {theme, get_food_amount(animal, count), animal.level or 0}
+end
+
+local function create_breeding_recipe(animal)
+    local cycle_amount = get_cycle_animal_amount(animal)
+    local energy = get_required_energy_breeding(animal)
+
+    local recipe =
+        Tirislib_RecipeGenerator.create {
+        product = animal.name,
+        product_amount = cycle_amount,
+        category = is_water_animal(animal) and "sosciencity-water-animal-farming" or "sosciencity-animal-farming",
+        byproducts = animal.breeding_byproducts or nil,
+        themes = {get_food_theme(animal, cycle_amount)},
+        energy_required = energy
+    }
+
+    if animal.preform then
+        recipe:add_new_ingredient(animal.preform, cycle_amount)
+    end
+
+    if animal.breeding_byproducts then
+        for _, byproduct in pairs(animal.breeding_byproducts) do
+            byproduct.amount = math.ceil((byproduct.amount or 1) * cycle_amount)
+        end
+        recipe:add_result_range(animal.breeding_byproducts)
+    end
+
+    table.insert(fauna_producing_recipes, recipe)
+end
+
+for index, animal in pairs(animals) do
+    if not animal.not_breedable then
+        create_breeding_recipe(animal)
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -281,4 +491,38 @@ for _, animal in pairs(animals) do
         local result_prototype = get_result_prototype(animal)
         fishwhirl:add_mining_result(result_prototype)
     end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << balance information >>
+if Sosciencity_Globals.DEBUG then
+    local function get_animal_size(animal_name)
+        for _, animal in pairs(animals) do
+            if animal.name == animal_name then
+                return animal.size
+            end
+        end
+    end
+
+    local function get_result_mass(recipe, difficulty)
+        local ret = 0
+        for _, result in pairs(recipe[difficulty].results) do
+            ret = ret + (get_animal_size(result.name) or 0) * Tirislib_RecipeEntry.get_average_yield(result)
+        end
+        return ret
+    end
+
+    local results = {}
+    for _, recipe in pairs(fauna_producing_recipes) do
+        local mass = get_result_mass(recipe, "normal")
+        local mass_expensive = get_result_mass(recipe, "expensive")
+        local time = recipe:get_field("energy_required", "normal")
+        local time_expensive = recipe:get_field("energy_required", "expensive")
+        table.insert(
+            results,
+            string.format("%s produces %d or %d kg per cycle, %d or %d kg per second", recipe.name, mass, mass_expensive, mass / time, mass_expensive / time_expensive)
+        )
+    end
+
+    log(Tirislib_String.join("\n", "Fauna Balancing Values:", results))
 end

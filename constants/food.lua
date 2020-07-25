@@ -54,6 +54,30 @@ Food.values = {
         portion_size = 10,
         group = "biter-meat"
     },
+    ["nan-egg"] = {
+        fat = 13.8,
+        carbohydrates = 2,
+        proteins = 12.8,
+        healthiness = 5,
+        food_category = "egg",
+        taste_category = Taste.umami,
+        taste_quality = 6,
+        luxury = 5,
+        portion_size = 10,
+        group = "egg"
+    },
+    ["primal-egg"] = {
+        fat = 13.8,
+        carbohydrates = 2,
+        proteins = 12.8,
+        healthiness = 6,
+        food_category = "egg",
+        taste_category = Taste.salty,
+        taste_quality = 4,
+        luxury = 3,
+        portion_size = 10,
+        group = "egg"
+    },
     ["unnamed-fruit"] = {
         fat = 1,
         carbohydrates = 10,

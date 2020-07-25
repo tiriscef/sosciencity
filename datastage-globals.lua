@@ -4,7 +4,7 @@ if not Sosciencity_Globals then
 end
 
 local default_values = {
-    DEBUG = true,
+    DEBUG = false,
     clockwork_pack = "automation-science-pack",
     orchid_pack = "logistic-science-pack",
     gunfire_pack = "military-science-pack",
@@ -19,6 +19,9 @@ local default_values = {
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
     }
 }
+if mods["sosciencity-debug"] then
+    default_values.DEBUG = true
+end
 
 default_values.__index = default_values
 setmetatable(Sosciencity_Globals, default_values)

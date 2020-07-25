@@ -610,6 +610,10 @@ function Tirislib_Recipe:add_ingredient_range(ingredients, expensive_ingredients
     return self
 end
 
+function Tirislib_Recipe:add_new_ingredient(ingredient, amount, _type)
+    Tirislib_Recipe.add_ingredient(self, {type = _type or "item", name = ingredient, amount = amount})
+end
+
 local function remove_ingredient(recipe_data, ingredient_name, ingredient_type)
     for index, ingredient in pairs(recipe_data.ingredients) do
         if

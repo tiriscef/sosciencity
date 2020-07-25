@@ -38,5 +38,9 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-slaughter"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-water-animal-farming"
     }
 }

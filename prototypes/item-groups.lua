@@ -47,9 +47,15 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-flora",
+        name = "sosciencity-gathering",
         group = "sosciencity-production",
         order = "aca"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-flora",
+        group = "sosciencity-production",
+        order = "acb"
     },
     {
         type = "item-subgroup",
@@ -61,7 +67,7 @@ data:extend {
         type = "item-subgroup",
         name = "sosciencity-slaughter",
         group = "sosciencity-production",
-        order = "adb"
+        order = "adc"
     },
     {
         type = "item-subgroup",
