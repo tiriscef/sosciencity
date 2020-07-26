@@ -12,6 +12,8 @@ local foods = {
     {name = "bird-meat"},
     {name = "fish-meat"},
     {name = "alien-meat", sprite_variations = {name = "alien-meat", count = 2, include_icon = true}},
+    {name = "nan-egg"},
+    {name = "primal-egg"},
     {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
     {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
     {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
@@ -23,8 +25,7 @@ local foods = {
     {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},
     {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}},
     {name = "avocado", sprite_variations = {name = "avocado-pile", count = 4}},
-    {name = "nan-egg"},
-    {name = "primal-egg"}
+    {name = "hummus"}
 }
 
 -- add the food values to the... prototype prototype

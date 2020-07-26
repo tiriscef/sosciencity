@@ -209,6 +209,18 @@ Food.values = {
         luxury = 8,
         portion_size = 50,
         group = "avocado"
+    },
+    ["hummus"] = {
+        fat = 10,
+        carbohydrates = 14,
+        proteins = 8,
+        healthiness = 9,
+        food_category = "processed",
+        taste_category = Taste.spicy,
+        taste_quality = 10,
+        luxury = 5,
+        portion_size = 50,
+        group = "hummus"
     }
 }
 
