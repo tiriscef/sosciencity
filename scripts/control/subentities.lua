@@ -59,6 +59,7 @@ end
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
 function Subentities.add_all_for(entry)
+    -- TODO I think this function might be obsolete if I create the subentities at the time they are needed
     local _type = entry[EK.type]
 
     if type_needs_beacon(_type) then
@@ -95,20 +96,21 @@ function Subentities.remove_all_for(entry)
     -- we don't need to destroy sprites when their target entity gets destroyed
 end
 
---- Gets the hidden entity of the given type and if it had to be recreated.
+--- Gets the hidden entity of the given type and if it had to be recreated.\
+--- Implicitly creates the subentity when the entry didn't have one.
 --- @param entry Entry
 --- @param _type Type
 function Subentities.get(entry, _type)
-    local subentity = entry[EK.subentities][_type]
-    if subentity == nil then
-        return
+    -- the encapsulating table doesn't even exist, the subentity has to be added
+    local subentities = entry[EK.subentities]
+    if not subentities then
+        return add(entry, _type), true
     end
 
-    -- there is the possibility that the subentity gets lost
-    if subentity.valid then
+    local subentity = subentities[_type]
+    if subentity ~= nil and subentity.valid then
         return subentity, false
     else
-        -- in this case we simply create a new one
         return add(entry, _type), true
     end
 end

@@ -48,9 +48,7 @@ Buildings.values = {
     },
     ["groundwater-pump"] = {
         type = Type.waterwell,
-        range = 64,
-        power_usage = 250,
-        speed = 120
+        range = 64
     },
     ["zeppelin-port"] = {
         type = Type.immigration_port,

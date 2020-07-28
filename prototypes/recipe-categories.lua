@@ -29,6 +29,10 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-groundwater-pump"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-hunting"
     },
     {

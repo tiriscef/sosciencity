@@ -39,8 +39,23 @@ function Entity.load()
     set_locals()
 end
 
+---------------------------------------------------------------------------------------------------
+-- << general helper functions >>
 local function get_speed_from_performance(performance)
     return floor(100 * performance - 20)
+end
+
+local function set_assembling_machine_performance(entry, performance)
+    entry[EK.performance] = performance
+
+    local entity = entry[EK.entity]
+
+    local is_active = performance >= 0.2
+    entity.active = is_active
+
+    if is_active then
+        set_beacon_effects(entry, get_speed_from_performance(performance), 0, true)
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -88,7 +103,7 @@ local function create_immigration_port(entry)
 end
 Register.set_entity_creation_handler(Type.immigration_port, create_immigration_port)
 
-local function update_immigration_port(entry, delta_ticks, current_tick)
+local function update_immigration_port(entry, _, current_tick)
     local tick_next_wave = entry[EK.next_wave]
     if current_tick >= tick_next_wave then
         local building_details = get_building_details(entry)
@@ -106,12 +121,7 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 local function update_manufactory(entry)
     Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
-
-    local can_work = performance > 0.2
-    entry[EK.entity].active = can_work
-
-    local speed = can_work and get_speed_from_performance or 0
-    set_beacon_effects(entry, speed, 0, true)
+    set_assembling_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.manufactory, update_manufactory)
 
@@ -150,14 +160,7 @@ local function update_fishery(entry)
     Inhabitants.update_workforce(entry)
     local entity = entry[EK.entity]
     local performance = get_fishery_performance(entry, entity)
-
-    local can_work = performance > 0.2
-    entity.active = can_work
-
-    local speed = can_work and floor(100 * performance - 20) or 0
-    set_beacon_effects(entry, speed, 0, true)
-
-    entry[EK.performance] = performance
+    set_assembling_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.fishery, update_fishery)
 
@@ -191,21 +194,11 @@ Register.set_entity_updater(Type.water_distributer, update_water_distributer)
 
 ---------------------------------------------------------------------------------------------------
 -- << waterwell >>
-local function update_waterwell(entry, delta_ticks)
-    local building_details = get_building_details(entry)
+local function update_waterwell(entry)
+    -- +1 so it counts itself too
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    local groundwater_volume = (delta_ticks * building_details.speed) / near_count
-
-    if has_power(entry) then
-        local inserted =
-            entry[EK.entity].insert_fluid {
-            name = "groundwater",
-            amount = groundwater_volume
-        }
-        log_fluid("groundwater", inserted)
-    end
-
-    entry[EK.performance] = 1. / near_count
+    local performance = near_count ^ (-0.65)
+    set_assembling_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
 

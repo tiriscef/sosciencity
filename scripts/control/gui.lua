@@ -1068,11 +1068,7 @@ local function update_waterwell_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    local building_details = Buildings.get(entry)
-
     local performance = entry[EK.performance]
-    local speed = 36 * performance * building_details.speed
-    set_datalist_value(building_data, "speed", {"sosciencity-gui.show-waterwell-speed", get_reasonable_number(speed)})
 
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
     set_datalist_value(
