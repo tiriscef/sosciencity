@@ -272,16 +272,16 @@ function Tirislib_Recipe:call_on_recipe_data(func, ...)
 end
 
 function Tirislib_Recipe:call_on_normal_recipe_data(func, ...)
-    if not self:has_difficulties() then
+    if not Tirislib_Recipe.has_difficulties(self) then
         func(self, ...)
     end
-    if self:has_normal_difficulty() then
+    if Tirislib_Recipe.has_normal_difficulty(self) then
         func(self.normal, ...)
     end
 end
 
 function Tirislib_Recipe:call_on_expensive_recipe_data(func, ...)
-    if self:has_expensive_difficulty() then
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
         func(self.expensive, ...)
     end
 end
@@ -331,13 +331,13 @@ local recipe_data_fields = {
 
 function Tirislib_Recipe:set_field(key, value)
     if recipe_data_fields[key] then
-        if not self:has_difficulties() then
+        if not Tirislib_Recipe.has_difficulties(self) then
             self[key] = value
         end
-        if self:has_normal_difficulty() then
+        if Tirislib_Recipe.has_normal_difficulty(self) then
             self.normal[key] = value
         end
-        if self:has_expensive_difficulty() then
+        if Tirislib_Recipe.has_expensive_difficulty(self) then
             self.expensive[key] = value
         end
     else
@@ -349,7 +349,7 @@ end
 
 function Tirislib_Recipe:set_expensive_field(key, value)
     if recipe_data_fields[key] then
-        if self:has_expensive_difficulty() then
+        if Tirislib_Recipe.has_expensive_difficulty(self) then
             self.expensive[key] = value
         end
     end
@@ -360,7 +360,7 @@ end
 function Tirislib_Recipe:set_fields(fields)
     if fields then
         for key, value in pairs(fields) do
-            self:set_field(key, value)
+            Tirislib_Recipe.set_field(self, key, value)
         end
     end
 
@@ -368,25 +368,32 @@ function Tirislib_Recipe:set_fields(fields)
 end
 
 function Tirislib_Recipe:get_field(field, mode)
+    local ret
     if mode then
-        return self[mode][field] or default_values[field]
+        ret = self[mode][field]
     else
-        return self[field] or default_values[field]
+        if Tirislib_Recipe.has_difficulties(self) then
+            ret = self["normal"][field]
+        else
+            ret = self[field]
+        end
     end
+
+    return ret or default_values[field]
 end
 
 function Tirislib_Recipe:multiply_field(field, normal_multiplier, expensive_multiplier)
     -- use the normal multiplier if no expensive one is given
     expensive_multiplier = expensive_multiplier or normal_multiplier
 
-    if not self:has_difficulties() then
-        self.energy_required = self:get_field(field) * normal_multiplier
+    if not Tirislib_Recipe.has_difficulties(self) then
+        self.energy_required = Tirislib_Recipe.get_field(self, field) * normal_multiplier
     else
-        if self:has_normal_difficulty() then
-            self.normal.energy_required = self:get_field(field, "normal") * normal_multiplier
+        if Tirislib_Recipe.has_normal_difficulty(self) then
+            self.normal.energy_required = Tirislib_Recipe.get_field(self, field, "normal") * normal_multiplier
         end
-        if self:has_expensive_difficulty() then
-            self.expensive.energy_required = self:get_field(field, "expensive") * expensive_multiplier
+        if Tirislib_Recipe.has_expensive_difficulty(self) then
+            self.expensive.energy_required = Tirislib_Recipe.get_field(self, field, "expensive") * expensive_multiplier
         end
     end
 
@@ -394,15 +401,15 @@ function Tirislib_Recipe:multiply_field(field, normal_multiplier, expensive_mult
 end
 
 function Tirislib_Recipe:multiply_expensive_field(field, multiplier)
-    if self:has_expensive_difficulty() then
-        self.expensive[field] = self:get_field(field, "expensive") * multiplier
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
+        self.expensive[field] = Tirislib_Recipe.get_field(self, field, "expensive") * multiplier
     end
     return self
 end
 
 function Tirislib_Recipe:create_difficulties()
     -- silently do nothing if they already exist
-    if self:has_difficulties() then
+    if Tirislib_Recipe.has_difficulties(self) then
         return self
     end
 
@@ -439,9 +446,9 @@ local function recipe_results_contain_item(recipe_data, item_name)
 end
 
 function Tirislib_Recipe:results_contain_item(item_name)
-    if self:has_normal_difficulty() then
+    if Tirislib_Recipe.has_normal_difficulty(self) then
         return recipe_results_contain_item(self.normal, item_name)
-    elseif self:has_expensive_difficulty() then
+    elseif Tirislib_Recipe.has_expensive_difficulty(self) then
         return recipe_results_contain_item(self.expensive, item_name)
     else
         return recipe_results_contain_item(self, item_name)
@@ -467,12 +474,12 @@ local function recipe_result_count(recipe_data, name)
 end
 
 function Tirislib_Recipe:get_result_item_count(item_name)
-    if self:has_difficulties() then
+    if Tirislib_Recipe.has_difficulties(self) then
         local normal_count, expensive_count
-        if self:has_normal_difficulty() then
+        if Tirislib_Recipe.has_normal_difficulty(self) then
             normal_count = recipe_result_count(self.normal, item_name)
         end
-        if self:has_expensive_difficulty() then
+        if Tirislib_Recipe.has_expensive_difficulty(self) then
             expensive_count = recipe_result_count(self.expensive, item_name)
         end
         return normal_count, expensive_count
@@ -506,15 +513,15 @@ local function add_result(recipe_data, result)
 end
 
 function Tirislib_Recipe:add_result(result, expensive_result)
-    if not self:has_difficulties() and result then
+    if not Tirislib_Recipe.has_difficulties(self) and result then
         add_result(self, result)
         return self
     end
 
-    if self:has_normal_difficulty() and result then
+    if Tirislib_Recipe.has_normal_difficulty(self) and result then
         add_result(self.normal, result)
     end
-    if self:has_expensive_difficulty() then
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
         add_result(self.expensive, expensive_result or result)
     end
     return self
@@ -531,15 +538,15 @@ function Tirislib_Recipe:add_result_range(results, expensive_results)
         return self
     end
 
-    if not self:has_difficulties() and results then
+    if not Tirislib_Recipe.has_difficulties(self) and results then
         add_results(self, results)
         return self
     end
 
-    if self:has_normal_difficulty() and results then
+    if Tirislib_Recipe.has_normal_difficulty(self) and results then
         add_results(self.normal, results)
     end
-    if self:has_expensive_difficulty() then
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
         add_results(self.expensive, expensive_results or results)
     end
     return self
@@ -574,8 +581,8 @@ function Tirislib_Recipe:add_ingredient(ingredient, expensive_ingredient)
     Tirislib_RecipeEntry.convert_to_named_keys(ingredient)
     Tirislib_RecipeEntry.convert_to_named_keys(expensive_ingredient)
 
-    self:call_on_normal_recipe_data(add_ingredient, ingredient)
-    self:call_on_expensive_recipe_data(add_ingredient, expensive_ingredient)
+    Tirislib_Recipe.call_on_normal_recipe_data(self, add_ingredient, ingredient)
+    Tirislib_Recipe.call_on_expensive_recipe_data(self, add_ingredient, expensive_ingredient)
 
     return self
 end
@@ -585,7 +592,7 @@ function Tirislib_Recipe:add_ingredient_range(ingredients, expensive_ingredients
         return self
     end
 
-    if not self:has_difficulties() then
+    if not Tirislib_Recipe.has_difficulties(self) then
         if ingredients then
             for _, entry in pairs(ingredients) do
                 add_ingredient(self, entry)
@@ -594,12 +601,12 @@ function Tirislib_Recipe:add_ingredient_range(ingredients, expensive_ingredients
         return self
     end
 
-    if ingredients and self:has_normal_difficulty() then
+    if ingredients and Tirislib_Recipe.has_normal_difficulty(self) then
         for _, entry in pairs(ingredients) do
             add_ingredient(self.normal, entry)
         end
     end
-    if self:has_expensive_difficulty() then
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
         local ingredients_to_do = expensive_ingredients or ingredients
 
         for _, entry in pairs(ingredients_to_do) do
@@ -631,7 +638,7 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
         ingredient_type = "item"
     end
 
-    self:call_on_recipe_data(remove_ingredient, ingredient_name, ingredient_type)
+    Tirislib_Recipe.call_on_recipe_data(self, remove_ingredient, ingredient_name, ingredient_type)
 
     return self
 end
@@ -655,7 +662,7 @@ function Tirislib_Recipe:remove_result(ingredient_name, ingredient_type)
         ingredient_type = "item"
     end
 
-    self:call_on_recipe_data(remove_result, ingredient_name, ingredient_type)
+    Tirislib_Recipe.call_on_recipe_data(self, remove_result, ingredient_name, ingredient_type)
 
     return self
 end
@@ -669,7 +676,7 @@ local function replace_ingredient(recipe_data, ingredient_name, replacement_name
 end
 
 function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name)
-    self:call_on_recipe_data(replace_ingredient, ingredient_name, replacement_name)
+    Tirislib_Recipe.call_on_recipe_data(self, replace_ingredient, ingredient_name, replacement_name)
 
     return self
 end
@@ -724,7 +731,7 @@ local function clear_ingredients(recipe_data)
 end
 
 function Tirislib_Recipe:clear_ingredients()
-    self:call_on_recipe_data(clear_ingredients)
+    Tirislib_Recipe.call_on_recipe_data(self, clear_ingredients)
 
     return self
 end
@@ -735,7 +742,7 @@ local function clear_results(recipe_data)
 end
 
 function Tirislib_Recipe:clear_results()
-    self:call_on_recipe_data(clear_results)
+    Tirislib_Recipe.call_on_recipe_data(self, clear_results)
 
     return self
 end
@@ -761,7 +768,7 @@ function Tirislib_Recipe:add_unlock(technology_name)
         return self
     end
 
-    self:set_enabled(false)
+    Tirislib_Recipe.set_enabled(self, false)
     local tech = Tirislib_Technology.get_by_name(technology_name)
 
     if tech then
@@ -786,8 +793,8 @@ local function set_ingredient_amounts(recipe_data, value)
 end
 
 function Tirislib_Recipe:set_ingredient_amounts(value, expensive_value)
-    self:call_on_normal_recipe_data(set_ingredient_amounts, value)
-    self:call_on_expensive_recipe_data(set_ingredient_amounts, expensive_value or value)
+    Tirislib_Recipe.call_on_normal_recipe_data(self, set_ingredient_amounts, value)
+    Tirislib_Recipe.call_on_expensive_recipe_data(self, set_ingredient_amounts, expensive_value or value)
 
     return self
 end
@@ -801,8 +808,8 @@ local function set_result_amounts(recipe_data, value)
 end
 
 function Tirislib_Recipe:set_result_amounts(value, expensive_value)
-    self:call_on_normal_recipe_data(set_result_amounts, value)
-    self:call_on_expensive_recipe_data(set_result_amounts, expensive_value or value)
+    Tirislib_Recipe.call_on_normal_recipe_data(self, set_result_amounts, value)
+    Tirislib_Recipe.call_on_expensive_recipe_data(self, set_result_amounts, expensive_value or value)
 
     return self
 end
@@ -814,13 +821,13 @@ local function multiply_ingredient_table_amounts(ingredients, multiplier)
 end
 
 function Tirislib_Recipe:multiply_ingredients(normal_multiplier, expensive_multiplier)
-    if not self:has_difficulties() then
+    if not Tirislib_Recipe.has_difficulties(self) then
         multiply_ingredient_table_amounts(self.ingredients, normal_multiplier)
     else
-        if self:has_normal_difficulty() then
+        if Tirislib_Recipe.has_normal_difficulty(self) then
             multiply_ingredient_table_amounts(self.normal.ingredients, normal_multiplier)
         end
-        if self:has_expensive_difficulty() then
+        if Tirislib_Recipe.has_expensive_difficulty(self) then
             multiply_ingredient_table_amounts(self.expensive.ingredients, expensive_multiplier or normal_multiplier)
         end
     end
@@ -829,7 +836,7 @@ function Tirislib_Recipe:multiply_ingredients(normal_multiplier, expensive_multi
 end
 
 function Tirislib_Recipe:multiply_expensive_ingredients(multiplier)
-    if self:has_expensive_difficulty() then
+    if Tirislib_Recipe.has_expensive_difficulty(self) then
         multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
     end
 
@@ -843,7 +850,7 @@ local function ceil_ingredient_amounts(recipe_data)
 end
 
 function Tirislib_Recipe:ceil_ingredients()
-    self:call_on_recipe_data(ceil_ingredient_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, ceil_ingredient_amounts)
 
     return self
 end
@@ -859,7 +866,7 @@ local function floor_ingredient_amounts(recipe_data)
 end
 
 function Tirislib_Recipe:floor_ingredients()
-    self:call_on_recipe_data(floor_ingredient_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, floor_ingredient_amounts)
 
     return self
 end
@@ -875,7 +882,7 @@ local function ceil_result_amounts(recipe_data)
 end
 
 function Tirislib_Recipe:ceil_results()
-    self:call_on_recipe_data(ceil_result_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, ceil_result_amounts)
 
     return self
 end
@@ -891,7 +898,7 @@ local function floor_result_amounts(recipe_data)
 end
 
 function Tirislib_Recipe:floor_results()
-    self:call_on_recipe_data(floor_result_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, floor_result_amounts)
 
     return self
 end
