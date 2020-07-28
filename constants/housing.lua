@@ -19,13 +19,13 @@ Housing.values = {
         alternatives = {"improvised-hut-2"}
     },
     ["house-1"] = {
-        room_count = 24,
+        room_count = 32,
         comfort = 5,
         caste = Type.ember,
         caste_bonus = 2
     },
     ["khrushchyovka"] = {
-        room_count = 20,
+        room_count = 25,
         comfort = 4,
         caste = Type.clockwork,
         caste_bonus = 4

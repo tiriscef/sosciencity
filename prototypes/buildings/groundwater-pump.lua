@@ -18,27 +18,22 @@ Tirislib_RecipeGenerator.create {
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
-    type = "storage-tank",
+    type = "assembling-machine",
     name = "groundwater-pump",
     icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "groundwater-pump"},
-    max_health = 150,
+    max_health = 400,
     corpse = "groundwater-pump-remnants",
-    fluid_box = {
-        base_area = 2,
-        filter = "groundwater",
-        pipe_covers = pipecoverspictures(),
-        pipe_picture = pipe_pictures,
-        pipe_connections = {
-            {position = {0, -2}}
-        }
-    },
-    vehicle_impact_sound = Tirislib_Entity.get_standard_impact_sound(),
-    pictures = {
-        picture = {
-            sheets = {
+    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
+    open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
+    close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
+    allowed_effects = {"productivity", "speed"}, -- try to disallow player craftable modules
+    animation = {
+        north = {
+            layers = {
                 {
                     filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump.png",
                     width = 128,
@@ -72,17 +67,26 @@ Tirislib_Entity.create {
                     }
                 }
             }
-        },
-        fluid_background = Tirislib_Entity.get_empty_sprite(),
-        window_background = Tirislib_Entity.get_empty_sprite(),
-        flow_sprite = Tirislib_Entity.get_empty_sprite(),
-        gas_flow = Tirislib_Entity.get_empty_animation()
+        }
     },
-    flow_length_in_ticks = 360,
-    window_bounding_box = Tirislib_Entity.get_selection_box(0, 0),
-    circuit_wire_connection_points = circuit_connector_definitions["storage-tank"].points,
-    circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
-    circuit_wire_max_distance = 13
+    crafting_speed = 1,
+    crafting_categories = {"sosciencity-groundwater-pump"},
+    energy_usage = "250kW",
+    energy_source = {
+        type = "electric",
+        usage_priority = "secondary-input",
+        emissions_per_minute = 1,
+        drain = "0W"
+    },
+    fluid_boxes = {
+        {
+            pipe_covers = pipecoverspictures(),
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {0, -2}}},
+            production_type = "output"
+        }
+    },
+    fixed_recipe = "groundwater"
 }:set_size(3, 3):copy_localisation_from_item()
 
 Tirislib_Entity.create {
