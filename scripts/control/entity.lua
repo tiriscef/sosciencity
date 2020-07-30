@@ -59,37 +59,32 @@ local function set_assembling_machine_performance(entry, performance)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << beaconed machine >>
--- TODO give them separate functions because wtf am I even doing here
-local function update_entity_with_beacon(entry)
-    local _type = entry[EK.type]
-    local speed_bonus = 0
-    local productivity_bonus = 0
-    local use_penalty_module = false
+-- << beaconed machines >>
 
-    if is_affected_by_clockwork(_type) then
-        speed_bonus = caste_bonuses[Type.clockwork]
-        use_penalty_module = global.use_penalty
-    end
-    if _type == Type.rocket_silo then
-        productivity_bonus = caste_bonuses[Type.aurora]
-    end
-    if is_affected_by_orchid(_type) then
-        productivity_bonus = caste_bonuses[Type.orchid]
-    end
-    if _type == Type.orangery then
-        local age = game.tick - entry[EK.tick_of_creation]
-        productivity_bonus = productivity_bonus + math.floor(math.sqrt(age)) -- TODO balance
-    end
-
-    set_beacon_effects(entry, speed_bonus, productivity_bonus, use_penalty_module)
+-- TODO guis for these guys
+local function update_machine(entry)
+    set_beacon_effects(entry, caste_bonuses[Type.clockwork], 0, global.use_penalty)
 end
-Register.set_entity_updater(Type.assembling_machine, update_entity_with_beacon)
-Register.set_entity_updater(Type.furnace, update_entity_with_beacon)
-Register.set_entity_updater(Type.rocket_silo, update_entity_with_beacon)
-Register.set_entity_updater(Type.farm, update_entity_with_beacon)
-Register.set_entity_updater(Type.mining_drill, update_entity_with_beacon)
-Register.set_entity_updater(Type.orangery, update_entity_with_beacon)
+Register.set_entity_updater(Type.assembling_machine, update_machine)
+Register.set_entity_updater(Type.furnace, update_machine)
+Register.set_entity_updater(Type.mining_drill, update_machine)
+
+local function update_farm(entry)
+    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.ember], global.use_penalty)
+end
+Register.set_entity_updater(Type.farm, update_farm)
+
+local function update_orangery(entry)
+    local age = game.tick - entry[EK.tick_of_creation]
+    -- TODO balance the age productivity gain
+    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.ember] + math.sqrt(age), global.use_penalty)
+end
+Register.set_entity_updater(Type.orangery, update_orangery)
+
+local function update_silo(entry)
+    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.aurora], global.use_penalty)
+end
+Register.set_entity_updater(Type.rocket_silo, update_silo)
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>
