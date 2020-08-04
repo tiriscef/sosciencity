@@ -8,21 +8,29 @@ Subentities = {}
 ]]
 -- local often used functions for extreme performance gains
 Subentities.subentity_name_lookup = {
-    [SubentityType.beacon] = "sosciencity-hidden-beacon",
-    [SubentityType.eei] = "sosciencity-hidden-eei"
+    [SubentityType.beacon] = "sosciencity-hidden-beacon"
 }
 local subentity_names = Subentities.subentity_name_lookup
 
-local type_needs_beacon = Types.needs_beacon
-local type_needs_alt_mode_sprite = Types.needs_alt_mode_sprite
-local is_inhabited = Types.is_inhabited
+local get_type_definition = Types.get
 
 local get_building_details = Buildings.get
 
 local max = math.max
+local format = string.format
+local get_size = Tirislib_Utils.get_size
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+local function get_subentity_name(_type, entity)
+    if _type == SubentityType.eei then
+        local width, height = get_size(entity)
+        return format("%d-%d-sosciencity-hidden-eei", width, height)
+    else
+        return subentity_names[_type]
+    end
+end
+
 local function add(entry, _type)
     entry[EK.subentities] = entry[EK.subentities] or {}
 
@@ -30,7 +38,7 @@ local function add(entry, _type)
     local subentity =
         entity.surface.create_entity(
         {
-            name = subentity_names[_type],
+            name = get_subentity_name(_type, entity),
             position = entity.position,
             force = entity.force
         }
@@ -59,24 +67,15 @@ end
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
 function Subentities.add_all_for(entry)
-    -- TODO I think this function might be obsolete if I create the subentities at the time they are needed
-    local _type = entry[EK.type]
-
-    if type_needs_beacon(_type) then
-        add(entry, SubentityType.beacon)
-    end
-    if is_inhabited(_type) then
-        add(entry, SubentityType.eei)
-        entry[EK.power_usage] = 0
-    end
-
     local building_details = get_building_details(entry)
     if building_details and building_details.power_usage then
         add(entry, SubentityType.eei)
         entry[EK.power_usage] = building_details.power_usage
     end
-    if type_needs_alt_mode_sprite(_type) then
-        add_alt_mode_sprite(entry, Types.definitions[_type].altmode_sprite)
+
+    local type_definition = get_type_definition(entry)
+    if type_definition.altmode_sprite then
+        add_alt_mode_sprite(entry, type_definition.altmode_sprite)
     end
 end
 

@@ -64,6 +64,16 @@ function Tirislib_Entity.get_collision_box(width, height)
     }
 end
 
+function Tirislib_Entity:set_collision_box(width, height)
+    self.collision_box = Tirislib_Entity.get_collision_box(width, height)
+    return self
+end
+
+function Tirislib_Entity:set_selection_box(width, height)
+    self.selection_box = Tirislib_Entity.get_selection_box(width, height)
+    return self
+end
+
 function Tirislib_Entity:set_size(width, height)
     self.selection_box = Tirislib_Entity.get_selection_box(width, height)
     self.collision_box = Tirislib_Entity.get_collision_box(width, height)

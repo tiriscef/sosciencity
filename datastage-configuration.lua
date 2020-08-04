@@ -1,6 +1,6 @@
-if not Sosciencity_Globals then
+if not Sosciencity_Config then
     --- Table with centrally defined global values.
-    Sosciencity_Globals = {}
+    Sosciencity_Config = {}
 end
 
 local default_values = {
@@ -17,13 +17,24 @@ local default_values = {
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-2.png", scale = 0.25},
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-3.png", scale = 0.25},
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
-    }
+    },
+    eei_sizes = {}
 }
+
+function default_values.add_eei_size(width, height)
+    local eei_sizes = default_values.eei_sizes
+    if not eei_sizes[width] then
+        eei_sizes[width] = {}
+    end
+
+    eei_sizes[width][height] = true
+end
+
 if mods["sosciencity-debug"] then
     default_values.DEBUG = true
 end
 
 default_values.__index = default_values
-setmetatable(Sosciencity_Globals, default_values)
+setmetatable(Sosciencity_Config, default_values)
 
-return Sosciencity_Globals
+return Sosciencity_Config

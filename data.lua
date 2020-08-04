@@ -2,7 +2,7 @@
 require("lib.init")
 require("recipe-generator")
 require("integrations")
-require("datastage-globals")
+require("datastage-configuration")
 
 -- create prototypes
 require("prototypes.item-groups")

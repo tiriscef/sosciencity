@@ -217,7 +217,7 @@ local function create_item(house_name, house, details)
         order = get_order(house),
         stack_size = details.stack_size or 20,
         place_result = house_name,
-        pictures = Sosciencity_Globals.blueprint_on_belt,
+        pictures = Sosciencity_Config.blueprint_on_belt,
         localised_description = {
             "item-description.housing",
             house.room_count,
@@ -272,6 +272,8 @@ local function create_entity(house_name, house, details)
         localised_name = {"entity-name." .. details.main_entity},
         localised_description = {"entity-description." .. details.main_entity}
     }:set_size(details.width, details.height)
+
+    Sosciencity_Config.add_eei_size(details.width, details.height)
 
     if details.main_entity ~= "improvised-hut" then
         entity:add_mining_result({name = details.main_entity, amount = 1})

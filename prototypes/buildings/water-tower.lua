@@ -7,7 +7,7 @@ Tirislib_Item.create {
     order = "aab",
     place_result = "water-tower",
     stack_size = 50,
-    pictures = Sosciencity_Globals.blueprint_on_belt
+    pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {
@@ -15,6 +15,8 @@ Tirislib_RecipeGenerator.create {
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local size_x = 3
+local size_y = 3
 
 Tirislib_Entity.create {
     type = "storage-tank",
@@ -85,7 +87,8 @@ Tirislib_Entity.create {
     circuit_wire_connection_points = circuit_connector_definitions["storage-tank"].points,
     circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(size_x, size_y):copy_localisation_from_item()
+Sosciencity_Config.add_eei_size(size_x, size_y)
 
 Tirislib_Entity.create {
     type = "corpse",
@@ -115,4 +118,4 @@ Tirislib_Entity.create {
         }
     },
     localised_name = {"item-name.water-tower"}
-}:set_size(3, 3)
+}:set_size(size_x, size_y)
