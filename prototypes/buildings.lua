@@ -10,6 +10,6 @@ require("buildings.trash-site")
 require("buildings.water-tower")
 require("buildings.zeppelin-port")
 
-if Sosciencity_Globals.DEBUG then
+if Sosciencity_Config.DEBUG then
     require("buildings.testbuildings")
 end

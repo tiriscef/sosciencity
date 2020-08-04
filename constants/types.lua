@@ -188,20 +188,8 @@ function Types.is_relevant_to_register(_type)
     return _type < 2000
 end
 
-function Types.is_affected_by_clockwork(_type)
-    return (_type >= Type.assembling_machine) and (_type <= Type.orangery)
-end
-
-function Types.is_affected_by_orchid(_type)
-    return (_type >= Type.farm) and (_type <= Type.orangery)
-end
-
 function Types.needs_beacon(_type)
     return (_type >= Type.fishery) and (_type <= Type.orangery)
-end
-
-function Types.needs_alt_mode_sprite(_type)
-    return definitions[_type].altmode_sprite ~= nil
 end
 
 function Types.get(entry)

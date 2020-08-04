@@ -495,7 +495,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << balance information >>
-if Sosciencity_Globals.DEBUG then
+if Sosciencity_Config.DEBUG then
     local function get_animal_size(animal_name)
         for _, animal in pairs(animals) do
             if animal.name == animal_name then

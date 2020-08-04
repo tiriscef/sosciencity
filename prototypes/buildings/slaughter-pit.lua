@@ -7,7 +7,7 @@ Tirislib_Item.create {
     order = "aaa",
     place_result = "slaughter-pit",
     stack_size = 10,
-    pictures = Sosciencity_Globals.blueprint_on_belt
+    pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {

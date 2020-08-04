@@ -17,11 +17,6 @@ local random = math.random
 
 local set_beacon_effects = Subentities.set_beacon_effects
 
-local is_affected_by_clockwork = Types.is_affected_by_clockwork
-local is_affected_by_orchid = Types.is_affected_by_orchid
-
-local log_fluid = Communication.log_fluid
-
 local get_building_details = Buildings.get
 
 local has_power = Subentities.has_power
