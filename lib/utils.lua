@@ -6,6 +6,22 @@ local floor = math.floor
 --<< Just some helper functions >>
 Tirislib_Utils = {}
 
+function Tirislib_Utils.clamp(val, min, max)
+    if val < min then
+        return min
+    elseif val > max then
+        return max
+    else
+        return val
+    end
+end
+local clamp = Tirislib_Utils.clamp
+
+function Tirislib_Utils.map_range(val, from_min, from_max, to_min, to_max)
+    val = clamp(val, from_min, from_max)
+    return to_min + (val - from_min) / (from_max - from_min) * (to_max - to_min)
+end
+
 function Tirislib_Utils.round(number)
     return floor(number + 0.5)
 end
@@ -69,7 +85,9 @@ end
 
 function Tirislib_Utils.desync_protection()
     if game then
-        error("A function that is supposed to only be called during the control initialization stage got called at a later stage.")
+        error(
+            "A function that is supposed to only be called during the control initialization stage got called at a later stage."
+        )
     end
 end
 

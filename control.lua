@@ -49,7 +49,6 @@ require("scripts.control.gui")
     --------------------------------
     global.last_tile_update: tick
 ]]
-
 ---------------------------------------------------------------------------------------------------
 -- local all the frequently called functions for miniscule performance gains
 local global
@@ -342,32 +341,53 @@ local function on_tile_update()
     global.last_tile_update = game.tick
 end
 
+local train_types =
+    Tirislib_Tables.array_to_lookup {
+    "locomotive",
+    "artillery-wagon",
+    "cargo-wagon",
+    "fluid-wagon"
+}
+local function on_player_died(event)
+    local causing_entity = event.cause
+
+    if not causing_entity then
+        return
+    end
+
+    if train_types[causing_entity.type] then
+        Communication.player_got_run_over()
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
 -- initialisation
 script.on_init(init)
-
--- loading
 script.on_load(on_load)
+script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 
 -- update function
 script.on_nth_tick(10, update_cycle)
-script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 
 -- placement
 -- filter out ghosts because my mod has nothing to do with them
 local filter = {{filter = "ghost", invert = true}, {filter = "force", force = "player", mode = "and"}}
 script.on_event(defines.events.on_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
-script.on_event(defines.events.on_entity_cloned, on_clone_built)
-script.on_event(defines.events.script_raised_built, on_script_built)
-script.on_event(defines.events.script_raised_revive, on_script_built)
+
+-- the other events can't be filtered by force
+filter = {{filter = "ghost", invert = true}}
+script.on_event(defines.events.on_entity_cloned, on_clone_built, filter)
+script.on_event(defines.events.script_raised_built, on_script_built, filter)
+script.on_event(defines.events.script_raised_revive, on_script_built, filter)
 
 -- removement
-script.on_event(defines.events.on_player_mined_entity, on_entity_mined)
-script.on_event(defines.events.on_robot_mined_entity, on_entity_mined)
-script.on_event(defines.events.on_entity_died, on_entity_died)
-script.on_event(defines.events.script_raised_destroy, on_entity_removed)
+script.on_event(defines.events.on_player_mined_entity, on_entity_mined, filter)
+script.on_event(defines.events.on_robot_mined_entity, on_entity_mined, filter)
+script.on_event(defines.events.on_entity_died, on_entity_died, filter)
+script.on_event(defines.events.script_raised_destroy, on_entity_removed, filter)
+filter = nil
 
 -- tile updates
 script.on_event(defines.events.on_player_built_tile, on_tile_update)
@@ -390,8 +410,11 @@ script.on_event(defines.events.on_gui_closed, on_gui_closed)
 -- gui events
 script.on_event(defines.events.on_gui_click, on_gui_click)
 
--- keeping track of research
+-- research
 script.on_event(defines.events.on_research_finished, on_research_finished)
 
--- selection stuff
+-- selection
 script.on_event(defines.events.on_selected_entity_changed, on_selection_changed)
+
+-- tragic deaths
+script.on_event(defines.events.on_player_died, on_player_died)

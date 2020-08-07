@@ -2,6 +2,7 @@ Speakers = {}
 
 Speakers["tiriscef."] = {
     useless_banter_count = 31,
+    roadkill_banter_count = 5,
     lines_with_followup = {
         2,
         3,
@@ -24,6 +25,7 @@ Speakers["tiriscef."] = {
 
 Speakers["profanity."] = {
     useless_banter_count = 21,
+    roadkill_banter_count = 5,
     lines_with_followup = {
         1,
         7,
