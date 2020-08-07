@@ -47,6 +47,7 @@ end
 
 local floor = math.floor
 local random = math.random
+local weighted_random = Tirislib_Utils.weighted_random
 
 local buildings = Buildings.values
 local is_inhabited = Types.is_inhabited
@@ -156,6 +157,8 @@ local function flush_logs()
     flush_log(fluid_production, fluid_statistics, 1)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << mouseover visualisations >>
 local function premultiply_with_alpha(color, a)
     color.r = color.r * a
     color.g = color.g * a
@@ -334,7 +337,17 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << speakers >>
-local FOLLOWUP_DELAY = 120 -- 2 seconds
+local FOLLOWUP_DELAY = 2 * 60 -- 2 seconds
+
+local function pick_speaker(weight_key)
+    local weights = {}
+    for index, name in pairs(allowed_speakers) do
+        weights[index] = speakers[name][weight_key]
+    end
+
+    local speaker_name = allowed_speakers[weighted_random(weights)]
+    return speaker_name, speakers[speaker_name]
+end
 
 local function say(speaker, line)
     game.print {"", {speaker .. "prefix"}, {speaker .. line}}
@@ -368,17 +381,10 @@ function Communication.useless_banter()
         return
     end
 
-    -- pick a speaker, the more they have to say the higher is the probability to pick them
-    local weights = {}
-    for index, name in pairs(allowed_speakers) do
-        weights[index] = speakers[name].useless_banter_count
-    end
-
     -- pick a random speaker and line until we found a line that wasn't used recently
     local speaker_name, speaker, line, line_index
     repeat
-        speaker_name = allowed_speakers[Tirislib_Utils.weighted_random(weights)]
-        speaker = speakers[speaker_name]
+        speaker_name, speaker = pick_speaker("useless_banter_count")
         line = random(speaker.useless_banter_count)
         line_index = line + speaker.index
     until not Tirislib_Tables.contains(global.past_banter, line_index)
@@ -392,12 +398,27 @@ function Communication.useless_banter()
 end
 local useless_banter = Communication.useless_banter
 
+---------------------------------------------------------------------------------------------------
+-- << events >>
+-- functions that can be called to inform this class of things going on
 function Communication.log_emigration(group, cause)
 end
 
 function Communication.log_immigration(group)
 end
 
+function Communication.player_got_run_over()
+    if #allowed_speakers == 0 then
+        return
+    end
+
+    local speaker_name, speaker = pick_speaker("roadkill_banter_count")
+    local line = random(speaker.roadkill_banter_count)
+    Scheduler.plan_event_in("say", 60, speaker_name, "train-" .. line)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << general >>
 function Communication.update(current_tick)
     flush_logs()
     log_population(current_tick)
