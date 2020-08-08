@@ -50,7 +50,7 @@ local random = math.random
 local weighted_random = Tirislib_Utils.weighted_random
 
 local buildings = Buildings.values
-local is_inhabited = Types.is_inhabited
+local get_type = Types.get
 local try_get = Register.try_get
 
 local function set_locals()
@@ -106,9 +106,6 @@ function Communication.caste_allowed_in(entry, caste_id)
             {"caste-name." .. caste.name}
         }
     )
-end
-
-function Communication.people_died_tragic(number_of_casualties)
 end
 
 -- << production and consumption statistics >>
@@ -305,7 +302,7 @@ function Communication.create_mouseover_highlights(player_id, entity)
         highlight_neighbors(player_id, entry, created_highlights)
 
         local _type = entry[EK.type]
-        if is_inhabited(_type) then
+        if get_type(_type).is_inhabited then
             show_inhabitants(player_id, entry, created_highlights)
         end
     end
@@ -405,6 +402,9 @@ function Communication.log_emigration(group, cause)
 end
 
 function Communication.log_immigration(group)
+end
+
+function Communication.log_casualties(group)
 end
 
 function Communication.player_got_run_over()

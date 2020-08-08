@@ -35,87 +35,119 @@ TypeGroup.inhabitant_subscriptions = {
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
+--- Type definitions\
+--- **altmode_sprite:** name of the sprite that should be shown in altmode\
+--- **subscriptions:** types that this type subscribes to by default\
+--- **is_civil:** is this type is part of the soscietal infrastructure\
+--- **is_inhabited:** do people live in this entity\
+--- **signature_color:** color for this entity, for displaying purposes\
+--- **localised_name:** localised name for this type\
+--- **localised_description:** localised description for this type
 Types.definitions = {
     [Type.empty_house] = {
-        altmode_sprite = "empty-caste"
+        altmode_sprite = "empty-caste",
+        is_civil = true
     },
     [Type.clockwork] = {
         altmode_sprite = "clockwork-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.orchid] = {
         altmode_sprite = "orchid-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.gunfire] = {
         altmode_sprite = "gunfire-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.ember] = {
         altmode_sprite = "ember-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.foundry] = {
         altmode_sprite = "foundry-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.gleam] = {
         altmode_sprite = "gleam-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.aurora] = {
         altmode_sprite = "aurora-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.plasma] = {
         altmode_sprite = "plasma-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions
+        subscriptions = TypeGroup.inhabitant_subscriptions,
+        is_civil = true,
+        is_inhabited = true
     },
     [Type.market] = {
         localised_name = {"sosciencity-gui.market"},
         localised_description = {"sosciencity-gui.explain-market"},
-        signature_color = {r = 1, g = 0.45, b = 0, a = 1}
+        signature_color = {r = 1, g = 0.45, b = 0, a = 1},
+        is_civil = true
     },
     [Type.water_distributer] = {
         localised_name = {"sosciencity-gui.water-distributer"},
         localised_description = {"sosciencity-gui.explain-water-distributer"},
-        signature_color = {r = 0, g = 0.8, b = 1, a = 1}
+        signature_color = {r = 0, g = 0.8, b = 1, a = 1},
+        is_civil = true
     },
     [Type.hospital] = {
         localised_name = {"sosciencity-gui.hospital"},
         localised_description = {"sosciencity-gui.explain-hospital"},
-        signature_color = {r = 0.8, g = 0.1, b = 0.1, a = 1}
+        signature_color = {r = 0.8, g = 0.1, b = 0.1, a = 1},
+        is_civil = true
     },
     [Type.dumpster] = {
         localised_name = {"sosciencity-gui.dumpster"},
         localised_description = {"sosciencity-gui.explain-dumpster"},
-        signature_color = {r = 0.8, g = 0.8, b = 0.8, a = 1}
+        signature_color = {r = 0.8, g = 0.8, b = 0.8, a = 1},
+        is_civil = true
     },
     [Type.pharmacy] = {
         localised_name = {"sosciencity-gui.pharmacy"},
-        localised_description = {"sosciencity-gui.explain-pharmacy"}
+        localised_description = {"sosciencity-gui.explain-pharmacy"},
+        is_civil = true
     },
     [Type.waterwell] = {
         localised_name = {"sosciencity-gui.waterwell"},
         localised_description = {"sosciencity-gui.explain-waterwell"},
-        localised_speed_name = {"sosciencity-gui.waterwell-speed"},
-        localised_speed_key = "sosciencity-gui.show-waterwell-speed",
         subscriptions = {Type.waterwell},
-        signature_color = {r = 0, g = 0, b = 1, a = 1}
+        signature_color = {r = 0, g = 0, b = 1, a = 1},
+        is_civil = true
     },
     [Type.immigration_port] = {
         localised_name = {"sosciencity-gui.immigration-port"},
-        localised_description = {"sosciencity-gui.explain-immigration-port"}
+        localised_description = {"sosciencity-gui.explain-immigration-port"},
+        is_civil = true
     },
     [Type.fishery] = {
         localised_name = {"sosciencity-gui.fishery"},
         localised_description = {"sosciencity-gui.explain-fishery"},
-        subscriptions = {Type.fishery}
+        subscriptions = {Type.fishery},
+        is_civil = true
     },
     [Type.manufactory] = {
         localised_name = {"sosciencity-gui.manufactory"},
         localised_description = {"sosciencity-gui.explain-manufactory"},
-        subscriptions = TypeGroup.all_castes
+        subscriptions = TypeGroup.all_castes,
+        is_civil = true
     },
     [Type.assembling_machine] = {},
     [Type.furnace] = {},
@@ -173,23 +205,6 @@ function Types.get_entity_type(entity)
     end
 
     return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
-end
-
--- TODO change these functions, because they are really bad code
-function Types.is_inhabited(_type)
-    return (_type < 100) and (_type > 0)
-end
-
-function Types.is_civil(_type)
-    return _type < 1000
-end
-
-function Types.is_relevant_to_register(_type)
-    return _type < 2000
-end
-
-function Types.needs_beacon(_type)
-    return (_type >= Type.fishery) and (_type <= Type.orangery)
 end
 
 function Types.get(entry)
