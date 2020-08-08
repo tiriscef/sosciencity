@@ -57,9 +57,7 @@ local add_fear = Inhabitants.add_fear
 local ease_fear = Inhabitants.ease_fear
 
 local get_entity_type = Types.get_entity_type
-local is_civil = Types.is_civil
-local is_inhabited = Types.is_inhabited
-local is_relevant_to_register = Types.is_relevant_to_register
+local get_type = Types.get
 
 local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
@@ -148,10 +146,7 @@ local function on_entity_built(event)
     end
 
     local entity_type = get_entity_type(entity)
-
-    if is_relevant_to_register(entity_type) then
-        add_to_register(entity, entity_type)
-    end
+    add_to_register(entity, entity_type)
 end
 
 local function on_clone_built(event)
@@ -163,20 +158,18 @@ local function on_clone_built(event)
 
     local entity_type = get_entity_type(destination)
 
-    if is_relevant_to_register(entity_type) then
-        -- try to copy the source - if possible
-        local source = event.source
-        if source and source.valid then
-            local source_entry = try_get_entry(source.unit_number)
-            if source_entry then
-                Register.clone(source_entry, destination)
-                return
-            end
+    -- try to copy the source - if possible
+    local source = event.source
+    if source and source.valid then
+        local source_entry = try_get_entry(source.unit_number)
+        if source_entry then
+            Register.clone(source_entry, destination)
+            return
         end
-
-        -- otherwise register the destination entity on it's own
-        add_to_register(destination, entity_type)
     end
+
+    -- otherwise register the destination entity on it's own
+    add_to_register(destination, entity_type)
 end
 
 local function on_script_built(event)
@@ -188,9 +181,7 @@ local function on_script_built(event)
 
     local entity_type = get_entity_type(entity)
 
-    if is_relevant_to_register(entity_type) then
-        add_to_register(entity, entity_type)
-    end
+    add_to_register(entity, entity_type)
 end
 
 local function on_entity_removed(event)
@@ -214,7 +205,7 @@ local function on_entity_died(event)
     if entry then
         local _type = entry[EK.type]
 
-        if is_civil(_type) then
+        if get_type(_type).is_civil then
             add_fear()
         end
 
@@ -252,7 +243,7 @@ local function on_entity_settings_pasted(event)
 
     local source_type = source_entry[EK.type]
     local destination_type = destination_entry[EK.type]
-    if is_inhabited(source_type) and destination_type == Type.empty_house then
+    if get_type(destination_type).is_inhabited and destination_type == Type.empty_house then
         Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
     end
 end

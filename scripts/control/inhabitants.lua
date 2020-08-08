@@ -923,7 +923,7 @@ function Inhabitants.add_casualty_fear(destroyed_house)
 
     local casualties = destroyed_house[EK.inhabitants]
     global.fear = global.fear + 0.05 + casualties
-    Communication.people_died_tragic(casualties)
+    Communication.log_casualties(destroyed_house)
 end
 
 ---------------------------------------------------------------------------------------------------

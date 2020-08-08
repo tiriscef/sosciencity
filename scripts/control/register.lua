@@ -64,11 +64,7 @@ function Register.init()
                 force = "player"
             }
         ) do
-            local _type = get_entity_type(entity)
-
-            if Types.is_relevant_to_register(_type) then
-                Register.add(entity)
-            end
+            Register.add(entity)
         end
     end
 end
@@ -244,6 +240,10 @@ end
 --- @param _type Type
 function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
+    if _type == Type.null then
+        return
+    end
+
     local entry = new_entry(entity, _type)
 
     init_custom_building(entry)
