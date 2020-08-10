@@ -256,9 +256,9 @@ local function create_entity(house_name, house, details)
         flags = {"placeable-neutral", "player-creation"},
         minable = {mining_time = 0.5},
         max_health = 500,
-        corpse = "small-remnants", -- TODO
-        open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65}, -- TODO sounds
-        close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7}, -- TODO
+        corpse = "small-remnants",
+        open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65},
+        close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7},
         inventory_size = get_inventory_size(house),
         vehicle_impact_sound = {
             filename = "__base__/sound/car-metal-impact.ogg",

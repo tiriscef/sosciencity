@@ -57,14 +57,6 @@ function Inventories.spill_items(entry, item, amount)
 end
 local spill_items = Inventories.spill_items
 
-function Inventories.try_output_ideas(entry, item, amount)
-    local housing_inventory = get_chest_inventory(entry)
-
-    local done = try_insert(housing_inventory, item, amount)
-    -- TODO other entities which accept idea items
-    return done
-end
-
 function Inventories.produce_garbage(entry, item, amount)
     local produced_amount = 0
 

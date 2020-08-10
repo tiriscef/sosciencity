@@ -22,7 +22,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "silo"},
     max_health = 500,
-    corpse = "small-remnants", -- TODO
+    corpse = "small-remnants",
     inventory_size = 64,
     vehicle_impact_sound = {
         filename = "__base__/sound/car-metal-impact.ogg",

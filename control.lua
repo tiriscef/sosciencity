@@ -57,7 +57,7 @@ local add_fear = Inhabitants.add_fear
 local ease_fear = Inhabitants.ease_fear
 
 local get_entity_type = Types.get_entity_type
-local get_type = Types.get
+local type_definitions = Types.definitions
 
 local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
@@ -205,7 +205,7 @@ local function on_entity_died(event)
     if entry then
         local _type = entry[EK.type]
 
-        if get_type(_type).is_civil then
+        if type_definitions[_type].is_civil then
             add_fear()
         end
 
@@ -243,7 +243,7 @@ local function on_entity_settings_pasted(event)
 
     local source_type = source_entry[EK.type]
     local destination_type = destination_entry[EK.type]
-    if get_type(destination_type).is_inhabited and destination_type == Type.empty_house then
+    if type_definitions[destination_type].is_inhabited and destination_type == Type.empty_house then
         Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
     end
 end
