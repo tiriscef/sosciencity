@@ -301,8 +301,7 @@ function Communication.create_mouseover_highlights(player_id, entity)
     if entry then
         highlight_neighbors(player_id, entry, created_highlights)
 
-        local _type = entry[EK.type]
-        if get_type(_type).is_inhabited then
+        if get_type(entry).is_inhabited then
             show_inhabitants(player_id, entry, created_highlights)
         end
     end
@@ -350,7 +349,7 @@ local function say(speaker, line)
     game.print {"", {speaker .. "prefix"}, {speaker .. line}}
 
     if speakers[speaker].lines_with_followup[line] then
-        Scheduler.plan_event("say", game.tick + FOLLOWUP_DELAY, speaker, line .. "f")
+        Scheduler.plan_event_in("say", FOLLOWUP_DELAY, speaker, line .. "f")
     end
 end
 Scheduler.set_event("say", say)
@@ -359,7 +358,7 @@ local function tell(player, speaker, line)
     player.print {"", {speaker .. "prefix"}, {speaker .. line}}
 
     if speakers[speaker].lines_with_followup[line] then
-        Scheduler.plan_event("tell", game.tick + FOLLOWUP_DELAY, player, speaker, line .. "f")
+        Scheduler.plan_event_in("tell", FOLLOWUP_DELAY, player, speaker, line .. "f")
     end
 end
 Scheduler.set_event("tell", tell)
@@ -414,7 +413,7 @@ function Communication.player_got_run_over()
 
     local speaker_name, speaker = pick_speaker("roadkill_banter_count")
     local line = random(speaker.roadkill_banter_count)
-    Scheduler.plan_event_in("say", 60, speaker_name, "train-" .. line)
+    Scheduler.plan_event_in("say", FOLLOWUP_DELAY, speaker_name, "train-" .. line)
 end
 
 ---------------------------------------------------------------------------------------------------

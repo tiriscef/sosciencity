@@ -45,6 +45,10 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-water-agriculture"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-water-animal-farming"
     }
 }

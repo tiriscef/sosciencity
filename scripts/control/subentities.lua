@@ -12,7 +12,7 @@ Subentities.subentity_name_lookup = {
 }
 local subentity_names = Subentities.subentity_name_lookup
 
-local get_type_definition = Types.get
+local get_type = Types.get
 
 local get_building_details = Buildings.get
 
@@ -73,7 +73,7 @@ function Subentities.add_all_for(entry)
         entry[EK.power_usage] = building_details.power_usage
     end
 
-    local type_definition = get_type_definition(entry)
+    local type_definition = get_type(entry)
     if type_definition.altmode_sprite then
         add_alt_mode_sprite(entry, type_definition.altmode_sprite)
     end

@@ -1,3 +1,4 @@
+require("buildings.aquafarm")
 require("buildings.arboretum")
 require("buildings.farm")
 require("buildings.greenhouse")
