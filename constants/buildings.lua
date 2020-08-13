@@ -33,9 +33,25 @@ Buildings.values = {
             castes = {Type.clockwork}
         }
     },
+    ["arboretum"] = {type = Type.farm},
+    ["farm"] = {type = Type.farm},
+    ["greenhouse"] = {type = Type.farm},
+    ["groundwater-pump"] = {
+        type = Type.waterwell,
+        range = 64
+    },
+    ["industrial-animal-farm"] = {
+        type = Type.animal_farm,
+        range = 50
+    },
     ["market-hall"] = {
         type = Type.market,
         range = 42
+    },
+    ["nightclub"] = {
+        type = Type.nightclub,
+        power_usage = 100,
+        range = 50
     },
     ["trash-site"] = {
         type = Type.dumpster,
@@ -45,10 +61,6 @@ Buildings.values = {
         type = Type.water_distributer,
         range = 35,
         power_usage = 50
-    },
-    ["groundwater-pump"] = {
-        type = Type.waterwell,
-        range = 64
     },
     ["zeppelin-port"] = {
         type = Type.immigration_port,

@@ -1,4 +1,5 @@
 require("constants.enums")
+require("constants.colors")
 
 Types = {}
 
@@ -30,7 +31,8 @@ TypeGroup.inhabitant_subscriptions = {
     Type.market,
     Type.water_distributer,
     Type.hospital,
-    Type.dumpster
+    Type.dumpster,
+    Type.nightclub
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -99,25 +101,25 @@ Types.definitions = {
     [Type.market] = {
         localised_name = {"sosciencity-gui.market"},
         localised_description = {"sosciencity-gui.explain-market"},
-        signature_color = {r = 1, g = 0.45, b = 0, a = 1},
+        signature_color = Colors.orange,
         is_civil = true
     },
     [Type.water_distributer] = {
         localised_name = {"sosciencity-gui.water-distributer"},
         localised_description = {"sosciencity-gui.explain-water-distributer"},
-        signature_color = {r = 0, g = 0.8, b = 1, a = 1},
+        signature_color = Colors.light_teal,
         is_civil = true
     },
     [Type.hospital] = {
         localised_name = {"sosciencity-gui.hospital"},
         localised_description = {"sosciencity-gui.explain-hospital"},
-        signature_color = {r = 0.8, g = 0.1, b = 0.1, a = 1},
+        signature_color = Colors.darkish_red,
         is_civil = true
     },
     [Type.dumpster] = {
         localised_name = {"sosciencity-gui.dumpster"},
         localised_description = {"sosciencity-gui.explain-dumpster"},
-        signature_color = {r = 0.8, g = 0.8, b = 0.8, a = 1},
+        signature_color = Colors.grey,
         is_civil = true
     },
     [Type.pharmacy] = {
@@ -125,16 +127,22 @@ Types.definitions = {
         localised_description = {"sosciencity-gui.explain-pharmacy"},
         is_civil = true
     },
+    [Type.immigration_port] = {
+        localised_name = {"sosciencity-gui.immigration-port"},
+        localised_description = {"sosciencity-gui.explain-immigration-port"},
+        is_civil = true
+    },
+    [Type.nightclub] = {
+        localised_name = {"sosciencity-gui.nightclub"},
+        localised_description = {"sosciencity-gui.explain-nightclub"},
+        signature_color = Colors.purple,
+        is_civil = true
+    },
     [Type.waterwell] = {
         localised_name = {"sosciencity-gui.waterwell"},
         localised_description = {"sosciencity-gui.explain-waterwell"},
         subscriptions = {Type.waterwell},
-        signature_color = {r = 0, g = 0, b = 1, a = 1},
-        is_civil = true
-    },
-    [Type.immigration_port] = {
-        localised_name = {"sosciencity-gui.immigration-port"},
-        localised_description = {"sosciencity-gui.explain-immigration-port"},
+        signature_color = Colors.blue,
         is_civil = true
     },
     [Type.fishery] = {
@@ -155,6 +163,9 @@ Types.definitions = {
     [Type.mining_drill] = {},
     [Type.farm] = {},
     [Type.orangery] = {},
+    [Type.animal_farm] = {
+        signature_color = Colors.brown
+    },
     [Type.turret] = {},
     [Type.lab] = {}
 }
@@ -174,11 +185,7 @@ local lookup_by_entity_type = {
     ["turret"] = Type.turret
 }
 
-local lookup_by_name = {
-    ["farm"] = Type.farm,
-    ["greenhouse"] = Type.farm,
-    ["arboretum"] = Type.farm
-}
+local lookup_by_name = {}
 
 function Types.load()
     -- add the houses to the lookup table

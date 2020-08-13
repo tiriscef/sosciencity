@@ -172,7 +172,7 @@ Tirislib_Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13,
     working_sound = {
-        sound = {filename = "__sosciencity-graphics__/sound/night-club.ogg", volume = 1},
+        sound = {filename = "__sosciencity-graphics__/sound/nightclub.ogg", volume = 1},
         apparent_volume = 1.5
     }
 }:set_size(3, 3)

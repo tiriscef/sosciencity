@@ -10,7 +10,9 @@ require("lib.utils")
 ---------------------------------------------------------------------------------------------------
 -- << runtime finals >>
 require("constants.castes")
+require("constants.colors")
 require("constants.diseases")
+require("constants.enums")
 require("constants.types")
 require("constants.food")
 require("constants.housing")
@@ -18,7 +20,6 @@ require("constants.buildings")
 require("constants.drinking-water")
 require("constants.speakers")
 require("constants.garbage")
-require("constants.colors")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
