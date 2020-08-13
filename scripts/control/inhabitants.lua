@@ -736,6 +736,18 @@ local function evaluate_sosciety(happiness_summands, health_summands, sanity_sum
     end
 end
 
+local function evaluate_neighborhood(entry, happiness_summands, health_summands)
+    local nightclub_bonus = 0
+    for _, nightclub in Neighborhood.all_of_type(entry, Type.nightclub) do
+        nightclub_bonus = max(nightclub_bonus, nightclub[EK.performance])
+    end
+    happiness_summands[HappinessSummand.nightclub] = nightclub_bonus
+
+    local animal_farm_count = Neighborhood.get_neighbor_count(entry, Type.animal_farm)
+    happiness_summands[HappinessSummand.animal_farms] = -1 * animal_farm_count ^ 0.5
+    health_summands[HealthSummand.animal_farms] = -2 * animal_farm_count ^ 0.7
+end
+
 --- Gets the trend toward the next inhabitant that moves out.
 function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
     local threshold_diff = nominal_happiness - caste.immigration_threshold
@@ -830,6 +842,7 @@ local function update_house(entry, delta_ticks)
     evaluate_housing(entry, happiness_summands, sanity_summands, caste)
     evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
     evaluate_sosciety(happiness_summands, health_summands, sanity_summands, caste)
+    evaluate_neighborhood(entry, happiness_summands, health_summands)
 
     -- update health
     local nominal_health = get_nominal_value(health_summands, health_factors)

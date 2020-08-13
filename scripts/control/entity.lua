@@ -116,6 +116,27 @@ end
 Register.set_entity_updater(Type.manufactory, update_manufactory)
 
 ---------------------------------------------------------------------------------------------------
+-- << nightclub >>
+local function update_nightclub(entry)
+    if not has_power(entry) then
+        entry[EK.performance] = 0
+        return
+    end
+
+    local worker_performance = Inhabitants.evaluate_workforce(entry)
+
+    -- TODO consume and evaluate drinks
+
+    entry[EK.performance] = worker_performance
+end
+Register.set_entity_updater(Type.nightclub, update_nightclub)
+
+local function create_nightclub(entry)
+    entry[EK.performance] = 0
+end
+Register.set_entity_creation_handler(Type.nightclub, create_nightclub)
+
+---------------------------------------------------------------------------------------------------
 -- << fishery >>
 local function get_water_tiles(entry, surface, area)
     if global.last_tile_update > (entry[EK.last_tile_update] or -1) then

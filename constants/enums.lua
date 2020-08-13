@@ -6,6 +6,7 @@
 --- Enum table for registered entity types.
 Type = {}
 
+-- housing types
 Type.empty_house = 0
 Type.clockwork = 1
 Type.orchid = 2
@@ -16,6 +17,7 @@ Type.gleam = 6
 Type.aurora = 7
 Type.plasma = 8
 
+-- civil types
 Type.market = 101
 Type.water_distributer = 102
 Type.hospital = 103
@@ -23,21 +25,23 @@ Type.dumpster = 104
 Type.pharmacy = 105
 Type.immigration_port = 106
 Type.transportation = 107
+Type.nightclub = 108
 
-Type.waterwell = 201
-
-Type.fishery = 999
-Type.manufactory = 1000
+-- crafting machines
 Type.assembling_machine = 1001
 Type.furnace = 1002
 Type.rocket_silo = 1003
 Type.mining_drill = 1004
-Type.farm = 1005
-Type.orangery = 1006
+-- ..with custom behaviour
+Type.manufactory = 1101
+Type.fishery = 1102
+Type.farm = 1103
+Type.orangery = 1104
+Type.animal_farm = 1105
+Type.waterwell = 1106
 
-Type.turret = 1100
-
-Type.lab = 2002
+Type.turret = 2000
+Type.lab = 2001
 
 Type.null = 9999
 
@@ -192,6 +196,8 @@ HappinessSummand.power = 7
 HappinessSummand.fear = 8
 HappinessSummand.ember = 9
 HappinessSummand.garbage = 10
+HappinessSummand.animal_farms = 11
+HappinessSummand.nightclub = 12
 
 --<< happiness factors >>
 --- Enum table for happiness factors.
@@ -211,6 +217,7 @@ HealthSummand.nutrients = 1
 HealthSummand.food = 2
 HealthSummand.fear = 3
 HealthSummand.plasma = 4
+HealthSummand.animal_farms = 5
 
 --<< health factors >>
 --- Enum table for health factors.
