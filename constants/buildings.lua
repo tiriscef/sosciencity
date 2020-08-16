@@ -29,11 +29,19 @@ Buildings.values = {
         range = 30,
         water_tiles = 300,
         workforce = {
-            count = 10,
+            count = 20,
             castes = {Type.clockwork}
         }
     },
     ["arboretum"] = {type = Type.farm},
+    ["architectural-office"] = {
+        type = Type.manufactory,
+        range = 50,
+        workforce = {
+            count = 8,
+            castes = {Type.clockwork, Type.gleam, Type.foundry}
+        }
+    },
     ["farm"] = {type = Type.farm},
     ["greenhouse"] = {type = Type.farm},
     ["groundwater-pump"] = {

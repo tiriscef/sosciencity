@@ -11,7 +11,8 @@ Tirislib_Item.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "trash-site"
+    product = "trash-site",
+    category = "sosciencity-architecture"
 }
 
 Tirislib_Entity.create {
