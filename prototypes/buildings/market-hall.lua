@@ -11,7 +11,8 @@ Tirislib_Item.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "market-hall"
+    product = "market-hall",
+    category = "sosciencity-architecture"
 }
 
 Tirislib_Entity.create {

@@ -12,7 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "farm",
-    themes = {{"soil", 50}, {"tank", 1, 0}, {"piping", 5}, {"building", 1, 0}}
+    themes = {{"soil", 50}, {"tank", 1, 0}, {"piping", 5}, {"building", 1, 0}},
+    category = "sosciencity-architecture"
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
