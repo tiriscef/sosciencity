@@ -75,12 +75,12 @@ Tirislib_Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-greenhouse"},
-    energy_usage = "100kW",
+    energy_usage = "195kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
         emissions_per_minute = 1,
-        drain = "0W"
+        drain = "5W"
     },
     working_sound = {
         -- memo: make sound files louder in the future
