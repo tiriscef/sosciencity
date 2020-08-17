@@ -61,6 +61,7 @@ Buildings.values = {
         power_usage = 100,
         range = 50
     },
+    ["orangery"] = {Type.orangery},
     ["trash-site"] = {
         type = Type.dumpster,
         range = 25
