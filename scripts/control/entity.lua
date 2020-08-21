@@ -138,8 +138,12 @@ Register.set_entity_creation_handler(Type.nightclub, create_nightclub)
 
 ---------------------------------------------------------------------------------------------------
 -- << fishery >>
-local function get_water_tiles(entry, surface, area)
+local function get_water_tiles(entry, building_details)
     if global.last_tile_update > (entry[EK.last_tile_update] or -1) then
+        local entity = entry[EK.entity]
+        local position = entity.position
+        local surface = entity.surface
+        local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
         local water_tiles = surface.count_tiles_filtered {area = area, collision_mask = "water-tile"}
 
         entry[EK.water_tiles] = water_tiles
@@ -151,15 +155,12 @@ local function get_water_tiles(entry, surface, area)
     end
 end
 
-local function get_fishery_performance(entry, entity)
+local function get_fishery_performance(entry)
     local building_details = get_building_details(entry)
 
     local worker_performance = Inhabitants.evaluate_workforce(entry)
 
-    local surface = entity.surface
-    local position = entity.position
-    local water_tiles =
-        get_water_tiles(entry, surface, Tirislib_Utils.get_range_bounding_box(position, building_details.range))
+    local water_tiles = get_water_tiles(entry, building_details)
     local water_performance = min(water_tiles / building_details.water_tiles, 1)
 
     local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.fishery) + 1)
@@ -169,8 +170,7 @@ end
 
 local function update_fishery(entry)
     Inhabitants.update_workforce(entry)
-    local entity = entry[EK.entity]
-    local performance = get_fishery_performance(entry, entity)
+    local performance = get_fishery_performance(entry)
     set_assembling_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.fishery, update_fishery)

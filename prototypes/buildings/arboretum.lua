@@ -95,7 +95,26 @@ Tirislib_Entity.create {
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {8.0, 0.0}}},
             production_type = "input"
-        }
+        },
+        {
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {-8.0, 0.0}}},
+            production_type = "input"
+        },
+        {
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {0.0, 8.0}}},
+            production_type = "output"
+        },
+        {
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {0.0, -8.0}}},
+            production_type = "output"
+        },
+        off_when_no_fluid_recipe = true
     }
 }:set_size(15, 15):copy_localisation_from_item()
 
