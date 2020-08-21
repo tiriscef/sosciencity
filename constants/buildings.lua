@@ -43,6 +43,15 @@ Buildings.values = {
         }
     },
     ["farm"] = {type = Type.farm},
+    ["fishing-hut"] = {
+        type = Type.fishery,
+        range = 30,
+        water_tiles = 300,
+        workforce = {
+            count = 4,
+            castes = {Types.clockwork}
+        }
+    },
     ["greenhouse"] = {type = Type.farm},
     ["groundwater-pump"] = {
         type = Type.waterwell,

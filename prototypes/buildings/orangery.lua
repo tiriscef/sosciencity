@@ -87,13 +87,13 @@ Tirislib_Entity.create {
         {
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {8.0, -1.0}}},
+            pipe_connections = {{position = {-8.0, 1.0}}},
             production_type = "input"
         },
         {
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-8.0, 1.0}}},
+            pipe_connections = {{position = {8.0, -1.0}}},
             production_type = "output"
         },
         {
@@ -101,8 +101,7 @@ Tirislib_Entity.create {
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {-8.0, -1.0}}},
             production_type = "output"
-        },
-        off_when_no_fluid_recipe = true
+        }
     },
     working_sound = {
         sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},

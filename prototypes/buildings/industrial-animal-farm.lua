@@ -127,25 +127,25 @@ Tirislib_Entity.create {
         {
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.5, 3.0}}},
+            pipe_connections = {{position = {7.5, 3.0}}},
             production_type = "input"
         },
         {
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.5, 3.0}}},
+            pipe_connections = {{position = {7.5, -3.0}}},
             production_type = "input"
         },
         {
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.5, -3.0}}},
+            pipe_connections = {{position = {-7.5, 3.0}}},
             production_type = "output"
         },
         {
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.5, -3.0}}},
+            pipe_connections = {{position = {-7.5, -3.0}}},
             production_type = "output"
         },
         off_when_no_fluid_recipe = true
