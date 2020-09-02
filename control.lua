@@ -48,6 +48,7 @@ require("scripts.control.gui")
 --[[
     Data this script stores in global
     --------------------------------
+    global.last_entity_update: tick
     global.last_tile_update: tick
 ]]
 ---------------------------------------------------------------------------------------------------
@@ -107,6 +108,7 @@ end
 
 local function init()
     global = _ENV.global
+    global.last_entity_update = 0
     global.last_tile_update = 0
 
     Types.load()
@@ -140,6 +142,8 @@ local function on_load()
 end
 
 local function on_entity_built(event)
+    global.last_entity_update = game.tick
+
     local entity = event.created_entity
 
     if not entity or not entity.valid or entity.force.name ~= "player" then
@@ -151,6 +155,8 @@ local function on_entity_built(event)
 end
 
 local function on_clone_built(event)
+    global.last_entity_update = game.tick
+
     local destination = event.destination
 
     if not destination or not destination.valid or destination.force.name ~= "player" then
@@ -174,6 +180,8 @@ local function on_clone_built(event)
 end
 
 local function on_script_built(event)
+    global.last_entity_update = game.tick
+
     local entity = event.entity
 
     if not entity or not entity.valid or entity.force.name ~= "player" then
@@ -186,6 +194,8 @@ local function on_script_built(event)
 end
 
 local function on_entity_removed(event)
+    global.last_entity_update = game.tick
+
     local entity = event.entity -- all removement events use 'entity' as key
     if not entity.valid then
         return
@@ -195,6 +205,8 @@ local function on_entity_removed(event)
 end
 
 local function on_entity_died(event)
+    global.last_entity_update = game.tick
+
     local entity = event.entity
 
     if not entity.valid then
@@ -215,6 +227,8 @@ local function on_entity_died(event)
 end
 
 local function on_entity_mined(event)
+    global.last_entity_update = game.tick
+
     local entity = event.entity
     if not entity.valid then
         return

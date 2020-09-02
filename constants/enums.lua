@@ -35,10 +35,11 @@ Type.mining_drill = 1004
 -- ..with custom behaviour
 Type.manufactory = 1101
 Type.fishery = 1102
-Type.farm = 1103
-Type.orangery = 1104
-Type.animal_farm = 1105
-Type.waterwell = 1106
+Type.hunting_hut = 1103
+Type.farm = 1104
+Type.orangery = 1105
+Type.animal_farm = 1106
+Type.waterwell = 1107
 
 Type.turret = 2000
 Type.lab = 2001
@@ -89,8 +90,10 @@ EK.subentities = 7
 EK.neighbors = 40
 --- the range this entry looks connects with other neighbor entries
 EK.range = 41
+--- tick of the last time this entity updated it's surrounding unregistered entity information
+EK.last_entity_update = 42
 --- tick of the last time this entity updated it's surrounding tile information
-EK.last_tile_update = 42
+EK.last_tile_update = 43
 
 -- workforce
 --- the number of workers employed by this entry
@@ -165,6 +168,10 @@ EK.next_wave = 400
 -- fishery
 --- water tile count in environment
 EK.water_tiles = 500
+
+-- hunting hut
+--- tree count in environment
+EK.tree_count = 600
 
 --<< causes >>
 --- Enum table for destruction causes

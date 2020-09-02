@@ -101,7 +101,7 @@ local data_details = {
         icon = "improvised-hut",
         main_entity = "improvised-hut"
     },
-    ["house-1"] = {
+    ["boring-brick-house"] = {
         picture = {
             layers = {
                 {
@@ -141,7 +141,7 @@ local data_details = {
         width = 8,
         height = 6,
         tech_level = 2,
-        main_entity = "house-1"
+        main_entity = "boring-brick-house"
     },
     ["khrushchyovka"] = {
         picture = {
@@ -277,6 +277,7 @@ local function create_entity(house_name, house, details)
 
     if details.main_entity ~= "improvised-hut" then
         entity:add_mining_result({name = details.main_entity, amount = 1})
+        entity:copy_localisation_from_item(details.main_entity)
     end
 end
 
