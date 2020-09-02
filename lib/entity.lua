@@ -279,9 +279,10 @@ end
 
 function Tirislib_Entity:copy_localisation_from_item(item_name)
     item_name = item_name or self.name
+    local item = Tirislib_Item.get_by_name(item_name)
 
-    self.localised_name = {"item-name." .. item_name}
-    self.localised_description = {"item-description." .. item_name}
+    self.localised_name = item.localised_name or {"item-name." .. item_name}
+    self.localised_description = item.localised_description or {"item-description." .. item_name}
 
     return self
 end

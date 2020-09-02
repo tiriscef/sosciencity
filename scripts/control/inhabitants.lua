@@ -644,7 +644,7 @@ local function get_next_free_house(caste_id)
     local unit_number = next_houses_table[#next_houses_table]
     next_houses_table[#next_houses_table] = nil
 
-    local entry = Register.try_get(unit_number)
+    local entry = try_get(unit_number)
     if entry and entry[EK.type] == caste_id then
         return entry
     else

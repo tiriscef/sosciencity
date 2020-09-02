@@ -18,7 +18,7 @@ Housing.values = {
         one_room_per_inhabitant = true,
         alternatives = {"improvised-hut-2"}
     },
-    ["house-1"] = {
+    ["boring-brick-house"] = {
         room_count = 32,
         comfort = 5,
         caste = Type.ember,

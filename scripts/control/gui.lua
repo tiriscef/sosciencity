@@ -1251,8 +1251,7 @@ function Gui.update_details_view()
             local gui_spec = type_gui_specifications[entry[EK.type]]
             local updater = gui_spec and gui_spec.updater
 
-            -- only update the gui if the entry got updated in this cycle
-            if updater and (entry[EK.last_update] == current_tick or updater.always_update) then
+            if updater and (entry[EK.last_update] == current_tick or gui_spec.always_update) then
                 updater(get_nested_details_view(player), entry)
             end
         end

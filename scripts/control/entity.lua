@@ -12,14 +12,18 @@ local caste_bonuses
 local water_values = DrinkingWater.values
 
 local floor = math.floor
+local map_range = Tirislib_Utils.map_range
 local min = math.min
 local random = math.random
-
-local set_beacon_effects = Subentities.set_beacon_effects
 
 local get_building_details = Buildings.get
 
 local has_power = Subentities.has_power
+local set_beacon_effects = Subentities.set_beacon_effects
+
+local Inhabitants = Inhabitants
+local Neighborhood = Neighborhood
+local Tirislib_Utils = Tirislib_Utils
 
 local function set_locals()
     global = _ENV.global
@@ -161,7 +165,7 @@ local function get_fishery_performance(entry)
     local worker_performance = Inhabitants.evaluate_workforce(entry)
 
     local water_tiles = get_water_tiles(entry, building_details)
-    local water_performance = min(water_tiles / building_details.water_tiles, 1)
+    local water_performance = map_range(water_tiles, 0, building_details.water_tiles, 0, 1)
 
     local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.fishery) + 1)
 
@@ -179,6 +183,29 @@ local function create_fishery(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.fishery, create_fishery)
+
+---------------------------------------------------------------------------------------------------
+-- << hunting hut >>
+local function get_tree_count(entry, building_details)
+
+end
+
+local function get_hunting_hut_performance(entry)
+
+end
+
+local function update_hunting_hut(entry)
+    Inhabitants.update_workforce(entry)
+    local performance = get_fishery_performance(entry)
+    set_assembling_machine_performance(entry, performance)
+end
+Register.set_entity_updater(Type.hunting_hut, update_hunting_hut)
+
+local function create_hunting_hut(entry)
+    entry[EK.performance] = 1
+end
+Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
+
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
