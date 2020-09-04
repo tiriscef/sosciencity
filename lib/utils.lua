@@ -446,3 +446,12 @@ function Tirislib_Tables.sequence(start, finish)
 
     return ret
 end
+
+--- Gets or creates the inner table with the given key.
+function Tirislib_Tables.get_inner_table(tbl, key)
+    if not tbl[key] then
+        tbl[key] = {}
+    end
+
+    return tbl[key]
+end

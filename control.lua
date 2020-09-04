@@ -2,6 +2,7 @@
 -- << development tools >>
 pcall(require, "__debugadapter__/debugadapter.lua")
 pcall(require, "__profiler__/profiler.lua")
+require("lib.testing")
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
@@ -422,5 +423,7 @@ script.on_event(defines.events.on_research_finished, on_research_finished)
 -- selection
 script.on_event(defines.events.on_selected_entity_changed, on_selection_changed)
 
--- tragic deaths
+-- tragic player deaths
 script.on_event(defines.events.on_player_died, on_player_died)
+
+commands.add_command("sosciencity-tests", "", Tiristest.run_all)

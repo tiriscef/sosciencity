@@ -15,6 +15,7 @@
         "assembler2pipepictures",
         "util",
         "log",
-        "unpack"
+        "unpack",
+        "commands"
     ]
 }
