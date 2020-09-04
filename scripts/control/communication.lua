@@ -279,7 +279,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
 
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
-        text = inhabitants .. " / " .. capacity,
+        text = {"sosciencity-gui.fraction", inhabitants, capacity, ""},
         target = entity,
         surface = entity.surface,
         players = {player_id},
