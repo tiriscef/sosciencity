@@ -152,8 +152,12 @@ EK.employed = 219
 EK.employments = 220
 --- the count of inhabitants that are ill
 EK.ill = 221
---- the illnesses of this entry as a DiseaseGroup object
+--- the illnesses of the inhabitants as a DiseaseGroup object
 EK.illnesses = 222
+--- the sexes of the inhabitants
+EK.sexes = 223
+--- the ages of the inhabitants
+EK.ages = 224
 
 -- water distributer
 --- quality of the water this distributer provides
@@ -188,6 +192,21 @@ EmigrationCause = {}
 EmigrationCause.unknown = 0
 EmigrationCause.unhappy = 1
 EmigrationCause.homeless = 2
+
+--- Enum table for new inhabitants
+NewInhabitantCause = {}
+
+NewInhabitantCause.unknown = 0
+NewInhabitantCause.immigration = 1
+NewInhabitantCause.birth = 2
+
+--- Enum table for dead inhabitants
+DeathCause = {}
+
+DeathCause.unknown = 0
+DeathCause.old_age = 1
+DeathCause.illness = 2
+DeathCause.killed = 3
 
 --<< happiness summands >>
 --- Enum table for happiness summands.
@@ -252,3 +271,12 @@ SanityFactor = {}
 
 SanityFactor.hunger = 1
 SanityFactor.thirst = 2
+
+--<< inhabitant sexes >>
+--- Enum table for sexes
+Sex = {}
+
+Sex.neutral = 1
+Sex.fale = 2
+Sex.pachin = 3
+Sex.ga = 4

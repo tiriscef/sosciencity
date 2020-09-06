@@ -1,6 +1,7 @@
 local random = math.random
 local abs = math.abs
 local max = math.max
+local min = math.min
 local floor = math.floor
 
 --<< Just some helper functions >>
@@ -43,10 +44,12 @@ function Tirislib_Utils.sgn(x)
     end
 end
 
-function Tirislib_Utils.weighted_random(weights)
-    local sum = 0
-    for i = 1, #weights do
-        sum = sum + weights[i]
+function Tirislib_Utils.weighted_random(weights, sum)
+    if sum == nil then
+        sum = 0
+        for i = 1, #weights do
+            sum = sum + weights[i]
+        end
     end
 
     local random_index = random(sum)
@@ -55,9 +58,56 @@ function Tirislib_Utils.weighted_random(weights)
     repeat
         index = index + 1
         random_index = random_index - weights[index]
-    until random_index < 1
+    until random_index <= 0
 
     return index
+end
+local weighted_random = Tirislib_Utils.weighted_random
+
+local function prepare_dice(dice)
+    local weights = {}
+    local lookup = {}
+    local ret = {}
+    local sum = 0
+
+    local index = 1
+    for key, probability in pairs(dice) do
+        weights[index] = probability
+        lookup[index] = key
+        ret[key] = 0
+        sum = sum + probability
+
+        index = index + 1
+    end
+
+    return weights, lookup, ret, sum
+end
+
+--- Rolls the given dice the given number of times and returns a table with the number of times
+--- each side was the result. For performance reason the function will actually just roll a
+--- limited number of times and extrapolate for bigger values.\
+--- A dice is defined as a table whose values are the probability weight of the associated key.
+--- @param dice table
+--- @param count integer
+--- @param actual_count integer
+--- @return table
+function Tirislib_Utils.dice_rolls(dice, count, actual_count)
+    actual_count = actual_count or 40
+
+    local weights, lookup, ret, sum = prepare_dice(dice)
+    local count_per_roll = 1
+    local modulo = 0
+    if count > actual_count then
+        count_per_roll = floor(count / actual_count)
+        modulo = count % actual_count
+    end
+
+    for i = 1, min(count, actual_count) do
+        local rolled = lookup[weighted_random(weights, sum)]
+        ret[rolled] = ret[rolled] + count_per_roll + (i < modulo and 1 or 0)
+    end
+
+    return ret
 end
 
 function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
@@ -407,13 +457,13 @@ function Tirislib_Tables.has_numeric_key(tbl)
     return false
 end
 
-function Tirislib_Tables.union_array(lhs, rhs)
+function Tirislib_Tables.union_array(lh, rh)
     local ret = {}
 
-    for _, value in pairs(lhs) do
+    for _, value in pairs(lh) do
         ret[value] = value
     end
-    for _, value in pairs(rhs) do
+    for _, value in pairs(rh) do
         ret[value] = value
     end
 
