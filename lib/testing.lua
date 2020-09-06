@@ -24,7 +24,7 @@ local function run_test(test_case)
     if ok then
         return true
     else
-        log(string.format("Failed Test: %s\n%s\n", test_case.name, error))
+        log(string.format("Failed Test: %s\n%s", test_case.name, error))
 
         return false
     end
@@ -46,7 +46,7 @@ function Tiristest.run_group_suite(group)
     end
 
     if failed_tests == 0 then
-        log("OK!\n")
+        log("OK!")
     else
         log(string.format("%d out of %d tests failed :(", failed_tests, #group_suite))
     end

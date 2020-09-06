@@ -233,27 +233,28 @@ local DEFAULT_HAPPINESS = 10
 local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
+local function new_sexes_table(caste, count)
+
+end
+
+local function new_ages_table(count, cause)
+
+end
+
 --- Constructs a new InhabitantGroup object.
-function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses)
+function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses, sexes, ages, cause)
     return {
         [EK.type] = caste,
         [EK.inhabitants] = count or 0,
         [EK.happiness] = happiness or DEFAULT_HAPPINESS,
         [EK.health] = health or DEFAULT_HEALTH,
         [EK.sanity] = sanity or DEFAULT_SANITY,
-        [EK.illnesses] = illnesses or new_illness_group(count or 0)
+        [EK.illnesses] = illnesses or new_illness_group(count or 0),
+        [EK.sexes] = sexes or new_sexes_table(caste, count),
+        [EK.ages] = ages or new_ages_table(count, cause)
     }
 end
 local new_group = InhabitantGroup.new
-
---- Adds the necessary data so this house can also work as an InhabitantGroup.
-function InhabitantGroup.new_house(house)
-    house[EK.inhabitants] = 0
-    house[EK.happiness] = 0
-    house[EK.health] = 0
-    house[EK.sanity] = 0
-    house[EK.illnesses] = new_illness_group(0)
-end
 
 function InhabitantGroup.empty(group)
     group[EK.inhabitants] = 0
@@ -261,6 +262,13 @@ function InhabitantGroup.empty(group)
     group[EK.health] = 0
     group[EK.sanity] = 0
     group[EK.illnesses] = new_illness_group(0)
+    group[EK.sexes] = new_sexes_table(0)
+    group[EK.ages] = new_ages_table(0)
+end
+
+--- Adds the necessary data so this house can also work as an InhabitantGroup.
+function InhabitantGroup.new_house(house)
+    InhabitantGroup.empty(house)
 end
 
 function InhabitantGroup.can_be_merged(lh, rh)
