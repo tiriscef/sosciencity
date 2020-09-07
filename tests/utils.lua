@@ -32,7 +32,7 @@ Tiristest.add_test_case(
 )
 
 Tiristest.add_test_case(
-    "dice_rolls returns a table with the correct keys",
+    "dice_rolls returns a table with the dice's keys",
     "lib.utils",
     function()
         local dice = {[1] = 1, ["a string"] = 1, [true] = 1, [false] = 1, [{}] = 1}
@@ -44,5 +44,32 @@ Tiristest.add_test_case(
         for key in pairs(dice) do
             Assert.not_nil(rolls[key])
         end
+    end
+)
+
+Tiristest.add_test_case(
+    "string join concats the contents of tables",
+    "lib.utils",
+    function()
+        local test = Tirislib_String.join(" ", "h", {"e", "l", "l", "o"}, " ", {{"wor", "ld"}, "!"})
+        Assert.equals(test, "h e l l o   wor ld !")
+    end
+)
+
+Tiristest.add_test_case(
+    "string join can handle empty inputs/tables",
+    "lib.utils",
+    function()
+        local test = Tirislib_String.join(",", {}, "a", "b", {{}})
+        Assert.equals(test, "a,b")
+
+        test = Tirislib_String.join(",")
+        Assert.equals(test, "")
+
+        test = Tirislib_String.join(",", {})
+        Assert.equals(test, "")
+
+        test = Tirislib_String.join(",", {"a"})
+        Assert.equals(test, "a")
     end
 )
