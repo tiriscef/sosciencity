@@ -1,3 +1,6 @@
+-- EmmyLua stuff
+---@class array
+
 local random = math.random
 local abs = math.abs
 local max = math.max
@@ -44,6 +47,10 @@ function Tirislib_Utils.sgn(x)
     end
 end
 
+--- Chooses a random index of the given weights array.
+--- @param weights array
+--- @param sum number
+--- @return integer
 function Tirislib_Utils.weighted_random(weights, sum)
     if sum == nil then
         sum = 0
@@ -52,7 +59,7 @@ function Tirislib_Utils.weighted_random(weights, sum)
         end
     end
 
-    local random_index = random(sum)
+    local random_index = random() * sum
     local index = 0
 
     repeat
@@ -64,6 +71,7 @@ function Tirislib_Utils.weighted_random(weights, sum)
 end
 local weighted_random = Tirislib_Utils.weighted_random
 
+--- Generates the weights array, key-lookup array, result array and the weights sum for the given dice.
 local function prepare_dice(dice)
     local weights = {}
     local lookup = {}
@@ -92,7 +100,7 @@ end
 --- @param actual_count integer
 --- @return table
 function Tirislib_Utils.dice_rolls(dice, count, actual_count)
-    actual_count = actual_count or 40
+    actual_count = actual_count or 20
 
     local weights, lookup, ret, sum = prepare_dice(dice)
     local count_per_roll = 1
@@ -104,7 +112,7 @@ function Tirislib_Utils.dice_rolls(dice, count, actual_count)
 
     for i = 1, min(count, actual_count) do
         local rolled = lookup[weighted_random(weights, sum)]
-        ret[rolled] = ret[rolled] + count_per_roll + (i < modulo and 1 or 0)
+        ret[rolled] = ret[rolled] + count_per_roll + (i <= modulo and 1 or 0)
     end
 
     return ret
@@ -150,7 +158,11 @@ end
 
 local function string_join(separator, lh, rh)
     if lh then
-        return lh .. separator .. rh
+        if rh then
+            return lh .. separator .. rh
+        else
+            return lh
+        end
     else
         return rh
     end
@@ -165,6 +177,16 @@ function Tirislib_String.join(separator, ...)
         else
             ret = string_join(separator, ret, current)
         end
+    end
+
+    return ret
+end
+
+function Tirislib_String.split(s, separator)
+    local ret = {}
+
+    for part in string.gmatch(s, "([^" .. separator .. "]+)") do
+        ret[#ret + 1] = part
     end
 
     return ret

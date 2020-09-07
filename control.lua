@@ -23,24 +23,39 @@ require("constants.garbage")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
-require("scripts.control.scheduler")
-require("scripts.control.replacer")
-require("scripts.control.register")
-require("scripts.control.technologies")
-require("scripts.control.subentities")
-require("scripts.control.neighborhood")
-require("scripts.control.communication")
-require("scripts.control.inventories")
-require("scripts.control.consumption")
-require("scripts.control.inhabitants")
-require("scripts.control.entity")
-require("scripts.control.gui")
+require("classes.scheduler")
+require("classes.replacer")
+require("classes.register")
+require("classes.technologies")
+require("classes.subentities")
+require("classes.neighborhood")
+require("classes.communication")
+require("classes.inventories")
+require("classes.consumption")
+require("classes.inhabitants")
+require("classes.entity")
+require("classes.gui")
 
 ---------------------------------------------------------------------------------------------------
 -- << tests >>
 if script.active_mods["sosciencity-debug"] then
     require("lib.testing")
-    commands.add_command("sosciencity-tests", "", Tiristest.run_all)
+
+    require("tests.utils")
+
+    local function handler(input)
+        local results
+        local group = input.parameter
+        if group then
+            results = Tiristest.run_group_suite(group)
+        else
+            results = Tiristest.run_all()
+        end
+
+        game.print(results)
+        log(results)
+    end
+    commands.add_command("sosciencity-tests", "", handler)
 end
 
 ---------------------------------------------------------------------------------------------------

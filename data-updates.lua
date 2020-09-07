@@ -3,11 +3,11 @@ require("lib.init")
 item_operations = {}
 recipe_operations = {}
 
-require("scripts.data-updates.science-pack-ingredients")
-require("scripts.data-updates.launchable-items")
-require("scripts.data-updates.gunfire-techs")
-require("scripts.data-updates.loot")
-require("scripts.data-updates.fawoxylas")
+require("datastage-scripts.science-pack-ingredients")
+require("datastage-scripts.launchable-items")
+require("datastage-scripts.gunfire-techs")
+require("datastage-scripts.loot")
+require("datastage-scripts.fawoxylas")
 
 --<< looping through items >>
 local item_types = require("lib.prototype-types.item-types")

@@ -19,7 +19,13 @@ Castes.values = {
         required_room_count = 1,
         minimum_comfort = 0,
         immigration_threshold = 5,
-        immigration_coefficient = 1.5, -- immigrants per minute
+        immigration_coefficient = 1.5, -- immigrants per minute,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.orchid] = {
         name = "orchid",
@@ -36,7 +42,13 @@ Castes.values = {
         required_room_count = 1,
         minimum_comfort = 8,
         immigration_threshold = 5,
-        immigration_coefficient = 1.1
+        immigration_coefficient = 1.1,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -53,7 +65,13 @@ Castes.values = {
         required_room_count = 0.5,
         minimum_comfort = 0,
         immigration_threshold = 5,
-        immigration_coefficient = 1.5
+        immigration_coefficient = 1.5,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.ember] = {
         name = "ember",
@@ -70,7 +88,13 @@ Castes.values = {
         required_room_count = 1,
         minimum_comfort = 1,
         immigration_threshold = 5,
-        immigration_coefficient = 2
+        immigration_coefficient = 2,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.foundry] = {
         name = "foundry",
@@ -87,7 +111,13 @@ Castes.values = {
         required_room_count = 4,
         minimum_comfort = 6,
         immigration_threshold = 5,
-        immigration_coefficient = 0.5
+        immigration_coefficient = 0.5,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.gleam] = {
         name = "gleam",
@@ -104,7 +134,13 @@ Castes.values = {
         required_room_count = 4,
         minimum_comfort = 4,
         immigration_threshold = 5,
-        immigration_coefficient = 0.5
+        immigration_coefficient = 0.5,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.aurora] = {
         name = "aurora",
@@ -121,7 +157,13 @@ Castes.values = {
         required_room_count = 10,
         minimum_comfort = 9,
         immigration_threshold = 5,
-        immigration_coefficient = 0.2
+        immigration_coefficient = 0.2,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     },
     [Type.plasma] = {
         name = "plasma",
@@ -138,7 +180,13 @@ Castes.values = {
         required_room_count = 3,
         minimum_comfort = 5,
         immigration_threshold = 5,
-        immigration_coefficient = 0.8
+        immigration_coefficient = 0.8,
+        gender_distribution = {
+            [Gender.neutral] = 30,
+            [Gender.fale] = 10,
+            [Gender.pachin] = 10,
+            [Gender.ga] = 50
+        }
     }
 }
 local castes = Castes.values

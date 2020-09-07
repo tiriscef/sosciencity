@@ -5,61 +5,134 @@ Tiristest = {}
 Tiristest.tests = {}
 local tests = Tiristest.tests
 
-local function new_test_case(name, testfunction)
-    return {name = name, fn = testfunction}
+---------------------------------------------------------------------------------------------------
+-- << adding test cases >>
+local function new_test_case(name, groups, testfunction)
+    return {name = name, fn = testfunction, groups = Tirislib_String.split(groups, "|")}
 end
 
 --- Adds a new test case to the collection.
 --- @param name string
---- @param group string
+--- @param groups string
 --- @param fn function
-function Tiristest.add_test_case(name, group, fn)
-    local group_suite = Tirislib_Tables.get_inner_table(tests, group)
-    group_suite[#group_suite+1] = new_test_case(name, fn)
+function Tiristest.add_test_case(name, groups, fn)
+    tests[#tests + 1] = new_test_case(name, groups, fn)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << logging >>
+local function prepare_log()
+    Tiristest.executed_tests = 0
+    Tiristest.failed_tests = {}
+
+    Tiristest.executed_asserts = 0
+    Tiristest.failed_asserts = {}
+end
+
+local function log_test_execution()
+    Tiristest.executed_tests = Tiristest.executed_tests + 1
+end
+
+local function log_failed_test(test_case, message)
+    table.insert(
+        Tiristest.failed_tests,
+        {
+            name = test_case.name,
+            error_message = message
+        }
+    )
+end
+
+local function log_assert_execution()
+    Tiristest.executed_asserts = Tiristest.executed_asserts + 1
+end
+
+local function log_failed_assert(message)
+    table.insert(
+        Tiristest.failed_asserts,
+        {
+            test_case = Tiristest.current_test,
+            error_message = message
+        }
+    )
+end
+
+local function get_logged_results()
+    local failed_test_count = #Tiristest.failed_tests
+    local failed_assert_count = #Tiristest.failed_asserts
+
+    local head =
+        string.format(
+        "%d tests with %d asserts were run - of which %d tests and %d asserts failed.",
+        Tiristest.executed_tests,
+        Tiristest.executed_asserts,
+        failed_test_count,
+        failed_assert_count
+    )
+
+    local test_messages = {}
+    for _, failed_test in pairs(Tiristest.failed_tests) do
+        table.insert(test_messages, string.format("Test '%s' failed:\n%s", failed_test.name, failed_test.error_message))
+    end
+
+    local assert_messages = {}
+    for _, failed_assert in pairs(Tiristest.failed_asserts) do
+        table.insert(
+            test_messages,
+            string.format("In Test '%s' an assert failed: %s", failed_assert.test_case, failed_assert.error_message)
+        )
+    end
+
+    return Tirislib_String.join(
+        "\n\n",
+        head,
+        Tirislib_String.join("\n", test_messages),
+        Tirislib_String.join("\n", assert_messages)
+    )
+end
+
+---------------------------------------------------------------------------------------------------
+-- << running the test cases >>
 local function run_test(test_case)
+    Tiristest.current_test = test_case.name
+    log_test_execution()
+
     local ok, error = pcall(test_case.fn)
 
-    if ok then
-        return true
-    else
-        log(string.format("Failed Test: %s\n%s", test_case.name, error))
-
-        return false
+    if not ok then
+        log_failed_test(test_case, error)
     end
 end
 
---- Runs all the test cases in the given group and prints the results.
---- @param group string
-function Tiristest.run_group_suite(group)
-    local group_suite = Tirislib_Tables.get_inner_table(tests, group)
+--- Runs all the test cases in the given group.
+--- @param group_name string
+function Tiristest.run_group_suite(group_name)
+    prepare_log()
 
-    log(string.format("Running Test Group %s", group))
-    local failed_tests = 0
-    for _, test_case in pairs(group_suite) do
-        local success = run_test(test_case)
-
-        if not success then
-            failed_tests = failed_tests + 1
+    for _, test_case in pairs(tests) do
+        if Tirislib_Tables.contains(test_case.groups, group_name) then
+            run_test(test_case)
         end
     end
 
-    if failed_tests == 0 then
-        log("OK!")
-    else
-        log(string.format("%d out of %d tests failed :(", failed_tests, #group_suite))
-    end
+    return string.format("Group '%s'\n%s", group_name, get_logged_results())
 end
 
 --- Runs all test cases.
 function Tiristest.run_all()
-    for group in pairs(tests) do
-        Tiristest.run_group_suite(group)
+    prepare_log()
+
+    for _, test_case in pairs(tests) do
+        run_test(test_case)
     end
+
+    return string.format("Running all tests\n%s", get_logged_results())
 end
 
-Assert = {}
+---------------------------------------------------------------------------------------------------
+-- << asserts >>
+Tiristest.Assert = {}
+local Assert = Tiristest.Assert
 
 local function equals(lh, rh)
     local type_lh = type(lh)
@@ -83,11 +156,21 @@ local function get_string_representation(v)
     end
 end
 
-function Assert.equals(lh, rh)
+function Assert.equals(lh, rh, message)
+    log_assert_execution()
+
     if not equals(lh, rh) then
         lh = get_string_representation(lh)
         rh = get_string_representation(rh)
 
-        error(string.format("Assert failed: %s ~= %s", lh, rh))
+        log_failed_assert(string.format(message or "%s ~= %s", lh, rh))
+    end
+end
+
+function Assert.not_nil(value, message)
+    log_assert_execution()
+
+    if value == nil then
+        log_failed_assert(message or "value is nil")
     end
 end
