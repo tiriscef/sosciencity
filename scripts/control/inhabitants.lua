@@ -72,6 +72,7 @@ local min = math.min
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
 local copy = Tirislib_Tables.copy
+local dice_rolls = Tirislib_Utils.dice_rolls
 local shallow_equal = Tirislib_Tables.shallow_equal
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
@@ -233,12 +234,16 @@ local DEFAULT_HAPPINESS = 10
 local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
-local function new_sexes_table(caste, count)
-
+local function new_gender_table(caste_id, count)
+    return dice_rolls(castes[caste_id].gender_distribution, count)
 end
 
 local function new_ages_table(count, cause)
-
+    if cause == NewInhabitantCause.immigration then
+        return dice_rolls(Castes.immigration_age_distribution)
+    else
+        return {[0] = count}
+    end
 end
 
 --- Constructs a new InhabitantGroup object.
@@ -250,7 +255,7 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses,
         [EK.health] = health or DEFAULT_HEALTH,
         [EK.sanity] = sanity or DEFAULT_SANITY,
         [EK.illnesses] = illnesses or new_illness_group(count or 0),
-        [EK.sexes] = sexes or new_sexes_table(caste, count),
+        [EK.genders] = sexes or new_gender_table(caste, count),
         [EK.ages] = ages or new_ages_table(count, cause)
     }
 end
@@ -262,7 +267,7 @@ function InhabitantGroup.empty(group)
     group[EK.health] = 0
     group[EK.sanity] = 0
     group[EK.illnesses] = new_illness_group(0)
-    group[EK.sexes] = new_sexes_table(0)
+    group[EK.genders] = new_gender_table(0)
     group[EK.ages] = new_ages_table(0)
 end
 

@@ -154,8 +154,8 @@ EK.employments = 220
 EK.ill = 221
 --- the illnesses of the inhabitants as a DiseaseGroup object
 EK.illnesses = 222
---- the sexes of the inhabitants
-EK.sexes = 223
+--- the genders of the inhabitants
+EK.genders = 223
 --- the ages of the inhabitants
 EK.ages = 224
 
@@ -272,11 +272,11 @@ SanityFactor = {}
 SanityFactor.hunger = 1
 SanityFactor.thirst = 2
 
---<< inhabitant sexes >>
---- Enum table for sexes
-Sex = {}
+--<< inhabitant genders >>
+--- Enum table for genders
+Gender = {}
 
-Sex.neutral = 1
-Sex.fale = 2
-Sex.pachin = 3
-Sex.ga = 4
+Gender.neutral = 1
+Gender.fale = 2
+Gender.pachin = 3
+Gender.ga = 4

@@ -144,10 +144,14 @@ Castes.values = {
 local castes = Castes.values
 
 --- The number of people that leave a house per minute if they are unhappy.
-Castes.emigration_coefficient = 0.8
+Castes.emigration_coefficient = 0.8 / 3600. * -1
 
 --- The number of general garbage an inhabitant produces per minute.
-Castes.garbage_coefficient = 0.1
+Castes.garbage_coefficient = 0.1 / 3600.
+
+Castes.immigration_age_distribution = {
+    
+}
 
 -- postprocessing
 for _, caste in pairs(Castes.values) do
@@ -161,14 +165,7 @@ for _, caste in pairs(Castes.values) do
     -- convert immigration coefficients from immigrants per minute
     -- to immigrants per tick
     caste.immigration_coefficient = caste.immigration_coefficient / 3600.
-
-    -- same with the other coefficients
-    if caste.idea_coefficient then
-        caste.idea_coefficient = caste.idea_coefficient / 3600.
-    end
 end
-Castes.emigration_coefficient = Castes.emigration_coefficient / 3600. * -1
-Castes.garbage_coefficient = Castes.garbage_coefficient / 3600.
 
 local meta = {}
 

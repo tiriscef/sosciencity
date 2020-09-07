@@ -2,7 +2,6 @@
 -- << development tools >>
 pcall(require, "__debugadapter__/debugadapter.lua")
 pcall(require, "__profiler__/profiler.lua")
-require("lib.testing")
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
@@ -36,6 +35,13 @@ require("scripts.control.consumption")
 require("scripts.control.inhabitants")
 require("scripts.control.entity")
 require("scripts.control.gui")
+
+---------------------------------------------------------------------------------------------------
+-- << tests >>
+if script.active_mods["sosciencity-debug"] then
+    require("lib.testing")
+    commands.add_command("sosciencity-tests", "", Tiristest.run_all)
+end
 
 ---------------------------------------------------------------------------------------------------
 -- EmmyLua stuff
@@ -425,5 +431,3 @@ script.on_event(defines.events.on_selected_entity_changed, on_selection_changed)
 
 -- tragic player deaths
 script.on_event(defines.events.on_player_died, on_player_died)
-
-commands.add_command("sosciencity-tests", "", Tiristest.run_all)
