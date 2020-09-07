@@ -235,27 +235,29 @@ local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
 local function new_gender_table(caste_id, count)
-    return dice_rolls(castes[caste_id].gender_distribution, count)
+    return dice_rolls(castes[caste_id].gender_distribution, count, 20)
 end
 
 local function new_ages_table(count, cause)
     if cause == NewInhabitantCause.immigration then
-        return dice_rolls(Castes.immigration_age_distribution)
+        return dice_rolls(Castes.immigration_age_distribution, count)
     else
         return {[0] = count}
     end
 end
 
 --- Constructs a new InhabitantGroup object.
-function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses, sexes, ages, cause)
+function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses, genders, ages, cause)
+    count = count or 0
+
     return {
         [EK.type] = caste,
-        [EK.inhabitants] = count or 0,
+        [EK.inhabitants] = count,
         [EK.happiness] = happiness or DEFAULT_HAPPINESS,
         [EK.health] = health or DEFAULT_HEALTH,
         [EK.sanity] = sanity or DEFAULT_SANITY,
-        [EK.illnesses] = illnesses or new_illness_group(count or 0),
-        [EK.genders] = sexes or new_gender_table(caste, count),
+        [EK.illnesses] = illnesses or new_illness_group(count),
+        [EK.genders] = genders or new_gender_table(caste, count),
         [EK.ages] = ages or new_ages_table(count, cause)
     }
 end
