@@ -57,6 +57,15 @@ Buildings.values = {
         type = Type.waterwell,
         range = 64
     },
+    ["hunting-hut"] = {
+        type = Type.hunting_hut,
+        range = 30,
+        trees = 200,
+        workforce = {
+            count = 4,
+            castes = {Types.clockwork}
+        }
+    },
     ["industrial-animal-farm"] = {
         type = Type.animal_farm,
         range = 50
@@ -71,6 +80,13 @@ Buildings.values = {
         range = 50
     },
     ["orangery"] = {Type.orangery},
+    ["orchid-paradise"] = {
+        Type.manufactory,
+        workforce = {
+            count = 7,
+            castes = {Type.orchid}
+        }
+    },
     ["trash-site"] = {
         type = Type.dumpster,
         range = 25

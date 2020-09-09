@@ -31,6 +31,26 @@ Tirislib_Recipe.create {
     main_product = ""
 }
 
+Tirislib_RecipeGenerator.create {
+    product = "note",
+    category = "sosciencity-caste-clockwork",
+    energy_required = 10,
+    expensive_energy_required = 15,
+    unlock = "clockwork-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "note",
+    product_amount = 8,
+    category = "sosciencity-caste-clockwork",
+    energy_required = 8,
+    expensive_energy_required = 16,
+    ingredients = {
+        {type = "item", name = "tiriscefing-whisky", amount = 1}
+    },
+    unlock = "clockwork-caste"
+}
+
 Tirislib_Recipe.create {
     type = "recipe",
     name = "write-essay",
@@ -47,3 +67,15 @@ Tirislib_Recipe.create {
     order = "aab",
     main_product = ""
 }:add_unlock("ember-caste")
+
+Tirislib_RecipeGenerator.create {
+    product = "essay",
+    product_amount = 7,
+    category = "sosciencity-caste-orchid",
+    energy_required = 10,
+    expensive_energy_required = 20,
+    ingredients = {
+        --{type = "item", name = "phytofallia", amount = 2}
+    },
+    unlock = "ember-caste"
+}

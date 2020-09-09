@@ -21,6 +21,42 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-brewery"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-clockwork"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-orchid"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-gunfire"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-ember"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-foundry"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-gleam"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-aurora"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-caste-plasma"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-fishery"
     },
     {

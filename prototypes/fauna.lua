@@ -177,7 +177,7 @@ local hunting =
     main_product = ""
 }:create_difficulties()
 hunting:multiply_expensive_field("energy_required", 2)
-hunting:add_catalyst("trap", "item", 0.8, 0.7, 5, 6)
+hunting:add_catalyst("trap", "item", 5, 0.8, 6, 0.7)
 table.insert(fauna_producing_recipes, hunting)
 
 local bird_hunting =
@@ -193,7 +193,7 @@ local bird_hunting =
     main_product = ""
 }:create_difficulties()
 bird_hunting:multiply_expensive_field("energy_required", 2)
-bird_hunting:add_catalyst("bird-trap", "item", 0.9, 0.8, 2, 3)
+bird_hunting:add_catalyst("bird-trap", "item", 2, 0.9, 3, 0.8)
 table.insert(fauna_producing_recipes, bird_hunting)
 
 local fishing =
@@ -209,7 +209,7 @@ local fishing =
     main_product = ""
 }:create_difficulties()
 fishing:multiply_expensive_field("energy_required", 2)
-fishing:add_catalyst("fishing-net", "item", 0.8, 0.7, 2, 3)
+fishing:add_catalyst("fishing-net", "item", 2, 0.8, 3, 0.7)
 table.insert(fauna_producing_recipes, fishing)
 
 local function get_result_prototype(animal)
@@ -520,7 +520,14 @@ if Sosciencity_Config.DEBUG then
         local time_expensive = recipe:get_field("energy_required", "expensive")
         table.insert(
             results,
-            string.format("%s produces %d or %d kg per cycle, %d or %d kg per second", recipe.name, mass, mass_expensive, mass / time, mass_expensive / time_expensive)
+            string.format(
+                "%s produces %d or %d kg per cycle, %d or %d kg per second",
+                recipe.name,
+                mass,
+                mass_expensive,
+                mass / time,
+                mass_expensive / time_expensive
+            )
         )
     end
 

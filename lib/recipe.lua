@@ -681,7 +681,7 @@ function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name)
     return self
 end
 
-function Tirislib_Recipe:add_catalyst(catalyst, catalyst_type, retrieval, expensive_retrieval, amount, expensive_amount)
+function Tirislib_Recipe:add_catalyst(catalyst, catalyst_type, amount, retrieval, expensive_amount, expensive_retrieval)
     catalyst_type = catalyst_type or "item"
 
     retrieval = retrieval or 1
