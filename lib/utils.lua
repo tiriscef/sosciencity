@@ -156,7 +156,7 @@ function Tirislib_String.begins_with(str, prefix)
     return str:sub(1, prefix:len()) == prefix
 end
 
-local function string_join(separator, lh, rh)
+local function join_single_element(separator, lh, rh)
     if lh then
         if rh then
             return lh .. separator .. rh
@@ -168,18 +168,24 @@ local function string_join(separator, lh, rh)
     end
 end
 
-function Tirislib_String.join(separator, ...)
+local function join_table(separator, tbl)
     local ret
 
-    for _, current in pairs({...}) do
+    for _, current in pairs(tbl) do
         if type(current) == "table" then
-            ret = string_join(separator, ret, Tirislib_String.join(separator, unpack(current)))
+            ret = join_single_element(separator, ret, join_table(separator, current))
         else
-            ret = string_join(separator, ret, current)
+            ret = join_single_element(separator, ret, current)
         end
     end
 
     return ret
+end
+
+--- Returns a string that presents all given elements, separated by the given separator.\
+--- Returns an empty string if no elements are given.
+function Tirislib_String.join(separator, ...)
+    return join_table(separator, {...}) or ""
 end
 
 function Tirislib_String.split(s, separator)

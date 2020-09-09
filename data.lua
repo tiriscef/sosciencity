@@ -9,6 +9,7 @@ require("prototypes.item-groups")
 require("prototypes.recipe-categories")
 require("prototypes.technologies")
 
+require("prototypes.beverages")
 require("prototypes.furniture")
 require("prototypes.garbage")
 require("prototypes.materials")

@@ -77,6 +77,12 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-beverages",
+        group = "sosciencity-production",
+        order = "aeb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-drinking-water",
         group = "sosciencity-production",
         order = "afa"
