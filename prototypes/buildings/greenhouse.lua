@@ -12,7 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "greenhouse",
-    themes = {{"windows", 150, 4}, {"piping", 20, 4}, {"soil", 100, 4}},
+    themes = {{"windows", 150}, {"piping", 20}, {"soil", 100}, {"machine", 5, 2}},
+    default_theme_level = 4,
     category = "sosciencity-architecture"
 }
 

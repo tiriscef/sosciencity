@@ -12,7 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "orangery",
-    themes = {{"building", 5, 1}, {"machine", 3, 1}, {"piping", 10, 1}, {"lamp", 20, 1}},
+    themes = {{"building", 5}, {"machine", 3}, {"piping", 10}, {"lamp", 20}, {"window", 50}},
+    default_theme_level = 4,
     category = "sosciencity-architecture"
 }
 

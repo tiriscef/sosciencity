@@ -21,7 +21,7 @@ data:extend {
     },
     {
         type = "recipe-category",
-        name = "sosciencity-brewery"
+        name = "sosciencity-fermentation-tank"
     },
     {
         type = "recipe-category",

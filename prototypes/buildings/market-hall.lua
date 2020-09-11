@@ -12,6 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "market-hall",
+    themes = {{"building", 2}, {"window", 15}},
+    default_theme_level = 1,
     category = "sosciencity-architecture"
 }
 

@@ -127,13 +127,11 @@ end
 local pipepictures = {
     north = {
         filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-N.png",
-        priority = "extra-high",
         width = 35,
         height = 18,
         shift = util.by_pixel(2.5, 14),
         hr_version = {
             filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-N.png",
-            priority = "extra-high",
             width = 71,
             height = 38,
             shift = util.by_pixel(2.25, 13.5),
@@ -142,13 +140,11 @@ local pipepictures = {
     },
     east = {
         filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-E.png",
-        priority = "extra-high",
         width = 20,
         height = 38,
         shift = util.by_pixel(-25, 1),
         hr_version = {
             filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-E.png",
-            priority = "extra-high",
             width = 42,
             height = 76,
             shift = util.by_pixel(-24.5, 1),
@@ -170,13 +166,11 @@ local pipepictures = {
     },
     west = {
         filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-W.png",
-        priority = "extra-high",
         width = 19,
         height = 37,
         shift = util.by_pixel(25.5, 1.5),
         hr_version = {
             filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-W.png",
-            priority = "extra-high",
             width = 39,
             height = 73,
             shift = util.by_pixel(25.75, 1.25),
@@ -194,6 +188,8 @@ local pipecovers = pipecoverspictures()
 -- remove the shadows because they never seem to look appropriate
 for _, direction in pairs(pipecovers) do
     for i, layer in pairs(direction.layers) do
+        layer.priority = nil
+
         if layer.draw_as_shadow then
             direction.layers[i] = nil
         end

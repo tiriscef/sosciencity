@@ -2,7 +2,9 @@
 -- << items >>
 local flora_items = {
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
+    {name = "leafage", sprite_variations = {name = "leafage", count = 3, include_icon = true}},
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
+    {name = "phytofall-blossom"},
     {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
@@ -155,6 +157,12 @@ local farm_specific_defaults = {
 }
 
 -- generation code that should minimize dublications
+local function merge_with_product_specification(specification, product)
+    local general_table = farmables[product]["general"]
+
+    Tirislib_Tables.set_fields(specification, general_table)
+end
+
 local function get_main_theme(specification)
     return {{"agriculture", specification.energy_required or 0.5, specification.level}}
 end
@@ -165,12 +173,6 @@ local function merge_with_category_specification(specification, category)
 
     specification.themes =
         Tirislib_Tables.merge_arrays(specification.themes or {}, get_main_theme(specification))
-end
-
-local function merge_with_product_specification(specification, product)
-    local general_table = farmables[product]["general"]
-
-    Tirislib_Tables.set_fields(specification, general_table)
 end
 
 local function create_farming_recipe(product, category, specification)

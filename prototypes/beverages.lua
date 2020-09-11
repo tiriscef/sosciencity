@@ -9,7 +9,7 @@ Tirislib_Item.batch_create(beverage_items, {type = "tool", subgroup = "soscienci
 Tirislib_RecipeGenerator.create {
     product = "tiriscefing-whisky",
     product_amount = 10,
-    category = "sosciencity-brewery",
+    category = "sosciencity-fermentation-tank",
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 50},
         {type = "item", name = "tiriscefing-willow-barrel", amount = 10},

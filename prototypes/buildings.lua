@@ -1,6 +1,7 @@
 require("buildings.aquafarm")
 require("buildings.arboretum")
 require("buildings.architectural-office")
+require("buildings.fermentation-tank")
 require("buildings.farm")
 require("buildings.fishing-hut")
 require("buildings.greenhouse")
