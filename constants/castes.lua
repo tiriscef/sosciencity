@@ -21,10 +21,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 1.5, -- immigrants per minute,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 50,
+            [Gender.fale] = 25,
+            [Gender.pachin] = 5,
+            [Gender.ga] = 20
         }
     },
     [Type.orchid] = {
@@ -44,10 +44,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 1.1,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 15,
+            [Gender.fale] = 5,
+            [Gender.pachin] = 60,
+            [Gender.ga] = 20
         }
     },
     [Type.gunfire] = {
@@ -67,10 +67,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 1.5,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 91,
+            [Gender.fale] = 3,
+            [Gender.pachin] = 3,
+            [Gender.ga] = 3
         }
     },
     [Type.ember] = {
@@ -90,10 +90,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 2,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 5,
+            [Gender.fale] = 35,
+            [Gender.pachin] = 15,
+            [Gender.ga] = 45
         }
     },
     [Type.foundry] = {
@@ -113,10 +113,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 0.5,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 10,
+            [Gender.fale] = 30,
+            [Gender.pachin] = 30,
+            [Gender.ga] = 30
         }
     },
     [Type.gleam] = {
@@ -136,10 +136,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 0.5,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 10,
+            [Gender.fale] = 30,
+            [Gender.pachin] = 30,
+            [Gender.ga] = 30
         }
     },
     [Type.aurora] = {
@@ -159,10 +159,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 0.2,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 25,
+            [Gender.fale] = 25,
+            [Gender.pachin] = 25,
+            [Gender.ga] = 25
         }
     },
     [Type.plasma] = {
@@ -182,10 +182,10 @@ Castes.values = {
         immigration_threshold = 5,
         immigration_coefficient = 0.8,
         gender_distribution = {
-            [Gender.neutral] = 30,
-            [Gender.fale] = 10,
-            [Gender.pachin] = 10,
-            [Gender.ga] = 50
+            [Gender.neutral] = 10,
+            [Gender.fale] = 40,
+            [Gender.pachin] = 20,
+            [Gender.ga] = 30
         }
     }
 }
@@ -222,3 +222,31 @@ function meta:__call(_type)
 end
 
 setmetatable(Castes, meta)
+
+if script and script.active_mods["sosciencity-balancing"] then
+    local tech_levels = {
+        [1] = {Type.clockwork},
+        [2] = {Type.clockwork, Type.orchid},
+        [3] = {Type.clockwork, Type.orchid, Type.plasma},
+        [4] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember},
+        [5] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember, Type.foundry},
+        [6] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember, Type.foundry, Type.gleam},
+        [7] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember, Type.foundry, Type.gleam, Type.aurora}
+    }
+
+    for level, caste_array in pairs(tech_levels) do
+        local neutral = 0
+        local fale = 0
+        local pachin = 0
+        local ga = 0
+
+        for _, caste in pairs(caste_array) do
+            neutral = neutral + castes[caste].gender_distribution[Gender.neutral]
+            fale = fale + castes[caste].gender_distribution[Gender.fale]
+            pachin = pachin + castes[caste].gender_distribution[Gender.pachin]
+            ga = ga + castes[caste].gender_distribution[Gender.ga]
+        end
+
+        log(string.format("Level %d: %d neutral, %d fale, %d pachin, %d ga", level, neutral, fale, pachin, ga))
+    end
+end

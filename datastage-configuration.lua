@@ -5,6 +5,7 @@ end
 
 local default_values = {
     DEBUG = false,
+    BALANCING = false,
     clockwork_pack = "automation-science-pack",
     orchid_pack = "logistic-science-pack",
     gunfire_pack = "military-science-pack",
@@ -32,6 +33,9 @@ end
 
 if mods["sosciencity-debug"] then
     default_values.DEBUG = true
+end
+if mods["sosciencity-balancing"] then
+    default_values.BALANCING = true
 end
 
 default_values.__index = default_values
