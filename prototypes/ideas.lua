@@ -75,7 +75,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 10,
     expensive_energy_required = 20,
     ingredients = {
-        --{type = "item", name = "phytofallia", amount = 2}
+        {type = "item", name = "phytofall-blossom", amount = 2}
     },
     unlock = "ember-caste"
 }

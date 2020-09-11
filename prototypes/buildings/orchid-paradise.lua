@@ -12,7 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "orchid-paradise",
-    themes = {{"building", 10, 2}, {"lamp", 40, 2}, {"window", 30, 2}},
+    themes = {{"building", 2}, {"lamp", 15}, {"window", 30}},
+    default_theme_level = 2,
     category = "sosciencity-architecture"
 }
 

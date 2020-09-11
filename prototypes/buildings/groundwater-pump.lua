@@ -12,7 +12,9 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "groundwater-pump",
-    themes = {{"building", 1, 1}, {"boring", 1}, {"piping", 5}, {"machine", 1, 1}, {"electronics", 3, 1}}
+    themes = {{"building", 1}, {"boring", 1}, {"piping", 5}, {"machine", 1}, {"electronics", 3}},
+    default_theme_level = 1,
+    unlock = "clockwork-caste"
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
