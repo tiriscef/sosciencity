@@ -35,32 +35,32 @@ RG.ingredient_themes = {
     breed_birds = {
         [0] = {
             {type = "item", name = "bird-food", amount = 1},
-            {type = "fluid", name = "water", amount = 5}
+            {type = "fluid", name = "water", amount = 10}
         }
     },
     breed_carnivores = {
         [0] = {
             {type = "item", name = "carnivore-food", amount = 1},
-            {type = "fluid", name = "water", amount = 5}
+            {type = "fluid", name = "water", amount = 10}
         }
     },
     breed_fish = {
         [0] = {
             {type = "item", name = "fish-food", amount = 1},
-            {type = "fluid", name = "water", amount = 20}
+            {type = "fluid", name = "water", amount = 50}
         }
     },
     breed_herbivores = {
         [0] = {
             {type = "item", name = "herbivore-food", amount = 1},
-            {type = "fluid", name = "water", amount = 5}
+            {type = "fluid", name = "water", amount = 10}
         }
     },
     breed_omnivores = {
         [0] = {
             {type = "item", name = "herbivore-food", amount = 2./3},
             {type = "item", name = "carnivore-food", amount = 1./3},
-            {type = "fluid", name = "water", amount = 5}
+            {type = "fluid", name = "water", amount = 10}
         }
     },
     building = {
@@ -128,6 +128,9 @@ RG.ingredient_themes = {
     framework = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 2}
+        },
+        [3] = {
+            {type = "item", name = "steel-plate", amount = 2}
         }
     },
     furnishing = {

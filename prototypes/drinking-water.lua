@@ -1,5 +1,4 @@
 local fluids = {
-    {name = "groundwater"},
     {name = "clean-water"}
 }
 
@@ -15,7 +14,7 @@ Tirislib_Fluid.batch_create(
 )
 
 Tirislib_RecipeGenerator.create {
-    product = "groundwater",
+    product = "clean-water",
     product_type = "fluid",
     product_min = 80,
     product_max = 160,

@@ -21,6 +21,10 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-chemical-clarifier"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-fermentation-tank"
     },
     {
@@ -74,6 +78,10 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-orangery"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-sedimentation-clarifier"
     },
     {
         type = "recipe-category",

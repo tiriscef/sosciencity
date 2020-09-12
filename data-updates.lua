@@ -7,7 +7,7 @@ require("datastage-scripts.science-pack-ingredients")
 require("datastage-scripts.launchable-items")
 require("datastage-scripts.gunfire-techs")
 require("datastage-scripts.loot")
-require("datastage-scripts.fawoxylas")
+require("datastage-scripts.trees")
 
 --<< looping through items >>
 local item_types = require("lib.prototype-types.item-types")

@@ -88,7 +88,7 @@ Tirislib_Entity.create {
             production_type = "output"
         }
     },
-    fixed_recipe = "groundwater"
+    fixed_recipe = "clean-water"
 }:set_size(3, 3):copy_localisation_from_item()
 
 Tirislib_Entity.create {
