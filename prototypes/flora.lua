@@ -150,34 +150,51 @@ local farm_specific_defaults = {
         product_probability = 0.5
     },
     arboretum = {
-        product_probability = 0.5
+        product_probability = 0.5,
+        byproducts = {{type = "item", name = "leafage", amount = 1}}
     },
     greenhouse = {},
-    orangery = {}
+    orangery = {
+        byproducts = {{type = "item", name = "leafage", amount = 1}}
+    }
 }
 
 -- generation code that should minimize dublications
-local function merge_with_product_specification(specification, product)
-    local general_table = farmables[product]["general"]
+local attributes = {"product_probability"}
+local function merge_specification_details(lh, rh)
+    for _, attribute in pairs(attributes) do
+        lh[attribute] = lh[attribute] or rh[attribute] or nil
+    end
 
-    Tirislib_Tables.set_fields(specification, general_table)
+    if rh.byproducts then
+        local byproducts = Tirislib_Tables.get_inner_table(lh, "byproducts")
+        Tirislib_Tables.merge_arrays(byproducts, rh.byproducts)
+    end
 end
 
-local function get_main_theme(specification)
-    return {{"agriculture", specification.energy_required or 0.5, specification.level}}
+local function merge_with_general_product_specification(specification, product)
+    local general = farmables[product]["general"]
+
+    if general then
+        merge_specification_details(specification, general)
+    end
+end
+
+local function add_main_theme(specification)
+    local main_theme = {"agriculture", specification.energy_required or 0.5, specification.level}
+    local themes = Tirislib_Tables.get_inner_table(specification, "themes")
+    themes[#themes + 1] = main_theme
 end
 
 local function merge_with_category_specification(specification, category)
     local category_table = farm_specific_defaults[category]
-    Tirislib_Tables.set_fields_passively(specification, category_table)
-
-    specification.themes =
-        Tirislib_Tables.merge_arrays(specification.themes or {}, get_main_theme(specification))
+    merge_specification_details(specification, category_table)
 end
 
 local function create_farming_recipe(product, category, specification)
-    merge_with_product_specification(specification, product)
+    merge_with_general_product_specification(specification, product)
     merge_with_category_specification(specification, category)
+    add_main_theme(specification)
 
     specification.product = product
     specification.category = "sosciencity-" .. category

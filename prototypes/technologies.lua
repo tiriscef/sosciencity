@@ -365,7 +365,7 @@ Tirislib_Technology.create {
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png", -- TODO create icon
     icon_size = 128,
     upgrade = false,
-    prerequisites = {"gleam-caste"},
+    prerequisites = {"ember-caste"},
     effects = {
         {
             type = "nothing",
@@ -378,6 +378,23 @@ Tirislib_Technology.create {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},
             {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "drinking-water-treatment",
+    icon = "__sosciencity-graphics__/graphics/technology/drinking-water-treatment.png",
+    icon_size = 128,
+    prerequisites = {"logistic-science-pack"},
+    effects = {},
+    unit = {
+        count = 139,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
         },
         time = 30
     }
