@@ -151,6 +151,12 @@ Types.definitions = {
         subscriptions = {Type.fishery},
         is_civil = true
     },
+    [Type.hunting_hut] = {
+        localised_name = {"sosciencity-gui.hunting-hut"},
+        localised_description = {"sosciencity-gui.explain-hunting-hut"},
+        subscriptions = {Type.hunting_hut},
+        is_civil = true
+    },
     [Type.manufactory] = {
         localised_name = {"sosciencity-gui.manufactory"},
         localised_description = {"sosciencity-gui.explain-manufactory"},
