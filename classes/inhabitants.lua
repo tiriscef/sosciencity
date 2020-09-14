@@ -269,7 +269,7 @@ function InhabitantGroup.empty(group)
     group[EK.health] = 0
     group[EK.sanity] = 0
     group[EK.illnesses] = new_illness_group(0)
-    group[EK.genders] = new_gender_table(0)
+    group[EK.genders] = new_gender_table(group[EK.type], 0)
     group[EK.ages] = new_ages_table(0)
 end
 

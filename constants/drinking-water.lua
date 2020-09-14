@@ -7,18 +7,11 @@ DrinkingWater.values = {
     },
     ["water"] = {
         health = 0.6
+    },
+    ["mechanically-cleaned-water"] = {
+        health = 0.7
+    },
+    ["biologically-cleaned-water"] = {
+        health = 0.8
     }
 }
-
---[[DrinkingWater["slightly-polluted-water"] = {
-    health = 0.5
-}
-
-DrinkingWater["polluted-water"] = {
-    health = 0.35
-}
-
-DrinkingWater["heavily-polluted-water"] = {
-    health = 0.2
-
-}]]
