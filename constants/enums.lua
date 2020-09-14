@@ -84,6 +84,8 @@ EK.last_update = 5
 EK.tick_of_creation = 6
 --- table with (subentity_type, subentity)-pairs
 EK.subentities = 7
+-- id of this entry's altmode sprite
+EK.altmode_sprite = 8
 
 -- neighborhood stuff
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs

@@ -220,7 +220,7 @@ end
 --- @param entity Entity
 --- @param _type Type
 --- @return Entry
-local function new_entry(entity, _type)
+local function get_new_entry(entity, _type)
     local current_tick = game.tick
 
     local entry = {
@@ -244,7 +244,7 @@ function Register.add(entity, _type)
         return
     end
 
-    local entry = new_entry(entity, _type)
+    local entry = get_new_entry(entity, _type)
 
     init_custom_building(entry)
     add_subentities(entry)
@@ -298,6 +298,10 @@ end
 -- -@param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry, DestructionCause.type_change)
+
+    -- remove the sprites explicitly, because normally they get destroyed when the entity is destroyed
+    Subentities.remove_sprites(entry)
+
     local new_entry = Register.add(entry[EK.entity], new_type)
     new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
 
