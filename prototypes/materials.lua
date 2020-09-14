@@ -16,7 +16,10 @@ local material_items = {
     {name = "bird-food"},
     {name = "fish-food"},
     {name = "carnivore-food"},
-    {name = "herbivore-food"}
+    {name = "herbivore-food"},
+    {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
+    {name = "sewage-sludge", sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}},
+    {name = "ferrous-sulfate"}
 }
 
 Tirislib_Item.batch_create(material_items, {subgroup = "sosciencity-materials", stack_size = 200})
@@ -87,6 +90,18 @@ Tirislib_RecipeGenerator.create {
         {name = "yarn", amount = 1},
         {name = "lumber", amount = 2}
     },
+    energy_required = 1,
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "ferrous-sulfate",
+    product_amount = 3,
+    ingredients = {
+        {type = "item", name = "iron-plate", amount = 1},
+        {type = "fluid", name = "sulfuric-acid", amount = 10}
+    },
+    category = "chemistry",
     energy_required = 1,
     allow_productivity = true
 }

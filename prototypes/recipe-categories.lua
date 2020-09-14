@@ -21,6 +21,10 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-biological-clarifier"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-chemical-clarifier"
     },
     {

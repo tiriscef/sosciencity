@@ -20,6 +20,7 @@ Tirislib_RecipeGenerator.create {
 local sprite_height = 9
 local sprite_width = 9
 local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",
@@ -39,20 +40,18 @@ Tirislib_Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-idle.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = sprite_width * 32,
                     height = sprite_height * 32,
-                    shift = {0.0, 0.0},
                     hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-idle-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = sprite_width * 64,
                         height = sprite_height * 64,
-                        scale = 0.5,
-                        shift = {0.0, 0.0}
+                        scale = 0.5
                     }
                 },
                 {
@@ -61,7 +60,6 @@ Tirislib_Entity.create {
                     priority = "extra-high",
                     width = sprite_width * 32,
                     height = sprite_height * 32,
-                    shift = {0.0, 0.0},
                     draw_as_shadow = true,
                     hr_version = {
                         filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-shadowmap-hr.png",
@@ -70,9 +68,27 @@ Tirislib_Entity.create {
                         width = sprite_width * 64,
                         height = sprite_height * 64,
                         scale = 0.5,
-                        shift = {0.0, 0.0},
                         draw_as_shadow = true
                     }
+                }
+            }
+        }
+    },
+    working_visualisations = {
+        {
+            animation = {
+                filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier.png",
+                frame_count = 1,
+                priority = "extra-high",
+                width = sprite_width * 32,
+                height = sprite_height * 32,
+                hr_version = {
+                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-hr.png",
+                    frame_count = 1,
+                    priority = "extra-high",
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5
                 }
             }
         }
@@ -89,21 +105,25 @@ Tirislib_Entity.create {
     fluid_boxes = {
         {
             pipe_covers = pipe_covers,
+            pipe_pictures = pipe_pictures,
             pipe_connections = {{position = {-2, 4}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
+            pipe_pictures = pipe_pictures,
             pipe_connections = {{position = {-2, -4}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
+            pipe_pictures = pipe_pictures,
             pipe_connections = {{position = {2, 4}}},
             production_type = "output"
         },
         {
             pipe_covers = pipe_covers,
+            pipe_pictures = pipe_pictures,
             pipe_connections = {{position = {2, -4}}},
             production_type = "output"
         }
