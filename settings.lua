@@ -8,8 +8,15 @@ data:extend {
     },
     {
         type = "bool-setting",
+        name = "sosciencity-modify-environment",
+        order = "aab",
+        setting_type = "startup",
+        default_value = true
+    },
+    {
+        type = "bool-setting",
         name = "sosciencity-penalty-module",
-        order = "aaa",
+        order = "aba",
         setting_type = "runtime-global",
         default_value = true
     },

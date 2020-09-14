@@ -1,3 +1,7 @@
+if not settings.startup["sosciencity-modify-environment"].value then
+    return
+end
+
 for _, tree in Tirislib_Entity.pairs("tree") do
     tree:add_mining_result {
         name = "fawoxylas",
