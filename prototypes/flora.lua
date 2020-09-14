@@ -1,7 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local flora_items = {
-    {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "leafage", sprite_variations = {name = "leafage", count = 3, include_icon = true}},
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "phytofall-blossom"},

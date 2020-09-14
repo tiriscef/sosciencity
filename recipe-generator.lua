@@ -8,7 +8,7 @@ Tirislib_RecipeGenerator = {}
 local RG = Tirislib_RecipeGenerator
 
 -- << definitions >>
---- Table with IngredientTheme -> table with (level, array of IngredientPrototypes) pairs\
+--- Table with Theme -> table with (level, array of IngredientPrototypes) pairs\
 --- Most of the time level is defined by the research stage at which the player should be able to use this recipe.\
 --- **0:** Start of the game, nothing researched\
 --- **1:** automation science\
@@ -290,7 +290,19 @@ RG.ingredient_themes = {
     }
 }
 
-RG.expensive_multiplier = 2
+--- Table with Theme -> table with (level, array of ResultPrototypes) pairs\
+--- These are separate from the ingredient themes, because ResultPrototypes aren't valid IngredientPrototypes.
+RG.result_themes = {
+    sediment = {
+        [0] = {
+            {type = "item", name = "leafage", amount = 1, probability = 0.2},
+            {type = "item", name = "stone", amount = 1, probability = 0.3},
+            {type = "item", name = "wood", amount = 1, probability = 0.2}
+        }
+    }
+}
+
+RG.expensive_multiplier = 1.5
 
 -- << generation >>
 --- Returns the entry in the theme definition that is the closest to the given level.
@@ -311,10 +323,10 @@ local function get_nearest_level(theme_definition, level)
     return ret
 end
 
-local function get_theme_definition(name, level)
+local function get_theme_definition(name, level, for_result)
     local ret
 
-    local theme_definition = RG.ingredient_themes[name]
+    local theme_definition = (for_result and RG.result_themes[name]) or RG.ingredient_themes[name]
     if theme_definition then
         ret = get_nearest_level(theme_definition, level)
     else
@@ -356,16 +368,16 @@ function RG.add_result_theme(recipe, theme, default_level)
     local amount = theme[2]
     local level = theme[3] or default_level or 1
 
-    local ingredients = get_theme_definition(name, level)
-    if not ingredients then
+    local results = get_theme_definition(name, level, true)
+    if not results then
         return
     end
 
-    for _, entry in pairs(ingredients) do
+    for _, entry in pairs(results) do
         entry.amount = entry.amount * amount
     end
 
-    recipe:add_result_range(ingredients)
+    recipe:add_result_range(results)
 end
 
 function RG.add_result_theme_range(recipe, themes, default_level)
@@ -419,6 +431,7 @@ end
 --- **product_min:** minimal amount of the main product (if the recipe should use a range)\
 --- **product_max:** maximal amount of the main product (if the recipe should use a range)\
 --- **product_probability:** probability of the main product\
+--- **name:** name of the recipe (defaults to the name of the product)\
 --- **byproducts:** array of ResultPrototypes\
 --- **expensive_byproducts:** array of ResultPrototypes (defaults to the byproducts field)\
 --- **category:** RecipeCategory of the recipe (defaults to "crafting")\
@@ -439,7 +452,7 @@ function RG.create(details)
 
     local recipe =
         Tirislib_Recipe.create {
-        name = Tirislib_Prototype.get_unique_name(product_prototype.name, "recipe"),
+        name = details.name or Tirislib_Prototype.get_unique_name(product_prototype.name, "recipe"),
         category = details.category or "crafting",
         enabled = true,
         energy_required = details.energy_required or 0.5,

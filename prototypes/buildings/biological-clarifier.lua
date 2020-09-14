@@ -1,34 +1,34 @@
 Tirislib_Item.create {
     type = "item",
-    name = "chemical-clarifier",
-    icon = "__sosciencity-graphics__/graphics/icon/chemical-clarifier.png",
+    name = "biological-clarifier",
+    icon = "__sosciencity-graphics__/graphics/icon/biological-clarifier.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aaa",
-    place_result = "chemical-clarifier",
+    place_result = "biological-clarifier",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "chemical-clarifier",
+    product = "biological-clarifier",
     themes = {{"piping", 10}, {"tank", 2}, {"machine", 1}},
     default_theme_level = 2,
     unlock = "drinking-water-treatment"
 }
 
-local sprite_height = 7
-local sprite_width = 7
+local sprite_height = 9
+local sprite_width = 9
 local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",
-    name = "chemical-clarifier",
-    icon = "__sosciencity-graphics__/graphics/icon/chemical-clarifier.png",
+    name = "biological-clarifier",
+    icon = "__sosciencity-graphics__/graphics/icon/biological-clarifier.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "chemical-clarifier"},
+    minable = {mining_time = 0.5, result = "biological-clarifier"},
     max_health = 200,
     corpse = "small-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
@@ -40,13 +40,13 @@ Tirislib_Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/chemical-clarifier/chemical-clarifier-idle.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-idle.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = sprite_width * 32,
                     height = sprite_height * 32,
                     hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/chemical-clarifier/chemical-clarifier-idle-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-idle-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = sprite_width * 64,
@@ -55,14 +55,14 @@ Tirislib_Entity.create {
                     }
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/chemical-clarifier/chemical-clarifier-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-shadowmap.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = sprite_width * 32,
                     height = sprite_height * 32,
                     draw_as_shadow = true,
                     hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/chemical-clarifier/chemical-clarifier-shadowmap-hr.png",
+                        filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-shadowmap-hr.png",
                         frame_count = 1,
                         priority = "extra-high",
                         width = sprite_width * 64,
@@ -77,13 +77,13 @@ Tirislib_Entity.create {
     working_visualisations = {
         {
             animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/chemical-clarifier/chemical-clarifier.png",
+                filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier.png",
                 frame_count = 1,
                 priority = "extra-high",
                 width = sprite_width * 32,
                 height = sprite_height * 32,
                 hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/chemical-clarifier/chemical-clarifier-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
                     width = sprite_width * 64,
@@ -94,7 +94,7 @@ Tirislib_Entity.create {
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-chemical-clarifier"},
+    crafting_categories = {"sosciencity-biological-clarifier"},
     energy_usage = "60kW",
     energy_source = {
         type = "electric",
@@ -106,26 +106,26 @@ Tirislib_Entity.create {
         {
             pipe_covers = pipe_covers,
             pipe_pictures = pipe_pictures,
-            pipe_connections = {{position = {-1, 3}}},
+            pipe_connections = {{position = {2, 4}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
             pipe_pictures = pipe_pictures,
-            pipe_connections = {{position = {-1, -3}}},
+            pipe_connections = {{position = {2, -4}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
             pipe_pictures = pipe_pictures,
-            pipe_connections = {{position = {1, 3}}},
+            pipe_connections = {{position = {-1, 4}}},
             production_type = "output"
         },
         {
             pipe_covers = pipe_covers,
             pipe_pictures = pipe_pictures,
-            pipe_connections = {{position = {1, -3}}},
+            pipe_connections = {{position = {-1, -4}}},
             production_type = "output"
         }
     }
-}:set_size(5, 5):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item()
