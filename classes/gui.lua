@@ -756,6 +756,11 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
     set_datalist_value(
         general_list,
+        "water-demand",
+        {"sosciencity-gui.show-water-demand", caste.water_demand * 3600 * inhabitants}
+    )
+    set_datalist_value(
+        general_list,
         "power-demand",
         {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * 60 * inhabitants}
     )
@@ -778,6 +783,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "sanity", {"sosciencity-gui.sanity"})
     add_kv_pair(data_list, "effective-population", {"sosciencity-gui.effective-population"})
     add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
+    add_kv_pair(data_list, "water-demand", {"sosciencity-gui.water-demand"})
     add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
 
     create_separator_line(flow)
@@ -1099,7 +1105,7 @@ local function update_fishery_details(container, entry)
     set_datalist_value(
         building_data,
         "water-tiles",
-        display_fraction(entry[EK.water_tiles], building_details.water_tiles, {"sosciencity-gui.tiles"})
+        {"sosciencity-gui.fraction", entry[EK.water_tiles], building_details.water_tiles, {"sosciencity-gui.tiles"}}
     )
 end
 
@@ -1112,6 +1118,31 @@ local function create_fishery_details(container, entry)
     add_kv_pair(building_data, "water-tiles", {"sosciencity-gui.water-tiles"})
 
     update_fishery_details(container, entry)
+end
+
+local function update_hunting_hut_details(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local building_details = Buildings.get(entry)
+    set_datalist_value(
+        building_data,
+        "tree-count",
+        {"sosciencity-gui.fraction", entry[EK.tree_count], building_details.tree_count, ""}
+    )
+end
+
+local function create_hunting_hut_details(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "tree-count", {"sosciencity-gui.tree-count"})
+
+    update_hunting_hut_details(container, entry)
 end
 
 local function update_immigration_port_details(container, entry)
@@ -1204,6 +1235,10 @@ local type_gui_specifications = {
     [Type.hospital] = {
         creater = create_general_building_details,
         updater = update_general_building_details
+    },
+    [Type.hunting_hut] = {
+        creater = create_hunting_hut_details,
+        updater = update_hunting_hut_details
     },
     [Type.immigration_port] = {
         creater = create_immigration_port_details,

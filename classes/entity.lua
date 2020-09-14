@@ -44,7 +44,7 @@ local function get_speed_from_performance(performance)
     return floor(100 * performance - 20)
 end
 
-local function set_assembling_machine_performance(entry, performance)
+local function set_crafting_machine_performance(entry, performance)
     entry[EK.performance] = performance
 
     local entity = entry[EK.entity]
@@ -76,7 +76,12 @@ Register.set_entity_updater(Type.farm, update_farm)
 local function update_orangery(entry)
     local age = game.tick - entry[EK.tick_of_creation]
     -- TODO balance the age productivity gain
-    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.ember] + math.sqrt(age), global.use_penalty)
+    set_beacon_effects(
+        entry,
+        caste_bonuses[Type.clockwork],
+        caste_bonuses[Type.ember] + math.sqrt(age),
+        global.use_penalty
+    )
 end
 Register.set_entity_updater(Type.orangery, update_orangery)
 
@@ -115,7 +120,7 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 local function update_manufactory(entry)
     Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
-    set_assembling_machine_performance(entry, performance)
+    set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.manufactory, update_manufactory)
 
@@ -160,10 +165,9 @@ local function get_water_tiles(entry, building_details)
 end
 
 local function get_fishery_performance(entry)
-    local building_details = get_building_details(entry)
-
     local worker_performance = Inhabitants.evaluate_workforce(entry)
 
+    local building_details = get_building_details(entry)
     local water_tiles = get_water_tiles(entry, building_details)
     local water_performance = map_range(water_tiles, 0, building_details.water_tiles, 0, 1)
 
@@ -175,7 +179,7 @@ end
 local function update_fishery(entry)
     Inhabitants.update_workforce(entry)
     local performance = get_fishery_performance(entry)
-    set_assembling_machine_performance(entry, performance)
+    set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.fishery, update_fishery)
 
@@ -187,17 +191,30 @@ Register.set_entity_creation_handler(Type.fishery, create_fishery)
 ---------------------------------------------------------------------------------------------------
 -- << hunting hut >>
 local function get_tree_count(entry, building_details)
-
+    local entity = entry[EK.entity]
+    local position = entity.position
+    local surface = entity.surface
+    local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
+    return surface.count_entities_filtered {area = area, type = "tree"}
 end
 
 local function get_hunting_hut_performance(entry)
+    local worker_performance = Inhabitants.evaluate_workforce(entry)
 
+    local building_details = get_building_details(entry)
+    local tree_count = get_tree_count(entry, building_details)
+    entry[EK.tree_count] = tree_count
+    local forest_performance = map_range(tree_count, 0, building_details.tree_count, 0, 1)
+
+    local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.hunting_hut) + 1)
+
+    return min(worker_performance, forest_performance) * neighborhood_performance
 end
 
 local function update_hunting_hut(entry)
     Inhabitants.update_workforce(entry)
-    local performance = get_fishery_performance(entry)
-    set_assembling_machine_performance(entry, performance)
+    local performance = get_hunting_hut_performance(entry)
+    set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.hunting_hut, update_hunting_hut)
 
@@ -205,7 +222,6 @@ local function create_hunting_hut(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
-
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
@@ -236,7 +252,7 @@ local function update_waterwell(entry)
     -- +1 so it counts itself too
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
     local performance = near_count ^ (-0.65)
-    set_assembling_machine_performance(entry, performance)
+    set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
 
