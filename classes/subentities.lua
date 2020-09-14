@@ -19,6 +19,7 @@ local get_building_details = Buildings.get
 local max = math.max
 local format = string.format
 local get_size = Tirislib_Utils.get_size
+local get_inner_table = Tirislib_Tables.get_inner_table
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
@@ -32,7 +33,7 @@ local function get_subentity_name(_type, entity)
 end
 
 local function add(entry, _type)
-    entry[EK.subentities] = entry[EK.subentities] or {}
+    local subentities = get_inner_table(entry, EK.subentities)
 
     local entity = entry[EK.entity]
     local subentity =
@@ -44,14 +45,14 @@ local function add(entry, _type)
         }
     )
 
-    entry[EK.subentities][_type] = subentity
+    subentities[_type] = subentity
 
     return subentity
 end
 
 local function add_alt_mode_sprite(entry, name)
     local entity = entry[EK.entity]
-    local sprite_id =
+    entry[EK.altmode_sprite] =
         rendering.draw_sprite(
         {
             sprite = name,
@@ -60,8 +61,6 @@ local function add_alt_mode_sprite(entry, name)
             only_in_alt_mode = true
         }
     )
-
-    return sprite_id
 end
 
 --- Adds all the hidden entities this entry needs to work.
@@ -93,6 +92,14 @@ function Subentities.remove_all_for(entry)
         end
     end
     -- we don't need to destroy sprites when their target entity gets destroyed
+end
+
+function Subentities.remove_sprites(entry)
+    local sprite_id = entry[EK.altmode_sprite]
+
+    if sprite_id then
+        rendering.destroy(sprite_id)
+    end
 end
 
 --- Gets the hidden entity of the given type and if it had to be recreated.\
