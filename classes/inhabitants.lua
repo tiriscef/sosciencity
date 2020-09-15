@@ -16,7 +16,7 @@ Inhabitants = {}
     global.immigration: table
         [caste_id]: float (number of immigrants in the next wave)
 
-    global.houses_with_free_capacity: table
+    global.free_houses: table
         [caste_id]: table
             [unit_number]: truthy (lookup)
 
@@ -37,7 +37,8 @@ local effective_population
 local caste_bonuses
 local immigration
 local homeless
-local houses_with_free_capacity
+local free_houses
+local free_improvised_houses
 local next_houses
 
 local Register = Register
@@ -84,7 +85,8 @@ local function set_locals()
     caste_bonuses = global.caste_bonuses
     immigration = global.immigration
     homeless = global.homeless
-    houses_with_free_capacity = global.houses_with_free_capacity
+    free_houses = global.free_houses
+    free_improvised_houses = global.free_improvised_houses
     next_houses = global.next_houses
 end
 
@@ -110,7 +112,8 @@ function Inhabitants.init()
     global.effective_population = new_caste_table()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
-    global.houses_with_free_capacity = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    global.free_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    global.free_improvised_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
     global.next_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
     global.homeless = {}
 
@@ -636,9 +639,9 @@ local function update_free_space_status(entry)
     local unit_number = entry[EK.unit_number]
 
     if get_free_capacity(entry) > 0 then
-        houses_with_free_capacity[caste_id][unit_number] = nil
+        free_houses[caste_id][unit_number] = nil
     else
-        houses_with_free_capacity[caste_id][unit_number] = unit_number
+        free_houses[caste_id][unit_number] = unit_number
     end
 end
 
@@ -647,7 +650,7 @@ local function get_next_free_house(caste_id)
 
     if #next_houses_table == 0 then
         -- create the next free houses queue
-        Tirislib_Tables.merge(next_houses_table, houses_with_free_capacity[caste_id])
+        Tirislib_Tables.merge(next_houses_table, free_houses[caste_id])
         shuffle(next_houses_table)
 
         -- check if there are any free houses at all
@@ -664,7 +667,7 @@ local function get_next_free_house(caste_id)
         return entry
     else
         -- remove it from the list of free houses
-        houses_with_free_capacity[caste_id][unit_number] = nil
+        free_houses[caste_id][unit_number] = nil
         -- skip this outdated house
         return get_next_free_house(caste_id)
     end
@@ -1099,7 +1102,7 @@ function Inhabitants.remove_house(entry, cause)
     remove_housing_census(entry)
 
     local unit_number = entry[EK.unit_number]
-    houses_with_free_capacity[entry[EK.type]][unit_number] = nil
+    free_houses[entry[EK.type]][unit_number] = nil
     Tirislib_Tables.remove_all(next_houses, unit_number)
 
     if cause == DestructionCause.destroyed then
