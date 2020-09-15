@@ -141,6 +141,11 @@ function Tirislib_Utils.get_size(entity)
     return right_bottom.x - left_top.x, right_bottom.y - left_top.y
 end
 
+function Tirislib_Utils.add_random_offset(position, offset)
+    position.x = position.x + random(-offset, offset)
+    position.y = position.y + random(-offset, offset)
+end
+
 function Tirislib_Utils.desync_protection()
     if game then
         error(
@@ -501,6 +506,11 @@ end
 function Tirislib_Tables.pick_random_key(tbl)
     local keys = get_keyset(tbl)
     return keys[random(#keys)]
+end
+
+function Tirislib_Tables.pick_random_value(tbl)
+    local keys = get_keyset(tbl)
+    return tbl[keys[random(#keys)]]
 end
 
 function Tirislib_Tables.pick_n_random_keys(tbl, n)

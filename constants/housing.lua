@@ -15,8 +15,16 @@ Housing.values = {
         comfort = 0,
         caste = Type.clockwork,
         caste_bonus = 2,
-        one_room_per_inhabitant = true,
-        alternatives = {"improvised-hut-2"}
+        is_improvised = true,
+        one_room_per_inhabitant = true
+    },
+    ["improvised-hut-2"] = {
+        room_count = 4,
+        comfort = 0,
+        caste = Type.clockwork,
+        caste_bonus = 2,
+        is_improvised = true,
+        one_room_per_inhabitant = true
     },
     ["boring-brick-house"] = {
         room_count = 32,

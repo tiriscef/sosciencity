@@ -38,8 +38,7 @@ local caste_bonuses
 local immigration
 local homeless
 local free_houses
-local free_improvised_houses
-local next_houses
+local next_free_houses
 
 local Register = Register
 local try_get = Register.try_get
@@ -77,6 +76,7 @@ local dice_rolls = Tirislib_Utils.dice_rolls
 local shallow_equal = Tirislib_Tables.shallow_equal
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
+local random = math.random
 
 local function set_locals()
     global = _ENV.global
@@ -86,8 +86,7 @@ local function set_locals()
     immigration = global.immigration
     homeless = global.homeless
     free_houses = global.free_houses
-    free_improvised_houses = global.free_improvised_houses
-    next_houses = global.next_houses
+    next_free_houses = global.next_free_houses
 end
 
 local function new_caste_table()
@@ -112,9 +111,14 @@ function Inhabitants.init()
     global.effective_population = new_caste_table()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
-    global.free_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
-    global.free_improvised_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
-    global.next_houses = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    global.free_houses = {
+        [true] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes),
+        [false] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    }
+    global.next_free_houses = {
+        [true] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes),
+        [false] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+    }
     global.homeless = {}
 
     set_locals()
@@ -631,26 +635,22 @@ function Inhabitants.get_nominal_sanity(entry)
 end
 
 local function update_free_space_status(entry)
-    if entry[EK.is_improvised] then
-        return
-    end
-
     local caste_id = entry[EK.type]
     local unit_number = entry[EK.unit_number]
 
     if get_free_capacity(entry) > 0 then
-        free_houses[caste_id][unit_number] = nil
+        free_houses[entry[EK.is_improvised]][caste_id][unit_number] = unit_number
     else
-        free_houses[caste_id][unit_number] = unit_number
+        free_houses[entry[EK.is_improvised]][caste_id][unit_number] = nil
     end
 end
 
-local function get_next_free_house(caste_id)
-    local next_houses_table = next_houses[caste_id]
+local function get_next_free_house(caste_id, improvised)
+    local next_houses_table = next_free_houses[improvised][caste_id]
 
     if #next_houses_table == 0 then
         -- create the next free houses queue
-        Tirislib_Tables.merge(next_houses_table, free_houses[caste_id])
+        Tirislib_Tables.merge(next_houses_table, free_houses[improvised][caste_id])
         shuffle(next_houses_table)
 
         -- check if there are any free houses at all
@@ -669,7 +669,7 @@ local function get_next_free_house(caste_id)
         -- remove it from the list of free houses
         free_houses[caste_id][unit_number] = nil
         -- skip this outdated house
-        return get_next_free_house(caste_id)
+        return get_next_free_house(caste_id, improvised)
     end
 end
 
@@ -691,22 +691,27 @@ function Inhabitants.try_add_to_house(entry, group)
 end
 local try_add_to_house = Inhabitants.try_add_to_house
 
---- Tries to distribute the specified inhabitants to houses with free capacity.
---- Returns the number of inhabitants that were distributed.
---- @param group InhabitantGroup
-function Inhabitants.distribute_inhabitants(group)
+local function distribute(group, to_improvised)
     local count_before = group[EK.inhabitants]
     local caste_id = group[EK.type]
-    local next_house = get_next_free_house(caste_id)
+    local next_house = get_next_free_house(caste_id, to_improvised)
 
     local to_distribute = count_before
     while to_distribute > 0 and next_house do
         to_distribute = to_distribute - try_add_to_house(next_house, group)
 
-        next_house = get_next_free_house(caste_id)
+        next_house = get_next_free_house(caste_id, to_improvised)
     end
 
     return count_before - to_distribute
+end
+
+--- Tries to distribute the specified inhabitants to houses with free capacity.
+--- Official houses get prioritised over improvised ones.
+--- Returns the number of inhabitants that were distributed.
+--- @param group InhabitantGroup
+function Inhabitants.distribute_inhabitants(group)
+    return distribute(group, false) + distribute(group, true)
 end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
@@ -959,37 +964,45 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << homeless inhabitants >>
-local hut_details = Housing.values["improvised-hut"]
-local hut_variations = copy(hut_details.alternatives)
-hut_variations[#hut_variations+1] = "improvised-hut"
-local function create_improvised_huts(group)
-    local caste_id = group[EK.type]
+local ROOMS_PER_HUT = Housing.values["improvised-hut"].room_count
+local HUTS = {}
+for name, house in pairs(Housing.values) do
+    if house.is_improvised then
+        HUTS[#HUTS + 1] = name
+    end
+end
 
-    for _, market in Register.all_of_type(Type.market) do
-        local entity = market[EK.entity]
-        local position = entity.position
-        local surface = entity.surface
-        local range = get_building_details(market).range
+local function create_improvised_huts()
+    for caste_id, group in pairs(homeless) do
+        for _, market in Register.all_of_type(Type.market) do
+            local entity = market[EK.entity]
+            local position = entity.position
+            local surface = entity.surface
+            local range = get_building_details(market).range
 
-        local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
+            local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
 
-        while group[EK.inhabitants] > 0 do
-            local possible_position =
-                surface.find_non_colliding_position_in_box("improvised-hut", bounding_box, 2, true)
-            if not possible_position then
-                break
+            while group[EK.inhabitants] > 0 do
+                -- we look for positions of market-hall, because it is a 5x5 entity, so there will be a
+                -- 1 tile margin for a random offset
+                local pos = surface.find_non_colliding_position_in_box("market-hall", bounding_box, 1, true)
+                if not pos then
+                    break
+                end
+                Tirislib_Utils.add_random_offset(pos, 1)
+
+                local hut_to_create = HUTS[random(#HUTS)]
+                local new_hut =
+                    surface.create_entity {
+                    name = hut_to_create,
+                    position = pos,
+                    force = "player"
+                }
+                local entry = Register.add(new_hut, caste_id)
+
+                local count_moving_in = min(group[EK.inhabitants], ROOMS_PER_HUT)
+                InhabitantGroup.merge_partially(entry, group, count_moving_in)
             end
-
-            local new_hut =
-                surface.create_entity {
-                name = hut_variations[math.random(#hut_variations)],
-                position = possible_position,
-                force = "player"
-            }
-            local entry = Register.add(new_hut, caste_id)
-
-            local count_moving_in = min(group[EK.inhabitants], hut_details.room_count)
-            InhabitantGroup.merge_partially(entry, group, count_moving_in)
         end
     end
 end
@@ -1000,7 +1013,7 @@ local function try_house_homeless()
     end
 end
 
---- Adds people without a home to the global homeless pool.
+--- Adds the given InhabitantGroup to the global homeless pool.
 function Inhabitants.add_to_homeless_pool(group)
     local caste_id = group[EK.type]
     InhabitantGroup.merge(homeless[caste_id], group)
@@ -1023,10 +1036,10 @@ local function update_homelessness()
         local emigrating = floor(count * (resettlement and 0.1 or 0.3))
         local emigrated = InhabitantGroup.take(homeless_group, emigrating)
         Communication.log_emigration(emigrated, EmigrationCause.homeless)
-
-        distribute_inhabitants(homeless_group)
-        create_improvised_huts(homeless_group)
     end
+
+    try_house_homeless()
+    create_improvised_huts()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1070,7 +1083,7 @@ function Inhabitants.create_house(entry)
     entry[EK.official_inhabitants] = 0
     entry[EK.points] = 0
 
-    entry[EK.is_improvised] = (get_housing_details(entry).main_entity == "improvised-hut")
+    entry[EK.is_improvised] = get_housing_details(entry).is_improvised or false
 
     entry[EK.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
     entry[EK.happiness_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessFactor), 1.)
@@ -1102,8 +1115,10 @@ function Inhabitants.remove_house(entry, cause)
     remove_housing_census(entry)
 
     local unit_number = entry[EK.unit_number]
+    local caste_id = entry[EK.type]
+    local improvised = entry[EK.is_improvised]
     free_houses[entry[EK.type]][unit_number] = nil
-    Tirislib_Tables.remove_all(next_houses, unit_number)
+    Tirislib_Tables.remove_all(next_free_houses[improvised][caste_id], unit_number)
 
     if cause == DestructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
