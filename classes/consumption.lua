@@ -9,6 +9,8 @@ Consumption = {}
 -- local often used functions for humongous performance gains
 local sort_by_key = Tirislib_Tables.insertion_sort_by_key
 
+local castes = Castes.values
+
 local food_values = Food.values
 
 local log_item = Communication.log_item
@@ -340,8 +342,6 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == count) and -3 or 0
 end
 
-local castes = Castes.values
-
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Consumption.evaluate_diet(entry, delta_ticks)
     local caste = castes[entry[EK.type]]
@@ -387,7 +387,7 @@ function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, healt
     local distributers = get_neighbors_of_type(entry, Type.water_distributer)
     sort_by_key(distributers, EK.water_quality)
 
-    local water_to_consume = 0.0008 * entry[EK.inhabitants] * delta_ticks -- 20 units per factorio day (25000 ticks)
+    local water_to_consume = castes[entry[EK.type]].water_demand * entry[EK.inhabitants] * delta_ticks
     local satisfaction, quality
 
     if water_to_consume > 0 then
