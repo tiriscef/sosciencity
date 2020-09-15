@@ -280,7 +280,7 @@ local function on_entity_settings_pasted(event)
 
     local source_type = source_entry[EK.type]
     local destination_type = destination_entry[EK.type]
-    if type_definitions[destination_type].is_inhabited and destination_type == Type.empty_house then
+    if type_definitions[source_type].is_inhabited and destination_type == Type.empty_house then
         Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
     end
 end
