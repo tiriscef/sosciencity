@@ -54,15 +54,15 @@ Tirislib_Entity.create {
             {
                 filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-shadowmap.png",
                 priority = "high",
-                width = 224,
-                height = 224,
+                width = 416,
+                height = 288,
                 shift = {0.0, -1.0},
                 draw_as_shadow = true,
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-shadowmap-hr.png",
                     priority = "high",
-                    width = 448,
-                    height = 448,
+                    width = 832,
+                    height = 576,
                     scale = 0.5,
                     shift = {0.0, -1.0},
                     draw_as_shadow = true
