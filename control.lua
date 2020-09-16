@@ -42,6 +42,7 @@ if script.active_mods["sosciencity-debug"] then
     require("lib.testing")
 
     require("tests.utils")
+    require("tests.inhabitants")
 
     local function handler(input)
         local results

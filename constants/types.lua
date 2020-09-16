@@ -32,7 +32,8 @@ TypeGroup.inhabitant_subscriptions = {
     Type.water_distributer,
     Type.hospital,
     Type.dumpster,
-    Type.nightclub
+    Type.nightclub,
+    Type.animal_farm
 }
 
 ---------------------------------------------------------------------------------------------------

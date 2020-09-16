@@ -134,54 +134,54 @@ function Inhabitants.load()
 end
 
 ---------------------------------------------------------------------------------------------------
--- << diseases >>
+-- << inhabitant diseases >>
 --- Object class for holding the diseases of a group of inhabitants.
-IllnessGroup = {}
+DiseaseGroup = {}
 
 local HEALTHY = {}
-IllnessGroup.healthy_entry = 1
-IllnessGroup.diseases = 1
-IllnessGroup.count = 2
+DiseaseGroup.healthy_entry = 1
+DiseaseGroup.diseases = 1
+DiseaseGroup.count = 2
 
-function IllnessGroup.new(count)
+function DiseaseGroup.new(count)
     return {{{}, count}}
 end
-local new_illness_group = IllnessGroup.new
+local new_illness_group = DiseaseGroup.new
 
-function IllnessGroup.add_persons(group, count, diseases)
+function DiseaseGroup.add_persons(group, count, diseases)
     diseases = diseases or HEALTHY
 
     for i = 1, #group do
         local entry = group[i]
-        if shallow_equal(entry[IllnessGroup.diseases], diseases) then
-            entry[IllnessGroup.count] = entry[IllnessGroup.count] + count
+        if shallow_equal(entry[DiseaseGroup.diseases], diseases) then
+            entry[DiseaseGroup.count] = entry[DiseaseGroup.count] + count
             return
         end
     end
 
     group[#group + 1] = {diseases, count}
 end
-local add_persons = IllnessGroup.add_persons
+local add_persons = DiseaseGroup.add_persons
 
 local function remove_empty_disease_entries(group)
     for i = #group, 2, -1 do
-        if group[i][IllnessGroup.count] == 0 then
+        if group[i][DiseaseGroup.count] == 0 then
             group[i] = group[#group]
             group[#group] = nil
         end
     end
 end
 
-function IllnessGroup.remove_persons(group, count, diseases)
+function DiseaseGroup.remove_persons(group, count, diseases)
     diseases = diseases or HEALTHY
     for i = 1, #group do
         local entry = group[i]
-        if shallow_equal(entry[IllnessGroup.diseases], diseases) then
-            local new_count = entry[IllnessGroup.count] - count
+        if shallow_equal(entry[DiseaseGroup.diseases], diseases) then
+            local new_count = entry[DiseaseGroup.count] - count
             if new_count > 0 then
-                entry[IllnessGroup.count] = new_count
+                entry[DiseaseGroup.count] = new_count
             else
-                if i ~= IllnessGroup.healthy_entry then
+                if i ~= DiseaseGroup.healthy_entry then
                     group[i] = group[#group]
                     group[#group] = nil
                 end
@@ -190,22 +190,22 @@ function IllnessGroup.remove_persons(group, count, diseases)
     end
 end
 
-function IllnessGroup.merge(lh, rh, keep_rh)
+function DiseaseGroup.merge(lh, rh, keep_rh)
     for i = 1, #rh do
         local entry = rh[i]
-        add_persons(lh, entry[IllnessGroup.count], entry[IllnessGroup.diseases])
+        add_persons(lh, entry[DiseaseGroup.count], entry[DiseaseGroup.diseases])
 
         if not keep_rh then
-            IllnessGroup.remove_persons(rh, entry[IllnessGroup.count], entry[IllnessGroup.diseases])
+            DiseaseGroup.remove_persons(rh, entry[DiseaseGroup.count], entry[DiseaseGroup.diseases])
         end
     end
 end
 
-function IllnessGroup.take(group, count, total_count)
+function DiseaseGroup.take(group, count, total_count)
     if not total_count then
         total_count = 0
         for i = 1, #group do
-            total_count = total_count + group[i][IllnessGroup.count]
+            total_count = total_count + group[i][DiseaseGroup.count]
         end
     end
 
@@ -215,7 +215,7 @@ function IllnessGroup.take(group, count, total_count)
 
     for i = 1, #group do
         local entry = group[i]
-        local current_count = entry[IllnessGroup.count]
+        local current_count = entry[DiseaseGroup.count]
 
         local to_take
         if count - taken < total_count - taken then
@@ -224,10 +224,124 @@ function IllnessGroup.take(group, count, total_count)
             to_take = current_count
         end
 
-        entry[IllnessGroup.count] = current_count - to_take
-        add_persons(ret, to_take, entry[IllnessGroup.diseases])
+        entry[DiseaseGroup.count] = current_count - to_take
+        add_persons(ret, to_take, entry[DiseaseGroup.diseases])
     end
     remove_empty_disease_entries(group)
+
+    return ret
+end
+
+---------------------------------------------------------------------------------------------------
+-- << inhabitant ages >>
+AgeGroup = {}
+
+--- Returns a new AgeGroup table with fixed ages.
+--- @param count integer
+--- @param age integer
+function AgeGroup.new(count, age)
+    local ret = {}
+
+    if count > 0 then
+        ret[age or 0] = count
+    end
+
+    return ret
+end
+
+local function get_immigrant_age()
+    local r1 = random() ^ 2
+    local r2 = (random() < 0.5) and 1 or -1
+
+    return 50 + r1 * r2 * 30
+end
+
+--- Returns a new AgeGroup table with random ages.
+--- @param count integer
+--- @param age_function function
+function AgeGroup.random_new(count, age_function)
+    local ret = {}
+
+    if count > 0 then
+        local rolls = min(count, 10)
+        local count_per_roll = floor(count / rolls)
+        local modulo = count % rolls
+
+        for i = 1, rolls do
+            local rolled = age_function()
+            ret[rolled] = (ret[rolled] or 0) + count_per_roll + (i <= modulo and 1 or 0)
+        end
+    end
+
+    return ret
+end
+
+function AgeGroup.merge(lh, rh, keep_rh)
+    for age, count in pairs(rh) do
+        lh[age] = (lh[age] or 0) + count
+    end
+
+    if not keep_rh then
+        Tirislib_Tables.empty(rh)
+    end
+end
+
+function AgeGroup.take(group, count, total_count)
+    total_count = total_count or Tirislib_Tables.sum(group)
+
+    local ret = {}
+    local percentage = count / total_count
+    local taken = 0
+    for age, current_count in pairs(group) do
+        local to_take
+        if count - taken < total_count - taken then
+            to_take = round(current_count * percentage)
+        else
+            to_take = current_count
+        end
+
+        ret[age] = to_take
+        group[age] = (to_take == current_count) and nil or (group[age] - to_take)
+    end
+
+    return ret
+end
+
+---------------------------------------------------------------------------------------------------
+-- << inhabitant genders >>
+GenderGroup = {}
+
+function GenderGroup.new(count, caste)
+    return dice_rolls(castes[caste].gender_distribution, count, 20)
+end
+
+function GenderGroup.merge(lh, rh, keep_rh)
+    for gender, count in pairs(rh) do
+        lh[gender] = lh[gender] + count
+
+        if not keep_rh then
+            rh[gender] = 0
+        end
+    end
+end
+
+function GenderGroup.take(group, count, total_count)
+    total_count = total_count or Tirislib_Tables.sum(group)
+
+    local ret = {}
+    local percentage = count / total_count
+    local taken = 0
+    for gender, current_count in pairs(group) do
+        local to_take
+        if count - taken < total_count - taken then
+            to_take = round(current_count * percentage)
+        else
+            to_take = current_count
+        end
+
+        ret[gender] = to_take
+        group[gender] = group[gender] - to_take
+    end
 
     return ret
 end
@@ -241,20 +355,8 @@ local DEFAULT_HAPPINESS = 10
 local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
-local function new_gender_table(caste_id, count)
-    return dice_rolls(castes[caste_id].gender_distribution, count, 20)
-end
-
-local function new_ages_table(count, cause)
-    if cause == NewInhabitantCause.immigration then
-        return dice_rolls(Castes.immigration_age_distribution, count)
-    else
-        return {[0] = count}
-    end
-end
-
 --- Constructs a new InhabitantGroup object.
-function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses, genders, ages, cause)
+function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses, genders, ages)
     count = count or 0
 
     return {
@@ -264,11 +366,26 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses,
         [EK.health] = health or DEFAULT_HEALTH,
         [EK.sanity] = sanity or DEFAULT_SANITY,
         [EK.illnesses] = illnesses or new_illness_group(count),
-        [EK.genders] = genders or new_gender_table(caste, count),
-        [EK.ages] = ages or new_ages_table(count, cause)
+        [EK.genders] = genders or GenderGroup.new(count, caste),
+        [EK.ages] = ages or AgeGroup.new(count)
     }
 end
 local new_group = InhabitantGroup.new
+
+function InhabitantGroup.new_immigrant_group(caste, count)
+    count = count or 0
+
+    return {
+        [EK.type] = caste,
+        [EK.inhabitants] = count,
+        [EK.happiness] = DEFAULT_HAPPINESS,
+        [EK.health] = DEFAULT_HEALTH,
+        [EK.sanity] = DEFAULT_SANITY,
+        [EK.illnesses] = new_illness_group(count),
+        [EK.genders] = GenderGroup.new(caste, count),
+        [EK.ages] = AgeGroup.random_new(count, get_immigrant_age)
+    }
+end
 
 function InhabitantGroup.empty(group)
     group[EK.inhabitants] = 0
@@ -276,8 +393,8 @@ function InhabitantGroup.empty(group)
     group[EK.health] = 0
     group[EK.sanity] = 0
     group[EK.illnesses] = new_illness_group(0)
-    group[EK.genders] = new_gender_table(group[EK.type], 0)
-    group[EK.ages] = new_ages_table(0)
+    group[EK.genders] = GenderGroup.new(0, group[EK.type])
+    group[EK.ages] = AgeGroup.new(0)
 end
 
 --- Adds the necessary data so this house can also work as an InhabitantGroup.
@@ -304,7 +421,9 @@ function InhabitantGroup.merge(lh, rh, keep_rh)
     lh[EK.health] = weighted_average(lh[EK.health], count_left, rh[EK.health], count_right)
     lh[EK.sanity] = weighted_average(lh[EK.sanity], count_left, rh[EK.sanity], count_right)
 
-    IllnessGroup.merge(lh[EK.illnesses], rh[EK.illnesses], keep_rh)
+    DiseaseGroup.merge(lh[EK.illnesses], rh[EK.illnesses], keep_rh)
+    AgeGroup.merge(lh[EK.ages], rh[EK.ages], keep_rh)
+    GenderGroup.merge(lh[EK.genders], rh[EK.genders], keep_rh)
 
     if not keep_rh then
         InhabitantGroup.empty(rh)
@@ -317,7 +436,7 @@ function InhabitantGroup.take(group, count)
 
     group[EK.inhabitants] = existing_count - taken_count
 
-    local taken_illnesses = IllnessGroup.take(group[EK.illnesses], taken_count)
+    local taken_illnesses = DiseaseGroup.take(group[EK.illnesses], taken_count, existing_count)
 
     local ret = copy(group)
     ret[EK.inhabitants] = taken_count
@@ -927,7 +1046,7 @@ function Inhabitants.migration_wave(immigration_port_details)
         capacity = capacity - count_immigrated
         immigration[caste] = immigration[caste] - count_immigrated
 
-        local immigrants = new_group(caste, count_immigrated)
+        local immigrants = InhabitantGroup.new_immigrant_group(caste, count_immigrated)
 
         Inhabitants.add_to_homeless_pool(immigrants)
     end
