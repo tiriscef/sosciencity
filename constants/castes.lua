@@ -205,10 +205,6 @@ Castes.emigration_coefficient = 0.8 / 3600. * -1
 --- The number of general garbage an inhabitant produces per minute.
 Castes.garbage_coefficient = 0.1 / 3600.
 
-Castes.immigration_age_distribution = {
-    
-}
-
 -- postprocessing
 for _, caste in pairs(Castes.values) do
     -- convert calorific demand to kcal per tick
