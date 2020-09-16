@@ -697,6 +697,32 @@ local function update_occupations_list(flow, entry)
     flow["header-occupations"].visible = visible
 end
 
+local function update_ages_list(flow, entry)
+    local ages_list = flow.ages
+
+    ages_list.clear()
+    for age, count in pairs(entry[EK.ages]) do
+        add_operand_entry(ages_list, age, {"sosciencity-gui.show-age", age}, count)
+    end
+
+    local visible = (entry[EK.inhabitants] > 0)
+    ages_list.visible = visible
+    flow["header-ages"].visible = visible
+end
+
+local function update_genders_list(flow, entry)
+    local genders_list = flow.genders
+
+    genders_list.clear()
+    for gender, count in pairs(entry[EK.genders]) do
+        add_operand_entry(genders_list, gender, {"sosciencity-gui.gender-" .. gender}, count)
+    end
+
+    local visible = (entry[EK.inhabitants] > 0)
+    genders_list.visible = visible
+    flow["header-genders"].visible = visible
+end
+
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local flow = get_tab_contents(tabbed_pane, "general")
     local general_list = flow["general-infos"]
@@ -766,6 +792,8 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
 
     update_occupations_list(flow, entry)
+    update_ages_list(flow, entry)
+    update_genders_list(flow, entry)
 end
 
 local function add_housing_general_info_tab(tabbed_pane, entry)
@@ -790,6 +818,16 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
 
     add_header_label(flow, "header-occupations", {"sosciencity-gui.occupations"})
     create_data_list(flow, "occupations")
+
+    create_separator_line(flow)
+
+    add_header_label(flow, "header-ages", {"sosciencity-gui.ages"})
+    create_data_list(flow, "ages")
+
+    create_separator_line(flow)
+
+    add_header_label(flow, "header-genders", {"sosciencity-gui.gender-distribution"})
+    create_data_list(flow, "genders")
 
     create_separator_line(flow)
 
