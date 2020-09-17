@@ -11,7 +11,7 @@ Gui = {}
 local castes = Castes.values
 local global
 local population
-local effective_population
+local caste_bonus
 local Register = Register
 local Inhabitants = Inhabitants
 local Buildings = Buildings
@@ -23,7 +23,7 @@ local format = string.format
 local function set_locals()
     global = _ENV.global
     population = global.population
-    effective_population = global.effective_population
+    caste_bonus = global.caste_bonus
 end
 
 --- This should be added to every gui element which needs an event handler,
@@ -493,7 +493,7 @@ local function add_caste_flow(container, caste_id)
         type = "label",
         name = "caste-population",
         caption = global.population[caste_id],
-        tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(effective_population[caste_id])}
+        tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(caste_bonus[caste_id])}
     }
 
     flow.add {
@@ -528,7 +528,7 @@ local function update_caste_flow(container, caste_id)
 
     local population_label = flow["caste-population"]
     population_label.caption = population[caste_id]
-    population_label.tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(effective_population[caste_id])}
+    population_label.tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(caste_bonus[caste_id])}
 
     flow["immigration"].caption = {
         "sosciencity-gui.show-immigration",
@@ -687,7 +687,7 @@ local function update_occupations_list(flow, entry)
         end
     end
 
-    local diseases = entry[EK.illnesses]
+    local diseases = entry[EK.diseases]
     for disease_number, count in pairs(diseases) do
         -- TODO diseases
     end
@@ -767,11 +767,11 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
     set_datalist_value(
         general_list,
-        "effective-population",
+        "bonus",
         (inhabitants > 0) and
             {
-                "sosciencity-gui.show-effective-population",
-                get_reasonable_number(entry[EK.points])
+                "sosciencity-gui.show-bonus",
+                get_reasonable_number(entry[EK.caste_points])
             } or
             "-"
     )
@@ -809,7 +809,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
     add_kv_pair(data_list, "health", {"sosciencity-gui.health"})
     add_kv_pair(data_list, "sanity", {"sosciencity-gui.sanity"})
-    add_kv_pair(data_list, "effective-population", {"sosciencity-gui.effective-population"})
+    add_kv_pair(data_list, "bonus", {"sosciencity-gui.bonus"})
     add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
     add_kv_pair(data_list, "water-demand", {"sosciencity-gui.water-demand"})
     add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
