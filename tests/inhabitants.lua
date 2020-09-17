@@ -77,6 +77,25 @@ Tiristest.add_test_case(
     end
 )
 
+local function DiseaseGroup_count_people(group)
+    local ret = 0
+
+    for _, entry in pairs(group) do
+        ret = ret + entry[DiseaseGroup.count]
+    end
+
+    return ret
+end
+
+Tiristest.add_test_case(
+    "DiseaseGroup.new",
+    "inhabitants|disease",
+    function()
+        local age_group = DiseaseGroup.new(5)
+        Assert.equals(DiseaseGroup_count_people(age_group), 5)
+    end
+)
+
 Tiristest.add_test_case(
     "GenderGroup.new",
     "inhabitants|gender",

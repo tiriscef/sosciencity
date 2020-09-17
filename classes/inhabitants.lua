@@ -7,7 +7,7 @@ Inhabitants = {}
     global.population: table
         [caste_id]: int (inhabitants count)
 
-    global.effective_population: table
+    global.caste_bonus: table
         [caste_id]: float (total caste bonus points)
 
     global.caste_bonuses: table
@@ -33,7 +33,7 @@ Inhabitants = {}
 -- local often used functions for enormous performance gains
 local global
 local population
-local effective_population
+local caste_bonus
 local caste_bonuses
 local immigration
 local homeless
@@ -81,7 +81,7 @@ local random = math.random
 local function set_locals()
     global = _ENV.global
     population = global.population
-    effective_population = global.effective_population
+    caste_bonus = global.caste_bonus
     caste_bonuses = global.caste_bonuses
     immigration = global.immigration
     homeless = global.homeless
@@ -108,7 +108,7 @@ function Inhabitants.init()
 
     global.fear = 0
     global.population = new_caste_table()
-    global.effective_population = new_caste_table()
+    global.caste_bonus = new_caste_table()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
     global.free_houses = {
@@ -146,7 +146,7 @@ DiseaseGroup.count = 2
 function DiseaseGroup.new(count)
     return {{{}, count}}
 end
-local new_illness_group = DiseaseGroup.new
+local new_disease_group = DiseaseGroup.new
 
 function DiseaseGroup.add_persons(group, count, diseases)
     diseases = diseases or HEALTHY
@@ -209,7 +209,7 @@ function DiseaseGroup.take(group, count, total_count)
         end
     end
 
-    local ret = new_illness_group(0)
+    local ret = new_disease_group(0)
     local percentage = count / total_count
     local taken = 0
 
@@ -356,7 +356,7 @@ local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
 --- Constructs a new InhabitantGroup object.
-function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses, genders, ages)
+function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, genders, ages)
     count = count or 0
 
     return {
@@ -365,7 +365,7 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, illnesses,
         [EK.happiness] = happiness or DEFAULT_HAPPINESS,
         [EK.health] = health or DEFAULT_HEALTH,
         [EK.sanity] = sanity or DEFAULT_SANITY,
-        [EK.illnesses] = illnesses or new_illness_group(count),
+        [EK.diseases] = diseases or new_disease_group(count),
         [EK.genders] = genders or GenderGroup.new(count, caste),
         [EK.ages] = ages or AgeGroup.new(count)
     }
@@ -381,7 +381,7 @@ function InhabitantGroup.new_immigrant_group(caste, count)
         [EK.happiness] = DEFAULT_HAPPINESS,
         [EK.health] = DEFAULT_HEALTH,
         [EK.sanity] = DEFAULT_SANITY,
-        [EK.illnesses] = new_illness_group(count),
+        [EK.diseases] = new_disease_group(count),
         [EK.genders] = GenderGroup.new(caste, count),
         [EK.ages] = AgeGroup.random_new(count, get_immigrant_age)
     }
@@ -392,7 +392,7 @@ function InhabitantGroup.empty(group)
     group[EK.happiness] = 0
     group[EK.health] = 0
     group[EK.sanity] = 0
-    group[EK.illnesses] = new_illness_group(0)
+    group[EK.diseases] = new_disease_group(0)
     group[EK.genders] = GenderGroup.new(0, group[EK.type])
     group[EK.ages] = AgeGroup.new(0)
 end
@@ -421,7 +421,7 @@ function InhabitantGroup.merge(lh, rh, keep_rh)
     lh[EK.health] = weighted_average(lh[EK.health], count_left, rh[EK.health], count_right)
     lh[EK.sanity] = weighted_average(lh[EK.sanity], count_left, rh[EK.sanity], count_right)
 
-    DiseaseGroup.merge(lh[EK.illnesses], rh[EK.illnesses], keep_rh)
+    DiseaseGroup.merge(lh[EK.diseases], rh[EK.diseases], keep_rh)
     AgeGroup.merge(lh[EK.ages], rh[EK.ages], keep_rh)
     GenderGroup.merge(lh[EK.genders], rh[EK.genders], keep_rh)
 
@@ -433,15 +433,18 @@ end
 function InhabitantGroup.take(group, count)
     local existing_count = group[EK.inhabitants]
     local taken_count = min(existing_count, count)
-
     group[EK.inhabitants] = existing_count - taken_count
 
-    local taken_illnesses = DiseaseGroup.take(group[EK.illnesses], taken_count, existing_count)
-
-    local ret = copy(group)
-    ret[EK.inhabitants] = taken_count
-    ret[EK.illnesses] = taken_illnesses
-    return ret
+    return new_group(
+        group[EK.type],
+        taken_count,
+        group[EK.happiness],
+        group[EK.health],
+        group[EK.sanity],
+        DiseaseGroup.take(group, taken_count, existing_count),
+        GenderGroup.take(group, taken_count, existing_count),
+        AgeGroup.take(group, taken_count, existing_count)
+    )
 end
 
 function InhabitantGroup.merge_partially(lh, rh, count)
@@ -466,7 +469,7 @@ local function update_sanity(group, target, delta_ticks)
     group[EK.sanity] = current + (target - current) * (1 - 0.99995 ^ delta_ticks)
 end
 
-local function get_effective_population_multiplier(happiness)
+local function get_caste_bonus_multiplier(happiness)
     return happiness * 0.1
 end
 
@@ -492,13 +495,13 @@ end
 local get_population_count = Inhabitants.get_population_count
 
 local function clockwork_bonus_no_penalty(effective_pop)
-    effective_pop = effective_pop or effective_population[Type.clockwork]
+    effective_pop = effective_pop or caste_bonus[Type.clockwork]
 
     return floor(10 * sqrt(effective_pop / max(Register.get_machine_count(), 1)))
 end
 
 local function clockwork_bonus_with_penalty()
-    local effective_pop = effective_population[Type.clockwork]
+    local effective_pop = caste_bonus[Type.clockwork]
     local startup_costs = max(Register.get_machine_count(), 1) * 3
 
     return min(effective_pop / startup_costs, 1) * 80 +
@@ -516,36 +519,36 @@ end
 
 --- Gets the current Orchid caste bonus.
 local function get_orchid_bonus()
-    return floor(sqrt(effective_population[Type.orchid]))
+    return floor(sqrt(caste_bonus[Type.orchid]))
 end
 
 --- Gets the current Gunfire caste bonus.
 local function get_gunfire_bonus()
-    return floor(effective_population[Type.gunfire] * 10 / max(Register.get_type_count(Type.turret), 1)) -- TODO balancing
+    return floor(caste_bonus[Type.gunfire] * 10 / max(Register.get_type_count(Type.turret), 1)) -- TODO balancing
 end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    return floor(10 * sqrt(effective_population[Type.ember] / max(1, get_population_count())))
+    return floor(10 * sqrt(caste_bonus[Type.ember] / max(1, get_population_count())))
 end
 
 --- Gets the current Foundry caste bonus.
 local function get_foundry_bonus()
-    return floor(sqrt(effective_population[Type.foundry] * 5))
+    return floor(sqrt(caste_bonus[Type.foundry] * 5))
 end
 
 --- Gets the current Gleam caste bonus.
 local function get_gleam_bonus()
-    return floor(sqrt(effective_population[Type.gleam]))
+    return floor(sqrt(caste_bonus[Type.gleam]))
 end
 
 --- Gets the current Aurora caste bonus.
 local function get_aurora_bonus()
-    return floor(sqrt(effective_population[Type.aurora]))
+    return floor(sqrt(caste_bonus[Type.aurora]))
 end
 
 local function get_plasma_bonus()
-    return floor(10 * sqrt(effective_population[Type.plasma] / max(1, get_population_count())))
+    return floor(10 * sqrt(caste_bonus[Type.plasma] / max(1, get_population_count())))
 end
 
 -- Assumes value is an integer
@@ -949,16 +952,16 @@ local function update_housing_census(entry, caste_id)
     end
 
     -- caste bonus points
-    local points = get_employable_count(entry) * get_effective_population_multiplier(entry[EK.happiness])
-    effective_population[caste_id] = effective_population[caste_id] - entry[EK.points] + points
-    entry[EK.points] = points
+    local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness])
+    caste_bonus[caste_id] = caste_bonus[caste_id] - entry[EK.caste_points] + points
+    entry[EK.caste_points] = points
 end
 
 local function remove_housing_census(entry)
     local caste_id = entry[EK.type]
 
     population[caste_id] = population[caste_id] - entry[EK.official_inhabitants]
-    effective_population[caste_id] = effective_population[caste_id] - entry[EK.points]
+    caste_bonus[caste_id] = caste_bonus[caste_id] - entry[EK.caste_points]
 end
 
 --- Updates the given housing entry.
@@ -1018,7 +1021,7 @@ function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
 
     if pop > 0 then
         -- TODO this method to get the average happiness doesn't work anymore because the meaning of effective population changed
-        local average_happiness = effective_population[caste_id] / population[caste_id]
+        local average_happiness = caste_bonus[caste_id] / population[caste_id]
         return castes[caste_id].immigration_coefficient * delta_ticks * average_happiness
     else
         return castes[caste_id].immigration_coefficient * delta_ticks
@@ -1200,7 +1203,7 @@ end
 function Inhabitants.create_house(entry)
     InhabitantGroup.new_house(entry)
     entry[EK.official_inhabitants] = 0
-    entry[EK.points] = 0
+    entry[EK.caste_points] = 0
 
     entry[EK.is_improvised] = get_housing_details(entry).is_improvised or false
 

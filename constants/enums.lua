@@ -123,7 +123,7 @@ EK.is_improvised = 203
 --- inhabitants this house has during the last update
 EK.official_inhabitants = 204
 --- points this house provides to the caste bonus
-EK.points = 205
+EK.caste_points = 205
 --- inhabitant count of this entry
 EK.inhabitants = 206
 --- current happiness of this entries inhabitants
@@ -155,7 +155,7 @@ EK.employments = 220
 --- the count of inhabitants that are ill
 EK.ill = 221
 --- the illnesses of the inhabitants as a DiseaseGroup object
-EK.illnesses = 222
+EK.diseases = 222
 --- the genders of the inhabitants
 EK.genders = 223
 --- the ages of the inhabitants
