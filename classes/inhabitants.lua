@@ -7,7 +7,7 @@ Inhabitants = {}
     global.population: table
         [caste_id]: int (inhabitants count)
 
-    global.caste_bonus: table
+    global.caste_points: table
         [caste_id]: float (total caste bonus points)
 
     global.caste_bonuses: table
@@ -33,7 +33,7 @@ Inhabitants = {}
 -- local often used functions for enormous performance gains
 local global
 local population
-local caste_bonus
+local caste_points
 local caste_bonuses
 local immigration
 local homeless
@@ -71,7 +71,6 @@ local max = math.max
 local min = math.min
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
-local copy = Tirislib_Tables.copy
 local dice_rolls = Tirislib_Utils.dice_rolls
 local shallow_equal = Tirislib_Tables.shallow_equal
 local shuffle = Tirislib_Tables.shuffle
@@ -81,7 +80,7 @@ local random = math.random
 local function set_locals()
     global = _ENV.global
     population = global.population
-    caste_bonus = global.caste_bonus
+    caste_points = global.caste_points
     caste_bonuses = global.caste_bonuses
     immigration = global.immigration
     homeless = global.homeless
@@ -108,7 +107,7 @@ function Inhabitants.init()
 
     global.fear = 0
     global.population = new_caste_table()
-    global.caste_bonus = new_caste_table()
+    global.caste_points = new_caste_table()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
     global.free_houses = {
@@ -143,8 +142,8 @@ DiseaseGroup.healthy_entry = 1
 DiseaseGroup.diseases = 1
 DiseaseGroup.count = 2
 
-function DiseaseGroup.new(count)
-    return {{{}, count}}
+function DiseaseGroup.new(count, disease)
+    return {{disease or HEALTHY, count}}
 end
 local new_disease_group = DiseaseGroup.new
 
@@ -186,6 +185,8 @@ function DiseaseGroup.remove_persons(group, count, diseases)
                     group[#group] = nil
                 end
             end
+
+            break
         end
     end
 end
@@ -495,13 +496,13 @@ end
 local get_population_count = Inhabitants.get_population_count
 
 local function clockwork_bonus_no_penalty(effective_pop)
-    effective_pop = effective_pop or caste_bonus[Type.clockwork]
+    effective_pop = effective_pop or caste_points[Type.clockwork]
 
     return floor(10 * sqrt(effective_pop / max(Register.get_machine_count(), 1)))
 end
 
 local function clockwork_bonus_with_penalty()
-    local effective_pop = caste_bonus[Type.clockwork]
+    local effective_pop = caste_points[Type.clockwork]
     local startup_costs = max(Register.get_machine_count(), 1) * 3
 
     return min(effective_pop / startup_costs, 1) * 80 +
@@ -519,36 +520,36 @@ end
 
 --- Gets the current Orchid caste bonus.
 local function get_orchid_bonus()
-    return floor(sqrt(caste_bonus[Type.orchid]))
+    return floor(sqrt(caste_points[Type.orchid]))
 end
 
 --- Gets the current Gunfire caste bonus.
 local function get_gunfire_bonus()
-    return floor(caste_bonus[Type.gunfire] * 10 / max(Register.get_type_count(Type.turret), 1)) -- TODO balancing
+    return floor(caste_points[Type.gunfire] * 10 / max(Register.get_type_count(Type.turret), 1)) -- TODO balancing
 end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    return floor(10 * sqrt(caste_bonus[Type.ember] / max(1, get_population_count())))
+    return floor(10 * sqrt(caste_points[Type.ember] / max(1, get_population_count())))
 end
 
 --- Gets the current Foundry caste bonus.
 local function get_foundry_bonus()
-    return floor(sqrt(caste_bonus[Type.foundry] * 5))
+    return floor(sqrt(caste_points[Type.foundry] * 5))
 end
 
 --- Gets the current Gleam caste bonus.
 local function get_gleam_bonus()
-    return floor(sqrt(caste_bonus[Type.gleam]))
+    return floor(sqrt(caste_points[Type.gleam]))
 end
 
 --- Gets the current Aurora caste bonus.
 local function get_aurora_bonus()
-    return floor(sqrt(caste_bonus[Type.aurora]))
+    return floor(sqrt(caste_points[Type.aurora]))
 end
 
 local function get_plasma_bonus()
-    return floor(10 * sqrt(caste_bonus[Type.plasma] / max(1, get_population_count())))
+    return floor(10 * sqrt(caste_points[Type.plasma] / max(1, get_population_count())))
 end
 
 -- Assumes value is an integer
@@ -953,7 +954,7 @@ local function update_housing_census(entry, caste_id)
 
     -- caste bonus points
     local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness])
-    caste_bonus[caste_id] = caste_bonus[caste_id] - entry[EK.caste_points] + points
+    caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points] + points
     entry[EK.caste_points] = points
 end
 
@@ -961,7 +962,7 @@ local function remove_housing_census(entry)
     local caste_id = entry[EK.type]
 
     population[caste_id] = population[caste_id] - entry[EK.official_inhabitants]
-    caste_bonus[caste_id] = caste_bonus[caste_id] - entry[EK.caste_points]
+    caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points]
 end
 
 --- Updates the given housing entry.
@@ -1021,7 +1022,7 @@ function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
 
     if pop > 0 then
         -- TODO this method to get the average happiness doesn't work anymore because the meaning of effective population changed
-        local average_happiness = caste_bonus[caste_id] / population[caste_id]
+        local average_happiness = caste_points[caste_id] / population[caste_id]
         return castes[caste_id].immigration_coefficient * delta_ticks * average_happiness
     else
         return castes[caste_id].immigration_coefficient * delta_ticks

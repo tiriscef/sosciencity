@@ -26,10 +26,22 @@ Tiristest.add_test_case(
     "AgeGroup.random_new",
     "inhabitants|age",
     function()
-        local age_group = AgeGroup.random_new(5, function() return 5 end)
+        local age_group =
+            AgeGroup.random_new(
+            5,
+            function()
+                return 5
+            end
+        )
         Assert.equals(age_group[5], 5)
 
-        age_group = AgeGroup.random_new(35, function() return math.random(1, 100) end)
+        age_group =
+            AgeGroup.random_new(
+            35,
+            function()
+                return math.random(1, 100)
+            end
+        )
         Assert.equals(Tbl.sum(age_group), 35)
     end
 )
@@ -59,7 +71,13 @@ Tiristest.add_test_case(
     "AgeGroup.take",
     "inhabitants|age",
     function()
-        local age_group = AgeGroup.random_new(50, function() return math.random(1, 100) end)
+        local age_group =
+            AgeGroup.random_new(
+            50,
+            function()
+                return math.random(1, 100)
+            end
+        )
         local copy = Tbl.copy(age_group)
 
         local taken = AgeGroup.take(age_group, 10)
@@ -87,12 +105,68 @@ local function DiseaseGroup_count_people(group)
     return ret
 end
 
+local function DiseaseGroup_construct_random_group()
+    local group = DiseaseGroup.new(math.random(0, 5))
+
+    for i = 1, math.random(2, 7) do
+        DiseaseGroup.add_persons(group, math.random(5, 15), {i})
+    end
+end
+
 Tiristest.add_test_case(
     "DiseaseGroup.new",
     "inhabitants|disease",
     function()
         local age_group = DiseaseGroup.new(5)
         Assert.equals(DiseaseGroup_count_people(age_group), 5)
+
+        age_group = DiseaseGroup.new(0)
+        Assert.equals(DiseaseGroup_count_people(age_group), 0)
+
+        age_group = DiseaseGroup.new(10, {"disease"})
+        Assert.equals(DiseaseGroup_count_people(age_group), 10)
+        Assert.equals(DiseaseGroup[DiseaseGroup.healthy_entry][DiseaseGroup.count], 0)
+    end
+)
+
+Tiristest.add_test_case(
+    "DiseaseGroup.merge",
+    "inhabitants|disease",
+    function()
+        local group = DiseaseGroup.new(10)
+        local other_group = DiseaseGroup.new(20, {"disease"})
+        DiseaseGroup.merge(group, other_group)
+
+        Assert.equals(DiseaseGroup_count_people(group), 30)
+        Assert.equals(DiseaseGroup_count_people(other_group), 0)
+
+        group = DiseaseGroup.new(10)
+        other_group = DiseaseGroup.new(20)
+        DiseaseGroup.merge(group, other_group, true)
+
+        Assert.equals(DiseaseGroup_count_people(other_group), 20)
+    end
+)
+
+Tiristest.add_test_case(
+    "DiseaseGroup.take",
+    "inhabitants|disease",
+    function()
+        local group = DiseaseGroup_construct_random_group()
+        local copy = Tbl.copy(group)
+
+        local taken = DiseaseGroup.take(group, 10)
+        Assert.equals(DiseaseGroup_count_people(taken), 10)
+
+        DiseaseGroup.merge(group, taken)
+        Assert.equals(group, copy)
+
+        taken = DiseaseGroup.take(group, 0)
+        Assert.equals(DiseaseGroup_count_people(taken), 0)
+
+        local count = DiseaseGroup_count_people(group)
+        taken = DiseaseGroup.take(group, count + 350)
+        Assert.equals(DiseaseGroup_count_people(taken), count)
     end
 )
 
