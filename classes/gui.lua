@@ -23,7 +23,7 @@ local format = string.format
 local function set_locals()
     global = _ENV.global
     population = global.population
-    caste_bonus = global.caste_bonus
+    caste_bonus = global.caste_bonuses
 end
 
 --- This should be added to every gui element which needs an event handler,
