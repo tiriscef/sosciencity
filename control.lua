@@ -44,19 +44,39 @@ if script.active_mods["sosciencity-debug"] then
     require("tests.utils")
     require("tests.inhabitants")
 
-    local function handler(input)
-        local results
-        local group = input.parameter
-        if group then
-            results = Tiristest.run_group_suite(group)
-        else
-            results = Tiristest.run_all()
-        end
+    commands.add_command(
+        "sosciencity-tests",
+        "",
+        function(input)
+            local results
+            local group = input.parameter
+            if group then
+                results = Tiristest.run_group_suite(group, true)
+            else
+                results = Tiristest.run_all(true)
+            end
 
-        game.print(results)
-        log(results)
-    end
-    commands.add_command("sosciencity-tests", "", handler)
+            game.print(results)
+            log(results)
+        end
+    )
+
+    commands.add_command(
+        "sosciencity-tests-debug",
+        "",
+        function(input)
+            local results
+            local group = input.parameter
+            if group then
+                results = Tiristest.run_group_suite(group, false)
+            else
+                results = Tiristest.run_all(false)
+            end
+
+            game.print(results)
+            log(results)
+        end
+    )
 end
 
 ---------------------------------------------------------------------------------------------------

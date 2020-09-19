@@ -93,25 +93,29 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << running the test cases >>
-local function run_test(test_case)
+local function run_test(test_case, suppress_exceptions)
     Tiristest.current_test = test_case.name
     log_test_execution()
 
-    local ok, error = pcall(test_case.fn)
+    if suppress_exceptions then
+        local ok, error = pcall(test_case.fn)
 
-    if not ok then
-        log_failed_test(test_case, error)
+        if not ok then
+            log_failed_test(test_case, error)
+        end
+    else
+        test_case.fn()
     end
 end
 
 --- Runs all the test cases in the given group.
 --- @param group_name string
-function Tiristest.run_group_suite(group_name)
+function Tiristest.run_group_suite(group_name, suppress_exceptions)
     prepare_log()
 
     for _, test_case in pairs(tests) do
         if Tirislib_Tables.contains(test_case.groups, group_name) then
-            run_test(test_case)
+            run_test(test_case, suppress_exceptions)
         end
     end
 
@@ -119,11 +123,11 @@ function Tiristest.run_group_suite(group_name)
 end
 
 --- Runs all test cases.
-function Tiristest.run_all()
+function Tiristest.run_all(suppress_exceptions)
     prepare_log()
 
     for _, test_case in pairs(tests) do
-        run_test(test_case)
+        run_test(test_case, suppress_exceptions)
     end
 
     return string.format("Running all tests\n%s", get_logged_results())

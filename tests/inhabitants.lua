@@ -95,6 +95,11 @@ Tiristest.add_test_case(
     end
 )
 
+local function test_DiseaseGroup_invariant(group)
+    Assert.not_nil(group[DiseaseGroup.healthy_entry])
+    Assert.equals(group[DiseaseGroup.healthy_entry][DiseaseGroup.diseases], {})
+end
+
 local function DiseaseGroup_count_people(group)
     local ret = 0
 
@@ -111,21 +116,21 @@ local function DiseaseGroup_construct_random_group()
     for i = 1, math.random(2, 7) do
         DiseaseGroup.add_persons(group, math.random(5, 15), {i})
     end
+
+    return group
 end
 
 Tiristest.add_test_case(
     "DiseaseGroup.new",
     "inhabitants|disease",
     function()
-        local age_group = DiseaseGroup.new(5)
-        Assert.equals(DiseaseGroup_count_people(age_group), 5)
+        local group = DiseaseGroup.new(5)
+        test_DiseaseGroup_invariant(group)
+        Assert.equals(DiseaseGroup_count_people(group), 5)
 
-        age_group = DiseaseGroup.new(0)
-        Assert.equals(DiseaseGroup_count_people(age_group), 0)
-
-        age_group = DiseaseGroup.new(10, {"disease"})
-        Assert.equals(DiseaseGroup_count_people(age_group), 10)
-        Assert.equals(DiseaseGroup[DiseaseGroup.healthy_entry][DiseaseGroup.count], 0)
+        group = DiseaseGroup.new(0)
+        test_DiseaseGroup_invariant(group)
+        Assert.equals(DiseaseGroup_count_people(group), 0)
     end
 )
 
@@ -134,9 +139,11 @@ Tiristest.add_test_case(
     "inhabitants|disease",
     function()
         local group = DiseaseGroup.new(10)
-        local other_group = DiseaseGroup.new(20, {"disease"})
+        local other_group = DiseaseGroup.new(20)
         DiseaseGroup.merge(group, other_group)
 
+        test_DiseaseGroup_invariant(group)
+        test_DiseaseGroup_invariant(other_group)
         Assert.equals(DiseaseGroup_count_people(group), 30)
         Assert.equals(DiseaseGroup_count_people(other_group), 0)
 
@@ -144,12 +151,37 @@ Tiristest.add_test_case(
         other_group = DiseaseGroup.new(20)
         DiseaseGroup.merge(group, other_group, true)
 
+        test_DiseaseGroup_invariant(other_group)
         Assert.equals(DiseaseGroup_count_people(other_group), 20)
     end
 )
 
 Tiristest.add_test_case(
     "DiseaseGroup.take",
+    "inhabitants|disease",
+    function()
+        local group = DiseaseGroup_construct_random_group()
+        local copy = Tbl.copy(group)
+
+        local taken = DiseaseGroup.take(group, 10)
+        test_DiseaseGroup_invariant(group)
+        test_DiseaseGroup_invariant(taken)
+        Assert.equals(DiseaseGroup_count_people(taken), 10)
+
+        DiseaseGroup.merge(group, taken)
+        Assert.equals(group, copy)
+
+        taken = DiseaseGroup.take(group, 0)
+        Assert.equals(DiseaseGroup_count_people(taken), 0)
+
+        local count = DiseaseGroup_count_people(group)
+        taken = DiseaseGroup.take(group, count + 350)
+        Assert.equals(DiseaseGroup_count_people(taken), count)
+    end
+)
+
+Tiristest.add_test_case(
+    "DiseaseGroup.take edge cases",
     "inhabitants|disease",
     function()
         local group = DiseaseGroup_construct_random_group()
@@ -170,24 +202,28 @@ Tiristest.add_test_case(
     end
 )
 
+local function test_GenderGroup_invariant(group)
+    Assert.not_nil(group[Gender.fale])
+    Assert.not_nil(group[Gender.ga])
+    Assert.not_nil(group[Gender.neutral])
+    Assert.not_nil(group[Gender.pachin])
+end
+
 Tiristest.add_test_case(
     "GenderGroup.new",
     "inhabitants|gender",
     function()
         for _, caste_id in pairs(TypeGroup.all_castes) do
-            local gender_group = GenderGroup.new(10, caste_id)
-            Assert.equals(Tbl.sum(gender_group), 10)
+            local group = GenderGroup.new(10, caste_id)
+            Assert.equals(Tbl.sum(group), 10)
 
-            gender_group = GenderGroup.new(3, caste_id)
-            Assert.equals(Tbl.sum(gender_group), 3)
+            group = GenderGroup.new(3, caste_id)
+            Assert.equals(Tbl.sum(group), 3)
 
-            gender_group = GenderGroup.new(0, caste_id)
-            Assert.equals(Tbl.sum(gender_group), 0)
+            group = GenderGroup.new(0, caste_id)
+            Assert.equals(Tbl.sum(group), 0)
 
-            Assert.not_nil(gender_group[Gender.fale])
-            Assert.not_nil(gender_group[Gender.ga])
-            Assert.not_nil(gender_group[Gender.neutral])
-            Assert.not_nil(gender_group[Gender.pachin])
+            test_GenderGroup_invariant(group)
         end
     end
 )
@@ -196,23 +232,21 @@ Tiristest.add_test_case(
     "GenderGroup.merge",
     "inhabitants|gender",
     function()
-        local gender_group = GenderGroup.new(10, Type.clockwork)
-        local other_gender_group = GenderGroup.new(20, Type.clockwork)
-        GenderGroup.merge(gender_group, other_gender_group)
+        local group = GenderGroup.new(10, Type.clockwork)
+        local other_group = GenderGroup.new(20, Type.clockwork)
+        GenderGroup.merge(group, other_group)
 
-        Assert.equals(Tbl.sum(gender_group), 30)
-        Assert.equals(Tbl.sum(other_gender_group), 0)
+        Assert.equals(Tbl.sum(group), 30)
+        Assert.equals(Tbl.sum(other_group), 0)
 
-        Assert.not_nil(other_gender_group[Gender.fale])
-        Assert.not_nil(other_gender_group[Gender.ga])
-        Assert.not_nil(other_gender_group[Gender.neutral])
-        Assert.not_nil(other_gender_group[Gender.pachin])
+        test_GenderGroup_invariant(group)
+        test_GenderGroup_invariant(other_group)
 
-        gender_group = GenderGroup.new(10, Type.clockwork)
-        other_gender_group = GenderGroup.new(20, Type.clockwork)
-        GenderGroup.merge(gender_group, other_gender_group, true)
+        group = GenderGroup.new(10, Type.clockwork)
+        other_group = GenderGroup.new(20, Type.clockwork)
+        GenderGroup.merge(group, other_group, true)
 
-        Assert.equals(Tbl.sum(other_gender_group), 20)
+        Assert.equals(Tbl.sum(other_group), 20)
     end
 )
 
@@ -220,24 +254,32 @@ Tiristest.add_test_case(
     "GenderGroup.take",
     "inhabitants|gender",
     function()
-        local gender_group = GenderGroup.new(50, Type.clockwork)
-        local copy = Tbl.copy(gender_group)
+        for _ = 1, 20 do
+            local total = math.random(100, 200)
+            local to_take = math.random(10, 50)
 
-        local taken = GenderGroup.take(gender_group, 10)
+            local group = GenderGroup.new(total, TypeGroup.all_castes[#TypeGroup.all_castes])
+            local copy = Tbl.copy(group)
 
-        Assert.equals(Tbl.sum(taken), 10)
+            local taken = GenderGroup.take(group, to_take, total)
+            Assert.equals(Tbl.sum(taken), to_take)
 
-        GenderGroup.merge(gender_group, taken)
-        Assert.equals(copy, gender_group)
+            GenderGroup.merge(group, taken)
+            Assert.equals(copy, group)
+        end
+    end
+)
 
-        taken = GenderGroup.take(gender_group, 0)
+Tiristest.add_test_case(
+    "GenderGroup.take edge cases",
+    "inhabitants|gender",
+    function()
+        local group = GenderGroup.new(50, TypeGroup.all_castes[#TypeGroup.all_castes])
+        local taken = GenderGroup.take(group, 0)
         Assert.equals(Tbl.sum(taken), 0)
-        Assert.not_nil(taken[Gender.fale])
-        Assert.not_nil(taken[Gender.ga])
-        Assert.not_nil(taken[Gender.neutral])
-        Assert.not_nil(taken[Gender.pachin])
+        test_GenderGroup_invariant(taken)
 
-        taken = GenderGroup.take(gender_group, 100)
+        taken = GenderGroup.take(group, 100)
         Assert.equals(Tbl.sum(taken), 50)
     end
 )

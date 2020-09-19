@@ -142,8 +142,8 @@ DiseaseGroup.healthy_entry = 1
 DiseaseGroup.diseases = 1
 DiseaseGroup.count = 2
 
-function DiseaseGroup.new(count, disease)
-    return {{disease or HEALTHY, count}}
+function DiseaseGroup.new(count)
+    return {{HEALTHY, count}}
 end
 local new_disease_group = DiseaseGroup.new
 
@@ -191,42 +191,54 @@ function DiseaseGroup.remove_persons(group, count, diseases)
     end
 end
 
+local function empty_disease_group(group)
+    group[DiseaseGroup.healthy_entry][DiseaseGroup.count] = 0
+
+    for i = 2, #group do
+        group[i] = nil
+    end
+end
+
 function DiseaseGroup.merge(lh, rh, keep_rh)
     for i = 1, #rh do
         local entry = rh[i]
         add_persons(lh, entry[DiseaseGroup.count], entry[DiseaseGroup.diseases])
+    end
 
-        if not keep_rh then
-            DiseaseGroup.remove_persons(rh, entry[DiseaseGroup.count], entry[DiseaseGroup.diseases])
-        end
+    if not keep_rh then
+        empty_disease_group(rh)
     end
 end
 
-function DiseaseGroup.take(group, count, total_count)
+function DiseaseGroup.take(group, to_take, total_count)
     if not total_count then
         total_count = 0
         for i = 1, #group do
             total_count = total_count + group[i][DiseaseGroup.count]
         end
     end
+    to_take = min(to_take, total_count)
 
     local ret = new_disease_group(0)
-    local percentage = count / total_count
-    local taken = 0
 
-    for i = 1, #group do
-        local entry = group[i]
-        local current_count = entry[DiseaseGroup.count]
+    while to_take > 0 do
+        for i = 1, #group do
+            local entry = group[i]
+            local current_count = entry[DiseaseGroup.count]
 
-        local to_take
-        if count - taken < total_count - taken then
-            to_take = round(current_count * percentage)
-        else
-            to_take = current_count
+            local percentage_to_take = to_take / total_count
+            local current_take = min(current_count, ceil(percentage_to_take * current_count))
+
+            entry[DiseaseGroup.count] = current_count - current_take
+            add_persons(ret, current_take, entry[DiseaseGroup.diseases])
+
+            total_count = total_count - current_take
+            to_take = to_take - current_take
+
+            if to_take == 0 then
+                return ret
+            end
         end
-
-        entry[DiseaseGroup.count] = current_count - to_take
-        add_persons(ret, to_take, entry[DiseaseGroup.diseases])
     end
     remove_empty_disease_entries(group)
 
@@ -287,22 +299,27 @@ function AgeGroup.merge(lh, rh, keep_rh)
     end
 end
 
-function AgeGroup.take(group, count, total_count)
+function AgeGroup.take(group, to_take, total_count)
     total_count = total_count or Tirislib_Tables.sum(group)
+    to_take = min(to_take, total_count)
 
     local ret = {}
-    local percentage = count / total_count
-    local taken = 0
-    for age, current_count in pairs(group) do
-        local to_take
-        if count - taken < total_count - taken then
-            to_take = round(current_count * percentage)
-        else
-            to_take = current_count
-        end
 
-        ret[age] = to_take
-        group[age] = (to_take == current_count) and nil or (group[age] - to_take)
+    while to_take > 0 do
+        for age, current_count in pairs(group) do
+            local percentage_to_take = to_take / total_count
+            local current_take = min(current_count, ceil(percentage_to_take * current_count))
+
+            total_count = total_count - current_take
+            to_take = to_take - current_take
+
+            ret[age] = (ret[age] or 0) + current_take
+            group[age] = group[age] - current_take
+
+            if to_take == 0 then
+                return ret
+            end
+        end
     end
 
     return ret
@@ -311,6 +328,10 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant genders >>
 GenderGroup = {}
+
+function GenderGroup.empty_new()
+    return {0, 0, 0, 0}
+end
 
 function GenderGroup.new(count, caste)
     return dice_rolls(castes[caste].gender_distribution, count, 20)
@@ -326,22 +347,28 @@ function GenderGroup.merge(lh, rh, keep_rh)
     end
 end
 
-function GenderGroup.take(group, count, total_count)
+function GenderGroup.take(group, to_take, total_count)
     total_count = total_count or Tirislib_Tables.sum(group)
+    to_take = min(to_take, total_count)
 
-    local ret = {}
-    local percentage = count / total_count
-    local taken = 0
-    for gender, current_count in pairs(group) do
-        local to_take
-        if count - taken < total_count - taken then
-            to_take = round(current_count * percentage)
-        else
-            to_take = current_count
+    local ret = GenderGroup.empty_new()
+
+    while to_take > 0 do
+        for gender = 1, #group do
+            local current_count = group[gender]
+            local percentage_to_take = to_take / total_count
+            local current_take = min(current_count, ceil(percentage_to_take * current_count))
+
+            ret[gender] = ret[gender] + current_take
+            group[gender] = group[gender] - current_take
+
+            total_count = total_count - current_take
+            to_take = to_take - current_take
+
+            if to_take == 0 then
+                return ret
+            end
         end
-
-        ret[gender] = to_take
-        group[gender] = group[gender] - to_take
     end
 
     return ret
@@ -442,9 +469,9 @@ function InhabitantGroup.take(group, count)
         group[EK.happiness],
         group[EK.health],
         group[EK.sanity],
-        DiseaseGroup.take(group, taken_count, existing_count),
-        GenderGroup.take(group, taken_count, existing_count),
-        AgeGroup.take(group, taken_count, existing_count)
+        DiseaseGroup.take(group[EK.diseases], taken_count, existing_count),
+        GenderGroup.take(group[EK.genders], taken_count, existing_count),
+        AgeGroup.take(group[EK.ages], taken_count, existing_count)
     )
 end
 
