@@ -525,11 +525,22 @@ function Tirislib_Tables.pick_n_random_keys(tbl, n)
     return ret
 end
 
-function Tirislib_Tables.sequence(start, finish)
+--- Returns an array with the given number sequence.
+--- @param start number
+--- @param finish number
+--- @param steps number|nil
+function Tirislib_Tables.sequence(start, finish, steps)
     local ret = {}
+    local i = 1
 
-    for i = 0, finish - start do
-        ret[i + 1] = start + i
+    steps = steps or 1
+    if finish < steps then
+        steps = min(steps, -steps)
+    end
+
+    for n = start, finish, steps do
+        ret[i] = n
+        i = i + 1
     end
 
     return ret
@@ -542,4 +553,29 @@ function Tirislib_Tables.get_inner_table(tbl, key)
     end
 
     return tbl[key]
+end
+local get_inner_table = Tirislib_Tables.get_inner_table
+
+--- Groups the tables inside the given table by the content of the given key.\
+--- In case an inner table doesn't have a value for the given key it gets added to the group of the default_key
+--- if one is given.
+--- @param tbl table
+--- @param key any
+--- @param default_key any|nil
+function Tirislib_Tables.group_by_key(tbl, key, default_key)
+    local ret = {}
+    local default_inner = default_key and get_inner_table(default_key)
+
+    for _, current in pairs(tbl) do
+        local value = current[key]
+
+        if value then
+            local result_inner = get_inner_table(ret, value)
+            result_inner[#result_inner + 1] = current
+        elseif default_inner then
+            default_inner[#default_inner + 1] = current
+        end
+    end
+
+    return ret
 end

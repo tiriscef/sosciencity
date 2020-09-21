@@ -48,11 +48,13 @@ local function log_assert_execution()
 end
 
 local function log_failed_assert(message)
+    local info = debug.getinfo(3, "Sl")
+
     table.insert(
         Tiristest.failed_asserts,
         {
             test_case = Tiristest.current_test,
-            error_message = message
+            error_message = string.format("%s, line %d: %s", info.source, info.currentline, message)
         }
     )
 end
@@ -76,11 +78,12 @@ local function get_logged_results()
     end
 
     local assert_messages = {}
-    for _, failed_assert in pairs(Tiristest.failed_asserts) do
-        table.insert(
-            test_messages,
-            string.format("In Test '%s' an assert failed: %s", failed_assert.test_case, failed_assert.error_message)
-        )
+    local grouped = Tirislib_Tables.group_by_key(Tiristest.failed_asserts, "test_case")
+    for test_name, failed_asserts in pairs(grouped) do
+        table.insert(assert_messages, string.format("In Test '%s':", test_name))
+        for _, failed_assert in pairs(failed_asserts) do
+            table.insert(assert_messages, failed_assert.error_message)
+        end
     end
 
     return Tirislib_String.join(
@@ -98,7 +101,7 @@ local function run_test(test_case, suppress_exceptions)
     log_test_execution()
 
     if suppress_exceptions then
-        local ok, error = pcall(test_case.fn)
+        local ok, error = xpcall(test_case.fn, debug.traceback)
 
         if not ok then
             log_failed_test(test_case, error)

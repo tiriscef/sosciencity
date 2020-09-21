@@ -77,6 +77,15 @@ if script.active_mods["sosciencity-debug"] then
             log(results)
         end
     )
+
+    commands.add_command(
+        "sosciencity-test-tiristest",
+        "",
+        function()
+            require("tests.testing")
+            game.print("tests.testing loaded")
+        end
+    )
 end
 
 ---------------------------------------------------------------------------------------------------
