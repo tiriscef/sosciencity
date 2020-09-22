@@ -325,6 +325,15 @@ function AgeGroup.take(group, to_take, total_count)
     return ret
 end
 
+function AgeGroup.shift(group, time)
+    local copy = Tirislib_Tables.copy(group)
+    Tirislib_Tables.empty(group)
+
+    for age, count in pairs(copy) do
+        group[age + time] = count
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant genders >>
 GenderGroup = {}

@@ -188,8 +188,6 @@ local pipecovers = pipecoverspictures()
 -- remove the shadows because they never seem to look appropriate
 for _, direction in pairs(pipecovers) do
     for i, layer in pairs(direction.layers) do
-        layer.priority = nil
-
         if layer.draw_as_shadow then
             direction.layers[i] = nil
         end

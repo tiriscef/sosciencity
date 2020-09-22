@@ -76,19 +76,24 @@ Tirislib_Entity.create {
     },
     working_visualisations = {
         {
+            constant_speed = true,
             animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier.png",
-                frame_count = 1,
+                filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-sheet.png",
+                frame_count = 60,
                 priority = "extra-high",
                 width = sprite_width * 32,
                 height = sprite_height * 32,
+                line_length = 3,
+                animation_speed = 12 / 60,
                 hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-hr.png",
-                    frame_count = 1,
+                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-sheet-hr.png",
+                    frame_count = 60,
                     priority = "extra-high",
                     width = sprite_width * 64,
                     height = sprite_height * 64,
-                    scale = 0.5
+                    scale = 0.5,
+                    line_length = 7,
+                    animation_speed = 12 / 60
                 }
             }
         }
@@ -105,25 +110,25 @@ Tirislib_Entity.create {
     fluid_boxes = {
         {
             pipe_covers = pipe_covers,
-            pipe_pictures = pipe_pictures,
+            pipe_picture = pipe_pictures,
             pipe_connections = {{position = {-2, 4}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
-            pipe_pictures = pipe_pictures,
+            pipe_picture = pipe_pictures,
             pipe_connections = {{position = {-2, -4}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
-            pipe_pictures = pipe_pictures,
+            pipe_picture = pipe_pictures,
             pipe_connections = {{position = {2, 4}}},
             production_type = "output"
         },
         {
             pipe_covers = pipe_covers,
-            pipe_pictures = pipe_pictures,
+            pipe_picture = pipe_pictures,
             pipe_connections = {{position = {2, -4}}},
             production_type = "output"
         }
