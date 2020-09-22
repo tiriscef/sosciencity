@@ -95,6 +95,30 @@ Tiristest.add_test_case(
     end
 )
 
+Tiristest.add_test_case(
+    "AgeGroup.shift",
+    "inhabitants|age",
+    function()
+        local group =
+            AgeGroup.random_new(
+            50,
+            function()
+                return math.random(1, 100)
+            end
+        )
+        local copy = Tirislib_Tables.copy(group)
+        local shift = math.random(1, 5)
+
+        AgeGroup.shift(group, shift)
+
+        Assert.equals(Tbl.sum(group), Tbl.sum(copy))
+
+        for age, count in pairs(copy) do
+            Assert.equals(group[age + shift], count)
+        end
+    end
+)
+
 local function test_DiseaseGroup_invariant(group)
     Assert.not_nil(group[DiseaseGroup.healthy_entry])
     Assert.equals(group[DiseaseGroup.healthy_entry][DiseaseGroup.diseases], {})
