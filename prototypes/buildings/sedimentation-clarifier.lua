@@ -100,7 +100,7 @@ Tirislib_Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-sedimentation-clarifier"},
-    energy_usage = "60kW",
+    energy_usage = "200kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",

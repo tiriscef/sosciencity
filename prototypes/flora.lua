@@ -7,7 +7,8 @@ local flora_items = {
     {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "avocado-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
+    {name = "avocado-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
+    {name = "zetorn-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
 }
 
 Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
@@ -57,10 +58,26 @@ local farmables = {
         arboretum = {},
         orangery = {}
     },
+    ["lemon"] = {
+        general = {
+            energy_required = 20,
+            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
+        },
+        arboretum = {},
+        orangery = {}
+    },
     ["olive"] = {
         general = {
             energy_required = 20,
             byproducts = {{type = "item", name = "olive-wood", amount = 1, probability = 0.2}}
+        },
+        arboretum = {},
+        orangery = {}
+    },
+    ["orange"] = {
+        general = {
+            energy_required = 20,
+            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
         },
         arboretum = {},
         orangery = {}
@@ -141,6 +158,14 @@ local farmables = {
             product_min = 40,
             product_max = 60
         }
+    },
+    ["zetorn"] = {
+        general = {
+            energy_required = 20,
+            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
+        },
+        arboretum = {},
+        orangery = {}
     }
 }
 
@@ -152,14 +177,17 @@ local farm_specific_defaults = {
         product_probability = 0.5,
         byproducts = {{type = "item", name = "leafage", amount = 1}}
     },
-    greenhouse = {},
+    greenhouse = {
+        unlock = "controlled-environment-farming"
+    },
     orangery = {
-        byproducts = {{type = "item", name = "leafage", amount = 1}}
+        byproducts = {{type = "item", name = "leafage", amount = 1}},
+        unlock = "controlled-environment-farming"
     }
 }
 
 -- generation code that should minimize dublications
-local attributes = {"product_probability"}
+local attributes = {"product_probability", "unlock"}
 local function merge_specification_details(lh, rh)
     for _, attribute in pairs(attributes) do
         lh[attribute] = lh[attribute] or rh[attribute] or nil

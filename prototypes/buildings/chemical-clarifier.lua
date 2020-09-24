@@ -105,7 +105,7 @@ Tirislib_Entity.create {
         type = "electric",
         usage_priority = "secondary-input",
         emissions_per_minute = 0.5,
-        drain = "0kW"
+        drain = "10kW"
     },
     fluid_boxes = {
         {

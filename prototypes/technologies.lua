@@ -399,3 +399,21 @@ Tirislib_Technology.create {
         time = 30
     }
 }
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "controlled-environment-farming",
+    icon = "__sosciencity-graphics__/graphics/technology/controlled-environment-farming.png",
+    icon_size = 128,
+    prerequisites = {"architecture-3"},
+    effects = {},
+    unit = {
+        count = 139,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
