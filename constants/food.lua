@@ -114,6 +114,42 @@ Food.values = {
         portion_size = 50,
         group = "grapes"
     },
+    ["orange"] = {
+        fat = 0.1,
+        carbohydrates = 25,
+        proteins = 1.0,
+        healthiness = 6,
+        food_category = "fruit",
+        taste_category = Taste.sweet,
+        taste_quality = 7,
+        luxury = 7,
+        portion_size = 50,
+        group = "orange"
+    },
+    ["lemon"] = {
+        fat = 0.6,
+        carbohydrates = 8.1,
+        proteins = 0.8,
+        healthiness = 6,
+        food_category = "fruit",
+        taste_category = Taste.sour,
+        taste_quality = 7,
+        luxury = 7,
+        portion_size = 50,
+        group = "lemon"
+    },
+    ["zetorn"] = {
+        fat = 1.2,
+        carbohydrates = 15.4,
+        proteins = 0.9,
+        healthiness = 6,
+        food_category = "alien-fruit",
+        taste_category = Taste.sweet,
+        taste_quality = 4,
+        luxury = 3,
+        portion_size = 50,
+        group = "zetorn"
+    },
     ["cherry"] = {
         fat = 0.4,
         carbohydrates = 12,

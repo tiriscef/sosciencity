@@ -100,12 +100,12 @@ Tirislib_Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-biological-clarifier"},
-    energy_usage = "60kW",
+    energy_usage = "280kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
         emissions_per_minute = 0.5,
-        drain = "0kW"
+        drain = "20kW"
     },
     fluid_boxes = {
         {
