@@ -16,9 +16,16 @@ data:extend {
     {
         type = "bool-setting",
         name = "sosciencity-penalty-module",
-        order = "aba",
+        order = "aaa",
         setting_type = "runtime-global",
         default_value = true
+    },
+    {
+        type = "double-setting",
+        name = "sosciencity-start-clockwork-points",
+        order = "aab",
+        setting_type = "runtime-global",
+        default_value = 1000
     },
     {
         type = "bool-setting",
