@@ -1,7 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 -- << development tools >>
-pcall(require, "__debugadapter__/debugadapter.lua")
-pcall(require, "__profiler__/profiler.lua")
+if script.active_mods["sosciencity-debug"] then
+    pcall(require, "__debugadapter__/debugadapter.lua")
+    pcall(require, "__profiler__/profiler.lua")
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
@@ -147,12 +149,12 @@ local function update_settings()
     global.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
 
     global.use_penalty = settings.global["sosciencity-penalty-module"].value
-    global.start_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
 
     global.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
     global.profanity = settings.global["sosciencity-allow-profanity"].value
 
     Communication.settings_update()
+    Inhabitants.settings_update()
 end
 
 local function set_locals()
@@ -166,8 +168,6 @@ local function init()
 
     Types.load()
 
-    update_settings()
-
     Scheduler.init()
     Neighborhood.init()
     Inhabitants.init()
@@ -176,6 +176,8 @@ local function init()
     Gui.init()
     Communication.init()
     Entity.init()
+
+    update_settings()
 
     set_locals()
     global.last_update = game.tick

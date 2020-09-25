@@ -65,6 +65,7 @@ local set_binary_techs = Technologies.set_binary_techs
 
 local floor = math.floor
 local ceil = math.ceil
+local round = Tirislib_Utils.round
 local sqrt = math.sqrt
 local max = math.max
 local min = math.min
@@ -130,6 +131,13 @@ end
 --- Sets local references during on_load
 function Inhabitants.load()
     set_locals()
+end
+
+function Inhabitants.settings_update()
+    local new_start_points = settings.global["sosciencity-start-clockwork-points"].value
+    local old_start_points = global.start_clockwork_points or 0
+    global.caste_points[Type.clockwork] = global.caste_points[Type.clockwork] - old_start_points + new_start_points
+    global.start_clockwork_points = new_start_points
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -266,7 +274,7 @@ local function get_immigrant_age()
     local r1 = random() ^ 2
     local r2 = (random() < 0.5) and 1 or -1
 
-    return 50 + r1 * r2 * 30
+    return round(50 + r1 * r2 * 30)
 end
 
 --- Returns a new AgeGroup table with random ages.
@@ -314,7 +322,7 @@ function AgeGroup.take(group, to_take, total_count)
             to_take = to_take - current_take
 
             ret[age] = (ret[age] or 0) + current_take
-            group[age] = group[age] - current_take
+            group[age] = (current_count ~= current_take) and current_count - current_take or nil
 
             if to_take == 0 then
                 return ret
@@ -419,7 +427,7 @@ function InhabitantGroup.new_immigrant_group(caste, count)
         [EK.health] = DEFAULT_HEALTH,
         [EK.sanity] = DEFAULT_SANITY,
         [EK.diseases] = new_disease_group(count),
-        [EK.genders] = GenderGroup.new(caste, count),
+        [EK.genders] = GenderGroup.new(count, caste),
         [EK.ages] = AgeGroup.random_new(count, get_immigrant_age)
     }
 end
@@ -532,16 +540,13 @@ end
 local get_population_count = Inhabitants.get_population_count
 
 local function clockwork_bonus_no_penalty(effective_pop)
-    if not effective_pop then
-        effective_pop = caste_points[Type.clockwork] + global.start_clockwork_points
-    end
-    effective_pop = max(effective_pop, 0)
+    effective_pop = max(effective_pop or caste_points[Type.clockwork], 0)
 
     return floor(10 * sqrt(effective_pop / max(Register.get_machine_count(), 1)))
 end
 
 local function clockwork_bonus_with_penalty()
-    local clockwork_points = caste_points[Type.clockwork] + global.start_clockwork_points
+    local clockwork_points = caste_points[Type.clockwork]
     local machine_maintenance_costs = max(Register.get_machine_count(), 1) * 10
 
     return map_range(clockwork_points, 0, machine_maintenance_costs, 0, 80) +
@@ -1056,23 +1061,10 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration >>
-function Inhabitants.get_immigration_trend(delta_ticks, caste_id)
-    local pop = population[caste_id]
-
-    if pop > 0 then
-        -- TODO this method to get the average happiness doesn't work anymore because the meaning of effective population changed
-        local average_happiness = caste_points[caste_id] / population[caste_id]
-        return castes[caste_id].immigration_coefficient * delta_ticks * average_happiness
-    else
-        return castes[caste_id].immigration_coefficient * delta_ticks
-    end
-end
-local get_immigration_trend = Inhabitants.get_immigration_trend
-
 local function update_immigration(delta_ticks)
     for caste = 1, #immigration do
         if is_researched(caste) then
-            immigration[caste] = immigration[caste] + get_immigration_trend(delta_ticks, caste)
+            immigration[caste] = immigration[caste] + castes[caste].immigration_coefficient * delta_ticks
         end
     end
 end
@@ -1091,6 +1083,7 @@ function Inhabitants.migration_wave(immigration_port_details)
 
         local immigrants = InhabitantGroup.new_immigrant_group(caste, count_immigrated)
 
+        distribute_inhabitants(immigrants)
         Inhabitants.add_to_homeless_pool(immigrants)
     end
 end

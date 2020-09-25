@@ -4,6 +4,14 @@ require("lib.utils")
 local Assert = Tiristest.Assert
 local Tbl = Tirislib_Tables
 
+local function test_AgeGroup_invariant(group)
+    for age, count in pairs(group) do
+        Assert.is_integer(age)
+        Assert.unequal(count, 0)
+        Assert.is_positive(count)
+    end
+end
+
 Tiristest.add_test_case(
     "AgeGroup.new",
     "inhabitants|age",
@@ -26,23 +34,25 @@ Tiristest.add_test_case(
     "AgeGroup.random_new",
     "inhabitants|age",
     function()
-        local age_group =
+        local group =
             AgeGroup.random_new(
             5,
             function()
                 return 5
             end
         )
-        Assert.equals(age_group[5], 5)
+        Assert.equals(group[5], 5)
+        test_AgeGroup_invariant(group)
 
-        age_group =
+        group =
             AgeGroup.random_new(
             35,
             function()
                 return math.random(1, 100)
             end
         )
-        Assert.equals(Tbl.sum(age_group), 35)
+        Assert.equals(Tbl.sum(group), 35)
+        test_AgeGroup_invariant(group)
     end
 )
 
@@ -50,20 +60,21 @@ Tiristest.add_test_case(
     "AgeGroup.merge",
     "inhabitants|age",
     function()
-        local age_group = AgeGroup.new(10, 10)
-        local other_age_group = AgeGroup.new(20, 20)
-        AgeGroup.merge(age_group, other_age_group)
+        local group = AgeGroup.new(10, 10)
+        local other_group = AgeGroup.new(20, 20)
+        AgeGroup.merge(group, other_group)
 
-        Assert.equals(age_group[10], 10)
-        Assert.equals(age_group[20], 20)
-        Assert.equals(Tbl.sum(age_group), 30)
-        Assert.equals(Tbl.sum(other_age_group), 0)
+        Assert.equals(group[10], 10)
+        Assert.equals(group[20], 20)
+        Assert.equals(Tbl.sum(group), 30)
+        Assert.equals(Tbl.sum(other_group), 0)
+        test_AgeGroup_invariant(other_group)
 
-        age_group = AgeGroup.new(10, 10)
-        other_age_group = AgeGroup.new(20, 20)
-        AgeGroup.merge(age_group, other_age_group, true)
+        group = AgeGroup.new(10, 10)
+        other_group = AgeGroup.new(20, 20)
+        AgeGroup.merge(group, other_group, true)
 
-        Assert.equals(Tbl.sum(other_age_group), 20)
+        Assert.equals(Tbl.sum(other_group), 20)
     end
 )
 
@@ -71,27 +82,28 @@ Tiristest.add_test_case(
     "AgeGroup.take",
     "inhabitants|age",
     function()
-        local age_group =
+        local group =
             AgeGroup.random_new(
             50,
             function()
                 return math.random(1, 100)
             end
         )
-        local copy = Tbl.copy(age_group)
+        local copy = Tbl.copy(group)
 
-        local taken = AgeGroup.take(age_group, 10)
+        local taken = AgeGroup.take(group, 10)
 
         Assert.equals(Tbl.sum(taken), 10)
 
-        AgeGroup.merge(age_group, taken)
-        Assert.equals(copy, age_group)
+        AgeGroup.merge(group, taken)
+        Assert.equals(copy, group)
 
-        taken = AgeGroup.take(age_group, 0)
+        taken = AgeGroup.take(group, 0)
         Assert.equals(Tbl.sum(taken), 0)
 
-        taken = AgeGroup.take(age_group, 100)
+        taken = AgeGroup.take(group, 100)
         Assert.equals(Tbl.sum(taken), 50)
+        test_AgeGroup_invariant(group)
     end
 )
 
@@ -112,6 +124,7 @@ Tiristest.add_test_case(
         AgeGroup.shift(group, shift)
 
         Assert.equals(Tbl.sum(group), Tbl.sum(copy))
+        test_AgeGroup_invariant(group)
 
         for age, count in pairs(copy) do
             Assert.equals(group[age + shift], count)
