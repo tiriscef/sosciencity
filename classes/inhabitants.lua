@@ -65,10 +65,10 @@ local set_binary_techs = Technologies.set_binary_techs
 
 local floor = math.floor
 local ceil = math.ceil
-local round = Tirislib_Utils.round
 local sqrt = math.sqrt
 local max = math.max
 local min = math.min
+local map_range = Tirislib_Utils.map_range
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
 local dice_rolls = Tirislib_Utils.dice_rolls
@@ -532,17 +532,20 @@ end
 local get_population_count = Inhabitants.get_population_count
 
 local function clockwork_bonus_no_penalty(effective_pop)
-    effective_pop = effective_pop or caste_points[Type.clockwork]
+    if not effective_pop then
+        effective_pop = caste_points[Type.clockwork] + global.start_clockwork_points
+    end
+    effective_pop = max(effective_pop, 0)
 
     return floor(10 * sqrt(effective_pop / max(Register.get_machine_count(), 1)))
 end
 
 local function clockwork_bonus_with_penalty()
-    local effective_pop = caste_points[Type.clockwork]
-    local startup_costs = max(Register.get_machine_count(), 1) * 3
+    local clockwork_points = caste_points[Type.clockwork] + global.start_clockwork_points
+    local machine_maintenance_costs = max(Register.get_machine_count(), 1) * 10
 
-    return min(effective_pop / startup_costs, 1) * 80 +
-        clockwork_bonus_no_penalty(max(effective_pop - startup_costs, 0))
+    return map_range(clockwork_points, 0, machine_maintenance_costs, 0, 80) +
+        clockwork_bonus_no_penalty(clockwork_points - machine_maintenance_costs)
 end
 
 --- Gets the current Clockwork caste bonus.
