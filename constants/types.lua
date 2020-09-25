@@ -55,49 +55,57 @@ Types.definitions = {
         altmode_sprite = "clockwork-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.clockwork"}
     },
     [Type.orchid] = {
         altmode_sprite = "orchid-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.orchid"}
     },
     [Type.gunfire] = {
         altmode_sprite = "gunfire-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.gunfire"}
     },
     [Type.ember] = {
         altmode_sprite = "ember-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.ember"}
     },
     [Type.foundry] = {
         altmode_sprite = "foundry-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.foundry"}
     },
     [Type.gleam] = {
         altmode_sprite = "gleam-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.gleam"}
     },
     [Type.aurora] = {
         altmode_sprite = "aurora-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.aurora"}
     },
     [Type.plasma] = {
         altmode_sprite = "plasma-caste",
         subscriptions = TypeGroup.inhabitant_subscriptions,
         is_civil = true,
-        is_inhabited = true
+        is_inhabited = true,
+        localised_name = {"caste-name.plasma"}
     },
     [Type.market] = {
         localised_name = {"sosciencity-gui.market"},

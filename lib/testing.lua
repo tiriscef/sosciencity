@@ -174,10 +174,45 @@ function Assert.equals(lh, rh, message)
     end
 end
 
+function Assert.unequal(lh, rh, message)
+    log_assert_execution()
+
+    if equals(lh, rh) then
+        lh = get_string_representation(lh)
+        rh = get_string_representation(rh)
+
+        log_failed_assert(string.format(message or "%s == %s", lh, rh))
+    end
+end
+
 function Assert.not_nil(value, message)
     log_assert_execution()
 
     if value == nil then
         log_failed_assert(message or "value is nil")
+    end
+end
+
+function Assert.is_integer(value, message)
+    log_assert_execution()
+
+    if math.floor(value) ~= value then
+        log_failed_assert(string.format(message or "%d isn't an integer", value))
+    end
+end
+
+function Assert.is_positive(value, message)
+    log_assert_execution()
+
+    if value < 0 then
+        log_failed_assert(string.format(message or "%d isn't positive", value))
+    end
+end
+
+function Assert.is_negative(value, message)
+    log_assert_execution()
+
+    if value > 0 then
+        log_failed_assert(string.format(message or "%d isn't negative", value))
     end
 end
