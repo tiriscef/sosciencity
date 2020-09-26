@@ -3,5 +3,6 @@ Garbage = {}
 
 Garbage.values = {
     ["garbage"] = 1,
-    ["food-leftovers"] = 1
+    ["food-leftovers"] = 1,
+    ["slaughter-waste"] = 1.5
 }

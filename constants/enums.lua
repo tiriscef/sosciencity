@@ -114,6 +114,7 @@ EK.productivity_bonus = 102
 EK.has_penalty_module = 103
 
 -- general Custom Building related stuff
+--- performance of the custom building
 EK.performance = 150
 
 -- type specific stuff
@@ -179,6 +180,12 @@ EK.water_tiles = 500
 --- tree count in environment
 EK.tree_count = 600
 
+-- farms
+--- living biomass in this farm
+EK.biomass = 700
+--- currently cultivated species
+EK.species = 701
+
 --<< causes >>
 --- Enum table for destruction causes
 DestructionCause = {}
@@ -194,13 +201,6 @@ EmigrationCause = {}
 EmigrationCause.unknown = 0
 EmigrationCause.unhappy = 1
 EmigrationCause.homeless = 2
-
---- Enum table for new inhabitants
-NewInhabitantCause = {}
-
-NewInhabitantCause.unknown = 0
-NewInhabitantCause.immigration = 1
-NewInhabitantCause.birth = 2
 
 --- Enum table for dead inhabitants
 DeathCause = {}
