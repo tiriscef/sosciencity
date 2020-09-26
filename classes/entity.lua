@@ -9,6 +9,7 @@ Entity = {}
 -- local all the frequently called functions for supercalifragilisticexpialidocious performance gains
 local global
 local caste_bonuses
+local trees = Biology.trees
 local water_values = DrinkingWater.values
 
 local floor = math.floor
@@ -59,8 +60,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << beaconed machines >>
-
--- TODO guis for these guys
 local function update_machine(entry)
     set_beacon_effects(entry, caste_bonuses[Type.clockwork], 0, global.use_penalty)
 end
@@ -73,22 +72,44 @@ local function update_farm(entry)
 end
 Register.set_entity_updater(Type.farm, update_farm)
 
-local function update_orangery(entry)
-    local age = game.tick - entry[EK.tick_of_creation]
-    -- TODO balance the age productivity gain
+local function update_rocket_silo(entry)
+    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.aurora], global.use_penalty)
+end
+Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
+
+---------------------------------------------------------------------------------------------------
+-- << farms >>
+local function get_species(recipe)
+    -- TODO: a clever algorithm to get the species name from the recipe
+end
+
+local function species_change(entry, new_species)
+    entry[EK.species] = new_species
+    entry[EK.biomass] = 0
+end
+
+local function update_tree_farm(entry, delta_ticks)
+    local species = get_species(entry[EK.entity].get_recipe())
+
+    if species ~= entry[EK.species] then
+        species_change(entry, species)
+    end
+
+    if species then
+        local species_details = trees[species]
+        local growth = delta_ticks * species_details.growth_coefficient
+        entry[EK.biomass] = entry[EK.biomass] + growth
+    end
+
+    -- TODO some way to translate the biomass into a productivity value
     set_beacon_effects(
         entry,
         caste_bonuses[Type.clockwork],
-        caste_bonuses[Type.ember] + math.sqrt(age),
+        caste_bonuses[Type.ember],
         global.use_penalty
     )
 end
-Register.set_entity_updater(Type.orangery, update_orangery)
-
-local function update_silo(entry)
-    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.aurora], global.use_penalty)
-end
-Register.set_entity_updater(Type.rocket_silo, update_silo)
+Register.set_entity_updater(Type.orangery, update_tree_farm)
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>

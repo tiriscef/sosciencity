@@ -11,6 +11,7 @@ require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
 -- << runtime finals >>
+require("constants.biology")
 require("constants.castes")
 require("constants.colors")
 require("constants.diseases")
