@@ -67,11 +67,6 @@ Register.set_entity_updater(Type.assembling_machine, update_machine)
 Register.set_entity_updater(Type.furnace, update_machine)
 Register.set_entity_updater(Type.mining_drill, update_machine)
 
-local function update_farm(entry)
-    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.ember], global.use_penalty)
-end
-Register.set_entity_updater(Type.farm, update_farm)
-
 local function update_rocket_silo(entry)
     set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.aurora], global.use_penalty)
 end
@@ -79,16 +74,14 @@ Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
 
 ---------------------------------------------------------------------------------------------------
 -- << farms >>
-local function get_species(recipe)
-    -- TODO: a clever algorithm to get the species name from the recipe
-end
+local get_species = Biology.get_species
 
 local function species_change(entry, new_species)
     entry[EK.species] = new_species
     entry[EK.biomass] = 0
 end
 
-local function update_tree_farm(entry, delta_ticks)
+local function update_farm(entry, delta_ticks)
     local species = get_species(entry[EK.entity].get_recipe())
 
     if species ~= entry[EK.species] then
@@ -109,7 +102,7 @@ local function update_tree_farm(entry, delta_ticks)
         global.use_penalty
     )
 end
-Register.set_entity_updater(Type.orangery, update_tree_farm)
+Register.set_entity_updater(Type.farm, update_farm)
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>

@@ -33,7 +33,9 @@ Buildings.values = {
             castes = {Type.clockwork}
         }
     },
-    ["arboretum"] = {type = Type.farm},
+    ["arboretum"] = {
+        type = Type.farm
+    },
     ["architectural-office"] = {
         type = Type.manufactory,
         range = 50,
@@ -52,7 +54,9 @@ Buildings.values = {
             castes = {Types.clockwork}
         }
     },
-    ["greenhouse"] = {type = Type.farm},
+    ["greenhouse"] = {
+        type = Type.farm
+    },
     ["groundwater-pump"] = {
         type = Type.waterwell,
         range = 64
@@ -79,7 +83,9 @@ Buildings.values = {
         power_usage = 100,
         range = 50
     },
-    ["orangery"] = {Type.orangery},
+    ["orangery"] = {
+        Type.farm
+    },
     ["orchid-paradise"] = {
         Type.manufactory,
         workforce = {
