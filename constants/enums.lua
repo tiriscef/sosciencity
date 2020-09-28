@@ -282,3 +282,18 @@ Gender.neutral = 1
 Gender.fale = 2
 Gender.pachin = 3
 Gender.ga = 4
+
+--<< climate >>
+--- Enum table for temperatures
+Climate = {}
+
+Climate.hot = 1
+Climate.moderate = 2
+Climate.cold = 3
+
+--- Enum table for humidity
+Humidity = {}
+
+Humidity.humid = 1
+Humidity.moderate = 2
+Humidity.dry = 3

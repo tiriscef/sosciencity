@@ -8,11 +8,12 @@ local material_items = {
     {name = "mineral-wool"},
     {name = "rope"},
     {name = "feathers", sprite_variations = {name = "feather-pile", count = 4}},
+    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
+    {name = "ink"},
+    {name = "writing-paper", sprite_variations = {name = "writing-paper-pile", count = 4}},
     {name = "trap"},
     {name = "bird-trap"},
     {name = "fishing-net"},
-    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
-    {name = "ink"},
     {name = "bird-food"},
     {name = "fish-food"},
     {name = "carnivore-food"},
@@ -61,6 +62,18 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {name = "yarn", amount = 5}
     },
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "writing-paper",
+    product_amount = 10,
+    energy_required = 5,
+    category = "chemistry",
+    ingredients = {
+        {name = "tiriscefing-willow-wood", amount = 10}
+    },
+    themes = {{"paper_production", 1}},
     allow_productivity = true
 }
 

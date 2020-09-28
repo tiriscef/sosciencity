@@ -248,6 +248,11 @@ RG.ingredient_themes = {
             {type = "item", name = "iron-gear-wheel", amount = 1}
         }
     },
+    paper_production = {
+        [0] = {
+            {type = "fluid", name = "steam", amount = 200}
+        }
+    },
     piping = {
         [0] = {
             {type = "item", name = "pipe", amount = 10}
@@ -446,6 +451,7 @@ end
 --- **unlock:** technology that unlocks the recipe\
 --- **additional_fields:** other fields that should be set for the recipe\
 --- **allow_productivity:** bool
+--- **set_main_product:** bool (defaults to true)
 function RG.create(details)
     local product_prototype = get_product(details)
     local main_product = get_main_product_entry(product_prototype, details)
@@ -462,6 +468,10 @@ function RG.create(details)
         main_product = product_prototype.name,
         always_show_products = true
     }:create_difficulties()
+
+    if details.set_main_product == false then
+        recipe.main_product = ""
+    end
 
     -- theme defined
     RG.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
