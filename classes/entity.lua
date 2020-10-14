@@ -9,7 +9,7 @@ Entity = {}
 -- local all the frequently called functions for supercalifragilisticexpialidocious performance gains
 local global
 local caste_bonuses
-local trees = Biology.trees
+local flora = Biology.flora
 local water_values = DrinkingWater.values
 
 local floor = math.floor
@@ -43,6 +43,16 @@ end
 -- << general helper functions >>
 local function get_speed_from_performance(performance)
     return floor(100 * performance - 20)
+end
+
+local function multiply_percentages(...)
+    local ret = 1
+
+    for _, v in pairs({...}) do
+        ret = ret * (v / 100 + 1)
+    end
+
+    return floor((ret - 1) * 100)
 end
 
 local function set_crafting_machine_performance(entry, performance)
@@ -81,6 +91,15 @@ local function species_change(entry, new_species)
     entry[EK.biomass] = 0
 end
 
+local function update_flora(entry, species, delta_ticks)
+    local species_details = flora[species]
+
+    if species_details.persistent then
+        local growth = delta_ticks * species_details.growth_coefficient
+        entry[EK.biomass] = entry[EK.biomass] + growth
+    end
+end
+
 local function update_farm(entry, delta_ticks)
     local species = get_species(entry[EK.entity].get_recipe())
 
@@ -89,18 +108,11 @@ local function update_farm(entry, delta_ticks)
     end
 
     if species then
-        local species_details = trees[species]
-        local growth = delta_ticks * species_details.growth_coefficient
-        entry[EK.biomass] = entry[EK.biomass] + growth
+        update_flora(entry, species, delta_ticks)
     end
 
     -- TODO some way to translate the biomass into a productivity value
-    set_beacon_effects(
-        entry,
-        caste_bonuses[Type.clockwork],
-        caste_bonuses[Type.ember],
-        global.use_penalty
-    )
+    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.ember], global.use_penalty)
 end
 Register.set_entity_updater(Type.farm, update_farm)
 
