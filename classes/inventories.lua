@@ -7,7 +7,7 @@ Inventories = {}
     nothing
 ]]
 -- local often used functions for great performance gains
-local garbage_values = Garbage.values
+local garbage_values = ItemConstants.garbage_values
 
 local log_item = Communication.log_item
 
@@ -18,7 +18,14 @@ local chest = defines.inventory.chest
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
 function Inventories.get_chest_inventory(entry)
-    return entry[EK.entity].get_inventory(chest)
+    local inventory = entry[EK.chest_inventory]
+
+    if not inventory then
+        inventory = entry[EK.entity].get_inventory(chest)
+        entry[EK.chest_inventory] = inventory
+    end
+
+    return inventory
 end
 local get_chest_inventory = Inventories.get_chest_inventory
 
