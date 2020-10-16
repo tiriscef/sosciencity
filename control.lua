@@ -16,13 +16,13 @@ require("constants.castes")
 require("constants.colors")
 require("constants.diseases")
 require("constants.enums")
+require("constants.item-constants")
 require("constants.types")
 require("constants.food")
 require("constants.housing")
 require("constants.buildings")
 require("constants.drinking-water")
 require("constants.speakers")
-require("constants.garbage")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>

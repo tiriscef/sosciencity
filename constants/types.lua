@@ -23,8 +23,7 @@ TypeGroup.affected_by_clockwork = {
     Type.furnace,
     Type.rocket_silo,
     Type.mining_drill,
-    Type.farm,
-    Type.orangery
+    Type.waterwell
 }
 
 TypeGroup.inhabitant_subscriptions = {
@@ -177,7 +176,6 @@ Types.definitions = {
     [Type.rocket_silo] = {},
     [Type.mining_drill] = {},
     [Type.farm] = {},
-    [Type.orangery] = {},
     [Type.animal_farm] = {
         signature_color = Colors.brown
     },

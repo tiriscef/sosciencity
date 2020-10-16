@@ -68,6 +68,10 @@ local function set_crafting_machine_performance(entry, performance)
     end
 end
 
+local function get_maintainance_performance()
+    return 1 + (caste_bonuses[Type.clockwork] - (global.use_penalty and 80 or 0)) / 100
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << beaconed machines >>
 local function update_machine(entry)
@@ -81,6 +85,77 @@ local function update_rocket_silo(entry)
     set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.aurora], global.use_penalty)
 end
 Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
+
+---------------------------------------------------------------------------------------------------
+-- << composting >>
+local function create_composter(entry)
+    entry[EK.humus] = 0
+    entry[EK.composting_progress] = 0
+end
+Register.set_entity_creation_handler(Type.composter, create_composter)
+
+local compost_values = ItemConstants.compost_values
+local function analyze_composter_inventory(inventory)
+    local content = inventory.get_contents()
+    local item_count = 0
+    local item_type_count = 0
+    local compostable_items = {}
+
+    for name, count in pairs(content) do
+        if compost_values[name] then
+            item_count = item_count + count
+            item_type_count = item_type_count + 1
+            compostable_items[#compostable_items + 1] = name
+        end
+    end
+
+    return item_count, item_type_count, compostable_items
+end
+
+local function remove_composted_items(inventory, count, compostable_items)
+    Tirislib_Tables.shuffle(compostable_items)
+
+    local to_remove = count
+    for i = 1, #compostable_items do
+        to_remove = to_remove - Inventories.try_remove(inventory, compostable_items[i], count)
+        if to_remove == 0 then
+            break
+        end
+    end
+
+    return count - to_remove
+end
+
+local composting_coefficient = 1 / 400 / 600
+
+local function update_composter(entry, delta_ticks)
+    local inventory = Inventories.get_chest_inventory(entry)
+    local item_count, item_type_count, compostable_items = analyze_composter_inventory(inventory)
+
+    local progress = entry[EK.composting_progress]
+
+    progress = progress + item_count * item_type_count * delta_ticks * composting_coefficient
+
+    if progress >= 1 then
+        progress = progress - remove_composted_items(inventory, floor(progress), compostable_items)
+    end
+
+    entry[EK.composting_progress] = progress
+end
+Register.set_entity_updater(Type.composter, update_composter)
+
+local function update_composter_output(entry)
+    local inventory = Inventories.get_chest_inventory(entry)
+
+    for _, composter in Neighborhood.all_of_type(entry, Type.composter) do
+        local humus_amount = composter[EK.humus]
+        local to_output = floor(humus_amount)
+        local actual_output = Inventories.try_insert(inventory, "humus", to_output)
+
+        composter[EK.humus] = humus_amount - actual_output
+    end
+end
+Register.set_entity_updater(Type.composter_output, update_composter_output)
 
 ---------------------------------------------------------------------------------------------------
 -- << farms >>
@@ -277,7 +352,7 @@ Register.set_entity_updater(Type.water_distributer, update_water_distributer)
 local function update_waterwell(entry)
     -- +1 so it counts itself too
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    local performance = near_count ^ (-0.65)
+    local performance = near_count ^ (-0.65) * get_maintainance_performance()
     set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)

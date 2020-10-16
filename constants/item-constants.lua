@@ -1,9 +1,13 @@
---- Things that people don't like in their homes.
-Garbage = {}
+--- Item
+ItemConstants = {}
 
-Garbage.values = {
+ItemConstants.garbage_values = {
     ["garbage"] = 1,
     ["food-leftovers"] = 1,
     ["slaughter-waste"] = 1.5,
     ["sewage-sludge"] = 1.5
+}
+
+ItemConstants.compost_values = {
+    
 }

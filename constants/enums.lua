@@ -40,6 +40,9 @@ Type.farm = 1104
 Type.animal_farm = 1106
 Type.waterwell = 1107
 
+Type.composter = 1110
+Type.composter_output = 1111
+
 Type.turret = 2000
 Type.lab = 2001
 
@@ -83,8 +86,10 @@ EK.last_update = 5
 EK.tick_of_creation = 6
 --- table with (subentity_type, subentity)-pairs
 EK.subentities = 7
--- id of this entry's altmode sprite
+--- id of this entry's altmode sprite
 EK.altmode_sprite = 8
+--- chest inventory of this entry's entity
+EK.chest_inventory = 9
 
 -- neighborhood stuff
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs
@@ -184,6 +189,12 @@ EK.tree_count = 600
 EK.biomass = 700
 --- currently cultivated species
 EK.species = 701
+
+-- composter
+--- produced humus inside this composter
+EK.humus = 800
+--- progress toward the next composted item
+EK.composting_progress = 801
 
 --<< causes >>
 --- Enum table for destruction causes
