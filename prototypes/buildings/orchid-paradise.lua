@@ -14,7 +14,8 @@ Tirislib_RecipeGenerator.create {
     product = "orchid-paradise",
     themes = {{"building", 2}, {"lamp", 15}, {"window", 30}},
     default_theme_level = 2,
-    category = "sosciencity-architecture"
+    category = "sosciencity-architecture",
+    unlock = "orchid-caste"
 }
 
 Tirislib_Entity.create {

@@ -12,10 +12,14 @@ local foods = {
     {name = "bird-meat"},
     {name = "fish-meat"},
     {name = "alien-meat", sprite_variations = {name = "alien-meat", count = 2, include_icon = true}},
+    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
     {name = "nan-egg"},
     {name = "primal-egg"},
     {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
+    {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}},
     {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
+    {name = "ortrot-fruit", sprite_variations = {name = "ortrot-fruit-pile", count = 4}},
+    {name = "apple", sprite_variations = {name = "apple-pile", count = 4}},
     {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
     {name = "lemon", sprite_variations = {name = "lemon-pile", count = 3}},
     {name = "orange", sprite_variations = {name = "orange-pile", count = 3}},
@@ -53,7 +57,7 @@ for _, food in pairs(foods) do
         {"item-description." .. food.name},
         {"food-category." .. food_details.food_category},
         {"food-group." .. food_details.group},
-        {"taste-category." .. Food.taste_names[food_details.taste_category]},
+        Food.taste_names[food_details.taste_category],
         {"color-scale." .. taste, {"taste-scale." .. taste}},
         {"description.sos-details", food_details.taste_quality},
         {"color-scale." .. health, {"health-scale." .. health}},
@@ -73,21 +77,3 @@ Tirislib_Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"}
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
---[[
--- nightshades
-Tirislib_RecipeGenerator.create_agriculture_recipe("potato", 10):add_unlock("nightshades")
-Tirislib_RecipeGenerator.create_greenhouse_recipe("potato", 20):add_unlock("nightshades")
-
-Tirislib_RecipeGenerator.create_agriculture_recipe("tomato", 10):add_unlock("nightshades")
-Tirislib_RecipeGenerator.create_greenhouse_recipe("tomato", 20):add_unlock("nightshades")
-
-Tirislib_RecipeGenerator.create_agriculture_recipe("eggplant", 10):add_unlock("nightshades")
-Tirislib_RecipeGenerator.create_greenhouse_recipe("eggplant", 20):add_unlock("nightshades")
-
--- alien plants
-Tirislib_RecipeGenerator.create_agriculture_recipe("unnamed-fruit", 10)
-Tirislib_RecipeGenerator.create_greenhouse_recipe("unnamed-fruit", 20)
-
-Tirislib_RecipeGenerator.create_agriculture_recipe("fawoxylas", 10, {{type = "item", name = "tiriscefing-willow-wood", amount = 2}})
-Tirislib_RecipeGenerator.create_greenhouse_recipe("fawoxylas", 20, {{type = "item", name = "tiriscefing-willow-wood", amount = 3}})
-]]

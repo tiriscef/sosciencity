@@ -19,7 +19,7 @@ Tirislib_Recipe.create {
     name = "brainstorm",
     category = "handcrafting",
     enabled = true,
-    energy_required = 10,
+    energy_required = 5,
     ingredients = {},
     results = {
         {type = "item", name = "note", amount_min = 2, amount_max = 4}
@@ -56,7 +56,7 @@ Tirislib_Recipe.create {
     name = "write-essay",
     category = "handcrafting",
     enabled = false,
-    energy_required = 90,
+    energy_required = 10,
     ingredients = {},
     results = {
         {type = "item", name = "essay", amount = 1}
@@ -66,7 +66,7 @@ Tirislib_Recipe.create {
     subgroup = "sosciencity-ideas",
     order = "aab",
     main_product = ""
-}:add_unlock("ember-caste")
+}:add_unlock("orchid-caste")
 
 Tirislib_RecipeGenerator.create {
     product = "essay",
@@ -77,5 +77,5 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "phytofall-blossom", amount = 2}
     },
-    unlock = "ember-caste"
+    unlock = "orchid-caste"
 }

@@ -23,7 +23,7 @@ function Tirislib_Technology.get(name)
     end
 end
 
-function Tirislib_Technology.pairs()
+function Tirislib_Technology.iterate()
     local index, prototype
 
     local function _next()

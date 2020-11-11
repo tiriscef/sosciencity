@@ -21,7 +21,8 @@ Tirislib_RecipeGenerator.create {
     product_min = 80,
     product_max = 160,
     category = "sosciencity-groundwater-pump",
-    energy_required = 1
+    energy_required = 1,
+    unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {

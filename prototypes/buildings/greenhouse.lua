@@ -14,7 +14,8 @@ Tirislib_RecipeGenerator.create {
     product = "greenhouse",
     themes = {{"windows", 150}, {"piping", 20}, {"soil", 100}, {"machine", 5, 2}},
     default_theme_level = 4,
-    category = "sosciencity-architecture"
+    category = "sosciencity-architecture",
+    unlock = "controlled-environment-farming"
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}

@@ -27,7 +27,7 @@ function Tirislib_Fluid.get(name)
     end
 end
 
-function Tirislib_Fluid.pairs()
+function Tirislib_Fluid.iterate()
     local index, value
 
     local function _next()

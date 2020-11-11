@@ -62,10 +62,12 @@ Taste = {}
 Taste.bitter = 1
 Taste.neutral = 2
 Taste.salty = 3
-Taste.sour = 4
+Taste.acidic = 4
 Taste.spicy = 5
-Taste.sweet = 6
+Taste.fruity = 6
 Taste.umami = 7
+Taste.soily = 8
+Taste.weirdly_chemical = 9
 
 --<< entry keys >>
 --- Enum table for entry table keys.

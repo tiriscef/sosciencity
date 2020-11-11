@@ -35,16 +35,26 @@ end
 Gui.UNIQUE_PREFIX = "sosciencity-"
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
-local function get_bonus_string(caste_id)
+local function get_caste_bonus(caste_id)
     local bonus = global.caste_bonuses[caste_id]
     if caste_id == Type.clockwork and global.use_penalty then
         bonus = bonus - 80
     end
-    return format("%+d", bonus)
+    return floor(bonus)
 end
 
 local function get_reasonable_number(number)
     return format("%.1f", number)
+end
+
+local function display_integer_summand(number)
+    if number > 0 then
+        return format("[color=0,1,0]%+d[/color]", number)
+    elseif number < 0 then
+        return format("[color=1,0,0]%+d[/color]", number)
+    else -- number equals 0
+        return "[color=0.8,0.8,0.8]0[/color]"
+    end
 end
 
 local function get_summand_string(number)
@@ -499,10 +509,11 @@ local function add_caste_flow(container, caste_id)
         tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(caste_points[caste_id])}
     }
 
+    local caste_bonus = get_caste_bonus(caste_id)
     flow.add {
         type = "label",
         name = "caste-bonus",
-        caption = {"caste-bonus.show-" .. caste_name, get_bonus_string(caste_id)},
+        caption = {"caste-bonus.show-" .. caste_name, display_integer_summand(caste_bonus)},
         tooltip = {"caste-bonus." .. caste_name}
     }
 end
@@ -526,9 +537,10 @@ local function update_caste_flow(container, caste_id)
         get_reasonable_number(caste_points[caste_id])
     }
 
+    local caste_bonus = get_caste_bonus(caste_id)
     flow["caste-bonus"].caption = {
         "caste-bonus.show-" .. castes[caste_id].name,
-        get_bonus_string(caste_id)
+        display_integer_summand(caste_bonus)
     }
 end
 
@@ -925,8 +937,8 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         {"sosciencity-gui.taste"},
         {
             "sosciencity-gui.show-taste",
-            {"taste-category." .. Food.taste_names[caste.favored_taste]},
-            {"taste-category." .. Food.taste_names[caste.least_favored_taste]}
+            Food.taste_names[caste.favored_taste],
+            Food.taste_names[caste.least_favored_taste]
         }
     )
     add_kv_pair(
@@ -1030,6 +1042,17 @@ local function update_general_building_details(container, entry)
                 {"sosciencity-gui.not-working"}
         )
     end
+
+    local type_details = Types.definitions[entry[EK.type]]
+    if type_details.affected_by_clockwork then
+        local clockwork_value = get_caste_bonus(Type.clockwork)
+        set_kv_pair_value(
+            building_data,
+            "maintenance",
+            clockwork_value >= 0 and {"sosciencity-gui.display-good-maintenance", clockwork_value} or
+                {"sosciencity-gui.display-bad-maintenance", clockwork_value}
+        )
+    end
 end
 
 local function create_general_building_details(container, entry)
@@ -1093,6 +1116,10 @@ local function create_general_building_details(container, entry)
         create_data_list(tab, "workers")
     end
 
+    if type_details.affected_by_clockwork then
+        add_kv_pair(building_data, "maintenance", {"sosciencity-gui.maintenance"})
+    end
+
     update_general_building_details(container, entry)
 
     return tabbed_pane
@@ -1104,13 +1131,12 @@ local function update_waterwell_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    local performance = entry[EK.performance]
-
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
+    local competition_performance = Entity.get_waterwell_competition_performance(entry)
     set_kv_pair_value(
         building_data,
         "competition",
-        {"sosciencity-gui.show-waterwell-competition", near_count, display_percentage(performance)}
+        {"sosciencity-gui.show-waterwell-competition", near_count, display_percentage(competition_performance)}
     )
 end
 
@@ -1281,6 +1307,22 @@ local function get_nested_details_view(player)
 end
 
 local type_gui_specifications = {
+    [Type.mining_drill] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.assembling_machine] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.furnace] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.rocket_silo] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
     [Type.dumpster] = {
         creater = create_general_building_details,
         updater = update_general_building_details

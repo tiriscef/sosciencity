@@ -189,6 +189,10 @@ Tirislib_Recipe = {}
 -- lua is weird
 Tirislib_Recipe.__index = Tirislib_Recipe
 
+--- Class for arrays of items. Setter-functions can be called on them.
+Tirislib_RecipeArray = {}
+Tirislib_RecipeArray.__index = Tirislib_PrototypeArray.__index
+
 -- << getter functions >>
 function Tirislib_Recipe.get_by_name(name)
     return Tirislib_Prototype.get("recipe", name, Tirislib_Recipe)
@@ -207,7 +211,7 @@ function Tirislib_Recipe.get(name)
     end
 end
 
-function Tirislib_Recipe.pairs()
+function Tirislib_Recipe.iterate()
     local index, value
 
     local function _next()
@@ -220,6 +224,17 @@ function Tirislib_Recipe.pairs()
     end
 
     return _next, index, value
+end
+
+function Tirislib_Recipe.all()
+    local array = {}
+    setmetatable(array, Tirislib_RecipeArray)
+
+    for _, recipe in Tirislib_Recipe.iterate() do
+        array[#array + 1] = recipe
+    end
+
+    return array
 end
 
 -- << creation >>
@@ -259,30 +274,36 @@ function Tirislib_Recipe:has_difficulties()
     return Tirislib_Recipe.has_normal_difficulty(self) or Tirislib_Recipe.has_expensive_difficulty(self)
 end
 
-function Tirislib_Recipe:call_on_recipe_data(func, ...)
+function Tirislib_Recipe:call_on_recipe_data(fn, ...)
     if not Tirislib_Recipe.has_difficulties(self) then
-        func(self, ...)
+        return fn(self, ...)
     end
-    if Tirislib_Recipe.has_normal_difficulty(self) then
-        func(self.normal, ...)
-    end
-    if Tirislib_Recipe.has_expensive_difficulty(self) then
-        func(self.expensive, ...)
+    local has_normal = Tirislib_Recipe.has_normal_difficulty(self)
+    local has_expensive = Tirislib_Recipe.has_expensive_difficulty(self)
+
+    if has_normal then
+        if has_expensive then
+            return fn(self.normal, ...), fn(self.expensive, ...)
+        else
+            return fn(self.normal, ...)
+        end
+    else
+        return nil, fn(self.expensive, ...)
     end
 end
 
-function Tirislib_Recipe:call_on_normal_recipe_data(func, ...)
+function Tirislib_Recipe:call_on_normal_recipe_data(fn, ...)
     if not Tirislib_Recipe.has_difficulties(self) then
-        func(self, ...)
+        return fn(self, ...)
     end
     if Tirislib_Recipe.has_normal_difficulty(self) then
-        func(self.normal, ...)
+        return fn(self.normal, ...)
     end
 end
 
-function Tirislib_Recipe:call_on_expensive_recipe_data(func, ...)
+function Tirislib_Recipe:call_on_expensive_recipe_data(fn, ...)
     if Tirislib_Recipe.has_expensive_difficulty(self) then
-        func(self.expensive, ...)
+        return fn(self.expensive, ...)
     end
 end
 
@@ -430,62 +451,6 @@ function Tirislib_Recipe:create_difficulties()
     end
 
     return self
-end
-
-local function recipe_results_contain_item(recipe_data, item_name)
-    if recipe_data.result then
-        return recipe_data.result == item_name
-    elseif recipe_data.results then
-        for _, result in pairs(recipe_data.results) do
-            if result.type == "item" and (result.name == item_name or result[1] == item_name) then
-                return true
-            end
-        end
-        return false
-    end
-end
-
-function Tirislib_Recipe:results_contain_item(item_name)
-    if Tirislib_Recipe.has_normal_difficulty(self) then
-        return recipe_results_contain_item(self.normal, item_name)
-    elseif Tirislib_Recipe.has_expensive_difficulty(self) then
-        return recipe_results_contain_item(self.expensive, item_name)
-    else
-        return recipe_results_contain_item(self, item_name)
-    end
-end
-
-local function recipe_result_count(recipe_data, name)
-    if recipe_data.result then
-        if recipe_data.result == name then
-            return recipe_data.result_count or 1 -- factorio defaults to 1 if no result_count is specified
-        else
-            return 0
-        end
-    elseif recipe_data.results then
-        for _, result in pairs(recipe_data.results) do
-            if Tirislib_RecipeEntry.get_name(result) == name and Tirislib_RecipeEntry.get_type(result) then
-                return Tirislib_RecipeEntry.get_average_yield(result)
-            end
-        end
-        return 0 -- item doesn't occur in this table
-    end
-    error("Sosciencity found a recipe without a valid result:\n" .. serpent.block(recipe_data))
-end
-
-function Tirislib_Recipe:get_result_item_count(item_name)
-    if Tirislib_Recipe.has_difficulties(self) then
-        local normal_count, expensive_count
-        if Tirislib_Recipe.has_normal_difficulty(self) then
-            normal_count = recipe_result_count(self.normal, item_name)
-        end
-        if Tirislib_Recipe.has_expensive_difficulty(self) then
-            expensive_count = recipe_result_count(self.expensive, item_name)
-        end
-        return normal_count, expensive_count
-    else
-        return recipe_result_count(self, item_name)
-    end
 end
 
 local function convert_to_results_table(recipe_data)
@@ -821,6 +786,9 @@ local function multiply_ingredient_table_amounts(ingredients, multiplier)
 end
 
 function Tirislib_Recipe:multiply_ingredients(normal_multiplier, expensive_multiplier)
+    normal_multiplier = normal_multiplier or 1
+    expensive_multiplier = expensive_multiplier or 1
+
     if not Tirislib_Recipe.has_difficulties(self) then
         multiply_ingredient_table_amounts(self.ingredients, normal_multiplier)
     else
@@ -836,6 +804,8 @@ function Tirislib_Recipe:multiply_ingredients(normal_multiplier, expensive_multi
 end
 
 function Tirislib_Recipe:multiply_expensive_ingredients(multiplier)
+    multiplier = multiplier or 1
+
     if Tirislib_Recipe.has_expensive_difficulty(self) then
         multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
     end
@@ -903,12 +873,131 @@ function Tirislib_Recipe:floor_results()
     return self
 end
 
+local function transform_ingredient_entries(recipe_data, fn)
+    for _, entry in pairs(recipe_data.ingredients) do
+        fn(entry)
+    end
+end
+
+function Tirislib_Recipe:transform_ingredient_entries(fn)
+    Tirislib_Recipe.call_on_recipe_data(self, transform_ingredient_entries, fn)
+
+    return self
+end
+
+local function transform_result_entries(recipe_data, fn)
+    convert_to_results_table(recipe_data)
+
+    for _, entry in pairs(recipe_data.results) do
+        fn(entry)
+    end
+end
+
+function Tirislib_Recipe:transform_result_entries(fn)
+    Tirislib_Recipe.call_on_recipe_data(self, transform_result_entries, fn)
+
+    return self
+end
+
 function Tirislib_Recipe:allow_productivity_modules()
     Tirislib_Prototype.add_recipe_to_productivity_modules(self.name)
 
     return self
 end
 
+-- << analyze >>
+-- these functions often have the trouble of the recipe definitions having too many options and pitfalls
+-- keep difficulties in mind when using them
+local function results_contain(recipe_data, name, _type)
+    if recipe_data.results then
+        for _, entry in pairs(recipe_data.results) do
+            if Entries.get_type(entry) == "item" and Entries.get_name(entry) == name then
+                return true
+            end
+        end
+    end
+    if _type == "item" and recipe_data.result == name then
+        return true
+    end
+    return false
+end
+
+function Tirislib_Recipe:has_result(name, _type)
+    _type = _type or "item"
+
+    return Tirislib_Recipe.call_on_recipe_data(self, results_contain, name, _type)
+end
+
+local function get_result_count(recipe_data, name, _type)
+    if recipe_data.results then
+        for _, result in pairs(recipe_data.results) do
+            if Tirislib_RecipeEntry.get_name(result) == name and Tirislib_RecipeEntry.get_type(result) == _type then
+                return Tirislib_RecipeEntry.get_average_yield(result)
+            end
+        end
+        return 0
+    end
+    if _type == "item" and recipe_data.result == name then
+        return recipe_data.result_count or 1 -- factorio defaults to 1 if no result_count is specified
+    end
+
+    return 0
+end
+
+function Tirislib_Recipe:get_result_count(name, _type)
+    _type = _type or "item"
+
+    return Tirislib_Recipe.call_on_recipe_data(self, get_result_count, name, _type)
+end
+
+local function ingredients_contain(recipe_data, name, _type)
+    _type = _type or "item"
+
+    for _, entry in pairs(recipe_data.ingredients) do
+        if Entries.get_type(entry) == "item" and Entries.get_name(entry) == name then
+            return true
+        end
+    end
+    return false
+end
+
+function Tirislib_Recipe:has_ingredient(name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, ingredients_contain, name, _type)
+end
+
+-- << high level >>
+local function pair_ingredient_with_result(recipe_data, result, result_type, ingredient, ingredient_type, amount_fn)
+    local result_amount = get_result_count(recipe_data, result, result_type)
+    if result_amount == 0 then
+        return
+    end
+
+    local amount = amount_fn and amount_fn(result_amount) or result_amount
+    add_ingredient(
+        recipe_data,
+        {
+            type = ingredient_type,
+            name = ingredient,
+            amount = math.ceil(amount)
+        }
+    )
+end
+
+function Tirislib_Recipe:pair_result_with_ingredient(result, result_type, ingredient, ingredient_type, amount_fn)
+    Tirislib_Recipe.call_on_recipe_data(
+        self,
+        pair_ingredient_with_result,
+        result,
+        result_type,
+        ingredient,
+        ingredient_type,
+        amount_fn
+    )
+
+    return self
+end
+
+-- << meta stuff >>
 local meta = {}
 
 function meta:__call(name)

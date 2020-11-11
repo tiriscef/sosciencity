@@ -129,7 +129,7 @@ RG.ingredient_themes = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 2}
         },
-        [3] = {
+        [1] = {
             {type = "item", name = "steel-plate", amount = 2}
         }
     },
@@ -255,7 +255,12 @@ RG.ingredient_themes = {
     },
     piping = {
         [0] = {
-            {type = "item", name = "pipe", amount = 10}
+            {type = "item", name = "pipe", amount = 1}
+        }
+    },
+    plating = {
+        [0] = {
+            {type = "item", name = "iron-plate", amount = 1}
         }
     },
     soil = {
@@ -306,8 +311,6 @@ RG.result_themes = {
         }
     }
 }
-
-RG.expensive_multiplier = 1.5
 
 -- << generation >>
 --- Returns the entry in the theme definition that is the closest to the given level.
@@ -445,7 +448,7 @@ end
 --- **default_theme_level:** number\
 --- **ingredients:** array of IngredientPrototypes\
 --- **expensive_ingredients:** array of IngredientPrototypes (defaults to the ingredient field)\
---- **expensive_multiplier:** ingredient multiplier for expensive mode (defaults to a global value)\
+--- **expensive_multiplier:** ingredient multiplier for expensive mode\
 --- **energy_required:** energy_required field for the recipe (defaults to 0.5)\
 --- **expensive_energy_required:** energy_required field for the expensive recipe (defaults to energy_required)\
 --- **unlock:** technology that unlocks the recipe\
@@ -458,7 +461,7 @@ function RG.create(details)
 
     local recipe =
         Tirislib_Recipe.create {
-        name = details.name or Tirislib_Prototype.get_unique_name(product_prototype.name, "recipe"),
+        name = Tirislib_Prototype.get_unique_name(details.name or product_prototype.name, "recipe"),
         category = details.category or "crafting",
         enabled = true,
         energy_required = details.energy_required or 0.5,
@@ -481,7 +484,7 @@ function RG.create(details)
     recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
     recipe:add_result_range(details.byproducts, details.expensive_byproducts)
 
-    recipe:multiply_expensive_ingredients(details.expensive_multiplier or RG.expensive_multiplier)
+    recipe:multiply_expensive_ingredients(details.expensive_multiplier)
     recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)

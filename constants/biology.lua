@@ -70,5 +70,5 @@ for _, family in pairs({"flora"}) do
 end
 
 function Biology.get_species(recipe)
-    return species_lookup[recipe.name]
+    return recipe and species_lookup[recipe.name] or nil
 end
