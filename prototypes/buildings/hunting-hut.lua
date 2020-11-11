@@ -13,7 +13,8 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "hunting-hut",
     themes = {{"building", 3, 0}},
-    category = "sosciencity-architecture"
+    category = "sosciencity-architecture",
+    unlock = "clockwork-caste"
 }
 
 local shift = {0.35, -0.5}

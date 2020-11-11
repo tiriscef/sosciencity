@@ -29,7 +29,7 @@ function Tirislib_Entity.get(name)
     end
 end
 
-function Tirislib_Entity.pairs(prototype_type)
+function Tirislib_Entity.iterate(prototype_type)
     local index, value
 
     local function _next()

@@ -96,7 +96,7 @@ function Tirislib_Prototype.add_recipe_to_productivity_modules(recipe_name)
 end
 
 function Tirislib_Prototype.finish_productivity_modules()
-    for _, _module in Tirislib_Item.pairs("module") do
+    for _, _module in Tirislib_Item.iterate("module") do
         if _module.category == "productivity" and _module.limitation then
             Tirislib_Tables.merge(_module.limitation, Tirislib_Prototype.productivity_recipes)
         end

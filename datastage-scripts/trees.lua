@@ -2,7 +2,7 @@ if not settings.startup["sosciencity-modify-environment"].value then
     return
 end
 
-for _, tree in Tirislib_Entity.pairs("tree") do
+for _, tree in Tirislib_Entity.iterate("tree") do
     tree:add_mining_result {
         name = "fawoxylas",
         probability = 0.5,

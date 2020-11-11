@@ -42,6 +42,7 @@ TypeGroup.inhabitant_subscriptions = {
 --- **subscriptions:** types that this type subscribes to by default\
 --- **is_civil:** is this type is part of the soscietal infrastructure\
 --- **is_inhabited:** do people live in this entity\
+--- **affected_by_clockwork:** is this machine affected by the clockwork-maintainance-mechanic\
 --- **signature_color:** color for this entity, for displaying purposes\
 --- **localised_name:** localised name for this type\
 --- **localised_description:** localised description for this type
@@ -171,18 +172,37 @@ Types.definitions = {
         subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
-    [Type.assembling_machine] = {},
-    [Type.furnace] = {},
-    [Type.rocket_silo] = {},
-    [Type.mining_drill] = {},
+    [Type.assembling_machine] = {
+        localised_name = {"sosciencity-gui.machine"},
+        localised_description = {"sosciencity-gui.explain-machine"}
+    },
+    [Type.furnace] = {
+        localised_name = {"sosciencity-gui.machine"},
+        localised_description = {"sosciencity-gui.explain-machine"}
+    },
+    [Type.rocket_silo] = {
+        localised_name = {"sosciencity-gui.machine"},
+        localised_description = {"sosciencity-gui.explain-machine"}
+    },
+    [Type.mining_drill] = {
+        localised_name = {"sosciencity-gui.machine"},
+        localised_description = {"sosciencity-gui.explain-machine"}
+    },
     [Type.farm] = {},
     [Type.animal_farm] = {
         signature_color = Colors.brown
     },
     [Type.turret] = {},
-    [Type.lab] = {}
+    [Type.lab] = {
+        localised_name = {"sosciencity-gui.lab"},
+        localised_description = {"sosciencity-gui.explain-lab"}
+    }
 }
 local definitions = Types.definitions
+
+for _, type in pairs(TypeGroup.affected_by_clockwork) do
+    definitions[type].affected_by_clockwork = true
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>

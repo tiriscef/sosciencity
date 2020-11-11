@@ -14,7 +14,7 @@ Tirislib_Technology.create {
         }
     },
     unit = {
-        count = 10,
+        count = 9,
         ingredients = {
             {"automation-science-pack", 1}
         },
@@ -402,10 +402,26 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     type = "technology",
+    name = "open-environment-farming",
+    icon = "__sosciencity-graphics__/graphics/technology/open-environment-farming.png",
+    icon_size = 128,
+    prerequisites = {},
+    effects = {},
+    unit = {
+        count = 11,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 10
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
     name = "controlled-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/controlled-environment-farming.png",
     icon_size = 128,
-    prerequisites = {"architecture-3"},
+    prerequisites = {"open-environment-farming", "chemical-science-pack"},
     effects = {},
     unit = {
         count = 139,
@@ -415,5 +431,23 @@ Tirislib_Technology.create {
             {"chemical-science-pack", 1}
         },
         time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "animal-husbandry",
+    icon = "__sosciencity-graphics__/graphics/technology/animal-husbandry.png",
+    icon_size = 128,
+    prerequisites = {"architecture-3"},
+    effects = {},
+    unit = {
+        count = 151,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 15
     }
 }

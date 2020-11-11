@@ -1,12 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local flora_items = {
-    {name = "leafage", sprite_variations = {name = "leafage", count = 3, include_icon = true}},
+    {name = "leafage", sprite_variations = {name = "leafage", count = 3, include_icon = true, fuel_value = "200kJ", fuel_category = "chemical"}},
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "phytofall-blossom"},
     {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
+    {name = "ortrot-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "avocado-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
     {name = "zetorn-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
 }
@@ -20,32 +21,54 @@ Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 -- << farming recipes >>
 --- Table with (product, table of recipe specification) pairs
 local farmables = {
+    ["apple"] = {
+        general = {
+            energy_required = 30,
+            byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}}
+        },
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
+    },
     ["avocado"] = {
         general = {
             energy_required = 30,
             byproducts = {{type = "item", name = "avocado-wood", amount = 1, probability = 0.2}}
         },
-        arboretum = {},
-        orangery = {}
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
     },
     ["bell-pepper"] = {
         general = {
             energy_required = 100,
             unlock = "nightshades"
         },
-        agriculture = {},
-        greenhouse = {}
+        agriculture = {
+            category = "sosciencity-agriculture"
+        },
+        greenhouse = {
+            category = "sosciencity-greenhouse"
+        }
     },
     ["brutal-pumpkin"] = {
         general = {
             energy_required = 100
         },
         agriculture = {
+            category = "sosciencity-agriculture",
             product_min = 5,
             product_max = 50,
             product_probability = 0.5
         },
         greenhouse = {
+            category = "sosciencity-greenhouse",
             product_min = 40,
             product_max = 60
         }
@@ -55,32 +78,48 @@ local farmables = {
             energy_required = 20,
             byproducts = {{type = "item", name = "cherry-wood", amount = 1, probability = 0.2}}
         },
-        arboretum = {},
-        orangery = {}
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
     },
     ["lemon"] = {
         general = {
             energy_required = 20,
             byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
         },
-        arboretum = {},
-        orangery = {}
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
     },
     ["olive"] = {
         general = {
             energy_required = 20,
             byproducts = {{type = "item", name = "olive-wood", amount = 1, probability = 0.2}}
         },
-        arboretum = {},
-        orangery = {}
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
     },
     ["orange"] = {
         general = {
             energy_required = 20,
             byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
         },
-        arboretum = {},
-        orangery = {}
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
     },
     ["potato"] = {
         general = {
@@ -88,10 +127,12 @@ local farmables = {
             unlock = "nightshades"
         },
         agriculture = {
+            category = "sosciencity-agriculture",
             product_min = 5,
             product_max = 50
         },
         greenhouse = {
+            category = "sosciencity-greenhouse",
             product_min = 40,
             product_max = 60
         }
@@ -102,10 +143,12 @@ local farmables = {
             unlock = "nightshades"
         },
         agriculture = {
+            category = "sosciencity-agriculture",
             product_min = 5,
             product_max = 50
         },
         greenhouse = {
+            category = "sosciencity-greenhouse",
             product_min = 40,
             product_max = 60
         }
@@ -116,10 +159,12 @@ local farmables = {
             unlock = "nightshades"
         },
         agriculture = {
+            category = "sosciencity-agriculture",
             product_min = 5,
             product_max = 50
         },
         greenhouse = {
+            category = "sosciencity-greenhouse",
             product_min = 40,
             product_max = 60
         }
@@ -129,16 +174,19 @@ local farmables = {
             energy_required = 60
         },
         agriculture = {
+            category = "sosciencity-agriculture",
             product_min = 10,
             product_max = 20
         },
         greenhouse = {
+            category = "sosciencity-greenhouse",
             product_min = 20,
             product_max = 30
         }
     },
     ["tiriscefing-willow-wood"] = {
         arboretum = {
+            category = "sosciencity-arboretum",
             energy_required = 20,
             product_probability = 1,
             product_min = 5,
@@ -151,10 +199,27 @@ local farmables = {
             energy_required = 100
         },
         agriculture = {
+            category = "sosciencity-agriculture",
             product_min = 5,
             product_max = 50
         },
         greenhouse = {
+            category = "sosciencity-greenhouse",
+            product_min = 40,
+            product_max = 60
+        }
+    },
+    ["weird-berry"] = {
+        general = {
+            energy_required = 80
+        },
+        agriculture = {
+            category = "sosciencity-agriculture",
+            product_min = 5,
+            product_max = 50
+        },
+        greenhouse = {
+            category = "sosciencity-greenhouse",
             product_min = 40,
             product_max = 60
         }
@@ -164,29 +229,35 @@ local farmables = {
             energy_required = 20,
             byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
         },
-        arboretum = {},
-        orangery = {}
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
     }
 }
 
 local farm_specific_defaults = {
-    agriculture = {
-        product_probability = 0.5
-    },
-    arboretum = {
+    ["sosciencity-agriculture"] = {
         product_probability = 0.5,
-        byproducts = {{type = "item", name = "leafage", amount = 1}}
+        unlock = "open-environment-farming"
     },
-    greenhouse = {
+    ["sosciencity-arboretum"] = {
+        product_probability = 0.5,
+        byproducts = {{type = "item", name = "leafage", amount = 1}},
+        unlock = "open-environment-farming"
+    },
+    ["sosciencity-greenhouse"] = {
         unlock = "controlled-environment-farming"
     },
-    orangery = {
+    ["sosciencity-orangery"] = {
         byproducts = {{type = "item", name = "leafage", amount = 1}},
         unlock = "controlled-environment-farming"
     }
 }
 
--- generation code that should minimize dublications
+-- generation code that should minimize dublications and enforce invariants
 local attributes = {"product_probability", "unlock"}
 local function merge_specification_details(lh, rh)
     for _, attribute in pairs(attributes) do
@@ -207,33 +278,25 @@ local function merge_with_general_product_specification(specification, product)
     end
 end
 
-local function add_main_theme(specification)
-    local main_theme = {"agriculture", specification.energy_required or 0.5, specification.level}
-    local themes = Tirislib_Tables.get_inner_table(specification, "themes")
-    themes[#themes + 1] = main_theme
-end
-
-local function merge_with_category_specification(specification, category)
-    local category_table = farm_specific_defaults[category]
+local function merge_with_category_specification(specification)
+    local category_table = farm_specific_defaults[specification.category]
     merge_specification_details(specification, category_table)
 end
 
-local function create_farming_recipe(product, category, specification)
+local function create_farming_recipe(product, specification)
     merge_with_general_product_specification(specification, product)
-    merge_with_category_specification(specification, category)
-    add_main_theme(specification)
+    merge_with_category_specification(specification)
 
     specification.product = product
-    specification.category = "sosciencity-" .. category
 
     Tirislib_RecipeGenerator.create(specification)
 end
 
 -- create the recipes
 for product, details in pairs(farmables) do
-    for category, specification in pairs(details) do
-        if category ~= "general" then
-            create_farming_recipe(product, category, specification)
+    for recipe_entry, specification in pairs(details) do
+        if recipe_entry ~= "general" then
+            create_farming_recipe(product, specification)
         end
     end
 end

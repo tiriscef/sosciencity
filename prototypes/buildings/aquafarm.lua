@@ -13,9 +13,12 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "aquafarm",
     themes = {{"tank", 2}, {"piping", 50}, {"building", 3}, {"machine", 5}, {"lamp", 20}},
-    default_theme_level = 3
+    default_theme_level = 3,
+    unlock = "animal-husbandry"
 }
 
+local sprite_height = 14
+local sprite_width = 12
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
@@ -35,18 +38,16 @@ Tirislib_Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm.png",
+                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet.png",
                 frame_count = 1,
-                priority = "extra-high",
-                width = 384,
-                height = 448,
+                width = sprite_width * 32,
+                height = sprite_height * 32,
                 shift = {0.0, -1.0},
                 hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-hr.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
                     frame_count = 1,
-                    priority = "extra-high",
-                    width = 768,
-                    height = 896,
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
                     scale = 0.5,
                     shift = {0.0, -1.0}
                 }
@@ -54,20 +55,45 @@ Tirislib_Entity.create {
             {
                 filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-shadowmap.png",
                 frame_count = 1,
-                priority = "extra-high",
-                width = 384,
-                height = 448,
+                width = sprite_width * 32,
+                height = sprite_height * 32,
                 shift = {0.0, -1.0},
                 draw_as_shadow = true,
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-shadowmap-hr.png",
                     frame_count = 1,
-                    priority = "extra-high",
-                    width = 768,
-                    height = 896,
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
                     scale = 0.5,
                     shift = {0.0, -1.0},
                     draw_as_shadow = true
+                }
+            }
+        }
+    },
+    working_visualisations = {
+        {
+            always_draw = true,
+            constant_speed = true,
+            animation = {
+                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet.png",
+                frame_count = 60,
+                priority = "extra-high",
+                width = sprite_width * 32,
+                height = sprite_height * 32,
+                shift = {0.0, -1.0},
+                line_length = 20,
+                animation_speed = 12 / 60,
+                hr_version = {
+                    filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
+                    frame_count = 60,
+                    priority = "extra-high",
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
+                    shift = {0.0, -1.0},
+                    line_length = 10,
+                    animation_speed = 12 / 60
                 }
             }
         }

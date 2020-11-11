@@ -13,7 +13,8 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "slaughter-pit",
     themes = {{"machine", 2}},
-    default_theme_level = 1
+    default_theme_level = 1,
+    unlock = "animal-husbandry"
 }
 
 Tirislib_Entity.create {

@@ -55,7 +55,7 @@ local function multiply_percentages(...)
     return floor((ret - 1) * 100)
 end
 
-local function set_crafting_machine_performance(entry, performance)
+local function set_crafting_machine_performance(entry, performance, productivity)
     entry[EK.performance] = performance
 
     local entity = entry[EK.entity]
@@ -64,7 +64,7 @@ local function set_crafting_machine_performance(entry, performance)
     entity.active = is_active
 
     if is_active then
-        set_beacon_effects(entry, get_speed_from_performance(performance), 0, true)
+        set_beacon_effects(entry, get_speed_from_performance(performance), productivity or 0, true)
     end
 end
 
@@ -166,28 +166,36 @@ local function species_change(entry, new_species)
     entry[EK.biomass] = 0
 end
 
-local function update_flora(entry, species, delta_ticks)
-    local species_details = flora[species]
-
-    if species_details.persistent then
-        local growth = delta_ticks * species_details.growth_coefficient
-        entry[EK.biomass] = entry[EK.biomass] + growth
-    end
+local function biomass_to_productivity(biomass)
+    return floor(biomass ^ 0.2)
 end
 
+-- put an alias in the global table so the gui can get this value
+Entity.biomass_to_productivity = biomass_to_productivity
+
 local function update_farm(entry, delta_ticks)
-    local species = get_species(entry[EK.entity].get_recipe())
+    local entity = entry[EK.entity]
+    local species_name = get_species(entity.get_recipe())
 
-    if species ~= entry[EK.species] then
-        species_change(entry, species)
+    local productivity = caste_bonuses[Type.ember]
+    local performance = 1
+
+    if species_name ~= entry[EK.species] then
+        species_change(entry, species_name)
     end
 
-    if species then
-        update_flora(entry, species, delta_ticks)
+    if species_name then
+        local species_details = flora[species_name]
+
+        if species_details.persistent then
+            local biomass = entry[EK.biomass] + delta_ticks * species_details.growth_coefficient
+            entry[EK.biomass] = biomass
+
+            productivity = multiply_percentages(productivity, floor(biomass ^ 0.2))
+        end
     end
 
-    -- TODO some way to translate the biomass into a productivity value
-    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.ember], global.use_penalty)
+    set_crafting_machine_performance(entry, performance, productivity)
 end
 Register.set_entity_updater(Type.farm, update_farm)
 
@@ -349,10 +357,16 @@ Register.set_entity_updater(Type.water_distributer, update_water_distributer)
 
 ---------------------------------------------------------------------------------------------------
 -- << waterwell >>
-local function update_waterwell(entry)
+local function get_waterwell_competition_performance(entry)
     -- +1 so it counts itself too
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    local performance = near_count ^ (-0.65) * get_maintainance_performance()
+    return near_count ^ (-0.65)
+end
+
+Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
+
+local function update_waterwell(entry)
+    local performance = get_waterwell_competition_performance(entry) * min(1, get_maintainance_performance())
     set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)

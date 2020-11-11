@@ -8,16 +8,15 @@ local material_items = {
     {name = "mineral-wool"},
     {name = "rope"},
     {name = "feathers", sprite_variations = {name = "feather-pile", count = 4}},
-    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
     {name = "ink"},
     {name = "writing-paper", sprite_variations = {name = "writing-paper-pile", count = 4}},
-    {name = "trap"},
-    {name = "bird-trap"},
-    {name = "fishing-net"},
-    {name = "bird-food"},
-    {name = "fish-food"},
-    {name = "carnivore-food"},
-    {name = "herbivore-food"},
+    {name = "trap", distinctions = {subgroup = "sosciencity-gathering"}},
+    {name = "bird-trap", distinctions = {subgroup = "sosciencity-gathering"}},
+    {name = "fishing-net", distinctions = {subgroup = "sosciencity-gathering"}},
+    {name = "bird-food", distinctions = {subgroup = "sosciencity-animal-food"}},
+    {name = "fish-food", distinctions = {subgroup = "sosciencity-animal-food"}},
+    {name = "carnivore-food", distinctions = {subgroup = "sosciencity-animal-food"}},
+    {name = "herbivore-food", distinctions = {subgroup = "sosciencity-animal-food"}},
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "sewage-sludge", sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}},
     {name = "ferrous-sulfate"}
@@ -58,7 +57,7 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "cloth",
-    energy_required = 10,
+    energy_required = 5,
     ingredients = {
         {name = "yarn", amount = 5}
     },
@@ -67,14 +66,26 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "writing-paper",
+    product_amount = 2,
+    energy_required = 5,
+    ingredients = {
+        {name = "tiriscefing-willow-wood", amount = 5}
+    },
+    allow_productivity = true,
+    unlock = "clockwork-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "writing-paper",
     product_amount = 10,
     energy_required = 5,
     category = "chemistry",
     ingredients = {
-        {name = "tiriscefing-willow-wood", amount = 10}
+        {name = "tiriscefing-willow-wood", amount = 5}
     },
     themes = {{"paper_production", 1}},
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "ember-caste"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -104,6 +115,26 @@ Tirislib_RecipeGenerator.create {
         {name = "lumber", amount = 2}
     },
     energy_required = 1,
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "bird-food",
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "fish-food",
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "carnivore-food",
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "herbivore-food",
     allow_productivity = true
 }
 

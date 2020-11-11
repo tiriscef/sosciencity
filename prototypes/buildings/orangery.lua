@@ -12,9 +12,10 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "orangery",
-    themes = {{"building", 5}, {"machine", 3}, {"piping", 10}, {"lamp", 20}, {"window", 50}},
+    themes = {{"building", 5}, {"machine", 3}, {"piping", 10}, {"lamp", 40}, {"window", 50}},
     default_theme_level = 4,
-    category = "sosciencity-architecture"
+    category = "sosciencity-architecture",
+    unlock = "controlled-environment-farming"
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}

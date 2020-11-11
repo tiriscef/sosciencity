@@ -13,7 +13,8 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "farm",
     themes = {{"soil", 50}, {"tank", 1}, {"piping", 10}, {"building", 1}},
-    default_theme_level = 0
+    default_theme_level = 0,
+    unlock = "open-environment-farming"
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}

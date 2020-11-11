@@ -29,7 +29,7 @@ function Tirislib_Item.get(name)
     end
 end
 
-function Tirislib_Item.pairs(item_type)
+function Tirislib_Item.iterate(item_type)
     local index, value
 
     local function _next()
@@ -42,6 +42,25 @@ function Tirislib_Item.pairs(item_type)
     end
 
     return _next, index, value
+end
+
+function Tirislib_Item.all(...)
+    local types = {...}
+    if #types == 0 then
+        -- return all items if no types are given
+        types = item_types
+    end
+
+    local array = {}
+    setmetatable(array, Tirislib_ItemArray)
+
+    for _, _type in pairs(types) do
+        for _, item in Tirislib_Item.iterate(_type) do
+            array[#array + 1] = item
+        end
+    end
+
+    return array
 end
 
 -- << creation >>

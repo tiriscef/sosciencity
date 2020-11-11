@@ -270,15 +270,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local carbohydrates = 0
     local proteins = 0
     local taste_quality = 0
-    local taste_counts = {
-        [Taste.bitter] = 0,
-        [Taste.neutral] = 0,
-        [Taste.salty] = 0,
-        [Taste.sour] = 0,
-        [Taste.spicy] = 0,
-        [Taste.sweet] = 0,
-        [Taste.umami] = 0
-    }
+    local taste_counts = Tirislib_Tables.new_array(#Taste, 0)
     local luxury = 0
     local favorite_taste = caste.favorite_taste
     local least_favored_taste = caste.least_favored_taste

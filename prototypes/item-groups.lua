@@ -65,6 +65,12 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-animal-food",
+        group = "sosciencity-production",
+        order = "adb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-slaughter",
         group = "sosciencity-production",
         order = "adc"
