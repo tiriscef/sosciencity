@@ -44,7 +44,12 @@ Buildings.values = {
             castes = {Type.clockwork, Type.gleam, Type.foundry}
         }
     },
-    ["farm"] = {type = Type.farm},
+    ["bloomhouse"] = {
+        type = Type.farm
+    },
+    ["farm"] = {
+        type = Type.farm
+    },
     ["fishing-hut"] = {
         type = Type.fishery,
         range = 30,

@@ -9,5 +9,9 @@ ItemConstants.garbage_values = {
 }
 
 ItemConstants.compost_values = {
-    
+    ["leafage"] = 1
+}
+
+ItemConstants.beverages = {
+    ["tiriscefing-whiskey"] = {}
 }

@@ -121,6 +121,14 @@ local farmables = {
             category = "sosciencity-orangery"
         }
     },
+    ["phytofall-blossom"] = {
+        bloomhouse = {
+            category = "sosciencity-bloomhouse",
+            energy_required = 20,
+            product_min = 10,
+            product_max = 30
+        }
+    },
     ["potato"] = {
         general = {
             energy_required = 100,
@@ -247,6 +255,9 @@ local farm_specific_defaults = {
         product_probability = 0.5,
         byproducts = {{type = "item", name = "leafage", amount = 1}},
         unlock = "open-environment-farming"
+    },
+    ["sosciencity-bloomhouse"] = {
+        unlock = "indoor-farming"
     },
     ["sosciencity-greenhouse"] = {
         unlock = "controlled-environment-farming"

@@ -25,6 +25,10 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-bloomhouse"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-chemical-clarifier"
     },
     {
