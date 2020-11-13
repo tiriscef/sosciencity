@@ -418,10 +418,27 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     type = "technology",
+    name = "indoor-growing",
+    icon = "__sosciencity-graphics__/graphics/technology/indoor-growing.png",
+    icon_size = 128,
+    prerequisites = {"open-environment-farming", "logistic-science-pack"},
+    effects = {},
+    unit = {
+        count = 56,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
     name = "controlled-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/controlled-environment-farming.png",
     icon_size = 128,
-    prerequisites = {"open-environment-farming", "chemical-science-pack"},
+    prerequisites = {"indoor-growing", "chemical-science-pack"},
     effects = {},
     unit = {
         count = 139,
@@ -448,6 +465,6 @@ Tirislib_Technology.create {
             {"logistic-science-pack", 1},
             {"chemical-science-pack", 1}
         },
-        time = 15
+        time = 30
     }
 }

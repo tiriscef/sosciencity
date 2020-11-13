@@ -313,9 +313,9 @@ Food.taste_names = {
     [Taste.neutral] = {"taste-category.neutral"},
     [Taste.salty] = {"taste-category.salty"},
     [Taste.soily] = {"taste-category.soily"},
-    [Taste.acidic] = {"taste-category.sour"},
+    [Taste.acidic] = {"taste-category.acidic"},
     [Taste.spicy] = {"taste-category.spicy"},
-    [Taste.fruity] = {"taste-category.sweet"},
+    [Taste.fruity] = {"taste-category.fruity"},
     [Taste.umami] = {"taste-category.umami"},
     [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"}
 }

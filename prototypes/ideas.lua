@@ -27,7 +27,7 @@ Tirislib_Recipe.create {
     icon = "__sosciencity-graphics__/graphics/icon/note.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas",
-    order = "aaa",
+    order = "00000",
     main_product = ""
 }
 
@@ -64,7 +64,7 @@ Tirislib_Recipe.create {
     icon = "__sosciencity-graphics__/graphics/icon/essay.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas",
-    order = "aab",
+    order = "00001",
     main_product = ""
 }:add_unlock("orchid-caste")
 
@@ -72,10 +72,66 @@ Tirislib_RecipeGenerator.create {
     product = "essay",
     product_amount = 7,
     category = "sosciencity-caste-orchid",
-    energy_required = 10,
-    expensive_energy_required = 20,
+    energy_required = 5,
+    expensive_energy_required = 10,
     ingredients = {
         {type = "item", name = "phytofall-blossom", amount = 2}
     },
+    expensive_multiplier = 1.5,
     unlock = "orchid-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "strategic-considerations",
+    product_amount = 7,
+    category = "sosciencity-caste-gunfire",
+    energy_required = 10,
+    expensive_energy_required = 20,
+    ingredients = {
+    },
+    unlock = "gunfire-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "sketchbook",
+    product_amount = 7,
+    category = "sosciencity-caste-ember",
+    energy_required = 10,
+    expensive_energy_required = 20,
+    ingredients = {
+    },
+    unlock = "ember-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "complex-scientific-data",
+    product_amount = 7,
+    category = "sosciencity-caste-foundry",
+    energy_required = 10,
+    expensive_energy_required = 20,
+    ingredients = {
+    },
+    unlock = "foundry-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "published-paper",
+    product_amount = 7,
+    category = "sosciencity-caste-gleam",
+    energy_required = 10,
+    expensive_energy_required = 20,
+    ingredients = {
+    },
+    unlock = "gleam-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "well-funded-scientific-thesis",
+    product_amount = 7,
+    category = "sosciencity-caste-aurora",
+    energy_required = 10,
+    expensive_energy_required = 20,
+    ingredients = {
+    },
+    unlock = "aurora-caste"
 }
