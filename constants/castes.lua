@@ -1,4 +1,5 @@
 require("constants.enums")
+require("constants.time")
 
 --- Things that define different kinds of people.
 Castes = {}
@@ -26,6 +27,16 @@ Castes.values = {
             [Gender.fale] = 25,
             [Gender.pachin] = 5,
             [Gender.ga] = 20
+        },
+        housing_preferences = {
+            ["compact"] = 1,
+            ["plain"] = 1,
+            ["individualistic"] = 1.5,
+            ["sheltered"] = 1,
+            ["technical"] = 2,
+            ["decorated"] = -2,
+            ["green"] = -1,
+            ["copy-paste"] = -2
         }
     },
     [Type.orchid] = {
@@ -50,7 +61,8 @@ Castes.values = {
             [Gender.fale] = 5,
             [Gender.pachin] = 60,
             [Gender.ga] = 20
-        }
+        },
+        housing_preferences = {}
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -74,6 +86,12 @@ Castes.values = {
             [Gender.fale] = 3,
             [Gender.pachin] = 3,
             [Gender.ga] = 3
+        },
+        housing_preferences = {
+            ["sheltered"] = 2,
+            ["plain"] = 1,
+            ["copy-paste"] = 1,
+            ["low"] = 0.5
         }
     },
     [Type.ember] = {
@@ -98,7 +116,8 @@ Castes.values = {
             [Gender.fale] = 35,
             [Gender.pachin] = 15,
             [Gender.ga] = 45
-        }
+        },
+        housing_preferences = {}
     },
     [Type.foundry] = {
         name = "foundry",
@@ -122,6 +141,8 @@ Castes.values = {
             [Gender.fale] = 30,
             [Gender.pachin] = 30,
             [Gender.ga] = 30
+        },
+        housing_preferences = {
         }
     },
     [Type.gleam] = {
@@ -146,6 +167,8 @@ Castes.values = {
             [Gender.fale] = 30,
             [Gender.pachin] = 30,
             [Gender.ga] = 30
+        },
+        housing_preferences = {
         }
     },
     [Type.aurora] = {
@@ -170,6 +193,8 @@ Castes.values = {
             [Gender.fale] = 25,
             [Gender.pachin] = 25,
             [Gender.ga] = 25
+        },
+        housing_preferences = {
         }
     },
     [Type.plasma] = {
@@ -194,31 +219,32 @@ Castes.values = {
             [Gender.fale] = 40,
             [Gender.pachin] = 20,
             [Gender.ga] = 30
+        },
+        housing_preferences = {
         }
     }
 }
 local castes = Castes.values
 
 --- The number of people that leave a house per minute if they are unhappy.
-Castes.emigration_coefficient = 0.8 / 3600. * -1
+Castes.emigration_coefficient = 0.8 / Time.minute * -1
 
 --- The number of general garbage an inhabitant produces per minute.
-Castes.garbage_coefficient = 0.1 / 3600.
+Castes.garbage_coefficient = 0.1 / Time.minute
 
 -- postprocessing
 for _, caste in pairs(Castes.values) do
     -- convert calorific demand to kcal per tick
-    -- a day has 25000 ticks according to the wiki
-    caste.calorific_demand = caste.calorific_demand / 25000.
+    caste.calorific_demand = caste.calorific_demand / Time.nauvis_day
 
-    caste.water_demand = caste.water_demand / 25000.
+    caste.water_demand = caste.water_demand / Time.nauvis_day
 
     -- convert power demand to J / tick: https://wiki.factorio.com/Types/Energy
-    caste.power_demand = caste.power_demand * 1000 / 60
+    caste.power_demand = caste.power_demand * 1000 / Time.second
 
     -- convert immigration coefficients from immigrants per minute
     -- to immigrants per tick
-    caste.immigration_coefficient = caste.immigration_coefficient / 3600.
+    caste.immigration_coefficient = caste.immigration_coefficient / Time.minute
 end
 
 local meta = {}
@@ -237,7 +263,16 @@ if script and script.active_mods["sosciencity-balancing"] then
         [4] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember},
         [5] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember, Type.foundry},
         [6] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember, Type.foundry, Type.gleam},
-        [7] = {Type.clockwork, Type.orchid, Type.plasma, Type.gunfire, Type.ember, Type.foundry, Type.gleam, Type.aurora}
+        [7] = {
+            Type.clockwork,
+            Type.orchid,
+            Type.plasma,
+            Type.gunfire,
+            Type.ember,
+            Type.foundry,
+            Type.gleam,
+            Type.aurora
+        }
     }
 
     for level, caste_array in pairs(tech_levels) do

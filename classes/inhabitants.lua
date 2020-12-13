@@ -17,11 +17,13 @@ Inhabitants = {}
         [caste_id]: float (number of immigrants in the next wave)
 
     global.free_houses: table
-        [caste_id]: table
-            [unit_number]: truthy (lookup)
+        [bool (improvised)]: table
+            [caste_id]: table
+                [unit_number]: truthy (lookup)
 
     global.next_houses: table
-        [caste_id]: shuffled array of unit_numbers
+        [bool (improvised)]: table
+            [caste_id]: shuffled array of unit_numbers
 
     global.fear: float (fear level)
 
@@ -62,6 +64,9 @@ local set_power_usage = Subentities.set_power_usage
 local has_power = Subentities.has_power
 
 local set_binary_techs = Technologies.set_binary_techs
+
+local Tirislib_Tables = Tirislib_Tables
+local Tirislib_Utils = Tirislib_Utils
 
 local floor = math.floor
 local ceil = math.ceil
@@ -207,6 +212,10 @@ local function empty_disease_group(group)
     end
 end
 
+--- Merges the right hand group into the left hand group. If keep_rh is falsy, then the right hand disease group object gets emptied.
+--- @param lh DiseaseGroup
+--- @param rh DiseaseGroup
+--- @param keep_rh boolean
 function DiseaseGroup.merge(lh, rh, keep_rh)
     for i = 1, #rh do
         local entry = rh[i]
@@ -218,12 +227,23 @@ function DiseaseGroup.merge(lh, rh, keep_rh)
     end
 end
 
+local function count_disease_group(group)
+    local total_count = 0
+
+    for i = 1, #group do
+        total_count = total_count + group[i][DiseaseGroup.count]
+    end
+
+    return total_count
+end
+
+--- Takes the given count of people from the given disease group and returns the disease group of the taken people.
+--- @param group DiseaseGroup
+--- @param to_take integer
+--- @param total_count integer|nil
 function DiseaseGroup.take(group, to_take, total_count)
     if not total_count then
-        total_count = 0
-        for i = 1, #group do
-            total_count = total_count + group[i][DiseaseGroup.count]
-        end
+        total_count = count_disease_group(group)
     end
     to_take = min(to_take, total_count)
 
@@ -251,6 +271,104 @@ function DiseaseGroup.take(group, to_take, total_count)
     remove_empty_disease_entries(group)
 
     return ret
+end
+
+local function get_or_create_disease_entry(group, diseases)
+    -- look for it
+    for i = 1, #group do
+        local entry = group[i]
+
+        if shallow_equal(entry[DiseaseGroup.diseases], diseases) then
+            return entry
+        end
+    end
+
+    -- create it
+    local entry = {diseases, 0}
+    group[#group + 1] = entry
+    return entry
+end
+
+local function get_disease_table_with(disease_table, disease)
+    local ret = Tirislib_Tables.copy(disease_table)
+    ret[#ret+1] = disease
+    table.sort(ret)
+    return ret
+end
+
+local function get_disease_table_without(disease_table, disease)
+    local ret = Tirislib_Tables.copy(disease_table)
+    Tirislib_Tables.remove_all(disease)
+    table.sort(ret)
+    return ret
+end
+
+--- Adds the given disease to the given count of people.
+--- @param group DiseaseGroup
+--- @param disease DiseaseID
+--- @param count integer
+function DiseaseGroup.add_disease(group, disease, count)
+    local order = Tirislib_Tables.sequence(1, #group)
+    shuffle(order)
+
+    for i = 1, #order do
+        local entry = group[i]
+        local current_diseases = entry[DiseaseGroup.diseases]
+
+        if not Tirislib_Tables.contains(current_diseases, disease) then
+            local current_count = entry[DiseaseGroup.count]
+            local to_make_sick = min(count, current_count)
+
+            -- remove them from this entry
+            entry[DiseaseGroup.count] = current_count - to_make_sick
+
+            -- add them to a new entry
+            local new_diseases = get_disease_table_with(current_diseases, disease)
+            local new_entry = get_or_create_disease_entry(group, new_diseases)
+            new_entry[DiseaseGroup.count] = new_entry[DiseaseGroup.count] + to_make_sick
+
+            count = count - to_make_sick
+            if count < 1 then
+                break
+            end
+        end
+    end
+
+    remove_empty_disease_entries(group)
+end
+
+--- Removes the given disease from the given count of people.
+--- @param group DiseaseGroup
+--- @param disease DiseaseID
+--- @param count integer
+function DiseaseGroup.remove_diseases(group, disease, count)
+    local order = Tirislib_Tables.sequence(1, #group)
+    shuffle(order)
+
+    for i = 1, #order do
+        local entry = group[i]
+        local current_diseases = entry[DiseaseGroup.diseases]
+
+        if Tirislib_Tables.contains(current_diseases, disease) then
+            local current_count = entry[DiseaseGroup.count]
+            local to_cure = min(count, current_count)
+
+            -- remove them from this entry
+            entry[DiseaseGroup.count] = current_count - to_cure
+
+            -- add them to a new entry
+            local new_diseases = get_disease_table_without(current_diseases, disease)
+            local new_entry = get_or_create_disease_entry(group, new_diseases)
+            new_entry[DiseaseGroup.count] = new_entry[DiseaseGroup.count] + to_cure
+
+            count = count - to_cure
+            if count < 1 then
+                break
+            end
+        end
+    end
+
+    remove_empty_disease_entries(group)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -884,7 +1002,7 @@ local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 ---------------------------------------------------------------------------------------------------
 -- << housing update >>
--- it's so complex, it got his own section
+-- it's so complex, it got its own section
 
 local function get_garbage_influence(entry)
     return max(get_garbage_value(entry) - 20, 0) * (-0.1)
@@ -897,8 +1015,12 @@ local function evaluate_housing(entry, happiness_summands, sanity_summands, cast
     happiness_summands[HappinessSummand.housing] = housing.comfort
     sanity_summands[SanitySummand.housing] = housing.comfort
 
-    happiness_summands[HappinessSummand.suitable_housing] =
-        (entry[EK.type] == housing.caste) and housing.caste_bonus or 0
+    local quality_assessment = 0
+    local preferences = caste.housing_preferences
+    for _, quality in pairs(housing.qualities) do
+        quality_assessment = quality_assessment + (preferences[quality] or 0)
+    end
+    happiness_summands[HappinessSummand.suitable_housing] = quality_assessment
 
     happiness_summands[HappinessSummand.garbage] = get_garbage_influence(entry)
 
@@ -936,6 +1058,16 @@ local function evaluate_neighborhood(entry, happiness_summands, health_summands)
     local animal_farm_count = Neighborhood.get_neighbor_count(entry, Type.animal_farm)
     happiness_summands[HappinessSummand.animal_farms] = -1 * animal_farm_count ^ 0.5
     health_summands[HealthSummand.animal_farms] = -2 * animal_farm_count ^ 0.7
+end
+
+local function update_ages(entry)
+    local last_shift = entry[EK.last_age_shift]
+    local shift = floor((game.tick - last_shift) / Time.nauvis_week)
+
+    if shift > 0 then
+        AgeGroup.shift(entry[EK.ages], shift)
+        entry[EK.last_age_shift] = last_shift + shift * Time.nauvis_week
+    end
 end
 
 --- Gets the trend toward the next inhabitant that moves out.
@@ -1050,6 +1182,7 @@ local function update_house(entry, delta_ticks)
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)
     update_happiness(entry, nominal_happiness, delta_ticks)
 
+    update_ages(entry)
     -- TODO diseases
 
     update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
@@ -1203,7 +1336,7 @@ function Inhabitants.update(current_tick)
     update_caste_bonuses()
     update_immigration(10)
 
-    if current_tick % 3600 == 0 then
+    if current_tick % Time.minute == 0 then
         update_homelessness()
     end
 end
@@ -1238,6 +1371,8 @@ function Inhabitants.create_house(entry)
     entry[EK.official_inhabitants] = 0
     entry[EK.caste_points] = 0
 
+    entry[EK.last_age_shift] = game.tick
+
     entry[EK.is_improvised] = get_housing_details(entry).is_improvised or false
 
     entry[EK.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
@@ -1261,6 +1396,7 @@ end
 
 function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source)
+    destination[EK.last_age_shift] = source[EK.last_age_shift]
 end
 
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
@@ -1272,7 +1408,7 @@ function Inhabitants.remove_house(entry, cause)
     local unit_number = entry[EK.unit_number]
     local caste_id = entry[EK.type]
     local improvised = entry[EK.is_improvised]
-    free_houses[entry[EK.type]][unit_number] = nil
+    free_houses[improvised][caste_id][unit_number] = nil
     Tirislib_Tables.remove_all(next_free_houses[improvised][caste_id], unit_number)
 
     if cause == DestructionCause.destroyed then

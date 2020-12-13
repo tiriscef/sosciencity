@@ -18,16 +18,15 @@ local chest = defines.inventory.chest
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
 function Inventories.get_chest_inventory(entry)
-    local inventory = entry[EK.chest_inventory]
-
-    if not inventory then
-        inventory = entry[EK.entity].get_inventory(chest)
-        entry[EK.chest_inventory] = inventory
-    end
-
-    return inventory
+    return entry[EK.entity].get_inventory(chest)
 end
 local get_chest_inventory = Inventories.get_chest_inventory
+
+--- Saves the contents of this entry's entity.
+--- @param entry Entry
+function Inventories.cache_contents(entry)
+    entry[EK.inventory_contents] = get_chest_inventory(entry).get_contents()
+end
 
 --- Tries to insert the given amount of the given item into the inventory and adds the inserted items to the production statistics.
 --- Returns the amount that was actually inserted.

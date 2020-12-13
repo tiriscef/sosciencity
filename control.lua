@@ -23,6 +23,7 @@ require("constants.housing")
 require("constants.buildings")
 require("constants.drinking-water")
 require("constants.speakers")
+require("constants.time")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
@@ -99,6 +100,7 @@ end
 ---@class Type
 ---@class InhabitantGroup
 ---@class DiseaseGroup
+---@class DiseaseID
 
 --[[
     Data this script stores in global

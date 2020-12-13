@@ -90,8 +90,10 @@ EK.tick_of_creation = 6
 EK.subentities = 7
 --- id of this entry's altmode sprite
 EK.altmode_sprite = 8
---- chest inventory of this entry's entity
-EK.chest_inventory = 9
+
+-- inventory stuff
+--- contents of this entry's entity's inventory for lazily evaluated inventories
+EK.inventory_contents = 30
 
 -- neighborhood stuff
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs
@@ -167,6 +169,8 @@ EK.diseases = 222
 EK.genders = 223
 --- the ages of the inhabitants
 EK.ages = 224
+--- the tick of the last age shift
+EK.last_age_shift = 225
 
 -- water distributer
 --- quality of the water this distributer provides

@@ -184,6 +184,48 @@ local data_details = {
         height = 3,
         tech_level = 1,
         main_entity = "khrushchyovka"
+    },
+    ["sheltered-house"] = {
+        picture = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-hr.png",
+                    priority = "high",
+                    width = 576,
+                    height = 448,
+                    shift = {0.0, 0.0},
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-hr.png",
+                        priority = "high",
+                        width = 576,
+                        height = 448,
+                        shift = {0.0, 0.0},
+                        scale = 0.5
+                    }
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-shadowmap-hr.png",
+                    priority = "high",
+                    width = 576,
+                    height = 448,
+                    shift = {0.0, 0.0},
+                    draw_as_shadow = true,
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-shadowmap-hr.png",
+                        priority = "high",
+                        width = 576,
+                        height = 448,
+                        shift = {0.0, 0.0},
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        width = 7,
+        height = 5,
+        tech_level = 1,
+        main_entity = "sheltered-house"
     }
 }
 
@@ -206,6 +248,17 @@ local function get_order(house)
     return string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
 end
 
+local function get_localised_qualities(house)
+    local ret = {""}
+
+    for _, quality in pairs(house.qualities) do
+        ret[#ret+1] = {"housing-quality." .. quality}
+        ret[#ret+1] = "  "
+    end
+
+    return ret
+end
+
 local function create_item(house_name, house, details)
     local item_prototype =
         Tirislib_Item.create {
@@ -223,7 +276,7 @@ local function create_item(house_name, house, details)
             house.room_count,
             {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
             {"description.sos-details", house.comfort},
-            {"caste-name." .. Castes(house.caste).name}
+            get_localised_qualities(house)
         }
     }
 
