@@ -333,7 +333,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << speakers >>
-local FOLLOWUP_DELAY = 2 * 60 -- 2 seconds
+local FOLLOWUP_DELAY = 2 * Time.second
 
 local function pick_speaker(weight_key)
     local weights = {}
@@ -422,7 +422,7 @@ function Communication.update(current_tick)
     flush_logs()
     log_population(current_tick)
 
-    if current_tick % 25200 == 7200 then -- every 7 minutes, first time after 2 minutes
+    if current_tick % (7 * Time.minute) == (2 * Time.minute) then -- every 7 minutes, first time after 2 minutes
         useless_banter()
     end
 end

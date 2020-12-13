@@ -183,7 +183,7 @@ local function create_data_list(container, name)
     return datatable
 end
 
-local function add_kv_pair(data_list, key, key_caption, value_caption, key_font, value_font)
+local function add_key_label(data_list, key, key_caption, key_font)
     local key_label =
         data_list.add {
         type = "label",
@@ -191,6 +191,10 @@ local function add_kv_pair(data_list, key, key_caption, value_caption, key_font,
         caption = key_caption
     }
     key_label.style.font = key_font or "default-bold"
+end
+
+local function add_kv_pair(data_list, key, key_caption, value_caption, key_font, value_font)
+    add_key_label(data_list, key, key_caption, key_font)
 
     local value_label =
         data_list.add {
@@ -205,6 +209,19 @@ local function add_kv_pair(data_list, key, key_caption, value_caption, key_font,
     if value_font then
         style.font = value_font
     end
+end
+
+local function add_kv_flow(data_list, key, key_caption, key_font)
+    add_key_label(data_list, key, key_caption, key_font)
+
+    local value_flow =
+        data_list.add {
+        type = "flow",
+        name = key,
+        direction = "vertical"
+    }
+
+    return value_flow
 end
 
 local function get_kv_pair(data_list, key)
@@ -646,12 +663,22 @@ local function add_caste_chooser_tab(tabbed_pane, details)
     end
 end
 
-local function add_empty_house_info_tab(tabbed_pane, details)
+local function add_empty_house_info_tab(tabbed_pane, house_details)
     local flow = create_tab(tabbed_pane, "house-info", {"sosciencity-gui.building-info"})
 
     local data_list = create_data_list(flow, "house-infos")
-    add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, details.room_count)
-    add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, display_comfort(details.comfort))
+    add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, house_details.room_count)
+    add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, display_comfort(house_details.comfort))
+
+    local qualities_flow = add_kv_flow(data_list, "qualities", {"sosciencity-gui.qualities"})
+    for _, quality in pairs(house_details.qualities) do
+        qualities_flow.add {
+            type = "label",
+            name = quality,
+            caption = {"housing-quality." .. quality},
+            tooltip = {"housing-quality-description." .. quality}
+        }
+    end
 end
 
 local function create_empty_housing_details(container, entry)
@@ -736,7 +763,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
 
     local capacity = Housing.get_capacity(entry)
-    local emigration = Inhabitants.get_emigration_trend(nominal_happiness, caste, 3600) -- 3600 ticks = 1 minute
+    local emigration = Inhabitants.get_emigration_trend(nominal_happiness, caste, Time.minute)
     local display_emigration = inhabitants > 0 and emigration < 0
 
     set_kv_pair_value(
@@ -782,17 +809,20 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_kv_pair_value(
         general_list,
         "calorific-demand",
-        {"sosciencity-gui.show-calorific-demand", get_reasonable_number(caste.calorific_demand * 3600 * inhabitants)}
+        {
+            "sosciencity-gui.show-calorific-demand",
+            get_reasonable_number(caste.calorific_demand * Time.minute * inhabitants)
+        }
     )
     set_kv_pair_value(
         general_list,
         "water-demand",
-        {"sosciencity-gui.show-water-demand", caste.water_demand * 3600 * inhabitants}
+        {"sosciencity-gui.show-water-demand", caste.water_demand * Time.minute * inhabitants}
     )
     set_kv_pair_value(
         general_list,
         "power-demand",
-        {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * 60 * inhabitants}
+        {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * Time.second * inhabitants}
     )
 
     update_occupations_list(flow, entry)
@@ -800,7 +830,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     update_genders_list(flow, entry)
 end
 
-local function add_housing_general_info_tab(tabbed_pane, entry)
+local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     local flow = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
 
     flow.style.vertical_spacing = 6
@@ -817,6 +847,30 @@ local function add_housing_general_info_tab(tabbed_pane, entry)
     add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
     add_kv_pair(data_list, "water-demand", {"sosciencity-gui.water-demand"})
     add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
+
+    local caste = castes[caste_id]
+    local housing_details = Housing.get(entry)
+
+    local qualities_flow = add_kv_flow(data_list, "qualities", {"sosciencity-gui.qualities"})
+    for _, quality in pairs(housing_details.qualities) do
+        local assessment = caste.housing_preferences[quality]
+
+        local caption =
+            assessment and {"", {"housing-quality." .. quality}, format(" (%+.1f)", assessment)} or
+            {"housing-quality." .. quality}
+
+        local quality_text =
+            qualities_flow.add {
+            type = "label",
+            name = quality,
+            caption = caption,
+            tooltip = {"housing-quality-description." .. quality}
+        }
+
+        if assessment then
+            quality_text.style.font_color = assessment > 0 and Colors.green or Colors.red
+        end
+    end
 
     create_separator_line(flow)
 
@@ -969,8 +1023,26 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
         caste_data,
         "power-demand",
         {"sosciencity-gui.power-demand"},
-        {"sosciencity-gui.show-power-demand", caste.power_demand / 1000 * 60} -- convert from J / tick to kW
+        {"sosciencity-gui.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
     )
+
+    local prefered_flow = add_kv_flow(caste_data, "prefered-qualities", {"sosciencity-gui.prefered-qualities"})
+    local disliked_flow = add_kv_flow(caste_data, "disliked-qualities", {"sosciencity-gui.disliked-qualities"})
+    for quality, assessment in pairs(caste.housing_preferences) do
+        local quality_flow
+        if assessment > 0 then
+            quality_flow = prefered_flow
+        else
+            quality_flow = disliked_flow
+        end
+
+        quality_flow.add {
+            type = "label",
+            name = quality,
+            caption = {"", {"housing-quality." .. quality}, format(" (%+.1f)", assessment)},
+            tooltip = {"housing-quality-description." .. quality}
+        }
+    end
 end
 
 local function update_housing_details(container, entry)
@@ -986,9 +1058,10 @@ local function create_housing_details(container, entry)
     local tabbed_pane = create_tabbed_pane(container)
     make_stretchable(tabbed_pane)
 
-    add_housing_general_info_tab(tabbed_pane, entry)
+    local caste_id = entry[EK.type]
+    add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_housing_factor_tab(tabbed_pane, entry)
-    add_caste_info_tab(tabbed_pane, entry[EK.type])
+    add_caste_info_tab(tabbed_pane, caste_id)
 end
 
 -- << buildings details views >>
@@ -1083,7 +1156,7 @@ local function create_general_building_details(container, entry)
 
     if building_details.power_usage then
         -- convert to kW
-        local power = get_reasonable_number(building_details.power_usage * 60 / 1000)
+        local power = get_reasonable_number(building_details.power_usage * Time.second / 1000)
         add_kv_pair(
             building_data,
             "power",
@@ -1094,7 +1167,7 @@ local function create_general_building_details(container, entry)
 
     if building_details.speed then
         -- convert to x / minute
-        local speed = get_reasonable_number(building_details.speed * 3600)
+        local speed = get_reasonable_number(building_details.speed * Time.minute)
         add_kv_pair(
             building_data,
             "speed",
@@ -1220,7 +1293,7 @@ local function update_immigration_port_details(container, entry)
             {
                 "",
                 floor(immigrants),
-                {"sosciencity-gui.migration", get_migration_string(castes[caste].immigration_coefficient * 3600)}
+                {"sosciencity-gui.migration", get_migration_string(castes[caste].immigration_coefficient * Time.minute)}
             }
         )
         set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))

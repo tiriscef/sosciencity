@@ -7,36 +7,42 @@ Housing.values = {
     ["test-house"] = {
         room_count = 200,
         comfort = 10,
-        caste = Type.clockwork, -- caste which likes this kind of housing
-        caste_bonus = 2
+        caste_bonus = 2,
+        qualities = {}
     },
     ["improvised-hut"] = {
         room_count = 4,
         comfort = 0,
-        caste = Type.clockwork,
         caste_bonus = 2,
         is_improvised = true,
-        one_room_per_inhabitant = true
+        one_room_per_inhabitant = true,
+        qualities = {"cheap", "individualistic"}
     },
     ["improvised-hut-2"] = {
         room_count = 4,
         comfort = 0,
-        caste = Type.clockwork,
         caste_bonus = 2,
         is_improvised = true,
-        one_room_per_inhabitant = true
+        one_room_per_inhabitant = true,
+        qualities = {"cheap", "individualistic"}
     },
     ["boring-brick-house"] = {
         room_count = 32,
         comfort = 5,
-        caste = Type.ember,
-        caste_bonus = 2
+        caste_bonus = 2,
+        qualities = {"cheap"}
     },
     ["khrushchyovka"] = {
         room_count = 25,
         comfort = 4,
-        caste = Type.clockwork,
-        caste_bonus = 4
+        caste_bonus = 4,
+        qualities = {"cheap"}
+    },
+    ["sheltered-house"] = {
+        room_count = 25,
+        comfort = 4,
+        caste_bonus = 4,
+        qualities = {"cheap"}
     }
 }
 local houses = Housing.values
@@ -87,6 +93,8 @@ do
 
             alternatives = Tirislib_Tables.array_to_lookup(house.alternatives)
         end
+
+        table.sort(house.qualities)
     end
 
     Tirislib_Tables.set_fields(houses, to_add)

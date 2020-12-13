@@ -333,6 +333,11 @@ end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
 
 ---------------------------------------------------------------------------------------------------
+-- << market >>
+Register.set_entity_creation_handler(Type.market, Inventories.cache_contents)
+Register.set_entity_updater(Type.market, Inventories.cache_contents)
+
+---------------------------------------------------------------------------------------------------
 -- << water distributer >>
 local function update_water_distributer(entry)
     local entity = entry[EK.entity]

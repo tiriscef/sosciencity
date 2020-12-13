@@ -123,12 +123,12 @@ local buildings = Buildings.values
 for _, details in pairs(Buildings.values) do
     -- convert power usages to J / tick
     if details.power_usage then
-        details.power_usage = details.power_usage * 1000 / 60.
+        details.power_usage = details.power_usage * 1000 / Time.second
     end
 
     -- convert speed from x / sec to x / tick
     if details.speed then
-        details.speed = details.speed / 60.
+        details.speed = details.speed / Time.second
     end
 end
 

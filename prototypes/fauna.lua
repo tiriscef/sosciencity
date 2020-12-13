@@ -52,10 +52,18 @@ local animals = {
         breeding_byproducts = {{name = "nan-egg", amount = 3}}
     },
     {
+        name = "smol-bonesnake",
+        size = 15,
+        bird = true,
+        probability = 0.1,
+        group_size = 5
+    },
+    {
         name = "bonesnake",
-        -- TODO younger forms
+        -- TODO old form
         size = 100,
         bird = true,
+        preform = "smol-bonesnake",
         probability = 0.15
     },
     {

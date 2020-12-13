@@ -17,8 +17,10 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-local sprite_height = 7
-local sprite_width = 7
+local height = 7
+local width = 7
+local sprite_height = height + 2
+local sprite_width = width + 2
 local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
@@ -91,13 +93,25 @@ Tirislib_Entity.create {
         {
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-0.0, 3.0}}},
+            pipe_connections = {{position = {0.0, 4.0}}},
             production_type = "input"
         },
         {
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0.5, -3.0}}},
+            pipe_connections = {{position = {0.0, -4.0}}},
+            production_type = "input"
+        },
+        {
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {4.0, 0.0}}},
+            production_type = "output"
+        },
+        {
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {-4.0, 0.0}}},
             production_type = "output"
         }
     },
@@ -105,4 +119,4 @@ Tirislib_Entity.create {
         sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
         apparent_volume = 1.5
     }
-}:set_size(5, 5):copy_localisation_from_item()
+}:set_size(width, height):copy_localisation_from_item()

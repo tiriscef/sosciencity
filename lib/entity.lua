@@ -198,6 +198,47 @@ function Tirislib_Entity.get_standard_pipe_cover(directions)
     return copy_directions(pipecovers, directions)
 end
 
+local PIXEL_PER_TILE = 32
+local PIXEL_PER_TILE_HR = 64
+function Tirislib_Entity.create_standard_picture(path, width, height, shift)
+    return {
+        layers = {
+            {
+                filename = path .. ".png",
+                priority = "high",
+                width = width * PIXEL_PER_TILE,
+                height = height * PIXEL_PER_TILE,
+                shift = shift,
+                hr_version = {
+                    filename = path .. "-hr.png",
+                    priority = "high",
+                    width = width * PIXEL_PER_TILE_HR,
+                    height = height * PIXEL_PER_TILE_HR,
+                    shift = shift,
+                    scale = 0.5
+                }
+            },
+            {
+                filename = path .. "-shadowmap.png",
+                priority = "high",
+                width = width * PIXEL_PER_TILE,
+                height = height * PIXEL_PER_TILE,
+                shift = shift,
+                draw_as_shadow = true,
+                hr_version = {
+                    filename = path .. "-shadowmap-hr.png",
+                    priority = "high",
+                    width = width * PIXEL_PER_TILE_HR,
+                    height = height * PIXEL_PER_TILE_HR,
+                    shift = shift,
+                    scale = 0.5,
+                    draw_as_shadow = true
+                }
+            }
+        }
+    }
+end
+
 function Tirislib_Entity.get_standard_impact_sound()
     return {
         filename = "__base__/sound/car-metal-impact.ogg",

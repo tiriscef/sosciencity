@@ -239,6 +239,36 @@ Tiristest.add_test_case(
     end
 )
 
+Tiristest.add_test_case(
+    "DiseaseGroup.add_disease",
+    "inhabitants|disease",
+    function()
+        local group = DiseaseGroup.new(10)
+
+        -- basic use case
+        DiseaseGroup.add_disease(group, "testing sickness", 5)
+
+        Assert.equals(group[DiseaseGroup.healthy_entry][DiseaseGroup.count], 5)
+        Assert.equals(group[2][DiseaseGroup.count], 5)
+        test_DiseaseGroup_invariant(group)
+
+        -- doesn't explode on edge cases
+        DiseaseGroup.add_disease(group, "testing sickness", 0)
+
+        Assert.equals(group[DiseaseGroup.healthy_entry][DiseaseGroup.count], 5)
+        Assert.equals(group[2][DiseaseGroup.count], 5)
+        test_DiseaseGroup_invariant(group)
+
+        DiseaseGroup.add_disease(group, "testing sickness", 20)
+
+        Assert.equals(group[DiseaseGroup.healthy_entry][DiseaseGroup.count], 0)
+        Assert.equals(group[2][DiseaseGroup.count], 10)
+        test_DiseaseGroup_invariant(group)
+
+        Assert.equals(DiseaseGroup_count_people(group), 10)
+    end
+)
+
 local function test_GenderGroup_invariant(group)
     Assert.not_nil(group[Gender.fale])
     Assert.not_nil(group[Gender.ga])

@@ -16,6 +16,7 @@ local food_values = Food.values
 local log_item = Communication.log_item
 local log_fluid = Communication.log_fluid
 
+local get_chest_inventory = Inventories.get_chest_inventory
 local produce_garbage = Inventories.produce_garbage
 
 local all_neighbors_of_type = Neighborhood.all_of_type
@@ -26,15 +27,14 @@ local has_power = Subentities.has_power
 ---------------------------------------------------------------------------------------------------
 -- << diet functions >>
 
-local chest = defines.inventory.chest
---- Returns a list of all inventories whose food is relevant to the diet.
+--- Returns a list of all entries whose inventory contents are relevant to the diet.
 --- Markets act like additional food inventories.
-local function get_food_inventories(entry)
-    local inventories = {entry[EK.entity].get_inventory(chest)}
+local function get_food_providers(entry)
+    local inventories = {get_chest_inventory(entry)}
 
     for _, market_entry in all_neighbors_of_type(entry, Type.market) do
         if has_power(market_entry) then
-            inventories[#inventories + 1] = market_entry[EK.entity].get_inventory(chest)
+            inventories[#inventories + 1] = get_chest_inventory(market_entry)
         end
     end
 
@@ -227,6 +227,8 @@ local function consume_food(entry, inventories, amount, diet, count)
     return (amount - to_consume) / amount
 end
 
+local taste_category_count = Tirislib_Tables.count(Taste)
+
 local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local happiness = entry[EK.happiness_summands]
     local happiness_factors = entry[EK.happiness_factors]
@@ -270,7 +272,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local carbohydrates = 0
     local proteins = 0
     local taste_quality = 0
-    local taste_counts = Tirislib_Tables.new_array(#Taste, 0)
+    local taste_counts = Tirislib_Tables.new_array(taste_category_count, 0)
     local luxury = 0
     local favorite_taste = caste.favorite_taste
     local least_favored_taste = caste.least_favored_taste
@@ -301,13 +303,13 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
         groups[food.group] = true
     end
 
-    -- means
+    -- calculate means
     intrinsic_healthiness = intrinsic_healthiness / count
     taste_quality = taste_quality / count
     luxury = luxury / count
 
     -- determine dominant taste
-    local dominant_taste = Taste.bitter
+    local dominant_taste = 1
     for current_taste_category, current_count in pairs(taste_counts) do
         if current_count > taste_counts[dominant_taste] then
             dominant_taste = current_taste_category
@@ -337,7 +339,7 @@ end
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Consumption.evaluate_diet(entry, delta_ticks)
     local caste = castes[entry[EK.type]]
-    local inventories = get_food_inventories(entry)
+    local inventories = get_food_providers(entry)
     local diet, food_count = get_diet(inventories)
 
     local hunger_satisfaction = 0
