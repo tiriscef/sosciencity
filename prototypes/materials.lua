@@ -11,7 +11,7 @@ local material_items = {
     {name = "ink"},
     {name = "writing-paper", sprite_variations = {name = "writing-paper-pile", count = 4}},
     {name = "trap", distinctions = {subgroup = "sosciencity-gathering"}},
-    {name = "bird-trap", distinctions = {subgroup = "sosciencity-gathering"}},
+    {name = "trap-cage", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "fishing-net", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "bird-food", distinctions = {subgroup = "sosciencity-animal-food"}},
     {name = "fish-food", distinctions = {subgroup = "sosciencity-animal-food"}},
@@ -98,7 +98,7 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "bird-trap",
+    product = "trap-cage",
     themes = {
         {"framework", 1, 0},
         {"grating", 1, 0}

@@ -6,7 +6,7 @@ Inventories = {}
     --------------------------------
     nothing
 ]]
--- local often used functions for great performance gains
+-- local often used globals for great performance gains
 local garbage_values = ItemConstants.garbage_values
 
 local log_item = Communication.log_item

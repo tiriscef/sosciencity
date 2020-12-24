@@ -6,7 +6,7 @@ Consumption = {}
     --------------------------------
     nothing
 ]]
--- local often used functions for humongous performance gains
+-- local often used globals for humongous performance gains
 local sort_by_key = Tirislib_Tables.insertion_sort_by_key
 
 local castes = Castes.values

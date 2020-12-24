@@ -7,8 +7,9 @@ Gui = {}
     global.details_view: table
         [player_id]: unit_number (of the entity whose details are watched by the player)
 ]]
--- local often used functions for microscopic performance gains
+-- local often used globals for microscopic performance gains
 local castes = Castes.values
+local diseases = Diseases.values
 local global
 local immigration
 local population
@@ -718,9 +719,14 @@ local function update_occupations_list(flow, entry)
         end
     end
 
-    local diseases = entry[EK.diseases]
-    for disease_number, count in pairs(diseases) do
-        -- TODO diseases
+    local disease_group = entry[EK.diseases]
+    for disease_id, count in pairs(disease_group) do
+        if disease_id ~= DiseaseGroup.HEALTHY then
+            local disease = diseases[disease_id]
+            local key = format("disease-%d", disease_id)
+            add_operand_entry(occupations_list, key, {"sosciencity-gui.ill", disease.localised_name}, count)
+            set_kv_pair_tooltip(occupations_list, key, disease.localised_description)
+        end
     end
 
     local visible = (entry[EK.inhabitants] > 0)

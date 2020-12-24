@@ -14,7 +14,7 @@ Neighborhood = {}
     global.subscriptions: table
         [type]: unit_number-lookup table
 ]]
--- local often used functions for giant performance gains
+-- local often used globals for giant performance gains
 local Register = Register
 local try_get = Register.try_get
 local get_type = Types.get

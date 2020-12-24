@@ -1,4 +1,4 @@
----Static class for the scripting game logic of my entities.
+---Static class for the game logic of my entities.
 Entity = {}
 
 --[[
@@ -6,7 +6,7 @@ Entity = {}
     --------------------------------
     nothing
 ]]
--- local all the frequently called functions for supercalifragilisticexpialidocious performance gains
+-- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
 local global
 local caste_bonuses
 local flora = Biology.flora

@@ -12,7 +12,7 @@ Scheduler = {}
         [1]: name
         [2]: arguments
 ]]
--- local often used functions for heavy performance gains
+-- local often used globals for heavy performance gains
 local ceil = math.ceil
 local schedule
 

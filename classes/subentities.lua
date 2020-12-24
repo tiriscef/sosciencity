@@ -6,7 +6,7 @@ Subentities = {}
     --------------------------------
     nothing
 ]]
--- local often used functions for extreme performance gains
+-- local often used globals for extreme performance gains
 Subentities.subentity_name_lookup = {
     [SubentityType.beacon] = "sosciencity-hidden-beacon"
 }

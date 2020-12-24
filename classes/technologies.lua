@@ -7,7 +7,7 @@ Technologies = {}
     global.technologies: table
         [tech_name]: bool (researched) or int (level)
 ]]
--- local often used functions for humongous performance gains
+-- local often used globals for humongous performance gains
 local relevant_techs = {
     ["resettlement"] = true,
 }
