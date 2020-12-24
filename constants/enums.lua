@@ -161,8 +161,6 @@ EK.garbage_progress = 218
 EK.employed = 219
 --- the employments of this entry as table of (building number, count)-pairs
 EK.employments = 220
---- the count of inhabitants that are ill
-EK.ill = 221
 --- the illnesses of the inhabitants as a DiseaseGroup object
 EK.diseases = 222
 --- the genders of the inhabitants

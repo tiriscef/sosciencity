@@ -26,18 +26,24 @@ data:extend {
         order = "aca"
     },
     {
+        type = "item-subgroup",
+        name = "sosciencity-building-materials",
+        group = "sosciencity-production",
+        order = "baa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-furniture",
+        group = "sosciencity-infrastructure",
+        order = "bab"
+    },
+    {
         type = "item-group",
         name = "sosciencity-production",
         inventory_order = "zb",
         order = "za",
         icon = "__sosciencity-graphics__/graphics/icon/production-group.png",
         icon_size = 128
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-furniture",
-        group = "sosciencity-production",
-        order = "aaa"
     },
     {
         type = "item-subgroup",
@@ -89,20 +95,26 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-drinking-water",
+        name = "sosciencity-medicine",
         group = "sosciencity-production",
         order = "afa"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-garbage",
+        name = "sosciencity-drinking-water",
         group = "sosciencity-production",
         order = "aga"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas",
+        name = "sosciencity-garbage",
         group = "sosciencity-production",
         order = "aha"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-ideas",
+        group = "sosciencity-production",
+        order = "aia"
     },
 }

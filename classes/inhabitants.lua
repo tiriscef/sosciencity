@@ -32,7 +32,7 @@ Inhabitants = {}
     global.homeless: table
         [caste_id]: InhabitantGroup
 ]]
--- local often used functions for enormous performance gains
+-- local often used globals for enormous performance gains
 local global
 local population
 local caste_points
@@ -78,7 +78,6 @@ local map_range = Tirislib_Utils.map_range
 local array_sum = Tirislib_Tables.array_sum
 local array_product = Tirislib_Tables.array_product
 local dice_rolls = Tirislib_Utils.dice_rolls
-local shallow_equal = Tirislib_Tables.shallow_equal
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
 local random = math.random
@@ -150,66 +149,17 @@ end
 --- Object class for holding the diseases of a group of inhabitants.
 DiseaseGroup = {}
 
-local HEALTHY = {}
-DiseaseGroup.healthy_entry = 1
-DiseaseGroup.diseases = 1
-DiseaseGroup.count = 2
+local HEALTHY = 0
+DiseaseGroup.HEALTHY = HEALTHY
 
 function DiseaseGroup.new(count)
-    return {{HEALTHY, count}}
+    return {[HEALTHY] = count}
 end
 local new_disease_group = DiseaseGroup.new
 
-function DiseaseGroup.add_persons(group, count, diseases)
-    diseases = diseases or HEALTHY
-
-    for i = 1, #group do
-        local entry = group[i]
-        if shallow_equal(entry[DiseaseGroup.diseases], diseases) then
-            entry[DiseaseGroup.count] = entry[DiseaseGroup.count] + count
-            return
-        end
-    end
-
-    group[#group + 1] = {diseases, count}
-end
-local add_persons = DiseaseGroup.add_persons
-
-local function remove_empty_disease_entries(group)
-    for i = #group, 2, -1 do
-        if group[i][DiseaseGroup.count] == 0 then
-            group[i] = group[#group]
-            group[#group] = nil
-        end
-    end
-end
-
-function DiseaseGroup.remove_persons(group, count, diseases)
-    diseases = diseases or HEALTHY
-    for i = 1, #group do
-        local entry = group[i]
-        if shallow_equal(entry[DiseaseGroup.diseases], diseases) then
-            local new_count = entry[DiseaseGroup.count] - count
-            if new_count > 0 then
-                entry[DiseaseGroup.count] = new_count
-            else
-                if i ~= DiseaseGroup.healthy_entry then
-                    group[i] = group[#group]
-                    group[#group] = nil
-                end
-            end
-
-            break
-        end
-    end
-end
-
 local function empty_disease_group(group)
-    group[DiseaseGroup.healthy_entry][DiseaseGroup.count] = 0
-
-    for i = 2, #group do
-        group[i] = nil
-    end
+    Tirislib_Tables.empty(group)
+    group[HEALTHY] = 0
 end
 
 --- Merges the right hand group into the left hand group. If keep_rh is falsy, then the right hand disease group object gets emptied.
@@ -217,9 +167,8 @@ end
 --- @param rh DiseaseGroup
 --- @param keep_rh boolean
 function DiseaseGroup.merge(lh, rh, keep_rh)
-    for i = 1, #rh do
-        local entry = rh[i]
-        add_persons(lh, entry[DiseaseGroup.count], entry[DiseaseGroup.diseases])
+    for disease, count in pairs(rh) do
+        lh[disease] = (lh[disease] or 0) + count
     end
 
     if not keep_rh then
@@ -227,148 +176,48 @@ function DiseaseGroup.merge(lh, rh, keep_rh)
     end
 end
 
-local function count_disease_group(group)
-    local total_count = 0
-
-    for i = 1, #group do
-        total_count = total_count + group[i][DiseaseGroup.count]
-    end
-
-    return total_count
-end
-
 --- Takes the given count of people from the given disease group and returns the disease group of the taken people.
 --- @param group DiseaseGroup
 --- @param to_take integer
 --- @param total_count integer|nil
 function DiseaseGroup.take(group, to_take, total_count)
-    if not total_count then
-        total_count = count_disease_group(group)
-    end
+    total_count = total_count or Tirislib_Tables.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = new_disease_group(0)
 
     while to_take > 0 do
-        for i = 1, #group do
-            local entry = group[i]
-            local current_count = entry[DiseaseGroup.count]
-
+        for disease, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
             local current_take = min(current_count, ceil(percentage_to_take * current_count))
 
-            entry[DiseaseGroup.count] = current_count - current_take
-            add_persons(ret, current_take, entry[DiseaseGroup.diseases])
-
             total_count = total_count - current_take
             to_take = to_take - current_take
+
+            ret[disease] = (ret[disease] or 0) + current_take
+            group[disease] = (current_count ~= current_take) and current_count - current_take or nil
 
             if to_take == 0 then
                 return ret
             end
         end
     end
-    remove_empty_disease_entries(group)
 
     return ret
 end
 
-local function get_or_create_disease_entry(group, diseases)
-    -- look for it
-    for i = 1, #group do
-        local entry = group[i]
-
-        if shallow_equal(entry[DiseaseGroup.diseases], diseases) then
-            return entry
-        end
-    end
-
-    -- create it
-    local entry = {diseases, 0}
-    group[#group + 1] = entry
-    return entry
-end
-
-local function get_disease_table_with(disease_table, disease)
-    local ret = Tirislib_Tables.copy(disease_table)
-    ret[#ret+1] = disease
-    table.sort(ret)
-    return ret
-end
-
-local function get_disease_table_without(disease_table, disease)
-    local ret = Tirislib_Tables.copy(disease_table)
-    Tirislib_Tables.remove_all(disease)
-    table.sort(ret)
-    return ret
-end
-
---- Adds the given disease to the given count of people.
---- @param group DiseaseGroup
---- @param disease DiseaseID
+--- Tries to makes the given number of people sick with the given disease. Returns the number of people that were actually sickened.
+--- @param group Entry
+--- @param disease_id DiseaseID
 --- @param count integer
-function DiseaseGroup.add_disease(group, disease, count)
-    local order = Tirislib_Tables.sequence(1, #group)
-    shuffle(order)
+function DiseaseGroup.make_sick(group, disease_id, count)
+    local healthy_count = group[HEALTHY]
+    local actually_sickened = min(count, healthy_count)
 
-    for i = 1, #order do
-        local entry = group[i]
-        local current_diseases = entry[DiseaseGroup.diseases]
+    group[HEALTHY] = healthy_count - actually_sickened
+    group[disease_id] = group[disease_id] + actually_sickened
 
-        if not Tirislib_Tables.contains(current_diseases, disease) then
-            local current_count = entry[DiseaseGroup.count]
-            local to_make_sick = min(count, current_count)
-
-            -- remove them from this entry
-            entry[DiseaseGroup.count] = current_count - to_make_sick
-
-            -- add them to a new entry
-            local new_diseases = get_disease_table_with(current_diseases, disease)
-            local new_entry = get_or_create_disease_entry(group, new_diseases)
-            new_entry[DiseaseGroup.count] = new_entry[DiseaseGroup.count] + to_make_sick
-
-            count = count - to_make_sick
-            if count < 1 then
-                break
-            end
-        end
-    end
-
-    remove_empty_disease_entries(group)
-end
-
---- Removes the given disease from the given count of people.
---- @param group DiseaseGroup
---- @param disease DiseaseID
---- @param count integer
-function DiseaseGroup.remove_diseases(group, disease, count)
-    local order = Tirislib_Tables.sequence(1, #group)
-    shuffle(order)
-
-    for i = 1, #order do
-        local entry = group[i]
-        local current_diseases = entry[DiseaseGroup.diseases]
-
-        if Tirislib_Tables.contains(current_diseases, disease) then
-            local current_count = entry[DiseaseGroup.count]
-            local to_cure = min(count, current_count)
-
-            -- remove them from this entry
-            entry[DiseaseGroup.count] = current_count - to_cure
-
-            -- add them to a new entry
-            local new_diseases = get_disease_table_without(current_diseases, disease)
-            local new_entry = get_or_create_disease_entry(group, new_diseases)
-            new_entry[DiseaseGroup.count] = new_entry[DiseaseGroup.count] + to_cure
-
-            count = count - to_cure
-            if count < 1 then
-                break
-            end
-        end
-    end
-
-    remove_empty_disease_entries(group)
+    return actually_sickened
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -767,7 +616,7 @@ end
 
 --- Returns the number of employable inhabitants living in the housing entry.
 function Inhabitants.get_employable_count(entry)
-    return entry[EK.inhabitants] - entry[EK.employed] - entry[EK.ill]
+    return entry[EK.diseases][HEALTHY] - entry[EK.employed]
 end
 local get_employable_count = Inhabitants.get_employable_count
 
@@ -799,11 +648,11 @@ local function try_employ(manufactory, house, count)
     return employed
 end
 
-local function look_for_workers(manufactory, castes, count)
+local function look_for_workers(manufactory, acceptable_castes, count)
     local workers_found = 0
 
-    for i = 1, #castes do
-        for _, house in Neighborhood.all_of_type(manufactory, castes[i]) do
+    for i = 1, #acceptable_castes do
+        for _, house in Neighborhood.all_of_type(manufactory, acceptable_castes[i]) do
             workers_found = workers_found + try_employ(manufactory, house, count - workers_found)
 
             if workers_found == count then
@@ -1001,6 +850,10 @@ end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 ---------------------------------------------------------------------------------------------------
+-- << healthcare >>
+
+
+---------------------------------------------------------------------------------------------------
 -- << housing update >>
 -- it's so complex, it got its own section
 
@@ -1134,6 +987,17 @@ local function update_housing_census(entry, caste_id)
     entry[EK.caste_points] = points
 end
 
+local function update_diseases(entry)
+    local disease_group = entry[EK.diseases]
+
+    local healthy_count = disease_group[HEALTHY]
+    local employed_count = entry[EK.employed]
+
+    if employed_count > healthy_count then
+        unemploy_inhabitants(entry, employed_count - healthy_count)
+    end
+end
+
 local function remove_housing_census(entry)
     local caste_id = entry[EK.type]
 
@@ -1190,6 +1054,8 @@ local function update_house(entry, delta_ticks)
     update_housing_census(entry, caste_id)
 
     update_garbage_output(entry, delta_ticks)
+
+    update_diseases(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1389,7 +1255,6 @@ function Inhabitants.create_house(entry)
 
     entry[EK.employed] = 0
     entry[EK.employments] = {}
-    entry[EK.ill] = 0
 
     update_free_space_status(entry)
 end

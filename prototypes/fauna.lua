@@ -190,7 +190,7 @@ table.insert(fauna_producing_recipes, hunting)
 
 local bird_hunting =
     Tirislib_Recipe.create {
-    name = "hunting-for-birds",
+    name = "hunting-for-small-land-animals",
     category = "sosciencity-hunting",
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
@@ -201,7 +201,7 @@ local bird_hunting =
     main_product = ""
 }:create_difficulties()
 bird_hunting:multiply_expensive_field("energy_required", 2)
-bird_hunting:add_catalyst("bird-trap", "item", 2, 0.9, 3, 0.8)
+bird_hunting:add_catalyst("trap-cage", "item", 2, 0.9, 3, 0.8)
 table.insert(fauna_producing_recipes, bird_hunting)
 
 local fishing =

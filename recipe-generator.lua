@@ -268,6 +268,11 @@ RG.ingredient_themes = {
             {type = "item", name = "humus", amount = 1}
         }
     },
+    structure = {
+        [0] = {
+            {type = "item", name = "iron-plate", amount = 1}
+        }
+    },
     tank = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 5},
@@ -280,6 +285,11 @@ RG.ingredient_themes = {
     windows = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 1}
+        }
+    },
+    wiring = {
+        [0] = {
+            {type = "item", name = "copper-cable", amount = 2}
         }
     },
     wood = {

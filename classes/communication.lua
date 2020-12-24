@@ -17,7 +17,7 @@ Communication = {}
 
     global.(tiriscef/profanity): bool (if they are enabled)
 ]]
--- local often used functions for smallish performance gains
+-- local often used globals for smallish performance gains
 local global
 
 local fluid_statistics
