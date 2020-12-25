@@ -119,26 +119,6 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "bird-food",
-    allow_productivity = true
-}
-
-Tirislib_RecipeGenerator.create {
-    product = "fish-food",
-    allow_productivity = true
-}
-
-Tirislib_RecipeGenerator.create {
-    product = "carnivore-food",
-    allow_productivity = true
-}
-
-Tirislib_RecipeGenerator.create {
-    product = "herbivore-food",
-    allow_productivity = true
-}
-
-Tirislib_RecipeGenerator.create {
     product = "ferrous-sulfate",
     product_amount = 3,
     ingredients = {

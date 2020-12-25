@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "slaughter-pit",
     icon = "__sosciencity-graphics__/graphics/icon/slaughter-pit.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-fauna-buildings",
     order = "aaa",
     place_result = "slaughter-pit",
     stack_size = 10,

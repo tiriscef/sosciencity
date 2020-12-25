@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "sedimentation-clarifier",
     icon = "__sosciencity-graphics__/graphics/icon/sedimentation-clarifier.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-water-buildings",
     order = "aaa",
     place_result = "sedimentation-clarifier",
     stack_size = 10,

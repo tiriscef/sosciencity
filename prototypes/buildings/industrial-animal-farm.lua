@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "industrial-animal-farm",
     icon = "__sosciencity-graphics__/graphics/icon/industrial-animal-farm.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-fauna-buildings",
     order = "aaa",
     place_result = "industrial-animal-farm",
     stack_size = 10,

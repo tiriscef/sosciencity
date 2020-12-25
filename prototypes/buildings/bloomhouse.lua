@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "bloomhouse",
     icon = "__sosciencity-graphics__/graphics/icon/bloomhouse.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-flora-buildings",
     order = "aaa",
     place_result = "bloomhouse",
     stack_size = 10,

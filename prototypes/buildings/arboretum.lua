@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "arboretum",
     icon = "__sosciencity-graphics__/graphics/icon/arboretum.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-flora-buildings",
     order = "aab",
     place_result = "arboretum",
     stack_size = 10,

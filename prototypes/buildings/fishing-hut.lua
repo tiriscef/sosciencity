@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "fishing-hut",
     icon = "__sosciencity-graphics__/graphics/icon/fishing-hut.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-fauna-buildings",
     order = "aaa",
     place_result = "fishing-hut",
     stack_size = 10,

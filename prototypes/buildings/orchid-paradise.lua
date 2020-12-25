@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "orchid-paradise",
     icon = "__sosciencity-graphics__/graphics/icon/orchid-paradise.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-hqs",
     order = "aaa",
     place_result = "orchid-paradise",
     stack_size = 10,

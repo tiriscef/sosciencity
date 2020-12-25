@@ -9,33 +9,63 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-buildings",
+        name = "sosciencity-infrastructure",
         group = "sosciencity-infrastructure",
         order = "aaa"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-infrastructure",
+        name = "sosciencity-housing",
         group = "sosciencity-infrastructure",
         order = "aba"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-housing",
+        name = "sosciencity-hqs",
         group = "sosciencity-infrastructure",
         order = "aca"
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-buildings",
+        group = "sosciencity-infrastructure",
+        order = "baa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-flora-buildings",
+        group = "sosciencity-infrastructure",
+        order = "bab"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-fauna-buildings",
+        group = "sosciencity-infrastructure",
+        order = "bac"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-water-buildings",
+        group = "sosciencity-infrastructure",
+        order = "bad"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-food-buildings",
+        group = "sosciencity-infrastructure",
+        order = "bac"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-building-materials",
         group = "sosciencity-production",
-        order = "baa"
+        order = "caa"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-furniture",
         group = "sosciencity-infrastructure",
-        order = "bab"
+        order = "cab"
     },
     {
         type = "item-group",
@@ -65,13 +95,13 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-fauna",
+        name = "sosciencity-animal-food",
         group = "sosciencity-production",
         order = "ada"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-animal-food",
+        name = "sosciencity-fauna",
         group = "sosciencity-production",
         order = "adb"
     },
