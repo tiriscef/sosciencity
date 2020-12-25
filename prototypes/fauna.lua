@@ -138,6 +138,27 @@ local animals = {
     }
 }
 
+local function get_stack_size(animal)
+    local size = animal.size
+
+    if size <= 20 then
+        return 200
+    elseif size <= 100 then
+        return 50
+    elseif size <= 500 then
+        return 20
+    else
+        return 10
+    end
+end
+
+for _, animal in pairs(animals) do
+    animal.distinctions = animal.distinctions or {}
+    local distinctions = animal.distinctions
+
+    distinctions.stack_size = get_stack_size(animal)
+end
+
 Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
 
 local function is_land_animal(animal)

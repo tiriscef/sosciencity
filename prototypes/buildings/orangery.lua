@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "orangery",
     icon = "__sosciencity-graphics__/graphics/icon/orangery.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-flora-buildings",
     order = "aaa",
     place_result = "orangery",
     stack_size = 10,

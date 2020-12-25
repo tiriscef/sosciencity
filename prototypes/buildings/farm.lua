@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "farm",
     icon = "__sosciencity-graphics__/graphics/icon/farm.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-flora-buildings",
     order = "aaa",
     place_result = "farm",
     stack_size = 10,

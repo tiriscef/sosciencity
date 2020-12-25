@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "silo",
     icon = "__sosciencity-graphics__/graphics/icon/silo.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-buildings",
     order = "aab",
     place_result = "silo",
     stack_size = 10,

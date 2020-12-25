@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "groundwater-pump",
     icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-water-buildings",
     order = "aab",
     place_result = "groundwater-pump",
     stack_size = 50,

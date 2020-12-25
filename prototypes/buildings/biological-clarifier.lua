@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "biological-clarifier",
     icon = "__sosciencity-graphics__/graphics/icon/biological-clarifier.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-water-buildings",
     order = "aaa",
     place_result = "biological-clarifier",
     stack_size = 10,

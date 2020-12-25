@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "architectural-office",
     icon = "__sosciencity-graphics__/graphics/icon/architectural-office.png",
     icon_size = 64,
-    subgroup = "sosciencity-infrastructure",
+    subgroup = "sosciencity-buildings",
     order = "aaa",
     place_result = "architectural-office",
     stack_size = 10,
