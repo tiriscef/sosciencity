@@ -112,12 +112,17 @@ local function analyze_composter_inventory(inventory)
     return item_count, item_type_count, compostable_items
 end
 
-local function remove_composted_items(inventory, count, compostable_items)
+local function remove_composted_items(inventory, count, compostable_items, entry)
     Tirislib_Tables.shuffle(compostable_items)
 
     local to_remove = count
     for i = 1, #compostable_items do
-        to_remove = to_remove - Inventories.try_remove(inventory, compostable_items[i], count)
+        local item_name = compostable_items[i]
+        local removed = Inventories.try_remove(inventory, item_name, count)
+
+        entry[EK.humus] = entry[EK.humus] + removed * compost_values[item_name]
+
+        to_remove = to_remove - removed
         if to_remove == 0 then
             break
         end
@@ -137,22 +142,41 @@ local function update_composter(entry, delta_ticks)
     progress = progress + item_count * item_type_count * delta_ticks * composting_coefficient
 
     if progress >= 1 then
-        progress = progress - remove_composted_items(inventory, floor(progress), compostable_items)
+        progress = progress - remove_composted_items(inventory, floor(progress), compostable_items, entry)
     end
 
     entry[EK.composting_progress] = progress
 end
 Register.set_entity_updater(Type.composter, update_composter)
 
+local function remove_composter(entry)
+    local humus = floor(entry[EK.humus])
+
+    if humus > 0 then
+        Inventories.spill_items(entry, "humus", humus)
+    end
+end
+Register.set_entity_destruction_handler(Type.composter, remove_composter)
+
+local function copy_composter(source, destination)
+    destination[EK.composting_progress] = source[EK.composting_progress]
+    destination[EK.humus] = source[EK.humus]
+end
+Register.set_entity_copy_handler(Type.composter, copy_composter)
+
+-- << composter output >>
 local function update_composter_output(entry)
     local inventory = Inventories.get_chest_inventory(entry)
 
     for _, composter in Neighborhood.all_of_type(entry, Type.composter) do
         local humus_amount = composter[EK.humus]
         local to_output = floor(humus_amount)
-        local actual_output = Inventories.try_insert(inventory, "humus", to_output)
 
-        composter[EK.humus] = humus_amount - actual_output
+        if to_output > 0 then
+            local actual_output = Inventories.try_insert(inventory, "humus", to_output)
+
+            composter[EK.humus] = humus_amount - actual_output
+        end
     end
 end
 Register.set_entity_updater(Type.composter_output, update_composter_output)
