@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/biological-clarifier.png",
     icon_size = 64,
     subgroup = "sosciencity-water-buildings",
-    order = "aaa",
+    order = "bab",
     place_result = "biological-clarifier",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt

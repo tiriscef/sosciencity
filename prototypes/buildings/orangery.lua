@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/orangery.png",
     icon_size = 64,
     subgroup = "sosciencity-flora-buildings",
-    order = "aaa",
+    order = "bac",
     place_result = "orangery",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt

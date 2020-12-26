@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/orchid-paradise.png",
     icon_size = 64,
     subgroup = "sosciencity-hqs",
-    order = "aaa",
+    order = "aab",
     place_result = "orchid-paradise",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt
