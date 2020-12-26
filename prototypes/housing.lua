@@ -3,19 +3,6 @@ require("constants.castes")
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local data_details = {
-    ["test-house"] = {
-        picture = {
-            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-            priority = "high",
-            width = 192,
-            height = 192,
-            scale = 0.5
-        },
-        width = 5,
-        height = 3,
-        tech_level = 0,
-        main_entity = "test-house"
-    },
     ["improvised-hut"] = {
         picture = {
             layers = {
@@ -228,6 +215,22 @@ local data_details = {
         main_entity = "sheltered-house"
     }
 }
+
+if Sosciencity_Config.DEBUG then
+    data_details["test-house"] = {
+        picture = {
+            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+            priority = "high",
+            width = 192,
+            height = 192,
+            scale = 0.5
+        },
+        width = 5,
+        height = 3,
+        tech_level = 0,
+        main_entity = "test-house"
+    }
+end
 
 local housing_unlocking_tech = {
     [0] = nil,

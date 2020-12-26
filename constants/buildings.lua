@@ -33,6 +33,13 @@ Buildings.values = {
             castes = {Type.clockwork}
         }
     },
+    ["test-composter"] = {
+        type = Type.composter,
+        range = 5
+    },
+    ["test-compost-output"] = {
+        type = Type.composter_output
+    },
     ["arboretum"] = {
         type = Type.farm
     },

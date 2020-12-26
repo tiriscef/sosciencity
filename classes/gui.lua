@@ -1204,6 +1204,26 @@ local function create_general_building_details(container, entry)
     return tabbed_pane
 end
 
+local function update_composter_details(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    set_kv_pair_value(building_data, "humus", {"sosciencity-gui.humus-count", floor(entry[EK.humus] / 100)})
+end
+
+local function create_composter_details(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "humus", {"sosciencity-gui.humus"})
+
+    update_composter_details(container, entry)
+end
+
 local function update_waterwell_details(container, entry)
     update_general_building_details(container, entry)
 
@@ -1399,6 +1419,14 @@ local type_gui_specifications = {
         updater = update_general_building_details
     },
     [Type.rocket_silo] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.composter] = {
+        creater = create_composter_details,
+        updater = update_composter_details
+    },
+    [Type.composter_output] = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },

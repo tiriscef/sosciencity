@@ -43,6 +43,8 @@ local function create_test_container(name)
     }:set_size(3, 3)
 end
 
+create_test_container("composter")
+create_test_container("compost-output")
 create_test_container("market")
 create_test_container("hospital")
 create_test_container("night-club")

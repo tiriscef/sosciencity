@@ -113,6 +113,17 @@ Types.definitions = {
         signature_color = Colors.orange,
         is_civil = true
     },
+    [Type.composter] = {
+        localised_name = {"sosciencity-gui.composter"},
+        localised_description = {"sosciencity-gui.explain-composter"},
+        signature_color = Colors.brown
+    },
+    [Type.composter_output] = {
+        localised_name = {"sosciencity-gui.composter-output"},
+        localised_description = {"sosciencity-gui.explain-composter-output"},
+        signature_color = Colors.brown,
+        subscriptions = {Type.composter}
+    },
     [Type.water_distributer] = {
         localised_name = {"sosciencity-gui.water-distributer"},
         localised_description = {"sosciencity-gui.explain-water-distributer"},
