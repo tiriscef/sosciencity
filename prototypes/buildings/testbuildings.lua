@@ -48,6 +48,7 @@ create_test_container("compost-output")
 create_test_container("market")
 create_test_container("hospital")
 create_test_container("night-club")
+create_test_container("pharmacy")
 
 local function create_test_assembling_machine(name)
     Tirislib_Item.create {
@@ -103,5 +104,3 @@ local function create_test_assembling_machine(name)
         localised_name = "test-" .. name
     }:set_size(3, 3)
 end
-
-create_test_assembling_machine("fishery")

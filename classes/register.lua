@@ -164,8 +164,6 @@ local function init_custom_building(entry)
         entry[EK.worker_count] = 0
         entry[EK.workers] = {}
     end
-
-    entry[EK.range] = building_details.range
 end
 
 local function destroy_custom_building(entry)

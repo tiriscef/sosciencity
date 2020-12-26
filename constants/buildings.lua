@@ -34,11 +34,15 @@ Buildings.values = {
         }
     },
     ["test-composter"] = {
-        type = Type.composter,
-        range = 5
+        type = Type.composter
     },
     ["test-compost-output"] = {
-        type = Type.composter_output
+        type = Type.composter_output,
+        range = 5
+    },
+    ["test-pharmacy"] = {
+        type = Type.pharmacy,
+        range = "global"
     },
     ["arboretum"] = {
         type = Type.farm

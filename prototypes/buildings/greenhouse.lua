@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",
     icon_size = 64,
     subgroup = "sosciencity-flora-buildings",
-    order = "aab",
+    order = "baa",
     place_result = "greenhouse",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt

@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/aquafarm.png",
     icon_size = 64,
     subgroup = "sosciencity-fauna-buildings",
-    order = "aaa",
+    order = "cac",
     place_result = "aquafarm",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt

@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/fishing-hut.png",
     icon_size = 64,
     subgroup = "sosciencity-fauna-buildings",
-    order = "aaa",
+    order = "bab",
     place_result = "fishing-hut",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt

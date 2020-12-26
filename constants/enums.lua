@@ -98,12 +98,10 @@ EK.inventory_contents = 30
 -- neighborhood stuff
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs
 EK.neighbors = 40
---- the range this entry looks connects with other neighbor entries
-EK.range = 41
 --- tick of the last time this entity updated it's surrounding unregistered entity information
-EK.last_entity_update = 42
+EK.last_entity_update = 41
 --- tick of the last time this entity updated it's surrounding tile information
-EK.last_tile_update = 43
+EK.last_tile_update = 42
 
 -- workforce
 --- the number of workers employed by this entry
