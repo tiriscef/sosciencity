@@ -16,11 +16,12 @@ local population
 local caste_points
 local Register = Register
 local Inhabitants = Inhabitants
-local Buildings = Buildings
+local get_building_details = Buildings.get
 
 local ceil = math.ceil
 local floor = math.floor
 local format = string.format
+local round = Tirislib_Utils.round
 local tostring = tostring
 
 local function set_locals()
@@ -1096,7 +1097,7 @@ local function update_general_building_details(container, entry)
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
 
-    local worker_specification = Buildings.get(entry).workforce
+    local worker_specification = get_building_details(entry).workforce
     if worker_specification then
         local count_needed = worker_specification.count
         set_kv_pair_value(building_data, "staff", {"sosciencity-gui.show-staff", entry[EK.worker_count], count_needed})
@@ -1138,7 +1139,7 @@ local function create_general_building_details(container, entry)
     local entity = entry[EK.entity]
     set_details_view_title(container, entity.localised_name)
 
-    local building_details = Buildings.get(entry)
+    local building_details = get_building_details(entry)
     local type_details = Types.definitions[entry[EK.type]]
 
     local tabbed_pane = create_tabbed_pane(container)
@@ -1210,7 +1211,25 @@ local function update_composter_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    set_kv_pair_value(building_data, "humus", {"sosciencity-gui.humus-count", floor(entry[EK.humus] / 100)})
+    local humus = entry[EK.humus]
+    set_kv_pair_value(building_data, "humus", {"sosciencity-gui.humus-count", round(humus / 100)})
+
+    local inventory = Inventories.get_chest_inventory(entry)
+    local progress_factor = Entity.analyze_composter_inventory(inventory)
+    -- display the composting speed as zero when the composter is full
+    if humus >= get_building_details(entry).capacity then
+        progress_factor = 0
+    end
+    set_kv_pair_value(
+        building_data,
+        "composting-speed",
+        {
+            "sosciencity-gui.fraction",
+            get_reasonable_number(Time.minute * progress_factor),
+            {"sosciencity-gui.minute"},
+            ""
+        }
+    )
 end
 
 local function create_composter_details(container, entry)
@@ -1220,6 +1239,13 @@ local function create_composter_details(container, entry)
     local building_data = general.building
 
     add_kv_pair(building_data, "humus", {"sosciencity-gui.humus"})
+    add_kv_pair(
+        building_data,
+        "capacity",
+        {"sosciencity-gui.capacity"},
+        {"sosciencity-gui.show-compost-capacity", get_building_details(entry).capacity}
+    )
+    add_kv_pair(building_data, "composting-speed", {"sosciencity-gui.composting-speed"})
 
     update_composter_details(container, entry)
 end
@@ -1256,7 +1282,7 @@ local function update_fishery_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    local building_details = Buildings.get(entry)
+    local building_details = get_building_details(entry)
     set_kv_pair_value(
         building_data,
         "water-tiles",
@@ -1281,7 +1307,7 @@ local function update_hunting_hut_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    local building_details = Buildings.get(entry)
+    local building_details = get_building_details(entry)
     set_kv_pair_value(
         building_data,
         "tree-count",
@@ -1331,7 +1357,7 @@ local function create_immigration_port_details(container, entry)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
-    local building_details = Buildings.get(entry)
+    local building_details = get_building_details(entry)
 
     add_kv_pair(building_data, "next-wave", {"sosciencity-gui.next-wave"})
     add_kv_pair(

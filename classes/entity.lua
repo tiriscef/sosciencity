@@ -95,6 +95,9 @@ end
 Register.set_entity_creation_handler(Type.composter, create_composter)
 
 local compost_values = ItemConstants.compost_values
+local composting_coefficient = 1 / 400 / 600
+
+--- Analyzes the given inventory and returns the composting progress per tick and an array of the compostable items.
 local function analyze_composter_inventory(inventory)
     local content = inventory.get_contents()
     local item_count = 0
@@ -109,10 +112,11 @@ local function analyze_composter_inventory(inventory)
         end
     end
 
-    return item_count, item_type_count, compostable_items
+    return item_count * item_type_count * composting_coefficient, compostable_items
 end
+Entity.analyze_composter_inventory = analyze_composter_inventory
 
-local function remove_composted_items(inventory, count, compostable_items, entry)
+local function compostify_items(inventory, count, compostable_items, entry)
     Tirislib_Tables.shuffle(compostable_items)
 
     local to_remove = count
@@ -127,22 +131,24 @@ local function remove_composted_items(inventory, count, compostable_items, entry
             break
         end
     end
-
-    return count - to_remove
 end
-
-local composting_coefficient = 1 / 400 / 600
 
 local function update_composter(entry, delta_ticks)
     local inventory = Inventories.get_chest_inventory(entry)
-    local item_count, item_type_count, compostable_items = analyze_composter_inventory(inventory)
+    local progress_factor, compostable_items = analyze_composter_inventory(inventory)
 
     local progress = entry[EK.composting_progress]
 
-    progress = progress + item_count * item_type_count * delta_ticks * composting_coefficient
+    progress = progress + progress_factor * delta_ticks
 
     if progress >= 1 then
-        progress = progress - remove_composted_items(inventory, floor(progress), compostable_items, entry)
+        local to_consume = floor(progress)
+        progress = progress - to_consume
+
+        local capacity = get_building_details(entry).capacity
+        if capacity > entry[EK.humus] then
+            compostify_items(inventory, to_consume, compostable_items, entry)
+        end
     end
 
     entry[EK.composting_progress] = progress
