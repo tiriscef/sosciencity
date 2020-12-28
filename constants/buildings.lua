@@ -34,7 +34,8 @@ Buildings.values = {
         }
     },
     ["test-composter"] = {
-        type = Type.composter
+        type = Type.composter,
+        capacity = 5000
     },
     ["test-compost-output"] = {
         type = Type.composter_output,
