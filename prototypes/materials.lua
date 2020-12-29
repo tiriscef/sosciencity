@@ -2,6 +2,7 @@
 -- << items >>
 local material_items = {
     {name = "lumber"},
+    {name = "sawdust", sprite_variations = {name = "sawdust", count = 2, include_icon = true}},
     {name = "tiriscefing-willow-barrel"},
     {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}},
     {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}},
@@ -13,10 +14,6 @@ local material_items = {
     {name = "trap", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "trap-cage", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "fishing-net", distinctions = {subgroup = "sosciencity-gathering"}},
-    {name = "bird-food", distinctions = {subgroup = "sosciencity-animal-food"}},
-    {name = "fish-food", distinctions = {subgroup = "sosciencity-animal-food"}},
-    {name = "carnivore-food", distinctions = {subgroup = "sosciencity-animal-food"}},
-    {name = "herbivore-food", distinctions = {subgroup = "sosciencity-animal-food"}},
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "sewage-sludge", sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}},
     {name = "ferrous-sulfate"}
@@ -32,16 +29,9 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "wood", amount = 1}
     },
-    allow_productivity = true
-}
-
-Tirislib_RecipeGenerator.create {
-    product = "lumber",
-    product_amount = 2,
-    ingredients = {
-        {type = "item", name = "tiriscefing-willow-wood", amount = 1}
-    },
-    allow_productivity = true
+    byproducts = {
+        {name = "sawdust", amount = 1}
+    }
 }
 
 Tirislib_RecipeGenerator.create {
