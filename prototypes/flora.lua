@@ -1,16 +1,29 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local flora_items = {
-    {name = "leafage", sprite_variations = {name = "leafage", count = 3, include_icon = true, fuel_value = "200kJ", fuel_category = "chemical"}},
+    {
+        name = "leafage",
+        sprite_variations = {name = "leafage", count = 3, include_icon = true},
+        distinctions = {fuel_value = "200kJ", fuel_category = "chemical"}
+    },
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "phytofall-blossom"},
-    {name = "tiriscefing-willow-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "cherry-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "olive-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "ortrot-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "avocado-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}},
-    {name = "zetorn-wood", distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}}
+    {name = "tiriscefing-willow-wood", wood = true},
+    {name = "cherry-wood", wood = true},
+    {name = "olive-wood", wood = true},
+    {name = "ortrot-wood", wood = true},
+    {name = "avocado-wood", wood = true},
+    {name = "zetorn-wood", wood = true}
 }
+
+for _, item in pairs(flora_items) do
+    local distinctions = Tirislib_Tables.get_inner_table(item, "distinctions")
+
+    if item.wood then
+        distinctions.fuel_value = "1MJ"
+        distinctions.fuel_category = "chemical"
+    end
+end
 
 Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
 
@@ -309,5 +322,30 @@ for product, details in pairs(farmables) do
         if recipe_entry ~= "general" then
             create_farming_recipe(product, specification)
         end
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << processing recipes >>
+for _, item in pairs(flora_items) do
+    if item.wood then
+        Tirislib_RecipeGenerator.create {
+            product = "lumber",
+            product_amount = 2,
+            ingredients = {
+                {name = item.name, amount = 1}
+            },
+            byproducts = {
+                {name = "sawdust", amount = 1}
+            }
+        }
+
+        Tirislib_RecipeGenerator.create {
+            product = "sawdust",
+            product_amount = 10,
+            ingredients = {
+                {name = item.name, amount = 1}
+            }
+        }
     end
 end

@@ -10,7 +10,9 @@ ItemConstants.garbage_values = {
 
 ItemConstants.compost_values = {
     ["leafage"] = 1,
-    ["food-leftovers"] = 1
+    ["food-leftovers"] = 1,
+    ["sewage-sludge"] = 1.5,
+    ["sawdust"] = 0.5
 }
 
 ItemConstants.beverages = {
