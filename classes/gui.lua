@@ -113,6 +113,7 @@ local mult = " × "
 local function display_materials(materials)
     local ret = {""}
     local first = true
+    local item_prototypes = game.item_prototypes
 
     for material, count in pairs(materials) do
         local entry = {""}
@@ -126,9 +127,7 @@ local function display_materials(materials)
         entry[#entry + 1] = mult
 
         entry[#entry + 1] = format("[item=%s] ", material)
-
-        local item_prototype = game.item_prototypes[material]
-        entry[#entry + 1] = item_prototype.localised_name
+        entry[#entry + 1] = item_prototypes[material].localised_name
 
         ret[#ret + 1] = entry
     end
@@ -614,11 +613,16 @@ local function set_details_view_title(container, caption)
     container.parent.caption = caption
 end
 
-local function create_tabbed_pane(container)
-    return container.add {
-        type = "tabbed-pane",
-        name = "tabpane"
-    }
+local function get_or_create_tabbed_pane(container)
+    local tabpane = container.tabpane
+    if container.tabpane then
+        return tabpane
+    else
+        return container.add {
+            type = "tabbed-pane",
+            name = "tabpane"
+        }
+    end
 end
 
 -- << empty housing details view >>
@@ -686,7 +690,7 @@ end
 local function create_empty_housing_details(container, entry)
     set_details_view_title(container, entry[EK.entity].localised_name)
 
-    local tabbed_pane = create_tabbed_pane(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
 
     local house_details = Housing.get(entry)
     add_caste_chooser_tab(tabbed_pane, house_details)
@@ -1062,7 +1066,7 @@ local function create_housing_details(container, entry)
     local title = {"", entry[EK.entity].localised_name, "  -  ", display_caste(entry[EK.type])}
     set_details_view_title(container, title)
 
-    local tabbed_pane = create_tabbed_pane(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
     make_stretchable(tabbed_pane)
 
     local caste_id = entry[EK.type]
@@ -1142,7 +1146,7 @@ local function create_general_building_details(container, entry)
     local building_details = get_building_details(entry)
     local type_details = Types.definitions[entry[EK.type]]
 
-    local tabbed_pane = create_tabbed_pane(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
 
     local building_data = create_data_list(tab, "building")
@@ -1205,6 +1209,22 @@ local function create_general_building_details(container, entry)
     return tabbed_pane
 end
 
+local function create_composting_values_tab(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
+    local tab = create_tab(tabbed_pane, "compostables", {"sosciencity-gui.compostables"})
+    local composting_list = create_data_list(tab, "compostables")
+
+    -- header
+    add_kv_pair(composting_list, "head", {"sosciencity-gui.item"}, {"sosciencity-gui.humus"}, "default-bold", "default-bold")
+
+    local item_prototypes = game.item_prototypes
+
+    for item, value in pairs(ItemConstants.compost_values) do
+        local item_representation = {"", format("[item=%s]  ", item), item_prototypes[item].localised_name}
+        add_operand_entry(composting_list, item, item_representation, tostring(value))
+    end
+end
+
 local function update_composter_details(container, entry)
     update_general_building_details(container, entry)
 
@@ -1248,6 +1268,7 @@ local function create_composter_details(container, entry)
     add_kv_pair(building_data, "composting-speed", {"sosciencity-gui.composting-speed"})
 
     update_composter_details(container, entry)
+    create_composting_values_tab(container)
 end
 
 local function update_waterwell_details(container, entry)
