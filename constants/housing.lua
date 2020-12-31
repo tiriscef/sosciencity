@@ -1,4 +1,5 @@
 require("constants.enums")
+require("constants.castes")
 
 --- Things that people live in.
 Housing = {}
@@ -70,8 +71,9 @@ function Housing.get_free_capacity(entry)
     return get_capacity(entry) - entry[EK.inhabitants]
 end
 
+local castes = Castes.values
 function Housing.allowes_caste(house, caste_id)
-    local caste = Castes(caste_id)
+    local caste = castes[caste_id]
     return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)
 end
 

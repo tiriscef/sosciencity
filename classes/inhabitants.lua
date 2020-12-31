@@ -149,8 +149,8 @@ end
 --- Object class for holding the diseases of a group of inhabitants.
 DiseaseGroup = {}
 
-local HEALTHY = 0
-DiseaseGroup.HEALTHY = HEALTHY
+DiseaseGroup.HEALTHY = 0
+local HEALTHY = DiseaseGroup.HEALTHY
 
 function DiseaseGroup.new(count)
     return {[HEALTHY] = count}
@@ -215,7 +215,7 @@ function DiseaseGroup.make_sick(group, disease_id, count)
     local actually_sickened = min(count, healthy_count)
 
     group[HEALTHY] = healthy_count - actually_sickened
-    group[disease_id] = group[disease_id] + actually_sickened
+    group[disease_id] = (group[disease_id] or 0) + actually_sickened
 
     return actually_sickened
 end
@@ -850,10 +850,6 @@ end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 ---------------------------------------------------------------------------------------------------
--- << healthcare >>
-
-
----------------------------------------------------------------------------------------------------
 -- << housing update >>
 -- it's so complex, it got its own section
 
@@ -987,8 +983,46 @@ local function update_housing_census(entry, caste_id)
     entry[EK.caste_points] = points
 end
 
-local function update_diseases(entry)
+function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
+    return entry[EK.employed] * delta_ticks / 3600
+end
+
+function Inhabitants.get_health_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks / 3600 / (entry[EK.health] + 1)
+end
+
+function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks / 3600 / (entry[EK.sanity] + 1)
+end
+
+local disease_progress_updaters = {
+    [DiseaseCategory.accident] = Inhabitants.get_accident_disease_progress,
+    [DiseaseCategory.health] = Inhabitants.get_health_disease_progress,
+    [DiseaseCategory.sanity] = Inhabitants.get_sanity_disease_progress
+}
+
+local function update_diseases(entry, delta_ticks)
     local disease_group = entry[EK.diseases]
+
+    local progresses = entry[EK.disease_progress]
+
+    for disease_category, progress in pairs(progresses) do
+        progress = progress + disease_progress_updaters[disease_category](entry, delta_ticks)
+
+        if progress > 1 then
+            local new_diseases = floor(progress)
+            local disease_id =
+                Tirislib_Tables.pick_random_subtable_weighted_by_key(
+                Diseases.by_category[disease_category],
+                "frequency"
+            )
+            DiseaseGroup.make_sick(disease_group, disease_id, new_diseases)
+
+            progress = progress - new_diseases
+        end
+
+        progresses[disease_category] = progress
+    end
 
     local healthy_count = disease_group[HEALTHY]
     local employed_count = entry[EK.employed]
@@ -1047,15 +1081,10 @@ local function update_house(entry, delta_ticks)
     update_happiness(entry, nominal_happiness, delta_ticks)
 
     update_ages(entry)
-    -- TODO diseases
-
     update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
-
     update_housing_census(entry, caste_id)
-
     update_garbage_output(entry, delta_ticks)
-
-    update_diseases(entry)
+    update_diseases(entry, delta_ticks)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1252,6 +1281,7 @@ function Inhabitants.create_house(entry)
 
     entry[EK.emigration_trend] = 0
     entry[EK.garbage_progress] = 0
+    entry[EK.disease_progress] = Tirislib_Tables.new_array(Tirislib_Tables.count(DiseaseCategory), 0.)
 
     entry[EK.employed] = 0
     entry[EK.employments] = {}
