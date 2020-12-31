@@ -11,7 +11,7 @@ local function find_curable_diseases(item_name)
     local first = true
 
     for _, disease in pairs(Diseases.values) do
-        if disease.cure_items[item_name] then
+        if disease.cure_items and disease.cure_items[item_name] then
             if not first then
                 ret[#ret + 1] = "[color=#FFFFFF] - [/color]"
             end

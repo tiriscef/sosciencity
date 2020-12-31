@@ -7,14 +7,89 @@ local max = math.max
 local min = math.min
 local floor = math.floor
 
---<< Just some helper functions >>
+---------------------------------------------------------------------------------------------------
+--- Table query functions
+Tirislib_Luaq = {}
+
+Tirislib_Luaq.__index = Tirislib_Luaq
+
+function Tirislib_Luaq.from(source)
+    local ret = {
+        content = source
+    }
+    setmetatable(ret, Tirislib_Luaq)
+
+    return ret
+end
+
+function Tirislib_Luaq:select_key(key)
+    local new_array = {}
+
+    for index, element in pairs(self.content) do
+        new_array[index] = element[key]
+    end
+
+    self.content = new_array
+    return self
+end
+
+function Tirislib_Luaq:select(fn, ...)
+    local new_array = {}
+
+    for index, element in pairs(self.content) do
+        new_array[index] = fn(element, ...)
+    end
+
+    self.content = new_array
+    return self
+end
+
+function Tirislib_Luaq:where(fn, ...)
+    local new_array = {}
+
+    for index, element in pairs(self.content) do
+        if fn(element, ...) then
+            new_array[index] = element
+        end
+    end
+
+    self.content = new_array
+    return self
+end
+
+function Tirislib_Luaq:foreach(fn, ...)
+    for _, element in pairs(self.content) do
+        fn(element, ...)
+    end
+end
+
+function Tirislib_Luaq:to_table()
+    return self.content
+end
+
+function Tirislib_Luaq:to_array()
+    local ret = {}
+
+    for _, element in pairs(self.content) do
+        ret[#ret + 1] = element
+    end
+
+    return ret
+end
+
+function Tirislib_Luaq:call(fn, ...)
+    return fn(self.content, ...)
+end
+
+---------------------------------------------------------------------------------------------------
+--- Just some helper functions
 Tirislib_Utils = {}
 
-function Tirislib_Utils.clamp(val, min, max)
-    if val < min then
-        return min
-    elseif val > max then
-        return max
+function Tirislib_Utils.clamp(val, value_min, value_max)
+    if val < value_min then
+        return value_min
+    elseif val > value_max then
+        return value_max
     else
         return val
     end
@@ -154,7 +229,8 @@ function Tirislib_Utils.desync_protection()
     end
 end
 
---<< Just some string helper functions >>
+---------------------------------------------------------------------------------------------------
+--- Just some string helper functions
 Tirislib_String = {}
 
 function Tirislib_String.begins_with(str, prefix)
@@ -203,7 +279,8 @@ function Tirislib_String.split(s, separator)
     return ret
 end
 
---<< Just some table helper functions >>
+---------------------------------------------------------------------------------------------------
+--- Just some table helper functions
 Tirislib_Tables = {}
 
 function Tirislib_Tables.equal(lh, rh)
@@ -405,6 +482,7 @@ function Tirislib_Tables.sum(tbl)
 
     return ret
 end
+local sum = Tirislib_Tables.sum
 
 function Tirislib_Tables.array_sum(tbl)
     local ret = 0.
@@ -523,6 +601,20 @@ function Tirislib_Tables.pick_n_random_keys(tbl, n)
     end
 
     return ret
+end
+
+function Tirislib_Tables.pick_random_subtable_weighted_by_key(tbl, key, weight_sum)
+    weight_sum = weight_sum or Tirislib_Luaq.from(tbl):select_key(key):call(sum)
+
+    local random_index = random() * weight_sum
+
+    for index, subtable in pairs(tbl) do
+        random_index = random_index - subtable[key]
+
+        if random_index <= 0 then
+            return index, subtable
+        end
+    end
 end
 
 --- Returns an array with the given number sequence.

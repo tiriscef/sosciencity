@@ -47,7 +47,7 @@ end
 
 local floor = math.floor
 local random = math.random
-local weighted_random = Tirislib_Utils.weighted_random
+local pick_random_subtable_weighted_by_key = Tirislib_Tables.pick_random_subtable_weighted_by_key
 
 local buildings = Buildings.values
 local get_type = Types.get
@@ -335,16 +335,6 @@ end
 -- << speakers >>
 local FOLLOWUP_DELAY = 2 * Time.second
 
-local function pick_speaker(weight_key)
-    local weights = {}
-    for index, name in pairs(allowed_speakers) do
-        weights[index] = speakers[name][weight_key]
-    end
-
-    local speaker_name = allowed_speakers[weighted_random(weights)]
-    return speaker_name, speakers[speaker_name]
-end
-
 local function say(speaker, line)
     game.print {"", {speaker .. "prefix"}, {speaker .. line}}
 
@@ -380,7 +370,7 @@ function Communication.useless_banter()
     -- pick a random speaker and line until we found a line that wasn't used recently
     local speaker_name, speaker, line, line_index
     repeat
-        speaker_name, speaker = pick_speaker("useless_banter_count")
+        speaker_name, speaker = pick_random_subtable_weighted_by_key(speakers, "useless_banter_count")
         line = random(speaker.useless_banter_count)
         line_index = line + speaker.index
     until not Tirislib_Tables.contains(global.past_banter, line_index)
@@ -411,7 +401,7 @@ function Communication.player_got_run_over()
         return
     end
 
-    local speaker_name, speaker = pick_speaker("roadkill_banter_count")
+    local speaker_name, speaker = pick_random_subtable_weighted_by_key(speakers, "roadkill_banter_count")
     local line = random(speaker.roadkill_banter_count)
     Scheduler.plan_event_in("say", FOLLOWUP_DELAY, speaker_name, "train-" .. line)
 end

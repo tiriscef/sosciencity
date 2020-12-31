@@ -161,12 +161,14 @@ EK.employed = 219
 EK.employments = 220
 --- the illnesses of the inhabitants as a DiseaseGroup object
 EK.diseases = 222
+--- the progresses toward the next disease case as a table of (disease category, float)-pairs
+EK.disease_progress = 223
 --- the genders of the inhabitants
-EK.genders = 223
+EK.genders = 224
 --- the ages of the inhabitants
-EK.ages = 224
+EK.ages = 225
 --- the tick of the last age shift
-EK.last_age_shift = 225
+EK.last_age_shift = 226
 
 -- water distributer
 --- quality of the water this distributer provides
@@ -309,3 +311,13 @@ Humidity = {}
 Humidity.humid = 1
 Humidity.moderate = 2
 Humidity.dry = 3
+
+--- Enum table for disease categories
+DiseaseCategory = {}
+
+--- consequences of bad healthiness
+DiseaseCategory.health = 1
+--- consequences of bad sanity
+DiseaseCategory.sanity = 2
+--- consequences of work related accidents
+DiseaseCategory.accident = 3
