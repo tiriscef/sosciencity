@@ -29,14 +29,14 @@ Castes.values = {
             [Gender.ga] = 20
         },
         housing_preferences = {
-            ["compact"] = 1,
-            ["plain"] = 1,
-            ["individualistic"] = 1.5,
             ["sheltered"] = 1,
-            ["technical"] = 2,
-            ["decorated"] = -2,
+            ["technical"] = 3,
+            ["compact"] = 1,
+            ["simple"] = 2,
+            ["cheap"] = 2,
+            ["decorated"] = -1,
             ["green"] = -1,
-            ["copy-paste"] = -2
+            ["pompous"] = -1
         }
     },
     [Type.orchid] = {
@@ -62,7 +62,14 @@ Castes.values = {
             [Gender.pachin] = 60,
             [Gender.ga] = 20
         },
-        housing_preferences = {}
+        housing_preferences = {
+            ["green"] = 3,
+            ["spacey"] = 3,
+            ["low"] = 2,
+            ["sheltered"] = -1,
+            ["technical"] = -3,
+            ["compact"] = -1
+        }
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -88,10 +95,16 @@ Castes.values = {
             [Gender.ga] = 3
         },
         housing_preferences = {
-            ["sheltered"] = 2,
-            ["plain"] = 1,
+            ["sheltered"] = 2.5,
+            ["compact"] = 1,
+            ["simple"] = 1,
             ["copy-paste"] = 1,
-            ["low"] = 0.5
+            ["cheap"] = 1,
+            ["low"] = 1,
+            ["spacey"] = -1,
+            ["individualistic"] = -2,
+            ["pompous"] = -1,
+            ["tall"] = -1
         }
     },
     [Type.ember] = {
@@ -117,7 +130,11 @@ Castes.values = {
             [Gender.pachin] = 15,
             [Gender.ga] = 45
         },
-        housing_preferences = {}
+        housing_preferences = {
+            ["decorated"] = 2.5,
+            ["tall"] = 3,
+            ["simple"] = -2
+        }
     },
     [Type.foundry] = {
         name = "foundry",
@@ -143,6 +160,13 @@ Castes.values = {
             [Gender.ga] = 30
         },
         housing_preferences = {
+            ["technical"] = 2,
+            ["spacey"] = 1,
+            ["simple"] = 1,
+            ["copy-paste"] = 1,
+            ["green"] = -2,
+            ["individualistic"] = -1,
+            ["low"] = -2
         }
     },
     [Type.gleam] = {
@@ -169,6 +193,11 @@ Castes.values = {
             [Gender.ga] = 30
         },
         housing_preferences = {
+            ["spacey"] = 1,
+            ["individualistic"] = 1,
+            ["pompous"] = 3,
+            ["technical"] = -2,
+            ["cheap"] = -3
         }
     },
     [Type.aurora] = {
@@ -195,6 +224,17 @@ Castes.values = {
             [Gender.ga] = 25
         },
         housing_preferences = {
+            ["green"] = 1,
+            ["spacey"] = 1,
+            ["decorated"] = 1,
+            ["individualistic"] = 1,
+            ["pompous"] = 1,
+            ["sheltered"] = -2,
+            ["technical"] = -2,
+            ["compact"] = -2,
+            ["simple"] = -2,
+            ["copy-paste"] = -2,
+            ["cheap"] = -5
         }
     },
     [Type.plasma] = {
@@ -221,6 +261,13 @@ Castes.values = {
             [Gender.ga] = 30
         },
         housing_preferences = {
+            ["green"] = 1,
+            ["compact"] = 1,
+            ["decorated"] = 2,
+            ["individualistic"] = 2,
+            ["sheltered"] = -1,
+            ["simple"] = -1,
+            ["cheap"] = -3
         }
     }
 }
@@ -246,14 +293,6 @@ for _, caste in pairs(Castes.values) do
     -- to immigrants per tick
     caste.immigration_coefficient = caste.immigration_coefficient / Time.minute
 end
-
-local meta = {}
-
-function meta:__call(_type)
-    return castes[_type]
-end
-
-setmetatable(Castes, meta)
 
 if script and script.active_mods["sosciencity-balancing"] then
     local tech_levels = {
