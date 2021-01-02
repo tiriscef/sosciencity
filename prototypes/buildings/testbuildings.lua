@@ -49,6 +49,7 @@ create_test_container("market")
 create_test_container("hospital")
 create_test_container("night-club")
 create_test_container("pharmacy")
+create_test_container("psych-ward")
 
 local function create_test_assembling_machine(name)
     Tirislib_Item.create {

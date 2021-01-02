@@ -20,12 +20,14 @@ Type.plasma = 8
 -- civil types
 Type.market = 101
 Type.water_distributer = 102
-Type.hospital = 103
 Type.dumpster = 104
-Type.pharmacy = 105
 Type.immigration_port = 106
 Type.transportation = 107
 Type.nightclub = 108
+
+Type.pharmacy = 199
+Type.hospital = 200
+Type.psych_ward = 201
 
 -- crafting machines
 Type.assembling_machine = 1001
@@ -125,8 +127,6 @@ EK.performance = 150
 
 -- type specific stuff
 -- housing
---- if this house is an improvised hut
-EK.is_improvised = 203
 --- inhabitants this house has during the last update
 EK.official_inhabitants = 204
 --- points this house provides to the caste bonus
@@ -163,12 +163,14 @@ EK.employments = 220
 EK.diseases = 222
 --- the progresses toward the next disease case as a table of (disease category, float)-pairs
 EK.disease_progress = 223
+--- the progress toward the next natural recovery
+EK.recovery_progress = 224
 --- the genders of the inhabitants
-EK.genders = 224
+EK.genders = 225
 --- the ages of the inhabitants
-EK.ages = 225
+EK.ages = 226
 --- the tick of the last age shift
-EK.last_age_shift = 226
+EK.last_age_shift = 227
 
 -- water distributer
 --- quality of the water this distributer provides
@@ -199,6 +201,12 @@ EK.species = 701
 EK.humus = 800
 --- progress toward the next composted item
 EK.composting_progress = 801
+
+-- hospital
+--- available operations in this hospital
+EK.operations = 900
+--- statistics over treated disease cases as (disease_id, count)-pairs
+EK.treated = 901
 
 --<< causes >>
 --- Enum table for destruction causes

@@ -35,6 +35,11 @@ TypeGroup.inhabitant_subscriptions = {
     Type.animal_farm
 }
 
+TypeGroup.hospital_complements = {
+    Type.pharmacy,
+    Type.psych_ward
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
 --- Type definitions\
@@ -130,21 +135,10 @@ Types.definitions = {
         signature_color = Colors.light_teal,
         is_civil = true
     },
-    [Type.hospital] = {
-        localised_name = {"sosciencity-gui.hospital"},
-        localised_description = {"sosciencity-gui.explain-hospital"},
-        signature_color = Colors.darkish_red,
-        is_civil = true
-    },
     [Type.dumpster] = {
         localised_name = {"sosciencity-gui.dumpster"},
         localised_description = {"sosciencity-gui.explain-dumpster"},
         signature_color = Colors.grey,
-        is_civil = true
-    },
-    [Type.pharmacy] = {
-        localised_name = {"sosciencity-gui.pharmacy"},
-        localised_description = {"sosciencity-gui.explain-pharmacy"},
         is_civil = true
     },
     [Type.immigration_port] = {
@@ -156,6 +150,26 @@ Types.definitions = {
         localised_name = {"sosciencity-gui.nightclub"},
         localised_description = {"sosciencity-gui.explain-nightclub"},
         signature_color = Colors.purple,
+        is_civil = true
+    },
+    [Type.pharmacy] = {
+        localised_name = {"sosciencity-gui.pharmacy"},
+        localised_description = {"sosciencity-gui.explain-pharmacy"},
+        is_civil = true
+    },
+    [Type.hospital] = {
+        localised_name = {"sosciencity-gui.hospital"},
+        localised_description = {"sosciencity-gui.explain-hospital"},
+        localised_speed_name = {"sosciencity-gui.rate"},
+        localised_speed_key = "sosciencity-gui.show-hospital-rate",
+        signature_color = Colors.darkish_red,
+        subscriptions = TypeGroup.hospital_complements,
+        is_civil = true
+    },
+    [Type.psych_ward] = {
+        localised_name = {"sosciencity-gui.psych-ward"},
+        localised_description = {"sosciencity-gui.explain-psych-ward"},
+        signature_color = Colors.darkish_red,
         is_civil = true
     },
     [Type.waterwell] = {

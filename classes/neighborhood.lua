@@ -193,7 +193,7 @@ function Neighborhood.get_by_type(entry, _type)
     local ret = {}
     local i = 1
 
-    for unit_number, _ in pairs(neighbor_table) do
+    for unit_number in pairs(neighbor_table) do
         local current_entry = try_get(unit_number)
         if current_entry and current_entry[EK.type] == _type then
             ret[i] = current_entry

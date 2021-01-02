@@ -3,7 +3,8 @@ require("constants.diseases")
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local medicine_items = {
-    {name = "artificial-limp"}
+    {name = "artificial-limp"},
+    {name = "psychotropics", sprite_variations = {name = "psychotropics-pile", count = 3}}
 }
 
 local function find_curable_diseases(item_name)
@@ -46,6 +47,13 @@ Tirislib_RecipeGenerator.create {
         {"wiring", 1, 1},
         {"electronics", 1, 1}
     },
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "plasma-caste"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "psychotropics",
     energy_required = 3,
     allow_productivity = true,
     unlock = "plasma-caste"

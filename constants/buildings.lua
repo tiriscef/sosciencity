@@ -18,7 +18,18 @@ Buildings.values = {
     },
     ["test-hospital"] = {
         type = Type.hospital,
-        range = 42
+        range = 42,
+        speed = 20,
+        workforce = {
+            count = 20,
+            castes = {Type.plasma}
+        },
+        power_usage = 50
+    },
+    ["test-psych-ward"] = {
+        type = Type.psych_ward,
+        range = 42,
+        power_usage = 50
     },
     ["test-water-distributer"] = {
         type = Type.water_distributer,
@@ -68,7 +79,7 @@ Buildings.values = {
         water_tiles = 300,
         workforce = {
             count = 4,
-            castes = {Types.clockwork}
+            castes = {Type.clockwork}
         }
     },
     ["greenhouse"] = {
@@ -84,7 +95,7 @@ Buildings.values = {
         tree_count = 100,
         workforce = {
             count = 4,
-            castes = {Types.clockwork}
+            castes = {Type.clockwork}
         }
     },
     ["industrial-animal-farm"] = {
