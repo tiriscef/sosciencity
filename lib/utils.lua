@@ -8,6 +8,18 @@ local min = math.min
 local floor = math.floor
 
 ---------------------------------------------------------------------------------------------------
+-- << helper functions >>
+
+--- Gets or creates the inner table with the given key.
+local function get_inner_table(tbl, key)
+    if not tbl[key] then
+        tbl[key] = {}
+    end
+
+    return tbl[key]
+end
+
+---------------------------------------------------------------------------------------------------
 --- Table query functions
 Tirislib_Luaq = {}
 
@@ -23,44 +35,56 @@ function Tirislib_Luaq.from(source)
 end
 
 function Tirislib_Luaq:select_key(key)
-    local new_array = {}
+    local new_content = {}
 
     for index, element in pairs(self.content) do
-        new_array[index] = element[key]
+        new_content[index] = element[key]
     end
 
-    self.content = new_array
+    self.content = new_content
     return self
 end
 
 function Tirislib_Luaq:select(fn, ...)
-    local new_array = {}
+    local new_content = {}
 
     for index, element in pairs(self.content) do
-        new_array[index] = fn(element, ...)
+        new_content[index] = fn(index, element, ...)
     end
 
-    self.content = new_array
+    self.content = new_content
     return self
 end
 
 function Tirislib_Luaq:where(fn, ...)
-    local new_array = {}
+    local new_content = {}
 
     for index, element in pairs(self.content) do
-        if fn(element, ...) then
-            new_array[index] = element
+        if fn(index, element, ...) then
+            new_content[index] = element
         end
     end
 
-    self.content = new_array
+    self.content = new_content
     return self
 end
 
 function Tirislib_Luaq:foreach(fn, ...)
-    for _, element in pairs(self.content) do
-        fn(element, ...)
+    for index, element in pairs(self.content) do
+        fn(index, element, ...)
     end
+end
+
+function Tirislib_Luaq:group(fn, ...)
+    local new_content = {}
+
+    for index, element in pairs(self.content) do
+        local group_index = fn(index, element, ...)
+        get_inner_table(new_content, group_index)[index] = element
+    end
+
+    self.content = new_content
+    return self
 end
 
 function Tirislib_Luaq:to_table()
@@ -191,6 +215,27 @@ function Tirislib_Utils.dice_rolls(dice, count, actual_count)
     end
 
     return ret
+end
+
+function Tirislib_Utils.coin_flips(probability, count, actual_count)
+    actual_count = actual_count or 20
+
+    local successes = 0
+    local count_per_coin = 1
+    local modulo = 0
+    if count > actual_count then
+        count_per_coin = floor(count / actual_count)
+        modulo = count % actual_count
+    end
+
+    for i = 1, min(count, actual_count) do
+        local success = (random() < probability)
+        if success then
+            successes = successes + count_per_coin + (i <= modulo and 1 or 0)
+        end
+    end
+
+    return successes
 end
 
 function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
@@ -638,15 +683,7 @@ function Tirislib_Tables.sequence(start, finish, steps)
     return ret
 end
 
---- Gets or creates the inner table with the given key.
-function Tirislib_Tables.get_inner_table(tbl, key)
-    if not tbl[key] then
-        tbl[key] = {}
-    end
-
-    return tbl[key]
-end
-local get_inner_table = Tirislib_Tables.get_inner_table
+Tirislib_Tables.get_inner_table = get_inner_table
 
 --- Groups the tables inside the given table by the content of the given key.\
 --- In case an inner table doesn't have a value for the given key it gets added to the group of the default_key
@@ -654,6 +691,7 @@ local get_inner_table = Tirislib_Tables.get_inner_table
 --- @param tbl table
 --- @param key any
 --- @param default_key any|nil
+--- @return table
 function Tirislib_Tables.group_by_key(tbl, key, default_key)
     local ret = {}
     local default_inner = default_key and get_inner_table(default_key)
@@ -670,4 +708,19 @@ function Tirislib_Tables.group_by_key(tbl, key, default_key)
     end
 
     return ret
+end
+
+--- Adds the contents of the given right hand side table to the given left hand side table.
+--- @param lh table
+--- @param rh table
+function Tirislib_Tables.add(lh, rh)
+    for key, value in pairs(rh) do
+        lh[key] = (lh[key] or 0) + value
+    end
+end
+
+function Tirislib_Tables.multiply(tbl, multiplier)
+    for key, value in pairs(tbl) do
+        tbl[key] = value * multiplier
+    end
 end

@@ -281,13 +281,13 @@ Tiristest.add_test_case(
     "inhabitants|gender",
     function()
         for _, caste_id in pairs(TypeGroup.all_castes) do
-            local group = GenderGroup.new(10, caste_id)
+            local group = GenderGroup.new_immigrants(10, caste_id)
             Assert.equals(Tbl.sum(group), 10)
 
-            group = GenderGroup.new(3, caste_id)
+            group = GenderGroup.new_immigrants(3, caste_id)
             Assert.equals(Tbl.sum(group), 3)
 
-            group = GenderGroup.new(0, caste_id)
+            group = GenderGroup.new_immigrants(0, caste_id)
             Assert.equals(Tbl.sum(group), 0)
 
             test_GenderGroup_invariant(group)
@@ -299,8 +299,8 @@ Tiristest.add_test_case(
     "GenderGroup.merge",
     "inhabitants|gender",
     function()
-        local group = GenderGroup.new(10, Type.clockwork)
-        local other_group = GenderGroup.new(20, Type.clockwork)
+        local group = GenderGroup.new_immigrants(10, Type.clockwork)
+        local other_group = GenderGroup.new_immigrants(20, Type.clockwork)
         GenderGroup.merge(group, other_group)
 
         Assert.equals(Tbl.sum(group), 30)
@@ -309,8 +309,8 @@ Tiristest.add_test_case(
         test_GenderGroup_invariant(group)
         test_GenderGroup_invariant(other_group)
 
-        group = GenderGroup.new(10, Type.clockwork)
-        other_group = GenderGroup.new(20, Type.clockwork)
+        group = GenderGroup.new_immigrants(10, Type.clockwork)
+        other_group = GenderGroup.new_immigrants(20, Type.clockwork)
         GenderGroup.merge(group, other_group, true)
 
         Assert.equals(Tbl.sum(other_group), 20)
@@ -325,7 +325,7 @@ Tiristest.add_test_case(
             local total = math.random(100, 200)
             local to_take = math.random(10, 50)
 
-            local group = GenderGroup.new(total, TypeGroup.all_castes[#TypeGroup.all_castes])
+            local group = GenderGroup.new_immigrants(total, TypeGroup.all_castes[#TypeGroup.all_castes])
             local copy = Tbl.copy(group)
 
             local taken = GenderGroup.take(group, to_take, total)
@@ -341,7 +341,7 @@ Tiristest.add_test_case(
     "GenderGroup.take edge cases",
     "inhabitants|gender",
     function()
-        local group = GenderGroup.new(50, TypeGroup.all_castes[#TypeGroup.all_castes])
+        local group = GenderGroup.new_immigrants(50, TypeGroup.all_castes[#TypeGroup.all_castes])
         local taken = GenderGroup.take(group, 0)
         Assert.equals(Tbl.sum(taken), 0)
         test_GenderGroup_invariant(taken)

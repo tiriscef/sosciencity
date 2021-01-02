@@ -9,6 +9,7 @@ Entity = {}
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
 local global
 local caste_bonuses
+local diseases = Diseases.values
 local flora = Biology.flora
 local water_values = DrinkingWater.values
 
@@ -366,6 +367,44 @@ Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
 -- << market >>
 Register.set_entity_creation_handler(Type.market, Inventories.cache_contents)
 Register.set_entity_updater(Type.market, Inventories.cache_contents)
+
+---------------------------------------------------------------------------------------------------
+-- << hospital >>
+function Entity.get_hospital_inventories(entry)
+    local ret = {Inventories.get_chest_inventory(entry)}
+
+    for _, _type in pairs(TypeGroup.hospital_complements) do
+        for _, building in Neighborhood.all_of_type(entry, _type) do
+            ret[#ret+1] = Inventories.get_chest_inventory(building)
+        end
+    end
+
+    return ret
+end
+
+local function update_hospital(entry, delta_ticks)
+    Inhabitants.update_workforce(entry)
+    local performance = Inhabitants.evaluate_workforce(entry)
+
+    if not has_power(entry) then
+        performance = 0
+    end
+
+    entry[EK.operations] = entry[EK.operations] + performance * delta_ticks * get_building_details(entry).speed
+end
+Register.set_entity_updater(Type.hospital, update_hospital)
+
+local function create_hospital(entry)
+    entry[EK.operations] = 0
+    entry[EK.treated] = {}
+end
+Register.set_entity_creation_handler(Type.hospital, create_hospital)
+
+local function copy_hospital(source, destination)
+    destination[EK.operations] = source[EK.operations]
+    destination[EK.treated] = Tirislib_Tables.copy(source[EK.treated])
+end
+Register.set_entity_copy_handler(Type.hospital, copy_hospital)
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>

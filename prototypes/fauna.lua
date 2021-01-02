@@ -329,8 +329,6 @@ local function create_slaughter_recipe(animal, index)
     if animal.slaughter_byproducts then
         recipe:add_result_range(animal.slaughter_byproducts)
     end
-
-    -- TODO bones
 end
 
 for index, animal in pairs(animals) do

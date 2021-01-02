@@ -101,6 +101,9 @@ end
 ---@class InhabitantGroup
 ---@class DiseaseGroup
 ---@class DiseaseID
+---@class AgeGroup
+---@class GenderGroup
+---@class LuaqQuery
 
 --[[
     Data this script stores in global

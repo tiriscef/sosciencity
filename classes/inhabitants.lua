@@ -54,6 +54,8 @@ local garbage_coefficient = Castes.garbage_coefficient
 local evaluate_diet = Consumption.evaluate_diet
 local evaluate_water = Consumption.evaluate_water
 
+local disease_values = Diseases.values
+
 local produce_garbage = Inventories.produce_garbage
 local get_garbage_value = Inventories.get_garbage_value
 
@@ -76,11 +78,18 @@ local max = math.max
 local min = math.min
 local map_range = Tirislib_Utils.map_range
 local array_sum = Tirislib_Tables.array_sum
+local sum = Tirislib_Tables.sum
 local array_product = Tirislib_Tables.array_product
+local coin_flips = Tirislib_Utils.coin_flips
 local dice_rolls = Tirislib_Utils.dice_rolls
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
 local random = math.random
+
+local table_copy = Tirislib_Tables.copy
+local table_multiply = Tirislib_Tables.multiply
+
+local Luaq_from = Tirislib_Luaq.from
 
 local function set_locals()
     global = _ENV.global
@@ -152,6 +161,8 @@ DiseaseGroup = {}
 DiseaseGroup.HEALTHY = 0
 local HEALTHY = DiseaseGroup.HEALTHY
 
+--- Returns a new DiseaseGroup with the given count of healthy people.
+--- @param count integer
 function DiseaseGroup.new(count)
     return {[HEALTHY] = count}
 end
@@ -207,7 +218,7 @@ function DiseaseGroup.take(group, to_take, total_count)
 end
 
 --- Tries to makes the given number of people sick with the given disease. Returns the number of people that were actually sickened.
---- @param group Entry
+--- @param group DiseaseGroup
 --- @param disease_id DiseaseID
 --- @param count integer
 function DiseaseGroup.make_sick(group, disease_id, count)
@@ -219,6 +230,29 @@ function DiseaseGroup.make_sick(group, disease_id, count)
 
     return actually_sickened
 end
+
+--- Tries to cure the given number of people of the given disease. Returns the number of people that were actually cured.
+--- @param group DiseaseGroup
+--- @param disease_id DiseaseID
+--- @param count integer
+function DiseaseGroup.cure(group, disease_id, count)
+    local healthy_count = group[HEALTHY]
+    local sick_count = group[disease_id]
+    local actually_cured = min(count, sick_count)
+
+    group[HEALTHY] = healthy_count + actually_cured
+    group[disease_id] = (actually_cured < sick_count) and sick_count - actually_cured or nil
+
+    return actually_cured
+end
+local cure = DiseaseGroup.cure
+
+--- Checks if the given id corresponds to a disease.
+--- @param id DiseaseID
+function DiseaseGroup.not_healthy(id)
+    return id ~= HEALTHY
+end
+local not_healthy = DiseaseGroup.not_healthy
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant ages >>
@@ -313,11 +347,11 @@ end
 -- << inhabitant genders >>
 GenderGroup = {}
 
-function GenderGroup.empty_new()
-    return {0, 0, 0, 0}
+function GenderGroup.new(neutral, fale, pachin, ga)
+    return {neutral or 0, fale or 0, pachin or 0, ga or 0}
 end
 
-function GenderGroup.new(count, caste)
+function GenderGroup.new_immigrants(count, caste)
     return dice_rolls(castes[caste].gender_distribution, count, 20)
 end
 
@@ -335,7 +369,7 @@ function GenderGroup.take(group, to_take, total_count)
     total_count = total_count or Tirislib_Tables.sum(group)
     to_take = min(to_take, total_count)
 
-    local ret = GenderGroup.empty_new()
+    local ret = GenderGroup.new()
 
     while to_take > 0 do
         for gender = 1, #group do
@@ -378,7 +412,7 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, 
         [EK.health] = health or DEFAULT_HEALTH,
         [EK.sanity] = sanity or DEFAULT_SANITY,
         [EK.diseases] = diseases or new_disease_group(count),
-        [EK.genders] = genders or GenderGroup.new(count, caste),
+        [EK.genders] = genders or GenderGroup.new_immigrants(count, caste),
         [EK.ages] = ages or AgeGroup.new(count)
     }
 end
@@ -394,7 +428,7 @@ function InhabitantGroup.new_immigrant_group(caste, count)
         [EK.health] = DEFAULT_HEALTH,
         [EK.sanity] = DEFAULT_SANITY,
         [EK.diseases] = new_disease_group(count),
-        [EK.genders] = GenderGroup.new(count, caste),
+        [EK.genders] = GenderGroup.new_immigrants(count, caste),
         [EK.ages] = AgeGroup.random_new(count, get_immigrant_age)
     }
 end
@@ -405,7 +439,7 @@ function InhabitantGroup.empty(group)
     group[EK.health] = 0
     group[EK.sanity] = 0
     group[EK.diseases] = new_disease_group(0)
-    group[EK.genders] = GenderGroup.new(0, group[EK.type])
+    group[EK.genders] = GenderGroup.new_immigrants(0, group[EK.type])
     group[EK.ages] = AgeGroup.new(0)
 end
 
@@ -458,6 +492,7 @@ function InhabitantGroup.take(group, count)
         AgeGroup.take(group[EK.ages], taken_count, existing_count)
     )
 end
+local take_inhabitants = InhabitantGroup.take
 
 function InhabitantGroup.merge_partially(lh, rh, count)
     InhabitantGroup.merge(lh, InhabitantGroup.take(rh, count))
@@ -771,11 +806,12 @@ end
 local function update_free_space_status(entry)
     local caste_id = entry[EK.type]
     local unit_number = entry[EK.unit_number]
+    local is_improvised = get_housing_details(entry).is_improvised
 
     if get_free_capacity(entry) > 0 then
-        free_houses[entry[EK.is_improvised]][caste_id][unit_number] = unit_number
+        free_houses[is_improvised][caste_id][unit_number] = unit_number
     else
-        free_houses[entry[EK.is_improvised]][caste_id][unit_number] = nil
+        free_houses[is_improvised][caste_id][unit_number] = nil
     end
 end
 
@@ -848,6 +884,194 @@ function Inhabitants.distribute_inhabitants(group)
     return distribute(group, false) + distribute(group, true)
 end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
+
+---------------------------------------------------------------------------------------------------
+-- << healthcare >>
+local function cure_side_effects(entry, disease_id, count)
+    local disease = disease_values[disease_id]
+
+    local dead_count = coin_flips(disease.lethality, count)
+    if dead_count > 0 then
+        take_inhabitants(entry, dead_count)
+        Communication.log_disease_deaths(disease_id, dead_count)
+    end
+end
+
+function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
+    return entry[EK.employed] * delta_ticks / 100000 * castes[entry[EK.type]].accident_disease_resilience
+end
+
+function Inhabitants.get_health_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + 1) *
+        castes[entry[EK.type]].health_disease_resilience
+end
+
+function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.sanity] + 1) *
+        castes[entry[EK.type]].sanity_disease_resilience
+end
+
+Inhabitants.disease_progress_updaters = {
+    [DiseaseCategory.accident] = Inhabitants.get_accident_disease_progress,
+    [DiseaseCategory.health] = Inhabitants.get_health_disease_progress,
+    [DiseaseCategory.sanity] = Inhabitants.get_sanity_disease_progress
+}
+local disease_progress_updaters = Inhabitants.disease_progress_updaters
+
+local function create_diseases(entry, disease_group, delta_ticks)
+    local progresses = entry[EK.disease_progress]
+
+    for disease_category, progress in pairs(progresses) do
+        progress = progress + disease_progress_updaters[disease_category](entry, delta_ticks)
+
+        if progress >= 1 then
+            local new_diseases = floor(progress)
+            local disease_id =
+                Tirislib_Tables.pick_random_subtable_weighted_by_key(
+                Diseases.by_category[disease_category],
+                "frequency",
+                Diseases.frequency_sums[disease_category]
+            )
+            DiseaseGroup.make_sick(disease_group, disease_id, new_diseases)
+
+            progress = progress - new_diseases
+        end
+
+        progresses[disease_category] = progress
+    end
+end
+
+local function get_recovery_progress(id, count, delta_ticks)
+    return disease_values[id].natural_recovery * count * delta_ticks
+end
+
+local function is_recoverable(id)
+    return disease_values[id].natural_recovery > 0
+end
+
+local function has_facility(hospital, facility_type)
+    for _, facility in Neighborhood.all_of_type(hospital, facility_type) do
+        if has_power(facility) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function try_treat_disease(hospital, hospital_contents, inventories, disease_group, disease_id, count)
+    local disease = disease_values[disease_id]
+    local necessary_facility = disease.curing_facility
+
+    if necessary_facility and not has_facility(hospital, necessary_facility) then
+        return 0
+    end
+
+    local operations = hospital[EK.operations]
+    local workload_per_case = disease.curing_workload
+    local items_per_case = disease.cure_items or {}
+
+    -- determine the number of treated cases
+    local to_treat = min(count, floor(operations / workload_per_case))
+
+    for item_name, item_count in pairs(items_per_case) do
+        to_treat = min(to_treat, floor((hospital_contents[item_name] or 0) / item_count))
+    end
+
+    to_treat = cure(disease_group, disease_id, to_treat)
+
+    -- consume operations and items
+    hospital[EK.operations] = operations - to_treat * workload_per_case
+
+    local items = table_copy(items_per_case)
+    table_multiply(items, to_treat)
+    Inventories.remove_item_range_from_inventory_range(inventories, items)
+
+    return to_treat
+end
+
+local function treat_diseases(entry, hospitals, diseases, disease_group)
+    if not diseases then
+        return
+    end
+
+    for disease_id, count in pairs(diseases) do
+        for _, hospital in pairs(hospitals) do
+            local inventories = Entity.get_hospital_inventories(hospital)
+            local contents = Inventories.get_combined_contents(inventories)
+
+            local treated = try_treat_disease(hospital, contents, inventories, disease_group, disease_id, count)
+            cure_side_effects(entry, disease_id, treated)
+
+            local statistics = hospital[EK.treated]
+            statistics[disease_id] = (statistics[disease_id] or 0) + treated
+            Communication.log_treatment(disease_id, treated)
+
+            count = count - treated
+            if count == 0 then
+                break
+            end
+        end
+    end
+end
+
+local function cure_diseases(entry, disease_group, delta_ticks)
+    -- check if there are diseased people in the first place, because this function is moderately expensive
+    if disease_group[HEALTHY] == entry[EK.inhabitants] then
+        return
+    end
+
+    -- the disease group without the healthy entry
+    local diseases = Luaq_from(disease_group):where(not_healthy):to_table()
+
+    -- natural recovery
+    local new_progress = Luaq_from(diseases):select(get_recovery_progress, delta_ticks):call(sum)
+    local recovery_progress = entry[EK.recovery_progress] + new_progress
+    if recovery_progress >= 1 then
+        local recoverable_diseases = diseases:where(is_recoverable):to_table()
+
+        local to_recover = floor(recovery_progress)
+        for disease_id, count in pairs(recoverable_diseases) do
+            local recovered = min(count, to_recover)
+            recovered = cure(disease_group, disease_id, recovered)
+
+            cure_side_effects(entry, disease_id, recovered)
+            Communication.log_recovery(disease_id, recovered)
+
+            to_recover = to_recover - recovered
+            if to_recover == 0 then
+                break
+            end
+        end
+    end
+    entry[EK.recovery_progress] = recovery_progress
+
+    -- check again because treatment in hospitals is even more expensive
+    if disease_group[HEALTHY] == entry[EK.inhabitants] then
+        return
+    end
+
+    -- treat in hospitals
+    local hospitals = Neighborhood.get_by_type(entry, Type.hospital)
+    local grouped = Luaq_from(diseases):group(is_recoverable):to_table()
+    treat_diseases(entry, hospitals, grouped[false], disease_group)
+    treat_diseases(entry, hospitals, grouped[true], disease_group)
+end
+
+local function update_diseases(entry, delta_ticks)
+    local disease_group = entry[EK.diseases]
+
+    create_diseases(entry, disease_group, delta_ticks)
+    cure_diseases(entry, disease_group, delta_ticks)
+
+    -- check employments
+    local healthy_count = disease_group[HEALTHY]
+    local employed_count = entry[EK.employed]
+
+    if employed_count > healthy_count then
+        unemploy_inhabitants(entry, employed_count - healthy_count)
+    end
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << housing update >>
@@ -942,7 +1166,7 @@ local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks
         local emigrating = -ceil(trend)
         trend = trend + emigrating
 
-        local emigrants = InhabitantGroup.take(entry, emigrating)
+        local emigrants = take_inhabitants(entry, emigrating)
         Communication.log_emigration(emigrants, EmigrationCause.unhappy)
     end
     entry[EK.emigration_trend] = trend
@@ -981,55 +1205,6 @@ local function update_housing_census(entry, caste_id)
     local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness])
     caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points] + points
     entry[EK.caste_points] = points
-end
-
-function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.employed] * delta_ticks / 3600
-end
-
-function Inhabitants.get_health_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 3600 / (entry[EK.health] + 1)
-end
-
-function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 3600 / (entry[EK.sanity] + 1)
-end
-
-local disease_progress_updaters = {
-    [DiseaseCategory.accident] = Inhabitants.get_accident_disease_progress,
-    [DiseaseCategory.health] = Inhabitants.get_health_disease_progress,
-    [DiseaseCategory.sanity] = Inhabitants.get_sanity_disease_progress
-}
-
-local function update_diseases(entry, delta_ticks)
-    local disease_group = entry[EK.diseases]
-
-    local progresses = entry[EK.disease_progress]
-
-    for disease_category, progress in pairs(progresses) do
-        progress = progress + disease_progress_updaters[disease_category](entry, delta_ticks)
-
-        if progress > 1 then
-            local new_diseases = floor(progress)
-            local disease_id =
-                Tirislib_Tables.pick_random_subtable_weighted_by_key(
-                Diseases.by_category[disease_category],
-                "frequency"
-            )
-            DiseaseGroup.make_sick(disease_group, disease_id, new_diseases)
-
-            progress = progress - new_diseases
-        end
-
-        progresses[disease_category] = progress
-    end
-
-    local healthy_count = disease_group[HEALTHY]
-    local employed_count = entry[EK.employed]
-
-    if employed_count > healthy_count then
-        unemploy_inhabitants(entry, employed_count - healthy_count)
-    end
 end
 
 local function remove_housing_census(entry)
@@ -1213,11 +1388,10 @@ local function update_homelessness()
         update_happiness(homeless_group, 0, 1800)
         update_health(homeless_group, 0, 1800)
         update_sanity(homeless_group, 0, 1800)
-        -- TODO diseases
 
         local count = homeless_group[EK.inhabitants]
         local emigrating = floor(count * (resettlement and 0.1 or 0.3))
-        local emigrated = InhabitantGroup.take(homeless_group, emigrating)
+        local emigrated = take_inhabitants(homeless_group, emigrating)
         Communication.log_emigration(emigrated, EmigrationCause.homeless)
     end
 
@@ -1268,8 +1442,6 @@ function Inhabitants.create_house(entry)
 
     entry[EK.last_age_shift] = game.tick
 
-    entry[EK.is_improvised] = get_housing_details(entry).is_improvised or false
-
     entry[EK.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
     entry[EK.happiness_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessFactor), 1.)
 
@@ -1282,6 +1454,7 @@ function Inhabitants.create_house(entry)
     entry[EK.emigration_trend] = 0
     entry[EK.garbage_progress] = 0
     entry[EK.disease_progress] = Tirislib_Tables.new_array(Tirislib_Tables.count(DiseaseCategory), 0.)
+    entry[EK.recovery_progress] = 0
 
     entry[EK.employed] = 0
     entry[EK.employments] = {}
@@ -1292,6 +1465,8 @@ end
 function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
+    destination[EK.disease_progress] = Tirislib_Tables.copy(source[EK.disease_progress])
+    destination[EK.recovery_progress] = source[EK.recovery_progress]
 end
 
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
@@ -1302,7 +1477,7 @@ function Inhabitants.remove_house(entry, cause)
 
     local unit_number = entry[EK.unit_number]
     local caste_id = entry[EK.type]
-    local improvised = entry[EK.is_improvised]
+    local improvised = get_housing_details(entry).is_improvised
     free_houses[improvised][caste_id][unit_number] = nil
     Tirislib_Tables.remove_all(next_free_houses[improvised][caste_id], unit_number)
 

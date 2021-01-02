@@ -396,6 +396,18 @@ end
 function Communication.log_casualties(group)
 end
 
+function Communication.log_recovery(disease_id, count)
+    game.print("%d people recovered from disease %d", count, disease_id)
+end
+
+function Communication.log_treatment(disease_id, count)
+    game.print(string.format("disease %d got treated %d times", disease_id, count))
+end
+
+function Communication.log_disease_deaths(disease_id, count)
+    game.print("%d people died from disease %d", count, disease_id)
+end
+
 function Communication.player_got_run_over()
     if #allowed_speakers == 0 then
         return

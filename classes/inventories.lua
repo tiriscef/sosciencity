@@ -15,12 +15,24 @@ local has_power = Subentities.has_power
 
 local chest = defines.inventory.chest
 
+local table_add = Tirislib_Tables.add
+
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
 function Inventories.get_chest_inventory(entry)
     return entry[EK.entity].get_inventory(chest)
 end
 local get_chest_inventory = Inventories.get_chest_inventory
+
+function Inventories.get_combined_contents(inventories)
+    local ret = {}
+
+    for _, inventory in pairs(inventories) do
+        table_add(ret, inventory.get_contents())
+    end
+
+    return ret
+end
 
 --- Saves the contents of this entry's entity.
 --- @param entry Entry
@@ -123,6 +135,18 @@ function Inventories.try_remove_item_range(entry, items)
     end
 
     return true
+end
+
+function Inventories.remove_item_range_from_inventory_range(inventories, items)
+    for item, count in pairs(items) do
+        for _, inventory in pairs(inventories) do
+            if count == 0 then
+                break
+            end
+
+            count = count - inventory.remove {name = item, count = count}
+        end
+    end
 end
 
 return Inventories

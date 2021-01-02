@@ -97,6 +97,8 @@ do
         end
 
         table.sort(house.qualities)
+
+        house.is_improvised = house.is_improvised or false
     end
 
     Tirislib_Tables.set_fields(houses, to_add)

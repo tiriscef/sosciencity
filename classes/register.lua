@@ -293,7 +293,7 @@ end
 
 --- Reregisters the entity with the given type.
 --- @param entry Entry
--- -@param new_type Type
+--- @param new_type Type
 function Register.change_type(entry, new_type)
     Register.remove_entry(entry, DestructionCause.type_change)
 

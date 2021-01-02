@@ -836,6 +836,19 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * Time.second * inhabitants}
     )
 
+    local _, disease_progress_flow = get_kv_pair(general_list, "disease-rate")
+    for category, id in pairs(DiseaseCategory) do
+        local progress_per_tick = Inhabitants.disease_progress_updaters[id](entry, 1)
+        local ticks_till_disease = ceil(1 / progress_per_tick)
+        local label = disease_progress_flow[category]
+        label.caption = {
+            "sosciencity-gui.show-disease-rate",
+            display_time(ticks_till_disease),
+            {"sosciencity-gui." .. category}
+        }
+        label.visible = (progress_per_tick > 0)
+    end
+
     update_occupations_list(flow, entry)
     update_ages_list(flow, entry)
     update_genders_list(flow, entry)
@@ -847,22 +860,31 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
 
-    local data_list = create_data_list(flow, "general-infos")
-    add_kv_pair(data_list, "caste", {"sosciencity-gui.caste"}, display_caste(entry[EK.type]))
+    local general_list = create_data_list(flow, "general-infos")
+    add_kv_pair(general_list, "caste", {"sosciencity-gui.caste"}, display_caste(entry[EK.type]))
 
-    add_kv_pair(data_list, "inhabitants", {"sosciencity-gui.inhabitants"})
-    add_kv_pair(data_list, "happiness", {"sosciencity-gui.happiness"})
-    add_kv_pair(data_list, "health", {"sosciencity-gui.health"})
-    add_kv_pair(data_list, "sanity", {"sosciencity-gui.sanity"})
-    add_kv_pair(data_list, "bonus", {"sosciencity-gui.bonus"})
-    add_kv_pair(data_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
-    add_kv_pair(data_list, "water-demand", {"sosciencity-gui.water-demand"})
-    add_kv_pair(data_list, "power-demand", {"sosciencity-gui.power-demand"})
+    add_kv_pair(general_list, "inhabitants", {"sosciencity-gui.inhabitants"})
+    add_kv_pair(general_list, "happiness", {"sosciencity-gui.happiness"})
+    add_kv_pair(general_list, "health", {"sosciencity-gui.health"})
+    add_kv_pair(general_list, "sanity", {"sosciencity-gui.sanity"})
+    add_kv_pair(general_list, "bonus", {"sosciencity-gui.bonus"})
+    add_kv_pair(general_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
+    add_kv_pair(general_list, "water-demand", {"sosciencity-gui.water-demand"})
+    add_kv_pair(general_list, "power-demand", {"sosciencity-gui.power-demand"})
+
+    local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity-gui.disease-rate"})
+    for category in pairs(DiseaseCategory) do
+        local label = disease_progress_flow.add {
+            type = "label",
+            name = category
+        }
+        label.style.single_line = false
+    end
 
     local caste = castes[caste_id]
     local housing_details = Housing.get(entry)
 
-    local qualities_flow = add_kv_flow(data_list, "qualities", {"sosciencity-gui.qualities"})
+    local qualities_flow = add_kv_flow(general_list, "qualities", {"sosciencity-gui.qualities"})
     for _, quality in pairs(housing_details.qualities) do
         local assessment = caste.housing_preferences[quality]
 
@@ -1215,7 +1237,14 @@ local function create_composting_values_tab(container)
     local composting_list = create_data_list(tab, "compostables")
 
     -- header
-    add_kv_pair(composting_list, "head", {"sosciencity-gui.item"}, {"sosciencity-gui.humus"}, "default-bold", "default-bold")
+    add_kv_pair(
+        composting_list,
+        "head",
+        {"sosciencity-gui.item"},
+        {"sosciencity-gui.humus"},
+        "default-bold",
+        "default-bold"
+    )
 
     local item_prototypes = game.item_prototypes
 

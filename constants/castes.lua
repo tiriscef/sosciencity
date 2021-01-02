@@ -37,7 +37,10 @@ Castes.values = {
             ["decorated"] = -1,
             ["green"] = -1,
             ["pompous"] = -1
-        }
+        },
+        accident_disease_resilience = 1,
+        health_disease_resilience = 0.65,
+        sanity_disease_resilience = 0.35
     },
     [Type.orchid] = {
         name = "orchid",
@@ -69,7 +72,10 @@ Castes.values = {
             ["sheltered"] = -1,
             ["technical"] = -3,
             ["compact"] = -1
-        }
+        },
+        accident_disease_resilience = 0.35,
+        health_disease_resilience = 0.2,
+        sanity_disease_resilience = 0.65
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -105,7 +111,10 @@ Castes.values = {
             ["individualistic"] = -2,
             ["pompous"] = -1,
             ["tall"] = -1
-        }
+        },
+        accident_disease_resilience = 1,
+        health_disease_resilience = 0.2,
+        sanity_disease_resilience = 1
     },
     [Type.ember] = {
         name = "ember",
@@ -134,7 +143,10 @@ Castes.values = {
             ["decorated"] = 2.5,
             ["tall"] = 3,
             ["simple"] = -2
-        }
+        },
+        accident_disease_resilience = 0,
+        health_disease_resilience = 1,
+        sanity_disease_resilience = 1
     },
     [Type.foundry] = {
         name = "foundry",
@@ -167,7 +179,10 @@ Castes.values = {
             ["green"] = -2,
             ["individualistic"] = -1,
             ["low"] = -2
-        }
+        },
+        accident_disease_resilience = 0.5,
+        health_disease_resilience = 1,
+        sanity_disease_resilience = 1
     },
     [Type.gleam] = {
         name = "gleam",
@@ -198,7 +213,10 @@ Castes.values = {
             ["pompous"] = 3,
             ["technical"] = -2,
             ["cheap"] = -3
-        }
+        },
+        accident_disease_resilience = 0,
+        health_disease_resilience = 2,
+        sanity_disease_resilience = 2
     },
     [Type.aurora] = {
         name = "aurora",
@@ -235,7 +253,10 @@ Castes.values = {
             ["simple"] = -2,
             ["copy-paste"] = -2,
             ["cheap"] = -5
-        }
+        },
+        accident_disease_resilience = 0,
+        health_disease_resilience = 1.5,
+        sanity_disease_resilience = 1
     },
     [Type.plasma] = {
         name = "plasma",
@@ -268,7 +289,10 @@ Castes.values = {
             ["sheltered"] = -1,
             ["simple"] = -1,
             ["cheap"] = -3
-        }
+        },
+        accident_disease_resilience = 0.2,
+        health_disease_resilience = 0.2,
+        sanity_disease_resilience = 1.5
     }
 }
 local castes = Castes.values
