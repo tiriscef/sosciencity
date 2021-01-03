@@ -1001,11 +1001,13 @@ local function treat_diseases(entry, hospitals, diseases, disease_group)
             local contents = Inventories.get_combined_contents(inventories)
 
             local treated = try_treat_disease(hospital, contents, inventories, disease_group, disease_id, count)
-            cure_side_effects(entry, disease_id, treated)
 
-            local statistics = hospital[EK.treated]
-            statistics[disease_id] = (statistics[disease_id] or 0) + treated
-            Communication.log_treatment(disease_id, treated)
+            if treated > 0 then
+                cure_side_effects(entry, disease_id, treated)
+                local statistics = hospital[EK.treated]
+                statistics[disease_id] = (statistics[disease_id] or 0) + treated
+                Communication.log_treatment(disease_id, treated)
+            end
 
             count = count - treated
             if count == 0 then
@@ -1035,8 +1037,10 @@ local function cure_diseases(entry, disease_group, delta_ticks)
             local recovered = min(count, to_recover)
             recovered = cure(disease_group, disease_id, recovered)
 
-            cure_side_effects(entry, disease_id, recovered)
-            Communication.log_recovery(disease_id, recovered)
+            if recovered > 0 then
+                cure_side_effects(entry, disease_id, recovered)
+                Communication.log_recovery(disease_id, recovered)
+            end
 
             to_recover = to_recover - recovered
             if to_recover == 0 then
