@@ -124,6 +124,8 @@ EK.has_penalty_module = 103
 -- general Custom Building related stuff
 --- performance of the custom building
 EK.performance = 150
+--- is this entity active?
+EK.active = 151
 
 -- type specific stuff
 -- housing

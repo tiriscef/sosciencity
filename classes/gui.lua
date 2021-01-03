@@ -168,12 +168,12 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << gui elements >>
 local DATA_LIST_DEFAULT_NAME = "datalist"
-local function create_data_list(container, name)
+local function create_data_list(container, name, columns)
     local datatable =
         container.add {
         type = "table",
         name = name or DATA_LIST_DEFAULT_NAME,
-        column_count = 2,
+        column_count = columns or 2,
         style = "bordered_table"
     }
     local style = datatable.style
@@ -227,6 +227,10 @@ end
 
 local function get_kv_pair(data_list, key)
     return data_list["key-" .. key], data_list[key]
+end
+
+local function get_kv_value_element(data_list, key)
+    return data_list[key]
 end
 
 local function set_key(data_list, key, key_caption)
@@ -838,16 +842,16 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local diseased = inhabitants - unemployed - employed
     set_kv_pair_value(
         general_list,
-        "diseased-count",
-        (inhabitants > 0) and {"sosciencity-gui.show-diseased-count", diseased} or "-"
-    )
-    set_kv_pair_value(
-        general_list,
         "employed-count",
         (inhabitants > 0) and {"sosciencity-gui.show-employed-count", employed} or "-"
     )
+    set_kv_pair_value(
+        general_list,
+        "diseased-count",
+        (inhabitants > 0) and {"sosciencity-gui.show-diseased-count", diseased} or "-"
+    )
 
-    local _, disease_progress_flow = get_kv_pair(general_list, "disease-rate")
+    local disease_progress_flow = get_kv_value_element(general_list, "disease-rate")
     for category, id in pairs(DiseaseCategory) do
         local progress_per_tick = Inhabitants.disease_progress_updaters[id](entry, 1)
         local ticks_till_disease = ceil(1 / progress_per_tick)
@@ -878,10 +882,10 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "water-demand", {"sosciencity-gui.water-demand"})
     add_kv_pair(general_list, "power-demand", {"sosciencity-gui.power-demand"})
     add_kv_pair(general_list, "bonus", {"sosciencity-gui.bonus"})
-    add_kv_pair(general_list, "diseased-count", {"sosciencity-gui.diseased-count"})
     add_kv_pair(general_list, "employed-count", {"sosciencity-gui.employed-count"})
+    add_kv_pair(general_list, "diseased-count", {"sosciencity-gui.diseased-count"})
 
-    local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity-gui.disease-rate"})
+    local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity-gui.rate"})
     for category in pairs(DiseaseCategory) do
         local label =
             disease_progress_flow.add {
@@ -1137,6 +1141,15 @@ local function update_general_building_details(container, entry)
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
 
+    local active = entry[EK.active]
+    if active ~= nil then
+        set_kv_pair_value(
+            building_data,
+            "active",
+            active and {"sosciencity-gui.active"} or {"sosciencity-gui.inactive"}
+        )
+    end
+
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
         local count_needed = worker_specification.count
@@ -1189,6 +1202,10 @@ local function create_general_building_details(container, entry)
 
     add_kv_pair(building_data, "building-type", {"sosciencity-gui.type"}, type_details.localised_name)
     add_kv_pair(building_data, "description", "", type_details.localised_description)
+
+    if entry[EK.active] ~= nil then
+        add_kv_pair(building_data, "active", {"sosciencity-gui.active"})
+    end
 
     if building_details.range then
         local range = building_details.range
@@ -1449,6 +1466,87 @@ local function create_immigration_port_details(container, entry)
     update_immigration_port_details(container, entry)
 end
 
+local function create_disease_catalogue(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
+    local tab = create_tab(tabbed_pane, "diseases", {"sosciencity-gui.diseases"})
+
+    local first = true
+    for category_name, category_id in pairs(DiseaseCategory) do
+        if not first then
+            create_separator_line(tab)
+        end
+        first = false
+
+        local data_list = create_data_list(tab, category_name, 1)
+
+        -- header
+        local head = data_list.add {
+            type = "label",
+            name = "head",
+            caption = {"disease-category-name." .. category_name}
+        }
+        head.style.font = "default-bold"
+
+        -- disease entries
+        for id, disease in pairs(Diseases.by_category[category_id]) do
+            local entry = data_list.add {
+                type = "label",
+                name = tostring(id),
+                caption = disease.localised_name,
+                tooltip = disease.localised_description
+            }
+            local style = entry.style
+            style.horizontally_stretchable = true
+        end
+    end
+end
+
+local function update_hospital_details(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    set_kv_pair_value(building_data, "capacity", {"sosciencity-gui.show-operations", floor(entry[EK.operations])})
+
+    local facility_flow = get_kv_value_element(building_data, "facilities")
+    facility_flow.clear()
+    for _, _type in pairs(TypeGroup.hospital_complements) do
+        local has_one = false
+        for _, facility in Neighborhood.all_of_type(entry, _type) do
+            if Entity.is_active(facility) then
+                has_one = true
+                break
+            end
+        end
+
+        if has_one then
+            local type_details = Types.definitions[_type]
+
+            facility_flow.add {
+                type = "label",
+                name = tostring(_type),
+                caption = type_details.localised_name,
+                tooltip = type_details.localised_description
+            }
+        end
+    end
+end
+
+local function create_hospital_details(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "capacity", {"sosciencity-gui.capacity"})
+    add_kv_flow(building_data, "facilities", {"sosciencity-gui.facilities"})
+
+    update_hospital_details(container, entry)
+
+    create_disease_catalogue(container)
+end
+
 -- << general details view functions >>
 local function create_details_view_for_player(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
@@ -1531,7 +1629,15 @@ local type_gui_specifications = {
         creater = create_fishery_details,
         updater = update_fishery_details
     },
+    [Type.pharmacy] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
     [Type.hospital] = {
+        creater = create_hospital_details,
+        updater = update_hospital_details
+    },
+    [Type.psych_ward] = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },

@@ -951,7 +951,7 @@ end
 
 local function has_facility(hospital, facility_type)
     for _, facility in Neighborhood.all_of_type(hospital, facility_type) do
-        if has_power(facility) then
+        if Entity.is_active(facility) then
             return true
         end
     end
