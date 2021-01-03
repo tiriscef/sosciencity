@@ -809,16 +809,6 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
     set_kv_pair_value(
         general_list,
-        "bonus",
-        (inhabitants > 0) and
-            {
-                "sosciencity-gui.show-bonus",
-                get_reasonable_number(entry[EK.caste_points])
-            } or
-            "-"
-    )
-    set_kv_pair_value(
-        general_list,
         "calorific-demand",
         {
             "sosciencity-gui.show-calorific-demand",
@@ -836,6 +826,27 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * Time.second * inhabitants}
     )
 
+    -- occupations
+    local unemployed = Inhabitants.get_employable_count(entry)
+    set_kv_pair_value(
+        general_list,
+        "bonus",
+        (inhabitants > 0) and {"sosciencity-gui.show-bonus", unemployed, get_reasonable_number(entry[EK.caste_points])} or
+            "-"
+    )
+    local employed = entry[EK.employed]
+    local diseased = inhabitants - unemployed - employed
+    set_kv_pair_value(
+        general_list,
+        "diseased-count",
+        (inhabitants > 0) and {"sosciencity-gui.show-diseased-count", diseased} or "-"
+    )
+    set_kv_pair_value(
+        general_list,
+        "employed-count",
+        (inhabitants > 0) and {"sosciencity-gui.show-employed-count", employed} or "-"
+    )
+
     local _, disease_progress_flow = get_kv_pair(general_list, "disease-rate")
     for category, id in pairs(DiseaseCategory) do
         local progress_per_tick = Inhabitants.disease_progress_updaters[id](entry, 1)
@@ -848,10 +859,6 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         }
         label.visible = (progress_per_tick > 0)
     end
-
-    update_occupations_list(flow, entry)
-    update_ages_list(flow, entry)
-    update_genders_list(flow, entry)
 end
 
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
@@ -867,14 +874,17 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "happiness", {"sosciencity-gui.happiness"})
     add_kv_pair(general_list, "health", {"sosciencity-gui.health"})
     add_kv_pair(general_list, "sanity", {"sosciencity-gui.sanity"})
-    add_kv_pair(general_list, "bonus", {"sosciencity-gui.bonus"})
     add_kv_pair(general_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
     add_kv_pair(general_list, "water-demand", {"sosciencity-gui.water-demand"})
     add_kv_pair(general_list, "power-demand", {"sosciencity-gui.power-demand"})
+    add_kv_pair(general_list, "bonus", {"sosciencity-gui.bonus"})
+    add_kv_pair(general_list, "diseased-count", {"sosciencity-gui.diseased-count"})
+    add_kv_pair(general_list, "employed-count", {"sosciencity-gui.employed-count"})
 
     local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity-gui.disease-rate"})
     for category in pairs(DiseaseCategory) do
-        local label = disease_progress_flow.add {
+        local label =
+            disease_progress_flow.add {
             type = "label",
             name = category
         }
@@ -907,21 +917,6 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
 
     create_separator_line(flow)
 
-    add_header_label(flow, "header-occupations", {"sosciencity-gui.occupations"})
-    create_data_list(flow, "occupations")
-
-    create_separator_line(flow)
-
-    add_header_label(flow, "header-ages", {"sosciencity-gui.ages"})
-    create_data_list(flow, "ages")
-
-    create_separator_line(flow)
-
-    add_header_label(flow, "header-genders", {"sosciencity-gui.gender-distribution"})
-    create_data_list(flow, "genders")
-
-    create_separator_line(flow)
-
     local kickout_button =
         flow.add {
         type = "button",
@@ -937,10 +932,10 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     update_housing_general_info_tab(tabbed_pane, entry)
 end
 
-local function update_housing_factor_tab(tabbed_pane, entry)
-    local content_flow = get_tab_contents(tabbed_pane, "details")
+local function update_housing_detailed_info_tab(tabbed_pane, entry)
+    local flow = get_tab_contents(tabbed_pane, "details")
 
-    local happiness_list = content_flow["happiness"]
+    local happiness_list = flow["happiness"]
     update_operand_entries(
         happiness_list,
         Inhabitants.get_nominal_happiness(entry),
@@ -948,7 +943,7 @@ local function update_housing_factor_tab(tabbed_pane, entry)
         entry[EK.happiness_factors]
     )
 
-    local health_list = content_flow["health"]
+    local health_list = flow["health"]
     update_operand_entries(
         health_list,
         Inhabitants.get_nominal_health(entry),
@@ -956,16 +951,20 @@ local function update_housing_factor_tab(tabbed_pane, entry)
         entry[EK.health_factors]
     )
 
-    local sanity_list = content_flow["sanity"]
+    local sanity_list = flow["sanity"]
     update_operand_entries(
         sanity_list,
         Inhabitants.get_nominal_sanity(entry),
         entry[EK.sanity_summands],
         entry[EK.sanity_factors]
     )
+
+    update_occupations_list(flow, entry)
+    update_ages_list(flow, entry)
+    update_genders_list(flow, entry)
 end
 
-local function add_housing_factor_tab(tabbed_pane, entry)
+local function add_housing_detailed_info_tab(tabbed_pane, entry)
     local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
 
     local happiness_list = create_data_list(flow, "happiness")
@@ -1002,8 +1001,23 @@ local function add_housing_factor_tab(tabbed_pane, entry)
         Tirislib_Tables.count(SanityFactor)
     )
 
+    create_separator_line(flow)
+
+    add_header_label(flow, "header-occupations", {"sosciencity-gui.occupations"})
+    create_data_list(flow, "occupations")
+
+    create_separator_line(flow)
+
+    add_header_label(flow, "header-ages", {"sosciencity-gui.ages"})
+    create_data_list(flow, "ages")
+
+    create_separator_line(flow)
+
+    add_header_label(flow, "header-genders", {"sosciencity-gui.gender-distribution"})
+    create_data_list(flow, "genders")
+
     -- call the update function to set the values
-    update_housing_factor_tab(tabbed_pane, entry)
+    update_housing_detailed_info_tab(tabbed_pane, entry)
 end
 
 local function add_caste_info_tab(tabbed_pane, caste_id)
@@ -1081,7 +1095,7 @@ end
 local function update_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     update_housing_general_info_tab(tabbed_pane, entry)
-    update_housing_factor_tab(tabbed_pane, entry)
+    update_housing_detailed_info_tab(tabbed_pane, entry)
 end
 
 local function create_housing_details(container, entry)
@@ -1093,7 +1107,7 @@ local function create_housing_details(container, entry)
 
     local caste_id = entry[EK.type]
     add_housing_general_info_tab(tabbed_pane, entry, caste_id)
-    add_housing_factor_tab(tabbed_pane, entry)
+    add_housing_detailed_info_tab(tabbed_pane, entry)
     add_caste_info_tab(tabbed_pane, caste_id)
 end
 
