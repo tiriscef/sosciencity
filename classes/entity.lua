@@ -375,7 +375,7 @@ function Entity.get_hospital_inventories(entry)
 
     for _, _type in pairs(TypeGroup.hospital_complements) do
         for _, building in Neighborhood.all_of_type(entry, _type) do
-            ret[#ret+1] = Inventories.get_chest_inventory(building)
+            ret[#ret + 1] = Inventories.get_chest_inventory(building)
         end
     end
 
@@ -405,6 +405,19 @@ local function copy_hospital(source, destination)
     destination[EK.treated] = Tirislib_Tables.copy(source[EK.treated])
 end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
+
+---------------------------------------------------------------------------------------------------
+-- << hospital complements >>
+local function update_psych_ward(entry)
+    Inhabitants.update_workforce(entry)
+    entry[EK.active] = has_power(entry) and Inhabitants.evaluate_workforce(entry) == 1
+end
+Register.set_entity_updater(Type.psych_ward, update_psych_ward)
+
+local function create_psych_ward(entry)
+    entry[EK.active] = false
+end
+Register.set_entity_creation_handler(Type.psych_ward, create_psych_ward)
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
@@ -449,3 +462,10 @@ local function create_waterwell(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
+
+---------------------------------------------------------------------------------------------------
+-- << interface for other classes >>
+function Entity.is_active(entry)
+    -- default to true for types that don't set the value
+    return entry[EK.active] or true
+end

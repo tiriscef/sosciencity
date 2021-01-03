@@ -6,7 +6,7 @@ require("constants.types")
 Diseases = {}
 
 Diseases.values = {
-    [1] = {
+    [0] = {
         name = "limp-loss",
         cure_items = {
             ["artificial-limp"] = 1
@@ -18,7 +18,7 @@ Diseases.values = {
         category = DiseaseCategory.accident,
         frequency = 100
     },
-    [2] = {
+    [100] = {
         name = "depression",
         cure_items = {
             ["psychotropics"] = 1
@@ -31,7 +31,20 @@ Diseases.values = {
         category = DiseaseCategory.sanity,
         frequency = 100
     },
-    [3] = {
+    [101] = {
+        name = "reality-loss",
+        cure_items = {
+            ["psychotropics"] = 1
+        },
+        curing_workload = 5,
+        curing_facility = Type.psych_ward,
+        contagiousness = 0,
+        lethality = 0,
+        natural_recovery = 1,
+        category = DiseaseCategory.sanity,
+        frequency = 100
+    },
+    [200] = {
         name = "rare-cold",
         curing_workload = 1,
         contagiousness = 0.1,
