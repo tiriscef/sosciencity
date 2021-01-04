@@ -169,8 +169,8 @@ end
 
 local function init()
     global = _ENV.global
-    global.last_entity_update = 0
-    global.last_tile_update = 0
+    global.last_entity_update = -1
+    global.last_tile_update = -1
 
     Types.load()
 
