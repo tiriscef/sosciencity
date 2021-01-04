@@ -9,7 +9,6 @@ Entity = {}
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
 local global
 local caste_bonuses
-local diseases = Diseases.values
 local flora = Biology.flora
 local water_values = DrinkingWater.values
 
@@ -282,25 +281,30 @@ Register.set_entity_updater(Type.nightclub, update_nightclub)
 
 local function create_nightclub(entry)
     entry[EK.performance] = 0
+    Inhabitants.social_environment_change()
 end
 Register.set_entity_creation_handler(Type.nightclub, create_nightclub)
+
+local function remove_nightclub()
+    Inhabitants.social_environment_change()
+end
+Register.set_entity_destruction_handler(Type.nightclub, remove_nightclub)
 
 ---------------------------------------------------------------------------------------------------
 -- << fishery >>
 local function get_water_tiles(entry, building_details)
-    if global.last_tile_update > (entry[EK.last_tile_update] or -1) then
+    local cached_value = entry[EK.water_tiles]
+    if not cached_value or global.last_tile_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
         local position = entity.position
-        local surface = entity.surface
         local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
-        local water_tiles = surface.count_tiles_filtered {area = area, collision_mask = "water-tile"}
+        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water-tile"}
 
         entry[EK.water_tiles] = water_tiles
-        entry[EK.last_tile_update] = game.tick
         return water_tiles
     else
         -- nothing could possibly have changed, return the cached value
-        return entry[EK.water_tiles]
+        return cached_value
     end
 end
 
@@ -331,11 +335,18 @@ Register.set_entity_creation_handler(Type.fishery, create_fishery)
 ---------------------------------------------------------------------------------------------------
 -- << hunting hut >>
 local function get_tree_count(entry, building_details)
-    local entity = entry[EK.entity]
-    local position = entity.position
-    local surface = entity.surface
-    local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
-    return surface.count_entities_filtered {area = area, type = "tree"}
+    local cached_value = entry[EK.tree_count]
+    if not cached_value or global.last_entity_update > entry[EK.last_update] then
+        local entity = entry[EK.entity]
+        local position = entity.position
+        local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
+        local trees = entity.surface.count_entities_filtered {area = area, type = "tree"}
+
+        entry[EK.tree_count] = trees
+        return trees
+    else
+        return cached_value
+    end
 end
 
 local function get_hunting_hut_performance(entry)
