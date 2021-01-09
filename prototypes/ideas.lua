@@ -66,7 +66,7 @@ Tirislib_Recipe.create {
     subgroup = "sosciencity-ideas",
     order = "00001",
     main_product = ""
-}:add_unlock("orchid-caste")
+}:add_unlock("logistic-science-pack")
 
 Tirislib_RecipeGenerator.create {
     product = "essay",

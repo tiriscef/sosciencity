@@ -836,7 +836,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_kv_pair_value(
         general_list,
         "bonus",
-        (inhabitants > 0) and {"sosciencity-gui.show-bonus", unemployed, get_reasonable_number(entry[EK.caste_points])} or
+        (inhabitants > 0) and {"sosciencity-gui.show-bonus", unemployed, get_reasonable_number(entry[EK.caste_points]), global.technologies[caste.effectivity_tech]} or
             "-"
     )
     local employed = entry[EK.employed]

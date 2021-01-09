@@ -18,18 +18,32 @@ for _, caste in pairs(Castes.values) do
 end
 
 local relevant_multi_level_techs = {
-
+    ["clockwork-caste-effectivity"] = {},
+    ["orchid-caste-effectivity"] = {},
+    ["gunfire-caste-effectivity"] = {},
+    ["ember-caste-effectivity"] = {},
+    ["foundry-caste-effectivity"] = {},
+    ["gleam-caste-effectivity"] = {},
+    ["aurora-caste-effectivity"] = {},
+    ["plasma-caste-effectivity"] = {},
 }
 
 local floor = math.floor
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
-local function determine_multi_level_tech_level(name)
+
+local function determine_tech_level(name)
     local level = 0
-    local details = relevant_multi_level_techs[name]
     local techs = game.forces.player.technologies
 
+    -- case one: the technology consists of just one infinite tech
+    local tech = techs[name]
+    if tech then
+        return tech.level - 1
+    end
+
+    local details = relevant_multi_level_techs[name]
     while techs[name .. "-" .. (level + 1)].researched do
         level = level + 1
     end
@@ -40,7 +54,7 @@ local function determine_multi_level_tech_level(name)
         level = techs[name .. "-" .. (level + 1)].level - 1
     end
 
-    global.technologies[name] = (level > 0) and level or false
+    return level
 end
 
 --- Sets the given binary technologies so they encode the given value.
@@ -66,7 +80,7 @@ function Technologies.finished(name)
     end
 
     if relevant_multi_level_techs[name] then
-        determine_multi_level_tech_level(name)
+        global.technologies[name] = determine_tech_level(name)
     end
 end
 
@@ -80,7 +94,7 @@ function Technologies.init()
     end
 
     for name, _ in pairs(relevant_multi_level_techs) do
-        determine_multi_level_tech_level(name)
+        global.technologies[name] = determine_tech_level(name)
     end
 end
 
