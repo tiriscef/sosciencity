@@ -59,7 +59,7 @@ local function display_integer_summand(number)
     end
 end
 
-local function get_summand_string(number)
+local function display_summand(number)
     if number > 0 then
         return format("[color=0,1,0]%+.1f[/color]", number)
     elseif number < 0 then
@@ -69,7 +69,7 @@ local function get_summand_string(number)
     end
 end
 
-local function get_factor_string(number)
+local function display_factor(number)
     if number > 1 then
         return format("[color=0,1,0]×%.1f[/color]", number)
     elseif number < 1 then
@@ -278,12 +278,13 @@ local function add_final_value_entry(data_list, caption)
     style.horizontal_align = "right"
 end
 
-local function add_operand_entry(data_list, key, key_caption, value_caption)
+local function add_operand_entry(data_list, key, key_caption, value_caption, description)
     local key_label =
         data_list.add {
         type = "label",
         name = "key-" .. key,
-        caption = key_caption
+        caption = key_caption,
+        tooltip = description
     }
     local key_style = key_label.style
     key_style.horizontally_stretchable = true
@@ -300,48 +301,48 @@ local function add_operand_entry(data_list, key, key_caption, value_caption)
     value_style.width = 50
 end
 
-local function add_summand_entries(data_list, caption_group, count)
-    for i = 1, count do
-        add_operand_entry(data_list, tostring(i), {caption_group .. i})
+local function add_entries(data_list, enum_table, names, descriptions)
+    for name, id in pairs(enum_table) do
+        add_operand_entry(data_list, name, names[id], descriptions[id])
     end
 end
 
-local function add_factor_entries(data_list, caption_group, count)
-    for i = 1, count do
-        add_operand_entry(data_list, "*" .. i, {caption_group .. i})
-    end
+local function create_operand_entries(
+    data_list,
+    final_caption,
+    summands_enums,
+    summand_localised,
+    summand_descriptions,
+    factor_enums,
+    factor_localised,
+    factor_descriptions)
+    add_final_value_entry(data_list, final_caption)
+    add_entries(data_list, summands_enums, summand_localised, summand_descriptions)
+    add_entries(data_list, factor_enums, factor_localised, factor_descriptions)
 end
 
-local function create_operand_entries(data_list, caption, summand_caption, summand_count, factor_caption, factor_count)
-    add_final_value_entry(data_list, caption)
-    add_summand_entries(data_list, summand_caption, summand_count)
-    add_factor_entries(data_list, factor_caption, factor_count)
-end
+local function update_operand_entries(data_list, final_value, summands, summand_enums, factors, factor_enums)
+    data_list["sum"].caption = display_summand(final_value)
 
-local function update_operand_entries(data_list, final_value, summand_entries, factor_entries)
-    data_list["sum"].caption = get_summand_string(final_value)
-
-    for i = 1, #summand_entries do
-        local value = summand_entries[i]
-        local key = tostring(i)
+    for name, id in pairs(summand_enums) do
+        local value = summands[id]
 
         if value ~= 0 then
-            set_kv_pair_value(data_list, key, get_summand_string(value))
-            set_kv_pair_visibility(data_list, key, true)
+            set_kv_pair_value(data_list, name, display_summand(value))
+            set_kv_pair_visibility(data_list, name, true)
         else
-            set_kv_pair_visibility(data_list, key, false)
+            set_kv_pair_visibility(data_list, name, false)
         end
     end
 
-    for i = 1, #factor_entries do
-        local value = factor_entries[i]
-        local key = "*" .. i
+    for name, id in pairs(factor_enums) do
+        local value = factors[id]
 
         if value ~= 1. then
-            set_kv_pair_value(data_list, key, get_factor_string(value))
-            set_kv_pair_visibility(data_list, key, true)
+            set_kv_pair_value(data_list, name, display_factor(value))
+            set_kv_pair_visibility(data_list, name, true)
         else
-            set_kv_pair_visibility(data_list, key, false)
+            set_kv_pair_visibility(data_list, name, false)
         end
     end
 end
@@ -944,7 +945,9 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
         happiness_list,
         Inhabitants.get_nominal_happiness(entry),
         entry[EK.happiness_summands],
-        entry[EK.happiness_factors]
+        HappinessSummand,
+        entry[EK.happiness_factors],
+        HappinessFactor
     )
 
     local health_list = flow["health"]
@@ -952,7 +955,9 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
         health_list,
         Inhabitants.get_nominal_health(entry),
         entry[EK.health_summands],
-        entry[EK.health_factors]
+        HealthSummand,
+        entry[EK.health_factors],
+        HealthFactor
     )
 
     local sanity_list = flow["sanity"]
@@ -960,13 +965,40 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
         sanity_list,
         Inhabitants.get_nominal_sanity(entry),
         entry[EK.sanity_summands],
-        entry[EK.sanity_factors]
+        SanitySummand,
+        entry[EK.sanity_factors],
+        SanityFactor
     )
 
     update_occupations_list(flow, entry)
     update_ages_list(flow, entry)
     update_genders_list(flow, entry)
 end
+
+local function build_localised(enum_table, format_string)
+    local ret = {}
+
+    for name, id in pairs(enum_table) do
+        ret[id] = {format(format_string, name)}
+    end
+
+    return ret
+end
+
+local localised_happiness_summands = build_localised(HappinessSummand, "happiness-summand.%s")
+local localised_happiness_summand_descriptions = build_localised(HappinessSummand, "happiness-summand-description.%s")
+local localised_happiness_factors = build_localised(HappinessFactor, "happiness-factor.%s")
+local localised_happiness_factor_descriptions = build_localised(HappinessFactor, "happiness-factor-description.%s")
+local localised_health_summands = build_localised(HealthSummand, "health-summand.%s")
+local localised_health_summand_descriptions = build_localised(HappinessSummand, "health-summand-description.%s")
+local localised_health_factors = build_localised(HealthFactor, "health-factor.%s")
+local localised_health_factor_descriptions = build_localised(HealthFactor, "health-factor-description.%s")
+local localised_sanity_summands = build_localised(SanitySummand, "sanity-summand.%s")
+local localised_sanity_summand_descriptions = build_localised(SanitySummand, "sanity-summand-description.%s")
+local localised_sanity_factors = build_localised(SanityFactor, "sanity-factor.%s")
+local localised_sanity_factor_descriptions = build_localised(SanityFactor, "sanity-factor-description.%s")
+
+build_localised = nil
 
 local function add_housing_detailed_info_tab(tabbed_pane, entry)
     local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
@@ -975,10 +1007,12 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     create_operand_entries(
         happiness_list,
         {"sosciencity-gui.happiness"},
-        "happiness-summand.",
-        Tirislib_Tables.count(HappinessSummand),
-        "happiness-factor.",
-        Tirislib_Tables.count(HappinessFactor)
+        HappinessSummand,
+        localised_happiness_summands,
+        localised_happiness_summand_descriptions,
+        HappinessFactor,
+        localised_happiness_factors,
+        localised_happiness_factor_descriptions
     )
 
     create_separator_line(flow)
@@ -987,10 +1021,12 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     create_operand_entries(
         health_list,
         {"sosciencity-gui.health"},
-        "health-summand.",
-        Tirislib_Tables.count(HealthSummand),
-        "health-factor.",
-        Tirislib_Tables.count(HealthFactor)
+        HealthSummand,
+        localised_health_summands,
+        localised_health_summand_descriptions,
+        HealthFactor,
+        localised_health_factors,
+        localised_health_factor_descriptions
     )
 
     create_separator_line(flow, "line2")
@@ -999,10 +1035,12 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     create_operand_entries(
         sanity_list,
         {"sosciencity-gui.sanity"},
-        "sanity-summand.",
-        Tirislib_Tables.count(SanitySummand),
-        "sanity-factor.",
-        Tirislib_Tables.count(SanityFactor)
+        SanitySummand,
+        localised_sanity_summands,
+        localised_sanity_summand_descriptions,
+        SanityFactor,
+        localised_sanity_factors,
+        localised_sanity_factor_descriptions
     )
 
     create_separator_line(flow)
@@ -1480,7 +1518,8 @@ local function create_disease_catalogue(container)
         local data_list = create_data_list(tab, category_name, 1)
 
         -- header
-        local head = data_list.add {
+        local head =
+            data_list.add {
             type = "label",
             name = "head",
             caption = {"disease-category-name." .. category_name}
@@ -1489,7 +1528,8 @@ local function create_disease_catalogue(container)
 
         -- disease entries
         for id, disease in pairs(Diseases.by_category[category_id]) do
-            local entry = data_list.add {
+            local entry =
+                data_list.add {
                 type = "label",
                 name = tostring(id),
                 caption = disease.localised_name,

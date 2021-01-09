@@ -100,10 +100,6 @@ EK.inventory_contents = 30
 -- neighborhood stuff
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs
 EK.neighbors = 40
---- tick of the last time this entity updated it's surrounding unregistered entity information
-EK.last_entity_update = 41
---- tick of the last time this entity updated it's surrounding tile information
-EK.last_tile_update = 42
 
 -- workforce
 --- the number of workers employed by this entry
@@ -173,6 +169,12 @@ EK.genders = 225
 EK.ages = 226
 --- the tick of the last age shift
 EK.last_age_shift = 227
+--- the entries that make up the social environment as an array of unit_numbers
+EK.social_environment = 228
+--- the progress toward the next social event
+EK.social_progress = 229
+--- the number of gas that conceived this ga cycle
+EK.ga_conceptions = 230
 
 -- water distributer
 --- quality of the water this distributer provides
@@ -240,16 +242,18 @@ HappinessSummand = {}
 
 HappinessSummand.housing = 1
 HappinessSummand.suitable_housing = 2
-HappinessSummand.taste = 3
-HappinessSummand.food_luxury = 4
-HappinessSummand.food_variety = 5
-HappinessSummand.no_power = 6
-HappinessSummand.power = 7
-HappinessSummand.fear = 8
-HappinessSummand.ember = 9
-HappinessSummand.garbage = 10
-HappinessSummand.animal_farms = 11
-HappinessSummand.nightclub = 12
+HappinessSummand.health = 3
+HappinessSummand.sanity = 4
+HappinessSummand.taste = 5
+HappinessSummand.food_luxury = 6
+HappinessSummand.food_variety = 7
+HappinessSummand.no_power = 8
+HappinessSummand.power = 9
+HappinessSummand.fear = 10
+HappinessSummand.ember = 11
+HappinessSummand.garbage = 12
+HappinessSummand.gross_industry = 13
+HappinessSummand.nightclub = 14
 
 --<< happiness factors >>
 --- Enum table for happiness factors.
@@ -258,8 +262,8 @@ HappinessFactor = {}
 HappinessFactor.not_enough_food_variety = 1
 HappinessFactor.hunger = 2
 HappinessFactor.thirst = 3
-HappinessFactor.health = 4
-HappinessFactor.sanity = 5
+HappinessFactor.bad_health = 4
+HappinessFactor.bad_sanity = 5
 
 --<< health summands >>
 --- Enum table for health summands.
@@ -269,34 +273,37 @@ HealthSummand.nutrients = 1
 HealthSummand.food = 2
 HealthSummand.fear = 3
 HealthSummand.plasma = 4
-HealthSummand.animal_farms = 5
+HealthSummand.gross_industry = 5
+HealthSummand.water = 6
 
 --<< health factors >>
 --- Enum table for health factors.
 HealthFactor = {}
 
 HealthFactor.hunger = 1
-HealthFactor.water = 2
+HealthFactor.thirst = 2
 
 --<< sanity summands >>
 --- Enum table for sanity summands.
 SanitySummand = {}
 
-SanitySummand.housing = 1
-SanitySummand.taste = 2
-SanitySummand.favorite_taste = 3
-SanitySummand.no_variety = 4
-SanitySummand.disliked_taste = 5
-SanitySummand.just_neutral = 6
-SanitySummand.single_food = 7
-SanitySummand.fear = 8
+SanitySummand.innate = 1
+SanitySummand.social_environment = 2
+SanitySummand.housing = 3
+SanitySummand.taste = 4
+SanitySummand.favorite_taste = 5
+SanitySummand.no_variety = 6
+SanitySummand.disliked_taste = 7
+SanitySummand.just_neutral = 8
+SanitySummand.single_food = 9
+SanitySummand.fear = 10
 
 --<< sanity factors >>
 --- Enum table for sanity factors.
 SanityFactor = {}
 
-SanityFactor.hunger = 1
-SanityFactor.thirst = 2
+--SanityFactor.hunger = 1
+--SanityFactor.thirst = 2
 
 --<< inhabitant genders >>
 --- Enum table for genders
