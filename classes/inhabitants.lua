@@ -31,6 +31,8 @@ Inhabitants = {}
 
     global.homeless: table
         [caste_id]: InhabitantGroup
+
+    global.last_social_change: tick
 ]]
 -- local often used globals for enormous performance gains
 local global
@@ -139,6 +141,8 @@ function Inhabitants.init()
     for _, caste_id in pairs(TypeGroup.all_castes) do
         homeless[caste_id] = InhabitantGroup.new(caste_id)
     end
+
+    global.last_social_change = game.tick
 end
 
 --- Sets local references during on_load
@@ -155,6 +159,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant diseases >>
+
 --- Object class for holding the diseases of a group of inhabitants.
 DiseaseGroup = {}
 
@@ -256,6 +261,7 @@ local not_healthy = DiseaseGroup.not_healthy
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant ages >>
+
 AgeGroup = {}
 
 --- Returns a new AgeGroup table with fixed ages.
@@ -345,6 +351,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant genders >>
+
 GenderGroup = {}
 
 function GenderGroup.new(neutral, fale, pachin, ga)
@@ -394,6 +401,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant groups >>
+
 --- Object class for holding groups of inhabitants.
 InhabitantGroup = {}
 
@@ -787,6 +795,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant functions >>
+
 local function get_nominal_value(influences, factors)
     return max(0, array_sum(influences) * array_product(factors))
 end
@@ -886,7 +895,128 @@ end
 local distribute_inhabitants = Inhabitants.distribute_inhabitants
 
 ---------------------------------------------------------------------------------------------------
+-- << social interaction >>
+
+--- Needs to be called when there is a change of any type that affects the social environment.
+function Inhabitants.social_environment_change()
+    global.last_social_change = game.tick
+end
+
+--- the time a ga reproduction cycle lasts
+Inhabitants.ga_reproduction_cycle = Time.nauvis_day
+
+local function get_ga_reproduction_cycle(tick)
+    return floor(tick / Inhabitants.ga_reproduction_cycle)
+end
+
+local function build_social_environment(entry)
+    local itself = entry[EK.unit_number]
+    local in_reach = {[itself] = itself}
+
+    for _, _type in pairs(TypeGroup.social_places) do
+        for _, building in Neighborhood.all_of_type(entry, _type) do
+            for _, caste in pairs(TypeGroup.all_castes) do
+                for _, house in Neighborhood.all_of_type(building, caste) do
+                    local unit_number = house[EK.unit_number]
+                    in_reach[unit_number] = unit_number
+                end
+            end
+        end
+    end
+
+    entry[EK.social_environment] = Tirislib_Tables.get_keyset(in_reach)
+end
+
+local function get_social_value(environment)
+    local value = 0
+
+    for _, unit_number in pairs(environment) do
+        local house = try_get(unit_number)
+
+        if house then
+            local caste = castes[house[EK.type]]
+            value = value + house[EK.inhabitants] * caste.social_coefficient
+        end
+    end
+
+    return value ^ 0.3
+end
+
+local function get_partner_rate(environment)
+    local fale_count = 0
+    local pachin_count = 0
+    local ga_count = 0
+
+    for _, unit_number in pairs(environment) do
+        local house = try_get(unit_number)
+
+        if house then
+            local genders = house[EK.genders]
+            fale_count = fale_count + genders[Gender.fale]
+            pachin_count = pachin_count + genders[Gender.pachin]
+            ga_count = ga_count + genders[Gender.ga]
+        end
+    end
+
+    -- handle the edge case of no ga people
+    if ga_count == 0 then
+        ga_count = 1
+    end
+
+    return min(fale_count / ga_count, pachin_count / ga_count, 1)
+end
+
+Inhabitants.conception_rate = 0.3
+
+local function social_meeting(entry, meeting_count)
+    local ga_count = entry[EK.genders][Gender.ga]
+    local past_conceptions = entry[EK.ga_conceptions]
+
+    -- reproduction
+    if ga_count > past_conceptions then
+        local available_partners = floor(get_partner_rate(entry[EK.social_environment]) * ga_count)
+        available_partners = available_partners - past_conceptions
+        local fertile_ga_count = ga_count - past_conceptions
+        local conceptions = coin_flips(Inhabitants.conception_rate, meeting_count, 5)
+
+        local actual_conceptions = min(fertile_ga_count, available_partners, conceptions)
+        if actual_conceptions > 0 then
+            Inventories.output_eggs(entry, actual_conceptions)
+            entry[EK.ga_conceptions] = past_conceptions + actual_conceptions
+        end
+    end
+
+    -- TODO: infection
+end
+
+local social_coefficient = 1 / 10000 -- TODO balancing
+local function evaluate_social_environment(entry, sanity_summands, delta_ticks)
+    if get_ga_reproduction_cycle(entry[EK.last_update]) ~= get_ga_reproduction_cycle(game.tick) then
+        -- a new ga cycle started, the gas are fertile again
+        entry[EK.ga_conceptions] = 0
+    end
+
+    if entry[EK.last_update] < global.last_social_change then
+        build_social_environment(entry)
+    end
+
+    local environment = entry[EK.social_environment]
+    local social_value = get_social_value(environment)
+    sanity_summands[SanitySummand.social_environment] = social_value
+
+    local social_progress = entry[EK.social_progress] + social_value * delta_ticks * social_coefficient
+    if social_progress >= 1 then
+        local event_count = floor(social_progress)
+        social_meeting(entry, event_count)
+        social_progress = social_progress - event_count
+    end
+    entry[EK.social_progress] = social_progress
+
+end
+
+---------------------------------------------------------------------------------------------------
 -- << healthcare >>
+
 local function cure_side_effects(entry, disease_id, count)
     local disease = disease_values[disease_id]
 
@@ -1030,7 +1160,7 @@ local function cure_diseases(entry, disease_group, delta_ticks)
     local new_progress = Luaq_from(diseases):select(get_recovery_progress, delta_ticks):call(sum)
     local recovery_progress = entry[EK.recovery_progress] + new_progress
     if recovery_progress >= 1 then
-        local recoverable_diseases = diseases:where(is_recoverable):to_table()
+        local recoverable_diseases = Luaq_from(diseases):where(is_recoverable):to_table()
 
         local to_recover = floor(recovery_progress)
         for disease_id, count in pairs(recoverable_diseases) do
@@ -1123,6 +1253,8 @@ local function evaluate_sosciety(happiness_summands, health_summands, sanity_sum
         health_summands[HealthSummand.fear] = 0
         sanity_summands[SanitySummand.fear] = 0
     end
+
+    sanity_summands[SanitySummand.innate] = caste.innate_sanity
 end
 
 local function evaluate_neighborhood(entry, happiness_summands, health_summands)
@@ -1133,8 +1265,8 @@ local function evaluate_neighborhood(entry, happiness_summands, health_summands)
     happiness_summands[HappinessSummand.nightclub] = nightclub_bonus
 
     local animal_farm_count = Neighborhood.get_neighbor_count(entry, Type.animal_farm)
-    happiness_summands[HappinessSummand.animal_farms] = -1 * animal_farm_count ^ 0.5
-    health_summands[HealthSummand.animal_farms] = -2 * animal_farm_count ^ 0.7
+    happiness_summands[HappinessSummand.gross_industry] = -1 * animal_farm_count ^ 0.5
+    health_summands[HealthSummand.gross_industry] = -2 * animal_farm_count ^ 0.7
 end
 
 local function update_ages(entry)
@@ -1239,21 +1371,26 @@ local function update_house(entry, delta_ticks)
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
     evaluate_housing(entry, happiness_summands, sanity_summands, caste)
-    evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
+    evaluate_water(entry, delta_ticks, happiness_factors, health_factors, health_summands)
     evaluate_sosciety(happiness_summands, health_summands, sanity_summands, caste)
     evaluate_neighborhood(entry, happiness_summands, health_summands)
+    evaluate_social_environment(entry, sanity_summands, delta_ticks)
 
     -- update health
     local nominal_health = get_nominal_value(health_summands, health_factors)
     update_health(entry, nominal_health, delta_ticks)
 
-    happiness_factors[HappinessFactor.health] = (inhabitants > 0) and (entry[EK.health] - 10) / 20. + 1 or 1
+    local new_health = entry[EK.health]
+    happiness_summands[HappinessSummand.health] = (inhabitants > 0 and new_health > 10) and (new_health - 10) ^ 0.5 or 0
+    happiness_factors[HappinessFactor.bad_health] = (inhabitants > 0) and map_range(new_health, 0, 10, 0, 1) ^ 0.5 or 1
 
     -- update sanity
     local nominal_sanity = get_nominal_value(sanity_summands, sanity_factors)
     update_sanity(entry, nominal_sanity, delta_ticks)
 
-    happiness_factors[HappinessFactor.sanity] = (inhabitants > 0) and (entry[EK.sanity] - 10) / 15. + 1 or 1
+    local new_sanity = entry[EK.sanity]
+    happiness_summands[HappinessSummand.sanity] = (inhabitants > 0 and new_sanity > 10) and (new_sanity - 10) ^ 0.5 or 0
+    happiness_factors[HappinessFactor.bad_sanity] = (inhabitants > 0) and map_range(new_sanity, 0, 10, 0, 1) ^ 0.5 or 1
 
     -- update happiness
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)
@@ -1268,6 +1405,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration >>
+
 local function update_immigration(delta_ticks)
     for caste = 1, #immigration do
         if is_researched(caste) then
@@ -1297,6 +1435,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << fear >>
+
 --- Lowers the population's fear over time. Assumes an update rate of 10 ticks.
 --- The fear level decreases after 2 minutes without a tragic event and the rate is affected by the time since the event.
 --- A fear level of 10 will decrease to 0 after 12.5 minutes.
@@ -1326,6 +1465,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << homeless inhabitants >>
+
 local ROOMS_PER_HUT = Housing.values["improvised-hut"].room_count
 local HUTS = {}
 for name, house in pairs(Housing.values) do
@@ -1405,6 +1545,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general update >>
+
 function Inhabitants.update(current_tick)
     update_caste_bonuses()
     update_immigration(10)
@@ -1463,7 +1604,13 @@ function Inhabitants.create_house(entry)
     entry[EK.employed] = 0
     entry[EK.employments] = {}
 
+    entry[EK.social_progress] = 0
+    entry[EK.ga_conceptions] = 0
+
     update_free_space_status(entry)
+
+    Inhabitants.social_environment_change()
+    build_social_environment(entry)
 end
 
 function Inhabitants.copy_house(source, destination)
@@ -1490,6 +1637,8 @@ function Inhabitants.remove_house(entry, cause)
     else
         Inhabitants.add_to_homeless_pool(entry)
     end
+
+    Inhabitants.social_environment_change()
 end
 
 -- Set event handlers for the housing entities.

@@ -147,4 +147,10 @@ data:extend {
         group = "sosciencity-production",
         order = "aia"
     },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-inhabitants",
+        group = "sosciencity-production",
+        order = "aja"
+    },
 }

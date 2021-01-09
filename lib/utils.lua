@@ -310,10 +310,15 @@ end
 
 --- Returns a string that presents all given elements, separated by the given separator.\
 --- Returns an empty string if no elements are given.
+--- @param separator string
 function Tirislib_String.join(separator, ...)
     return join_table(separator, {...}) or ""
 end
 
+---Splits the given string along the given separator and returns an array of the parts.
+---@param s string
+---@param separator string
+---@return table
 function Tirislib_String.split(s, separator)
     local ret = {}
 
@@ -396,7 +401,7 @@ function Tirislib_Tables.get_keyset(tbl)
     local ret = {}
     local index = 1
 
-    for key, _ in pairs(tbl) do
+    for key in pairs(tbl) do
         ret[index] = key
         index = index + 1
     end

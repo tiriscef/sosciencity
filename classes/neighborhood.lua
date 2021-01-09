@@ -285,6 +285,9 @@ function Neighborhood.all(entry)
     return all_neighbors_iterator, entry[EK.neighbors]
 end
 
+--- Counts the neighbors of the given type.
+--- @param entry Entry
+--- @param _type Type
 function Neighborhood.get_neighbor_count(entry, _type)
     if not entry[EK.neighbors] or not entry[EK.neighbors][_type] then
         return 0

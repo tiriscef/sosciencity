@@ -235,16 +235,13 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local health = entry[EK.health_summands]
     local health_factors = entry[EK.health_factors]
     local sanity = entry[EK.sanity_summands]
-    local sanity_factors = entry[EK.sanity_factors]
 
     if hunger_satisfaction < 0.5 then
         happiness_factors[HappinessFactor.hunger] = 0.
         health_factors[HealthFactor.hunger] = 0.
-        sanity_factors[SanityFactor.hunger] = 0.
     else
         happiness_factors[HappinessFactor.hunger] = 1.
         health_factors[HealthFactor.hunger] = 1.
-        sanity_factors[SanityFactor.hunger] = 1.
     end
 
     -- handle the annoying edge case of no food at all
@@ -377,7 +374,7 @@ local function consume_water(distributers, amount)
     return (amount - to_consume) / amount, quality / amount
 end
 
-function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, sanity_factors)
+function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, health_summands)
     local distributers = get_neighbors_of_type(entry, Type.water_distributer)
     sort_by_key(distributers, EK.water_quality)
 
@@ -400,8 +397,8 @@ function Consumption.evaluate_water(entry, delta_ticks, happiness_factors, healt
     end
 
     happiness_factors[HappinessFactor.thirst] = satisfaction
-    health_factors[HealthFactor.water] = quality * satisfaction
-    sanity_factors[SanityFactor.thirst] = satisfaction
+    health_factors[HealthFactor.thirst] = satisfaction
+    health_summands[HealthSummand.water] = quality
 end
 
 return Consumption

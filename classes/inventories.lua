@@ -17,6 +17,8 @@ local chest = defines.inventory.chest
 
 local table_add = Tirislib_Tables.add
 
+local min = math.min
+
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
 function Inventories.get_chest_inventory(entry)
@@ -147,6 +149,14 @@ function Inventories.remove_item_range_from_inventory_range(inventories, items)
             count = count - inventory.remove {name = item, count = count}
         end
     end
+end
+
+function Inventories.output_eggs(entry, count)
+    -- TODO output in some collection entity
+
+    local house_inventory = get_chest_inventory(entry)
+    local already_inside = house_inventory.get_item_count("egg")
+    return try_insert(house_inventory, "egg", min(20 - already_inside, count))
 end
 
 return Inventories

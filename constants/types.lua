@@ -35,6 +35,10 @@ TypeGroup.inhabitant_subscriptions = {
     Type.animal_farm
 }
 
+TypeGroup.social_places = {
+    Type.nightclub
+}
+
 TypeGroup.hospital_complements = {
     Type.pharmacy,
     Type.psych_ward
@@ -150,6 +154,7 @@ Types.definitions = {
         localised_name = {"sosciencity-gui.nightclub"},
         localised_description = {"sosciencity-gui.explain-nightclub"},
         signature_color = Colors.purple,
+        subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
     [Type.pharmacy] = {
