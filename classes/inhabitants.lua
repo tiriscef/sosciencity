@@ -968,13 +968,18 @@ end
 
 Inhabitants.conception_rate = 0.3
 
+local function is_infectious(disease_id)
+    return disease_values[disease_id].contagiousness > 0
+end
+
 local function social_meeting(entry, meeting_count)
     local ga_count = entry[EK.genders][Gender.ga]
     local past_conceptions = entry[EK.ga_conceptions]
+    local environment = entry[EK.social_environment]
 
     -- reproduction
     if ga_count > past_conceptions then
-        local available_partners = floor(get_partner_rate(entry[EK.social_environment]) * ga_count)
+        local available_partners = floor(get_partner_rate(environment) * ga_count)
         available_partners = available_partners - past_conceptions
         local fertile_ga_count = ga_count - past_conceptions
         local conceptions = coin_flips(Inhabitants.conception_rate, meeting_count, 5)
@@ -986,7 +991,16 @@ local function social_meeting(entry, meeting_count)
         end
     end
 
-    -- TODO: infection
+    local infectious_diseases = Luaq_from(entry[EK.diseases]):where(is_infectious):to_table()
+    for disease_id, count in pairs(infectious_diseases) do
+        local infections = coin_flips(disease_values[disease_id].contagiousness, count, 5)
+
+        if infections > 0 then
+            local random_house = environment[random(#environment)]
+            local infected = DiseaseGroup.make_sick(random_house[EK.diseases], disease_id, infections)
+            Communication.log_infected(disease_id, infected)
+        end
+    end
 end
 
 local social_coefficient = 1 / 10000 -- TODO balancing
@@ -1338,7 +1352,8 @@ local function update_housing_census(entry, caste_id)
     end
 
     -- caste bonus points
-    local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness])
+    local effectivity = 1 + 0.1 * global.technologies[castes[caste_id].effectivity_tech]
+    local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness]) * effectivity
     caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points] + points
     entry[EK.caste_points] = points
 end

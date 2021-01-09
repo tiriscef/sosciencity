@@ -405,6 +405,9 @@ end
 function Communication.log_disease_deaths(disease_id, count)
 end
 
+function Communication.log_infected(disease_id, count)
+end
+
 function Communication.player_got_run_over()
     if #allowed_speakers == 0 then
         return
