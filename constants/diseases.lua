@@ -5,6 +5,22 @@ require("constants.types")
 --- A disease is a particular abnormal condition that negatively affects the structure or function of all or part of an organism
 Diseases = {}
 
+--- Disease definitions\
+--- **name:** prototype name of the disease\
+--- **localised_name:** localised name for this disease\
+--- **localised_description:** localised description for this disease\
+--- **cure_items:** items needed to cure the disease\
+--- **curing_workload:** operations needed to cure the disease\
+--- **curing_facility:** facility needed to cure the disease\
+--- **contagiousness:** probability that the disease infects someone else during a social meeting\
+--- **lethality:** probability that the person doesn't survive the disease\
+--- **natural_recovery:** average time till recovery - will be translated to the probability per tick during runtime\
+--- **category:** disease category of this disease\
+--- **frequency:** the probability weight that the disease gets chosen when distributing diseases\
+--- **escalation:** the disease that this disease can escalate to when it doesn't get cured\
+--- **escalation_probability:** the probability that the disease escalates\
+--- **complication:** the disease that this disease can transform to\
+--- **complication_probability:** the probability of a complication
 Diseases.values = {
     [0] = {
         name = "limp-loss",
@@ -51,7 +67,18 @@ Diseases.values = {
         lethality = 0,
         natural_recovery = 2 * Time.nauvis_day,
         category = DiseaseCategory.health,
-        frequency = 100
+        frequency = 100,
+        escalation = "lung-infection",
+        escalation_probability = 0.1
+    },
+    [201] = {
+        name = "lung-infection",
+        curing_workload = 5,
+        contagiousness = 0,
+        lethality = 0.1,
+        natural_recovery = Time.nauvis_week,
+        category = DiseaseCategory.health,
+        frequency = 1
     }
 }
 
@@ -96,6 +123,15 @@ do
         return ret
     end
 
+    local function get_disease_id(disease_name)
+        for id, disease in pairs(Diseases.values) do
+            if disease_name == disease.name then
+                return id
+            end
+        end
+        error("Diseases looked for the ID of a nonexistant disease: " .. disease_name)
+    end
+
     Diseases.by_category = {}
     Diseases.frequency_sums = {}
     for _, category in pairs(DiseaseCategory) do
@@ -115,5 +151,8 @@ do
         if disease.natural_recovery > 0 then
             disease.natural_recovery = 1 / disease.natural_recovery
         end
+
+        disease.escalation = disease.escalation and get_disease_id(disease.escalation) or nil
+        disease.complication = disease.complication and get_disease_id(disease.complication) or nil
     end
 end
