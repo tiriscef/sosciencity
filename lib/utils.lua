@@ -217,6 +217,13 @@ function Tirislib_Utils.dice_rolls(dice, count, actual_count)
     return ret
 end
 
+--- Flips a coin the given number of times and returns the number of successes.
+--- For performance reason the function will actually just roll a limited number
+--- of times and extrapolate for bigger values.
+---@param probability number
+---@param count number
+---@param actual_count any
+---@return integer
 function Tirislib_Utils.coin_flips(probability, count, actual_count)
     actual_count = actual_count or 20
 
@@ -236,6 +243,14 @@ function Tirislib_Utils.coin_flips(probability, count, actual_count)
     end
 
     return successes
+end
+
+--- Returns the probability of at least one success after n tries.
+--- @param probability number
+--- @param tries number
+--- @return number
+function Tirislib_Utils.occurence_probability(probability, tries)
+    return 1 - (1 - probability) ^ tries
 end
 
 function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)

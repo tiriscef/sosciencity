@@ -213,6 +213,18 @@ local data_details = {
         height = 5,
         tech_level = 1,
         main_entity = "sheltered-house"
+    },
+    ["small-prefabricated-house"] = {
+        picture = Tirislib_Entity.create_standard_picture(
+            "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
+            8,
+            11,
+            {0.5, -1.5}
+        ),
+        width = 5,
+        height = 6,
+        tech_level = 1,
+        main_entity = "pascal-house"
     }
 }
 
@@ -255,8 +267,8 @@ local function get_localised_qualities(house)
     local ret = {""}
 
     for _, quality in pairs(house.qualities) do
-        ret[#ret+1] = {"housing-quality." .. quality}
-        ret[#ret+1] = "  "
+        ret[#ret + 1] = {"housing-quality." .. quality}
+        ret[#ret + 1] = "  "
     end
 
     return ret
@@ -289,7 +301,7 @@ end
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
     local ingredient_themes = {
-        {"building", house.room_count, tech_level}, 
+        {"building", house.room_count, tech_level},
         {"furnishing", house.room_count, house.comfort}
     }
 
@@ -339,6 +351,9 @@ end
 
 for house_name, house in pairs(Housing.values) do
     local details = data_details[house_name]
+
+    -- if the main_entity isn't set, then this house is its own
+    details.main_entity = details.main_entity or house_name
 
     if details.main_entity == house_name and house_name ~= "improvised-hut" then
         create_item(house_name, house, details)

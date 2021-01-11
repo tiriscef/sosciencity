@@ -80,10 +80,10 @@ local max = math.max
 local min = math.min
 local map_range = Tirislib_Utils.map_range
 local array_sum = Tirislib_Tables.array_sum
-local sum = Tirislib_Tables.sum
 local array_product = Tirislib_Tables.array_product
 local coin_flips = Tirislib_Utils.coin_flips
 local dice_rolls = Tirislib_Utils.dice_rolls
+local occurence_probability = Tirislib_Utils.occurence_probability
 local shuffle = Tirislib_Tables.shuffle
 local weighted_average = Tirislib_Utils.weighted_average
 local random = math.random
@@ -235,6 +235,7 @@ function DiseaseGroup.make_sick(group, disease_id, count)
 
     return actually_sickened
 end
+local make_sick = DiseaseGroup.make_sick
 
 --- Tries to cure the given number of people of the given disease. Returns the number of people that were actually cured.
 --- @param group DiseaseGroup
@@ -968,10 +969,6 @@ end
 
 Inhabitants.conception_rate = 0.3
 
-local function is_infectious(disease_id)
-    return disease_values[disease_id].contagiousness > 0
-end
-
 local function social_meeting(entry, meeting_count)
     local ga_count = entry[EK.genders][Gender.ga]
     local past_conceptions = entry[EK.ga_conceptions]
@@ -991,14 +988,21 @@ local function social_meeting(entry, meeting_count)
         end
     end
 
-    local infectious_diseases = Luaq_from(entry[EK.diseases]):where(is_infectious):to_table()
-    for disease_id, count in pairs(infectious_diseases) do
-        local infections = coin_flips(disease_values[disease_id].contagiousness, count, 5)
+    -- infections
+    for disease_id, count in pairs(entry[EK.diseases]) do
+        if disease_id ~= HEALTHY then
+            local contagiousness = disease_values[disease_id].contagiousness
+            if contagiousness > 0 then
+                local infections = coin_flips(contagiousness, count, 5)
 
-        if infections > 0 then
-            local random_house = environment[random(#environment)]
-            local infected = DiseaseGroup.make_sick(random_house[EK.diseases], disease_id, infections)
-            Communication.log_infected(disease_id, infected)
+                if infections > 0 then
+                    local random_house = try_get(environment[random(#environment)])
+                    if random_house then
+                        local infected = make_sick(random_house[EK.diseases], disease_id, infections)
+                        Communication.log_infected(disease_id, infected)
+                    end
+                end
+            end
         end
     end
 end
@@ -1025,19 +1029,39 @@ local function evaluate_social_environment(entry, sanity_summands, delta_ticks)
         social_progress = social_progress - event_count
     end
     entry[EK.social_progress] = social_progress
-
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << healthcare >>
 
-local function cure_side_effects(entry, disease_id, count)
+local function cure_side_effects(entry, disease_id, count, cured)
     local disease = disease_values[disease_id]
 
     local dead_count = coin_flips(disease.lethality, count)
     if dead_count > 0 then
+        -- TODO: secure that a healthy person gets taken
         take_inhabitants(entry, dead_count)
         Communication.log_disease_deaths(disease_id, dead_count)
+    end
+
+    -- the following effects cannot occur when the person died
+    count = count - dead_count
+
+    local escalation_disease = disease.escalation
+    local escalation_count = 0
+    if not cured and escalation_disease then
+        escalation_count = coin_flips(disease.escalation_probability, count, 5)
+        if escalation_count > 0 then
+            make_sick(entry[EK.diseases], escalation_disease, escalation_count)
+        end
+    end
+
+    local complication_disease = disease.complication
+    if complication_disease then
+        local complication_count = coin_flips(disease.complication_probability, count - escalation_count, 5)
+        if complication_count > 0 then
+            make_sick(entry[EK.diseases], complication_disease, complication_count)
+        end
     end
 end
 
@@ -1062,7 +1086,7 @@ Inhabitants.disease_progress_updaters = {
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 
-local function create_diseases(entry, disease_group, delta_ticks)
+local function create_disease_cases(entry, disease_group, delta_ticks)
     local progresses = entry[EK.disease_progress]
 
     for disease_category, progress in pairs(progresses) do
@@ -1076,17 +1100,13 @@ local function create_diseases(entry, disease_group, delta_ticks)
                 "frequency",
                 Diseases.frequency_sums[disease_category]
             )
-            DiseaseGroup.make_sick(disease_group, disease_id, new_diseases)
+            make_sick(disease_group, disease_id, new_diseases)
 
             progress = progress - new_diseases
         end
 
         progresses[disease_category] = progress
     end
-end
-
-local function get_recovery_progress(id, count, delta_ticks)
-    return disease_values[id].natural_recovery * count * delta_ticks
 end
 
 local function is_recoverable(id)
@@ -1147,7 +1167,7 @@ local function treat_diseases(entry, hospitals, diseases, disease_group)
             local treated = try_treat_disease(hospital, contents, inventories, disease_group, disease_id, count)
 
             if treated > 0 then
-                cure_side_effects(entry, disease_id, treated)
+                cure_side_effects(entry, disease_id, treated, true)
                 local statistics = hospital[EK.treated]
                 statistics[disease_id] = (statistics[disease_id] or 0) + treated
                 Communication.log_treatment(disease_id, treated)
@@ -1161,56 +1181,39 @@ local function treat_diseases(entry, hospitals, diseases, disease_group)
     end
 end
 
-local function cure_diseases(entry, disease_group, delta_ticks)
+local function update_disease_cases(entry, disease_group, delta_ticks)
     -- check if there are diseased people in the first place, because this function is moderately expensive
     if disease_group[HEALTHY] == entry[EK.inhabitants] then
         return
     end
 
-    -- the disease group without the healthy entry
-    local diseases = Luaq_from(disease_group):where(not_healthy):to_table()
+    -- treat disease cases in hospitals
+    local hospitals = Neighborhood.get_by_type(entry, Type.hospital)
+    local grouped = Luaq_from(disease_group):where(not_healthy):group(is_recoverable):to_table()
+    treat_diseases(entry, hospitals, grouped[false], disease_group)
+    treat_diseases(entry, hospitals, grouped[true], disease_group)
 
-    -- natural recovery
-    local new_progress = Luaq_from(diseases):select(get_recovery_progress, delta_ticks):call(sum)
-    local recovery_progress = entry[EK.recovery_progress] + new_progress
-    if recovery_progress >= 1 then
-        local recoverable_diseases = Luaq_from(diseases):where(is_recoverable):to_table()
+    for disease_id, count in pairs(disease_group) do
+        if disease_id ~= HEALTHY then
+            local natural_recovery = disease_values.natural_recovery
+            if natural_recovery then
+                local recovered = coin_flips(occurence_probability(natural_recovery, delta_ticks), count, 5)
+                recovered = cure(disease_group, disease_id, recovered)
 
-        local to_recover = floor(recovery_progress)
-        for disease_id, count in pairs(recoverable_diseases) do
-            local recovered = min(count, to_recover)
-            recovered = cure(disease_group, disease_id, recovered)
-
-            if recovered > 0 then
-                cure_side_effects(entry, disease_id, recovered)
-                Communication.log_recovery(disease_id, recovered)
-            end
-
-            to_recover = to_recover - recovered
-            if to_recover == 0 then
-                break
+                if recovered > 0 then
+                    cure_side_effects(entry, disease_id, recovered)
+                    Communication.log_recovery(disease_id, recovered)
+                end
             end
         end
     end
-    entry[EK.recovery_progress] = recovery_progress
-
-    -- check again because treatment in hospitals is even more expensive
-    if disease_group[HEALTHY] == entry[EK.inhabitants] then
-        return
-    end
-
-    -- treat in hospitals
-    local hospitals = Neighborhood.get_by_type(entry, Type.hospital)
-    local grouped = Luaq_from(diseases):group(is_recoverable):to_table()
-    treat_diseases(entry, hospitals, grouped[false], disease_group)
-    treat_diseases(entry, hospitals, grouped[true], disease_group)
 end
 
 local function update_diseases(entry, delta_ticks)
     local disease_group = entry[EK.diseases]
 
-    create_diseases(entry, disease_group, delta_ticks)
-    cure_diseases(entry, disease_group, delta_ticks)
+    create_disease_cases(entry, disease_group, delta_ticks)
+    update_disease_cases(entry, disease_group, delta_ticks)
 
     -- check employments
     local healthy_count = disease_group[HEALTHY]
