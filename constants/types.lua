@@ -157,6 +157,9 @@ Types.definitions = {
         subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
+    [Type.upbringing_station] = {
+        is_civil = true
+    },
     [Type.pharmacy] = {
         localised_name = {"sosciencity-gui.pharmacy"},
         localised_description = {"sosciencity-gui.explain-pharmacy"},

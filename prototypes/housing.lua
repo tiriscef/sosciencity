@@ -217,14 +217,13 @@ local data_details = {
     ["small-prefabricated-house"] = {
         picture = Tirislib_Entity.create_standard_picture(
             "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
-            8,
-            11,
-            {0.5, -1.5}
+            13,
+            12,
+            {3.0, -1.5}
         ),
         width = 5,
-        height = 6,
-        tech_level = 1,
-        main_entity = "pascal-house"
+        height = 5,
+        tech_level = 1
     }
 }
 

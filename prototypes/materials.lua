@@ -13,6 +13,7 @@ local material_items = {
     {name = "writing-paper", sprite_variations = {name = "writing-paper-pile", count = 4}},
     {name = "trap", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "trap-cage", distinctions = {subgroup = "sosciencity-gathering"}},
+    {name = "trap-bucket", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "fishing-net", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "sewage-sludge", sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}},

@@ -10,6 +10,7 @@ end
 local foods = {
     {name = "mammal-meat"},
     {name = "bird-meat"},
+    {name = "insect-meat"},
     {name = "fish-meat"},
     {name = "alien-meat", sprite_variations = {name = "alien-meat", count = 2, include_icon = true}},
     {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
