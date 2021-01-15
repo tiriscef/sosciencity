@@ -17,6 +17,8 @@ local chest = defines.inventory.chest
 
 local table_add = Tirislib_Tables.add
 
+local food_values = Food.values
+
 local min = math.min
 
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
@@ -157,6 +159,53 @@ function Inventories.output_eggs(entry, count)
     local house_inventory = get_chest_inventory(entry)
     local already_inside = house_inventory.get_item_count("egg")
     return try_insert(house_inventory, "egg", min(20 - already_inside, count))
+end
+
+function Inventories.count_calories(inventory)
+    local ret = 0
+
+    for i = 1, #inventory do
+        local stack = inventory[i]
+        if stack.valid_for_read then
+            local name = stack.name
+            local food_details = food_values[name]
+            if food_details then
+                -- .durability returns the calories of the item at the top of the stack
+                -- the rest of the stack is at maximum calories
+                ret = ret + (stack.count - 1) * food_details.calories + stack.durability
+            end
+        end
+    end
+
+    return ret
+end
+
+function Inventories.consume_calories(inventory, calories)
+    local actually_consumed = 0
+
+    for i = 1, #inventory do
+        local slot = inventory[i]
+        if slot.valid_for_read then
+            local name = slot.name
+            local food_details = food_values[name]
+            if food_details then
+                local count_before = slot.count
+                actually_consumed = actually_consumed + slot.drain_durability(calories - actually_consumed)
+
+                local items_consumed = slot.valid_for_read and count_before - slot.count or count_before
+
+                if items_consumed > 0 then
+                    log_item(name, -items_consumed)
+                end
+
+                if calories - actually_consumed < 0.001 then
+                    return calories
+                end
+            end
+        end
+    end
+
+    return actually_consumed
 end
 
 return Inventories

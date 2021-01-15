@@ -135,6 +135,19 @@ local animals = {
         probability = 0.15,
         slaughter_byproducts = {{name = "ink", amount = 4}},
         breeding_byproducts = {{name = "ultra-squibbel", amount = 0.5}}
+    },
+    {
+        name = "cabar",
+        size = 20,
+        probability = 0.2,
+        min_group_size = 1,
+        max_group_size = 7
+    },
+    {
+        name = "caddle",
+        size = 20,
+        probability = 0.15,
+        group_size = 2
     }
 }
 
@@ -161,10 +174,6 @@ end
 
 Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
 
-local function is_land_animal(animal)
-    return animal.land_animal
-end
-
 local function is_water_animal(animal)
     return animal.water_animal or animal.fish
 end
@@ -175,7 +184,8 @@ local function get_meat_type(animal)
         return animal.meat
     end
 
-    return (animal.bird and "bird-meat") or (animal.fish and "fish-meat") or "mammal-meat"
+    return (animal.bird and "bird-meat") or (animal.fish and "fish-meat") or (animal.insect and "insect-meat") or
+        "mammal-meat"
 end
 
 local function get_preform(animal)
@@ -193,9 +203,9 @@ local fauna_producing_recipes = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << gathering recipes >>
-local hunting =
+local megafauna_hunting =
     Tirislib_Recipe.create {
-    name = "hunting-for-mammals",
+    name = "hunting-for-megafauna",
     category = "sosciencity-hunting",
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
@@ -205,13 +215,13 @@ local hunting =
     always_show_made_in = true,
     main_product = ""
 }:create_difficulties()
-hunting:multiply_expensive_field("energy_required", 2)
-hunting:add_catalyst("trap", "item", 5, 0.8, 6, 0.7)
-table.insert(fauna_producing_recipes, hunting)
+megafauna_hunting:multiply_expensive_field("energy_required", 2)
+megafauna_hunting:add_catalyst("trap", "item", 5, 0.8, 6, 0.7)
+table.insert(fauna_producing_recipes, megafauna_hunting)
 
-local bird_hunting =
+local makrofauna_hunting =
     Tirislib_Recipe.create {
-    name = "hunting-for-small-land-animals",
+    name = "hunting-for-makrofauna",
     category = "sosciencity-hunting",
     energy_required = 20,
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
@@ -221,9 +231,25 @@ local bird_hunting =
     always_show_made_in = true,
     main_product = ""
 }:create_difficulties()
-bird_hunting:multiply_expensive_field("energy_required", 2)
-bird_hunting:add_catalyst("trap-cage", "item", 2, 0.9, 3, 0.8)
-table.insert(fauna_producing_recipes, bird_hunting)
+makrofauna_hunting:multiply_expensive_field("energy_required", 2)
+makrofauna_hunting:add_catalyst("trap-cage", "item", 2, 0.9, 3, 0.8)
+table.insert(fauna_producing_recipes, makrofauna_hunting)
+
+local mikrofauna_hunting =
+    Tirislib_Recipe.create {
+    name = "hunting-for-mikrofauna",
+    category = "sosciencity-hunting",
+    energy_required = 20,
+    icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+    icon_size = 64,
+    subgroup = "sosciencity-gathering",
+    allow_decomposition = false,
+    always_show_made_in = true,
+    main_product = ""
+}:create_difficulties()
+makrofauna_hunting:multiply_expensive_field("energy_required", 2)
+makrofauna_hunting:add_catalyst("trap-bucket", "item", 10, 0.9, 15, 0.8)
+table.insert(fauna_producing_recipes, mikrofauna_hunting)
 
 local fishing =
     Tirislib_Recipe.create {
@@ -242,20 +268,29 @@ fishing:add_catalyst("fishing-net", "item", 2, 0.8, 3, 0.7)
 table.insert(fauna_producing_recipes, fishing)
 
 local function get_result_prototype(animal)
-    return {name = animal.name, amount = animal.group_size or 1, probability = animal.probability}
+    return {
+        name = animal.name,
+        amount = animal.group_size or (not animal.min_group_size) and 1,
+        probability = animal.probability,
+        amount_min = animal.min_group_size,
+        amount_max = animal.max_group_size
+    }
 end
 
 local function add_to_gather_recipe(animal)
     local result_prototype = get_result_prototype(animal)
 
-    if is_land_animal(animal) then
-        hunting:add_result(result_prototype)
-    end
-    if animal.bird then
-        bird_hunting:add_result(result_prototype)
-    end
     if is_water_animal(animal) then
         fishing:add_result(result_prototype)
+        return
+    end
+    if animal.size >= 100 then
+        megafauna_hunting:add_result(result_prototype)
+    end
+    if animal.size < 100 and animal.size >= 10 then
+        makrofauna_hunting:add_result(result_prototype)
+    else
+        mikrofauna_hunting:add_result(result_prototype)
     end
 end
 

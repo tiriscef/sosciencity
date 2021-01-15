@@ -7,6 +7,7 @@ Entity = {}
     nothing
 ]]
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
+
 local global
 local caste_bonuses
 local flora = Biology.flora
@@ -41,6 +42,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general helper functions >>
+
 local function get_speed_from_performance(performance)
     return floor(100 * performance - 20)
 end
@@ -74,6 +76,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << beaconed machines >>
+
 local function update_machine(entry)
     set_beacon_effects(entry, caste_bonuses[Type.clockwork], 0, global.use_penalty)
 end
@@ -88,6 +91,7 @@ Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
 
 ---------------------------------------------------------------------------------------------------
 -- << composting >>
+
 local function create_composter(entry)
     entry[EK.humus] = 0
     entry[EK.composting_progress] = 0
@@ -189,6 +193,7 @@ Register.set_entity_updater(Type.composter_output, update_composter_output)
 
 ---------------------------------------------------------------------------------------------------
 -- << farms >>
+
 local get_species = Biology.get_species
 
 local function species_change(entry, new_species)
@@ -231,6 +236,7 @@ Register.set_entity_updater(Type.farm, update_farm)
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>
+
 local function schedule_immigration_wave(entry, building_details)
     entry[EK.next_wave] =
         (entry[EK.next_wave] or game.tick) + building_details.interval + random(building_details.random_interval) - 1
@@ -256,6 +262,7 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 
 ---------------------------------------------------------------------------------------------------
 -- << manufactory >>
+
 local function update_manufactory(entry)
     Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
@@ -265,6 +272,7 @@ Register.set_entity_updater(Type.manufactory, update_manufactory)
 
 ---------------------------------------------------------------------------------------------------
 -- << nightclub >>
+
 local function update_nightclub(entry)
     if not has_power(entry) then
         entry[EK.performance] = 0
@@ -292,6 +300,7 @@ Register.set_entity_destruction_handler(Type.nightclub, remove_nightclub)
 
 ---------------------------------------------------------------------------------------------------
 -- << fishery >>
+
 local function get_water_tiles(entry, building_details)
     local cached_value = entry[EK.water_tiles]
     if not cached_value or global.last_tile_update > entry[EK.last_update] then
@@ -334,6 +343,7 @@ Register.set_entity_creation_handler(Type.fishery, create_fishery)
 
 ---------------------------------------------------------------------------------------------------
 -- << hunting hut >>
+
 local function get_tree_count(entry, building_details)
     local cached_value = entry[EK.tree_count]
     if not cached_value or global.last_entity_update > entry[EK.last_update] then
@@ -376,11 +386,13 @@ Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
 
 ---------------------------------------------------------------------------------------------------
 -- << market >>
+
 Register.set_entity_creation_handler(Type.market, Inventories.cache_contents)
 Register.set_entity_updater(Type.market, Inventories.cache_contents)
 
 ---------------------------------------------------------------------------------------------------
 -- << hospital >>
+
 function Entity.get_hospital_inventories(entry)
     local ret = {Inventories.get_chest_inventory(entry)}
 
@@ -419,6 +431,7 @@ Register.set_entity_copy_handler(Type.hospital, copy_hospital)
 
 ---------------------------------------------------------------------------------------------------
 -- << hospital complements >>
+
 local function update_psych_ward(entry)
     Inhabitants.update_workforce(entry)
     entry[EK.active] = has_power(entry) and Inhabitants.evaluate_workforce(entry) == 1
@@ -431,7 +444,21 @@ end
 Register.set_entity_creation_handler(Type.psych_ward, create_psych_ward)
 
 ---------------------------------------------------------------------------------------------------
+-- << upbringing station >>
+
+local function update_upbringing_station(entry, delta_ticks)
+
+end
+Register.set_entity_updater(Type.upbringing_station, update_upbringing_station)
+
+local function create_upbringing_station(entry)
+    entry[EK.education_mode] = Type.clockwork
+end
+Register.set_entity_creation_handler(Type.upbringing_station, create_upbringing_station)
+
+---------------------------------------------------------------------------------------------------
 -- << water distributer >>
+
 local function update_water_distributer(entry)
     local entity = entry[EK.entity]
 
@@ -455,6 +482,7 @@ Register.set_entity_updater(Type.water_distributer, update_water_distributer)
 
 ---------------------------------------------------------------------------------------------------
 -- << waterwell >>
+
 local function get_waterwell_competition_performance(entry)
     -- +1 so it counts itself too
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
@@ -476,6 +504,7 @@ Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
 
 ---------------------------------------------------------------------------------------------------
 -- << interface for other classes >>
+
 function Entity.is_active(entry)
     -- default to true for types that don't set the value
     return entry[EK.active] or true

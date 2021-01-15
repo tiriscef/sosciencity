@@ -38,6 +38,7 @@ require("classes.inventories")
 require("classes.consumption")
 require("classes.inhabitants")
 require("classes.entity")
+require("classes.handcrafting")
 require("classes.gui")
 
 ---------------------------------------------------------------------------------------------------
@@ -113,6 +114,7 @@ end
 ]]
 ---------------------------------------------------------------------------------------------------
 -- local all the frequently called functions for miniscule performance gains
+
 local global
 
 local add_fear = Inhabitants.add_fear
@@ -138,6 +140,7 @@ local remove_mouseover_highlights = Communication.remove_mouseover_highlights
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
+
 local function update_cycle()
     local current_tick = game.tick
     ease_fear(current_tick)
@@ -182,6 +185,7 @@ local function init()
     Gui.init()
     Communication.init()
     Entity.init()
+    Handcrafting.init()
 
     update_settings()
 
@@ -386,8 +390,10 @@ local function on_gui_click(event)
     end
 end
 
+local on_technology_finished = Technologies.finished
+
 local function on_research_finished(event)
-    Technologies.finished(event.research.name)
+    on_technology_finished(event.research.name)
 end
 
 local function on_selection_changed(event)
@@ -415,6 +421,7 @@ local train_types =
     "cargo-wagon",
     "fluid-wagon"
 }
+
 local function on_player_died(event)
     local causing_entity = event.cause
 
@@ -425,6 +432,23 @@ local function on_player_died(event)
     if train_types[causing_entity.type] then
         Communication.player_got_run_over()
     end
+end
+
+local on_handcrafting = Handcrafting.on_craft
+
+local function on_player_crafted(event)
+    local player_id = event.player_index
+    local name = event.recipe.name
+    on_handcrafting(player_id, name)
+end
+
+local on_handcrafting_queue = Handcrafting.on_queued
+
+local function on_player_queued_craft(event)
+    local player_id = event.player_index
+    local name = event.recipe.name
+    local count = event.queued_count
+    on_handcrafting_queue(player_id, name, count)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -485,3 +509,7 @@ script.on_event(defines.events.on_selected_entity_changed, on_selection_changed)
 
 -- tragic player deaths
 script.on_event(defines.events.on_player_died, on_player_died)
+
+-- player crafts
+script.on_event(defines.events.on_player_crafted_item, on_player_crafted)
+script.on_event(defines.events.on_pre_player_crafted_item, on_player_queued_craft)

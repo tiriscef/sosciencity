@@ -10,7 +10,7 @@ Food.values = {
         fat = 15,
         carbohydrates = 0.2,
         proteins = 19.6,
-        healthiness = 5,
+        healthiness = 4,
         food_category = "meat",
         taste_category = Taste.umami,
         taste_quality = 7,
@@ -22,13 +22,25 @@ Food.values = {
         fat = 14,
         carbohydrates = 0.1,
         proteins = 20.6,
-        healthiness = 3,
+        healthiness = 6,
         food_category = "meat",
         taste_category = Taste.neutral,
         taste_quality = 5,
         luxury = 6,
         portion_size = 10,
         group = "bird-meat"
+    },
+    ["insect-meat"] = {
+        fat = 28.7,
+        carbohydrates = 2.7,
+        proteins = 53.2,
+        healthiness = 6,
+        food_category = "meat",
+        taste_category = Taste.soily,
+        taste_quality = 4,
+        luxury = 3,
+        portion_size = 10,
+        group = "insect-meat"
     },
     ["fish-meat"] = {
         fat = 17,
@@ -319,6 +331,8 @@ Food.taste_names = {
     [Taste.umami] = {"taste-category.umami"},
     [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"}
 }
+
+Food.egg_calories = 10000
 
 local energy_density_fat = 9 -- kcal per g
 local energy_density_carbohydrates = 4

@@ -25,6 +25,7 @@ Type.immigration_port = 106
 Type.transportation = 107
 Type.nightclub = 108
 
+Type.upbringing_station = 198
 Type.pharmacy = 199
 Type.hospital = 200
 Type.psych_ward = 201
@@ -211,6 +212,10 @@ EK.composting_progress = 801
 EK.operations = 900
 --- statistics over treated disease cases as (disease_id, count)-pairs
 EK.treated = 901
+
+-- upbringing station
+--- the caste the children are educated in
+EK.education_mode = 1000
 
 --<< causes >>
 --- Enum table for destruction causes
