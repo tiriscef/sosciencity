@@ -8,7 +8,7 @@ local idea_items = {
         sprite_variations = {name = "huwan-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity-gui.any"}}
+            localised_description = {"item-description.huwan-egg", {"sosciencity.any"}}
         }
     },
     {
@@ -16,7 +16,7 @@ local idea_items = {
         sprite_variations = {name = "huwan-neutral-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity-gui.gender-1"}}
+            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-1"}}
         }
     },
     {
@@ -24,7 +24,7 @@ local idea_items = {
         sprite_variations = {name = "huwan-fale-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity-gui.gender-2"}}
+            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-2"}}
         }
     },
     {
@@ -32,7 +32,7 @@ local idea_items = {
         sprite_variations = {name = "huwan-pachin-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity-gui.gender-3"}}
+            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-3"}}
         }
     },
     {
@@ -40,7 +40,7 @@ local idea_items = {
         sprite_variations = {name = "huwan-ga-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity-gui.gender-4"}}
+            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-4"}}
         }
     }
 }
@@ -70,6 +70,6 @@ for index, egg in pairs({"huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) 
         expensive_energy_required = 160,
         themes = {{"genetical", 1}},
         category = "sosciencity-gene-lab",
-        localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity-gui.gender-" .. (index + 1)}}
+        localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index + 1)}}
     }
 end

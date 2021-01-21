@@ -85,23 +85,23 @@ Diseases.values = {
 -- postprocessing
 do
     local function get_localised_cure(disease)
-        local ret = {"", {"sosciencity-gui.cure-workload", disease.curing_workload}}
+        local ret = {"", {"sosciencity.cure-workload", disease.curing_workload}}
 
         if disease.cure_items then
             local items = {""}
             for item, count in pairs(disease.cure_items) do
-                items[#items + 1] = {"sosciencity-gui.multiplier", count, string.format("[item=%s] ", item)}
+                items[#items + 1] = {"sosciencity.multiplier", count, string.format("[item=%s] ", item)}
                 items[#items + 1] = {string.format("item-name.%s", item)}
             end
 
             ret[#ret + 1] = "\n"
-            ret[#ret + 1] = {"sosciencity-gui.cure-medicine", items}
+            ret[#ret + 1] = {"sosciencity.cure-medicine", items}
         end
 
         if disease.curing_facility then
             ret[#ret + 1] = "\n"
             ret[#ret + 1] = {
-                "sosciencity-gui.cure-facility",
+                "sosciencity.cure-facility",
                 Types.definitions[disease.curing_facility].localised_name
             }
         end
@@ -112,7 +112,7 @@ do
     local function get_localised_description(disease)
         local ret = {
             "",
-            {"sosciencity-gui.bold", disease.localised_name},
+            {"sosciencity.bold", disease.localised_name},
             "\n",
             {"disease-description." .. disease.name},
             "\n\n",

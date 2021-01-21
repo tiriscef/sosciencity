@@ -59,7 +59,7 @@ local function blood_donation(player_id)
     local damage = count * 49
     character.damage(damage, character.force)
 
-    player.print {"sosciencity-gui.donate-blood", count}
+    player.print {"sosciencity.donate-blood", count}
 end
 
 local crafted_lookup = {
@@ -82,7 +82,7 @@ local function produce_eggs(player_id, recipe_name, count)
     local possible_eggs = min(floor(calories / Biology.egg_calories), count)
 
     if possible_eggs < count then
-        player.print {"sosciencity-gui.less-eggs", possible_eggs}
+        player.print {"sosciencity.less-eggs", possible_eggs}
 
         local character = player.character
 
