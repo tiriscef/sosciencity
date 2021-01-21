@@ -3,15 +3,15 @@ DrinkingWater = {}
 
 DrinkingWater.values = {
     ["clean-water"] = {
-        health = 1.
+        health = 2
     },
     ["water"] = {
-        health = 0.6
+        health = -5
     },
     ["mechanically-cleaned-water"] = {
-        health = 0.7
+        health = -3
     },
     ["biologically-cleaned-water"] = {
-        health = 0.8
+        health = -1
     }
 }

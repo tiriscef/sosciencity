@@ -128,6 +128,7 @@ local remove_entity = Register.remove_entity
 local remove_entry = Register.remove_entry
 local add_to_register = Register.add
 local entity_update_cycle = Register.entity_update_cycle
+local on_settings_pasted = Register.on_settings_pasted
 
 local update_inhabitants = Inhabitants.update
 local update_city_info = Gui.update_city_info
@@ -323,8 +324,12 @@ local function on_entity_settings_pasted(event)
 
     local source_type = source_entry[EK.type]
     local destination_type = destination_entry[EK.type]
+
+    -- TODO: make the special case a regular one to simplify this code
     if type_definitions[source_type].is_inhabited and destination_type == Type.empty_house then
         Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
+    else
+        on_settings_pasted(source_type, source_entry, destination_type, destination_entry)
     end
 end
 
@@ -362,31 +367,6 @@ local function on_gui_closed(event)
     if event.gui_type == defines.gui_type.entity then
         local player = game.get_player(event.player_index)
         Gui.close_details_view_for_player(player)
-    end
-end
-
-local UNIQUE_PREFIX = Gui.UNIQUE_PREFIX -- greetings to LuziferSenpai
-local PREFIX_LENGTH = UNIQUE_PREFIX:len()
-local function on_gui_click(event)
-    local gui_element = event.element
-    local name = gui_element.name
-
-    -- check if it's my gui with my prefix
-    if name:sub(1, PREFIX_LENGTH) ~= UNIQUE_PREFIX then
-        return
-    end
-    -- remove the prefix
-    name = name:sub(PREFIX_LENGTH + 1)
-
-    -- check Caste assignment buttons
-    for caste_id, caste in pairs(Castes.values) do
-        if name == caste.name then
-            Gui.handle_caste_button(event.player_index, caste_id)
-        end
-    end
-
-    if name == "kickout" then
-        Gui.handle_kickout_button(event.player_index, gui_element)
     end
 end
 
@@ -499,7 +479,8 @@ script.on_event(defines.events.on_gui_opened, on_gui_opened)
 script.on_event(defines.events.on_gui_closed, on_gui_closed)
 
 -- gui events
-script.on_event(defines.events.on_gui_click, on_gui_click)
+script.on_event(defines.events.on_gui_click, Gui.on_gui_click)
+script.on_event(defines.events.on_gui_checked_state_changed, Gui.on_gui_checked_state_changed)
 
 -- research
 script.on_event(defines.events.on_research_finished, on_research_finished)

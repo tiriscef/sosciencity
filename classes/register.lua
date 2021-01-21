@@ -14,6 +14,7 @@ Register = {}
         [type]: int (total number)
 ]]
 -- local often used globals for almost non-existant performance gains
+
 local global
 local register
 local register_by_type
@@ -31,8 +32,11 @@ local get_building_details = Buildings.get
 local establish_new_neighbor
 local unsubscribe_neighborhood
 
+local get_inner_table = Tirislib_Tables.get_inner_table
+
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
+
 local function set_locals()
     global = _ENV.global
     register = global.register
@@ -75,7 +79,8 @@ function Register.load()
 end
 
 ---------------------------------------------------------------------------------------------------
--- << entity event handler lookup >>
+-- << entity event handlers >>
+
 local on_creation_lookup = {}
 
 --- Sets the function that gets called when an entity of the given type gets created.
@@ -151,8 +156,40 @@ local function on_destruction(_type, entry, cause)
     end
 end
 
+--- Data structure:\
+--- [destination_type]: table of (source_type, function)-pairs
+local on_settings_paste_lookup = {}
+
+--- Sets the function that gets called when the player pastes the settings of one type of entity to another.
+--- @param source_type Type
+--- @param destination_type Type
+--- @param fn function
+function Register.set_settings_paste_handler(source_type, destination_type, fn)
+    Tirislib_Utils.desync_protection()
+
+    local tbl = get_inner_table(on_settings_paste_lookup, destination_type)
+    tbl[source_type] = fn
+end
+
+--- Calls the event handler when the player pastes the settings of one entity to another - if there is a handler.
+--- @param source_type Type
+--- @param source Entry
+--- @param destination_type Type
+--- @param destination Entry
+function Register.on_settings_pasted(source_type, source, destination_type, destination)
+    local tbl = on_settings_paste_lookup[destination_type]
+
+    if not tbl then
+        local fn = tbl[source_type]
+        if fn then
+            fn(source, destination)
+        end
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << custom building systems >>
+
 local function init_custom_building(entry)
     local building_details = get_building_details(entry)
 
@@ -180,6 +217,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
+
 local function add_entry_to_register(entry)
     local unit_number = entry[EK.unit_number]
 

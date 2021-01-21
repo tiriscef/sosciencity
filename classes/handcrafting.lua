@@ -79,7 +79,7 @@ local function produce_eggs(player_id, recipe_name, count)
     local inventory = player.get_main_inventory()
 
     local calories = Inventories.count_calories(inventory)
-    local possible_eggs = min(floor(calories / Food.egg_calories), count)
+    local possible_eggs = min(floor(calories / Biology.egg_calories), count)
 
     if possible_eggs < count then
         player.print {"sosciencity-gui.less-eggs", possible_eggs}
@@ -103,11 +103,11 @@ local function produce_eggs(player_id, recipe_name, count)
         end
     end
 
-    Inventories.consume_calories(inventory, possible_eggs * Food.egg_calories)
+    Inventories.consume_calories(inventory, possible_eggs * Biology.egg_calories)
 end
 
 local queued_lookup = {
-    ["infertile-egg"] = produce_eggs
+    ["lay-egg"] = produce_eggs
 }
 
 function Handcrafting.on_queued(player_id, recipe_name, count)

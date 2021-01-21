@@ -560,6 +560,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << balance information >>
+
 if Sosciencity_Config.BALANCING then
     local function get_animal_size(animal_name)
         for _, animal in pairs(animals) do
