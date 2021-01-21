@@ -56,6 +56,15 @@ Buildings.values = {
         type = Type.pharmacy,
         range = "global"
     },
+    ["test-upbringing-station"] = {
+        type = Type.upbringing_station,
+        power_usage = 100,
+        capacity = 40
+    },
+    ["test-egg-collector"] = {
+        type = Type.egg_collector,
+        range = 42
+    },
     ["arboretum"] = {
         type = Type.farm
     },

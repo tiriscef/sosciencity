@@ -25,6 +25,7 @@ Type.immigration_port = 106
 Type.transportation = 107
 Type.nightclub = 108
 
+Type.egg_collector = 197
 Type.upbringing_station = 198
 Type.pharmacy = 199
 Type.hospital = 200
@@ -216,6 +217,10 @@ EK.treated = 901
 -- upbringing station
 --- the caste the children are educated in
 EK.education_mode = 1000
+--- the current classes of this upbringing station
+EK.classes = 1001
+--- the number of upbrought children
+EK.graduates = 1002
 
 --<< causes >>
 --- Enum table for destruction causes

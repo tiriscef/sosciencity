@@ -58,8 +58,8 @@ RG.ingredient_themes = {
     },
     breed_omnivores = {
         [0] = {
-            {type = "item", name = "herbivore-food", amount = 2./3},
-            {type = "item", name = "carnivore-food", amount = 1./3},
+            {type = "item", name = "herbivore-food", amount = 2. / 3},
+            {type = "item", name = "carnivore-food", amount = 1. / 3},
             {type = "fluid", name = "water", amount = 10}
         }
     },
@@ -194,6 +194,9 @@ RG.ingredient_themes = {
     },
     grating = {
         [0] = {{type = "item", name = "iron-stick", amount = 10}}
+    },
+    in_vitro_reproduction = {
+        [0] = {} -- TODO: in-vitro ingredients
     },
     lamp = {
         [0] = {
@@ -357,7 +360,7 @@ end
 function RG.add_ingredient_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local level = theme[3] or default_level or 0
+    local level = theme[3] or default_level or 1
 
     local theme_definition = get_theme_definition(name, level)
     if not theme_definition then
@@ -408,7 +411,7 @@ function RG.add_result_theme_range(recipe, themes, default_level)
     end
 end
 
-local function get_product(details)
+local function get_product_prototype(details)
     local product =
         (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
         Tirislib_Item.get_by_name(details.product)
@@ -466,25 +469,32 @@ end
 --- **allow_productivity:** bool
 --- **set_main_product:** bool (defaults to true)
 function RG.create(details)
-    local product_prototype = get_product(details)
-    local main_product = get_main_product_entry(product_prototype, details)
+    local product = get_product_prototype(details)
+    local main_product = get_main_product_entry(product, details)
 
     local recipe =
         Tirislib_Recipe.create {
-        name = Tirislib_Prototype.get_unique_name(details.name or product_prototype.name, "recipe"),
+        name = Tirislib_Prototype.get_unique_name(details.name or product.name, "recipe"),
         category = details.category or "crafting",
         enabled = true,
         energy_required = details.energy_required or 0.5,
         results = {main_product},
-        subgroup = product_prototype.subgroup,
-        order = product_prototype.order,
-        main_product = product_prototype.name,
+        subgroup = product.subgroup,
+        order = product.order,
         always_show_products = true
-    }:create_difficulties()
+    }
 
-    if details.set_main_product == false then
-        recipe.main_product = ""
+    if details.set_main_product or details.set_main_product == nil then
+        recipe.main_product = product.name
+    else
+        recipe.localised_name = details.localised_name or product.localised_name or {"item-name." .. product.name}
+        recipe.localised_description =
+            details.localised_description or product.localised_description or {"item-description." .. product.name}
+        recipe.icon = details.icon or product.icon
+        recipe.icon_size = details.icon_size or product.icon_size or 64
     end
+
+    recipe:create_difficulties()
 
     -- theme defined
     RG.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)

@@ -50,8 +50,10 @@ create_test_container("hospital")
 create_test_container("night-club")
 create_test_container("pharmacy")
 create_test_container("psych-ward")
+create_test_container("upbringing-station")
+create_test_container("egg-collector")
 
-local function create_test_assembling_machine(name)
+local function create_test_assembling_machine(name, categories)
     Tirislib_Item.create {
         type = "item",
         name = "test-" .. name,
@@ -94,7 +96,7 @@ local function create_test_assembling_machine(name)
             frame_count = 1
         },
         crafting_speed = 1,
-        crafting_categories = {"sosciencity-fishery"},
+        crafting_categories = categories,
         energy_usage = "50kW",
         energy_source = {
             type = "electric",
@@ -105,3 +107,5 @@ local function create_test_assembling_machine(name)
         localised_name = "test-" .. name
     }:set_size(3, 3)
 end
+
+create_test_assembling_machine("gene-lab", {"sosciencity-gene-lab"})

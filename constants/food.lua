@@ -332,8 +332,6 @@ Food.taste_names = {
     [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"}
 }
 
-Food.egg_calories = 10000
-
 local energy_density_fat = 9 -- kcal per g
 local energy_density_carbohydrates = 4
 local energy_density_proteins = 3.7

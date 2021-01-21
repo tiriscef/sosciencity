@@ -8,15 +8,18 @@ Gui = {}
         [player_id]: unit_number (of the entity whose details are watched by the player)
 ]]
 -- local often used globals for microscopic performance gains
+
 local castes = Castes.values
 local diseases = Diseases.values
 local global
 local immigration
 local population
 local caste_points
+local Entity = Entity
 local Register = Register
 local Inhabitants = Inhabitants
 local get_building_details = Buildings.get
+local type_definitions = Types.definitions
 
 local ceil = math.ceil
 local floor = math.floor
@@ -31,12 +34,10 @@ local function set_locals()
     caste_points = global.caste_points
 end
 
---- This should be added to every gui element which needs an event handler,
---- because the click event is fired for every gui in existance.
---- So I need to ensure that I'm not reacting to another mods gui.
-Gui.UNIQUE_PREFIX = "sosciencity-"
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
+---------------------------------------------------------------------------------------------------
+
 local function get_caste_bonus(caste_id)
     local bonus = global.caste_bonuses[caste_id]
     if caste_id == Type.clockwork and global.use_penalty then
@@ -147,6 +148,8 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << style functions >>
+---------------------------------------------------------------------------------------------------
+
 local function set_padding(element, padding)
     local style = element.style
     style.left_padding = padding
@@ -167,6 +170,8 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << gui elements >>
+---------------------------------------------------------------------------------------------------
+
 local DATA_LIST_DEFAULT_NAME = "datalist"
 local function create_data_list(container, name, columns)
     local datatable =
@@ -448,7 +453,63 @@ local function add_header_label(container, name, caption)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << handlers >>
+---------------------------------------------------------------------------------------------------
+
+local click_lookup = {}
+
+--- Sets the 'on_gui_click' event handler for a gui element with the given name. Additional arguments for the call can be specified.
+--- @param name string
+--- @param fn function
+local function set_click_handler(name, fn, ...)
+    Tirislib_Utils.desync_protection()
+    click_lookup[name] = {fn, {...}}
+end
+
+local checkbox_click_lookup = {}
+
+--- Sets the 'on_gui_checked_state_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
+--- @param name string
+--- @param fn function
+local function set_checked_state_handler(name, fn, ...)
+    Tirislib_Utils.desync_protection()
+    checkbox_click_lookup[name] = {fn, {...}}
+end
+
+--- This should be added to every gui element which needs an event handler,
+--- because the gui event handlers get fired for every gui in existance.
+--- So I need to ensure that I'm not reacting to another mods gui.
+local unique_prefix_builder = "sosciencity-%s-%s"
+
+--- Generic handler that verifies that the gui element belongs to my mod, looks for an event handler function and calls it.
+local function look_for_event_handler(event, lookup)
+    local gui_element = event.element
+    local name = gui_element.name
+
+    local handler = lookup[name]
+
+    if handler then
+        local player_id = event.player_index
+        local entry = Register.try_get(global.details_view[player_id])
+
+        handler[1](entry, gui_element, unpack(handler[2]))
+    end
+end
+
+--- Event handler for Gui click events
+function Gui.on_gui_click(event)
+    look_for_event_handler(event, click_lookup)
+end
+
+--- Event handler for checkbox/radiobuttom click events
+function Gui.on_gui_checked_state_changed(event)
+    look_for_event_handler(event, checkbox_click_lookup)
+end
+
+---------------------------------------------------------------------------------------------------
 -- << city info gui >>
+---------------------------------------------------------------------------------------------------
+
 local CITY_INFO_NAME = "sosciencity-city-info"
 local CITY_INFO_SPRITE_SIZE = 48
 
@@ -583,7 +644,7 @@ local function create_city_info_for_player(player)
 
     add_population_flow(frame)
 
-    for id, _ in pairs(Castes.values) do
+    for id, _ in pairs(castes) do
         add_caste_flow(frame, id)
     end
 end
@@ -591,7 +652,7 @@ end
 local function update_city_info(frame)
     update_population_flow(frame)
 
-    for id, _ in pairs(Castes.values) do
+    for id, _ in pairs(castes) do
         update_caste_flow(frame, id)
     end
 end
@@ -612,6 +673,8 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << entity details view >>
+---------------------------------------------------------------------------------------------------
+
 local DETAILS_VIEW_NAME = "sosciencity-details"
 
 local function set_details_view_title(container, caption)
@@ -630,7 +693,9 @@ local function get_or_create_tabbed_pane(container)
     end
 end
 
--- << empty housing details view >>
+---------------------------------------------------------------------------------------------------
+-- << empty houses >>
+
 local function add_caste_chooser_tab(tabbed_pane, details)
     local flow = create_tab(tabbed_pane, "caste-chooser", {"sosciencity-gui.caste"})
 
@@ -639,14 +704,14 @@ local function add_caste_chooser_tab(tabbed_pane, details)
     flow.style.vertical_spacing = 6
 
     local at_least_one = false
-    for caste_id, caste in pairs(Castes.values) do
+    for caste_id, caste in pairs(castes) do
         if Inhabitants.caste_is_researched(caste_id) then
             local caste_name = caste.name
 
             local button =
                 flow.add {
                 type = "button",
-                name = Gui.UNIQUE_PREFIX .. caste_name,
+                name = format(unique_prefix_builder, "assign-caste", caste_name),
                 caption = {"caste-name." .. caste_name},
                 tooltip = {"sosciencity-gui.move-in", caste_name},
                 mouse_button_filter = {"left"}
@@ -672,6 +737,17 @@ local function add_caste_chooser_tab(tabbed_pane, details)
             caption = {"sosciencity-gui.no-castes-researched"}
         }
     end
+end
+
+-- Event handler function for clicks on the caste assign buttons.
+for id, caste in pairs(castes) do
+    set_click_handler(
+        format(unique_prefix_builder, "assign-caste", caste.name),
+        function(entry, element, caste_id)
+            Inhabitants.try_allow_for_caste(entry, caste_id, true)
+        end,
+        id
+    )
 end
 
 local function add_empty_house_info_tab(tabbed_pane, house_details)
@@ -702,7 +778,9 @@ local function create_empty_housing_details(container, entry)
     add_empty_house_info_tab(tabbed_pane, house_details)
 end
 
--- << housing details view >>
+---------------------------------------------------------------------------------------------------
+-- << occupied housing >>
+
 local function update_occupations_list(flow, entry)
     local occupations_list = flow.occupations
 
@@ -836,7 +914,13 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_kv_pair_value(
         general_list,
         "bonus",
-        (inhabitants > 0) and {"sosciencity-gui.show-bonus", unemployed, get_reasonable_number(entry[EK.caste_points]), global.technologies[caste.effectivity_tech]} or
+        (inhabitants > 0) and
+            {
+                "sosciencity-gui.show-bonus",
+                unemployed,
+                get_reasonable_number(entry[EK.caste_points]),
+                global.technologies[caste.effectivity_tech]
+            } or
             "-"
     )
     local employed = entry[EK.employed]
@@ -925,7 +1009,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     local kickout_button =
         flow.add {
         type = "button",
-        name = Gui.UNIQUE_PREFIX .. "kickout",
+        name = format(unique_prefix_builder, "kickout", ""),
         caption = {"sosciencity-gui.kickout"},
         tooltip = global.technologies.resettlement and {"sosciencity-gui.with-resettlement"} or
             {"sosciencity-gui.no-resettlement"},
@@ -936,6 +1020,18 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     -- call the update function to set the values
     update_housing_general_info_tab(tabbed_pane, entry)
 end
+
+-- Event handler function for clicks on the kickout button.
+set_click_handler(
+    format(unique_prefix_builder, "kickout", ""),
+    function(entry, button)
+        if is_confirmed(button) then
+            Register.change_type(entry, Type.empty_house)
+            Gui.rebuild_details_view_for_entry(entry)
+            return
+        end
+    end
+)
 
 local function update_housing_detailed_info_tab(tabbed_pane, entry)
     local flow = get_tab_contents(tabbed_pane, "details")
@@ -1153,7 +1249,9 @@ local function create_housing_details(container, entry)
     add_caste_info_tab(tabbed_pane, caste_id)
 end
 
--- << buildings details views >>
+---------------------------------------------------------------------------------------------------
+-- << general building details >>
+
 local function update_worker_list(list, entry)
     local workers = entry[EK.workers]
 
@@ -1214,7 +1312,7 @@ local function update_general_building_details(container, entry)
         )
     end
 
-    local type_details = Types.definitions[entry[EK.type]]
+    local type_details = type_definitions[entry[EK.type]]
     if type_details.affected_by_clockwork then
         local clockwork_value = get_caste_bonus(Type.clockwork)
         set_kv_pair_value(
@@ -1231,7 +1329,7 @@ local function create_general_building_details(container, entry)
     set_details_view_title(container, entity.localised_name)
 
     local building_details = get_building_details(entry)
-    local type_details = Types.definitions[entry[EK.type]]
+    local type_details = type_definitions[entry[EK.type]]
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
@@ -1299,6 +1397,9 @@ local function create_general_building_details(container, entry)
 
     return tabbed_pane
 end
+
+---------------------------------------------------------------------------------------------------
+-- << composter >>
 
 local function create_composting_values_tab(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
@@ -1369,6 +1470,9 @@ local function create_composter_details(container, entry)
     create_composting_values_tab(container)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << water well >>
+
 local function update_waterwell_details(container, entry)
     update_general_building_details(container, entry)
 
@@ -1395,6 +1499,9 @@ local function create_waterwell_details(container, entry)
     update_waterwell_details(container, entry)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << fishing hut >>
+
 local function update_fishery_details(container, entry)
     update_general_building_details(container, entry)
 
@@ -1420,6 +1527,9 @@ local function create_fishery_details(container, entry)
     update_fishery_details(container, entry)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << hunting hut >>
+
 local function update_hunting_hut_details(container, entry)
     update_general_building_details(container, entry)
 
@@ -1444,6 +1554,9 @@ local function create_hunting_hut_details(container, entry)
 
     update_hunting_hut_details(container, entry)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << immigration port >>
 
 local function update_immigration_port_details(container, entry)
     update_general_building_details(container, entry)
@@ -1498,11 +1611,14 @@ local function create_immigration_port_details(container, entry)
     local immigrants_list = create_data_list(general, "immigration")
 
     for caste in pairs(immigration) do
-        add_kv_pair(immigrants_list, tostring(caste), Types.definitions[caste].localised_name)
+        add_kv_pair(immigrants_list, tostring(caste), type_definitions[caste].localised_name)
     end
 
     update_immigration_port_details(container, entry)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << hospital >>
 
 local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
@@ -1561,7 +1677,7 @@ local function update_hospital_details(container, entry)
         end
 
         if has_one then
-            local type_details = Types.definitions[_type]
+            local type_details = type_definitions[_type]
 
             facility_flow.add {
                 type = "label",
@@ -1587,7 +1703,160 @@ local function create_hospital_details(container, entry)
     create_disease_catalogue(container)
 end
 
+---------------------------------------------------------------------------------------------------
+-- << upbringing station >>
+
+local function update_mode_radiobuttons(entry, mode_flow)
+    local mode = entry[EK.education_mode]
+
+    for index, radiobutton in pairs(mode_flow.children) do
+        local mode_id = TypeGroup.breedable_castes[index]
+
+        if mode_id then
+            radiobutton.visible = Inhabitants.caste_is_researched(mode_id)
+            radiobutton.state = (mode == mode_id)
+        else
+            radiobutton.state = (mode == Type.null)
+        end
+    end
+end
+
+local function update_classes_flow(entry, classes_flow)
+    classes_flow.clear()
+
+    local current_tick = game.tick
+    local classes = entry[EK.classes]
+    local at_least_one = false
+
+    for index, class in pairs(classes) do
+        local percentage = (current_tick - class[1]) / Entity.upbringing_time
+        local count = Tirislib_Tables.array_sum(class[2])
+        classes_flow.add {
+            name = tostring(index),
+            type = "label",
+            caption = {"sosciencity-gui.show-class", count, display_percentage(percentage)}
+        }
+
+        at_least_one = true
+    end
+
+    if not at_least_one then
+        classes_flow.add {
+            name = "no-classes",
+            type = "label",
+            caption = {"sosciencity-gui.no-classes"}
+        }
+    end
+end
+
+local function update_upbringing_station(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local mode_flow = get_kv_value_element(building_data, "mode")
+    update_mode_radiobuttons(entry, mode_flow)
+
+    local probability_flow = get_kv_value_element(building_data, "probabilities")
+    local probabilities = Entity.get_upbringing_expectations(entry[EK.education_mode])
+    local at_least_one = false
+
+    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+        local probability = probabilities[caste_id]
+        local caste = castes[caste_id]
+
+        local label = probability_flow[caste.name]
+        if probability then
+            at_least_one = true
+
+            label.caption = {
+                "sosciencity-gui.caste-probability",
+                {"caste-short." .. caste.name},
+                display_percentage(probability)
+            }
+        end
+        label.visible = (probability ~= nil)
+    end
+
+    probability_flow.no_castes.visible = not at_least_one
+
+    update_classes_flow(entry, get_kv_value_element(building_data, "classes"))
+
+    set_kv_pair_value(building_data, "graduates", entry[EK.graduates])
+end
+
+local function create_upbringing_station(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(
+        building_data,
+        "capacity",
+        {"sosciencity-gui.capacity"},
+        {"sosciencity-gui.show-upbringing-capacity", get_building_details(entry).capacity}
+    )
+
+    -- Mode flow
+    local mode_flow = add_kv_flow(building_data, "mode", {"sosciencity-gui.mode"})
+
+    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+        mode_flow.add {
+            name = format(unique_prefix_builder, "education-mode", caste_id),
+            type = "radiobutton",
+            caption = type_definitions[caste_id].localised_name,
+            state = true
+        }
+    end
+
+    mode_flow.add {
+        name = format(unique_prefix_builder, "education-mode", Type.null),
+        type = "radiobutton",
+        caption = {"sosciencity-gui.no-mode"},
+        state = true
+    }
+
+    -- expected castes flow
+    local probabilities_flow = add_kv_flow(building_data, "probabilities", {"sosciencity-gui.expected"})
+
+    probabilities_flow.add {
+        name = "no_castes",
+        type = "label",
+        caption = {"sosciencity-gui.no-castes"}
+    }
+
+    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+        local caste = castes[caste_id]
+        probabilities_flow.add {
+            name = caste.name,
+            type = "label"
+        }
+    end
+
+    add_kv_flow(building_data, "classes", {"sosciencity-gui.classes"})
+    add_kv_pair(building_data, "graduates", {"sosciencity-gui.graduates"})
+
+    update_upbringing_station(container, entry)
+end
+
+for _, caste_id in pairs(Tirislib_Tables.union_array(TypeGroup.breedable_castes, {Type.null})) do
+    set_checked_state_handler(
+        format(unique_prefix_builder, "education-mode", caste_id),
+        function(entry, element, mode)
+            if mode then
+                entry[EK.education_mode] = mode
+                update_mode_radiobuttons(entry, element.parent)
+            end
+        end,
+        caste_id
+    )
+end
+
+---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
+
 local function create_details_view_for_player(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
     if frame and frame.valid then
@@ -1662,6 +1931,10 @@ local type_gui_specifications = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },
+    [Type.egg_collector] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
     [Type.empty_house] = {
         creater = create_empty_housing_details
     },
@@ -1698,6 +1971,10 @@ local type_gui_specifications = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },
+    [Type.upbringing_station] = {
+        creater = create_upbringing_station,
+        updater = update_upbringing_station
+    },
     [Type.water_distributer] = {
         creater = create_general_building_details,
         updater = update_general_building_details
@@ -1709,7 +1986,7 @@ local type_gui_specifications = {
 }
 
 -- add the caste specifications
-for caste_id in pairs(Castes.values) do
+for caste_id in pairs(castes) do
     type_gui_specifications[caste_id] = {
         creater = create_housing_details,
         updater = update_housing_details
@@ -1786,40 +2063,15 @@ function Gui.rebuild_details_view_for_entry(entry)
     end
 end
 
----------------------------------------------------------------------------------------------------
--- << handlers >>
---- Event handler function for clicks on caste assign buttons.
-function Gui.handle_caste_button(player_index, caste_id)
-    local entry = Register.try_get(global.details_view[player_index])
-    if not entry then
-        return
-    end
-
-    Inhabitants.try_allow_for_caste(entry, caste_id, true)
-end
-
---- Event handler function for clicks on the kickout button.
-function Gui.handle_kickout_button(player_index, button)
-    local entry = Register.try_get(global.details_view[player_index])
-    if not entry then
-        return
-    end
-
-    if is_confirmed(button) then
-        Register.change_type(entry, Type.empty_house)
-        Gui.rebuild_details_view_for_entry(entry)
-        return
-    end
-end
-
----------------------------------------------------------------------------------------------------
--- << general >>
 --- Initializes the guis for the given player. Gets called after a new player gets created.
 --- @param player Player
 function Gui.create_guis_for_player(player)
     create_city_info_for_player(player)
     create_details_view_for_player(player)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
 
 --- Initialize the guis for all existing players.
 function Gui.init()

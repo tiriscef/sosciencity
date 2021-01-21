@@ -16,6 +16,7 @@ local water_values = DrinkingWater.values
 local floor = math.floor
 local map_range = Tirislib_Utils.map_range
 local min = math.min
+local max = math.max
 local random = math.random
 
 local get_building_details = Buildings.get
@@ -26,6 +27,7 @@ local set_beacon_effects = Subentities.set_beacon_effects
 local Inhabitants = Inhabitants
 local Neighborhood = Neighborhood
 local Tirislib_Utils = Tirislib_Utils
+local Tirislib_Tables = Tirislib_Tables
 
 local function set_locals()
     global = _ENV.global
@@ -446,15 +448,117 @@ Register.set_entity_creation_handler(Type.psych_ward, create_psych_ward)
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
 
-local function update_upbringing_station(entry, delta_ticks)
+local function get_upbringing_expectations(mode)
+    local targeted_portion = (mode == Type.null) and 0 or 0.5
 
+    local ret = {}
+    local researched_count = 0
+    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+        if Inhabitants.caste_is_researched(caste_id) then
+            ret[caste_id] = (caste_id == mode) and targeted_portion or 0
+            researched_count = researched_count + 1
+        end
+    end
+
+    for caste_id, probability in pairs(ret) do
+        ret[caste_id] = probability + (1 - targeted_portion) / researched_count
+    end
+
+    return ret
+end
+Entity.get_upbringing_expectations = get_upbringing_expectations
+
+-- Data structure for a upbringing class object:
+-- [1]: tick of creation
+-- [2]: GenderGroup
+
+local function finish_class(entry, class, mode)
+    local probabilities = get_upbringing_expectations(mode)
+    local caste = Tirislib_Utils.weighted_random(probabilities, 1)
+    local genders = class[2]
+    local count = Tirislib_Tables.array_sum(genders)
+    local graduates =
+        InhabitantGroup.new(caste, count, nil, nil, nil, nil, genders)
+    Inhabitants.add_to_city(graduates)
+
+    entry[EK.graduates] = entry[EK.graduates] + count
+end
+
+Entity.upbringing_time = Time.minute * 5
+local upbringing_time = Entity.upbringing_time
+
+local function update_upbringing_station(entry)
+    local mode = entry[EK.education_mode]
+
+    if mode ~= Type.null and not Inhabitants.caste_is_researched(mode) then
+        -- the player somehow managed to set the mode to a not researched caste
+        entry[EK.education_mode] = Type.null
+        mode = Type.null
+    end
+
+    -- return if no caste is researched (clockwork has to be researched before all the other castes)
+    if not Inhabitants.caste_is_researched(Type.clockwork) then
+        return
+    end
+
+    local classes = entry[EK.classes]
+    local most_recent_class = -30 * Time.second
+    local students = 0
+    local current_tick = game.tick
+
+    -- update classes
+    for i = #classes, 1, -1 do
+        local class = classes[i]
+        local tick_of_creation = class[1]
+
+        if current_tick - tick_of_creation >= upbringing_time then
+            finish_class(entry, class, mode)
+            classes[i] = classes[#classes]
+            classes[#classes] = nil
+        else
+            most_recent_class = max(most_recent_class, tick_of_creation)
+            students = students + Tirislib_Tables.array_sum(class[2])
+        end
+    end
+
+    -- create new classes
+    if current_tick - most_recent_class >= 30 * Time.second then
+        local free_capacity = get_building_details(entry).capacity - students
+        local hatched, genders = Inventories.hatch_eggs(entry, free_capacity)
+
+        if hatched > 0 then
+            classes[#classes+1] = {current_tick, genders}
+        end
+    end
 end
 Register.set_entity_updater(Type.upbringing_station, update_upbringing_station)
 
 local function create_upbringing_station(entry)
-    entry[EK.education_mode] = Type.clockwork
+    entry[EK.education_mode] = Type.null
+    entry[EK.classes] = {}
+    entry[EK.graduates] = 0
 end
 Register.set_entity_creation_handler(Type.upbringing_station, create_upbringing_station)
+
+local function copy_upbringing_station(source, destination)
+    destination[EK.mode] = source[EK.mode]
+    destination[EK.classes] = Tirislib_Tables.copy(source[EK.classes])
+    destination[EK.graduates] = source[EK.graduates]
+end
+Register.set_entity_copy_handler(Type.upbringing_station, copy_upbringing_station)
+
+local function paste_upbringing_settings(source, destination)
+    destination[EK.education_mode] = source[EK.education_mode]
+end
+Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_station, paste_upbringing_settings)
+
+---------------------------------------------------------------------------------------------------
+-- << egg collector >>
+
+local function update_egg_collector(entry)
+    entry[EK.active] = has_power(entry)
+end
+Register.set_entity_updater(Type.egg_collector, update_egg_collector)
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>

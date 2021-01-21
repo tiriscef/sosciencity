@@ -795,7 +795,7 @@ function Inhabitants.evaluate_workforce(manufactory)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << inhabitant functions >>
+-- << inhabitant interface functions >>
 
 local function get_nominal_value(influences, factors)
     return max(0, array_sum(influences) * array_product(factors))
@@ -812,6 +812,9 @@ end
 function Inhabitants.get_nominal_sanity(entry)
     return get_nominal_value(entry[EK.sanity_summands], entry[EK.sanity_factors])
 end
+
+---------------------------------------------------------------------------------------------------
+-- << living space management >>
 
 local function update_free_space_status(entry)
     local caste_id = entry[EK.type]
@@ -857,7 +860,7 @@ end
 --- Returns the number of inhabitants that were added.
 --- @param entry Entry
 --- @param group InhabitantGroup
-function Inhabitants.try_add_to_house(entry, group)
+local function try_add_to_house(entry, group)
     local count_moving_in = min(group[EK.inhabitants], get_free_capacity(entry))
 
     if count_moving_in == 0 then
@@ -869,7 +872,6 @@ function Inhabitants.try_add_to_house(entry, group)
 
     return count_moving_in
 end
-local try_add_to_house = Inhabitants.try_add_to_house
 
 local function distribute(group, to_improvised)
     local count_before = group[EK.inhabitants]
@@ -890,10 +892,97 @@ end
 --- Official houses get prioritised over improvised ones.
 --- Returns the number of inhabitants that were distributed.
 --- @param group InhabitantGroup
-function Inhabitants.distribute_inhabitants(group)
+local function distribute_inhabitants(group)
     return distribute(group, false) + distribute(group, true)
 end
-local distribute_inhabitants = Inhabitants.distribute_inhabitants
+
+---------------------------------------------------------------------------------------------------
+-- << homeless inhabitants >>
+
+local ROOMS_PER_HUT = Housing.values["improvised-hut"].room_count
+local HUTS = {}
+for name, house in pairs(Housing.values) do
+    if house.is_improvised then
+        HUTS[#HUTS + 1] = name
+    end
+end
+
+local function create_improvised_huts()
+    for caste_id, group in pairs(homeless) do
+        for _, market in Register.all_of_type(Type.market) do
+            local entity = market[EK.entity]
+            local position = entity.position
+            local surface = entity.surface
+            local range = get_building_details(market).range
+
+            local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
+
+            while group[EK.inhabitants] > 0 do
+                -- we look for positions of market-hall, because it is a 5x5 entity, so there will be a
+                -- 1 tile margin for a random offset
+                local pos = surface.find_non_colliding_position_in_box("market-hall", bounding_box, 1, true)
+                if not pos then
+                    break
+                end
+                Tirislib_Utils.add_random_offset(pos, 1)
+
+                local hut_to_create = HUTS[random(#HUTS)]
+                local new_hut =
+                    surface.create_entity {
+                    name = hut_to_create,
+                    position = pos,
+                    force = "player"
+                }
+                local entry = Register.add(new_hut, caste_id)
+
+                local count_moving_in = min(group[EK.inhabitants], ROOMS_PER_HUT)
+                InhabitantGroup.merge_partially(entry, group, count_moving_in)
+            end
+        end
+    end
+end
+
+local function try_house_homeless()
+    for _, group in pairs(homeless) do
+        distribute_inhabitants(group)
+    end
+end
+
+--- Adds the given InhabitantGroup to the global homeless pool.
+local function add_to_homeless_pool(group)
+    local caste_id = group[EK.type]
+    InhabitantGroup.merge(homeless[caste_id], group)
+
+    if global.technologies["resettlement"] then
+        try_house_homeless()
+    end
+end
+
+local function update_homelessness()
+    local resettlement = global.technologies["resettlement"]
+
+    for _, homeless_group in pairs(homeless) do
+        update_happiness(homeless_group, 0, 1800)
+        update_health(homeless_group, 0, 1800)
+        update_sanity(homeless_group, 0, 1800)
+
+        local count = homeless_group[EK.inhabitants]
+        local emigrating = floor(count * (resettlement and 0.1 or 0.3))
+        local emigrated = take_inhabitants(homeless_group, emigrating)
+        Communication.log_emigration(emigrated, EmigrationCause.homeless)
+    end
+
+    try_house_homeless()
+    create_improvised_huts()
+end
+
+---------------------------------------------------------------------------------------------------
+-- << city interface >>
+
+function Inhabitants.add_to_city(group)
+    distribute_inhabitants(group)
+    add_to_homeless_pool(group)
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << social interaction >>
@@ -1447,7 +1536,7 @@ function Inhabitants.migration_wave(immigration_port_details)
         local immigrants = InhabitantGroup.new_immigrant_group(caste, count_immigrated)
 
         distribute_inhabitants(immigrants)
-        Inhabitants.add_to_homeless_pool(immigrants)
+        add_to_homeless_pool(immigrants)
     end
 end
 
@@ -1479,86 +1568,6 @@ function Inhabitants.add_casualty_fear(destroyed_house)
     local casualties = destroyed_house[EK.inhabitants]
     global.fear = global.fear + 0.05 + casualties
     Communication.log_casualties(destroyed_house)
-end
-
----------------------------------------------------------------------------------------------------
--- << homeless inhabitants >>
-
-local ROOMS_PER_HUT = Housing.values["improvised-hut"].room_count
-local HUTS = {}
-for name, house in pairs(Housing.values) do
-    if house.is_improvised then
-        HUTS[#HUTS + 1] = name
-    end
-end
-
-local function create_improvised_huts()
-    for caste_id, group in pairs(homeless) do
-        for _, market in Register.all_of_type(Type.market) do
-            local entity = market[EK.entity]
-            local position = entity.position
-            local surface = entity.surface
-            local range = get_building_details(market).range
-
-            local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
-
-            while group[EK.inhabitants] > 0 do
-                -- we look for positions of market-hall, because it is a 5x5 entity, so there will be a
-                -- 1 tile margin for a random offset
-                local pos = surface.find_non_colliding_position_in_box("market-hall", bounding_box, 1, true)
-                if not pos then
-                    break
-                end
-                Tirislib_Utils.add_random_offset(pos, 1)
-
-                local hut_to_create = HUTS[random(#HUTS)]
-                local new_hut =
-                    surface.create_entity {
-                    name = hut_to_create,
-                    position = pos,
-                    force = "player"
-                }
-                local entry = Register.add(new_hut, caste_id)
-
-                local count_moving_in = min(group[EK.inhabitants], ROOMS_PER_HUT)
-                InhabitantGroup.merge_partially(entry, group, count_moving_in)
-            end
-        end
-    end
-end
-
-local function try_house_homeless()
-    for _, group in pairs(homeless) do
-        distribute_inhabitants(group)
-    end
-end
-
---- Adds the given InhabitantGroup to the global homeless pool.
-function Inhabitants.add_to_homeless_pool(group)
-    local caste_id = group[EK.type]
-    InhabitantGroup.merge(homeless[caste_id], group)
-
-    if global.technologies["resettlement"] then
-        try_house_homeless()
-    end
-end
-
-local function update_homelessness()
-    local resettlement = global.technologies["resettlement"]
-
-    for _, homeless_group in pairs(homeless) do
-        update_happiness(homeless_group, 0, 1800)
-        update_health(homeless_group, 0, 1800)
-        update_sanity(homeless_group, 0, 1800)
-
-        local count = homeless_group[EK.inhabitants]
-        local emigrating = floor(count * (resettlement and 0.1 or 0.3))
-        local emigrated = take_inhabitants(homeless_group, emigrating)
-        Communication.log_emigration(emigrated, EmigrationCause.homeless)
-    end
-
-    try_house_homeless()
-    create_improvised_huts()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1653,7 +1662,7 @@ function Inhabitants.remove_house(entry, cause)
     if cause == DestructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
     else
-        Inhabitants.add_to_homeless_pool(entry)
+        add_to_homeless_pool(entry)
     end
 
     Inhabitants.social_environment_change()

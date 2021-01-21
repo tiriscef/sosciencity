@@ -18,6 +18,16 @@ TypeGroup.all_castes = {
     Type.plasma
 }
 
+TypeGroup.breedable_castes = {
+    Type.clockwork,
+    Type.orchid,
+    Type.gunfire,
+    Type.ember,
+    Type.foundry,
+    Type.gleam,
+    Type.plasma
+}
+
 TypeGroup.affected_by_clockwork = {
     Type.assembling_machine,
     Type.furnace,
@@ -29,9 +39,10 @@ TypeGroup.affected_by_clockwork = {
 TypeGroup.inhabitant_subscriptions = {
     Type.market,
     Type.water_distributer,
-    Type.hospital,
     Type.dumpster,
     Type.nightclub,
+    Type.egg_collector,
+    Type.hospital,
     Type.animal_farm
 }
 
@@ -157,7 +168,14 @@ Types.definitions = {
         subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
+    [Type.egg_collector] = {
+        localised_name = {"sosciencity-gui.egg-collector"},
+        localised_description = {"sosciencity-gui.explain-egg-collector"},
+        is_civil = true
+    },
     [Type.upbringing_station] = {
+        localised_name = {"sosciencity-gui.upbringing-station"},
+        localised_description = {"sosciencity-gui.explain-upbringing-station"},
         is_civil = true
     },
     [Type.pharmacy] = {
