@@ -128,116 +128,116 @@ Types.definitions = {
         localised_name = {"caste-name.plasma"}
     },
     [Type.market] = {
-        localised_name = {"sosciencity-gui.market"},
-        localised_description = {"sosciencity-gui.explain-market"},
+        localised_name = {"sosciencity.market"},
+        localised_description = {"sosciencity.explain-market"},
         signature_color = Colors.orange,
         is_civil = true
     },
     [Type.composter] = {
-        localised_name = {"sosciencity-gui.composter"},
-        localised_description = {"sosciencity-gui.explain-composter"},
+        localised_name = {"sosciencity.composter"},
+        localised_description = {"sosciencity.explain-composter"},
         signature_color = Colors.brown
     },
     [Type.composter_output] = {
-        localised_name = {"sosciencity-gui.composter-output"},
-        localised_description = {"sosciencity-gui.explain-composter-output"},
+        localised_name = {"sosciencity.composter-output"},
+        localised_description = {"sosciencity.explain-composter-output"},
         signature_color = Colors.brown,
         subscriptions = {Type.composter}
     },
     [Type.water_distributer] = {
-        localised_name = {"sosciencity-gui.water-distributer"},
-        localised_description = {"sosciencity-gui.explain-water-distributer"},
+        localised_name = {"sosciencity.water-distributer"},
+        localised_description = {"sosciencity.explain-water-distributer"},
         signature_color = Colors.light_teal,
         is_civil = true
     },
     [Type.dumpster] = {
-        localised_name = {"sosciencity-gui.dumpster"},
-        localised_description = {"sosciencity-gui.explain-dumpster"},
+        localised_name = {"sosciencity.dumpster"},
+        localised_description = {"sosciencity.explain-dumpster"},
         signature_color = Colors.grey,
         is_civil = true
     },
     [Type.immigration_port] = {
-        localised_name = {"sosciencity-gui.immigration-port"},
-        localised_description = {"sosciencity-gui.explain-immigration-port"},
+        localised_name = {"sosciencity.immigration-port"},
+        localised_description = {"sosciencity.explain-immigration-port"},
         is_civil = true
     },
     [Type.nightclub] = {
-        localised_name = {"sosciencity-gui.nightclub"},
-        localised_description = {"sosciencity-gui.explain-nightclub"},
+        localised_name = {"sosciencity.nightclub"},
+        localised_description = {"sosciencity.explain-nightclub"},
         signature_color = Colors.purple,
         subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
     [Type.egg_collector] = {
-        localised_name = {"sosciencity-gui.egg-collector"},
-        localised_description = {"sosciencity-gui.explain-egg-collector"},
+        localised_name = {"sosciencity.egg-collector"},
+        localised_description = {"sosciencity.explain-egg-collector"},
         is_civil = true
     },
     [Type.upbringing_station] = {
-        localised_name = {"sosciencity-gui.upbringing-station"},
-        localised_description = {"sosciencity-gui.explain-upbringing-station"},
+        localised_name = {"sosciencity.upbringing-station"},
+        localised_description = {"sosciencity.explain-upbringing-station"},
         is_civil = true
     },
     [Type.pharmacy] = {
-        localised_name = {"sosciencity-gui.pharmacy"},
-        localised_description = {"sosciencity-gui.explain-pharmacy"},
+        localised_name = {"sosciencity.pharmacy"},
+        localised_description = {"sosciencity.explain-pharmacy"},
         is_civil = true
     },
     [Type.hospital] = {
-        localised_name = {"sosciencity-gui.hospital"},
-        localised_description = {"sosciencity-gui.explain-hospital"},
-        localised_speed_name = {"sosciencity-gui.rate"},
-        localised_speed_key = "sosciencity-gui.show-hospital-rate",
+        localised_name = {"sosciencity.hospital"},
+        localised_description = {"sosciencity.explain-hospital"},
+        localised_speed_name = {"sosciencity.rate"},
+        localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Colors.darkish_red,
         subscriptions = TypeGroup.hospital_complements,
         is_civil = true
     },
     [Type.psych_ward] = {
-        localised_name = {"sosciencity-gui.psych-ward"},
-        localised_description = {"sosciencity-gui.explain-psych-ward"},
+        localised_name = {"sosciencity.psych-ward"},
+        localised_description = {"sosciencity.explain-psych-ward"},
         signature_color = Colors.darkish_red,
         is_civil = true
     },
     [Type.waterwell] = {
-        localised_name = {"sosciencity-gui.waterwell"},
-        localised_description = {"sosciencity-gui.explain-waterwell"},
+        localised_name = {"sosciencity.waterwell"},
+        localised_description = {"sosciencity.explain-waterwell"},
         subscriptions = {Type.waterwell},
         signature_color = Colors.blue,
         is_civil = true
     },
     [Type.fishery] = {
-        localised_name = {"sosciencity-gui.fishery"},
-        localised_description = {"sosciencity-gui.explain-fishery"},
+        localised_name = {"sosciencity.fishery"},
+        localised_description = {"sosciencity.explain-fishery"},
         subscriptions = {Type.fishery},
         is_civil = true
     },
     [Type.hunting_hut] = {
-        localised_name = {"sosciencity-gui.hunting-hut"},
-        localised_description = {"sosciencity-gui.explain-hunting-hut"},
+        localised_name = {"sosciencity.hunting-hut"},
+        localised_description = {"sosciencity.explain-hunting-hut"},
         subscriptions = {Type.hunting_hut},
         is_civil = true
     },
     [Type.manufactory] = {
-        localised_name = {"sosciencity-gui.manufactory"},
-        localised_description = {"sosciencity-gui.explain-manufactory"},
+        localised_name = {"sosciencity.manufactory"},
+        localised_description = {"sosciencity.explain-manufactory"},
         subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
     [Type.assembling_machine] = {
-        localised_name = {"sosciencity-gui.machine"},
-        localised_description = {"sosciencity-gui.explain-machine"}
+        localised_name = {"sosciencity.machine"},
+        localised_description = {"sosciencity.explain-machine"}
     },
     [Type.furnace] = {
-        localised_name = {"sosciencity-gui.machine"},
-        localised_description = {"sosciencity-gui.explain-machine"}
+        localised_name = {"sosciencity.machine"},
+        localised_description = {"sosciencity.explain-machine"}
     },
     [Type.rocket_silo] = {
-        localised_name = {"sosciencity-gui.machine"},
-        localised_description = {"sosciencity-gui.explain-machine"}
+        localised_name = {"sosciencity.machine"},
+        localised_description = {"sosciencity.explain-machine"}
     },
     [Type.mining_drill] = {
-        localised_name = {"sosciencity-gui.machine"},
-        localised_description = {"sosciencity-gui.explain-machine"}
+        localised_name = {"sosciencity.machine"},
+        localised_description = {"sosciencity.explain-machine"}
     },
     [Type.farm] = {},
     [Type.animal_farm] = {
@@ -245,8 +245,8 @@ Types.definitions = {
     },
     [Type.turret] = {},
     [Type.lab] = {
-        localised_name = {"sosciencity-gui.lab"},
-        localised_description = {"sosciencity-gui.explain-lab"}
+        localised_name = {"sosciencity.lab"},
+        localised_description = {"sosciencity.explain-lab"}
     }
 }
 local definitions = Types.definitions

@@ -95,19 +95,19 @@ end
 local function get_entry_representation(entry)
     local entity = entry[EK.entity]
     local position = entity.position
-    return {"sosciencity-gui.entry-representation", entity.localised_name, position.x, position.y}
+    return {"sosciencity.entry-representation", entity.localised_name, position.x, position.y}
 end
 
 local function display_percentage(percentage)
-    return {"sosciencity-gui.percentage", ceil(percentage * 100)}
+    return {"sosciencity.percentage", ceil(percentage * 100)}
 end
 
 local function display_fraction(numerator, denominator, localised_name)
-    return {"sosciencity-gui.fraction", numerator, denominator, localised_name}
+    return {"sosciencity.fraction", numerator, denominator, localised_name}
 end
 
 local function display_convergence(current, target)
-    return {"sosciencity-gui.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
+    return {"sosciencity.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
 end
 
 local mult = " × "
@@ -143,7 +143,7 @@ local function display_time(ticks)
     local hours = floor(minutes / 60)
     minutes = minutes % 60
 
-    return {"sosciencity-gui.time", hours, minutes, seconds}
+    return {"sosciencity.time", hours, minutes, seconds}
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -354,11 +354,11 @@ end
 
 local function is_confirmed(button)
     local caption = button.caption[1]
-    if caption == "sosciencity-gui.confirm" then
+    if caption == "sosciencity.confirm" then
         return true
     else
-        button.caption = {"sosciencity-gui.confirm"}
-        button.tooltip = {"sosciencity-gui.confirm-tooltip"}
+        button.caption = {"sosciencity.confirm"}
+        button.tooltip = {"sosciencity.confirm-tooltip"}
         return false
     end
 end
@@ -517,11 +517,11 @@ local function update_population_flow(frame)
     local population_flow = frame["general"]
 
     local population_count = Inhabitants.get_population_count()
-    population_flow["population"].caption = {"sosciencity-gui.population", population_count}
+    population_flow["population"].caption = {"sosciencity.population", population_count}
 
-    population_flow["machine-count"].caption = {"sosciencity-gui.machines", Register.get_machine_count()}
+    population_flow["machine-count"].caption = {"sosciencity.machines", Register.get_machine_count()}
 
-    population_flow["turret-count"].caption = {"sosciencity-gui.turrets", Register.get_type_count(Type.turret)}
+    population_flow["turret-count"].caption = {"sosciencity.turrets", Register.get_type_count(Type.turret)}
 end
 
 local function add_population_flow(container)
@@ -590,7 +590,7 @@ local function add_caste_flow(container, caste_id)
         type = "label",
         name = "caste-population",
         caption = global.population[caste_id],
-        tooltip = {"sosciencity-gui.caste-points", get_reasonable_number(caste_points[caste_id])}
+        tooltip = {"sosciencity.caste-points", get_reasonable_number(caste_points[caste_id])}
     }
 
     local caste_bonus = get_caste_bonus(caste_id)
@@ -617,7 +617,7 @@ local function update_caste_flow(container, caste_id)
     local population_label = flow["caste-population"]
     population_label.caption = population[caste_id]
     population_label.tooltip = {
-        "sosciencity-gui.caste-points",
+        "sosciencity.caste-points",
         get_reasonable_number(caste_points[caste_id])
     }
 
@@ -697,7 +697,7 @@ end
 -- << empty houses >>
 
 local function add_caste_chooser_tab(tabbed_pane, details)
-    local flow = create_tab(tabbed_pane, "caste-chooser", {"sosciencity-gui.caste"})
+    local flow = create_tab(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
 
     flow.style.horizontal_align = "center"
     flow.style.vertical_align = "center"
@@ -713,17 +713,17 @@ local function add_caste_chooser_tab(tabbed_pane, details)
                 type = "button",
                 name = format(unique_prefix_builder, "assign-caste", caste_name),
                 caption = {"caste-name." .. caste_name},
-                tooltip = {"sosciencity-gui.move-in", caste_name},
+                tooltip = {"sosciencity.move-in", caste_name},
                 mouse_button_filter = {"left"}
             }
             button.style.width = 150
 
             if Housing.allowes_caste(details, caste_id) then
-                button.tooltip = {"sosciencity-gui.move-in", caste_name}
+                button.tooltip = {"sosciencity.move-in", caste_name}
             elseif castes[caste_id].required_room_count > details.room_count then
-                button.tooltip = {"sosciencity-gui.not-enough-room"}
+                button.tooltip = {"sosciencity.not-enough-room"}
             else
-                button.tooltip = {"sosciencity-gui.not-enough-comfort"}
+                button.tooltip = {"sosciencity.not-enough-comfort"}
             end
             button.enabled = Housing.allowes_caste(details, caste_id)
             at_least_one = true
@@ -734,7 +734,7 @@ local function add_caste_chooser_tab(tabbed_pane, details)
         flow.add {
             type = "label",
             name = "no-castes-researched-label",
-            caption = {"sosciencity-gui.no-castes-researched"}
+            caption = {"sosciencity.no-castes-researched"}
         }
     end
 end
@@ -751,13 +751,13 @@ for id, caste in pairs(castes) do
 end
 
 local function add_empty_house_info_tab(tabbed_pane, house_details)
-    local flow = create_tab(tabbed_pane, "house-info", {"sosciencity-gui.building-info"})
+    local flow = create_tab(tabbed_pane, "house-info", {"sosciencity.building-info"})
 
     local data_list = create_data_list(flow, "house-infos")
-    add_kv_pair(data_list, "room_count", {"sosciencity-gui.room-count"}, house_details.room_count)
-    add_kv_pair(data_list, "comfort", {"sosciencity-gui.comfort"}, display_comfort(house_details.comfort))
+    add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
+    add_kv_pair(data_list, "comfort", {"sosciencity.comfort"}, display_comfort(house_details.comfort))
 
-    local qualities_flow = add_kv_flow(data_list, "qualities", {"sosciencity-gui.qualities"})
+    local qualities_flow = add_kv_flow(data_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(house_details.qualities) do
         qualities_flow.add {
             type = "label",
@@ -789,10 +789,10 @@ local function update_occupations_list(flow, entry)
     add_operand_entry(
         occupations_list,
         "unoccupied",
-        {"sosciencity-gui.unemployed"},
+        {"sosciencity.unemployed"},
         Inhabitants.get_employable_count(entry)
     )
-    set_kv_pair_tooltip(occupations_list, "unoccupied", {"sosciencity-gui.explain-unemployed"})
+    set_kv_pair_tooltip(occupations_list, "unoccupied", {"sosciencity.explain-unemployed"})
 
     local employments = entry[EK.employments]
     for building_number, count in pairs(employments) do
@@ -801,7 +801,7 @@ local function update_occupations_list(flow, entry)
             add_operand_entry(
                 occupations_list,
                 building_number,
-                {"sosciencity-gui.employed", get_entry_representation(building)},
+                {"sosciencity.employed", get_entry_representation(building)},
                 count
             )
         end
@@ -812,7 +812,7 @@ local function update_occupations_list(flow, entry)
         if disease_id ~= DiseaseGroup.HEALTHY then
             local disease = diseases[disease_id]
             local key = format("disease-%d", disease_id)
-            add_operand_entry(occupations_list, key, {"sosciencity-gui.ill", disease.localised_name}, count)
+            add_operand_entry(occupations_list, key, {"sosciencity.ill", disease.localised_name}, count)
             set_kv_pair_tooltip(occupations_list, key, disease.localised_description)
         end
     end
@@ -827,7 +827,7 @@ local function update_ages_list(flow, entry)
 
     ages_list.clear()
     for age, count in pairs(entry[EK.ages]) do
-        add_operand_entry(ages_list, age, {"sosciencity-gui.show-age", age}, count)
+        add_operand_entry(ages_list, age, {"sosciencity.show-age", age}, count)
     end
 
     local visible = (entry[EK.inhabitants] > 0)
@@ -840,7 +840,7 @@ local function update_genders_list(flow, entry)
 
     genders_list.clear()
     for gender, count in pairs(entry[EK.genders]) do
-        add_operand_entry(genders_list, gender, {"sosciencity-gui.gender-" .. gender}, count)
+        add_operand_entry(genders_list, gender, {"sosciencity.gender-" .. gender}, count)
     end
 
     local visible = (entry[EK.inhabitants] > 0)
@@ -865,14 +865,14 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "inhabitants",
         {
             "",
-            {"sosciencity-gui.show-inhabitants", inhabitants, capacity},
-            display_emigration and {"sosciencity-gui.migration", get_migration_string(emigration)} or ""
+            {"sosciencity.show-inhabitants", inhabitants, capacity},
+            display_emigration and {"sosciencity.migration", get_migration_string(emigration)} or ""
         }
     )
     set_datalist_value_tooltip(
         general_list,
         "inhabitants",
-        (entry[EK.emigration_trend] > 0) and {"sosciencity-gui.positive-trend"} or {"sosciencity-gui.negative-trend"}
+        (entry[EK.emigration_trend] > 0) and {"sosciencity.positive-trend"} or {"sosciencity.negative-trend"}
     )
 
     set_kv_pair_value(
@@ -894,19 +894,19 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         general_list,
         "calorific-demand",
         {
-            "sosciencity-gui.show-calorific-demand",
+            "sosciencity.show-calorific-demand",
             get_reasonable_number(caste.calorific_demand * Time.minute * inhabitants)
         }
     )
     set_kv_pair_value(
         general_list,
         "water-demand",
-        {"sosciencity-gui.show-water-demand", caste.water_demand * Time.minute * inhabitants}
+        {"sosciencity.show-water-demand", caste.water_demand * Time.minute * inhabitants}
     )
     set_kv_pair_value(
         general_list,
         "power-demand",
-        {"sosciencity-gui.current-power-demand", caste.power_demand / 1000 * Time.second * inhabitants}
+        {"sosciencity.current-power-demand", caste.power_demand / 1000 * Time.second * inhabitants}
     )
 
     -- occupations
@@ -916,7 +916,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "bonus",
         (inhabitants > 0) and
             {
-                "sosciencity-gui.show-bonus",
+                "sosciencity.show-bonus",
                 unemployed,
                 get_reasonable_number(entry[EK.caste_points]),
                 global.technologies[caste.effectivity_tech]
@@ -928,12 +928,12 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_kv_pair_value(
         general_list,
         "employed-count",
-        (inhabitants > 0) and {"sosciencity-gui.show-employed-count", employed} or "-"
+        (inhabitants > 0) and {"sosciencity.show-employed-count", employed} or "-"
     )
     set_kv_pair_value(
         general_list,
         "diseased-count",
-        (inhabitants > 0) and {"sosciencity-gui.show-diseased-count", diseased} or "-"
+        (inhabitants > 0) and {"sosciencity.show-diseased-count", diseased} or "-"
     )
 
     local disease_progress_flow = get_kv_value_element(general_list, "disease-rate")
@@ -942,35 +942,35 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         local ticks_till_disease = ceil(1 / progress_per_tick)
         local label = disease_progress_flow[category]
         label.caption = {
-            "sosciencity-gui.show-disease-rate",
+            "sosciencity.show-disease-rate",
             display_time(ticks_till_disease),
-            {"sosciencity-gui." .. category}
+            {"sosciencity." .. category}
         }
         label.visible = (progress_per_tick > 0)
     end
 end
 
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
-    local flow = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
+    local flow = create_tab(tabbed_pane, "general", {"sosciencity.general"})
 
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
 
     local general_list = create_data_list(flow, "general-infos")
-    add_kv_pair(general_list, "caste", {"sosciencity-gui.caste"}, display_caste(entry[EK.type]))
+    add_kv_pair(general_list, "caste", {"sosciencity.caste"}, display_caste(entry[EK.type]))
 
-    add_kv_pair(general_list, "inhabitants", {"sosciencity-gui.inhabitants"})
-    add_kv_pair(general_list, "happiness", {"sosciencity-gui.happiness"})
-    add_kv_pair(general_list, "health", {"sosciencity-gui.health"})
-    add_kv_pair(general_list, "sanity", {"sosciencity-gui.sanity"})
-    add_kv_pair(general_list, "calorific-demand", {"sosciencity-gui.calorific-demand"})
-    add_kv_pair(general_list, "water-demand", {"sosciencity-gui.water-demand"})
-    add_kv_pair(general_list, "power-demand", {"sosciencity-gui.power-demand"})
-    add_kv_pair(general_list, "bonus", {"sosciencity-gui.bonus"})
-    add_kv_pair(general_list, "employed-count", {"sosciencity-gui.employed-count"})
-    add_kv_pair(general_list, "diseased-count", {"sosciencity-gui.diseased-count"})
+    add_kv_pair(general_list, "inhabitants", {"sosciencity.inhabitants"})
+    add_kv_pair(general_list, "happiness", {"sosciencity.happiness"})
+    add_kv_pair(general_list, "health", {"sosciencity.health"})
+    add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
+    add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
+    add_kv_pair(general_list, "water-demand", {"sosciencity.water-demand"})
+    add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
+    add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
+    add_kv_pair(general_list, "employed-count", {"sosciencity.employed-count"})
+    add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
 
-    local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity-gui.rate"})
+    local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity.rate"})
     for category in pairs(DiseaseCategory) do
         local label =
             disease_progress_flow.add {
@@ -983,7 +983,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     local caste = castes[caste_id]
     local housing_details = Housing.get(entry)
 
-    local qualities_flow = add_kv_flow(general_list, "qualities", {"sosciencity-gui.qualities"})
+    local qualities_flow = add_kv_flow(general_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(housing_details.qualities) do
         local assessment = caste.housing_preferences[quality]
 
@@ -1010,9 +1010,9 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
         flow.add {
         type = "button",
         name = format(unique_prefix_builder, "kickout", ""),
-        caption = {"sosciencity-gui.kickout"},
-        tooltip = global.technologies.resettlement and {"sosciencity-gui.with-resettlement"} or
-            {"sosciencity-gui.no-resettlement"},
+        caption = {"sosciencity.kickout"},
+        tooltip = global.technologies.resettlement and {"sosciencity.with-resettlement"} or
+            {"sosciencity.no-resettlement"},
         mouse_button_filter = {"left"}
     }
     kickout_button.style.right_margin = 4
@@ -1097,12 +1097,12 @@ local localised_sanity_factor_descriptions = build_localised(SanityFactor, "sani
 build_localised = nil
 
 local function add_housing_detailed_info_tab(tabbed_pane, entry)
-    local flow = create_tab(tabbed_pane, "details", {"sosciencity-gui.details"})
+    local flow = create_tab(tabbed_pane, "details", {"sosciencity.details"})
 
     local happiness_list = create_data_list(flow, "happiness")
     create_operand_entries(
         happiness_list,
-        {"sosciencity-gui.happiness"},
+        {"sosciencity.happiness"},
         HappinessSummand,
         localised_happiness_summands,
         localised_happiness_summand_descriptions,
@@ -1116,7 +1116,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     local health_list = create_data_list(flow, "health")
     create_operand_entries(
         health_list,
-        {"sosciencity-gui.health"},
+        {"sosciencity.health"},
         HealthSummand,
         localised_health_summands,
         localised_health_summand_descriptions,
@@ -1130,7 +1130,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     local sanity_list = create_data_list(flow, "sanity")
     create_operand_entries(
         sanity_list,
-        {"sosciencity-gui.sanity"},
+        {"sosciencity.sanity"},
         SanitySummand,
         localised_sanity_summands,
         localised_sanity_summand_descriptions,
@@ -1141,17 +1141,17 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
 
     create_separator_line(flow)
 
-    add_header_label(flow, "header-occupations", {"sosciencity-gui.occupations"})
+    add_header_label(flow, "header-occupations", {"sosciencity.occupations"})
     create_data_list(flow, "occupations")
 
     create_separator_line(flow)
 
-    add_header_label(flow, "header-ages", {"sosciencity-gui.ages"})
+    add_header_label(flow, "header-ages", {"sosciencity.ages"})
     create_data_list(flow, "ages")
 
     create_separator_line(flow)
 
-    add_header_label(flow, "header-genders", {"sosciencity-gui.gender-distribution"})
+    add_header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
     create_data_list(flow, "genders")
 
     -- call the update function to set the values
@@ -1168,14 +1168,14 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
     create_caste_sprite(flow, caste_id, 128)
 
     local caste_data = create_data_list(flow, "caste-infos")
-    add_kv_pair(caste_data, "caste-name", {"sosciencity-gui.name"}, {"caste-name." .. caste.name})
+    add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, {"caste-name." .. caste.name})
     add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
     add_kv_pair(
         caste_data,
         "taste",
-        {"sosciencity-gui.taste"},
+        {"sosciencity.taste"},
         {
-            "sosciencity-gui.show-taste",
+            "sosciencity.show-taste",
             Food.taste_names[caste.favored_taste],
             Food.taste_names[caste.least_favored_taste]
         }
@@ -1183,36 +1183,36 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
     add_kv_pair(
         caste_data,
         "food-count",
-        {"sosciencity-gui.food-count"},
-        {"sosciencity-gui.show-food-count", caste.minimum_food_count}
+        {"sosciencity.food-count"},
+        {"sosciencity.show-food-count", caste.minimum_food_count}
     )
     add_kv_pair(
         caste_data,
         "luxury",
-        {"sosciencity-gui.luxury"},
-        {"sosciencity-gui.show-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
+        {"sosciencity.luxury"},
+        {"sosciencity.show-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
     )
     add_kv_pair(
         caste_data,
         "room-count",
-        {"sosciencity-gui.room-needs"},
-        {"sosciencity-gui.show-room-needs", caste.required_room_count}
+        {"sosciencity.room-needs"},
+        {"sosciencity.show-room-needs", caste.required_room_count}
     )
     add_kv_pair(
         caste_data,
         "comfort",
-        {"sosciencity-gui.comfort"},
-        {"sosciencity-gui.show-comfort-needs", caste.minimum_comfort}
+        {"sosciencity.comfort"},
+        {"sosciencity.show-comfort-needs", caste.minimum_comfort}
     )
     add_kv_pair(
         caste_data,
         "power-demand",
-        {"sosciencity-gui.power-demand"},
-        {"sosciencity-gui.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
+        {"sosciencity.power-demand"},
+        {"sosciencity.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
     )
 
-    local prefered_flow = add_kv_flow(caste_data, "prefered-qualities", {"sosciencity-gui.prefered-qualities"})
-    local disliked_flow = add_kv_flow(caste_data, "disliked-qualities", {"sosciencity-gui.disliked-qualities"})
+    local prefered_flow = add_kv_flow(caste_data, "prefered-qualities", {"sosciencity.prefered-qualities"})
+    local disliked_flow = add_kv_flow(caste_data, "disliked-qualities", {"sosciencity.disliked-qualities"})
     for quality, assessment in pairs(caste.housing_preferences) do
         local quality_flow
         if assessment > 0 then
@@ -1268,7 +1268,7 @@ local function update_worker_list(list, entry)
     end
 
     if not at_least_one then
-        add_operand_entry(list, "no-one", {"sosciencity-gui.no-employees"}, "-")
+        add_operand_entry(list, "no-one", {"sosciencity.no-employees"}, "-")
     end
 end
 
@@ -1282,20 +1282,20 @@ local function update_general_building_details(container, entry)
         set_kv_pair_value(
             building_data,
             "active",
-            active and {"sosciencity-gui.active"} or {"sosciencity-gui.inactive"}
+            active and {"sosciencity.active"} or {"sosciencity.inactive"}
         )
     end
 
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
         local count_needed = worker_specification.count
-        set_kv_pair_value(building_data, "staff", {"sosciencity-gui.show-staff", entry[EK.worker_count], count_needed})
+        set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], count_needed})
         local staff_performance = Inhabitants.evaluate_workforce(entry)
         set_kv_pair_value(
             building_data,
             "staff-performance",
-            staff_performance >= 0.2 and {"sosciencity-gui.staff-performance", ceil(staff_performance * 100)} or
-                {"sosciencity-gui.not-enough-staff", ceil(0.2 * count_needed)}
+            staff_performance >= 0.2 and {"sosciencity.staff-performance", ceil(staff_performance * 100)} or
+                {"sosciencity.not-enough-staff", ceil(0.2 * count_needed)}
         )
 
         local worker_data = tab.workers
@@ -1307,8 +1307,8 @@ local function update_general_building_details(container, entry)
         set_kv_pair_value(
             building_data,
             "general-performance",
-            performance >= 0.2 and {"sosciencity-gui.percentage", ceil(performance * 100)} or
-                {"sosciencity-gui.not-working"}
+            performance >= 0.2 and {"sosciencity.percentage", ceil(performance * 100)} or
+                {"sosciencity.not-working"}
         )
     end
 
@@ -1318,8 +1318,8 @@ local function update_general_building_details(container, entry)
         set_kv_pair_value(
             building_data,
             "maintenance",
-            clockwork_value >= 0 and {"sosciencity-gui.display-good-maintenance", clockwork_value} or
-                {"sosciencity-gui.display-bad-maintenance", clockwork_value}
+            clockwork_value >= 0 and {"sosciencity.display-good-maintenance", clockwork_value} or
+                {"sosciencity.display-bad-maintenance", clockwork_value}
         )
     end
 end
@@ -1332,15 +1332,15 @@ local function create_general_building_details(container, entry)
     local type_details = type_definitions[entry[EK.type]]
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = create_tab(tabbed_pane, "general", {"sosciencity-gui.general"})
+    local tab = create_tab(tabbed_pane, "general", {"sosciencity.general"})
 
     local building_data = create_data_list(tab, "building")
 
-    add_kv_pair(building_data, "building-type", {"sosciencity-gui.type"}, type_details.localised_name)
+    add_kv_pair(building_data, "building-type", {"sosciencity.type"}, type_details.localised_name)
     add_kv_pair(building_data, "description", "", type_details.localised_description)
 
     if entry[EK.active] ~= nil then
-        add_kv_pair(building_data, "active", {"sosciencity-gui.active"})
+        add_kv_pair(building_data, "active", {"sosciencity.active"})
     end
 
     if building_details.range then
@@ -1348,9 +1348,9 @@ local function create_general_building_details(container, entry)
         add_kv_pair(
             building_data,
             "range",
-            {"sosciencity-gui.range"},
-            (range ~= "global" and {"sosciencity-gui.show-range", building_details.range * 2}) or
-                {"sosciencity-gui.global-range"}
+            {"sosciencity.range"},
+            (range ~= "global" and {"sosciencity.show-range", building_details.range * 2}) or
+                {"sosciencity.global-range"}
         )
     end
 
@@ -1360,8 +1360,8 @@ local function create_general_building_details(container, entry)
         add_kv_pair(
             building_data,
             "power",
-            {"sosciencity-gui.power-demand"},
-            {"sosciencity-gui.current-power-demand", power}
+            {"sosciencity.power-demand"},
+            {"sosciencity.current-power-demand", power}
         )
     end
 
@@ -1377,20 +1377,20 @@ local function create_general_building_details(container, entry)
     end
 
     if entry[EK.performance] then
-        add_kv_pair(building_data, "general-performance", {"sosciencity-gui.general-performance"})
+        add_kv_pair(building_data, "general-performance", {"sosciencity.general-performance"})
     end
 
     local worker_specification = building_details.workforce
     if worker_specification then
-        add_kv_pair(building_data, "staff", {"sosciencity-gui.staff"})
+        add_kv_pair(building_data, "staff", {"sosciencity.staff"})
         add_kv_pair(building_data, "staff-performance")
 
-        add_header_label(tab, "worker-header", {"sosciencity-gui.worker-header"})
+        add_header_label(tab, "worker-header", {"sosciencity.worker-header"})
         create_data_list(tab, "workers")
     end
 
     if type_details.affected_by_clockwork then
-        add_kv_pair(building_data, "maintenance", {"sosciencity-gui.maintenance"})
+        add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
     end
 
     update_general_building_details(container, entry)
@@ -1403,15 +1403,15 @@ end
 
 local function create_composting_values_tab(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = create_tab(tabbed_pane, "compostables", {"sosciencity-gui.compostables"})
+    local tab = create_tab(tabbed_pane, "compostables", {"sosciencity.compostables"})
     local composting_list = create_data_list(tab, "compostables")
 
     -- header
     add_kv_pair(
         composting_list,
         "head",
-        {"sosciencity-gui.item"},
-        {"sosciencity-gui.humus"},
+        {"sosciencity.item"},
+        {"sosciencity.humus"},
         "default-bold",
         "default-bold"
     )
@@ -1431,7 +1431,7 @@ local function update_composter_details(container, entry)
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
     local humus = entry[EK.humus]
-    set_kv_pair_value(building_data, "humus", {"sosciencity-gui.humus-count", round(humus / 100)})
+    set_kv_pair_value(building_data, "humus", {"sosciencity.humus-count", round(humus / 100)})
 
     local inventory = Inventories.get_chest_inventory(entry)
     local progress_factor = Entity.analyze_composter_inventory(inventory)
@@ -1443,9 +1443,9 @@ local function update_composter_details(container, entry)
         building_data,
         "composting-speed",
         {
-            "sosciencity-gui.fraction",
+            "sosciencity.fraction",
             get_reasonable_number(Time.minute * progress_factor),
-            {"sosciencity-gui.minute"},
+            {"sosciencity.minute"},
             ""
         }
     )
@@ -1457,14 +1457,14 @@ local function create_composter_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "humus", {"sosciencity-gui.humus"})
+    add_kv_pair(building_data, "humus", {"sosciencity.humus"})
     add_kv_pair(
         building_data,
         "capacity",
-        {"sosciencity-gui.capacity"},
-        {"sosciencity-gui.show-compost-capacity", get_building_details(entry).capacity}
+        {"sosciencity.capacity"},
+        {"sosciencity.show-compost-capacity", get_building_details(entry).capacity}
     )
-    add_kv_pair(building_data, "composting-speed", {"sosciencity-gui.composting-speed"})
+    add_kv_pair(building_data, "composting-speed", {"sosciencity.composting-speed"})
 
     update_composter_details(container, entry)
     create_composting_values_tab(container)
@@ -1484,7 +1484,7 @@ local function update_waterwell_details(container, entry)
     set_kv_pair_value(
         building_data,
         "competition",
-        {"sosciencity-gui.show-waterwell-competition", near_count, display_percentage(competition_performance)}
+        {"sosciencity.show-waterwell-competition", near_count, display_percentage(competition_performance)}
     )
 end
 
@@ -1494,7 +1494,7 @@ local function create_waterwell_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "competition", {"sosciencity-gui.competition"})
+    add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_waterwell_details(container, entry)
 end
@@ -1512,7 +1512,7 @@ local function update_fishery_details(container, entry)
     set_kv_pair_value(
         building_data,
         "water-tiles",
-        {"sosciencity-gui.fraction", entry[EK.water_tiles], building_details.water_tiles, {"sosciencity-gui.tiles"}}
+        {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles, {"sosciencity.tiles"}}
     )
 end
 
@@ -1522,7 +1522,7 @@ local function create_fishery_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "water-tiles", {"sosciencity-gui.water-tiles"})
+    add_kv_pair(building_data, "water-tiles", {"sosciencity.water-tiles"})
 
     update_fishery_details(container, entry)
 end
@@ -1540,7 +1540,7 @@ local function update_hunting_hut_details(container, entry)
     set_kv_pair_value(
         building_data,
         "tree-count",
-        {"sosciencity-gui.fraction", entry[EK.tree_count], building_details.tree_count, ""}
+        {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count, ""}
     )
 end
 
@@ -1550,7 +1550,7 @@ local function create_hunting_hut_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "tree-count", {"sosciencity-gui.tree-count"})
+    add_kv_pair(building_data, "tree-count", {"sosciencity.tree-count"})
 
     update_hunting_hut_details(container, entry)
 end
@@ -1577,7 +1577,7 @@ local function update_immigration_port_details(container, entry)
             {
                 "",
                 floor(immigrants),
-                {"sosciencity-gui.migration", get_migration_string(castes[caste].immigration_coefficient * Time.minute)}
+                {"sosciencity.migration", get_migration_string(castes[caste].immigration_coefficient * Time.minute)}
             }
         )
         set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
@@ -1591,23 +1591,23 @@ local function create_immigration_port_details(container, entry)
     local building_data = general.building
     local building_details = get_building_details(entry)
 
-    add_kv_pair(building_data, "next-wave", {"sosciencity-gui.next-wave"})
+    add_kv_pair(building_data, "next-wave", {"sosciencity.next-wave"})
     add_kv_pair(
         building_data,
         "materials",
-        {"sosciencity-gui.materials"},
+        {"sosciencity.materials"},
         display_materials(building_details.materials)
     )
     add_kv_pair(
         building_data,
         "capacity",
-        {"sosciencity-gui.capacity"},
-        {"sosciencity-gui.show-port-capacity", building_details.capacity}
+        {"sosciencity.capacity"},
+        {"sosciencity.show-port-capacity", building_details.capacity}
     )
 
     create_separator_line(general)
 
-    add_header_label(general, "header-immigration", {"sosciencity-gui.estimated-immigrants"})
+    add_header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
     local immigrants_list = create_data_list(general, "immigration")
 
     for caste in pairs(immigration) do
@@ -1622,7 +1622,7 @@ end
 
 local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = create_tab(tabbed_pane, "diseases", {"sosciencity-gui.diseases"})
+    local tab = create_tab(tabbed_pane, "diseases", {"sosciencity.diseases"})
 
     local first = true
     for category_name, category_id in pairs(DiseaseCategory) do
@@ -1663,7 +1663,7 @@ local function update_hospital_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    set_kv_pair_value(building_data, "capacity", {"sosciencity-gui.show-operations", floor(entry[EK.operations])})
+    set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.operations])})
 
     local facility_flow = get_kv_value_element(building_data, "facilities")
     facility_flow.clear()
@@ -1695,8 +1695,8 @@ local function create_hospital_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "capacity", {"sosciencity-gui.capacity"})
-    add_kv_flow(building_data, "facilities", {"sosciencity-gui.facilities"})
+    add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
+    add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
 
     update_hospital_details(container, entry)
 
@@ -1734,7 +1734,7 @@ local function update_classes_flow(entry, classes_flow)
         classes_flow.add {
             name = tostring(index),
             type = "label",
-            caption = {"sosciencity-gui.show-class", count, display_percentage(percentage)}
+            caption = {"sosciencity.show-class", count, display_percentage(percentage)}
         }
 
         at_least_one = true
@@ -1744,7 +1744,7 @@ local function update_classes_flow(entry, classes_flow)
         classes_flow.add {
             name = "no-classes",
             type = "label",
-            caption = {"sosciencity-gui.no-classes"}
+            caption = {"sosciencity.no-classes"}
         }
     end
 end
@@ -1771,7 +1771,7 @@ local function update_upbringing_station(container, entry)
             at_least_one = true
 
             label.caption = {
-                "sosciencity-gui.caste-probability",
+                "sosciencity.caste-probability",
                 {"caste-short." .. caste.name},
                 display_percentage(probability)
             }
@@ -1795,12 +1795,12 @@ local function create_upbringing_station(container, entry)
     add_kv_pair(
         building_data,
         "capacity",
-        {"sosciencity-gui.capacity"},
-        {"sosciencity-gui.show-upbringing-capacity", get_building_details(entry).capacity}
+        {"sosciencity.capacity"},
+        {"sosciencity.show-upbringing-capacity", get_building_details(entry).capacity}
     )
 
     -- Mode flow
-    local mode_flow = add_kv_flow(building_data, "mode", {"sosciencity-gui.mode"})
+    local mode_flow = add_kv_flow(building_data, "mode", {"sosciencity.mode"})
 
     for _, caste_id in pairs(TypeGroup.breedable_castes) do
         mode_flow.add {
@@ -1814,17 +1814,17 @@ local function create_upbringing_station(container, entry)
     mode_flow.add {
         name = format(unique_prefix_builder, "education-mode", Type.null),
         type = "radiobutton",
-        caption = {"sosciencity-gui.no-mode"},
+        caption = {"sosciencity.no-mode"},
         state = true
     }
 
     -- expected castes flow
-    local probabilities_flow = add_kv_flow(building_data, "probabilities", {"sosciencity-gui.expected"})
+    local probabilities_flow = add_kv_flow(building_data, "probabilities", {"sosciencity.expected"})
 
     probabilities_flow.add {
         name = "no_castes",
         type = "label",
-        caption = {"sosciencity-gui.no-castes"}
+        caption = {"sosciencity.no-castes"}
     }
 
     for _, caste_id in pairs(TypeGroup.breedable_castes) do
@@ -1835,8 +1835,8 @@ local function create_upbringing_station(container, entry)
         }
     end
 
-    add_kv_flow(building_data, "classes", {"sosciencity-gui.classes"})
-    add_kv_pair(building_data, "graduates", {"sosciencity-gui.graduates"})
+    add_kv_flow(building_data, "classes", {"sosciencity.classes"})
+    add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
 
     update_upbringing_station(container, entry)
 end
