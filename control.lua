@@ -35,7 +35,6 @@ require("classes.subentities")
 require("classes.neighborhood")
 require("classes.communication")
 require("classes.inventories")
-require("classes.consumption")
 require("classes.inhabitants")
 require("classes.entity")
 require("classes.handcrafting")
@@ -96,8 +95,9 @@ end
 ---------------------------------------------------------------------------------------------------
 -- EmmyLua stuff
 ---@class Entity
----@class Entry
 ---@class Player
+---@class Inventory
+---@class Entry
 ---@class Type
 ---@class InhabitantGroup
 ---@class DiseaseGroup
@@ -181,6 +181,7 @@ local function init()
     Scheduler.init()
     Neighborhood.init()
     Inhabitants.init()
+    Inventories.init()
     Register.init()
     Technologies.init()
     Gui.init()
@@ -203,8 +204,9 @@ local function on_load()
     Register.load()
     Gui.load()
     Inhabitants.load()
+    Inventories.load()
     Communication.load()
-    Entity.init()
+    Entity.load()
 end
 
 local function on_entity_built(event)
