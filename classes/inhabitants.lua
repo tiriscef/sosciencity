@@ -53,8 +53,8 @@ local castes = Castes.values
 local emigration_coefficient = Castes.emigration_coefficient
 local garbage_coefficient = Castes.garbage_coefficient
 
-local evaluate_diet = Consumption.evaluate_diet
-local evaluate_water = Consumption.evaluate_water
+local evaluate_diet = Inventories.evaluate_diet
+local evaluate_water = Inventories.evaluate_water
 
 local disease_values = Diseases.values
 
@@ -765,13 +765,7 @@ local function unemploy_all_inhabitants(house)
 end
 
 --- Looks for employees if this entry needs then.
-function Inhabitants.update_workforce(manufactory)
-    local workforce = get_building_details(manufactory).workforce
-
-    if not workforce then
-        return
-    end
-
+function Inhabitants.update_workforce(manufactory, workforce)
     local nominal_count = workforce.count
     local current_workers = manufactory[EK.worker_count]
 

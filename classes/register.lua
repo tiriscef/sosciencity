@@ -32,6 +32,8 @@ local get_building_details = Buildings.get
 local establish_new_neighbor
 local unsubscribe_neighborhood
 
+local update_workforce
+
 local get_inner_table = Tirislib_Tables.get_inner_table
 
 ---------------------------------------------------------------------------------------------------
@@ -51,6 +53,8 @@ local function set_locals()
 
     establish_new_neighbor = Neighborhood.establish_new_neighbor
     unsubscribe_neighborhood = Neighborhood.unsubscribe_all
+
+    update_workforce = Inhabitants.update_workforce
 end
 
 --- Initialize the register related contents of global.
@@ -200,6 +204,19 @@ local function init_custom_building(entry)
     if building_details.workforce then
         entry[EK.worker_count] = 0
         entry[EK.workers] = {}
+    end
+end
+
+local function update_custom_building(entry)
+    local building_details = get_building_details(entry)
+
+    if not building_details then
+        return
+    end
+
+    local workforce = building_details.workforce
+    if workforce then
+        update_workforce(entry, workforce)
     end
 end
 
@@ -390,6 +407,7 @@ function Register.entity_update_cycle(current_tick)
     end
 
     while index and count < number_of_checks do
+        update_custom_building(current_entry)
         on_update(current_entry, current_tick)
         current_entry[EK.last_update] = current_tick
 

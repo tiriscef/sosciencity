@@ -24,6 +24,8 @@ local get_building_details = Buildings.get
 local has_power = Subentities.has_power
 local set_beacon_effects = Subentities.set_beacon_effects
 
+local evaluate_workforce = Inhabitants.evaluate_workforce
+
 local Inhabitants = Inhabitants
 local Neighborhood = Neighborhood
 local Tirislib_Utils = Tirislib_Utils
@@ -74,6 +76,17 @@ end
 
 local function get_maintainance_performance()
     return 1 + (caste_bonuses[Type.clockwork] - (global.use_penalty and 80 or 0)) / 100
+end
+
+local function is_active(entry)
+    return has_power(entry) and evaluate_workforce(entry) > 0.999
+end
+
+---------------------------------------------------------------------------------------------------
+-- << interface for other classes >>
+
+function Entity.is_active(entry)
+    return entry[EK.active] or is_active(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -266,7 +279,6 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 -- << manufactory >>
 
 local function update_manufactory(entry)
-    Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
     set_crafting_machine_performance(entry, performance)
 end
@@ -332,7 +344,6 @@ local function get_fishery_performance(entry)
 end
 
 local function update_fishery(entry)
-    Inhabitants.update_workforce(entry)
     local performance = get_fishery_performance(entry)
     set_crafting_machine_performance(entry, performance)
 end
@@ -375,7 +386,6 @@ local function get_hunting_hut_performance(entry)
 end
 
 local function update_hunting_hut(entry)
-    Inhabitants.update_workforce(entry)
     local performance = get_hunting_hut_performance(entry)
     set_crafting_machine_performance(entry, performance)
 end
@@ -408,7 +418,6 @@ function Entity.get_hospital_inventories(entry)
 end
 
 local function update_hospital(entry, delta_ticks)
-    Inhabitants.update_workforce(entry)
     local performance = Inhabitants.evaluate_workforce(entry)
 
     if not has_power(entry) then
@@ -432,21 +441,11 @@ end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
 
 ---------------------------------------------------------------------------------------------------
--- << hospital complements >>
-
-local function update_psych_ward(entry)
-    Inhabitants.update_workforce(entry)
-    entry[EK.active] = has_power(entry) and Inhabitants.evaluate_workforce(entry) == 1
-end
-Register.set_entity_updater(Type.psych_ward, update_psych_ward)
-
-local function create_psych_ward(entry)
-    entry[EK.active] = false
-end
-Register.set_entity_creation_handler(Type.psych_ward, create_psych_ward)
-
----------------------------------------------------------------------------------------------------
 -- << upbringing station >>
+
+-- Data structure for a upbringing class object:
+-- [1]: tick of creation
+-- [2]: GenderGroup
 
 local function get_upbringing_expectations(mode)
     local targeted_portion = (mode == Type.null) and 0 or 0.5
@@ -468,17 +467,12 @@ local function get_upbringing_expectations(mode)
 end
 Entity.get_upbringing_expectations = get_upbringing_expectations
 
--- Data structure for a upbringing class object:
--- [1]: tick of creation
--- [2]: GenderGroup
-
 local function finish_class(entry, class, mode)
     local probabilities = get_upbringing_expectations(mode)
     local caste = Tirislib_Utils.weighted_random(probabilities, 1)
     local genders = class[2]
     local count = Tirislib_Tables.array_sum(genders)
-    local graduates =
-        InhabitantGroup.new(caste, count, nil, nil, nil, nil, genders)
+    local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, nil, genders)
     Inhabitants.add_to_city(graduates)
 
     entry[EK.graduates] = entry[EK.graduates] + count
@@ -490,15 +484,19 @@ local upbringing_time = Entity.upbringing_time
 local function update_upbringing_station(entry)
     local mode = entry[EK.education_mode]
 
+    -- return if no caste is researched (clockwork has to be researched before all the other castes)
+    if not Inhabitants.caste_is_researched(Type.clockwork) then
+        return
+    end
+
+    if not is_active(entry) then
+        return
+    end
+
     if mode ~= Type.null and not Inhabitants.caste_is_researched(mode) then
         -- the player somehow managed to set the mode to a not researched caste
         entry[EK.education_mode] = Type.null
         mode = Type.null
-    end
-
-    -- return if no caste is researched (clockwork has to be researched before all the other castes)
-    if not Inhabitants.caste_is_researched(Type.clockwork) then
-        return
     end
 
     local classes = entry[EK.classes]
@@ -527,7 +525,7 @@ local function update_upbringing_station(entry)
         local hatched, genders = Inventories.hatch_eggs(entry, free_capacity)
 
         if hatched > 0 then
-            classes[#classes+1] = {current_tick, genders}
+            classes[#classes + 1] = {current_tick, genders}
         end
     end
 end
@@ -553,14 +551,6 @@ end
 Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_station, paste_upbringing_settings)
 
 ---------------------------------------------------------------------------------------------------
--- << egg collector >>
-
-local function update_egg_collector(entry)
-    entry[EK.active] = has_power(entry)
-end
-Register.set_entity_updater(Type.egg_collector, update_egg_collector)
-
----------------------------------------------------------------------------------------------------
 -- << water distributer >>
 
 local function update_water_distributer(entry)
@@ -569,7 +559,7 @@ local function update_water_distributer(entry)
     -- determine and save the type of water that this distributer provides
     -- this is because it's unlikely to ever change (due to the system that prevents fluids from mixing)
     -- but needs to be checked often
-    if has_power(entry) then
+    if is_active(entry) then
         for fluid_name in pairs(entity.get_fluid_contents()) do
             local water_value = water_values[fluid_name]
             if water_value then
@@ -605,11 +595,3 @@ local function create_waterwell(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
-
----------------------------------------------------------------------------------------------------
--- << interface for other classes >>
-
-function Entity.is_active(entry)
-    -- default to true for types that don't set the value
-    return entry[EK.active] or true
-end

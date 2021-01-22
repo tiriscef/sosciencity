@@ -69,14 +69,20 @@ local function can_connect(entry1, entry2)
     end
 
     -- check if one of the entries can reach the other
-    local range = get_building_details(entry1).range
-    if range and is_in_range(entry1, entry2, range) then
-        return true
+    local building_details = get_building_details(entry1)
+    if building_details then
+        local range = building_details.range
+        if range and is_in_range(entry1, entry2, range) then
+            return true
+        end
     end
 
-    range = get_building_details(entry2).range
-    if range and is_in_range(entry2, entry1, range) then
-        return true
+    building_details = get_building_details(entry2)
+    if building_details then
+        local range = building_details.range
+        if range and is_in_range(entry2, entry1, range) then
+            return true
+        end
     end
 
     return false
