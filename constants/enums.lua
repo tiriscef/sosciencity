@@ -348,3 +348,13 @@ DiseaseCategory.health = 1
 DiseaseCategory.sanity = 2
 --- consequences of work related accidents
 DiseaseCategory.accident = 3
+
+--- Enum table for subscription connection types
+ConnectionType = {}
+
+--- the connection is established when either one entity can reach the other
+ConnectionType.bidirectional = 1
+--- the connection is established when the entity can reach the neighbor
+ConnectionType.to_neighbor = 2
+--- the connection is established when the neighbor can reach the entity
+ConnectionType.from_neighbor = 3
