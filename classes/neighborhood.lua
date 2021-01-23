@@ -12,14 +12,16 @@ Neighborhood = {}
     Data this class stores in global
     --------------------------------
     global.subscriptions: table
-        [type]: unit_number-lookup table
+        [type]: table with (unit_number, ConnectionType)-pairs
 ]]
 -- local often used globals for giant performance gains
+
 local Register = Register
 local try_get = Register.try_get
-local get_type = Types.get
+local get_type_definition = Types.get
 local get_building_details = Buildings.get
 local distance = Tirislib_Utils.maximum_metric_distance
+local get_inner_table = Tirislib_Tables.get_inner_table
 local subscriptions
 
 local function set_locals()
@@ -60,27 +62,19 @@ local function is_in_range(neighbor, entry, range)
         (distance(x, y, x2, y2) < range)
 end
 
-local function can_connect(entry1, entry2)
-    -- first check if they are on the same surface
-    local surface1 = entry1[EK.entity].surface.index
-    local surface2 = entry2[EK.entity].surface.index
-    if surface1 ~= surface2 then
-        return false
-    end
-
-    -- check if one of the entries can reach the other
-    local building_details = get_building_details(entry1)
+local function connect_bidirectional(entry, neighbor)
+    local building_details = get_building_details(entry)
     if building_details then
         local range = building_details.range
-        if range and is_in_range(entry1, entry2, range) then
+        if range and is_in_range(entry, neighbor, range) then
             return true
         end
     end
 
-    building_details = get_building_details(entry2)
+    building_details = get_building_details(neighbor)
     if building_details then
         local range = building_details.range
-        if range and is_in_range(entry2, entry1, range) then
+        if range and is_in_range(neighbor, entry, range) then
             return true
         end
     end
@@ -88,33 +82,75 @@ local function can_connect(entry1, entry2)
     return false
 end
 
-function Neighborhood.subscribe_to(entry, _type)
+local function connect_from_neighbor(entry, neighbor)
+    local building_details = get_building_details(entry)
+    if building_details then
+        local range = building_details.range
+        if range and is_in_range(entry, neighbor, range) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function connect_to_neighbor(entry, neighbor)
+    local building_details = get_building_details(neighbor)
+    if building_details then
+        local range = building_details.range
+        if range and is_in_range(neighbor, entry, range) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local connect_lookup = {
+    [ConnectionType.bidirectional] = connect_bidirectional,
+    [ConnectionType.from_neighbor] = connect_from_neighbor,
+    [ConnectionType.to_neighbor] = connect_to_neighbor
+}
+
+local function can_connect(entry, neighbor, connection_type)
+    -- first check if they are on the same surface
+    local surface1 = entry[EK.entity].surface.index
+    local surface2 = neighbor[EK.entity].surface.index
+    if surface1 ~= surface2 then
+        return false
+    end
+
+    -- call the ConnectionType-specific function
+    return connect_lookup[connection_type](entry, neighbor)
+end
+
+local function try_connect(entry, neighbor, connection_type)
+    if can_connect(entry, neighbor, connection_type) then
+        local _type = neighbor[EK.type]
+
+        local neighbors_table = get_inner_table(entry, EK.neighbors)
+        local neighbors_of_type = get_inner_table(neighbors_table, _type)
+        neighbors_of_type[neighbor[EK.unit_number]] = _type
+    end
+end
+
+function Neighborhood.subscribe_to(entry, _type, connection_type)
     local unit_number = entry[EK.unit_number]
+    connection_type = connection_type or ConnectionType.bidirectional
 
     -- note subscription
-    if not subscriptions[_type] then
-        subscriptions[_type] = {}
-    end
-    subscriptions[_type][unit_number] = true
+    get_inner_table(subscriptions, _type)[unit_number] = connection_type
 
-    -- get the neighbors table (and initialise it when needed)
-    entry[EK.neighbors] = entry[EK.neighbors] or {}
-    local neighbors = entry[EK.neighbors]
-    neighbors[_type] = neighbors[_type] or {}
-    local neighbors_of_this_type = neighbors[_type]
-
-    -- find all the entries of the given type
+    -- find all the neighbors already existing
     for _, possible_neighbor in Register.all_of_type(_type) do
-        if can_connect(entry, possible_neighbor) then
-            neighbors_of_this_type[possible_neighbor[EK.unit_number]] = _type
-        end
+        try_connect(entry, possible_neighbor, connection_type)
     end
 end
 local subscribe_to = Neighborhood.subscribe_to
 
 local function subscribe_to_range(entry, types)
-    for _, _type in pairs(types) do
-        subscribe_to(entry, _type)
+    for _type, connection_type in pairs(types) do
+        subscribe_to(entry, _type, connection_type)
     end
 end
 
@@ -122,13 +158,11 @@ end
 --- @param entry Entry
 --- @param _type Type
 function Neighborhood.unsubscribe_to(entry, _type)
-    local neighbors = entry[EK.neighbors]
-    local unit_number = entry[EK.unit_number]
-
     -- delete neighbors
-    neighbors[_type] = nil
+    entry[EK.neighbors][_type] = nil
 
     -- delete subscriptions
+    local unit_number = entry[EK.unit_number]
     subscriptions[_type][unit_number] = nil
 end
 
@@ -155,12 +189,10 @@ local function notify_subscribers(entry)
         return
     end
 
-    local unit_number = entry[EK.unit_number]
-
-    for subscriber_number in pairs(subscribers) do
+    for subscriber_number, connection_type in pairs(subscribers) do
         local subscriber = try_get(subscriber_number)
         if subscriber then
-            subscriber[EK.neighbors][_type][unit_number] = _type
+            try_connect(subscriber, entry, connection_type)
         end
     end
 end
@@ -169,7 +201,7 @@ end
 --- @param entry Entry
 function Neighborhood.establish_new_neighbor(entry)
     -- Subscribe to the neighbors this entry type needs
-    local type_subscriptions = get_type(entry).subscriptions
+    local type_subscriptions = get_type_definition(entry).subscriptions
 
     if type_subscriptions then
         subscribe_to_range(entry, type_subscriptions)
