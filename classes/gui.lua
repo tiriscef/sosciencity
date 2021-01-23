@@ -1514,6 +1514,13 @@ local function update_fishery_details(container, entry)
         "water-tiles",
         {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles, {"sosciencity.tiles"}}
     )
+
+    local competition_performance, near_count = Entity.get_fishing_competition(entry)
+    set_kv_pair_value(
+        building_data,
+        "competition",
+        {"sosciencity.show-fishing-competition", near_count, display_percentage(competition_performance)}
+    )
 end
 
 local function create_fishery_details(container, entry)
@@ -1523,6 +1530,7 @@ local function create_fishery_details(container, entry)
     local building_data = general.building
 
     add_kv_pair(building_data, "water-tiles", {"sosciencity.water-tiles"})
+    add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_fishery_details(container, entry)
 end
@@ -1542,6 +1550,13 @@ local function update_hunting_hut_details(container, entry)
         "tree-count",
         {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count, ""}
     )
+
+    local competition_performance, near_count = Entity.get_hunting_competition(entry)
+    set_kv_pair_value(
+        building_data,
+        "competition",
+        {"sosciencity.show-hunting-competition", near_count, display_percentage(competition_performance)}
+    )
 end
 
 local function create_hunting_hut_details(container, entry)
@@ -1551,6 +1566,7 @@ local function create_hunting_hut_details(container, entry)
     local building_data = general.building
 
     add_kv_pair(building_data, "tree-count", {"sosciencity.tree-count"})
+    add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_hunting_hut_details(container, entry)
 end

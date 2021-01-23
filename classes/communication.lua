@@ -84,6 +84,9 @@ function Communication.load()
     set_locals()
 end
 
+---------------------------------------------------------------------------------------------------
+-- << flying texts >>
+
 function Communication.create_flying_text(entry, text)
     local entity = entry[EK.entity]
 
@@ -95,22 +98,11 @@ function Communication.create_flying_text(entry, text)
 end
 local create_flying_text = Communication.create_flying_text
 
-function Communication.caste_allowed_in(entry, caste_id)
-    local caste = castes[caste_id]
-
-    create_flying_text(
-        entry,
-        {
-            "flying-text.set-caste",
-            "[img=technology/" .. caste.tech_name .. "]",
-            {"caste-name." .. caste.name}
-        }
-    )
-end
-
+---------------------------------------------------------------------------------------------------
 -- << production and consumption statistics >>
 -- we collect all the produced/consumed stuff and log them collectively
 -- this reduces the amount of API calls and avoids the problem that the statistics log only integer numbers
+
 function Communication.log_item(item, amount)
     if amount > 0 then
         item_production[item] = (item_production[item] or 0) + amount
@@ -156,6 +148,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << mouseover visualisations >>
+
 local function premultiply_with_alpha(color, a)
     color.r = color.r * a
     color.g = color.g * a
@@ -333,6 +326,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << speakers >>
+
 local FOLLOWUP_DELAY = 2 * Time.second
 
 local function say(speaker, line)
@@ -386,7 +380,21 @@ local useless_banter = Communication.useless_banter
 
 ---------------------------------------------------------------------------------------------------
 -- << events >>
--- functions that can be called to inform this class of things going on
+-- interface functions to inform this class of things going on
+
+function Communication.caste_allowed_in(entry, caste_id)
+    local caste = castes[caste_id]
+
+    create_flying_text(
+        entry,
+        {
+            "flying-text.set-caste",
+            "[img=technology/" .. caste.tech_name .. "]",
+            {"caste-name." .. caste.name}
+        }
+    )
+end
+
 function Communication.log_emigration(group, cause)
 end
 
@@ -420,6 +428,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+
 function Communication.update(current_tick)
     flush_logs()
     log_population(current_tick)

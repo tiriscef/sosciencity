@@ -347,11 +347,3 @@ for _, food in pairs(Food.values) do
     -- the magic 10 is just to get from 100g to 1kg
     food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
 end
-
-local meta = {}
-
-function meta:__call(item)
-    return Food.values[item]
-end
-
-setmetatable(Food, meta)

@@ -331,6 +331,12 @@ local function get_water_tiles(entry, building_details)
     end
 end
 
+local function get_fishing_competition(entry)
+    local count = Neighborhood.get_neighbor_count(entry, Type.fishery)
+    return 1 / (count + 1), count
+end
+Entity.get_fishing_competition = get_fishing_competition
+
 local function get_fishery_performance(entry)
     local worker_performance = Inhabitants.evaluate_workforce(entry)
 
@@ -338,7 +344,7 @@ local function get_fishery_performance(entry)
     local water_tiles = get_water_tiles(entry, building_details)
     local water_performance = map_range(water_tiles, 0, building_details.water_tiles, 0, 1)
 
-    local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.fishery) + 1)
+    local neighborhood_performance = get_fishing_competition(entry)
 
     return min(worker_performance, water_performance) * neighborhood_performance
 end
@@ -372,6 +378,12 @@ local function get_tree_count(entry, building_details)
     end
 end
 
+local function get_hunting_competition(entry)
+    local count = Neighborhood.get_neighbor_count(entry, Type.hunting_hut)
+    return 1 / (count + 1), count
+end
+Entity.get_hunting_competition = get_hunting_competition
+
 local function get_hunting_hut_performance(entry)
     local worker_performance = Inhabitants.evaluate_workforce(entry)
 
@@ -380,7 +392,7 @@ local function get_hunting_hut_performance(entry)
     entry[EK.tree_count] = tree_count
     local forest_performance = map_range(tree_count, 0, building_details.tree_count, 0, 1)
 
-    local neighborhood_performance = 1 / (Neighborhood.get_neighbor_count(entry, Type.hunting_hut) + 1)
+    local neighborhood_performance = get_hunting_competition(entry)
 
     return min(worker_performance, forest_performance) * neighborhood_performance
 end
