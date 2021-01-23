@@ -176,8 +176,6 @@ local function init()
     global.last_entity_update = -1
     global.last_tile_update = -1
 
-    Types.load()
-
     Scheduler.init()
     Neighborhood.init()
     Inhabitants.init()
@@ -199,7 +197,6 @@ local function on_load()
     set_locals()
 
     Scheduler.load()
-    Types.load()
     Neighborhood.load()
     Register.load()
     Gui.load()

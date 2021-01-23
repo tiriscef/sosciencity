@@ -1,5 +1,7 @@
-require("constants.enums")
+require("constants.buildings")
 require("constants.colors")
+require("constants.enums")
+require("constants.housing")
 
 Types = {}
 
@@ -36,16 +38,6 @@ TypeGroup.affected_by_clockwork = {
     Type.waterwell
 }
 
-TypeGroup.inhabitant_subscriptions = {
-    Type.market,
-    Type.water_distributer,
-    Type.dumpster,
-    Type.nightclub,
-    Type.egg_collector,
-    Type.hospital,
-    Type.animal_farm
-}
-
 TypeGroup.social_places = {
     Type.nightclub
 }
@@ -57,6 +49,22 @@ TypeGroup.hospital_complements = {
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
+
+local inhabitant_subscriptions = {
+    [Type.market] = ConnectionType.bidirectional,
+    [Type.water_distributer] = ConnectionType.from_neighbor,
+    [Type.dumpster] = ConnectionType.bidirectional,
+    [Type.nightclub] = ConnectionType.to_neighbor,
+    [Type.egg_collector] = ConnectionType.to_neighbor,
+    [Type.hospital] = ConnectionType.bidirectional,
+    [Type.animal_farm] = ConnectionType.from_neighbor
+}
+
+local hospital_subscriptions = {}
+for _, _type in pairs(TypeGroup.hospital_complements) do
+    hospital_subscriptions[_type] = ConnectionType.from_neighbor
+end
+
 --- Type definitions\
 --- **altmode_sprite:** name of the sprite that should be shown in altmode\
 --- **subscriptions:** types that this type subscribes to by default\
@@ -73,56 +81,56 @@ Types.definitions = {
     },
     [Type.clockwork] = {
         altmode_sprite = "clockwork-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.clockwork"}
     },
     [Type.orchid] = {
         altmode_sprite = "orchid-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.orchid"}
     },
     [Type.gunfire] = {
         altmode_sprite = "gunfire-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.gunfire"}
     },
     [Type.ember] = {
         altmode_sprite = "ember-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.ember"}
     },
     [Type.foundry] = {
         altmode_sprite = "foundry-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.foundry"}
     },
     [Type.gleam] = {
         altmode_sprite = "gleam-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.gleam"}
     },
     [Type.aurora] = {
         altmode_sprite = "aurora-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.aurora"}
     },
     [Type.plasma] = {
         altmode_sprite = "plasma-caste",
-        subscriptions = TypeGroup.inhabitant_subscriptions,
+        subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.plasma"}
@@ -142,7 +150,9 @@ Types.definitions = {
         localised_name = {"sosciencity.composter-output"},
         localised_description = {"sosciencity.explain-composter-output"},
         signature_color = Colors.brown,
-        subscriptions = {Type.composter}
+        subscriptions = {
+            [Type.composter] = ConnectionType.bidirectional
+        }
     },
     [Type.water_distributer] = {
         localised_name = {"sosciencity.water-distributer"},
@@ -165,7 +175,16 @@ Types.definitions = {
         localised_name = {"sosciencity.nightclub"},
         localised_description = {"sosciencity.explain-nightclub"},
         signature_color = Colors.purple,
-        subscriptions = TypeGroup.all_castes,
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.from_neighbor,
+            [Type.orchid] = ConnectionType.from_neighbor,
+            [Type.gunfire] = ConnectionType.from_neighbor,
+            [Type.ember] = ConnectionType.from_neighbor,
+            [Type.foundry] = ConnectionType.from_neighbor,
+            [Type.gleam] = ConnectionType.from_neighbor,
+            [Type.aurora] = ConnectionType.from_neighbor,
+            [Type.plasma] = ConnectionType.from_neighbor
+        },
         is_civil = true
     },
     [Type.egg_collector] = {
@@ -189,7 +208,7 @@ Types.definitions = {
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Colors.darkish_red,
-        subscriptions = TypeGroup.hospital_complements,
+        subscriptions = hospital_subscriptions,
         is_civil = true
     },
     [Type.psych_ward] = {
@@ -201,26 +220,31 @@ Types.definitions = {
     [Type.waterwell] = {
         localised_name = {"sosciencity.waterwell"},
         localised_description = {"sosciencity.explain-waterwell"},
-        subscriptions = {Type.waterwell},
+        subscriptions = {
+            [Type.waterwell] = ConnectionType.bidirectional
+        },
         signature_color = Colors.blue,
         is_civil = true
     },
     [Type.fishery] = {
         localised_name = {"sosciencity.fishery"},
         localised_description = {"sosciencity.explain-fishery"},
-        subscriptions = {Type.fishery},
+        subscriptions = {
+            [Type.fishery] = ConnectionType.bidirectional
+        },
         is_civil = true
     },
     [Type.hunting_hut] = {
         localised_name = {"sosciencity.hunting-hut"},
         localised_description = {"sosciencity.explain-hunting-hut"},
-        subscriptions = {Type.hunting_hut},
+        subscriptions = {
+            [Type.hunting_hut] = ConnectionType.bidirectional
+        },
         is_civil = true
     },
     [Type.manufactory] = {
         localised_name = {"sosciencity.manufactory"},
         localised_description = {"sosciencity.explain-manufactory"},
-        subscriptions = TypeGroup.all_castes,
         is_civil = true
     },
     [Type.assembling_machine] = {
@@ -271,20 +295,19 @@ local lookup_by_entity_type = {
 
 local lookup_by_name = {}
 
-function Types.load()
-    -- add the houses to the lookup table
-    for name in pairs(Housing.values) do
-        lookup_by_name[name] = Type.empty_house
-    end
+-- add the houses to the lookup table
+for name in pairs(Housing.values) do
+    lookup_by_name[name] = Type.empty_house
+end
 
-    -- add the functional buildings to the lookup table
-    for name, details in pairs(Buildings.values) do
-        lookup_by_name[name] = details.type
-    end
+-- add the functional buildings to the lookup table
+for name, details in pairs(Buildings.values) do
+    lookup_by_name[name] = details.type
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
+
 --- Returns the internal type for the given entity.
 function Types.get_entity_type(entity)
     local name = entity.name
@@ -298,14 +321,7 @@ function Types.get_entity_type(entity)
     return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
 end
 
+--- Returns the type definition of the given entity
 function Types.get(entry)
     return definitions[entry[EK.type]]
 end
-
-local meta = {}
-
-function meta:__call(entity)
-    return Types.get_entity_type(entity)
-end
-
-setmetatable(Types, meta)
