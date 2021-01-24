@@ -87,18 +87,6 @@ local function connect_bidirectional(entry, neighbor)
 end
 
 local function connect_from_neighbor(entry, neighbor)
-    local building_details = get_building_details(entry)
-    if building_details then
-        local range = building_details.range
-        if range and is_in_range(entry, neighbor, range) then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function connect_to_neighbor(entry, neighbor)
     local building_details = get_building_details(neighbor)
     if building_details then
         local range = building_details.range
@@ -110,10 +98,22 @@ local function connect_to_neighbor(entry, neighbor)
     return false
 end
 
+local function connect_to_neighbor(entry, neighbor)
+    local building_details = get_building_details(entry)
+    if building_details then
+        local range = building_details.range
+        if range and is_in_range(entry, neighbor, range) then
+            return true
+        end
+    end
+
+    return false
+end
+
 local connect_lookup = {
     [ConnectionType.bidirectional] = connect_bidirectional,
-    [ConnectionType.from_neighbor] = connect_from_neighbor,
-    [ConnectionType.to_neighbor] = connect_to_neighbor
+    [ConnectionType.to_neighbor] = connect_to_neighbor,
+    [ConnectionType.from_neighbor] = connect_from_neighbor
 }
 
 local function can_connect(entry, neighbor, connection_type)
@@ -129,12 +129,12 @@ local function can_connect(entry, neighbor, connection_type)
 end
 
 local function try_connect(entry, neighbor, connection_type)
-    if can_connect(entry, neighbor, connection_type) then
-        local _type = neighbor[EK.type]
+    if entry ~= neighbor and can_connect(entry, neighbor, connection_type) then
+        local entity_type = neighbor[EK.type]
         local neighbors_table = get_inner_table(entry, EK.neighbors)
-        local neighbors_of_type = get_inner_table(neighbors_table, _type)
+        local neighbors_of_type = get_inner_table(neighbors_table, entity_type)
 
-        neighbors_of_type[neighbor[EK.unit_number]] = _type
+        neighbors_of_type[neighbor[EK.unit_number]] = entity_type
     end
 end
 
@@ -195,12 +195,11 @@ local function notify_subscribers(new_neighbor)
     end
 end
 
---- Adds the given neighbor to every interested entity in range.
+--- Adds the given neighbor to every interested entity in range. Needs to be called when a new entity gets created.
 --- @param entry Entry
 function Neighborhood.establish_new_neighbor(entry)
     -- Subscribe to the neighbors this entry type needs
     local type_subscriptions = get_type_definition(entry).subscriptions
-
     if type_subscriptions then
         for _type, connection_type in pairs(type_subscriptions) do
             subscribe_to(entry, _type, connection_type)

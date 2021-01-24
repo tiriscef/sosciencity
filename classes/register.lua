@@ -299,12 +299,12 @@ function Register.add(entity, _type)
 
     local entry = get_new_entry(entity, _type)
 
+    add_entry_to_register(entry)
+
     init_custom_building(entry)
     add_subentities(entry)
     establish_new_neighbor(entry)
     on_creation(_type, entry)
-
-    add_entry_to_register(entry)
 
     return entry
 end
@@ -350,12 +350,12 @@ end
 --- @param entry Entry
 --- @param new_type Type
 function Register.change_type(entry, new_type)
-    Register.remove_entry(entry, DestructionCause.type_change)
+    remove_entry(entry, DestructionCause.type_change)
 
     -- remove the sprites explicitly, because normally they get destroyed when the entity is destroyed
     Subentities.remove_sprites(entry)
 
-    local new_entry = Register.add(entry[EK.entity], new_type)
+    local new_entry = add_entity(entry[EK.entity], new_type)
     new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
 
     Gui.rebuild_details_view_for_entry(entry)
