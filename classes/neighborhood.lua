@@ -131,32 +131,26 @@ end
 local function try_connect(entry, neighbor, connection_type)
     if can_connect(entry, neighbor, connection_type) then
         local _type = neighbor[EK.type]
-
         local neighbors_table = get_inner_table(entry, EK.neighbors)
         local neighbors_of_type = get_inner_table(neighbors_table, _type)
+
         neighbors_of_type[neighbor[EK.unit_number]] = _type
     end
 end
 
-function Neighborhood.subscribe_to(entry, _type, connection_type)
+function Neighborhood.subscribe_to(entry, neighbor_type, connection_type)
     local unit_number = entry[EK.unit_number]
     connection_type = connection_type or ConnectionType.bidirectional
 
     -- note subscription
-    get_inner_table(subscriptions, _type)[unit_number] = connection_type
+    get_inner_table(subscriptions, neighbor_type)[unit_number] = connection_type
 
     -- find all the neighbors already existing
-    for _, possible_neighbor in Register.all_of_type(_type) do
+    for _, possible_neighbor in Register.all_of_type(neighbor_type) do
         try_connect(entry, possible_neighbor, connection_type)
     end
 end
 local subscribe_to = Neighborhood.subscribe_to
-
-local function subscribe_to_range(entry, types)
-    for _type, connection_type in pairs(types) do
-        subscribe_to(entry, _type, connection_type)
-    end
-end
 
 --- Unsubscribes the given entry from the given type.
 --- @param entry Entry
@@ -185,18 +179,18 @@ function Neighborhood.unsubscribe_all(entry)
 end
 
 --- Adds the given entry to all the entries that are in range and subscribe to the type.
---- @param entry Entry
-local function notify_subscribers(entry)
-    local _type = entry[EK.type]
+--- @param new_neighbor Entry
+local function notify_subscribers(new_neighbor)
+    local _type = new_neighbor[EK.type]
     local subscribers = subscriptions[_type]
     if not subscribers then
         return
     end
 
-    for subscriber_number, connection_type in pairs(subscribers) do
-        local subscriber = try_get(subscriber_number)
+    for unit_number, connection_type in pairs(subscribers) do
+        local subscriber = try_get(unit_number)
         if subscriber then
-            try_connect(subscriber, entry, connection_type)
+            try_connect(subscriber, new_neighbor, connection_type)
         end
     end
 end
@@ -208,7 +202,9 @@ function Neighborhood.establish_new_neighbor(entry)
     local type_subscriptions = get_type_definition(entry).subscriptions
 
     if type_subscriptions then
-        subscribe_to_range(entry, type_subscriptions)
+        for _type, connection_type in pairs(type_subscriptions) do
+            subscribe_to(entry, _type, connection_type)
+        end
     end
 
     -- Subscribe to the neighbors this custom building needs
@@ -216,12 +212,17 @@ function Neighborhood.establish_new_neighbor(entry)
     if building_details then
         local workforce = building_details.workforce
         if workforce then
-            subscribe_to_range(entry, workforce.castes)
+            for _, caste in pairs(workforce.castes) do
+                subscribe_to(entry, caste, ConnectionType.from_neighbor)
+            end
         end
     end
 
     notify_subscribers(entry)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << interface functions >>
 
 --- Returns a complete list of all neighbors of the given type.
 --- @param entry Entry

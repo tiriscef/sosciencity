@@ -268,10 +268,17 @@ function Tirislib_Utils.get_range_bounding_box(position, range)
     return {{x - range, y - range}, {x + range, y + range}}
 end
 
-function Tirislib_Utils.get_size(entity)
+function Tirislib_Utils.get_entity_size(entity)
     local selection_box = entity.selection_box
     local left_top = selection_box.left_top
     local right_bottom = selection_box.right_bottom
+
+    return right_bottom.x - left_top.x, right_bottom.y - left_top.y
+end
+
+function Tirislib_Utils.get_box_size(box)
+    local left_top = box.left_top
+    local right_bottom = box.right_bottom
 
     return right_bottom.x - left_top.x, right_bottom.y - left_top.y
 end

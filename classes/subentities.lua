@@ -19,7 +19,7 @@ local get_building_details = Buildings.get
 
 local max = math.max
 local format = string.format
-local get_size = Tirislib_Utils.get_size
+local get_size = Tirislib_Utils.get_entity_size
 local get_inner_table = Tirislib_Tables.get_inner_table
 
 ---------------------------------------------------------------------------------------------------
