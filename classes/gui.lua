@@ -27,6 +27,8 @@ local format = string.format
 local round = Tirislib_Utils.round
 local tostring = tostring
 
+local Luaq_from = Tirislib_Luaq.from
+
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
@@ -101,8 +103,12 @@ local function display_comfort(comfort)
     return {"", comfort, "  -  ", {"comfort-scale." .. comfort}}
 end
 
-local function display_caste(caste_id)
-    return {"caste-name." .. castes[caste_id].name}
+local function display_caste(caste_id, short)
+    if short then
+        return {format("caste-short.%s", castes[caste_id].name)}
+    else
+        return {format("caste-name.%s", castes[caste_id].name)}
+    end
 end
 
 local function get_migration_string(number)
@@ -161,6 +167,49 @@ local function display_time(ticks)
     minutes = minutes % 60
 
     return {"sosciencity.time", hours, minutes, seconds}
+end
+
+--- Shortens the ""-enumeration to ensure that there aren't more than the allowed number of elements.
+local function shorten_enumeration(enumeration)
+    if #enumeration <= 20 then
+        return
+    end
+
+    local copy = {}
+    for i = 2, #enumeration do
+        copy[#copy + 1] = enumeration[i]
+        enumeration[i] = nil
+    end
+
+    for i = 1, #copy do
+        local subtable_index = floor(i / 20) + 2
+        if not enumeration[subtable_index] then
+            enumeration[subtable_index] = {""}
+        end
+        local subtable = enumeration[subtable_index]
+        subtable[#subtable + 1] = copy[i]
+    end
+
+    shorten_enumeration(enumeration)
+end
+
+local function display_enumeration(elements, separator, last_separator)
+    separator = separator or ", "
+    local ret = {""}
+
+    for _, element in pairs(elements) do
+        ret[#ret + 1] = element
+        ret[#ret + 1] = separator
+    end
+    ret[#ret] = nil
+
+    if last_separator and #ret > 2 then
+        ret[#ret - 1] = last_separator
+    end
+
+    shorten_enumeration(ret)
+
+    return ret
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1296,17 +1345,14 @@ local function update_general_building_details(container, entry)
 
     local active = entry[EK.active]
     if active ~= nil then
-        set_kv_pair_value(
-            building_data,
-            "active",
-            active and {"sosciencity.active"} or {"sosciencity.inactive"}
-        )
+        set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
     end
 
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
         local count_needed = worker_specification.count
         set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], count_needed})
+
         local staff_performance = Inhabitants.evaluate_workforce(entry)
         set_kv_pair_value(
             building_data,
@@ -1324,8 +1370,7 @@ local function update_general_building_details(container, entry)
         set_kv_pair_value(
             building_data,
             "general-performance",
-            performance >= 0.2 and {"sosciencity.percentage", ceil(performance * 100)} or
-                {"sosciencity.not-working"}
+            performance >= 0.2 and {"sosciencity.percentage", ceil(performance * 100)} or {"sosciencity.not-working"}
         )
     end
 
@@ -1374,12 +1419,7 @@ local function create_general_building_details(container, entry)
     if building_details.power_usage then
         -- convert to kW
         local power = get_reasonable_number(building_details.power_usage * Time.second / 1000)
-        add_kv_pair(
-            building_data,
-            "power",
-            {"sosciencity.power-demand"},
-            {"sosciencity.current-power-demand", power}
-        )
+        add_kv_pair(building_data, "power", {"sosciencity.power-demand"}, {"sosciencity.current-power-demand", power})
     end
 
     if building_details.speed then
@@ -1401,6 +1441,14 @@ local function create_general_building_details(container, entry)
     if worker_specification then
         add_kv_pair(building_data, "staff", {"sosciencity.staff"})
         add_kv_pair(building_data, "staff-performance")
+
+        local castes_needed =
+            Luaq_from(worker_specification.castes):select(display_caste, true):call(
+            display_enumeration,
+            nil,
+            {"sosciencity.or"}
+        )
+        add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
 
         add_header_label(tab, "worker-header", {"sosciencity.worker-header"})
         create_data_list(tab, "workers")
@@ -1424,14 +1472,7 @@ local function create_composting_values_tab(container)
     local composting_list = create_data_list(tab, "compostables")
 
     -- header
-    add_kv_pair(
-        composting_list,
-        "head",
-        {"sosciencity.item"},
-        {"sosciencity.humus"},
-        "default-bold",
-        "default-bold"
-    )
+    add_kv_pair(composting_list, "head", {"sosciencity.item"}, {"sosciencity.humus"}, "default-bold", "default-bold")
 
     local item_prototypes = game.item_prototypes
 
@@ -1625,12 +1666,7 @@ local function create_immigration_port_details(container, entry)
     local building_details = get_building_details(entry)
 
     add_kv_pair(building_data, "next-wave", {"sosciencity.next-wave"})
-    add_kv_pair(
-        building_data,
-        "materials",
-        {"sosciencity.materials"},
-        display_materials(building_details.materials)
-    )
+    add_kv_pair(building_data, "materials", {"sosciencity.materials"}, display_materials(building_details.materials))
     add_kv_pair(
         building_data,
         "capacity",
