@@ -13,11 +13,13 @@ Scheduler = {}
         [2]: arguments
 ]]
 -- local often used globals for heavy performance gains
+
 local ceil = math.ceil
 local schedule
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
+
 local function set_locals()
     schedule = global.schedule
 end
@@ -33,6 +35,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << schedule implementation >>
+
 local event_lookup = {}
 
 --- Sets the function that gets called when the event of the given name is fired.

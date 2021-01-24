@@ -5,9 +5,6 @@ Communication = {}
 --[[
     Data this class stores in global
     --------------------------------
-    global.mouseover_highlights: table
-        [player_index]: table of render_ids
-
     global.(fluid/item)_(consumption/production): table
         [name]: amount consumed/produced
 
@@ -18,6 +15,7 @@ Communication = {}
     global.(tiriscef/profanity): bool (if they are enabled)
 ]]
 -- local often used globals for smallish performance gains
+
 local global
 
 local fluid_statistics
@@ -27,7 +25,6 @@ local item_statistics
 local item_consumption
 local item_production
 
-local highlights
 local castes = Castes.values
 
 local Scheduler = Scheduler
@@ -35,6 +32,14 @@ local Tirislib_Tables = Tirislib_Tables
 
 local speakers = Speakers
 local allowed_speakers
+
+local floor = math.floor
+local random = math.random
+local pick_random_subtable_weighted_by_key = Tirislib_Tables.pick_random_subtable_weighted_by_key
+
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
+
 local function generate_speakers_list()
     allowed_speakers = {}
     if global.tiriscef then
@@ -45,17 +50,7 @@ local function generate_speakers_list()
     end
 end
 
-local floor = math.floor
-local random = math.random
-local pick_random_subtable_weighted_by_key = Tirislib_Tables.pick_random_subtable_weighted_by_key
-
-local buildings = Buildings.values
-local get_type = Types.get
-local try_get = Register.try_get
-
 local function set_locals()
-    highlights = global.mouseover_highlights
-
     fluid_consumption = global.fluid_consumption
     fluid_production = global.fluid_production
     item_consumption = global.item_consumption
@@ -66,7 +61,6 @@ end
 
 function Communication.init()
     global = _ENV.global
-    global.mouseover_highlights = {}
 
     global.fluid_consumption = {}
     global.fluid_production = {}
@@ -144,181 +138,6 @@ local function flush_logs()
     flush_log(item_production, item_statistics, 1)
     flush_log(fluid_consumption, fluid_statistics, -1)
     flush_log(fluid_production, fluid_statistics, 1)
-end
-
----------------------------------------------------------------------------------------------------
--- << mouseover visualisations >>
-
-local function premultiply_with_alpha(color, a)
-    color.r = color.r * a
-    color.g = color.g * a
-    color.b = color.b * a
-    color.a = color.a * a
-end
-
-local range_highlight_alpha = 0.15
-local range_highlight_colors = {}
-
-for _type, definition in pairs(Types.definitions) do
-    local color = Tirislib_Tables.copy(definition.signature_color or Colors.white)
-    premultiply_with_alpha(color, range_highlight_alpha)
-    range_highlight_colors[_type] = color
-end
-
-local function highlight_range(player_id, entity, building_details, created_highlights)
-    local range = building_details.range
-
-    if range == "global" then
-        -- TODO highlight that somehow
-        return
-    end
-
-    local surface = entity.surface
-    local position = entity.position
-    local x = position.x
-    local y = position.y
-
-    created_highlights[#created_highlights + 1] =
-        rendering.draw_rectangle {
-        color = range_highlight_colors[building_details.type],
-        filled = true,
-        left_top = {x - range, y - range},
-        right_bottom = {x + range, y + range},
-        surface = surface,
-        players = {player_id},
-        draw_on_ground = true
-    }
-end
-
-local building_details_visualization_lookup = {
-    range = highlight_range
-}
-
-local function visualize_building_details(player_id, entity, building_details, created_highlights)
-    for key in pairs(building_details) do
-        local fn = building_details_visualization_lookup[key]
-
-        if fn then
-            fn(player_id, entity, building_details, created_highlights)
-        end
-    end
-end
-
-local function create_neighbor_highlights(players, entry, created_highlights)
-    local type_details = Types.get(entry)
-    local tint = type_details.signature_color
-
-    local entity = entry[EK.entity]
-    local bounding_box = entity.selection_box
-    local left_top = bounding_box.left_top
-    local right_bottom = bounding_box.right_bottom
-
-    local surface = entity.surface
-
-    created_highlights[#created_highlights + 1] =
-        rendering.draw_sprite {
-        sprite = "highlight-left-top",
-        tint = tint,
-        surface = surface,
-        players = players,
-        target = left_top
-    }
-    created_highlights[#created_highlights + 1] =
-        rendering.draw_sprite {
-        sprite = "highlight-right-bottom",
-        tint = tint,
-        surface = surface,
-        players = players,
-        target = right_bottom
-    }
-
-    -- convert left_top to left_bottom and right_bottom to right_top
-    left_top.y, right_bottom.y = right_bottom.y, left_top.y
-
-    created_highlights[#created_highlights + 1] =
-        rendering.draw_sprite {
-        sprite = "highlight-left-bottom",
-        tint = tint,
-        surface = surface,
-        players = players,
-        target = left_top
-    }
-    created_highlights[#created_highlights + 1] =
-        rendering.draw_sprite {
-        sprite = "highlight-right-top",
-        tint = tint,
-        surface = surface,
-        players = players,
-        target = right_bottom
-    }
-end
-
-local function highlight_neighbors(player_id, entry, created_highlights)
-    local neighbors = entry[EK.neighbors]
-    if not neighbors then
-        return
-    end
-
-    local players = {player_id}
-    for _, neighbor_entry in Neighborhood.all(entry) do
-        create_neighbor_highlights(players, neighbor_entry, created_highlights)
-    end
-end
-
-local function show_inhabitants(player_id, entry, created_highlights)
-    local inhabitants = entry[EK.inhabitants]
-    local capacity = Housing.get_capacity(entry)
-    local entity = entry[EK.entity]
-
-    created_highlights[#created_highlights + 1] =
-        rendering.draw_text {
-        text = {"sosciencity.fraction", inhabitants, capacity, ""},
-        target = entity,
-        surface = entity.surface,
-        players = {player_id},
-        alignment = "center",
-        color = Colors.white
-    }
-end
-
-function Communication.create_mouseover_highlights(player_id, entity)
-    local name = entity.name
-    local created_highlights = {}
-
-    local building_details = buildings[name]
-    if building_details then
-        visualize_building_details(player_id, entity, building_details, created_highlights)
-    end
-
-    local entry = try_get(entity.unit_number)
-    if entry then
-        highlight_neighbors(player_id, entry, created_highlights)
-
-        if get_type(entry).is_inhabited then
-            show_inhabitants(player_id, entry, created_highlights)
-        end
-    end
-
-    if #created_highlights > 0 then
-        highlights[player_id] = created_highlights
-    end
-end
-
-function Communication.remove_mouseover_highlights(player_id)
-    local renders = highlights[player_id]
-
-    if not renders then
-        return
-    end
-
-    for i = 1, #renders do
-        local id = renders[i]
-        if rendering.is_valid(id) then
-            rendering.destroy(id)
-        end
-    end
-
-    highlights[player_id] = nil
 end
 
 local function log_population(current_tick)

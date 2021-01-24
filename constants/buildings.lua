@@ -1,4 +1,5 @@
 require("constants.enums")
+require("constants.housing")
 
 --- Defines the general custom properties for various entities.
 Buildings = {}
@@ -164,7 +165,13 @@ for _, details in pairs(Buildings.values) do
     end
 end
 
+local houses = Housing.values
+local housing_details = {
+    range = 40 -- range 'by foot'
+}
+
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
 function Buildings.get(entry)
-    return buildings[entry[EK.name]]
+    local name = entry[EK.name]
+    return buildings[name] or (houses[name] and housing_details) or nil
 end

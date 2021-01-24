@@ -7,6 +7,7 @@ Subentities = {}
     nothing
 ]]
 -- local often used globals for extreme performance gains
+
 Subentities.subentity_name_lookup = {
     [SubentityType.beacon] = "sosciencity-hidden-beacon"
 }
@@ -23,6 +24,7 @@ local get_inner_table = Tirislib_Tables.get_inner_table
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+
 local function get_subentity_name(_type, entity)
     if _type == SubentityType.eei then
         local width, height = get_size(entity)

@@ -13,9 +13,15 @@ local min = math.min
 local format = string.format
 local get_inner_table = Tirislib_Tables.get_inner_table
 
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
+
 function Handcrafting.init()
     global.blood_donations = {}
 end
+
+---------------------------------------------------------------------------------------------------
+-- << handcrafting finished stuff >>
 
 local function get_recent_donation_count(player_id)
     local log = get_inner_table(global.blood_donations, player_id)
@@ -73,6 +79,9 @@ function Handcrafting.on_craft(player_id, recipe_name)
         fn(player_id, recipe_name)
     end
 end
+
+---------------------------------------------------------------------------------------------------
+-- << handcrafting queued stuff >>
 
 local function produce_eggs(player_id, recipe_name, count)
     local player = game.players[player_id]
