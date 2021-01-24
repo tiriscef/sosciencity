@@ -2004,6 +2004,10 @@ local type_gui_specifications = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },
+    [Type.nightclub] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
     [Type.upbringing_station] = {
         creater = create_upbringing_station,
         updater = update_upbringing_station

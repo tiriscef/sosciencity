@@ -78,6 +78,11 @@ function Communication.load()
     set_locals()
 end
 
+function Communication.settings_update()
+    global = _ENV.global
+    generate_speakers_list()
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << flying texts >>
 
@@ -255,11 +260,6 @@ function Communication.update(current_tick)
     if current_tick % (7 * Time.minute) == (2 * Time.minute) then -- every 7 minutes, first time after 2 minutes
         useless_banter()
     end
-end
-
-function Communication.settings_update()
-    global = _ENV.global
-    generate_speakers_list()
 end
 
 return Communication

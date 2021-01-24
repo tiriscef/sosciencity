@@ -589,6 +589,12 @@ local function update_water_distributer(entry)
 end
 Register.set_entity_updater(Type.water_distributer, update_water_distributer)
 
+local function create_water_distributer(entry)
+    entry[EK.water_quality] = 0
+    entry[EK.water_name] = nil
+end
+Register.set_entity_creation_handler(Type.water_distributer, create_water_distributer)
+
 ---------------------------------------------------------------------------------------------------
 -- << waterwell >>
 

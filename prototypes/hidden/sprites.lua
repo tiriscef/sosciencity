@@ -42,8 +42,26 @@ Tirislib_Prototype.create {
 
 Tirislib_Prototype.create {
     type = "sprite",
+    name = "highlight-left-top-big",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-left-top-big.png",
+    size = 64,
+    scale = 0.5,
+    shift = {0.4, 0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
     name = "highlight-right-top",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-right-top.png",
+    size = 64,
+    scale = 0.5,
+    shift = {-0.4, 0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "highlight-right-top-big",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-right-top-big.png",
     size = 64,
     scale = 0.5,
     shift = {-0.4, 0.4}
@@ -60,8 +78,26 @@ Tirislib_Prototype.create {
 
 Tirislib_Prototype.create {
     type = "sprite",
+    name = "highlight-left-bottom-big",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-left-bottom-big.png",
+    size = 64,
+    scale = 0.5,
+    shift = {0.4, -0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
     name = "highlight-right-bottom",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-right-bottom.png",
+    size = 64,
+    scale = 0.5,
+    shift = {-0.4, -0.4}
+}
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "highlight-right-bottom-big",
+    filename = "__sosciencity-graphics__/graphics/utility/highlight-right-bottom-big.png",
     size = 64,
     scale = 0.5,
     shift = {-0.4, -0.4}
