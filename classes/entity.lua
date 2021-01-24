@@ -31,6 +31,9 @@ local Neighborhood = Neighborhood
 local Tirislib_Utils = Tirislib_Utils
 local Tirislib_Tables = Tirislib_Tables
 
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
+
 local function set_locals()
     global = _ENV.global
     caste_bonuses = global.caste_bonuses

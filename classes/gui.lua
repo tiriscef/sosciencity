@@ -27,11 +27,28 @@ local format = string.format
 local round = Tirislib_Utils.round
 local tostring = tostring
 
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
+
 local function set_locals()
     global = _ENV.global
     immigration = global.immigration
     population = global.population
     caste_points = global.caste_points
+end
+
+--- Initialize the guis for all existing players.
+function Gui.init()
+    set_locals()
+    global.details_view = {}
+
+    for _, player in pairs(game.players) do
+        Gui.create_guis_for_player(player)
+    end
+end
+
+function Gui.load()
+    set_locals()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2084,23 +2101,6 @@ end
 function Gui.create_guis_for_player(player)
     create_city_info_for_player(player)
     create_details_view_for_player(player)
-end
-
----------------------------------------------------------------------------------------------------
--- << lua state lifecycle stuff >>
-
---- Initialize the guis for all existing players.
-function Gui.init()
-    set_locals()
-    global.details_view = {}
-
-    for _, player in pairs(game.players) do
-        Gui.create_guis_for_player(player)
-    end
-end
-
-function Gui.load()
-    set_locals()
 end
 
 return Gui

@@ -24,6 +24,9 @@ local distance = Tirislib_Utils.maximum_metric_distance
 local get_inner_table = Tirislib_Tables.get_inner_table
 local subscriptions
 
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
+
 local function set_locals()
     subscriptions = global.subscriptions
 end
@@ -39,6 +42,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
+
 local function is_in_range(neighbor, entry, range)
     if range == "global" then
         return true

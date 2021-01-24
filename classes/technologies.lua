@@ -8,6 +8,7 @@ Technologies = {}
         [tech_name]: bool (researched) or int (level)
 ]]
 -- local often used globals for humongous performance gains
+
 local relevant_techs = {
     ["resettlement"] = true,
 }
@@ -83,6 +84,9 @@ function Technologies.finished(name)
         global.technologies[name] = determine_tech_level(name)
     end
 end
+
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
 
 --- Initialize the technology related contents of global.
 function Technologies.init()

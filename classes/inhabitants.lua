@@ -93,6 +93,9 @@ local table_multiply = Tirislib_Tables.multiply
 
 local Luaq_from = Tirislib_Luaq.from
 
+---------------------------------------------------------------------------------------------------
+-- << lua state lifecycle stuff >>
+
 local function set_locals()
     global = _ENV.global
     population = global.population

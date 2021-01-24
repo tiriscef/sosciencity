@@ -34,6 +34,7 @@ require("classes.technologies")
 require("classes.subentities")
 require("classes.neighborhood")
 require("classes.communication")
+require("classes.visualisation")
 require("classes.inventories")
 require("classes.inhabitants")
 require("classes.entity")
@@ -136,8 +137,8 @@ local update_details_view = Gui.update_details_view
 local update_scheduler = Scheduler.update
 local update_communication = Communication.update
 
-local create_mouseover_highlights = Communication.create_mouseover_highlights
-local remove_mouseover_highlights = Communication.remove_mouseover_highlights
+local create_mouseover_highlights = Visualisation.create_mouseover_highlights
+local remove_mouseover_highlights = Visualisation.remove_mouseover_highlights
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler functions >>
@@ -184,6 +185,7 @@ local function init()
     Technologies.init()
     Gui.init()
     Communication.init()
+    Visualisation.init()
     Entity.init()
     Handcrafting.init()
 
@@ -203,6 +205,7 @@ local function on_load()
     Inhabitants.load()
     Inventories.load()
     Communication.load()
+    Visualisation.load()
     Entity.load()
 end
 
