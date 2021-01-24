@@ -118,8 +118,7 @@ Buildings.values = {
     },
     ["nightclub"] = {
         type = Type.nightclub,
-        power_usage = 100,
-        range = 50
+        power_usage = 100
     },
     ["orangery"] = {
         Type.farm
