@@ -28,6 +28,7 @@ require("constants.time")
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
 require("classes.scheduler")
+require("classes.weather")
 require("classes.replacer")
 require("classes.register")
 require("classes.technologies")
@@ -128,7 +129,7 @@ local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
 local remove_entry = Register.remove_entry
 local add_to_register = Register.add
-local entity_update_cycle = Register.entity_update_cycle
+local update_entities = Register.entity_update_cycle
 local on_settings_pasted = Register.on_settings_pasted
 
 local update_inhabitants = Inhabitants.update
@@ -136,6 +137,7 @@ local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 local update_scheduler = Scheduler.update
 local update_communication = Communication.update
+local update_weather = Weather.update
 
 local create_mouseover_highlights = Visualisation.create_mouseover_highlights
 local remove_mouseover_highlights = Visualisation.remove_mouseover_highlights
@@ -146,12 +148,15 @@ local remove_mouseover_highlights = Visualisation.remove_mouseover_highlights
 local function update_cycle()
     local current_tick = game.tick
     ease_fear(current_tick)
+    update_scheduler(current_tick)
+    update_weather(current_tick)
     update_inhabitants(current_tick)
-    entity_update_cycle(current_tick)
+    update_entities(current_tick)
+
     update_city_info()
     update_details_view()
+
     update_communication(current_tick)
-    update_scheduler(current_tick)
 
     global.last_update = current_tick
 end
@@ -178,6 +183,7 @@ local function init()
     global.last_tile_update = -1
 
     Scheduler.init()
+    Weather.init()
     Neighborhood.init()
     Inhabitants.init()
     Inventories.init()
@@ -269,7 +275,7 @@ local function on_entity_removed(event)
         return
     end
 
-    remove_entity(entity, DestructionCause.unknown)
+    remove_entity(entity, DeconstructionCause.unknown)
 end
 
 local function on_entity_died(event)
@@ -290,7 +296,7 @@ local function on_entity_died(event)
             add_fear()
         end
 
-        remove_entry(entry, DestructionCause.destroyed)
+        remove_entry(entry, DeconstructionCause.destroyed)
     end
 end
 
@@ -305,7 +311,7 @@ local function on_entity_mined(event)
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
     if entry then
-        remove_entry(entry, DestructionCause.mined)
+        remove_entry(entry, DeconstructionCause.mined)
     end
 end
 

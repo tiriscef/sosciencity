@@ -588,6 +588,16 @@ local function update_population_flow(frame)
     population_flow["machine-count"].caption = {"sosciencity.machines", Register.get_machine_count()}
 
     population_flow["turret-count"].caption = {"sosciencity.turrets", Register.get_type_count(Type.turret)}
+
+    local climate = global.current_climate
+    local humidity = global.current_humidity
+    local weather_label = population_flow.weather
+    weather_label.caption = {"sosciencity.weather", Weather.weather_locales[humidity][climate]}
+    weather_label.tooltip = {
+        "sosciencity.explain-weather",
+        Weather.climate_locales[climate],
+        Weather.humidity_locales[humidity]
+    }
 end
 
 local function add_population_flow(container)
@@ -599,23 +609,30 @@ local function add_population_flow(container)
     }
     set_padding(frame, 2)
 
-    local population_label =
+    local populations =
         frame.add {
         type = "label",
         name = "population"
     }
-    population_label.style.bottom_margin = 4
+    populations.style.bottom_margin = 4
 
-    local machine_label =
+    local machines =
         frame.add {
         type = "label",
         name = "machine-count"
     }
-    machine_label.style.bottom_margin = 4
+    machines.style.bottom_margin = 4
+
+    local turrets =
+        frame.add {
+        type = "label",
+        name = "turret-count"
+    }
+    turrets.style.bottom_margin = 4
 
     frame.add {
         type = "label",
-        name = "turret-count"
+        name = "weather"
     }
 
     update_population_flow(container)

@@ -197,10 +197,6 @@ end
 local function init_custom_building(entry)
     local building_details = get_building_details(entry)
 
-    if not building_details then
-        return
-    end
-
     if building_details.workforce then
         entry[EK.worker_count] = 0
         entry[EK.workers] = {}
@@ -210,10 +206,6 @@ end
 local function update_custom_building(entry)
     local building_details = get_building_details(entry)
 
-    if not building_details then
-        return
-    end
-
     local workforce = building_details.workforce
     if workforce then
         update_workforce(entry, workforce)
@@ -222,10 +214,6 @@ end
 
 local function destroy_custom_building(entry)
     local building_details = get_building_details(entry)
-
-    if not building_details then
-        return
-    end
 
     if building_details.workforce then
         fire_all_workers(entry)
@@ -350,7 +338,7 @@ end
 --- @param entry Entry
 --- @param new_type Type
 function Register.change_type(entry, new_type)
-    remove_entry(entry, DestructionCause.type_change)
+    remove_entry(entry, DeconstructionCause.type_change)
 
     -- remove the sprites explicitly, because normally they get destroyed when the entity is destroyed
     Subentities.remove_sprites(entry)
