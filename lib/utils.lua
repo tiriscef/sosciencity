@@ -253,6 +253,28 @@ function Tirislib_Utils.occurence_probability(probability, tries)
     return 1 - (1 - probability) ^ tries
 end
 
+--- Returns the greatest number that is a divisor of both given numbers.
+--- @param m integer
+--- @param n integer
+--- @return integer
+function Tirislib_Utils.greatest_common_divisor(m, n)
+    while n ~= 0 do
+        local q = m
+        m = n
+        n = q % n
+    end
+    return m
+end
+local gcd = Tirislib_Utils.greatest_common_divisor
+
+--- Returns the lowest number that has both given numbers as divisors.
+---@param m integer
+---@param n integer
+---@return integer
+function Tirislib_Utils.lowest_common_multiple(m, n)
+    return (m ~= 0 and n ~= 0) and m * n / gcd(m, n) or 0
+end
+
 function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
     local dist_x = abs(x1 - x2)
     local dist_y = abs(y1 - y2)

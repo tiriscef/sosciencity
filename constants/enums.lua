@@ -224,12 +224,12 @@ EK.graduates = 1002
 
 --<< causes >>
 --- Enum table for destruction causes
-DestructionCause = {}
+DeconstructionCause = {}
 
-DestructionCause.unknown = 0
-DestructionCause.mined = 1
-DestructionCause.destroyed = 2
-DestructionCause.type_change = 3
+DeconstructionCause.unknown = 0
+DeconstructionCause.mined = 1
+DeconstructionCause.destroyed = 2
+DeconstructionCause.type_change = 3
 
 --- Enum table for emigration causes
 EmigrationCause = {}
@@ -329,7 +329,7 @@ Gender.ga = 4
 Climate = {}
 
 Climate.hot = 1
-Climate.moderate = 2
+Climate.temperate = 2
 Climate.cold = 3
 
 --- Enum table for humidity

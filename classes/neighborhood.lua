@@ -68,19 +68,15 @@ end
 
 local function connect_bidirectional(entry, neighbor)
     local building_details = get_building_details(entry)
-    if building_details then
-        local range = building_details.range
-        if range and is_in_range(entry, neighbor, range) then
-            return true
-        end
+    local range = building_details.range
+    if range and is_in_range(entry, neighbor, range) then
+        return true
     end
 
     building_details = get_building_details(neighbor)
-    if building_details then
-        local range = building_details.range
-        if range and is_in_range(neighbor, entry, range) then
-            return true
-        end
+    range = building_details.range
+    if range and is_in_range(neighbor, entry, range) then
+        return true
     end
 
     return false
@@ -88,11 +84,9 @@ end
 
 local function connect_from_neighbor(entry, neighbor)
     local building_details = get_building_details(neighbor)
-    if building_details then
-        local range = building_details.range
-        if range and is_in_range(neighbor, entry, range) then
-            return true
-        end
+    local range = building_details.range
+    if range and is_in_range(neighbor, entry, range) then
+        return true
     end
 
     return false
@@ -100,11 +94,9 @@ end
 
 local function connect_to_neighbor(entry, neighbor)
     local building_details = get_building_details(entry)
-    if building_details then
-        local range = building_details.range
-        if range and is_in_range(entry, neighbor, range) then
-            return true
-        end
+    local range = building_details.range
+    if range and is_in_range(entry, neighbor, range) then
+        return true
     end
 
     return false
@@ -208,12 +200,10 @@ function Neighborhood.establish_new_neighbor(entry)
 
     -- Subscribe to the neighbors this custom building needs
     local building_details = get_building_details(entry)
-    if building_details then
-        local workforce = building_details.workforce
-        if workforce then
-            for _, caste in pairs(workforce.castes) do
-                subscribe_to(entry, caste, ConnectionType.from_neighbor)
-            end
+    local workforce = building_details.workforce
+    if workforce then
+        for _, caste in pairs(workforce.castes) do
+            subscribe_to(entry, caste, ConnectionType.from_neighbor)
         end
     end
 

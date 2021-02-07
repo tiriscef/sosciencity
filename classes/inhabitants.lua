@@ -1656,7 +1656,7 @@ function Inhabitants.remove_house(entry, cause)
     free_houses[improvised][caste_id][unit_number] = nil
     Tirislib_Tables.remove_all(next_free_houses[improvised][caste_id], unit_number)
 
-    if cause == DestructionCause.destroyed then
+    if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
     else
         add_to_homeless_pool(entry)

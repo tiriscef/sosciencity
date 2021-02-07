@@ -69,12 +69,10 @@ end
 --- @param entry Entry
 function Subentities.add_all_for(entry)
     local building_details = get_building_details(entry)
-    if building_details then
-        local power_usage = building_details.power_usage
-        if power_usage then
-            add(entry, SubentityType.eei)
-            entry[EK.power_usage] = power_usage
-        end
+    local power_usage = building_details.power_usage
+    if power_usage then
+        add(entry, SubentityType.eei)
+        entry[EK.power_usage] = power_usage
     end
 
     local type_definition = get_type(entry)

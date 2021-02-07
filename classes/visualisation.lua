@@ -85,7 +85,9 @@ local building_details_visualization_lookup = {
     range = highlight_range
 }
 
-local function visualize_building_details(player_id, entry, building_details, created_highlights)
+local function visualize_building_details(player_id, entry, created_highlights)
+    local building_details = get_building_details(entry)
+
     for key in pairs(building_details) do
         local fn = building_details_visualization_lookup[key]
 
@@ -189,10 +191,7 @@ function Visualisation.create_mouseover_highlights(player_id, entity)
             show_inhabitants(player_id, entry, created_highlights)
         end
 
-        local building_details = get_building_details(entry)
-        if building_details then
-            visualize_building_details(player_id, entry, building_details, created_highlights)
-        end
+        visualize_building_details(player_id, entry, created_highlights)
 
         if #created_highlights > 0 then
             highlights[player_id] = created_highlights
