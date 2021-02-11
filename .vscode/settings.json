@@ -16,6 +16,16 @@
         "util",
         "log",
         "unpack",
-        "commands"
+        "commands",
+        "pairs",
+        "next",
+        "error",
+        "pcall",
+        "setmetatable",
+        "type",
+        "tostring"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-field"
     ]
 }

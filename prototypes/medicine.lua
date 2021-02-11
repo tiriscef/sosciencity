@@ -10,17 +10,11 @@ local medicine_items = {
 }
 
 local function find_curable_diseases(item_name)
-    local ret = {""}
-    local first = true
+    local ret = {}
 
     for _, disease in pairs(Diseases.values) do
         if disease.cure_items and disease.cure_items[item_name] then
-            if not first then
-                ret[#ret + 1] = "[color=#FFFFFF] - [/color]"
-            end
-
             ret[#ret + 1] = disease.localised_name
-            first = false
         end
     end
 
@@ -32,9 +26,9 @@ for _, medicine in pairs(medicine_items) do
     local distinctions = medicine.distinctions
 
     distinctions.localised_description = {
-        "item-description.medicine",
+        "sosciencity-util.medicine",
         {"item-description." .. medicine.name},
-        find_curable_diseases(medicine.name)
+        Tirislib_Locales.create_enumeration(find_curable_diseases(medicine.name), "[color=#FFFFFF], [/color]")
     }
 end
 

@@ -215,7 +215,7 @@ local data_details = {
         main_entity = "sheltered-house"
     },
     ["small-prefabricated-house"] = {
-        picture = Tirislib_Entity.create_standard_picture(
+        picture = Tirislib_Entity.create_standard_picture_old(
             "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
             13,
             12,
@@ -223,6 +223,61 @@ local data_details = {
         ),
         width = 5,
         height = 5,
+        tech_level = 1
+    },
+    ["bunkerhouse"] = {
+        picture = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse.png",
+                    priority = "high",
+                    width = 384,
+                    height = 288,
+                    shift = {2.0, -0.5},
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-hr.png",
+                        priority = "high",
+                        width = 768,
+                        height = 576,
+                        shift = {2.0, -0.5},
+                        scale = 0.5
+                    }
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-shadowmap.png",
+                    priority = "high",
+                    width = 384,
+                    height = 288,
+                    shift = {2.0, -0.5},
+                    draw_as_shadow = true,
+                    hr_version = {
+                        filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-shadowmap-hr.png",
+                        priority = "high",
+                        width = 768,
+                        height = 576,
+                        shift = {2.0, -0.5},
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        width = 8,
+        height = 6,
+        tech_level = 1
+    },
+    ["huwanic-mansion"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/huwanic-mansion/huwanic-mansion",
+            width = 22,
+            height = 20,
+            shift = {5.5, -3.0},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 9,
+        height = 8,
         tech_level = 1
     }
 }
@@ -286,7 +341,7 @@ local function create_item(house_name, house, details)
         place_result = house_name,
         pictures = Sosciencity_Config.blueprint_on_belt,
         localised_description = {
-            "item-description.housing",
+            "sosciencity-util.housing",
             house.room_count,
             {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
             {"description.sos-details", house.comfort},
