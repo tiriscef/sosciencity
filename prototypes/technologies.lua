@@ -567,30 +567,7 @@ Tirislib_Technology.create {
 }
 
 ---------------------------------------------------------------------------------------------------
--- << other technologies >>
-Tirislib_Technology.create {
-    type = "technology",
-    name = "resettlement",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png", -- TODO create icon
-    icon_size = 128,
-    upgrade = false,
-    prerequisites = {"ember-caste"},
-    effects = {
-        {
-            type = "nothing",
-            effect_description = {"description.resettlement"}
-        }
-    },
-    unit = {
-        count = 233,
-        ingredients = {
-            {"automation-science-pack", 1},
-            {"logistic-science-pack", 1},
-            {"chemical-science-pack", 1}
-        },
-        time = 30
-    }
-}
+-- << processing >>
 
 Tirislib_Technology.create {
     type = "technology",

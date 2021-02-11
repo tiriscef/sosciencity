@@ -768,8 +768,65 @@ function Tirislib_Tables.add(lh, rh)
     end
 end
 
+--- Multiplies all containing values of the given table with the given multiplier.
+--- @param tbl table
+--- @param multiplier number
 function Tirislib_Tables.multiply(tbl, multiplier)
     for key, value in pairs(tbl) do
         tbl[key] = value * multiplier
     end
+end
+
+---------------------------------------------------------------------------------------------------
+--- Just some locale helper functions
+Tirislib_Locales = {}
+
+--- Shortens the ""-enumeration to ensure that there aren't more than the allowed number of elements.
+local function shorten_enumeration(enumeration)
+    if #enumeration <= 20 then
+        return
+    end
+
+    local copy = {}
+    for i = 2, #enumeration do
+        copy[#copy + 1] = enumeration[i]
+        enumeration[i] = nil
+    end
+
+    for i = 1, #copy do
+        local subtable_index = floor(i / 20) + 2
+        if not enumeration[subtable_index] then
+            enumeration[subtable_index] = {""}
+        end
+        local subtable = enumeration[subtable_index]
+        subtable[#subtable + 1] = copy[i]
+    end
+
+    shorten_enumeration(enumeration)
+end
+
+function Tirislib_Locales.create_enumeration(elements, separator, last_separator)
+    separator = separator or ", "
+    local ret = {""}
+    local at_least_one = false
+
+    for _, element in pairs(elements) do
+        ret[#ret + 1] = element
+        ret[#ret + 1] = separator
+        at_least_one = true
+    end
+    ret[#ret] = nil
+
+    if last_separator and #ret > 2 then
+        ret[#ret - 1] = last_separator
+    end
+
+    if not at_least_one then
+        -- the given elements table was empty
+        return ""
+    end
+
+    shorten_enumeration(ret)
+
+    return ret
 end

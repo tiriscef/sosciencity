@@ -200,7 +200,7 @@ end
 
 local PIXEL_PER_TILE = 32
 local PIXEL_PER_TILE_HR = 64
-function Tirislib_Entity.create_standard_picture(path, width, height, shift)
+function Tirislib_Entity.create_standard_picture_old(path, width, height, shift)
     return {
         layers = {
             {
@@ -237,6 +237,93 @@ function Tirislib_Entity.create_standard_picture(path, width, height, shift)
             }
         }
     }
+end
+
+function Tirislib_Entity.create_standard_picture(details)
+    local path = details.path
+    local width = details.width
+    local height = details.height
+    local shift = details.shift
+
+    local layers = {
+        {
+            filename = path .. "-lr.png",
+            priority = "high",
+            width = width * PIXEL_PER_TILE,
+            height = height * PIXEL_PER_TILE,
+            shift = shift,
+            hr_version = {
+                filename = path .. ".png",
+                priority = "high",
+                width = width * PIXEL_PER_TILE_HR,
+                height = height * PIXEL_PER_TILE_HR,
+                shift = shift,
+                scale = 0.5
+            }
+        }
+    }
+
+    if details.shadowmap then
+        layers[#layers + 1] = {
+            filename = path .. "-shadowmap-lr.png",
+            priority = "high",
+            width = width * PIXEL_PER_TILE,
+            height = height * PIXEL_PER_TILE,
+            shift = shift,
+            draw_as_shadow = true,
+            hr_version = {
+                filename = path .. "-shadowmap.png",
+                priority = "high",
+                width = width * PIXEL_PER_TILE_HR,
+                height = height * PIXEL_PER_TILE_HR,
+                shift = shift,
+                scale = 0.5,
+                draw_as_shadow = true
+            }
+        }
+    end
+
+    if details.lightmap then
+        layers[#layers + 1] = {
+            filename = path .. "-lightmap-lr.png",
+            priority = "high",
+            width = width * PIXEL_PER_TILE,
+            height = height * PIXEL_PER_TILE,
+            shift = shift,
+            draw_as_light = true,
+            hr_version = {
+                filename = path .. "-lightmap.png",
+                priority = "high",
+                width = width * PIXEL_PER_TILE_HR,
+                height = height * PIXEL_PER_TILE_HR,
+                shift = shift,
+                scale = 0.5,
+                draw_as_light = true
+            }
+        }
+    end
+
+    if details.glow then
+        layers[#layers + 1] = {
+            filename = path .. "-glow-lr.png",
+            priority = "high",
+            width = width * PIXEL_PER_TILE,
+            height = height * PIXEL_PER_TILE,
+            shift = shift,
+            draw_as_glow = true,
+            hr_version = {
+                filename = path .. "-glow.png",
+                priority = "high",
+                width = width * PIXEL_PER_TILE_HR,
+                height = height * PIXEL_PER_TILE_HR,
+                shift = shift,
+                scale = 0.5,
+                draw_as_glow = true
+            }
+        }
+    end
+
+    return {layers = layers}
 end
 
 function Tirislib_Entity.get_standard_impact_sound()

@@ -29,6 +29,8 @@ local tostring = tostring
 
 local Luaq_from = Tirislib_Luaq.from
 
+local display_enumeration = Tirislib_Locales.create_enumeration
+
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
@@ -167,49 +169,6 @@ local function display_time(ticks)
     minutes = minutes % 60
 
     return {"sosciencity.time", hours, minutes, seconds}
-end
-
---- Shortens the ""-enumeration to ensure that there aren't more than the allowed number of elements.
-local function shorten_enumeration(enumeration)
-    if #enumeration <= 20 then
-        return
-    end
-
-    local copy = {}
-    for i = 2, #enumeration do
-        copy[#copy + 1] = enumeration[i]
-        enumeration[i] = nil
-    end
-
-    for i = 1, #copy do
-        local subtable_index = floor(i / 20) + 2
-        if not enumeration[subtable_index] then
-            enumeration[subtable_index] = {""}
-        end
-        local subtable = enumeration[subtable_index]
-        subtable[#subtable + 1] = copy[i]
-    end
-
-    shorten_enumeration(enumeration)
-end
-
-local function display_enumeration(elements, separator, last_separator)
-    separator = separator or ", "
-    local ret = {""}
-
-    for _, element in pairs(elements) do
-        ret[#ret + 1] = element
-        ret[#ret + 1] = separator
-    end
-    ret[#ret] = nil
-
-    if last_separator and #ret > 2 then
-        ret[#ret - 1] = last_separator
-    end
-
-    shorten_enumeration(ret)
-
-    return ret
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1094,8 +1053,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
         type = "button",
         name = format(unique_prefix_builder, "kickout", ""),
         caption = {"sosciencity.kickout"},
-        tooltip = global.technologies.resettlement and {"sosciencity.with-resettlement"} or
-            {"sosciencity.no-resettlement"},
+        tooltip = {"sosciencity.with-resettlement"},
         mouse_button_filter = {"left"}
     }
     kickout_button.style.right_margin = 4

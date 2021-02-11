@@ -54,7 +54,7 @@ for _, food in pairs(foods) do
     distinctions.durability_description_value = "description.food-value"
     distinctions.infinite = false
     distinctions.localised_description = {
-        "item-description.foods",
+        "sosciencity-util.foods",
         {"item-description." .. food.name},
         {"food-category." .. food_details.food_category},
         {"food-group." .. food_details.group},

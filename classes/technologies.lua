@@ -9,9 +9,7 @@ Technologies = {}
 ]]
 -- local often used globals for humongous performance gains
 
-local relevant_techs = {
-    ["resettlement"] = true,
-}
+local relevant_techs = {}
 
 -- add caste techs
 for _, caste in pairs(Castes.values) do

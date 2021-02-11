@@ -949,22 +949,17 @@ end
 local function add_to_homeless_pool(group)
     local caste_id = group[EK.type]
     InhabitantGroup.merge(homeless[caste_id], group)
-
-    if global.technologies["resettlement"] then
-        try_house_homeless()
-    end
+    try_house_homeless()
 end
 
 local function update_homelessness()
-    local resettlement = global.technologies["resettlement"]
-
     for _, homeless_group in pairs(homeless) do
         update_happiness(homeless_group, 0, 1800)
         update_health(homeless_group, 0, 1800)
         update_sanity(homeless_group, 0, 1800)
 
         local count = homeless_group[EK.inhabitants]
-        local emigrating = floor(count * (resettlement and 0.1 or 0.3))
+        local emigrating = ceil(count * 0.1)
         local emigrated = take_inhabitants(homeless_group, emigrating)
         Communication.log_emigration(emigrated, EmigrationCause.homeless)
     end

@@ -43,6 +43,16 @@ Housing.values = {
         room_count = 25,
         comfort = 5,
         qualities = {}
+    },
+    ["bunkerhouse"] = {
+        room_count = 25,
+        comfort = 5,
+        qualities = {}
+    },
+    ["huwanic-mansion"] = {
+        room_count = 25,
+        comfort = 5,
+        qualities = {}
     }
 }
 local houses = Housing.values
