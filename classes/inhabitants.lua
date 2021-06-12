@@ -278,11 +278,11 @@ function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_
 
     for i = 1, actual_count do
         local disease_id =
-                Tirislib_Tables.pick_random_subtable_weighted_by_key(
-                Diseases.by_category[disease_category],
-                frequency_keys[disease_category],
-                Diseases.frequency_sums[disease_category]
-            )
+            Tirislib_Tables.pick_random_subtable_weighted_by_key(
+            Diseases.by_category[disease_category],
+            frequency_keys[disease_category],
+            Diseases.frequency_sums[disease_category]
+        )
         make_sick(group, disease_id, count_per_pick + (i <= modulo and 1 or 0))
     end
 end
@@ -1246,7 +1246,7 @@ end
 local function cure_side_effects(entry, disease_id, count, cured)
     local disease = disease_values[disease_id]
 
-    local lethal_probability = cured and disease.complication_lethality or disease.lethality
+    local lethal_probability = (cured and disease.complication_lethality) or (not cured and disease.lethality)
     local dead_count = 0
     if lethal_probability then
         dead_count = coin_flips(cured and disease.complication_lethality or disease.lethality, count)

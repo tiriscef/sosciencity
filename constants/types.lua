@@ -290,11 +290,11 @@ Types.definitions = {
     },
     [Type.cooling_warehouse] = {
         localised_name = {"sosciencity.cooling-warehouse"},
-        localised_description = {"sosciencity.cooling-warehouse"}
+        localised_description = {"sosciencity.explain-cooling-warehouse"}
     },
     [Type.waste_dump] = {
         localised_name = {"sosciencity.waste-dump"},
-        localised_description = {"sosciencity.waste-dump"}
+        localised_description = {"sosciencity.explain-waste-dump"}
     }
 }
 local definitions = Types.definitions
