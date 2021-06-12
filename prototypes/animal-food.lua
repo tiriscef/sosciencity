@@ -13,20 +13,24 @@ Tirislib_Item.batch_create(animal_food_items, {subgroup = "sosciencity-animal-fo
 -- << recipes >>
 Tirislib_RecipeGenerator.create {
     product = "bird-food",
+--    ingredients = {{}},
     allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
     product = "fish-food",
+    ingredients = {{type = "item", name = "leafage", amount = 1}},
     allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
     product = "carnivore-food",
+    ingredients = {{type = "item", name = "slaughter-waste", amount = 1}},
     allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
     product = "herbivore-food",
+    ingredients = {{type = "item", name = "leafage", amount = 1}},
     allow_productivity = true
 }

@@ -19,45 +19,107 @@ Tirislib_Item.batch_create(furniture_items, {subgroup = "sosciencity-furniture",
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 Tirislib_RecipeGenerator.create {
-    product = "air-conditioner"
+    product = "air-conditioner",
+    themes = {
+        {"electronics", 1, 2},
+        {"casing", 1, 2}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "bed"
+    product = "bed",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 5},
+        {type = "item", name = "cloth", amount = 2},
+        {type = "item", name = "plemnemm-cotton", amount = 10},
+        {type = "item", name = "screw-set", amount = 1}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "carpet"
+    product = "carpet",
+    ingredients = {
+        {type = "item", name = "cloth", amount = 2},
+        {type = "item", name = "yarn", amount = 1}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "chair"
+    product = "chair",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 2},
+        {type = "item", name = "screw-set", amount = 1}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "cupboard"
+    product = "cupboard",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 5},
+        {type = "item", name = "screw-set", amount = 1}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "curtain"
+    product = "curtain",
+    ingredients = {
+        {type = "item", name = "cloth", amount = 2},
+        {type = "item", name = "yarn", amount = 1}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "painting"
+    product = "painting",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 1},
+        {type = "item", name = "cloth", amount = 1}
+    },
+    category = "sosciencity-caste-ember",
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "refrigerator"
+    product = "refrigerator",
+    themes = {
+        {"electronics", 1, 2},
+        {"casing", 1, 2},
+        {"cooling_fluid", 20, 0}
+    },
+    category = "crafting-with-fluid",
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "sofa"
+    product = "sofa",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 5},
+        {type = "item", name = "cloth", amount = 2},
+        {type = "item", name = "plemnemm-cotton", amount = 10},
+        {type = "item", name = "screw-set", amount = 2}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "stove"
+    product = "stove",
+    themes = {
+        {"wiring", 5, 0},
+        {"casing", 1, 2}
+    },
+    allow_productivity = true
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "table"
+    product = "table",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 4},
+        {type = "item", name = "screw-set", amount = 1}
+    },
+    allow_productivity = true
 }

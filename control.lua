@@ -1,54 +1,15 @@
 ---------------------------------------------------------------------------------------------------
--- << development tools >>
+-- << debug stuff >>
+
 if script.active_mods["sosciencity-debug"] then
+    DEBUG = true
+
+    -- development tools
     pcall(require, "__debugadapter__/debugadapter.lua")
     pcall(require, "__profiler__/profiler.lua")
-end
 
----------------------------------------------------------------------------------------------------
--- << helper functions >>
-require("lib.utils")
-
----------------------------------------------------------------------------------------------------
--- << runtime finals >>
-require("constants.biology")
-require("constants.castes")
-require("constants.colors")
-require("constants.diseases")
-require("constants.enums")
-require("constants.item-constants")
-require("constants.types")
-require("constants.food")
-require("constants.housing")
-require("constants.buildings")
-require("constants.drinking-water")
-require("constants.speakers")
-require("constants.time")
-
----------------------------------------------------------------------------------------------------
--- << classes >>
-require("classes.scheduler")
-require("classes.weather")
-require("classes.replacer")
-require("classes.register")
-require("classes.technologies")
-require("classes.subentities")
-require("classes.neighborhood")
-require("classes.communication")
-require("classes.visualisation")
-require("classes.inventories")
-require("classes.inhabitants")
-require("classes.entity")
-require("classes.handcrafting")
-require("classes.gui")
-
----------------------------------------------------------------------------------------------------
--- << tests >>
-if script.active_mods["sosciencity-debug"] then
+    -- tests
     require("lib.testing")
-
-    require("tests.utils")
-    require("tests.inhabitants")
 
     commands.add_command(
         "sosciencity-tests",
@@ -95,7 +56,49 @@ if script.active_mods["sosciencity-debug"] then
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << helper functions >>
+
+require("lib.utils")
+
+---------------------------------------------------------------------------------------------------
+-- << runtime finals >>
+
+require("constants.biology")
+require("constants.castes")
+require("constants.colors")
+require("constants.diseases")
+require("constants.enums")
+require("constants.item-constants")
+require("constants.types")
+require("constants.food")
+require("constants.housing")
+require("constants.buildings")
+require("constants.drinking-water")
+require("constants.speakers")
+require("constants.time")
+require("constants.unlocks")
+
+---------------------------------------------------------------------------------------------------
+-- << classes >>
+
+require("classes.scheduler")
+require("classes.weather")
+require("classes.replacer")
+require("classes.register")
+require("classes.technologies")
+require("classes.subentities")
+require("classes.neighborhood")
+require("classes.communication")
+require("classes.visualisation")
+require("classes.inventories")
+require("classes.inhabitants")
+require("classes.entity")
+require("classes.handcrafting")
+require("classes.gui")
+
+---------------------------------------------------------------------------------------------------
 -- EmmyLua stuff
+
 ---@class Entity
 ---@class Player
 ---@class Inventory
@@ -104,9 +107,11 @@ end
 ---@class InhabitantGroup
 ---@class DiseaseGroup
 ---@class DiseaseID
+---@class DiseaseCategory
 ---@class AgeGroup
 ---@class GenderGroup
 ---@class LuaqQuery
+---@class locale
 
 --[[
     Data this script stores in global
@@ -132,12 +137,16 @@ local add_to_register = Register.add
 local update_entities = Register.entity_update_cycle
 local on_settings_pasted = Register.on_settings_pasted
 
+local unlock_on_mined_entity = Technologies.on_mined_entity
+local on_technology_finished = Technologies.finished
+
 local update_inhabitants = Inhabitants.update
 local update_city_info = Gui.update_city_info
 local update_details_view = Gui.update_details_view
 local update_scheduler = Scheduler.update
 local update_communication = Communication.update
 local update_weather = Weather.update
+local update_technologies = Technologies.update
 
 local create_mouseover_highlights = Visualisation.create_mouseover_highlights
 local remove_mouseover_highlights = Visualisation.remove_mouseover_highlights
@@ -147,11 +156,13 @@ local remove_mouseover_highlights = Visualisation.remove_mouseover_highlights
 
 local function update_cycle()
     local current_tick = game.tick
+
     ease_fear(current_tick)
     update_scheduler(current_tick)
     update_weather(current_tick)
     update_inhabitants(current_tick)
     update_entities(current_tick)
+    update_technologies()
 
     update_city_info()
     update_details_view()
@@ -206,6 +217,7 @@ local function on_load()
 
     Scheduler.load()
     Neighborhood.load()
+    Technologies.load()
     Register.load()
     Gui.load()
     Inhabitants.load()
@@ -313,6 +325,8 @@ local function on_entity_mined(event)
     if entry then
         remove_entry(entry, DeconstructionCause.mined)
     end
+
+    unlock_on_mined_entity(event.buffer)
 end
 
 local function on_entity_settings_pasted(event)
@@ -333,12 +347,7 @@ local function on_entity_settings_pasted(event)
     local source_type = source_entry[EK.type]
     local destination_type = destination_entry[EK.type]
 
-    -- TODO: make the special case a regular one to simplify this code
-    if type_definitions[source_type].is_inhabited and destination_type == Type.empty_house then
-        Inhabitants.try_allow_for_caste(destination_entry, source_type, true)
-    else
-        on_settings_pasted(source_type, source_entry, destination_type, destination_entry)
-    end
+    on_settings_pasted(source_type, source_entry, destination_type, destination_entry)
 end
 
 local function on_configuration_change()
@@ -377,8 +386,6 @@ local function on_gui_closed(event)
         Gui.close_details_view_for_player(player)
     end
 end
-
-local on_technology_finished = Technologies.finished
 
 local function on_research_finished(event)
     on_technology_finished(event.research.name)
@@ -441,6 +448,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
+
 -- initialisation
 script.on_init(init)
 script.on_load(on_load)

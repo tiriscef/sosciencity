@@ -83,7 +83,7 @@ Tirislib_Entity.create {
                 height = sprite_height * 32,
                 shift = {0.0, -1.0},
                 line_length = 20,
-                animation_speed = 12 / 60,
+                animation_speed = 10 / 60,
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
                     frame_count = 60,
@@ -93,7 +93,7 @@ Tirislib_Entity.create {
                     scale = 0.5,
                     shift = {0.0, -1.0},
                     line_length = 10,
-                    animation_speed = 12 / 60
+                    animation_speed = 10 / 60
                 }
             }
         }

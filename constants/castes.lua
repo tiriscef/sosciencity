@@ -319,7 +319,6 @@ Castes.values = {
         sanity_disease_resilience = 1.5
     }
 }
-local castes = Castes.values
 
 --- The number of people that leave a house per minute if they are unhappy.
 Castes.emigration_coefficient = 0.8 / Time.minute * -1

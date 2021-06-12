@@ -28,6 +28,7 @@ Tirislib_Entity.create {
     minable = {mining_time = 0.5, result = "farm"},
     max_health = 200,
     corpse = "farm-remnants",
+    dying_explosion = "assembling-machine-1-explosion";
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},

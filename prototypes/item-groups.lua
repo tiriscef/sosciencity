@@ -143,14 +143,20 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas",
+        name = "sosciencity-ideas-per-hand",
         group = "sosciencity-production",
         order = "aia"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-ideas",
+        group = "sosciencity-production",
+        order = "aib"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-inhabitants",
         group = "sosciencity-production",
         order = "aja"
-    },
+    }
 }

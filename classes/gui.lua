@@ -30,6 +30,7 @@ local tostring = tostring
 local Luaq_from = Tirislib_Luaq.from
 
 local display_enumeration = Tirislib_Locales.create_enumeration
+local display_time = Tirislib_Locales.display_time
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -159,16 +160,6 @@ local function display_materials(materials)
     end
 
     return ret
-end
-
-local function display_time(ticks)
-    local seconds = ceil(ticks / 60)
-    local minutes = floor(seconds / 60)
-    seconds = seconds % 60
-    local hours = floor(minutes / 60)
-    minutes = minutes % 60
-
-    return {"sosciencity.time", hours, minutes, seconds}
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -979,10 +970,10 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
 
     local disease_progress_flow = get_kv_value_element(general_list, "disease-rate")
-    for category, id in pairs(DiseaseCategory) do
-        local progress_per_tick = Inhabitants.disease_progress_updaters[id](entry, 1)
+    for category, updater in pairs(Inhabitants.disease_progress_updaters) do
+        local progress_per_tick = updater(entry, 1)
         local ticks_till_disease = ceil(1 / progress_per_tick)
-        local label = disease_progress_flow[category]
+        local label = disease_progress_flow[tostring(category)]
         label.caption = {
             "sosciencity.show-disease-rate",
             display_time(ticks_till_disease),
@@ -1013,11 +1004,11 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
 
     local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity.rate"})
-    for category in pairs(DiseaseCategory) do
+    for category in pairs(Inhabitants.disease_progress_updaters) do
         local label =
             disease_progress_flow.add {
             type = "label",
-            name = category
+            name = tostring(category)
         }
         label.style.single_line = false
     end
@@ -1682,7 +1673,8 @@ local function create_disease_catalogue(container)
             data_list.add {
             type = "label",
             name = "head",
-            caption = {"disease-category-name." .. category_name}
+            caption = {"disease-category-name." .. category_name},
+            tooltip = {"disease-category-description." .. category_name}
         }
         head.style.font = "default-bold"
 
@@ -1707,7 +1699,7 @@ local function update_hospital_details(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.operations])})
+    set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.workhours])})
 
     local facility_flow = get_kv_value_element(building_data, "facilities")
     facility_flow.clear()

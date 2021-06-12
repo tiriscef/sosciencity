@@ -13,6 +13,8 @@ Communication = {}
     global.past_banter_index: int
 
     global.(tiriscef/profanity): bool (if they are enabled)
+
+    global.logs: table
 ]]
 -- local often used globals for smallish performance gains
 
@@ -24,6 +26,8 @@ local fluid_production
 local item_statistics
 local item_consumption
 local item_production
+
+local logs
 
 local castes = Castes.values
 
@@ -56,6 +60,8 @@ local function set_locals()
     item_consumption = global.item_consumption
     item_production = global.item_production
 
+    logs = global.logs
+
     generate_speakers_list()
 end
 
@@ -66,6 +72,16 @@ function Communication.init()
     global.fluid_production = {}
     global.item_consumption = {}
     global.item_production = {}
+
+    global.logs = {
+        emigration = {},
+        immigration = {},
+        casualty = {},
+        recovery = {},
+        treatment = {},
+        disease_death = {},
+        infection = {}
+    }
 
     global.past_banter = {}
     global.past_banter_index = 1
@@ -124,10 +140,12 @@ local function flush_log(list, statistic, multiplier)
 
         if amount_to_log > 0 then
             statistic.on_flow(name, amount_to_log * multiplier)
-            list[name] = list[name] - amount_to_log
 
-            if list[name] == 0 then
+            local new_amount = amount - amount_to_log
+            if new_amount == 0 then
                 list[name] = nil
+            else
+                list[name] = new_amount
             end
         end
     end
@@ -143,9 +161,6 @@ local function flush_logs()
     flush_log(item_production, item_statistics, 1)
     flush_log(fluid_consumption, fluid_statistics, -1)
     flush_log(fluid_production, fluid_statistics, 1)
-end
-
-local function log_population(current_tick)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -212,32 +227,24 @@ function Communication.caste_allowed_in(entry, caste_id)
     create_flying_text(
         entry,
         {
-            "flying-text.set-caste",
+            "sosciencity.set-caste",
             "[img=technology/" .. caste.tech_name .. "]",
             {"caste-name." .. caste.name}
         }
     )
 end
 
-function Communication.log_emigration(group, cause)
-end
+function Communication.caste_not_allowed_in(entry, caste_id)
+    local caste = castes[caste_id]
 
-function Communication.log_immigration(group)
-end
-
-function Communication.log_casualties(group)
-end
-
-function Communication.log_recovery(disease_id, count)
-end
-
-function Communication.log_treatment(disease_id, count)
-end
-
-function Communication.log_disease_deaths(disease_id, count)
-end
-
-function Communication.log_infected(disease_id, count)
+    create_flying_text(
+        entry,
+        {
+            "sosciencity.set-caste-denied",
+            "[img=technology/" .. caste.tech_name .. "]",
+            {"caste-name." .. caste.name}
+        }
+    )
 end
 
 function Communication.player_got_run_over()
@@ -248,6 +255,37 @@ function Communication.player_got_run_over()
     local speaker_name, speaker = pick_random_subtable_weighted_by_key(speakers, "roadkill_banter_count")
     local line = random(speaker.roadkill_banter_count)
     Scheduler.plan_event_in("say", FOLLOWUP_DELAY, speaker_name, "train-" .. line)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << logs >>
+
+local function log_population(current_tick)
+end
+
+function Communication.log_emigration(group, cause)
+end
+
+function Communication.log_immigration(group)
+end
+
+function Communication.log_death(group, cause)
+end
+
+function Communication.log_diseased(disease_id, count, cause)
+
+end
+
+function Communication.log_recovery(disease_id, count)
+end
+
+function Communication.log_treatment(disease_id, count)
+end
+
+function Communication.log_disease_death(disease_id, count)
+end
+
+function Communication.log_infected(disease_id, count)
 end
 
 ---------------------------------------------------------------------------------------------------

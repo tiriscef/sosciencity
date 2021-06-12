@@ -69,7 +69,7 @@ for index, egg in pairs({"huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) 
         energy_required = 120,
         expensive_energy_required = 160,
         themes = {{"genetical", 1}},
-        category = "sosciencity-gene-lab",
+        category = "sosciencity-reproductive-gene-lab",
         localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index + 1)}}
     }
 end

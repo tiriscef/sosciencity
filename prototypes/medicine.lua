@@ -5,8 +5,14 @@ require("constants.diseases")
 
 local medicine_items = {
     {name = "artificial-limp"},
+    {name = "artificial-heart"},
+    {name = "bandage", sprite_variations = {name = "bandage-pile", count = 3}},
     {name = "blood-bag"},
-    {name = "psychotropics", sprite_variations = {name = "psychotropics-pile", count = 3}}
+    {name = "psychotropics", sprite_variations = {name = "psychotropics-pile", count = 3}},
+    {name = "analgesics", sprite_variations = {name = "analgesics-pile", count = 3}},
+    {name = "potent-analgesics", sprite_variations = {name = "potent-analgesics-pile", count = 3}},
+    {name = "anesthetics", sprite_variations = {name = "anesthetics-pile", count = 3}},
+    {name = "antibiotics", sprite_variations = {name = "antibiotics-pile", count = 3}}
 }
 
 local function find_curable_diseases(item_name)
@@ -46,14 +52,78 @@ Tirislib_RecipeGenerator.create {
     },
     energy_required = 3,
     allow_productivity = true,
-    unlock = "plasma-caste"
+    unlock = "hospital"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "artificial-heart",
+    themes = {
+        {"casing", 1},
+        {"wiring", 2},
+        {"electronics", 1},
+        {"battery", 1}
+    },
+    default_theme_level = 4,
+    energy_required = 10,
+    allow_productivity = true,
+    unlock = "intensive-care"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "bandage",
+    product_amount = 15,
+    ingredients = {
+        {name = "cloth", amount = 10},
+        {name = "steam", amount = 300, type = "fluid"}
+    },
+    category = "crafting-with-fluid",
+    energy_required = 5,
+    allow_productivity = true,
+    unlock = "hospital"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "psychotropics",
+    themes = {{"tablet_ingredients", 1}},
+    ingredients = {{name = "phytofall-blossom", amount = 2}},
     energy_required = 3,
     allow_productivity = true,
-    unlock = "plasma-caste"
+    unlock = "psychiatry"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "analgesics",
+    themes = {{"tablet_ingredients", 1}},
+    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "hospital"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "potent-analgesics",
+    themes = {{"tablet_ingredients", 1}},
+    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "intensive-care"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "anesthetics",
+    ingredients = {{name = "clean-water", amount = 2, type = "fluid"}},
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "intensive-care"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "antibiotics",
+    themes = {{"tablet_ingredients", 1}},
+    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "hospital"
 }
 
 Tirislib_Recipe.create {

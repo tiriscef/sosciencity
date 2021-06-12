@@ -12,7 +12,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "silo",
-    themes = {{"plating", 1, 20}, {"framework", 1, 1}},
+    themes = {{"plating", 20}, {"framework", 1}},
     default_theme_level = 1
 }
 
@@ -24,12 +24,12 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "silo"},
     max_health = 500,
-    corpse = "small-remnants",
     inventory_size = 64,
-    vehicle_impact_sound = {
-        filename = "__base__/sound/car-metal-impact.ogg",
-        volume = 0.65
-    },
+    corpse = "small-remnants",
+    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
+    open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
+    close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     picture = {
         layers = {
             {

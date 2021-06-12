@@ -183,7 +183,7 @@ end
 function Register.on_settings_pasted(source_type, source, destination_type, destination)
     local tbl = on_settings_paste_lookup[destination_type]
 
-    if not tbl then
+    if tbl then
         local fn = tbl[source_type]
         if fn then
             fn(source, destination)
