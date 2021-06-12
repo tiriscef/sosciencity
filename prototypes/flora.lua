@@ -1,5 +1,8 @@
+require("constants.unlocks")
+
 ---------------------------------------------------------------------------------------------------
 -- << items >>
+
 local flora_items = {
     {
         name = "leafage",
@@ -8,12 +11,12 @@ local flora_items = {
     },
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "phytofall-blossom"},
-    {name = "tiriscefing-willow-wood", wood = true},
+    {name = "tiriscefing-willow-wood", wood = true, unlock = "open-environment-farming"},
     {name = "cherry-wood", wood = true},
     {name = "olive-wood", wood = true},
-    {name = "ortrot-wood", wood = true},
+    {name = "ortrot-wood", wood = true, unlock = Unlocks.get_tech_name("ortrot")},
     {name = "avocado-wood", wood = true},
-    {name = "zetorn-wood", wood = true}
+    {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")}
 }
 
 for _, item in pairs(flora_items) do
@@ -32,6 +35,7 @@ Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 
 ---------------------------------------------------------------------------------------------------
 -- << farming recipes >>
+
 --- Table with (product, table of recipe specification) pairs
 local farmables = {
     ["apple"] = {
@@ -61,7 +65,8 @@ local farmables = {
     ["bell-pepper"] = {
         general = {
             energy_required = 100,
-            unlock = "nightshades"
+            unlock = "nightshades",
+            themes = {{"agriculture", 100}}
         },
         agriculture = {
             category = "sosciencity-agriculture"
@@ -98,10 +103,27 @@ local farmables = {
             category = "sosciencity-orangery"
         }
     },
+    ["chickpeas"] = {
+        general = {
+            energy_required = 100
+        },
+        agriculture = {
+            category = "sosciencity-agriculture",
+            product_min = 5,
+            product_max = 50,
+            product_probability = 0.5
+        },
+        greenhouse = {
+            category = "sosciencity-greenhouse",
+            product_min = 40,
+            product_max = 60
+        }
+    },
     ["lemon"] = {
         general = {
             energy_required = 20,
-            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
+            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}},
+            unlock = "zetorn-variations"
         },
         arboretum = {
             category = "sosciencity-arboretum"
@@ -125,7 +147,8 @@ local farmables = {
     ["orange"] = {
         general = {
             energy_required = 20,
-            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
+            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}},
+            unlock = "zetorn-variations"
         },
         arboretum = {
             category = "sosciencity-arboretum"
@@ -135,11 +158,14 @@ local farmables = {
         }
     },
     ["phytofall-blossom"] = {
-        bloomhouse = {
-            category = "sosciencity-bloomhouse",
+        general = {
             energy_required = 20,
             product_min = 10,
-            product_max = 30
+            product_max = 30,
+            unlock = "orchid-caste"
+        },
+        bloomhouse = {
+            category = "sosciencity-bloomhouse"
         }
     },
     ["potato"] = {
@@ -217,7 +243,8 @@ local farmables = {
     },
     ["unnamed-fruit"] = {
         general = {
-            energy_required = 100
+            energy_required = 100,
+            unlock = Unlocks.get_tech_name("unnamed-fruit")
         },
         agriculture = {
             category = "sosciencity-agriculture",
@@ -245,10 +272,24 @@ local farmables = {
             product_max = 60
         }
     },
+    ["ortrot-fruit"] = {
+        general = {
+            energy_required = 20,
+            byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
+            unlock = Unlocks.get_tech_name("ortrot")
+        },
+        arboretum = {
+            category = "sosciencity-arboretum"
+        },
+        orangery = {
+            category = "sosciencity-orangery"
+        }
+    },
     ["zetorn"] = {
         general = {
             energy_required = 20,
-            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}}
+            byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.1}},
+            unlock = Unlocks.get_tech_name("zetorn")
         },
         arboretum = {
             category = "sosciencity-arboretum"
@@ -283,33 +324,27 @@ local farm_specific_defaults = {
 
 -- generation code that should minimize dublications and enforce invariants
 local attributes = {"product_probability", "unlock"}
-local function merge_specification_details(lh, rh)
+local arrays = {"byproducts", "themes"}
+local function merge_details(lh, rh)
+    if not rh then
+        return
+    end
+
     for _, attribute in pairs(attributes) do
         lh[attribute] = lh[attribute] or rh[attribute] or nil
     end
 
-    if rh.byproducts then
-        local byproducts = Tirislib_Tables.get_inner_table(lh, "byproducts")
-        Tirislib_Tables.merge_arrays(byproducts, rh.byproducts)
+    for _, array in pairs(arrays) do
+        if rh[array] then
+            local lh_array = Tirislib_Tables.get_inner_table(lh, array)
+            Tirislib_Tables.merge_arrays(lh_array, rh[array])
+        end
     end
-end
-
-local function merge_with_general_product_specification(specification, product)
-    local general = farmables[product]["general"]
-
-    if general then
-        merge_specification_details(specification, general)
-    end
-end
-
-local function merge_with_category_specification(specification)
-    local category_table = farm_specific_defaults[specification.category]
-    merge_specification_details(specification, category_table)
 end
 
 local function create_farming_recipe(product, specification)
-    merge_with_general_product_specification(specification, product)
-    merge_with_category_specification(specification)
+    merge_details(specification, farmables[product]["general"])
+    merge_details(specification, farm_specific_defaults[specification.category])
 
     specification.product = product
 
@@ -327,6 +362,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << processing recipes >>
+
 for _, item in pairs(flora_items) do
     if item.wood then
         Tirislib_RecipeGenerator.create {
@@ -336,8 +372,10 @@ for _, item in pairs(flora_items) do
                 {name = item.name, amount = 1}
             },
             byproducts = {
-                {name = "sawdust", amount = 1}
-            }
+                {name = "sawdust", amount = 2}
+            },
+            allow_productivity = true,
+            unlock = item.unlock
         }
 
         Tirislib_RecipeGenerator.create {
@@ -345,7 +383,8 @@ for _, item in pairs(flora_items) do
             product_amount = 10,
             ingredients = {
                 {name = item.name, amount = 1}
-            }
+            },
+            unlock = item.unlock
         }
     end
 end

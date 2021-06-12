@@ -111,7 +111,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 2,
         luxury = 1,
-        portion_size = 50,
+        portion_size = 10,
         group = "unnamed-fruit"
     },
     ["weird-berry"] = {
@@ -123,7 +123,7 @@ Food.values = {
         taste_category = Taste.soily,
         taste_quality = 5,
         luxury = 1,
-        portion_size = 50,
+        portion_size = 10,
         group = "unnamed-fruit"
     },
     ["brutal-pumpkin"] = {
@@ -135,7 +135,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 4,
         luxury = 2,
-        portion_size = 50,
+        portion_size = 10,
         group = "brutal-pumpkin"
     },
     ["ortrot-fruit"] = {
@@ -147,7 +147,7 @@ Food.values = {
         taste_category = Taste.weirdly_chemical,
         taste_quality = 2,
         luxury = 2,
-        portion_size = 50,
+        portion_size = 10,
         group = "ortrot"
     },
     ["apple"] = {
@@ -159,7 +159,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 5,
-        portion_size = 50,
+        portion_size = 10,
         group = "apple"
     },
     ["blue-grapes"] = {
@@ -171,7 +171,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 5,
-        portion_size = 50,
+        portion_size = 10,
         group = "grapes"
     },
     ["orange"] = {
@@ -183,7 +183,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 7,
-        portion_size = 50,
+        portion_size = 10,
         group = "orange"
     },
     ["lemon"] = {
@@ -195,7 +195,7 @@ Food.values = {
         taste_category = Taste.acidic,
         taste_quality = 7,
         luxury = 7,
-        portion_size = 50,
+        portion_size = 10,
         group = "lemon"
     },
     ["zetorn"] = {
@@ -207,7 +207,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 4,
         luxury = 3,
-        portion_size = 50,
+        portion_size = 10,
         group = "zetorn"
     },
     ["cherry"] = {
@@ -219,7 +219,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 4,
-        portion_size = 50,
+        portion_size = 10,
         group = "cherry"
     },
     ["olive"] = {
@@ -231,7 +231,7 @@ Food.values = {
         taste_category = Taste.salty,
         taste_quality = 7,
         luxury = 6,
-        portion_size = 50,
+        portion_size = 10,
         group = "olive"
     },
     ["bell-pepper"] = {
@@ -243,7 +243,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 7,
         luxury = 4,
-        portion_size = 50,
+        portion_size = 10,
         group = "bell-pepper"
     },
     ["potato"] = {
@@ -255,7 +255,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 3,
         luxury = 3,
-        portion_size = 50,
+        portion_size = 10,
         group = "potato"
     },
     ["tomato"] = {
@@ -267,7 +267,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 50,
+        portion_size = 10,
         group = "tomato"
     },
     ["eggplant"] = {
@@ -279,7 +279,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 50,
+        portion_size = 10,
         group = "eggplant"
     },
     ["fawoxylas"] = {
@@ -291,7 +291,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 6,
-        portion_size = 50,
+        portion_size = 10,
         group = "fawoxylas"
     },
     ["avocado"] = {
@@ -303,8 +303,20 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 8,
         luxury = 8,
-        portion_size = 50,
+        portion_size = 10,
         group = "avocado"
+    },
+    ["chickpeas"] = {
+        fat = 6,
+        carbohydrates = 44,
+        proteins = 19,
+        healthiness = 7,
+        food_category = "legume",
+        taste_category = Taste.umami,
+        taste_quality = 5,
+        luxury = 5,
+        portion_size = 10,
+        group = "beans"
     },
     ["hummus"] = {
         fat = 10,
@@ -315,7 +327,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 10,
         luxury = 5,
-        portion_size = 50,
+        portion_size = 10,
         group = "hummus"
     }
 }

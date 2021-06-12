@@ -10,7 +10,6 @@ require("prototypes.recipe-categories")
 require("prototypes.technologies")
 
 require("prototypes.inhabitant-prototypes")
-
 require("prototypes.animal-food")
 require("prototypes.beverages")
 require("prototypes.furniture")
@@ -25,6 +24,7 @@ require("prototypes.fauna")
 
 require("prototypes.housing")
 require("prototypes.buildings")
+require("prototypes.unlocking-technologies")
 
 require("prototypes.hidden.beacon")
 require("prototypes.hidden.caste-technologies")

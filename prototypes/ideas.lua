@@ -26,10 +26,27 @@ Tirislib_Recipe.create {
     },
     icon = "__sosciencity-graphics__/graphics/icon/note.png",
     icon_size = 64,
-    subgroup = "sosciencity-ideas",
+    subgroup = "sosciencity-ideas-per-hand",
     order = "00000",
     main_product = ""
 }
+
+Tirislib_Recipe.create {
+    type = "recipe",
+    name = "write-essay",
+    category = "handcrafting",
+    enabled = false,
+    energy_required = 10,
+    ingredients = {},
+    results = {
+        {type = "item", name = "essay", amount = 1}
+    },
+    icon = "__sosciencity-graphics__/graphics/icon/essay.png",
+    icon_size = 64,
+    subgroup = "sosciencity-ideas-per-hand",
+    order = "00001",
+    main_product = ""
+}:add_unlock("logistic-science-pack")
 
 Tirislib_RecipeGenerator.create {
     product = "note",
@@ -51,23 +68,6 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_Recipe.create {
-    type = "recipe",
-    name = "write-essay",
-    category = "handcrafting",
-    enabled = false,
-    energy_required = 10,
-    ingredients = {},
-    results = {
-        {type = "item", name = "essay", amount = 1}
-    },
-    icon = "__sosciencity-graphics__/graphics/icon/essay.png",
-    icon_size = 64,
-    subgroup = "sosciencity-ideas",
-    order = "00001",
-    main_product = ""
-}:add_unlock("logistic-science-pack")
-
 Tirislib_RecipeGenerator.create {
     product = "essay",
     product_amount = 7,
@@ -88,6 +88,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 10,
     expensive_energy_required = 20,
     ingredients = {
+        {type = "item", name = "tiriscefing-whisky", amount = 1}
     },
     unlock = "gunfire-caste"
 }

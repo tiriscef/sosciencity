@@ -225,6 +225,22 @@ function DiseaseGroup.take(group, to_take, total_count)
     return ret
 end
 
+function DiseaseGroup.subtract(lh, rh)
+    for disease, count in pairs(rh) do
+        local new_count = lh[disease] - count
+
+        if new_count < 0 then
+            error("Sosciencity tried to subtract two incompatible DiseaseGroup objects.")
+        end
+
+        if disease == HEALTHY then
+            lh[disease] = new_count
+        else
+            lh[disease] = (new_count > 0) and new_count or nil
+        end
+    end
+end
+
 --- Tries to makes the given number of people sick with the given disease. Returns the number of people that were actually sickened.
 --- @param group DiseaseGroup
 --- @param disease_id DiseaseID
@@ -239,6 +255,38 @@ function DiseaseGroup.make_sick(group, disease_id, count)
     return actually_sickened
 end
 local make_sick = DiseaseGroup.make_sick
+
+local frequency_keys = {}
+for _, disease_category in pairs(DiseaseCategory) do
+    frequency_keys[disease_category] = "frequency" .. disease_category
+end
+
+--- Tried to make the given number of people sick with random diseases of the given category.
+--- @param group DiseaseGroup
+--- @param disease_category DiseaseCategory
+--- @param count integer
+--- @param actual_count integer
+function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_count)
+    actual_count = min(count, actual_count or 20)
+
+    local count_per_pick = 1
+    local modulo = 0
+    if count > actual_count then
+        count_per_pick = floor(count / actual_count)
+        modulo = count % actual_count
+    end
+
+    for i = 1, actual_count do
+        local disease_id =
+                Tirislib_Tables.pick_random_subtable_weighted_by_key(
+                Diseases.by_category[disease_category],
+                frequency_keys[disease_category],
+                Diseases.frequency_sums[disease_category]
+            )
+        make_sick(group, disease_id, count_per_pick + (i <= modulo and 1 or 0))
+    end
+end
+local make_sick_randomly = DiseaseGroup.make_sick_randomly
 
 --- Tries to cure the given number of people of the given disease. Returns the number of people that were actually cured.
 --- @param group DiseaseGroup
@@ -344,6 +392,18 @@ function AgeGroup.take(group, to_take, total_count)
     return ret
 end
 
+function AgeGroup.subtract(lh, rh)
+    for age, count in pairs(rh) do
+        local new_count = lh[age] - count
+
+        if new_count < 0 then
+            error("Sosciencity tried to subtract two incompatible AgeGroup objects.")
+        end
+
+        lh[age] = (new_count > 0) and new_count or nil
+    end
+end
+
 function AgeGroup.shift(group, time)
     local copy = Tirislib_Tables.copy(group)
     Tirislib_Tables.empty(group)
@@ -403,6 +463,15 @@ function GenderGroup.take(group, to_take, total_count)
     return ret
 end
 
+function GenderGroup.subtract(lh, rh)
+    for gender, count in pairs(rh) do
+        lh[gender] = lh[gender] - count
+        if lh[gender] < 0 then
+            error("Sosciencity tried to subtract two incompatible GenderGroup objects.")
+        end
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant groups >>
 
@@ -430,6 +499,10 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, 
 end
 local new_group = InhabitantGroup.new
 
+--- Returns a new InhabitantGroup object filled with immigrants.
+--- @param caste Type
+--- @param count integer
+--- @return InhabitantGroup
 function InhabitantGroup.new_immigrant_group(caste, count)
     count = count or 0
 
@@ -445,6 +518,8 @@ function InhabitantGroup.new_immigrant_group(caste, count)
     }
 end
 
+--- Throws all inhabitants of the given InhabitantGroup in a shredder.
+--- @param group InhabitantGroup
 function InhabitantGroup.empty(group)
     group[EK.inhabitants] = 0
     group[EK.happiness] = 0
@@ -456,15 +531,24 @@ function InhabitantGroup.empty(group)
 end
 
 --- Adds the necessary data so this house can also work as an InhabitantGroup.
+--- @param house Entry
 function InhabitantGroup.new_house(house)
     InhabitantGroup.empty(house)
 end
 
+--- Checks if the given InhabitantGroup objects can be merged.
+--- @param lh InhabitantGroup
+--- @param rh InhabitantGroup
+--- @return boolean
 function InhabitantGroup.can_be_merged(lh, rh)
     return lh[EK.type] == rh[EK.type]
 end
 local groups_can_merge = InhabitantGroup.can_be_merged
 
+--- Merges the inhabitants of the right InhabitantGroup into the left one.
+--- @param lh InhabitantGroup
+--- @param rh InhabitantGroup
+--- @param keep_rh boolean
 function InhabitantGroup.merge(lh, rh, keep_rh)
     if not groups_can_merge(lh, rh) then
         error("Sosciencity tried to merge two incompatible InhabitantGroup objects.")
@@ -488,6 +572,11 @@ function InhabitantGroup.merge(lh, rh, keep_rh)
     end
 end
 
+--- Takes the specified number of inhabitants out of the given InhabitantGroup.
+--- Returns a new InhabitantGroup of the taken inhabitants.
+--- @param group InhabitantGroup
+--- @param count integer
+--- @return InhabitantGroup
 function InhabitantGroup.take(group, count)
     local existing_count = group[EK.inhabitants]
     local taken_count = min(existing_count, count)
@@ -506,6 +595,45 @@ function InhabitantGroup.take(group, count)
 end
 local take_inhabitants = InhabitantGroup.take
 
+--- Like InhabitantGroup.take, but allowes to specify the diseases, genders or ages to take.
+--- @param group InhabitantGroup
+--- @param count integer
+--- @param diseases DiseaseGroup|nil DiseaseGroup of the taken inhabitants.
+--- @param genders GenderGroup|nil GenderGroup of the taken inhabitants.
+--- @param ages AgeGroup|nil AgeGroup of the taken Inhabitants.
+--- @return InhabitantGroup
+function InhabitantGroup.take_specific(group, count, diseases, genders, ages)
+    local existing_count = group[EK.inhabitants]
+    local taken_count = min(existing_count, count)
+    group[EK.inhabitants] = existing_count - taken_count
+
+    if diseases then
+        DiseaseGroup.subtract(group[EK.diseases], diseases)
+    end
+    if genders then
+        GenderGroup.subtract(group[EK.genders], genders)
+    end
+    if ages then
+        AgeGroup.subtract(group[EK.ages], ages)
+    end
+
+    return new_group(
+        group[EK.type],
+        taken_count,
+        group[EK.happiness],
+        group[EK.health],
+        group[EK.sanity],
+        diseases or DiseaseGroup.take(group[EK.diseases], taken_count, existing_count),
+        genders or GenderGroup.take(group[EK.genders], taken_count, existing_count),
+        ages or AgeGroup.take(group[EK.ages], taken_count, existing_count)
+    )
+end
+local take_specific_inhabitants = InhabitantGroup.take_specific
+
+--- Merges the given number of inhabitants from the right InhabitantGroup in to the left one.
+--- @param lh InhabitantGroup
+--- @param rh InhabitantGroup
+--- @param count integer
 function InhabitantGroup.merge_partially(lh, rh, count)
     InhabitantGroup.merge(lh, InhabitantGroup.take(rh, count))
 end
@@ -1073,7 +1201,7 @@ local function social_meeting(entry, meeting_count)
     for disease_id, count in pairs(entry[EK.diseases]) do
         if disease_id ~= HEALTHY then
             local contagiousness = disease_values[disease_id].contagiousness
-            if contagiousness > 0 then
+            if contagiousness then
                 local infections = coin_flips(contagiousness, count, 5)
 
                 if infections > 0 then
@@ -1118,14 +1246,17 @@ end
 local function cure_side_effects(entry, disease_id, count, cured)
     local disease = disease_values[disease_id]
 
-    local dead_count = coin_flips(disease.lethality, count)
-    if dead_count > 0 then
-        -- TODO: secure that a healthy person gets taken
-        take_inhabitants(entry, dead_count)
-        Communication.log_disease_deaths(disease_id, dead_count)
+    local lethal_probability = cured and disease.complication_lethality or disease.lethality
+    local dead_count = 0
+    if lethal_probability then
+        dead_count = coin_flips(cured and disease.complication_lethality or disease.lethality, count)
+        if dead_count > 0 then
+            take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
+            Communication.log_disease_death(disease_id, dead_count)
+        end
     end
 
-    -- the following effects cannot occur when the person died
+    -- the following effects cannot occur when the persons died
     count = count - dead_count
 
     local escalation_disease = disease.escalation
@@ -1144,6 +1275,10 @@ local function cure_side_effects(entry, disease_id, count, cured)
             make_sick(entry[EK.diseases], complication_disease, complication_count)
         end
     end
+end
+
+function Inhabitants.get_birth_defect_probability()
+    return 0.1
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
@@ -1170,18 +1305,13 @@ local disease_progress_updaters = Inhabitants.disease_progress_updaters
 local function create_disease_cases(entry, disease_group, delta_ticks)
     local progresses = entry[EK.disease_progress]
 
-    for disease_category, progress in pairs(progresses) do
-        progress = progress + disease_progress_updaters[disease_category](entry, delta_ticks)
+    for disease_category, updater in pairs(disease_progress_updaters) do
+        local progress = progresses[disease_category] + updater(entry, delta_ticks)
 
         if progress >= 1 then
             local new_diseases = floor(progress)
-            local disease_id =
-                Tirislib_Tables.pick_random_subtable_weighted_by_key(
-                Diseases.by_category[disease_category],
-                "frequency",
-                Diseases.frequency_sums[disease_category]
-            )
-            make_sick(disease_group, disease_id, new_diseases)
+
+            make_sick_randomly(disease_group, disease_category, new_diseases)
 
             progress = progress - new_diseases
         end
@@ -1191,7 +1321,7 @@ local function create_disease_cases(entry, disease_group, delta_ticks)
 end
 
 local function is_recoverable(id)
-    return disease_values[id].natural_recovery > 0
+    return disease_values[id].natural_recovery
 end
 
 local function has_facility(hospital, facility_type)
@@ -1212,7 +1342,7 @@ local function try_treat_disease(hospital, hospital_contents, inventories, disea
         return 0
     end
 
-    local operations = hospital[EK.operations]
+    local operations = hospital[EK.workhours]
     local workload_per_case = disease.curing_workload
     local items_per_case = disease.cure_items or {}
 
@@ -1226,7 +1356,7 @@ local function try_treat_disease(hospital, hospital_contents, inventories, disea
     to_treat = cure(disease_group, disease_id, to_treat)
 
     -- consume operations and items
-    hospital[EK.operations] = operations - to_treat * workload_per_case
+    hospital[EK.workhours] = operations - to_treat * workload_per_case
 
     local items = table_copy(items_per_case)
     table_multiply(items, to_treat)
@@ -1276,7 +1406,7 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
 
     for disease_id, count in pairs(disease_group) do
         if disease_id ~= HEALTHY then
-            local natural_recovery = disease_values.natural_recovery
+            local natural_recovery = disease_values[disease_id].natural_recovery
             if natural_recovery then
                 local recovered = coin_flips(occurence_probability(natural_recovery, delta_ticks), count, 5)
                 recovered = cure(disease_group, disease_id, recovered)
@@ -1558,8 +1688,8 @@ function Inhabitants.add_casualty_fear(destroyed_house)
     Inhabitants.add_fear()
 
     local casualties = destroyed_house[EK.inhabitants]
-    global.fear = global.fear + 0.05 + casualties
-    Communication.log_casualties(destroyed_house)
+    global.fear = global.fear + 0.05 * casualties
+    Communication.log_death(destroyed_house, DeathCause.killed)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1593,8 +1723,15 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         end
         return true
     else
+        if loud then
+            Communication.caste_not_allowed_in(entry, caste_id)
+        end
         return false
     end
+end
+
+local function on_settings_paste(source, destination)
+    Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
 end
 
 --- Initializes the given entry so it can work as an housing entry.
@@ -1617,7 +1754,13 @@ function Inhabitants.create_house(entry)
 
     entry[EK.emigration_trend] = 0
     entry[EK.garbage_progress] = 0
-    entry[EK.disease_progress] = Tirislib_Tables.new_array(Tirislib_Tables.count(DiseaseCategory), 0.)
+
+    local progresses = {}
+    for disease_category in pairs(disease_progress_updaters) do
+        progresses[disease_category] = 0.
+    end
+    entry[EK.disease_progress] = progresses
+
     entry[EK.recovery_progress] = 0
 
     entry[EK.employed] = 0
@@ -1666,6 +1809,7 @@ for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
     Register.set_entity_updater(caste, update_house)
     Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
+    Register.set_settings_paste_handler(caste, Type.empty_house, on_settings_paste)
 end
 
 return Inhabitants

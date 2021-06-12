@@ -1,5 +1,3 @@
----------------------------------------------------------------------------------------------------
--- << static class for recipe generation >>
 --- Generator for generic recipes with configurable ingredients to facilitate integration/compatibility with other mods.
 --- Assumes the result items already exist.
 Tirislib_RecipeGenerator = {}
@@ -7,7 +5,9 @@ Tirislib_RecipeGenerator = {}
 -- shorthand alias for more readability
 local RG = Tirislib_RecipeGenerator
 
+---------------------------------------------------------------------------------------------------
 -- << definitions >>
+
 --- Table with Theme -> table with (level, array of IngredientPrototypes) pairs\
 --- Most of the time level is defined by the research stage at which the player should be able to use this recipe.\
 --- **0:** Start of the game, nothing researched\
@@ -21,7 +21,11 @@ local RG = Tirislib_RecipeGenerator
 RG.ingredient_themes = {
     agriculture = {
         [0] = {
-            {type = "fluid", name = "water", amount = 5}
+            {type = "fluid", name = "water", amount = 500}
+        },
+        [1] = {
+            {type = "item", name = "humus", amount = 10},
+            {type = "fluid", name = "water", amount = 500}
         }
     },
     boring = {
@@ -104,6 +108,12 @@ RG.ingredient_themes = {
     can = {
         [0] = {{type = "item", name = "iron-plate", amount = 1}}
     },
+    casing = {
+        [0] = {{type = "item", name = "iron-plate", amount = 2}}
+    },
+    cooling_fluid = {
+        [0] = {{type = "fluid", name = "petroleum-gas", amount = 1}}
+    },
     electronics = {
         [0] = {{type = "item", name = "copper-cable", amount = 2}},
         [1] = {{type = "item", name = "electronic-circuit", amount = 1}},
@@ -141,7 +151,7 @@ RG.ingredient_themes = {
         [2] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 1}
+            {type = "item", name = "table", amount = 0.5}
         },
         [3] = {
             {type = "item", name = "bed", amount = 1},
@@ -165,31 +175,41 @@ RG.ingredient_themes = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2}
+            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "air-conditioner", amount = 1 / 3}
         },
         [7] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2}
+            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "air-conditioner", amount = 1 / 3}
         },
         [8] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1.5},
-            {type = "item", name = "cupboard", amount = 2}
+            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "air-conditioner", amount = 0.5}
         },
         [9] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2.5},
             {type = "item", name = "table", amount = 2},
-            {type = "item", name = "cupboard", amount = 3}
+            {type = "item", name = "cupboard", amount = 3},
+            {type = "item", name = "air-conditioner", amount = 2 / 3}
         },
         [10] = {
             {type = "item", name = "bed", amount = 3},
             {type = "item", name = "chair", amount = 5},
             {type = "item", name = "table", amount = 3},
-            {type = "item", name = "cupboard", amount = 4}
+            {type = "item", name = "cupboard", amount = 4},
+            {type = "item", name = "air-conditioner", amount = 1}
+        }
+    },
+    furnishing_decorated = {
+        [0] = {
+            {type = "item", name = "painting", amount = 1}
         }
     },
     grating = {
@@ -266,6 +286,17 @@ RG.ingredient_themes = {
             {type = "item", name = "iron-plate", amount = 1}
         }
     },
+    screw_material = {
+        [0] = {
+            {type = "item", name = "iron-plate", amount = 2}
+        },
+        [1] = {
+            {type = "item", name = "copper-plate", amount = 2}
+        },
+        [70] = {
+            {type = "item", name = "steel-plate", amount = 2}
+        }
+    },
     soil = {
         [0] = {
             {type = "item", name = "humus", amount = 1}
@@ -274,6 +305,11 @@ RG.ingredient_themes = {
     structure = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 1}
+        }
+    },
+    tablet_ingredients = {
+        [0] = {
+            {type = "item", name = "amylum", amount = 1}
         }
     },
     tank = {
@@ -326,6 +362,7 @@ RG.result_themes = {
 }
 
 -- << generation >>
+
 --- Returns the entry in the theme definition that is the closest to the given level.
 --- It doesn't return a definition with a higher level to avoid creating progression deadlocks.
 local function get_nearest_level(theme_definition, level)
@@ -445,6 +482,21 @@ local function get_main_product_entry(product, details)
     return main_product
 end
 
+local function has_fluid_ingredient(recipe_data)
+    for _, ingredient in pairs(recipe_data.ingredients) do
+        if Tirislib_RecipeEntry.yields_fluid(ingredient) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function get_standard_category(recipe)
+    local normal, expensive = recipe:call_on_recipe_data(has_fluid_ingredient)
+    return (normal or expensive) and "crafting-with-fluid" or "crafting"
+end
+
 --- Creates a dynamic recipe.\
 --- **product:** name of the main product\
 --- **product_type:** type of the main product (defaults to "item")\
@@ -475,7 +527,6 @@ function RG.create(details)
     local recipe =
         Tirislib_Recipe.create {
         name = Tirislib_Prototype.get_unique_name(details.name or product.name, "recipe"),
-        category = details.category or "crafting",
         enabled = true,
         energy_required = details.energy_required or 0.5,
         results = {main_product},
@@ -511,9 +562,52 @@ function RG.create(details)
 
     recipe:set_fields(details.additional_fields)
 
+    recipe:set_field("category", details.category or get_standard_category(recipe))
+
     if details.allow_productivity then
         recipe:allow_productivity_modules()
     end
 
     return recipe
+end
+
+--- Creates a dynamic recipe for every level of a given ingredient theme.\
+--- Additional fields:\
+--- **followed_theme:** name\
+--- **followed_theme_amount:** number or function\
+--- **dynamic_fields:** table with (detail field, fn) pairs. The functions will be called with the theme level as the argument.\
+function RG.create_per_theme_level(details)
+    local theme_name = details.followed_theme
+    local theme_definition = RG.ingredient_themes[theme_name]
+    local theme_amount = details.followed_theme_amount or 1
+    local dynamic = details.dynamic_fields or {}
+
+    local created_recipes = {}
+    setmetatable(created_recipes, Tirislib_RecipeArray)
+
+    if not theme_definition then
+        log("Tirislib RecipeGenerator was told to follow an undefined theme: " .. details.followed_theme)
+        theme_definition = {}
+    end
+
+    for level in pairs(theme_definition) do
+        local current_details = Tirislib_Tables.copy(details)
+
+        -- set dynamic fields
+        for field, fn in pairs(dynamic) do
+            current_details[field] = fn(level)
+        end
+
+        -- set the current followed theme
+        local themes = Tirislib_Tables.get_inner_table(current_details, "themes")
+        themes[#themes + 1] = {
+            theme_name,
+            type(theme_amount) == "function" and theme_amount(level) or theme_amount,
+            level
+        }
+
+        created_recipes[#created_recipes + 1] = RG.create(current_details)
+    end
+
+    return created_recipes
 end

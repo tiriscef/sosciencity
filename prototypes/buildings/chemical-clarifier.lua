@@ -13,7 +13,7 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "chemical-clarifier",
     themes = {{"piping", 10}, {"tank", 2}, {"machine", 1}},
-    default_theme_level = 2,
+    default_theme_level = 4,
     unlock = "drinking-water-treatment"
 }
 

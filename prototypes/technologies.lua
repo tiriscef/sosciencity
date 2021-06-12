@@ -1,5 +1,9 @@
+
+require("constants.unlocks")
+
 ---------------------------------------------------------------------------------------------------
 -- << caste technologies >>
+
 Tirislib_Technology.create {
     type = "technology",
     name = "clockwork-caste",
@@ -410,6 +414,7 @@ Tirislib_Technology.create {
 
 ---------------------------------------------------------------------------------------------------
 -- << architecture technologies >>
+
 Tirislib_Technology.create {
     type = "technology",
     name = "architecture-1",
@@ -548,26 +553,191 @@ Tirislib_Technology.create {
 }
 
 ---------------------------------------------------------------------------------------------------
--- << food stuff >>
+-- << healthcare >>
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "hospital",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"plasma-caste"},
+    effects = {},
+    unit = {
+        count = 166,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "transfusion-medicine",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"hospital"},
+    effects = {},
+    unit = {
+        count = 166,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "psychiatry",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"hospital"},
+    effects = {},
+    unit = {
+        count = 166,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "intensive-care",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"hospital", "architecture-3"},
+    effects = {},
+    unit = {
+        count = 248,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+---------------------------------------------------------------------------------------------------
+-- << gene technologies >>
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "genetic-neogenesis",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    upgrade = false,
+    prerequisites = {"orchid-caste", "plasma-caste"},
+    effects = {},
+    unit = {
+        count = 107,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
 Tirislib_Technology.create {
     type = "technology",
     name = "nightshades",
     icon = "__sosciencity-graphics__/graphics/technology/nightshades.png",
     icon_size = 128,
     upgrade = false,
-    prerequisites = {},
+    prerequisites = {"genetic-neogenesis"},
     effects = {},
     unit = {
         count = 35,
         ingredients = {
-            {"automation-science-pack", 1}
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
         },
         time = 20
     }
 }
 
+Tirislib_Technology.create {
+    type = "technology",
+    name = "huwan-genetic-neogenesis",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    upgrade = false,
+    prerequisites = {"genetic-neogenesis", "plasma-caste", "chemical-science-pack"},
+    effects = {},
+    unit = {
+        count = 267,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "zetorn-variations",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    upgrade = false,
+    prerequisites = {Unlocks.get_tech_name("zetorn"), "genetic-neogenesis"},
+    effects = {},
+    unit = {
+        count = 73,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "ortrot-variations",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    upgrade = false,
+    prerequisites = {Unlocks.get_tech_name("ortrot"), "genetic-neogenesis"},
+    effects = {},
+    unit = {
+        count = 68,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << processing >>
+
+Tirislib_Technology.create {
+    type = "technology",
+    name = "hummus",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    upgrade = false,
+    prerequisites = {"orchid-caste"},
+    effects = {},
+    unit = {
+        count = 233,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 15
+    }
+}
 
 Tirislib_Technology.create {
     type = "technology",

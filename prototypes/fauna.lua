@@ -1,14 +1,16 @@
+require("constants.unlocks")
+
 ---------------------------------------------------------------------------------------------------
 -- << items >>
+
 local animals = {
     {
         name = "primal-quackling",
         size = 5,
         bird = true,
-        probability = 0.15,
-        group_size = 7,
         preform = "primal-egg",
-        metabolism_coefficient = 1.7
+        metabolism_coefficient = 1.7,
+        unlock = Unlocks.get_tech_name("primal-quacker")
     },
     {
         name = "primal-quacker",
@@ -16,7 +18,8 @@ local animals = {
         bird = true,
         probability = 0.12,
         preform = "primal-quackling",
-        metabolism_coefficient = 1.5
+        metabolism_coefficient = 1.5,
+        unlock = Unlocks.get_tech_name("primal-quacker")
     },
     {
         name = "primal-quackpa",
@@ -24,16 +27,16 @@ local animals = {
         bird = true,
         preform = "primal-quacker",
         metabolism_coefficient = 4,
-        breeding_byproducts = {{name = "primal-egg", amount = 5}}
+        breeding_byproducts = {{name = "primal-egg", amount = 5}},
+        unlock = Unlocks.get_tech_name("primal-quacker")
     },
     {
         name = "nan-swanling",
         size = 10,
         bird = true,
-        probability = 0.1,
-        group_size = 3,
         preform = "nan-egg",
-        metabolism_coefficient = 1.7
+        metabolism_coefficient = 1.7,
+        unlock = Unlocks.get_tech_name("nan-swan")
     },
     {
         name = "nan-swan",
@@ -41,7 +44,8 @@ local animals = {
         bird = true,
         probability = 0.2,
         preform = "nan-swanling",
-        metabolism_coefficient = 1.5
+        metabolism_coefficient = 1.5,
+        unlock = Unlocks.get_tech_name("nan-swan")
     },
     {
         name = "elder-nan",
@@ -49,14 +53,14 @@ local animals = {
         bird = true,
         preform = "nan-swan",
         metabolism_coefficient = 3.5,
-        breeding_byproducts = {{name = "nan-egg", amount = 3}}
+        breeding_byproducts = {{name = "nan-egg", amount = 3}},
+        unlock = Unlocks.get_tech_name("nan-swan")
     },
     {
         name = "smol-bonesnake",
         size = 15,
         bird = true,
-        probability = 0.1,
-        group_size = 5
+        unlock = Unlocks.get_tech_name("bonesnake")
     },
     {
         name = "bonesnake",
@@ -64,61 +68,69 @@ local animals = {
         size = 100,
         bird = true,
         preform = "smol-bonesnake",
-        probability = 0.15
+        probability = 0.15,
+        unlock = Unlocks.get_tech_name("bonesnake")
     },
     {
         name = "young-petunial",
         size = 2500,
         water_animal = true,
-        probability = 0.05,
-        metabolism_coefficient = 1.2
+        metabolism_coefficient = 1.2,
+        unlock = Unlocks.get_tech_name("petunial")
     },
     {
         name = "petunial",
         size = 15000,
         water_animal = true,
         probability = 0.05,
-        preform = "young-petunial"
+        preform = "young-petunial",
+        unlock = Unlocks.get_tech_name("petunial")
     },
     {
         name = "hellfin",
         size = 190,
         water_animal = true,
         probability = 0.09,
-        group_size = 4
+        group_size = 4,
+        unlock = Unlocks.get_tech_name("hellfin")
     },
     {
         name = "warnal",
         size = 1000,
         water_animal = true,
-        probability = 0.09
+        probability = 0.09,
+        unlock = Unlocks.get_tech_name("warnal")
     },
     {
         name = "shellscript",
         size = 50,
         water_animal = true,
         probability = 0.15,
-        group_size = 4
+        group_size = 4,
+        unlock = Unlocks.get_tech_name("shellscript")
     },
     {
         name = "boofish",
         size = 3,
         fish = true,
         probability = 0.3,
-        group_size = 5
+        group_size = 5,
+        unlock = Unlocks.get_tech_name("boofish")
     },
     {
         name = "fupper",
         size = 5,
         fish = true,
-        probability = 0.5
+        probability = 0.5,
+        unlock = Unlocks.get_tech_name("fupper")
     },
     {
         name = "dodkopus",
         size = 40,
         water_animal = true,
         probability = 0.15,
-        slaughter_byproducts = {{name = "ink", amount = 3}}
+        slaughter_byproducts = {{name = "ink", amount = 3}},
+        unlock = Unlocks.get_tech_name("dodkopus")
     },
     {
         name = "ultra-squibbel",
@@ -126,7 +138,8 @@ local animals = {
         water_animal = true,
         probability = 0.20,
         slaughter_byproducts = {{name = "ink", amount = 10}},
-        not_breedable = true
+        not_breedable = true,
+        unlock = Unlocks.get_tech_name("squibbel")
     },
     {
         name = "miniscule-squibbel",
@@ -134,21 +147,41 @@ local animals = {
         water_animal = true,
         probability = 0.15,
         slaughter_byproducts = {{name = "ink", amount = 4}},
-        breeding_byproducts = {{name = "ultra-squibbel", amount = 0.5}}
+        breeding_byproducts = {{name = "ultra-squibbel", amount = 0.5}},
+        unlock = Unlocks.get_tech_name("squibbel")
     },
     {
         name = "cabar",
         size = 20,
         probability = 0.2,
         min_group_size = 1,
-        max_group_size = 7
+        max_group_size = 7,
+        unlock = Unlocks.get_tech_name("cabar")
     },
     {
         name = "caddle",
         size = 20,
+        carnivore = true,
         probability = 0.15,
-        group_size = 2
-    }
+        min_group_size = 1,
+        max_group_size = 4,
+        unlock = Unlocks.get_tech_name("caddle")
+    },
+    {
+        name = "river-horse",
+        size = 500,
+        probability = 0.01,
+        min_group_size = 3,
+        max_group_size = 6,
+        sprite_variations = {name = "river-horse-on-belt", count = 1},
+        unlock = Unlocks.get_tech_name("river-horse")
+    },
+--[[    {
+        name = "vels-ant",
+        size = 10,
+        insect = true,
+        probability = 0.5
+    }]]
 }
 
 local function get_stack_size(animal)
@@ -203,12 +236,20 @@ local fauna_producing_recipes = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << gathering recipes >>
+
 local megafauna_hunting =
     Tirislib_Recipe.create {
     name = "hunting-for-megafauna",
     category = "sosciencity-hunting",
     energy_required = 20,
-    icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/megafauna.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+            scale = 0.3,
+            shift = {-8, -8}
+        }
+    },
     icon_size = 64,
     subgroup = "sosciencity-gathering",
     allow_decomposition = false,
@@ -216,40 +257,54 @@ local megafauna_hunting =
     main_product = ""
 }:create_difficulties()
 megafauna_hunting:multiply_expensive_field("energy_required", 2)
-megafauna_hunting:add_catalyst("trap", "item", 5, 0.8, 6, 0.7)
+megafauna_hunting:add_catalyst("trap", "item", 5, 0.7, 6, 0.6)
 table.insert(fauna_producing_recipes, megafauna_hunting)
 
-local makrofauna_hunting =
+local macrofauna_hunting =
     Tirislib_Recipe.create {
-    name = "hunting-for-makrofauna",
+    name = "hunting-for-macrofauna",
     category = "sosciencity-hunting",
     energy_required = 20,
-    icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/macrofauna.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+            scale = 0.3,
+            shift = {-8, -8}
+        }
+    },
     icon_size = 64,
     subgroup = "sosciencity-gathering",
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
 }:create_difficulties()
-makrofauna_hunting:multiply_expensive_field("energy_required", 2)
-makrofauna_hunting:add_catalyst("trap-cage", "item", 2, 0.9, 3, 0.8)
-table.insert(fauna_producing_recipes, makrofauna_hunting)
+macrofauna_hunting:multiply_expensive_field("energy_required", 2)
+macrofauna_hunting:add_catalyst("trap-cage", "item", 2, 0.8, 3, 0.7)
+table.insert(fauna_producing_recipes, macrofauna_hunting)
 
-local mikrofauna_hunting =
+local microfauna_hunting =
     Tirislib_Recipe.create {
-    name = "hunting-for-mikrofauna",
+    name = "hunting-for-microfauna",
     category = "sosciencity-hunting",
     energy_required = 20,
-    icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/microfauna.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
+            scale = 0.3,
+            shift = {-8, -8}
+        }
+    },
     icon_size = 64,
     subgroup = "sosciencity-gathering",
     allow_decomposition = false,
     always_show_made_in = true,
     main_product = ""
 }:create_difficulties()
-makrofauna_hunting:multiply_expensive_field("energy_required", 2)
-makrofauna_hunting:add_catalyst("trap-bucket", "item", 10, 0.9, 15, 0.8)
-table.insert(fauna_producing_recipes, mikrofauna_hunting)
+microfauna_hunting:multiply_expensive_field("energy_required", 2)
+microfauna_hunting:add_catalyst("trap-bucket", "item", 10, 0.95, 15, 0.9)
+table.insert(fauna_producing_recipes, microfauna_hunting)
 
 local fishing =
     Tirislib_Recipe.create {
@@ -270,7 +325,7 @@ table.insert(fauna_producing_recipes, fishing)
 local function get_result_prototype(animal)
     return {
         name = animal.name,
-        amount = animal.group_size or (not animal.min_group_size) and 1,
+        amount = (not animal.min_group_size) and (animal.group_size or 1) or nil,
         probability = animal.probability,
         amount_min = animal.min_group_size,
         amount_max = animal.max_group_size
@@ -284,13 +339,18 @@ local function add_to_gather_recipe(animal)
         fishing:add_result(result_prototype)
         return
     end
+
+    if animal.insect then
+        microfauna_hunting:add_result(result_prototype)
+        return
+    end
+
     if animal.size >= 100 then
         megafauna_hunting:add_result(result_prototype)
-    end
-    if animal.size < 100 and animal.size >= 10 then
-        makrofauna_hunting:add_result(result_prototype)
+    elseif animal.size >= 10 then
+        macrofauna_hunting:add_result(result_prototype)
     else
-        mikrofauna_hunting:add_result(result_prototype)
+        microfauna_hunting:add_result(result_prototype)
     end
 end
 
@@ -302,6 +362,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << slaughter recipes >>
+
 local function get_required_energy_slaughter(animal)
     return math.ceil(animal.size ^ 0.5)
 end
@@ -339,7 +400,7 @@ local function create_slaughter_recipe(animal, index)
             {icon = item.icon},
             {
                 icon = "__sosciencity-graphics__/graphics/icon/slaughter.png",
-                scale = 0.25,
+                scale = 0.3,
                 shift = {-8, -8},
                 tint = {r = 1, g = 0.2, b = 0.2, a = 0.8}
             }
@@ -364,6 +425,10 @@ local function create_slaughter_recipe(animal, index)
     if animal.slaughter_byproducts then
         recipe:add_result_range(animal.slaughter_byproducts)
     end
+
+    if animal.unlock then
+        recipe:add_unlock(animal.unlock)
+    end
 end
 
 for index, animal in pairs(animals) do
@@ -372,6 +437,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << breeding recipes >>
+
 local food_item_weight = 50
 local farm_size = 2000
 
@@ -425,7 +491,8 @@ local function create_breeding_recipe(animal)
         category = is_water_animal(animal) and "sosciencity-water-animal-farming" or "sosciencity-animal-farming",
         byproducts = animal.breeding_byproducts or nil,
         themes = {get_food_theme(animal, cycle_amount)},
-        energy_required = energy
+        energy_required = energy,
+        unlock = animal.unlock
     }
 
     if animal.preform then
@@ -442,7 +509,7 @@ local function create_breeding_recipe(animal)
     table.insert(fauna_producing_recipes, recipe)
 end
 
-for index, animal in pairs(animals) do
+for _, animal in pairs(animals) do
     if not animal.not_breedable then
         create_breeding_recipe(animal)
     end
@@ -464,7 +531,7 @@ if settings.startup["sosciencity-modify-environment"].value then
             mining_time = 0.4,
             results = {
                 {name = "primal-quacker", amount = 1},
-                {name = "primal-quackling", amount_min = 0, amount_max = 5}
+                {name = "primal-quackling", amount_min = 0, amount_max = 10}
             }
         },
         max_health = 20,
@@ -497,7 +564,7 @@ if settings.startup["sosciencity-modify-environment"].value then
             mining_time = 0.4,
             results = {
                 {name = "nan-swan", amount = 1},
-                {name = "nan-swanling", amount_min = 0, amount_max = 3}
+                {name = "nan-swanling", amount_min = 0, amount_max = 7}
             }
         },
         max_health = 40,

@@ -44,7 +44,8 @@ TypeGroup.social_places = {
 
 TypeGroup.hospital_complements = {
     Type.pharmacy,
-    Type.psych_ward
+    Type.psych_ward,
+    Type.intensive_care_unit
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -213,7 +214,13 @@ Types.definitions = {
     },
     [Type.psych_ward] = {
         localised_name = {"sosciencity.psych-ward"},
-        localised_description = {"sosciencity.explain-psych-ward"},
+        localised_description = {"item-description.psych-ward"},
+        signature_color = Colors.darkish_red,
+        is_civil = true
+    },
+    [Type.intensive_care_unit] = {
+        localised_name = {"sosciencity.intensive-care-unit"},
+        localised_description = {"item-description.intensive-care-unit"},
         signature_color = Colors.darkish_red,
         is_civil = true
     },
@@ -271,6 +278,23 @@ Types.definitions = {
     [Type.lab] = {
         localised_name = {"sosciencity.lab"},
         localised_description = {"sosciencity.explain-lab"}
+    },
+    [Type.plant_care_station] = {
+        localised_name = {"sosciencity.plant-care-station"},
+        localised_description = {"sosciencity.plant-care-station"},
+        is_civil = true,
+        subscriptions = {
+            [Type.farm] = ConnectionType.to_neighbor
+        },
+        signature_color = Colors.yellowish_green
+    },
+    [Type.cooling_warehouse] = {
+        localised_name = {"sosciencity.cooling-warehouse"},
+        localised_description = {"sosciencity.cooling-warehouse"}
+    },
+    [Type.waste_dump] = {
+        localised_name = {"sosciencity.waste-dump"},
+        localised_description = {"sosciencity.waste-dump"}
     }
 }
 local definitions = Types.definitions
@@ -281,6 +305,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << lookup tables >>
+
 local lookup_by_entity_type = {
     ["assembling-machine"] = Type.assembling_machine,
     ["mining-drill"] = Type.mining_drill,

@@ -80,6 +80,21 @@ Buildings.values = {
     ["bloomhouse"] = {
         type = Type.farm
     },
+    ["composting-silo"] = {
+        type = Type.composter,
+        capacity = 5000
+    },
+    ["composting-silo-output"] = {
+        type = Type.composter_output,
+        range = 5
+    },
+    ["cooling-warehouse"] = {
+        type = Type.cooling_warehouse
+    },
+    ["egg-collecting-station"] = {
+        type = Type.egg_collector,
+        range = 40
+    },
     ["farm"] = {
         type = Type.farm
     },
@@ -99,6 +114,16 @@ Buildings.values = {
         type = Type.waterwell,
         range = 64
     },
+    ["hospital"] = {
+        type = Type.hospital,
+        range = 50,
+        speed = 2,
+        workforce = {
+            count = 10,
+            castes = {Type.plasma}
+        },
+        power_usage = 100
+    },
     ["hunting-hut"] = {
         type = Type.hunting_hut,
         range = 30,
@@ -112,6 +137,10 @@ Buildings.values = {
         type = Type.animal_farm,
         range = 50
     },
+    ["intensive-care-unit"] = {
+        type = Type.intensive_care_unit,
+        range = 7
+    },
     ["market-hall"] = {
         type = Type.market,
         range = 42
@@ -121,18 +150,44 @@ Buildings.values = {
         power_usage = 100
     },
     ["orangery"] = {
-        Type.farm
+        type = Type.farm
+    },
+    ["orchid-food-factory"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 10,
+            castes = {Type.orchid}
+        }
     },
     ["orchid-paradise"] = {
-        Type.manufactory,
+        type = Type.manufactory,
         workforce = {
             count = 7,
             castes = {Type.orchid}
         }
     },
+    ["orchid-plant-care-station"] = {
+        type = Type.plant_care_station,
+        range = 120
+    },
+    ["pharmacy"] = {
+        type = Type.pharmacy,
+        range = "global"
+    },
+    ["psych-ward"] = {
+        type = Type.psych_ward,
+        range = 7
+    },
     ["trash-site"] = {
         type = Type.dumpster,
         range = 25
+    },
+    ["upbringing-station"] = {
+        type = Type.upbringing_station,
+        power_usage = 150
+    },
+    ["waste-dump"] = {
+        type = Type.waste_dump
     },
     ["water-tower"] = {
         type = Type.water_distributer,

@@ -3,6 +3,7 @@
 local material_items = {
     {name = "lumber"},
     {name = "sawdust", sprite_variations = {name = "sawdust", count = 2, include_icon = true}},
+    {name = "screw-set", sprite_variations = {name = "screw-set", count = 2, include_icon = true}},
     {name = "tiriscefing-willow-barrel"},
     {name = "cloth", sprite_variations = {name = "cloth", count = 3, include_icon = true}},
     {name = "yarn", sprite_variations = {name = "yarn-pile", count = 4}},
@@ -17,7 +18,8 @@ local material_items = {
     {name = "fishing-net", distinctions = {subgroup = "sosciencity-gathering"}},
     {name = "humus", sprite_variations = {name = "humus", count = 2, include_icon = true}},
     {name = "sewage-sludge", sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}},
-    {name = "ferrous-sulfate"}
+    {name = "ferrous-sulfate"},
+    {name = "amylum"}
 }
 
 Tirislib_Item.batch_create(material_items, {subgroup = "sosciencity-materials", stack_size = 200})
@@ -32,6 +34,25 @@ Tirislib_RecipeGenerator.create {
     },
     byproducts = {
         {name = "sawdust", amount = 1}
+    },
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create_per_theme_level {
+    product = "screw-set",
+    followed_theme = "screw_material",
+    energy_required = 1,
+    dynamic_fields = {
+        product_amount = function(n) return math.ceil(n / 10) * 2 end
+    },
+    allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "tiriscefing-willow-barrel",
+    energy_required = 1,
+    ingredients = {
+        {type = "item", name = "tiriscefing-willow-wood", amount = 2}
     }
 }
 
@@ -119,4 +140,18 @@ Tirislib_RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1,
     allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "amylum",
+    product_min = 2,
+    product_max = 6,
+    ingredients = {
+        {type = "item", name = "potato", amount = 5},
+        {type = "fluid", name = "clean-water", amount = 80}
+    },
+    category = "crafting-with-fluid",
+    energy_required = 4,
+    allow_productivity = true,
+    unlock = "hospital"
 }

@@ -38,7 +38,7 @@ function Entries.yields_item(entry)
 end
 
 function Entries.yields_fluid(entry)
-    return (entry.type ~= nil) and (entry.type == "fluid")
+    return entry.type == "fluid"
 end
 
 function Entries.get_type(entry)
@@ -734,18 +734,12 @@ function Tirislib_Recipe:add_unlock(technology_name)
     end
 
     Tirislib_Recipe.set_enabled(self, false)
-    local tech = Tirislib_Technology.get_by_name(technology_name)
+    local tech, found = Tirislib_Technology.get_by_name(technology_name)
 
-    if tech then
+    if found then
         tech:add_unlock(self.name)
     else
-        Tirislib_Prototype.postpone {
-            recipe = self,
-            technology = technology_name,
-            execute = function(self)
-                self.recipe:add_unlock(self.technology)
-            end
-        }
+        Tirislib_Prototype.postpone(Tirislib_Recipe.add_unlock, self, technology_name)
     end
 
     return self

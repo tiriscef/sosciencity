@@ -29,23 +29,23 @@ end
 --- Returns a dummy prototype if no one was found, so that I can manipulate prototypes without
 --- checking if they exist.
 function Tirislib_Prototype.get(prototype_type, name, mt)
-    local res
+    local ret
     if type(prototype_type) == "string" then
-        res = data.raw[prototype_type][name]
+        ret = data.raw[prototype_type][name]
     elseif type(prototype_type) == "table" then
         for _, ctype in pairs(prototype_type) do
-            res = data.raw[ctype][name]
-            if res then
+            ret = data.raw[ctype][name]
+            if ret then
                 break
             end
         end
     end
 
-    if res then
-        setmetatable(res, mt)
-        return res
+    if ret then
+        setmetatable(ret, mt)
+        return ret, true
     else
-        return dummy_prototype
+        return dummy_prototype, false
     end
 end
 
@@ -63,8 +63,8 @@ end
 --- stored functions.
 Tirislib_Prototype.postponed_functions = {}
 
-function Tirislib_Prototype.postpone(func)
-    table.insert(Tirislib_Prototype.postponed_functions, func)
+function Tirislib_Prototype.postpone(fn, ...)
+    table.insert(Tirislib_Prototype.postponed_functions, {fn = fn, arg = {...}})
 end
 
 -- This assumes that a 'successful' call to a postponed function will not result in
@@ -76,8 +76,8 @@ function Tirislib_Prototype.finish_postponed()
 
     while to_do_count < last_to_do_count do
         Tirislib_Prototype.postponed_functions = {}
-        for _, func in pairs(to_do) do
-            func:execute()
+        for _, postponed in pairs(to_do) do
+            postponed.fn(unpack(postponed.arg))
         end
 
         to_do = Tirislib_Prototype.postponed_functions

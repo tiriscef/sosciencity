@@ -73,7 +73,11 @@ data:extend {
     },
     {
         type = "recipe-category",
-        name = "sosciencity-gene-lab"
+        name = "sosciencity-reproductive-gene-lab"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-phyto-gene-lab"
     },
     {
         type = "recipe-category",
@@ -90,6 +94,10 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-orangery"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-orchid-food-processing"
     },
     {
         type = "recipe-category",

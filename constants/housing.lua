@@ -32,27 +32,27 @@ Housing.values = {
     ["khrushchyovka"] = {
         room_count = 25,
         comfort = 4,
-        qualities = {"cheap"}
+        qualities = {"compact", "simple", "copy-paste", "cheap", "tall"}
     },
     ["sheltered-house"] = {
         room_count = 25,
         comfort = 4,
-        qualities = {"cheap"}
+        qualities = {"sheltered", "compact", "simple", "low"}
     },
     ["small-prefabricated-house"] = {
         room_count = 25,
         comfort = 5,
-        qualities = {}
+        qualities = {"compact", "simple", "copy-paste", "cheap"}
     },
     ["bunkerhouse"] = {
         room_count = 25,
         comfort = 5,
-        qualities = {}
+        qualities = {"sheltered", "compact", "simple", "low"}
     },
     ["huwanic-mansion"] = {
         room_count = 25,
         comfort = 5,
-        qualities = {}
+        qualities = {"spacey", "decorated", "individualistic", "pompous", "tall"}
     }
 }
 local houses = Housing.values

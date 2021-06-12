@@ -9,14 +9,14 @@ Technologies = {}
 ]]
 -- local often used globals for humongous performance gains
 
-local relevant_techs = {}
+local tracked_techs = {}
 
 -- add caste techs
 for _, caste in pairs(Castes.values) do
-    relevant_techs[caste.tech_name] = true
+    tracked_techs[caste.tech_name] = true
 end
 
-local relevant_multi_level_techs = {
+local tracked_multi_level_techs = {
     ["clockwork-caste-effectivity"] = {},
     ["orchid-caste-effectivity"] = {},
     ["gunfire-caste-effectivity"] = {},
@@ -26,6 +26,9 @@ local relevant_multi_level_techs = {
     ["aurora-caste-effectivity"] = {},
     ["plasma-caste-effectivity"] = {},
 }
+
+local unlocks = Unlocks.by_item_aquisition
+local unlocked
 
 local floor = math.floor
 
@@ -42,7 +45,7 @@ local function determine_tech_level(name)
         return tech.level - 1
     end
 
-    local details = relevant_multi_level_techs[name]
+    local details = tracked_multi_level_techs[name]
     while techs[name .. "-" .. (level + 1)].researched do
         level = level + 1
     end
@@ -74,30 +77,80 @@ end
 
 --- Event handler function for finished technologies.
 function Technologies.finished(name)
-    if relevant_techs[name] then
+    if tracked_techs[name] then
         global.technologies[name] = true
     end
 
-    if relevant_multi_level_techs[name] then
+    if tracked_multi_level_techs[name] then
         global.technologies[name] = determine_tech_level(name)
+    end
+end
+
+local function unlock(technology_name)
+    local tech = game.forces.player.technologies[technology_name]
+    tech.researched = true
+    unlocked[technology_name] = true
+    game.print(tech.localised_description)
+end
+
+function Technologies.update()
+    local production
+
+    -- check if the required item was acquired by crafting (shows in the production statistic)
+    for technology_name, already_unlocked in pairs(unlocked) do
+        if not already_unlocked then
+            production = game.forces.player.item_production_statistics
+            if production.get_input_count(unlocks[technology_name]) > 0 then
+                unlock(technology_name)
+            end
+        end
+    end
+end
+
+function Technologies.on_mined_entity(inventory)
+    for technology_name, already_unlocked in pairs(unlocked) do
+        if not already_unlocked then
+            if inventory.get_item_count(unlocks[technology_name]) > 0 then
+                unlock(technology_name)
+            end
+        end
     end
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
+local function set_locals()
+    unlocked = global.unlocked
+end
+
 --- Initialize the technology related contents of global.
 function Technologies.init()
-    global.technologies = {}
     local techs = game.forces.player.technologies
 
-    for name, _ in pairs(relevant_techs) do
+    -- tracked technologies
+    global.technologies = {}
+
+    for name in pairs(tracked_techs) do
         global.technologies[name] = techs[name].researched
     end
 
-    for name, _ in pairs(relevant_multi_level_techs) do
+    for name in pairs(tracked_multi_level_techs) do
         global.technologies[name] = determine_tech_level(name)
     end
+
+    -- unlockables
+    global.unlocked = {}
+
+    for tech_name in pairs(unlocks) do
+        global.unlocked[tech_name] = techs[tech_name].researched
+    end
+
+    set_locals()
+end
+
+function Technologies.load()
+    set_locals()
 end
 
 return Technologies

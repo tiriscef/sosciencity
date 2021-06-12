@@ -131,44 +131,16 @@ local data_details = {
         main_entity = "boring-brick-house"
     },
     ["khrushchyovka"] = {
-        picture = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka.png",
-                    priority = "high",
-                    width = 256,
-                    height = 320,
-                    shift = {0.5, -2.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka-hr.png",
-                        priority = "high",
-                        width = 512,
-                        height = 640,
-                        shift = {0.5, -2.5},
-                        scale = 0.5
-                    }
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka-shadowmap.png",
-                    priority = "high",
-                    width = 256,
-                    height = 320,
-                    shift = {0.5, -2.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka-shadowmap-hr.png",
-                        priority = "high",
-                        width = 512,
-                        height = 640,
-                        shift = {0.5, -2.5},
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
-                }
-            }
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka",
+            width = 13,
+            height = 13,
+            shift = {3.0, -3.5},
+            shadowmap = true,
+            glow = true
         },
-        width = 5,
-        height = 3,
+        width = 7,
+        height = 4,
         tech_level = 1,
         main_entity = "khrushchyovka"
     },
@@ -211,7 +183,7 @@ local data_details = {
         },
         width = 7,
         height = 5,
-        tech_level = 1,
+        tech_level = 3,
         main_entity = "sheltered-house"
     },
     ["small-prefabricated-house"] = {
@@ -264,7 +236,7 @@ local data_details = {
         },
         width = 8,
         height = 6,
-        tech_level = 1
+        tech_level = 3
     },
     ["huwanic-mansion"] = {
         picture = Tirislib_Entity.create_standard_picture {
@@ -278,7 +250,7 @@ local data_details = {
         },
         width = 9,
         height = 8,
-        tech_level = 1
+        tech_level = 5
     }
 }
 
@@ -352,6 +324,45 @@ local function create_item(house_name, house, details)
     Tirislib_Tables.set_fields(item_prototype, details.distinctions)
 end
 
+local quality_effect_on_recipe = {
+    sheltered = function(details, house, tech_level)
+        table.insert(details.themes, {"furnishing_sheltered", house.room_count, tech_level})
+    end,
+    green = function(details, house, tech_level)
+        table.insert(details.themes, {"green", house.room_count, tech_level})
+    end,
+    technical = function(details, house, tech_level)
+        table.insert(details.themes, {"furnishing_technical", house.room_count, tech_level})
+    end,
+    spacey = function(details, house, tech_level)
+        details.themes[1][2] = details.themes[1][2] * 2
+    end,
+    compact = function(details, house, tech_level)
+        details.themes[1][2] = details.themes[1][2] / 2
+    end,
+    decorated = function(details, house, tech_level)
+        table.insert(details.themes, {"furnishing_decorated", house.room_count, tech_level})
+    end,
+    simple = function(details, house, tech_level)
+        details.themes[2][3] = math.max(details.themes[2][3] - 1, 0)
+    end,
+    individualistic = function(details, house, tech_level)
+        details.energy_required = details.energy_required * 3
+    end,
+    ["copy-paste"] = function(details, house, tech_level)
+        details.energy_required = details.energy_required / 10
+    end,
+    pompous = function(details, house, tech_level)
+    end,
+    cheap = function(details, house, tech_level)
+        details.themes[1][3] = math.max(details.themes[1][3] - 1, 0)
+    end,
+    tall = function(details, house, tech_level)
+    end,
+    low = function(details, house, tech_level)
+    end
+}
+
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
     local ingredient_themes = {
@@ -359,12 +370,19 @@ local function create_recipe(house_name, house, details)
         {"furnishing", house.room_count, house.comfort}
     }
 
-    Tirislib_RecipeGenerator.create {
+    local recipe_details = {
         product = house_name,
         themes = ingredient_themes,
         unlock = housing_unlocking_tech[tech_level],
+        energy_required = house.room_count,
         category = "sosciencity-architecture"
     }
+
+    for _, quality in pairs(house.qualities) do
+        quality_effect_on_recipe[quality](recipe_details, house, tech_level)
+    end
+
+    Tirislib_RecipeGenerator.create(recipe_details)
 end
 
 local function create_entity(house_name, house, details)

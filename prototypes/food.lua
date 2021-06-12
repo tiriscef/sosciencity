@@ -33,6 +33,7 @@ local foods = {
     {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},
     {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}},
     {name = "avocado", sprite_variations = {name = "avocado-pile", count = 4}},
+    {name = "chickpeas"},
     {name = "hummus"}
 }
 
@@ -78,3 +79,13 @@ Tirislib_Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"}
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+
+Tirislib_RecipeGenerator.create {
+    product = "hummus",
+    ingredients = {
+        {name = "chickpeas", amount = 10},
+        --{name = "sesame", amount = 10} TODO: sesame item
+    },
+    category = "sosciencity-orchid-food-processing",
+    unlock = "hummus"
+}

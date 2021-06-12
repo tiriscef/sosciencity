@@ -359,10 +359,10 @@ function Tirislib_String.join(separator, ...)
     return join_table(separator, {...}) or ""
 end
 
----Splits the given string along the given separator and returns an array of the parts.
----@param s string
----@param separator string
----@return table
+--- Splits the given string along the given separator and returns an array of the parts.
+--- @param s string
+--- @param separator string
+--- @return table
 function Tirislib_String.split(s, separator)
     local ret = {}
 
@@ -371,6 +371,15 @@ function Tirislib_String.split(s, separator)
     end
 
     return ret
+end
+
+--- Inserts the given string at the given position.
+--- @param s string
+--- @param ins string
+--- @param pos integer
+--- @return string
+function Tirislib_String.insert(s, ins, pos)
+    return s:sub(1, pos) .. ins .. s:sub(pos + 1)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -805,6 +814,11 @@ local function shorten_enumeration(enumeration)
     shorten_enumeration(enumeration)
 end
 
+--- Creates a localised enumeration of the given elements.
+--- @param elements array
+--- @param separator string|locale
+--- @param last_separator string|locale|nil
+--- @return locale
 function Tirislib_Locales.create_enumeration(elements, separator, last_separator)
     separator = separator or ", "
     local ret = {""}
@@ -829,4 +843,56 @@ function Tirislib_Locales.create_enumeration(elements, separator, last_separator
     shorten_enumeration(ret)
 
     return ret
+end
+local create_enumeration = Tirislib_Locales.create_enumeration
+
+--- Creates a localisation for the real world time for the given ticks.
+--- @param ticks integer
+--- @return locale
+function Tirislib_Locales.display_time(ticks)
+    local seconds = floor(ticks / 60)
+    local minutes = floor(seconds / 60)
+    seconds = seconds % 60
+    local hours = floor(minutes / 60)
+    minutes = minutes % 60
+
+    local points = {}
+    if hours > 0 then
+        points[#points + 1] = {"sosciencity.xhours", hours}
+    end
+    if minutes > 0 then
+        points[#points + 1] = {"sosciencity.xminutes", minutes}
+    end
+    if seconds > 0 or #points == 0 then
+        points[#points + 1] = {"sosciencity.xseconds", seconds}
+    end
+
+    return create_enumeration(points, ", ", {"sosciencity.and"})
+end
+
+--- Creates a localisation for the ingame time for the given ticks.
+--- @param ticks integer
+--- @return locale
+function Tirislib_Locales.display_ingame_time(ticks)
+    local days = floor(ticks / 25000)
+    local weeks = floor(days / 7)
+    days = days % 7
+    local months = floor(weeks / 4)
+    weeks = weeks % 4
+
+    local points = {}
+    if months > 0 then
+        points[#points + 1] = {"sosciencity.xmonths", months}
+    end
+    if weeks > 0 then
+        points[#points + 1] = {"sosciencity.xweeks", weeks}
+    end
+    if days > 0 then
+        points[#points + 1] = {"sosciencity.xdays", days}
+    end
+    if #points == 0 then
+        points[#points + 1] = {"sosciencity.less-than-a-day"}
+    end
+
+    return create_enumeration(points, ", ", {"sosciencity.and"})
 end

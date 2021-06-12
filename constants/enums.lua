@@ -30,6 +30,7 @@ Type.upbringing_station = 198
 Type.pharmacy = 199
 Type.hospital = 200
 Type.psych_ward = 201
+Type.intensive_care_unit = 202
 
 -- crafting machines
 Type.assembling_machine = 1001
@@ -44,8 +45,12 @@ Type.farm = 1104
 Type.animal_farm = 1106
 Type.waterwell = 1107
 
-Type.composter = 1110
-Type.composter_output = 1111
+-- misc container types
+Type.composter = 1200
+Type.composter_output = 1201
+Type.plant_care_station = 1202
+Type.cooling_warehouse = 1203
+Type.waste_dump = 1204
 
 Type.turret = 2000
 Type.lab = 2001
@@ -124,6 +129,8 @@ EK.has_penalty_module = 103
 EK.performance = 150
 --- is this entity active?
 EK.active = 151
+--- available work
+EK.workhours = 152
 
 -- type specific stuff
 -- housing
@@ -209,10 +216,8 @@ EK.humus = 800
 EK.composting_progress = 801
 
 -- hospital
---- available operations in this hospital
-EK.operations = 900
 --- statistics over treated disease cases as (disease_id, count)-pairs
-EK.treated = 901
+EK.treated = 900
 
 -- upbringing station
 --- the caste the children are educated in
@@ -221,6 +226,18 @@ EK.education_mode = 1000
 EK.classes = 1001
 --- the number of upbrought children
 EK.graduates = 1002
+
+-- plant care station
+--- stored humus in this plant care station
+EK.humus_stored = 1100
+--- humus related operation mode for this plant care station
+EK.humus_mode = 1101
+--- stored fertiliser in this plant care station
+EK.fertiliser_stored = 1102
+--- fertiliser related operation mode for this plant care station
+EK.fertiliser_mode = 1103
+--- pruning related operation mode for this plant care station
+EK.pruning_mode = 1104
 
 --<< causes >>
 --- Enum table for destruction causes
@@ -348,6 +365,18 @@ DiseaseCategory.health = 1
 DiseaseCategory.sanity = 2
 --- consequences of work related accidents
 DiseaseCategory.accident = 3
+--- consequences of genetic dispositions or complications during upbringing
+DiseaseCategory.birth_defect = 4
+
+DiseasedCause = {}
+
+DiseasedCause.health = 1
+DiseasedCause.sanity = 2
+DiseasedCause.accident = 3
+DiseasedCause.infection = 4
+DiseasedCause.escalation = 5
+DiseasedCause.complication = 6
+DiseasedCause.birth = 7
 
 --- Enum table for subscription connection types
 ConnectionType = {}

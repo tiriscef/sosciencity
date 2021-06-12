@@ -26,6 +26,8 @@ local set_beacon_effects = Subentities.set_beacon_effects
 
 local evaluate_workforce = Inhabitants.evaluate_workforce
 
+local get_chest_inventory = Inventories.get_chest_inventory
+
 local Inhabitants = Inhabitants
 local Neighborhood = Neighborhood
 local Tirislib_Utils = Tirislib_Utils
@@ -156,7 +158,7 @@ local function compostify_items(inventory, count, compostable_items, entry)
 end
 
 local function update_composter(entry, delta_ticks)
-    local inventory = Inventories.get_chest_inventory(entry)
+    local inventory = get_chest_inventory(entry)
     local progress_factor, compostable_items = analyze_composter_inventory(inventory)
 
     local progress = entry[EK.composting_progress]
@@ -194,7 +196,7 @@ Register.set_entity_copy_handler(Type.composter, copy_composter)
 
 -- << composter output >>
 local function update_composter_output(entry)
-    local inventory = Inventories.get_chest_inventory(entry)
+    local inventory = get_chest_inventory(entry)
 
     for _, composter in Neighborhood.all_of_type(entry, Type.composter) do
         local humus_amount = composter[EK.humus]
@@ -253,6 +255,55 @@ end
 Register.set_entity_updater(Type.farm, update_farm)
 
 ---------------------------------------------------------------------------------------------------
+-- << plant care station >>
+
+local function update_plant_care_station(entry, delta_ticks)
+
+end
+Register.set_entity_updater(Type.plant_care_station, update_plant_care_station)
+
+local function create_plant_care_station(entry)
+    entry[EK.humus_stored] = 0
+    entry[EK.humus_mode] = true
+
+    entry[EK.fertiliser_stored] = 0
+    entry[EK.fertiliser_mode] = true
+
+    entry[EK.pruning_mode] = true
+
+    entry[EK.workhours] = 0
+end
+Register.set_entity_destruction_handler(Type.plant_care_station, create_plant_care_station)
+
+local function copy_plant_care_station(source, destination)
+    destination[EK.humus_stored] = source[EK.humus_stored]
+    destination[EK.humus_mode] = source[EK.humus_mode]
+
+    destination[EK.fertiliser_stored] = source[EK.fertiliser_stored]
+    destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
+
+    destination[EK.pruning_mode] = source[EK.pruning_mode]
+
+    destination[EK.workhours] = source[EK.workhours]
+end
+Register.set_entity_copy_handler(Type.plant_care_station, copy_plant_care_station)
+
+local function paste_plant_care_station_settings(source, destination)
+    destination[EK.humus_mode] = source[EK.humus_mode]
+    destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
+    destination[EK.pruning_mode] = source[EK.pruning_mode]
+end
+Register.set_settings_paste_handler(Type.plant_care_station, Type.plant_care_station, paste_plant_care_station_settings)
+
+---------------------------------------------------------------------------------------------------
+-- << cooling warehouse >>
+
+
+---------------------------------------------------------------------------------------------------
+-- << waste dump >>
+
+
+---------------------------------------------------------------------------------------------------
 -- << immigration port >>
 
 local function schedule_immigration_wave(entry, building_details)
@@ -282,7 +333,7 @@ Register.set_entity_updater(Type.immigration_port, update_immigration_port)
 -- << manufactory >>
 
 local function update_manufactory(entry)
-    local performance = Inhabitants.evaluate_workforce(entry)
+    local performance = evaluate_workforce(entry)
     set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.manufactory, update_manufactory)
@@ -296,7 +347,7 @@ local function update_nightclub(entry)
         return
     end
 
-    local worker_performance = Inhabitants.evaluate_workforce(entry)
+    local worker_performance = evaluate_workforce(entry)
 
     -- TODO consume and evaluate drinks
 
@@ -341,7 +392,7 @@ end
 Entity.get_fishing_competition = get_fishing_competition
 
 local function get_fishery_performance(entry)
-    local worker_performance = Inhabitants.evaluate_workforce(entry)
+    local worker_performance = evaluate_workforce(entry)
 
     local building_details = get_building_details(entry)
     local water_tiles = get_water_tiles(entry, building_details)
@@ -388,7 +439,7 @@ end
 Entity.get_hunting_competition = get_hunting_competition
 
 local function get_hunting_hut_performance(entry)
-    local worker_performance = Inhabitants.evaluate_workforce(entry)
+    local worker_performance = evaluate_workforce(entry)
 
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)
@@ -421,11 +472,11 @@ Register.set_entity_updater(Type.market, Inventories.cache_contents)
 -- << hospital >>
 
 function Entity.get_hospital_inventories(entry)
-    local ret = {Inventories.get_chest_inventory(entry)}
+    local ret = {get_chest_inventory(entry)}
 
     for _, _type in pairs(TypeGroup.hospital_complements) do
         for _, building in Neighborhood.all_of_type(entry, _type) do
-            ret[#ret + 1] = Inventories.get_chest_inventory(building)
+            ret[#ret + 1] = get_chest_inventory(building)
         end
     end
 
@@ -433,24 +484,24 @@ function Entity.get_hospital_inventories(entry)
 end
 
 local function update_hospital(entry, delta_ticks)
-    local performance = Inhabitants.evaluate_workforce(entry)
+    local performance = evaluate_workforce(entry)
 
     if not has_power(entry) then
         performance = 0
     end
 
-    entry[EK.operations] = entry[EK.operations] + performance * delta_ticks * get_building_details(entry).speed
+    entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * get_building_details(entry).speed
 end
 Register.set_entity_updater(Type.hospital, update_hospital)
 
 local function create_hospital(entry)
-    entry[EK.operations] = 0
+    entry[EK.workhours] = 0
     entry[EK.treated] = {}
 end
 Register.set_entity_creation_handler(Type.hospital, create_hospital)
 
 local function copy_hospital(source, destination)
-    destination[EK.operations] = source[EK.operations]
+    destination[EK.workhours] = source[EK.workhours]
     destination[EK.treated] = Tirislib_Tables.copy(source[EK.treated])
 end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
@@ -487,7 +538,14 @@ local function finish_class(entry, class, mode)
     local caste = Tirislib_Utils.weighted_random(probabilities, 1)
     local genders = class[2]
     local count = Tirislib_Tables.array_sum(genders)
-    local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, nil, genders)
+
+    local diseases = DiseaseGroup.new(count)
+    local sick_count = Tirislib_Utils.coin_flips(Inhabitants.get_birth_defect_probability(), count)
+    if sick_count > 0 then
+        DiseaseGroup.make_sick_randomly(diseases, DiseaseCategory.birth_defect, sick_count)
+    end
+
+    local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, DiseaseGroup.new_at_birth(count), genders)
     Inhabitants.add_to_city(graduates)
 
     entry[EK.graduates] = entry[EK.graduates] + count
@@ -584,6 +642,7 @@ local function update_water_distributer(entry)
             end
         end
     end
+
     entry[EK.water_quality] = 0
     entry[EK.water_name] = nil
 end

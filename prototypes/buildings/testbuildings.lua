@@ -108,4 +108,4 @@ local function create_test_assembling_machine(name, categories)
     }:set_size(3, 3)
 end
 
-create_test_assembling_machine("gene-lab", {"sosciencity-gene-lab"})
+create_test_assembling_machine("gene-lab", {"sosciencity-reproductive-gene-lab"})
