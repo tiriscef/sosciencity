@@ -35,6 +35,7 @@ Inhabitants = {}
     global.last_social_change: tick
 ]]
 -- local often used globals for enormous performance gains
+
 local global
 local population
 local caste_points
@@ -1089,7 +1090,7 @@ local function update_homelessness()
         local count = homeless_group[EK.inhabitants]
         local emigrating = ceil(count * 0.1)
         local emigrated = take_inhabitants(homeless_group, emigrating)
-        Communication.log_emigration(emigrated, EmigrationCause.homeless)
+        Communication.report_emigration(emigrated[EK.inhabitants], EmigrationCause.homeless)
     end
 
     try_house_homeless()
@@ -1252,7 +1253,7 @@ local function cure_side_effects(entry, disease_id, count, cured)
         dead_count = coin_flips(cured and disease.complication_lethality or disease.lethality, count)
         if dead_count > 0 then
             take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
-            Communication.log_disease_death(disease_id, dead_count)
+            Communication.report_disease_death(disease_id, dead_count)
         end
     end
 
@@ -1381,7 +1382,7 @@ local function treat_diseases(entry, hospitals, diseases, disease_group)
                 cure_side_effects(entry, disease_id, treated, true)
                 local statistics = hospital[EK.treated]
                 statistics[disease_id] = (statistics[disease_id] or 0) + treated
-                Communication.log_treatment(disease_id, treated)
+                Communication.report_treatment(disease_id, treated)
             end
 
             count = count - treated
@@ -1413,7 +1414,7 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
 
                 if recovered > 0 then
                     cure_side_effects(entry, disease_id, recovered)
-                    Communication.log_recovery(disease_id, recovered)
+                    Communication.report_recovery(disease_id, recovered)
                 end
             end
         end
@@ -1531,7 +1532,7 @@ local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks
         trend = trend + emigrating
 
         local emigrants = take_inhabitants(entry, emigrating)
-        Communication.log_emigration(emigrants, EmigrationCause.unhappy)
+        Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
     end
     entry[EK.emigration_trend] = trend
 end
@@ -1689,7 +1690,7 @@ function Inhabitants.add_casualty_fear(destroyed_house)
 
     local casualties = destroyed_house[EK.inhabitants]
     global.fear = global.fear + 0.05 * casualties
-    Communication.log_death(destroyed_house, DeathCause.killed)
+    Communication.report_death(destroyed_house[EK.inhabitants], DeathCause.killed)
 end
 
 ---------------------------------------------------------------------------------------------------
