@@ -255,6 +255,11 @@ EmigrationCause.unknown = 0
 EmigrationCause.unhappy = 1
 EmigrationCause.homeless = 2
 
+--- Enum table for immigration causes
+ImmigrationCause = {}
+
+ImmigrationCause.birth = 1
+
 --- Enum table for dead inhabitants
 DeathCause = {}
 
@@ -262,6 +267,17 @@ DeathCause.unknown = 0
 DeathCause.old_age = 1
 DeathCause.illness = 2
 DeathCause.killed = 3
+
+--- Enum table for disease causes
+DiseasedCause = {}
+
+DiseasedCause.health = 1
+DiseasedCause.sanity = 2
+DiseasedCause.accident = 3
+DiseasedCause.infection = 4
+DiseasedCause.escalation = 5
+DiseasedCause.complication = 6
+DiseasedCause.birth = 7
 
 --<< happiness summands >>
 --- Enum table for happiness summands.
@@ -368,15 +384,6 @@ DiseaseCategory.accident = 3
 --- consequences of genetic dispositions or complications during upbringing
 DiseaseCategory.birth_defect = 4
 
-DiseasedCause = {}
-
-DiseasedCause.health = 1
-DiseasedCause.sanity = 2
-DiseasedCause.accident = 3
-DiseasedCause.infection = 4
-DiseasedCause.escalation = 5
-DiseasedCause.complication = 6
-DiseasedCause.birth = 7
 
 --- Enum table for subscription connection types
 ConnectionType = {}
