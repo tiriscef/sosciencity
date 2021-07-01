@@ -34,7 +34,7 @@ local unsubscribe_neighborhood
 
 local update_workforce
 
-local get_inner_table = Tirislib_Tables.get_inner_table
+local get_subtbl = Tirislib_Tables.get_subtbl
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -171,7 +171,7 @@ local on_settings_paste_lookup = {}
 function Register.set_settings_paste_handler(source_type, destination_type, fn)
     Tirislib_Utils.desync_protection()
 
-    local tbl = get_inner_table(on_settings_paste_lookup, destination_type)
+    local tbl = get_subtbl(on_settings_paste_lookup, destination_type)
     tbl[source_type] = fn
 end
 

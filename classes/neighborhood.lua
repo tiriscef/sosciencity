@@ -21,7 +21,7 @@ local try_get = Register.try_get
 local get_type_definition = Types.get
 local get_building_details = Buildings.get
 local distance = Tirislib_Utils.maximum_metric_distance
-local get_inner_table = Tirislib_Tables.get_inner_table
+local get_subtbl = Tirislib_Tables.get_subtbl
 local subscriptions
 
 ---------------------------------------------------------------------------------------------------
@@ -123,8 +123,8 @@ end
 local function try_connect(entry, neighbor, connection_type)
     if entry ~= neighbor and can_connect(entry, neighbor, connection_type) then
         local entity_type = neighbor[EK.type]
-        local neighbors_table = get_inner_table(entry, EK.neighbors)
-        local neighbors_of_type = get_inner_table(neighbors_table, entity_type)
+        local neighbors_table = get_subtbl(entry, EK.neighbors)
+        local neighbors_of_type = get_subtbl(neighbors_table, entity_type)
 
         neighbors_of_type[neighbor[EK.unit_number]] = entity_type
     end
@@ -135,7 +135,7 @@ function Neighborhood.subscribe_to(entry, neighbor_type, connection_type)
     connection_type = connection_type or ConnectionType.bidirectional
 
     -- note subscription
-    get_inner_table(subscriptions, neighbor_type)[unit_number] = connection_type
+    get_subtbl(subscriptions, neighbor_type)[unit_number] = connection_type
 
     -- find all the neighbors already existing
     for _, possible_neighbor in Register.all_of_type(neighbor_type) do

@@ -599,7 +599,7 @@ function RG.create_per_theme_level(details)
         end
 
         -- set the current followed theme
-        local themes = Tirislib_Tables.get_inner_table(current_details, "themes")
+        local themes = Tirislib_Tables.get_subtbl(current_details, "themes")
         themes[#themes + 1] = {
             theme_name,
             type(theme_amount) == "function" and theme_amount(level) or theme_amount,

@@ -6,15 +6,30 @@ Tirislib_Technology = {}
 -- lua is weird
 Tirislib_Technology.__index = Tirislib_Technology
 
+--- Class for arrays of technologies. Setter-functions can be called on them.
+Tirislib_TechnologyArray = {}
+Tirislib_TechnologyArray.__index = Tirislib_PrototypeArray.__index
+
+--- Gets the TechnologyPrototype of the given name. If no such Technology exists, a dummy object will be returned instead.
+--- @param name string
+--- @return TechnologyPrototype prototype
+--- @return boolean found
 function Tirislib_Technology.get_by_name(name)
     return Tirislib_Prototype.get("technology", name, Tirislib_Technology)
 end
 
+--- Creates the TechnologyPrototype metatable for the given prototype.
+--- @param prototype table
+--- @return TechnologyPrototype
 function Tirislib_Technology.get_from_prototype(prototype)
     setmetatable(prototype, Tirislib_Technology)
     return prototype
 end
 
+--- Unified function for the get_by_name and for the get_from_prototype functions.
+--- @param name string|table
+--- @return TechnologyPrototype prototype
+--- @return boolean|nil found
 function Tirislib_Technology.get(name)
     if type(name) == "string" then
         return Tirislib_Technology.get_by_name(name)
@@ -23,6 +38,10 @@ function Tirislib_Technology.get(name)
     end
 end
 
+--- Creates an iterator over all TechnologyPrototypes.
+--- @return function
+--- @return string
+--- @return TechnologyPrototype
 function Tirislib_Technology.iterate()
     local index, prototype
 
@@ -38,6 +57,9 @@ function Tirislib_Technology.iterate()
     return _next, index, prototype
 end
 
+--- Creates an TechnologyPrototype from the given prototype table.
+--- @param prototype table
+--- @return TechnologyPrototype prototype
 function Tirislib_Technology.create(prototype)
     if not prototype.type then
         prototype.type = "technology"
@@ -47,6 +69,9 @@ function Tirislib_Technology.create(prototype)
     return Tirislib_Technology.get_from_prototype(prototype)
 end
 
+--- Adds the given effect to this technology.
+--- @param effect TechnologyEffectPrototype
+--- @return TechnologyPrototype itself
 function Tirislib_Technology:add_effect(effect)
     if not self.effects then
         self.effects = {}
@@ -64,6 +89,9 @@ function Tirislib_Technology:add_effect(effect)
     return self
 end
 
+--- Adds an unlock effect for the given recipe to this technology.
+--- @param recipe_name string
+--- @return TechnologyPrototype itself
 function Tirislib_Technology:add_unlock(recipe_name)
     return self:add_effect {
         type = "unlock-recipe",
@@ -71,6 +99,9 @@ function Tirislib_Technology:add_unlock(recipe_name)
     }
 end
 
+--- Adds the given technology to the prerequisites.
+--- @param tech_name string
+--- @return TechnologyPrototype itself
 function Tirislib_Technology:add_prerequisite(tech_name)
     if not self.prerequisites then
         self.prerequisites = {}
@@ -86,6 +117,9 @@ function Tirislib_Technology:add_prerequisite(tech_name)
     return self
 end
 
+--- Removes the given technology from the prerequisites.
+--- @param tech_name string
+--- @return TechnologyPrototype itself
 function Tirislib_Technology:remove_prerequisite(tech_name)
     if not self.prerequisites then
         -- nothing to do

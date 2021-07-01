@@ -12,15 +12,27 @@ Tirislib_ItemArray.__index = Tirislib_PrototypeArray.__index
 
 -- << getter functions >>
 local item_types = require("lib.prototype-types.item-types")
+
+--- Gets the ItemPrototype of the given name. If no such Item exists, a dummy object will be returned instead.
+--- @param name string
+--- @return ItemPrototype prototype
+--- @return boolean found
 function Tirislib_Item.get_by_name(name)
     return Tirislib_Prototype.get(item_types, name, Tirislib_Item)
 end
 
+--- Creates the ItemPrototype metatable for the given prototype.
+--- @param prototype table
+--- @return ItemPrototype
 function Tirislib_Item.get_from_prototype(prototype)
     setmetatable(prototype, Tirislib_Item)
     return prototype
 end
 
+--- Unified function for the get_by_name and for the get_from_prototype functions.
+--- @param name string|table
+--- @return ItemPrototype prototype
+--- @return boolean|nil found
 function Tirislib_Item.get(name)
     if type(name) == "string" then
         return Tirislib_Item.get_by_name(name)
@@ -29,6 +41,11 @@ function Tirislib_Item.get(name)
     end
 end
 
+--- Creates an iterator over all ItemPrototypes of the given entity subtype.
+--- @param item_type string
+--- @return function
+--- @return string
+--- @return ItemPrototype
 function Tirislib_Item.iterate(item_type)
     local index, value
 
@@ -44,6 +61,8 @@ function Tirislib_Item.iterate(item_type)
     return _next, index, value
 end
 
+--- Returns an ItemPrototypeArray with all ItemPrototypes of the given subtypes.
+--- @return ItemPrototypeArray prototypes
 function Tirislib_Item.all(...)
     local types = {...}
     if #types == 0 then
@@ -64,6 +83,10 @@ function Tirislib_Item.all(...)
 end
 
 -- << creation >>
+
+--- Creates an ItemPrototype from the given prototype table.
+--- @param prototype table
+--- @return ItemPrototype prototype
 function Tirislib_Item.create(prototype)
     if not prototype.type then
         prototype.type = "item"
@@ -78,6 +101,9 @@ end
 --- **name:** name of the item prototype\
 --- **sprite_variations:** sprite variations for the prototype to use\
 --- **distinctions:** table of prototype fields that should be different from the batch specification
+--- @param item_detail_array table
+--- @param batch_details table
+--- @return ItemPrototypeArray
 function Tirislib_Item.batch_create(item_detail_array, batch_details)
     local prototype_type = batch_details.type or "item"
     local path = batch_details.icon_path or "__sosciencity-graphics__/graphics/icon/"
@@ -117,10 +143,15 @@ function Tirislib_Item.batch_create(item_detail_array, batch_details)
 end
 
 -- << manipulation >>
+
+--- Checks if the item is launchable, which means that it has launch products.
+--- @return boolean
 function Tirislib_Item:is_launchable()
     return (self.rocket_launch_product ~= nil) or (self.rocket_launch_products ~= nil)
 end
 
+--- Returns the RecipeEntryPrototypes of this item's launch products.
+--- @return table
 function Tirislib_Item:get_launch_products()
     if not self:is_launchable() then
         return {}
@@ -129,6 +160,9 @@ function Tirislib_Item:get_launch_products()
     return self.rocket_launch_product and {self.rocket_launch_product} or self.rocket_launch_products
 end
 
+--- Adds the given RecipeEntryPrototype to this item's launch products.
+--- @param product_prototype RecipeEntryPrototype
+--- @return ItemPrototype itself
 function Tirislib_Item:add_launch_product(product_prototype)
     if not self:is_launchable() then
         self.rocket_launch_products = {product_prototype}
@@ -143,6 +177,11 @@ function Tirislib_Item:add_launch_product(product_prototype)
     return self
 end
 
+--- Adds the given amount of standardized sprite variations to the item.
+--- @param size number
+--- @param path string
+--- @param count integer
+--- @return ItemPrototype itself
 function Tirislib_Item:add_sprite_variations(size, path, count)
     if not self.pictures then
         self.pictures = {}
@@ -158,8 +197,12 @@ function Tirislib_Item:add_sprite_variations(size, path, count)
             }
         )
     end
+
+    return self
 end
 
+--- Adds the item's icon to its sprite variations.
+--- @return ItemPrototype itself
 function Tirislib_Item:add_icon_to_sprite_variations()
     if not self.pictures then
         self.pictures = {}
@@ -173,8 +216,13 @@ function Tirislib_Item:add_icon_to_sprite_variations()
             scale = 16. / self.icon_size
         }
     )
+
+    return self
 end
 
+--- Sets the stack size to the given number if that number isn't smaller that the current stack size.
+--- @param size integer
+--- @return ItemPrototype itself
 function Tirislib_Item:set_min_stack_size(size)
     if self.stack_size < size then
         self.stack_size = size
@@ -183,10 +231,14 @@ function Tirislib_Item:set_min_stack_size(size)
     return self
 end
 
+--- Returns the localised name of the item.
+--- @return locale
 function Tirislib_Item:get_localised_name()
     return self.localised_name or {"item-name." .. self.name}
 end
 
+--- Returns the localised description of the item.
+--- @return locale
 function Tirislib_Item:get_localised_description()
     return self.localised_description or {"item-description." .. self.name}
 end

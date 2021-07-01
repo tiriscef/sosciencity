@@ -10,15 +10,26 @@ Tirislib_Fluid.__index = Tirislib_Fluid
 Tirislib_FluidArray = {}
 Tirislib_FluidArray.__index = Tirislib_PrototypeArray.__index
 
+--- Gets the FluidPrototype of the given name. If no such Fluid exists, a dummy object will be returned instead.
+--- @param name string
+--- @return FluidPrototype prototype
+--- @return boolean found
 function Tirislib_Fluid.get_by_name(name)
     return Tirislib_Prototype.get("fluid", name, Tirislib_Fluid)
 end
 
+--- Creates the FluidPrototype metatable for the given prototype.
+--- @param prototype table
+--- @return FluidPrototype
 function Tirislib_Fluid.get_from_prototype(prototype)
     setmetatable(prototype, Tirislib_Fluid)
     return prototype
 end
 
+--- Unified function for the get_by_name and for the get_from_prototype functions.
+--- @param name string|table
+--- @return FluidPrototype prototype
+--- @return boolean|nil found
 function Tirislib_Fluid.get(name)
     if type(name) == "string" then
         return Tirislib_Fluid.get_by_name(name)
@@ -27,6 +38,10 @@ function Tirislib_Fluid.get(name)
     end
 end
 
+--- Creates an iterator over all FluidPrototypes.
+--- @return function
+--- @return string
+--- @return FluidPrototype
 function Tirislib_Fluid.iterate()
     local index, value
 
@@ -42,6 +57,9 @@ function Tirislib_Fluid.iterate()
     return _next, index, value
 end
 
+--- Creates an FluidPrototype from the given prototype table.
+--- @param prototype table
+--- @return FluidPrototype prototype
 function Tirislib_Fluid.create(prototype)
     if not prototype.type then
         prototype.type = "fluid"
@@ -55,7 +73,10 @@ end
 --- *Fluid specification:*\
 --- **name:** name of the fluid prototype\
 --- **distinctions:** table of prototype fields that should be different from the batch specification
-function Tirislib_Fluid.batch_create(item_detail_array, batch_details)
+--- @param fluid_detail_array table
+--- @param batch_details table
+--- @return FluidPrototypeArray
+function Tirislib_Fluid.batch_create(fluid_detail_array, batch_details)
     local path = batch_details.icon_path or "__sosciencity-graphics__/graphics/icon/"
     local size = batch_details.icon_size or 64
     local subgroup = batch_details.subgroup
@@ -65,7 +86,7 @@ function Tirislib_Fluid.batch_create(item_detail_array, batch_details)
     local max_temperature = batch_details.max_temperature or 100
 
     local created_items = {}
-    for index, details in pairs(item_detail_array) do
+    for index, details in pairs(fluid_detail_array) do
         local fluid =
             Tirislib_Fluid.create {
             name = details.name,
