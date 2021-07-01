@@ -11,7 +11,7 @@ Handcrafting = {}
 local floor = math.floor
 local min = math.min
 local format = string.format
-local get_inner_table = Tirislib_Tables.get_inner_table
+local get_subtbl = Tirislib_Tables.get_subtbl
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -24,7 +24,7 @@ end
 -- << handcrafting finished stuff >>
 
 local function get_recent_donation_count(player_id)
-    local log = get_inner_table(global.blood_donations, player_id)
+    local log = get_subtbl(global.blood_donations, player_id)
 
     local count = 1 -- set to 1, because the current donation counts
     local current_tick = game.tick

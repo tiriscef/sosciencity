@@ -110,8 +110,6 @@ require("classes.gui")
 ---@class DiseaseCategory
 ---@class AgeGroup
 ---@class GenderGroup
----@class LuaqQuery
----@class locale
 
 --[[
     Data this script stores in global

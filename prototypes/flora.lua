@@ -20,7 +20,7 @@ local flora_items = {
 }
 
 for _, item in pairs(flora_items) do
-    local distinctions = Tirislib_Tables.get_inner_table(item, "distinctions")
+    local distinctions = Tirislib_Tables.get_subtbl(item, "distinctions")
 
     if item.wood then
         distinctions.fuel_value = "1MJ"
@@ -336,7 +336,7 @@ local function merge_details(lh, rh)
 
     for _, array in pairs(arrays) do
         if rh[array] then
-            local lh_array = Tirislib_Tables.get_inner_table(lh, array)
+            local lh_array = Tirislib_Tables.get_subtbl(lh, array)
             Tirislib_Tables.merge_arrays(lh_array, rh[array])
         end
     end

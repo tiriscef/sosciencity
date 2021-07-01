@@ -53,10 +53,8 @@ local allowed_speakers
 local floor = math.floor
 local random = math.random
 local pick_random_subtable_weighted_by_key = Tirislib_Tables.pick_random_subtable_weighted_by_key
-local get_inner_table = Tirislib_Tables.get_inner_table
+local get_subtbl = Tirislib_Tables.get_subtbl
 local sum = Tirislib_Tables.sum
-
-local display_time = Tirislib_Locales.display_time
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -72,7 +70,7 @@ local function generate_speakers_list()
 
     speakers = {}
     for _, speaker_name in pairs(allowed_speakers) do
-        speakers = Speakers[speaker_name]
+        speakers[speaker_name] = Speakers[speaker_name]
     end
 end
 
@@ -102,7 +100,15 @@ function Communication.init()
     --[[global.logs = {
         population = {}
     }]]
-    global.reports = {}
+    global.reports = {
+        ["immigration"] = {},
+        ["emigration"] = {},
+        ["death"] = {},
+        ["diseases"] = {},
+        ["disease-cause"] = {},
+        ["disease-recovery"] = {},
+        ["disease-death"] = {}
+    }
     global.current_reports = {}
     global.report_ticks = {
         census = game.tick,
@@ -209,7 +215,7 @@ local FOLLOWUP_DELAY = 2 * Time.second
 local function say(speaker, line, ...)
     game.print {"", {speaker .. "prefix"}, {speaker .. line, ...}}
 
-    if speakers[speaker].lines_with_followup[line] then
+    if Speakers[speaker].lines_with_followup[line] then
         Scheduler.plan_event_in("say", FOLLOWUP_DELAY, speaker, line .. "f")
     end
 end
@@ -225,7 +231,7 @@ local function say_random_variant(line, speaker, ...)
 
     local variant = random(speakers[speaker][line])
 
-    say(speaker, variant, ...)
+    say(speaker, line .. variant, ...)
 end
 Scheduler.set_event("say_random_variant", say_random_variant)
 
@@ -236,17 +242,15 @@ Scheduler.set_event("say_random_variant", say_random_variant)
 local function tell(player, speaker, line, ...)
     player.print {"", {speaker .. "prefix"}, {speaker .. line, ...}}
 
-    if speakers[speaker].lines_with_followup[line] then
+    if Speakers[speaker].lines_with_followup[line] then
         Scheduler.plan_event_in("tell", FOLLOWUP_DELAY, player, speaker, line .. "f")
     end
 end
 Scheduler.set_event("tell", tell)
 
 function Communication.say_welcome(player)
-    tell(player, "tiriscef.", "welcome")
-
-    if global.profanity then
-        tell(player, "profanity.", "welcome")
+    for _, speaker in pairs(allowed_speakers) do
+        tell(player, speaker, "welcome")
     end
 end
 
@@ -342,39 +346,39 @@ end
     The following report interface functions feature rather ugly code dublications. But I don't have a good idea how to simplify this code at the moment.
 ]]
 function Communication.report_emigration(count, cause)
-    local current_report = get_inner_table(reports, "emigration")
+    local current_report = get_subtbl(reports, "emigration")
     current_report[cause] = (current_report[cause] or 0) + count
 
     reported_event_counts.census = reported_event_counts.census + 1
 end
 
 function Communication.report_immigration(count, cause)
-    local current_report = get_inner_table(reports, "immigration")
+    local current_report = get_subtbl(reports, "immigration")
     current_report[cause] = (current_report[cause] or 0) + count
 
     reported_event_counts.census = reported_event_counts.census + 1
 end
 
 function Communication.report_death(count, cause)
-    local current_report = get_inner_table(reports, "death")
+    local current_report = get_subtbl(reports, "death")
     current_report[cause] = (current_report[cause] + count)
 
     reported_event_counts.census = reported_event_counts.census + 1
 end
 
 function Communication.report_diseased(disease_id, count, cause)
-    local current_disease_report = get_inner_table(reports, "diseases")
+    local current_disease_report = get_subtbl(reports, "diseases")
     current_disease_report[disease_id] = (current_disease_report[disease_id] or 0) + count
 
-    local current_disease_cause_report = get_inner_table(reports, "disease-cause")
+    local current_disease_cause_report = get_subtbl(reports, "disease-cause")
     current_disease_cause_report[cause] = (current_disease_cause_report[cause] or 0) + count
 
     reported_event_counts.healthcare = reported_event_counts.healthcare + 1
 end
 
 function Communication.report_recovery(disease_id, count)
-    local current_report = get_inner_table(reports, "disease-recovery")
-    current_report = get_inner_table(current_report, false)
+    local current_report = get_subtbl(reports, "disease-recovery")
+    current_report = get_subtbl(current_report, false)
 
     current_report[disease_id] = (current_report[disease_id] or 0) + count
 
@@ -382,8 +386,8 @@ function Communication.report_recovery(disease_id, count)
 end
 
 function Communication.report_treatment(disease_id, count)
-    local current_report = get_inner_table(reports, "disease-recovery")
-    current_report = get_inner_table(current_report, false)
+    local current_report = get_subtbl(reports, "disease-recovery")
+    current_report = get_subtbl(current_report, false)
 
     current_report[disease_id] = (current_report[disease_id] or 0) + count
 
@@ -393,7 +397,7 @@ end
 function Communication.report_disease_death(count, disease_id)
     Communication.report_death(count, DeathCause.illness)
 
-    local current_report = get_inner_table(reports, "disease-death")
+    local current_report = get_subtbl(reports, "disease-death")
     current_report[disease_id] = (current_report[disease_id] or 0) + count
 
     reported_event_counts.healthcare = reported_event_counts.healthcare + 1
@@ -406,20 +410,16 @@ local function publish_reports(...)
     end
 end
 
-local function is_census_report_justified()
-    return reported_event_counts.census > 5
-end
-
 local function census_report()
     local speaker = pick_speaker("census-immigration")
 
-    local emigration = sum(reports["emigration"])
-    local death = sum(reports["death"])
+    local emigration = sum(get_subtbl(reports, "emigration"))
+    local death = sum(get_subtbl(reports, "death"))
     local pure_emigration = emigration - death
 
     say_random_variant("report-begin", speaker, {"report-name.census"})
 
-    say_random_variant("census-immigration", speaker, sum(reports["immigration"]))
+    say_random_variant("census-immigration", speaker, sum(get_subtbl(reports, "immigration")))
     say_random_variant("census-emigration", speaker, emigration, death, pure_emigration)
 
     say_random_variant("report-end", speaker)
@@ -427,24 +427,21 @@ local function census_report()
     publish_reports("immigration", "emigration", "death")
 end
 
-local function is_healthcare_report_justified()
-    return reported_event_counts.healthcare > 5
-end
-
 local function healthcare_report()
     local speaker = pick_speaker("healthcare")
 
-    local diseases = sum(reports["diseases"])
-    local natural_recovered = sum(reports["disease-recovery"][true])
-    local treated = sum(reports["disease-recovery"][false])
+    local diseases = sum(get_subtbl(reports, "diseases"))
+    local recovery = get_subtbl(reports, "disease-recovery")
+    local natural_recovered = sum(get_subtbl(recovery, true))
+    local treated = sum(get_subtbl(recovery, false))
     local recoveries = natural_recovered + treated
 
     say_random_variant("report-begin", speaker, {"report-name.healthcare"})
 
-    say_random_variant("healthcare", speaker, diseases, sum(reports["disease-death"]))
+    say_random_variant("healthcare", speaker, diseases, sum(get_subtbl(reports, "disease-death")))
     say_random_variant("healthcare-recovery", speaker, natural_recovered, treated, recoveries)
 
-    local infections = reports["disease-cause"][DiseasedCause.infection]
+    local infections = get_subtbl(reports, "disease-cause")[DiseasedCause.infection]
     if diseases > 10 and infections >= 0.5 * diseases then
         say_random_variant("healthcare-infection-warning", speaker)
     end
@@ -459,21 +456,14 @@ local report_lookup = {
     healthcare = healthcare_report
 }
 
-local report_justification_lookup = {
-    census = is_census_report_justified,
-    healthcare = is_healthcare_report_justified
-}
-
 --- Looks for a type of report that makes sense to fire at the moment.
 local function look_for_report(current_tick)
     for report_name, last_report_tick in pairs(report_ticks) do
-        if current_tick - last_report_tick >= (10 * Time.minute) then
-            if report_justification_lookup[report_name]() then
-                report_lookup[report_name]()
-                report_ticks[report_name] = current_tick
-                reported_event_counts[report_name] = 0
-                return
-            end
+        if current_tick - last_report_tick >= (10 * Time.minute) and reported_event_counts[report_name] > 5 then
+            report_lookup[report_name]()
+            report_ticks[report_name] = current_tick
+            reported_event_counts[report_name] = 0
+            return
         end
     end
 end

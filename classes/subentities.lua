@@ -20,7 +20,7 @@ local get_building_details = Buildings.get
 local max = math.max
 local format = string.format
 local get_size = Tirislib_Utils.get_entity_size
-local get_inner_table = Tirislib_Tables.get_inner_table
+local get_subtbl = Tirislib_Tables.get_subtbl
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
@@ -35,7 +35,7 @@ local function get_subentity_name(_type, entity)
 end
 
 local function add(entry, _type)
-    local subentities = get_inner_table(entry, EK.subentities)
+    local subentities = get_subtbl(entry, EK.subentities)
 
     local entity = entry[EK.entity]
     local subentity =
