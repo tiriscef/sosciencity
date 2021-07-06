@@ -54,7 +54,7 @@ local sp_ingredients = {
 
 -- find launchable items that produce the science packs
 local launchable_item_ingredients = {}
-for _, item in pairs(Tirislib_Item.all()) do
+for _, item in Tirislib_Item.iterate() do
     for _, launch_product in pairs(item:get_launch_products()) do
         local launch_product_name = Tirislib_RecipeEntry.get_name(launch_product)
 

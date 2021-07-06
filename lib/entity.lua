@@ -41,25 +41,61 @@ function Tirislib_Entity.get(name)
     end
 end
 
---- Creates an iterator over all EntityPrototypes of the given entity subtype.
---- @param prototype_type string
+--- Creates an iterator over all EntityPrototypes of the given entity subtypes.
+--- @param types table|string|nil
 --- @return function
 --- @return string
 --- @return EntityPrototype
-function Tirislib_Entity.iterate(prototype_type)
-    local index, value
+function Tirislib_Entity.iterate(types)
+    -- no argument - iterate over all types
+    if types == nil then
+        types = entity_types
+    end
+    -- one type given - iterate over just that type
+    if type(types) ~= "table" then
+        types = {types}
+    end
+
+    local name, entity, type_index, prototype_type
+    type_index, prototype_type = next(types, type_index)
 
     local function _next()
-        index, value = next(data.raw[prototype_type], index)
+        name, entity = next(data.raw[prototype_type], name)
 
-        if index then
-            setmetatable(value, Tirislib_Entity)
-            return index, value
+        if name then
+            setmetatable(entity, Tirislib_Entity)
+            return name, entity
+        else
+            type_index, prototype_type = next(types, type_index)
+            if prototype_type ~= nil then
+                return _next()
+            end
         end
     end
 
-    return _next, index, value
+    return _next, name, entity
 end
+
+--- Returns an ItemPrototypeArray with all ItemPrototypes of the given subtypes.
+--- @return ItemPrototypeArray prototypes
+function Tirislib_Entity.all(...)
+    local types = {...}
+    if #types == 0 then
+        -- return all entities if no types are given
+        types = entity_types
+    end
+
+    local array = {}
+    setmetatable(array, Tirislib_EntityArray)
+
+    for _, item in Tirislib_Entity.iterate(types) do
+        array[#array + 1] = item
+    end
+
+    return array
+end
+
+-- << creation >>
 
 --- Creates an EntityPrototype from the given prototype table.
 --- @param prototype table

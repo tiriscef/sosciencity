@@ -904,12 +904,12 @@ function Tirislib_Tables.complement_array(set, ...)
         local current_set = select(i, ...)
         for _, value in pairs(current_set) do
             if set[value] == nil then
-                ret[#ret+1] = value
+                ret[value] = true
             end
         end
     end
 
-    return ret
+    return get_keyset(ret)
 end
 
 --- Returns a random key out of the given table.
