@@ -41,24 +41,39 @@ function Tirislib_Item.get(name)
     end
 end
 
---- Creates an iterator over all ItemPrototypes of the given entity subtype.
---- @param item_type string
+--- Creates an iterator over all ItemPrototypes of the given entity subtypes.
+--- @param types table|string|nil
 --- @return function
 --- @return string
 --- @return ItemPrototype
-function Tirislib_Item.iterate(item_type)
-    local index, value
+function Tirislib_Item.iterate(types)
+    -- no argument - iterate over all types
+    if types == nil then
+        types = item_types
+    end
+    -- one type given - iterate over just that type
+    if type(types) ~= "table" then
+        types = {types}
+    end
+
+    local name, item, type_index, prototype_type
+    type_index, prototype_type = next(types, type_index)
 
     local function _next()
-        index, value = next(data.raw[item_type], index)
+        name, item = next(data.raw[prototype_type], name)
 
-        if index then
-            setmetatable(value, Tirislib_Item)
-            return index, value
+        if name then
+            setmetatable(item, Tirislib_Item)
+            return name, item
+        else
+            type_index, prototype_type = next(types, type_index)
+            if prototype_type ~= nil then
+                return _next()
+            end
         end
     end
 
-    return _next, index, value
+    return _next, name, item
 end
 
 --- Returns an ItemPrototypeArray with all ItemPrototypes of the given subtypes.
@@ -73,10 +88,8 @@ function Tirislib_Item.all(...)
     local array = {}
     setmetatable(array, Tirislib_ItemArray)
 
-    for _, _type in pairs(types) do
-        for _, item in Tirislib_Item.iterate(_type) do
-            array[#array + 1] = item
-        end
+    for _, item in Tirislib_Item.iterate(types) do
+        array[#array + 1] = item
     end
 
     return array

@@ -20,17 +20,15 @@ local PROBABILITY = 0.5
 -- biters and spitters are units, worms are turrets
 local types = {"unit", "turret"}
 
-for _, prototype_type in pairs(types) do
-    for _, unit in Tirislib_Entity.iterate(prototype_type) do
-        if is_likely_an_alien(unit) then
-            local count_min, count_max = get_meat_amounts(unit)
+for _, unit in Tirislib_Entity.iterate(types) do
+    if is_likely_an_alien(unit) then
+        local count_min, count_max = get_meat_amounts(unit)
 
-            unit:add_loot {
-                item = "alien-meat",
-                probability = PROBABILITY,
-                count_min = count_min,
-                count_max = count_max
-            }
-        end
+        unit:add_loot {
+            item = "alien-meat",
+            probability = PROBABILITY,
+            count_min = count_min,
+            count_max = count_max
+        }
     end
 end
