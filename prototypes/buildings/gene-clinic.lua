@@ -2,30 +2,31 @@
 
 Tirislib_Item.create {
     type = "item",
-    name = "composting-silo",
+    name = "gene-clinic",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     subgroup = "sosciencity-food-buildings",
     order = "daa",
-    place_result = "composting-silo",
+    place_result = "gene-clinic",
     stack_size = 10,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "composting-silo",
-    themes = {{"plating", 20}, {"framework", 2}},
-    default_theme_level = 2,
-    unlock = "open-environment-farming"
+    product = "gene-clinic",
+    themes = {{"building", 2}, {"machine", 2}},
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    default_theme_level = 4,
+    unlock = "in-situ-gene-editing"
 }
 
 Tirislib_Entity.create {
     type = "container",
-    name = "composting-silo",
+    name = "gene-clinic",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "composting-silo"},
+    minable = {mining_time = 0.5, result = "gene-clinic"},
     max_health = 200,
     inventory_size = 20,
     corpse = "small-remnants",

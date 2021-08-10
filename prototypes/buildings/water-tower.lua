@@ -13,7 +13,8 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "water-tower",
     themes = {{"tank", 1}, {"piping", 15}, {"framework", 10}},
-    default_theme_level = 1
+    default_theme_level = 1,
+    unlock = "clockwork-caste"
 }
 
 local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}

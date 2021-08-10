@@ -213,14 +213,20 @@ Types.definitions = {
         is_civil = true
     },
     [Type.psych_ward] = {
-        localised_name = {"sosciencity.psych-ward"},
+        localised_name = {"item-name.psych-ward"},
         localised_description = {"item-description.psych-ward"},
         signature_color = Colors.darkish_red,
         is_civil = true
     },
     [Type.intensive_care_unit] = {
-        localised_name = {"sosciencity.intensive-care-unit"},
+        localised_name = {"item-name.intensive-care-unit"},
         localised_description = {"item-description.intensive-care-unit"},
+        signature_color = Colors.darkish_red,
+        is_civil = true
+    },
+    [Type.gene_clinic] = {
+        localised_name = {"item-name.gene-clinic"},
+        localised_description = {"item-description.gene-clinic"},
         signature_color = Colors.darkish_red,
         is_civil = true
     },

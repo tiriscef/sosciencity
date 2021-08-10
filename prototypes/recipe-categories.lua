@@ -1,10 +1,6 @@
 data:extend {
     {
         type = "recipe-category",
-        name = "handcrafting"
-    },
-    {
-        type = "recipe-category",
         name = "sosciencity-agriculture"
     },
     {
@@ -25,15 +21,15 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-bioreactor"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-bloomhouse"
     },
     {
         type = "recipe-category",
         name = "sosciencity-chemical-clarifier"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-fermentation-tank"
     },
     {
         type = "recipe-category",
@@ -69,15 +65,19 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-computing-center"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-drying-unit"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-fermentation-tank"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-fishery"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-reproductive-gene-lab"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-phyto-gene-lab"
     },
     {
         type = "recipe-category",
@@ -89,7 +89,15 @@ data:extend {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-handcrafting"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-hunting"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-microalgae-farm"
     },
     {
         type = "recipe-category",
@@ -98,6 +106,18 @@ data:extend {
     {
         type = "recipe-category",
         name = "sosciencity-orchid-food-processing"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-phyto-gene-lab"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-reproductive-gene-lab"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-salt-pond"
     },
     {
         type = "recipe-category",

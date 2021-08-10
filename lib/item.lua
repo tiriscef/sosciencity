@@ -101,11 +101,10 @@ end
 --- @param prototype table
 --- @return ItemPrototype prototype
 function Tirislib_Item.create(prototype)
-    if not prototype.type then
-        prototype.type = "item"
-    end
+    prototype.type = prototype.type or "item"
 
-    data:extend {prototype}
+    Tirislib_Prototype.create(prototype)
+
     return Tirislib_Item.get_by_name(prototype.name)
 end
 

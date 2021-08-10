@@ -594,8 +594,8 @@ end
 local array_to_lookup = Tirislib_Tables.array_to_lookup
 
 --- Shuffles the elements of the given array.
---- @param tbl table
---- @return table
+--- @param tbl array
+--- @return array itself
 function Tirislib_Tables.shuffle(tbl)
     --https://gist.github.com/Uradamus/10323382
     for i = #tbl, 2, -1 do
@@ -690,7 +690,7 @@ end
 function Tirislib_Tables.set_fields_passively(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
-            tbl[key] = tbl[key] or value
+            tbl[key] = (tbl[key] ~= nil) and tbl[key] or value
         end
     end
 
@@ -1064,6 +1064,29 @@ function Tirislib_Tables.multiply(tbl, multiplier)
     for key, value in pairs(tbl) do
         tbl[key] = value * multiplier
     end
+end
+
+local function partial_iterator(tbl, index_table)
+    local count = index_table[2]
+    if count > 0 then
+        local value = tbl[index_table[1]]
+        if value then
+            index_table[1] = next(tbl, index_table[1])
+            index_table[2] = count - 1
+
+            return index_table, value
+        end
+    end
+end
+
+function Tirislib_Tables.iterate_partially(tbl, start, count)
+    if tbl[start] == nil then
+        start = nil
+    end
+
+    local index_table = {start, count}
+
+    return partial_iterator, tbl, index_table
 end
 
 ---------------------------------------------------------------------------------------------------

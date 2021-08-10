@@ -107,6 +107,10 @@ Buildings.values = {
             castes = {Type.clockwork}
         }
     },
+    ["gene-clinic"] = {
+        type = Type.gene_clinic,
+        range = 7
+    },
     ["greenhouse"] = {
         type = Type.farm
     },
@@ -187,7 +191,8 @@ Buildings.values = {
         power_usage = 150
     },
     ["waste-dump"] = {
-        type = Type.waste_dump
+        type = Type.waste_dump,
+        capacity = 200000
     },
     ["water-tower"] = {
         type = Type.water_distributer,

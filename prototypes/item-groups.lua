@@ -62,12 +62,6 @@ data:extend {
         order = "caa"
     },
     {
-        type = "item-subgroup",
-        name = "sosciencity-furniture",
-        group = "sosciencity-infrastructure",
-        order = "cab"
-    },
-    {
         type = "item-group",
         name = "sosciencity-production",
         inventory_order = "zb",
@@ -83,7 +77,31 @@ data:extend {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-furniture",
+        group = "sosciencity-production",
+        order = "abb"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-biology-materials",
+        group = "sosciencity-production",
+        order = "abc"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-fluid-materials",
+        group = "sosciencity-production",
+        order = "abd"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-gathering",
+        group = "sosciencity-production",
+        order = "abz"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-microorganisms",
         group = "sosciencity-production",
         order = "aca"
     },
@@ -95,19 +113,19 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-animal-food",
+        name = "sosciencity-fauna",
         group = "sosciencity-production",
         order = "ada"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-fauna",
+        name = "sosciencity-slaughter",
         group = "sosciencity-production",
         order = "adb"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-slaughter",
+        name = "sosciencity-animal-food",
         group = "sosciencity-production",
         order = "adc"
     },

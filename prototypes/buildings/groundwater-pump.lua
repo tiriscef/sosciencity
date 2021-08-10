@@ -12,7 +12,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "groundwater-pump",
-    themes = {{"building", 1}, {"boring", 1}, {"piping", 5}, {"machine", 1}, {"electronics", 3}},
+    themes = {{"boring", 1}, {"piping", 5}, {"machine", 1}},
     default_theme_level = 1,
     unlock = "clockwork-caste"
 }

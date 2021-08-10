@@ -1,5 +1,8 @@
 Tirislib_Prototype = {}
 
+--- The name of the mod that is currently running. Used to set the inofficial 'owner' field for created prototypes.
+Tirislib_Prototype.modname = nil
+
 --- Removes all of my metatables so other mods don't call them accidentally.
 local function remove_metatables()
     for _, prototypes in pairs(data.raw) do
@@ -58,9 +61,11 @@ function Tirislib_Prototype.get(prototype_type, name, mt)
 end
 
 --- Creates the given prototype and adds it to data.raw.
----@param prototype table
----@return Prototype Prototype
+--- @param prototype table
+--- @return Prototype Prototype
 function Tirislib_Prototype.create(prototype)
+    prototype.owner = prototype.owner or Tirislib_Prototype.modname
+
     data:extend {prototype}
 
     return Tirislib_Prototype.get(prototype.type, prototype.name)
@@ -139,8 +144,8 @@ function Tirislib_Prototype.get_unique_name(name, _type)
 
     local i = 1
     while true do
-        if not data.raw[_type][name .. "-" .. i] then
-            return name .. "-" .. i
+        if not data.raw[_type][name .. i] then
+            return name .. i
         end
         i = i + 1
     end

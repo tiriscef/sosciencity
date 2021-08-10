@@ -13,9 +13,9 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "architectural-office",
     themes = {{"building", 5}, {"machine", 3}, {"lamp", 10}},
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 1,
-    unlock = "architecture-1",
-    category = "sosciencity-architecture"
+    unlock = "architecture-1"
 }
 
 Tirislib_Entity.create {

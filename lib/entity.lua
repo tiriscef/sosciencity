@@ -101,7 +101,8 @@ end
 --- @param prototype table
 --- @return EntityPrototype prototype
 function Tirislib_Entity.create(prototype)
-    data:extend {prototype}
+    Tirislib_Prototype.create(prototype)
+
     return Tirislib_Entity.get(prototype)
 end
 

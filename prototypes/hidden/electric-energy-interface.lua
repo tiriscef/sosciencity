@@ -30,7 +30,8 @@ for width, height_table in pairs(Sosciencity_Config.eei_sizes) do
             icon = "__sosciencity-graphics__/graphics/empty-caste.png",
             icon_size = 256,
             localised_name = {"entity-name.sosciencity-hidden-eei"},
-            localised_description = {"entity-description.sosciencity-hidden-eei"}
+            localised_description = {"entity-description.sosciencity-hidden-eei"},
+            is_hack = true
         }:set_collision_box(width, height)
         -- TODO icon
     end

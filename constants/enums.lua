@@ -31,6 +31,7 @@ Type.pharmacy = 199
 Type.hospital = 200
 Type.psych_ward = 201
 Type.intensive_care_unit = 202
+Type.gene_clinic = 203
 
 -- crafting machines
 Type.assembling_machine = 1001
@@ -83,6 +84,7 @@ Taste.weirdly_chemical = 9
 EK = {}
 
 -- general
+
 --- type of this entry
 EK.type = 1
 --- LuaEntity of this entry
@@ -101,20 +103,24 @@ EK.subentities = 7
 EK.altmode_sprite = 8
 
 -- inventory stuff
+
 --- contents of this entry's entity's inventory for lazily evaluated inventories
 EK.inventory_contents = 30
 
 -- neighborhood stuff
+
 --- neighbors as a table with (type, lookup-table of neighbor numbers)-pairs
 EK.neighbors = 40
 
 -- workforce
+
 --- the number of workers employed by this entry
 EK.worker_count = 50
 --- workers as a table of (housing_number, count)-pairs
 EK.workers = 51
 
 -- subentity stuff
+
 --- the current power usage of this entries eei
 EK.power_usage = 100
 --- the current speed bonus of this entries beacon
@@ -125,6 +131,7 @@ EK.productivity_bonus = 102
 EK.has_penalty_module = 103
 
 -- general Custom Building related stuff
+
 --- performance of the custom building
 EK.performance = 150
 --- is this entity active?
@@ -134,6 +141,7 @@ EK.workhours = 152
 
 -- type specific stuff
 -- housing
+
 --- inhabitants this house has during the last update
 EK.official_inhabitants = 204
 --- points this house provides to the caste bonus
@@ -186,40 +194,48 @@ EK.social_progress = 229
 EK.ga_conceptions = 230
 
 -- water distributer
+
 --- quality of the water this distributer provides
 EK.water_quality = 300
 --- name of the water this distributer provides
 EK.water_name = 301
 
 -- immigration port
+
 --- tick of the next immigration wave
 EK.next_wave = 400
 
 -- fishery
+
 --- water tile count in environment
 EK.water_tiles = 500
 
 -- hunting hut
+
 --- tree count in environment
 EK.tree_count = 600
 
 -- farms
+
 --- living biomass in this farm
 EK.biomass = 700
 --- currently cultivated species
 EK.species = 701
 
 -- composter
+
 --- produced humus inside this composter
 EK.humus = 800
 --- progress toward the next composted item
 EK.composting_progress = 801
 
 -- hospital
+
 --- statistics over treated disease cases as (disease_id, count)-pairs
 EK.treated = 900
 
 -- upbringing station
+
 --- the caste the children are educated in
 EK.education_mode = 1000
 --- the current classes of this upbringing station
@@ -228,6 +244,7 @@ EK.classes = 1001
 EK.graduates = 1002
 
 -- plant care station
+
 --- stored humus in this plant care station
 EK.humus_stored = 1100
 --- humus related operation mode for this plant care station
@@ -239,7 +256,33 @@ EK.fertiliser_mode = 1103
 --- pruning related operation mode for this plant care station
 EK.pruning_mode = 1104
 
+-- waste dump
+
+--- stored garbage in this waste dump
+EK.stored_garbage = 1200
+--- operation mode of this waste dump
+EK.waste_dump_mode = 1201
+--- if the scrap press of this waste dump is activated
+EK.press_mode = 1202
+--- progress toward the next item that will be stored or put out
+EK.store_progress = 1203
+--- progress toward the next item that will be turned into garbage
+EK.garbagify_progress = 1204
+
+--<< entity specific enums >>
+
+--- Enum table for the operation modes of waste dumps
+WasteDumpOperationMode = {}
+
+--- nothing will happen to the garbage inside the dump
+WasteDumpOperationMode.neutral = 0
+--- garbage will be stored inside the dump
+WasteDumpOperationMode.store = 1
+--- garbage will be removed from the dump
+WasteDumpOperationMode.output = 2
+
 --<< causes >>
+
 --- Enum table for destruction causes
 DeconstructionCause = {}
 
@@ -280,6 +323,7 @@ DiseasedCause.complication = 6
 DiseasedCause.birth = 7
 
 --<< happiness summands >>
+
 --- Enum table for happiness summands.
 HappinessSummand = {}
 
@@ -298,7 +342,8 @@ HappinessSummand.garbage = 12
 HappinessSummand.gross_industry = 13
 HappinessSummand.nightclub = 14
 
---<< happiness factors >>
+--<< inhabitant values >>
+
 --- Enum table for happiness factors.
 HappinessFactor = {}
 
@@ -308,7 +353,6 @@ HappinessFactor.thirst = 3
 HappinessFactor.bad_health = 4
 HappinessFactor.bad_sanity = 5
 
---<< health summands >>
 --- Enum table for health summands.
 HealthSummand = {}
 
@@ -319,14 +363,12 @@ HealthSummand.plasma = 4
 HealthSummand.gross_industry = 5
 HealthSummand.water = 6
 
---<< health factors >>
 --- Enum table for health factors.
 HealthFactor = {}
 
 HealthFactor.hunger = 1
 HealthFactor.thirst = 2
 
---<< sanity summands >>
 --- Enum table for sanity summands.
 SanitySummand = {}
 
@@ -341,14 +383,12 @@ SanitySummand.just_neutral = 8
 SanitySummand.single_food = 9
 SanitySummand.fear = 10
 
---<< sanity factors >>
 --- Enum table for sanity factors.
 SanityFactor = {}
 
 --SanityFactor.hunger = 1
 --SanityFactor.thirst = 2
 
---<< inhabitant genders >>
 --- Enum table for genders
 Gender = {}
 
@@ -358,6 +398,7 @@ Gender.pachin = 3
 Gender.ga = 4
 
 --<< climate >>
+
 --- Enum table for temperatures
 Climate = {}
 

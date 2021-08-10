@@ -10,11 +10,11 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+--[[Tirislib_RecipeGenerator.create {
     product = "zeppelin-port",
     themes = {{"building", 3}, {"fabric", 50}, {"rope", 20}, {"framework", 10}},
     default_theme_level = 0
-}
+}]]
 
 Tirislib_Entity.create {
     type = "container",

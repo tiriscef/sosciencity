@@ -14,6 +14,7 @@ local castes = Castes.values
 local garbage_values = ItemConstants.garbage_values
 
 local log_item = Communication.log_item
+local log_items = Communication.log_items
 local log_fluid = Communication.log_fluid
 
 local all_neighbors_of_type = Neighborhood.all_of_type
@@ -51,11 +52,15 @@ end
 
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
+--- @return Inventory
 function Inventories.get_chest_inventory(entry)
     return entry[EK.entity].get_inventory(chest)
 end
 local get_chest_inventory = Inventories.get_chest_inventory
 
+--- Returns a table with the (item, amount)-pairs of the combined contents of the given Inventories.
+--- @param inventories table
+--- @return table
 function Inventories.get_combined_contents(inventories)
     local ret = {}
 
@@ -74,11 +79,12 @@ end
 
 --- Tries to insert the given amount of the given item into the inventory and adds the inserted items to the production statistics.
 --- Returns the amount that was actually inserted.
----@param inventory Inventory
----@param item string
----@param amount number
----@return integer
-function Inventories.try_insert(inventory, item, amount)
+--- @param inventory Inventory
+--- @param item string
+--- @param amount number
+--- @param suppress_logging boolean
+--- @return integer
+function Inventories.try_insert(inventory, item, amount, suppress_logging)
     if amount <= 0 then
         return 0
     end
@@ -89,7 +95,9 @@ function Inventories.try_insert(inventory, item, amount)
         count = amount
     }
 
-    log_item(item, inserted_amount)
+    if not suppress_logging then
+        log_item(item, inserted_amount)
+    end
 
     return inserted_amount
 end
@@ -97,7 +105,12 @@ local try_insert = Inventories.try_insert
 
 --- Tries to remove the given amount of the given item from the inventory and adds the removed items to the production statistics.
 --- Returns the amount that was actually removed.
-function Inventories.try_remove(inventory, item, amount)
+--- @param inventory Inventory
+--- @param item string
+--- @param amount integer
+--- @param suppress_logging boolean
+--- @return integer
+function Inventories.try_remove(inventory, item, amount, suppress_logging)
     if amount <= 0 then
         return 0
     end
@@ -108,13 +121,20 @@ function Inventories.try_remove(inventory, item, amount)
         count = amount
     }
 
-    log_item(item, -removed_amount)
+    if not suppress_logging then
+        log_item(item, -removed_amount)
+    end
 
     return removed_amount
 end
 local try_remove = Inventories.try_remove
 
-function Inventories.spill_items(entry, item, amount)
+--- Spills the given items around the given entry.
+--- @param entry Entry
+--- @param item string
+--- @param amount integer
+--- @param suppress_logging boolean
+function Inventories.spill_items(entry, item, amount, suppress_logging)
     if amount <= 0 then
         return
     end
@@ -122,13 +142,40 @@ function Inventories.spill_items(entry, item, amount)
     local entity = entry[EK.entity]
     entity.surface.spill_item_stack(entity.position, {name = item, count = amount})
 
-    log_item(item, amount)
+    if not suppress_logging then
+        log_item(item, amount)
+    end
 end
 local spill_items = Inventories.spill_items
 
+--- Spills the given table of items around the given entry.
+--- @param entry Entry
+--- @param items table
+--- @param suppress_logging boolean
+function Inventories.spill_item_range(entry, items, suppress_logging)
+    local entity = entry[EK.entity]
+
+    local surface = entity.surface
+    local position = entity.position
+
+    for item, count in pairs(items) do
+        if count > 0 then
+            surface.spill_item_stack(position, {name = item, count = count})
+        end
+    end
+
+    if not suppress_logging then
+        log_items(items)
+    end
+end
+
 --- Tries to remove the given list of items if a full set is available in the inventory.
 --- Returns true if it removed the items.
-function Inventories.try_remove_item_range(entry, items)
+--- @param entry Entry
+--- @param items table
+--- @param silent boolean
+--- @return boolean
+function Inventories.try_remove_item_range(entry, items, silent)
     local inventory = get_chest_inventory(entry)
     local contents = inventory.get_contents()
 
@@ -141,6 +188,9 @@ function Inventories.try_remove_item_range(entry, items)
 
     for name, desired_amount in pairs(items) do
         inventory.remove {name = name, count = desired_amount}
+    end
+    if not silent then
+        log_items(items)
     end
 
     return true

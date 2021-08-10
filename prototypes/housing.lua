@@ -326,13 +326,13 @@ end
 
 local quality_effect_on_recipe = {
     sheltered = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_sheltered", house.room_count, tech_level})
+        table.insert(details.themes, {"furnishing_sheltered", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     green = function(details, house, tech_level)
-        table.insert(details.themes, {"green", house.room_count, tech_level})
+        table.insert(details.themes, {"green", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     technical = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_technical", house.room_count, tech_level})
+        table.insert(details.themes, {"furnishing_technical", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     spacey = function(details, house, tech_level)
         details.themes[1][2] = details.themes[1][2] * 2
@@ -341,10 +341,10 @@ local quality_effect_on_recipe = {
         details.themes[1][2] = details.themes[1][2] / 2
     end,
     decorated = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_decorated", house.room_count, tech_level})
+        table.insert(details.themes, {"furnishing_decorated", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     simple = function(details, house, tech_level)
-        details.themes[2][3] = math.max(details.themes[2][3] - 1, 0)
+        details.themes[2][1] = "simple_furnishing"
     end,
     individualistic = function(details, house, tech_level)
         details.energy_required = details.energy_required * 3
@@ -353,9 +353,10 @@ local quality_effect_on_recipe = {
         details.energy_required = details.energy_required / 10
     end,
     pompous = function(details, house, tech_level)
+        details.themes[1][1] = "pompous_building"
     end,
     cheap = function(details, house, tech_level)
-        details.themes[1][3] = math.max(details.themes[1][3] - 1, 0)
+        details.themes[1][1] = "cheap_building"
     end,
     tall = function(details, house, tech_level)
     end,
@@ -366,8 +367,8 @@ local quality_effect_on_recipe = {
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
     local ingredient_themes = {
-        {"building", house.room_count, tech_level},
-        {"furnishing", house.room_count, house.comfort}
+        {"building", house.room_count, nil, tech_level},
+        {"furnishing", house.room_count, nil, house.comfort}
     }
 
     local recipe_details = {
@@ -375,7 +376,7 @@ local function create_recipe(house_name, house, details)
         themes = ingredient_themes,
         unlock = housing_unlocking_tech[tech_level],
         energy_required = house.room_count,
-        category = "sosciencity-architecture"
+        ingredients = {{type = "item", name = "architectural-concept", amount = 1}}
     }
 
     for _, quality in pairs(house.qualities) do

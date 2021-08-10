@@ -13,7 +13,8 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "fermentation-tank",
     themes = {{"piping", 10}, {"tank", 2}, {"machine", 1}},
-    default_theme_level = 2
+    default_theme_level = 2,
+    unlock = "brewing"
 }
 
 local sprite_height = 6

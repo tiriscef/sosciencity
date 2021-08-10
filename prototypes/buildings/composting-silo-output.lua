@@ -16,8 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "composting-silo-output",
     themes = {{"plating", 2}, {"framework", 2}},
     default_theme_level = 2,
-    category = "sosciencity-architecture",
-    unlock = "orchid-caste"
+    unlock = "open-environment-farming"
 }
 
 Tirislib_Entity.create {

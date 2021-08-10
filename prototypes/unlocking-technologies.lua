@@ -6,7 +6,8 @@ Tirislib_Item.create {
     icon = "__core__/graphics/cancel.png",
     icon_size = 64,
     stack_size = 50,
-    durability = 1
+    durability = 1,
+    is_hack = true
 }
 
 Tirislib_Technology.create {
@@ -21,7 +22,8 @@ Tirislib_Technology.create {
         }
     },
     upgrade = false,
-    enabled = false
+    enabled = false,
+    is_hack = true
 }
 
 for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
@@ -42,7 +44,8 @@ for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
         },
         upgrade = false,
         prerequisites = {"sosciencity-research-blocker"},
-        localised_name = {"technology-name.acquisition", localised_name},
-        localised_description = {"technology-description.acquisition", localised_name}
+        localised_name = localised_name,
+        localised_description = {"technology-description.acquisition", localised_name},
+        is_hack = true
     }
 end

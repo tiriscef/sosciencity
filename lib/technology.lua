@@ -61,11 +61,11 @@ end
 --- @param prototype table
 --- @return TechnologyPrototype prototype
 function Tirislib_Technology.create(prototype)
-    if not prototype.type then
-        prototype.type = "technology"
-    end
+    prototype.type = prototype.type or "technology"
+    prototype.effects = prototype.effects or {}
 
-    data:extend {prototype}
+    Tirislib_Prototype.create(prototype)
+
     return Tirislib_Technology.get_from_prototype(prototype)
 end
 
@@ -97,6 +97,32 @@ function Tirislib_Technology:add_unlock(recipe_name)
         type = "unlock-recipe",
         recipe = recipe_name
     }
+end
+
+local function iterate_to_next_unlock(effects, index)
+    local next_index, effect = next(effects, index)
+
+    if effect then
+        if effect.type == "unlock-recipe" then
+            local recipe, found = Tirislib_Recipe.get_by_name(effect.recipe)
+
+            if found then
+                return next_index, recipe
+            end
+        end
+
+        -- skipping this effect, as it's not a (existing) recipe
+        return iterate_to_next_unlock(effects, next_index)
+    end
+end
+
+--- Iterator over all the recipes this technology unlocks. Returns (index as integer, recipe as RecipePrototype) pairs.
+--- @return function iterator
+--- @return table effects_table
+--- @return integer index
+function Tirislib_Technology:get_unlocked_recipes()
+    local effects = Tirislib_Tables.get_subtbl(self, "effects")
+    return iterate_to_next_unlock, effects, nil
 end
 
 --- Adds the given technology to the prerequisites.

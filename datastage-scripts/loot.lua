@@ -21,7 +21,7 @@ local PROBABILITY = 0.5
 local types = {"unit", "turret"}
 
 for _, unit in Tirislib_Entity.iterate(types) do
-    if is_likely_an_alien(unit) then
+    if not unit.is_hack and is_likely_an_alien(unit) then
         local count_min, count_max = get_meat_amounts(unit)
 
         unit:add_loot {

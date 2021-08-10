@@ -3,7 +3,7 @@
 Tirislib_RecipeGenerator = {}
 
 -- shorthand alias for more readability
-local RG = Tirislib_RecipeGenerator
+RG = Tirislib_RecipeGenerator
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
@@ -212,11 +212,30 @@ RG.ingredient_themes = {
             {type = "item", name = "painting", amount = 1}
         }
     },
+    genetic_neogenesis = {
+        [0] = {
+            {type = "item", name = "nucleic-acid-concentrate", amount = 1},
+            {type = "item", name = "thermostable-dna-polymerase", amount = 1},
+            {type = "item", name = "agarose", amount = 2}
+        }
+    },
+    glass = {
+        [0] = {{type = "item", name = "glass", amount = 1}}
+    },
+    glass_educt = {
+        -- for a lack of a better term. like... the stuff that would be smelted to get glass.
+        -- vanilla doesn't really have something like that and a lot of mods invent different versions for it
+        [0] = {{type = "item", name = "stone", amount = 1}}
+    },
     grating = {
-        [0] = {{type = "item", name = "iron-stick", amount = 10}}
+        [0] = {{type = "item", name = "iron-stick", amount = 1}}
     },
     in_vitro_reproduction = {
-        [0] = {} -- TODO: in-vitro ingredients
+        [0] = {
+            {type = "item", name = "nucleic-acid-concentrate", amount = 1},
+            {type = "item", name = "thermostable-dna-polymerase", amount = 1},
+            {type = "item", name = "agarose", amount = 2}
+        }
     },
     lamp = {
         [0] = {
@@ -322,8 +341,8 @@ RG.ingredient_themes = {
         }
     },
     windows = {
-        [0] = {
-            {type = "item", name = "iron-plate", amount = 1}
+        [2] = {
+            {type = "item", name = "window", amount = 1}
         }
     },
     wiring = {
@@ -359,6 +378,16 @@ RG.result_themes = {
             {type = "item", name = "wood", amount = 1, probability = 0.2}
         }
     }
+}
+
+--- Table with (alias, name of RecipeCategory) pairs.
+RG.category_alias = {
+    handcrafting = "sosciencity-handcrafting",
+    mixing = "crafting"
+}
+
+RG.item_alias = {
+    glass = "glass"
 }
 
 -- << generation >>
@@ -397,7 +426,8 @@ end
 function RG.add_ingredient_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local level = theme[3] or default_level or 1
+    local expensive_amount = theme[3]
+    local level = theme[4] or default_level or 1
 
     local theme_definition = get_theme_definition(name, level)
     if not theme_definition then
@@ -408,7 +438,15 @@ function RG.add_ingredient_theme(recipe, theme, default_level)
         entry.amount = entry.amount * amount
     end
 
-    recipe:add_ingredient_range(theme_definition)
+    local expensive_theme_definition
+    if expensive_amount then
+        expensive_theme_definition = get_theme_definition(name, level)
+        for _, entry in pairs(expensive_theme_definition) do
+            entry.amount = entry.amount * expensive_amount
+        end
+    end
+
+    recipe:add_ingredient_range(theme_definition, expensive_theme_definition)
 end
 
 function RG.add_ingredient_theme_range(recipe, themes, default_level)
@@ -424,18 +462,27 @@ end
 function RG.add_result_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local level = theme[3] or default_level or 1
+    local expensive_amount = theme[3]
+    local level = theme[4] or default_level or 1
 
     local results = get_theme_definition(name, level, true)
     if not results then
         return
     end
 
+    local expensive_results
+    if expensive_amount then
+        expensive_results = get_theme_definition(name, level, true)
+        for _, entry in pairs(expensive_results) do
+            entry.amount = entry.amount * expensive_amount
+        end
+    end
+
     for _, entry in pairs(results) do
         entry.amount = entry.amount * amount
     end
 
-    recipe:add_result_range(results)
+    recipe:add_result_range(results, expensive_results)
 end
 
 function RG.add_result_theme_range(recipe, themes, default_level)
@@ -449,14 +496,32 @@ function RG.add_result_theme_range(recipe, themes, default_level)
 end
 
 local function get_product_prototype(details)
-    local product =
-        (details.product_type == "fluid") and Tirislib_Fluid.get_by_name(details.product) or
-        Tirislib_Item.get_by_name(details.product)
+    local product_name = details.product
+    local product, found
 
-    if Tirislib_Prototype.is_dummy(product) then
+    if details.product_type then -- explicitly set
+        product, found = (details.product_type == "item" and Tirislib_Item or Tirislib_Fluid).get_by_name(product_name)
+    else -- implicit, look if an item or a fluid exists
+        product, found = Tirislib_Item.get_by_name(product_name)
+
+        if found then
+            -- check that no fluid with the same name exists
+            local _, found_again = Tirislib_Fluid.get_by_name(product_name)
+            if found_again then
+                error(
+                    "Tirislib RecipeGenerator was told to create a recipe for a product with an implicit type, but there is is both an item and a fluid with the given name:  " ..
+                        product_name
+                )
+            end
+        else
+            product, found = Tirislib_Fluid.get_by_name(product_name)
+        end
+    end
+
+    if not found then
         error(
-            "Tirislib RecipeGenerator was told to create a recipe for a non-existant item. A task it's unable to complete. The item's name is " ..
-                details.product
+            "Tirislib RecipeGenerator was told to create a recipe for a non-existant product. A task it's unable to complete. The product's name is " ..
+                product_name
         )
     end
 
@@ -465,7 +530,7 @@ end
 
 local function get_main_product_entry(product, details)
     local main_product = {
-        type = details.product_type or "item",
+        type = product.type == "fluid" and "fluid" or "item",
         name = product.name,
         probability = details.product_probability
     }
@@ -507,7 +572,8 @@ end
 --- **name:** name of the recipe (defaults to the name of the product)\
 --- **byproducts:** array of ResultPrototypes\
 --- **expensive_byproducts:** array of ResultPrototypes (defaults to the byproducts field)\
---- **category:** RecipeCategory of the recipe (defaults to "crafting")\
+--- **category:** RecipeCategory of the recipe (defaults to "crafting" or "crafting-with-fluid")\
+--- **dynamic_category:** Alias for a RecipeCategory. The actual category behind the alias depends in the active mods.\
 --- **themes:** array of themes\
 --- **result_themes:** array of themes\
 --- **default_theme_level:** number\
@@ -518,8 +584,13 @@ end
 --- **expensive_energy_required:** energy_required field for the expensive recipe (defaults to energy_required)\
 --- **unlock:** technology that unlocks the recipe\
 --- **additional_fields:** other fields that should be set for the recipe\
---- **allow_productivity:** bool
---- **set_main_product:** bool (defaults to true)
+--- **allow_productivity:** bool\
+--- **set_main_product:** bool (defaults to true)\
+--- **localised_name:** locale\
+--- **localised_description:** locale\
+--- **icon:** path to icon\
+--- **icons:** array of SpritePrototypes\
+--- **icon_size:** integer
 function RG.create(details)
     local product = get_product_prototype(details)
     local main_product = get_main_product_entry(product, details)
@@ -538,11 +609,21 @@ function RG.create(details)
     if details.set_main_product or details.set_main_product == nil then
         recipe.main_product = product.name
     else
-        recipe.localised_name = details.localised_name or product.localised_name or {"item-name." .. product.name}
-        recipe.localised_description =
-            details.localised_description or product.localised_description or {"item-description." .. product.name}
-        recipe.icon = details.icon or product.icon
-        recipe.icon_size = details.icon_size or product.icon_size or 64
+        recipe.localised_name = details.localised_name or product:get_localised_name()
+        if details.localised_name then
+            recipe.show_amount_in_title = false
+        end
+        recipe.localised_description = details.localised_description or product:get_localised_description()
+
+        if details.icon or details.icons then
+            recipe.icon = details.icon
+            recipe.icons = details.icons
+            recipe.icon_size = details.icon_size or 64
+        else
+            recipe.icon = product.icon
+            recipe.icons = product.icons
+            recipe.icon_size = product.icon_size or 64
+        end
     end
 
     recipe:create_difficulties()
@@ -562,7 +643,11 @@ function RG.create(details)
 
     recipe:set_fields(details.additional_fields)
 
-    recipe:set_field("category", details.category or get_standard_category(recipe))
+    recipe:set_field(
+        "category",
+        (details.dynamic_category and RG.category_alias[details.dynamic_category]) or details.category or
+            get_standard_category(recipe)
+    )
 
     if details.allow_productivity then
         recipe:allow_productivity_modules()
@@ -603,6 +688,7 @@ function RG.create_per_theme_level(details)
         themes[#themes + 1] = {
             theme_name,
             type(theme_amount) == "function" and theme_amount(level) or theme_amount,
+            nil,
             level
         }
 
@@ -610,4 +696,42 @@ function RG.create_per_theme_level(details)
     end
 
     return created_recipes
+end
+
+--- Merges the given arrays, prioritising the right hand array.
+--- @param lh table|array
+--- @param rh table|array
+local function get_merged_array(lh, rh)
+    local ret = {}
+
+    for _, v in pairs(rh) do
+        ret[#ret + 1] = v
+    end
+
+    for _, v in pairs(lh) do
+        ret[#ret + 1] = v
+    end
+
+    return ret
+end
+
+local arrays = {"ingredients", "expensive ingredients", "byproducts", "expensive_byproducts", "themes", "result_themes"}
+Tirislib_Tables.array_to_lookup(arrays)
+
+--- Merges the right hand recipe details into the left hand recipe details.
+--- @param lh table
+--- @param rh table
+function RG.merge_details(lh, rh)
+    if not lh or not rh then
+        return
+    end
+
+    for key, value in pairs(rh) do
+        if arrays[key] then
+            lh[key] = get_merged_array(Tirislib_Tables.get_subtbl(lh, key), value)
+        else
+            -- set the field passively
+            lh[key] = (lh[key] ~= nil) and lh[key] or value
+        end
+    end
 end

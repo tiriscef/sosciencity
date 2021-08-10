@@ -16,10 +16,10 @@ local foods = {
     {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
     {name = "nan-egg"},
     {name = "primal-egg"},
-    {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
-    {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}},
+    {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}, probability = 0.3},
+    {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}, probability = 0.1},
     {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
-    {name = "ortrot-fruit", sprite_variations = {name = "ortrot-fruit-pile", count = 4}},
+    {name = "ortrot-fruit", sprite_variations = {name = "ortrot-fruit-pile", count = 4}, probability = 0.1},
     {name = "apple", sprite_variations = {name = "apple-pile", count = 4}},
     {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
     {name = "lemon", sprite_variations = {name = "lemon-pile", count = 3}},
@@ -29,12 +29,17 @@ local foods = {
     {name = "olive", sprite_variations = {name = "olive-pile", count = 3}},
     {name = "bell-pepper", sprite_variations = {name = "bell-pepper-pile", count = 4}},
     {name = "potato", sprite_variations = {name = "potato-pile", count = 4}},
+    {name = "sesame", sprite_variations = {name = "sesame-pile", count = 3}},
     {name = "tomato", sprite_variations = {name = "tomato-pile", count = 4}},
     {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},
     {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}},
     {name = "avocado", sprite_variations = {name = "avocado-pile", count = 4}},
-    {name = "chickpeas"},
-    {name = "hummus"}
+    {name = "chickpea", sprite_variations = {name = "chickpea-pile", count = 3}},
+    {name = "hummus"},
+    {name = "dried-solfaen", sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true}},
+    {name = "razha-bean", sprite_variations = {name = "razha-bean-pile", count = 3}, probability = 0.1},
+    {name = "tofu"},
+    {name = "yuba"}
 }
 
 -- add the food values to the... prototype prototype
@@ -47,8 +52,7 @@ for _, food in pairs(foods) do
     local health = food_details.healthiness
     local luxury = food_details.luxury
 
-    food.distinctions = food.distinctions or {}
-    local distinctions = food.distinctions
+    local distinctions = Tirislib_Tables.get_subtbl(food, "distinctions")
 
     distinctions.durability = food_details.calories
     distinctions.durability_description_key = "description.food-key"
@@ -83,9 +87,28 @@ Tirislib_Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"}
 Tirislib_RecipeGenerator.create {
     product = "hummus",
     ingredients = {
-        {name = "chickpeas", amount = 10},
-        --{name = "sesame", amount = 10} TODO: sesame item
+        {name = "chickpea", amount = 2},
+        {name = "sesame", amount = 1}
     },
     category = "sosciencity-orchid-food-processing",
     unlock = "hummus"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "dried-solfaen",
+    ingredients = {
+        {type = "fluid", name = "solfaen", amount = 10}
+    },
+    category = "sosciencity-drying-unit",
+    unlock = "basic-biotechnology"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "tofu",
+    byproducts = {{name = "yuba", amount = 1}},
+    ingredients = {
+        {type = "fluid", name = "soy-milk", amount = 20}
+    },
+    category = "sosciencity-orchid-food-processing",
+    unlock = "soy-products"
 }

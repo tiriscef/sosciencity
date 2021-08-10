@@ -16,8 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "waste-incineration-plant",
     themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"window", 5}},
     default_theme_level = 2,
-    category = "sosciencity-architecture",
-    unlock = "orchid-caste"
+    unlock = "architecture-4"
 }
 
 Tirislib_Entity.create {

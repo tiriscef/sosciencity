@@ -1,3 +1,4 @@
+require("constants.food")
 require("constants.unlocks")
 
 ---------------------------------------------------------------------------------------------------
@@ -16,7 +17,10 @@ local flora_items = {
     {name = "olive-wood", wood = true},
     {name = "ortrot-wood", wood = true, unlock = Unlocks.get_tech_name("ortrot")},
     {name = "avocado-wood", wood = true},
-    {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")}
+    {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")},
+    {name = "tello-fruit", sprite_variations = {name = "tello-pile", count = 3, include_icon = true}},
+    {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
+    {name = "sugar-beet", sprite_variations = {name = "sugar-beet-pile", count = 3}}
 }
 
 for _, item in pairs(flora_items) do
@@ -29,9 +33,6 @@ for _, item in pairs(flora_items) do
 end
 
 Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
-
----------------------------------------------------------------------------------------------------
--- << gathering recipes >>
 
 ---------------------------------------------------------------------------------------------------
 -- << farming recipes >>
@@ -48,6 +49,10 @@ local farmables = {
         },
         orangery = {
             category = "sosciencity-orangery"
+        },
+        neogenesis = {
+            neogenesis = true,
+            category = "sosciencity-phyto-gene-lab"
         }
     },
     ["avocado"] = {
@@ -103,7 +108,7 @@ local farmables = {
             category = "sosciencity-orangery"
         }
     },
-    ["chickpeas"] = {
+    ["chickpea"] = {
         general = {
             energy_required = 100
         },
@@ -319,36 +324,29 @@ local farm_specific_defaults = {
     ["sosciencity-orangery"] = {
         byproducts = {{type = "item", name = "leafage", amount = 1}},
         unlock = "controlled-environment-farming"
+    },
+    ["sosciencity-phyto-gene-lab"] = {
+        unlock = ""
     }
 }
 
 -- generation code that should minimize dublications and enforce invariants
-local attributes = {"product_probability", "unlock"}
-local arrays = {"byproducts", "themes"}
-local function merge_details(lh, rh)
-    if not rh then
-        return
-    end
-
-    for _, attribute in pairs(attributes) do
-        lh[attribute] = lh[attribute] or rh[attribute] or nil
-    end
-
-    for _, array in pairs(arrays) do
-        if rh[array] then
-            local lh_array = Tirislib_Tables.get_subtbl(lh, array)
-            Tirislib_Tables.merge_arrays(lh_array, rh[array])
-        end
-    end
-end
-
 local function create_farming_recipe(product, specification)
-    merge_details(specification, farmables[product]["general"])
-    merge_details(specification, farm_specific_defaults[specification.category])
+    if not specification.neogenesis then
+        Tirislib_RecipeGenerator.merge_details(
+            specification,
+            {
+                ingredients = {{type = "item", name = product, amount = 1}}
+            }
+        )
+    end
+
+    Tirislib_RecipeGenerator.merge_details(specification, farmables[product]["general"])
+    Tirislib_RecipeGenerator.merge_details(specification, farm_specific_defaults[specification.category])
 
     specification.product = product
 
-    Tirislib_RecipeGenerator.create(specification)
+    return Tirislib_RecipeGenerator.create(specification)
 end
 
 -- create the recipes
@@ -358,6 +356,51 @@ for product, details in pairs(farmables) do
             create_farming_recipe(product, specification)
         end
     end
+end
+
+if Sosciencity_Config.BALANCING then
+    local function get_result_calories(recipe)
+        local result = recipe:get_first_result()
+        local food_values = Food.values[result]
+
+        if food_values ~= nil then
+            local count_normal, count_expensive = recipe:get_result_count(result)
+            count_expensive = count_expensive or count_normal
+            count_normal = count_normal * Food.values[result].calories
+            count_expensive = count_expensive * Food.values[result].calories
+
+            local time, expensive_time
+            if recipe:has_difficulties() then
+                time = recipe:get_field("energy_required", "normal")
+                expensive_time = recipe:get_field("energy_required", "expensive")
+            else
+                time = recipe.energy_required
+                expensive_time = time
+            end
+
+            return count_normal, count_expensive, count_normal / time, count_expensive / expensive_time
+        else
+            return 0, 0, 0, 0
+        end
+    end
+
+    local results = {}
+    for _, recipe in Tirislib_Recipe.iterate() do
+        if recipe.owner == "sosciencity" then
+            if get_result_calories(recipe) > 0 then
+                table.insert(
+                    results,
+                    string.format(
+                        "%s produces %d or %d kcal per cycle, %d or %d kg per second",
+                        recipe.name,
+                        get_result_calories(recipe)
+                    )
+                )
+            end
+        end
+    end
+
+    log(Tirislib_String.join("\n", "Flora Balancing Values:", results))
 end
 
 ---------------------------------------------------------------------------------------------------

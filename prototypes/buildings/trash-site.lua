@@ -12,7 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "trash-site",
-    category = "sosciencity-architecture"
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    unlock = "architecture-1"
 }
 
 Tirislib_Entity.create {

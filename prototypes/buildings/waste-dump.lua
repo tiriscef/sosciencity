@@ -16,8 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "waste-dump",
     themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"window", 5}},
     default_theme_level = 2,
-    category = "sosciencity-architecture",
-    unlock = "huwan-genetic-neogenesis"
+    unlock = "architecure-2"
 }
 
 Tirislib_Entity.create {
@@ -28,7 +27,7 @@ Tirislib_Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "waste-dump"},
     max_health = 200,
-    inventory_size = 20,
+    inventory_size = 50,
     corpse = "small-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},

@@ -17,7 +17,7 @@ Tirislib_Item.batch_create(idea_items, {subgroup = "sosciencity-ideas", stack_si
 Tirislib_Recipe.create {
     type = "recipe",
     name = "brainstorm",
-    category = "handcrafting",
+    category = "sosciencity-handcrafting",
     enabled = true,
     energy_required = 5,
     ingredients = {},
@@ -34,7 +34,7 @@ Tirislib_Recipe.create {
 Tirislib_Recipe.create {
     type = "recipe",
     name = "write-essay",
-    category = "handcrafting",
+    category = "sosciencity-handcrafting",
     enabled = false,
     energy_required = 10,
     ingredients = {},
@@ -111,6 +111,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 10,
     expensive_energy_required = 20,
     ingredients = {
+        {"empty-hard-drive", 1}
     },
     unlock = "foundry-caste"
 }
