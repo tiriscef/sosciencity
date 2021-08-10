@@ -1089,8 +1089,10 @@ local function update_homelessness()
 
         local count = homeless_group[EK.inhabitants]
         local emigrating = ceil(count * 0.1)
-        local emigrated = take_inhabitants(homeless_group, emigrating)
-        Communication.report_emigration(emigrated[EK.inhabitants], EmigrationCause.homeless)
+        if emigrating > 0 then
+            local emigrated = take_inhabitants(homeless_group, emigrating)
+            Communication.report_emigration(emigrated[EK.inhabitants], EmigrationCause.homeless)
+        end
     end
 
     try_house_homeless()

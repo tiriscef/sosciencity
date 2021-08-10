@@ -13,7 +13,8 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "silo",
     themes = {{"plating", 20}, {"framework", 1}},
-    default_theme_level = 1
+    default_theme_level = 1,
+    unlock = "architecture-1"
 }
 
 Tirislib_Entity.create {

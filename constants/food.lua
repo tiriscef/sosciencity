@@ -258,6 +258,18 @@ Food.values = {
         portion_size = 10,
         group = "potato"
     },
+    ["sesame"] = {
+        fat = 48,
+        carbohydrates = 26,
+        proteins = 17,
+        healthiness = 7,
+        food_category = "seed",
+        taste_category = Taste.umami,
+        taste_quality = 6,
+        luxury = 7,
+        portion_size = 2,
+        group = "sesame"
+    },
     ["tomato"] = {
         fat = 0.33,
         carbohydrates = 4,
@@ -306,7 +318,7 @@ Food.values = {
         portion_size = 10,
         group = "avocado"
     },
-    ["chickpeas"] = {
+    ["chickpea"] = {
         fat = 6,
         carbohydrates = 44,
         proteins = 19,
@@ -329,6 +341,54 @@ Food.values = {
         luxury = 5,
         portion_size = 10,
         group = "hummus"
+    },
+    ["dried-solfaen"] = {
+        fat = 0.6,
+        carbohydrates = 3.1,
+        proteins = 5.9,
+        healthiness = 7,
+        food_category = "processed",
+        taste_category = Taste.neutral,
+        taste_quality = 2,
+        luxury = 1,
+        portion_size = 10,
+        group = "algae"
+    },
+    ["razha-bean"] = { -- TODO values
+        fat = 0.6,
+        carbohydrates = 3.1,
+        proteins = 5.9,
+        healthiness = 7,
+        food_category = "processed",
+        taste_category = Taste.neutral,
+        taste_quality = 2,
+        luxury = 1,
+        portion_size = 10,
+        group = "algae"
+    },
+    ["tofu"] = { -- TODO values
+        fat = 0.6,
+        carbohydrates = 3.1,
+        proteins = 5.9,
+        healthiness = 7,
+        food_category = "processed",
+        taste_category = Taste.neutral,
+        taste_quality = 2,
+        luxury = 1,
+        portion_size = 10,
+        group = "algae"
+    },
+    ["yuba"] = { -- TODO values
+        fat = 0.6,
+        carbohydrates = 3.1,
+        proteins = 5.9,
+        healthiness = 7,
+        food_category = "processed",
+        taste_category = Taste.neutral,
+        taste_quality = 2,
+        luxury = 1,
+        portion_size = 10,
+        group = "algae"
     }
 }
 

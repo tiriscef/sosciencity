@@ -63,7 +63,7 @@ Diseases.values = {
         cure_items = {
             ["psychotropics"] = 1
         },
-        curing_workload = 5,
+        curing_workload = 15,
         curing_facility = Type.psych_ward,
         lethality = 0.1,
         categories = {[DiseaseCategory.sanity] = 100}
@@ -73,17 +73,26 @@ Diseases.values = {
         cure_items = {
             ["psychotropics"] = 1
         },
-        curing_workload = 5,
+        curing_workload = 10,
         curing_facility = Type.psych_ward,
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100}
     },
     [1002] = {
         name = "factorio-addiction",
-        curing_workload = 10,
+        curing_workload = 5,
         curing_facility = Type.psych_ward,
         natural_recovery = 2 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100}
+    },
+    [1003] = {
+        name = "gender-dysphoria",
+        cure_items = {
+            ["edited-huwan-genome"] = 1
+        },
+        curing_workload = 10,
+        curing_facility = Type.gene_clinic,
+        categories = {[DiseaseCategory.birth_defect] = 50}
     },
     [2000] = {
         name = "rare-cold",
@@ -95,6 +104,18 @@ Diseases.values = {
         escalation_probability = 0.1
     },
     [2001] = {
+        name = "yeast-infection",
+        cure_items = {
+            ["antimycotics"] = 1
+        },
+        curing_workload = 2,
+        contagiousness = 0.1,
+        natural_recovery = 2 * Time.nauvis_day,
+        categories = {[DiseaseCategory.health] = 100},
+        escalation = "lung-infection",
+        escalation_probability = 0.1
+    },
+    [2100] = {
         name = "lung-infection",
         cure_items = {
             ["antibiotics"] = 1,
@@ -105,7 +126,7 @@ Diseases.values = {
         natural_recovery = 2 * Time.nauvis_week,
         categories = {[DiseaseCategory.health] = 10}
     },
-    [2002] = {
+    [2200] = {
         name = "weak-heart",
         cure_items = {
             ["artificial-heart"] = 1,
@@ -115,7 +136,7 @@ Diseases.values = {
         },
         curing_workload = 10,
         curing_facility = Type.intensive_care_unit,
-        lethality = 0.5,
+        lethality = 0.7,
         complication_lethality = 0.1,
         natural_recovery = 2 * Time.nauvis_month,
         categories = {

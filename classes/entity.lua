@@ -33,6 +33,8 @@ local Neighborhood = Neighborhood
 local Tirislib_Utils = Tirislib_Utils
 local Tirislib_Tables = Tirislib_Tables
 
+local log_item = Communication.log_item
+
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
@@ -120,10 +122,10 @@ Register.set_entity_creation_handler(Type.composter, create_composter)
 
 local compost_values = ItemConstants.compost_values
 local composting_coefficient = 1 / 400 / 600
+local mold_producers = ItemConstants.mold_producers
 
 --- Analyzes the given inventory and returns the composting progress per tick and an array of the compostable items.
-local function analyze_composter_inventory(inventory)
-    local content = inventory.get_contents()
+local function analyze_composter_inventory(content)
     local item_count = 0
     local item_type_count = 0
     local compostable_items = {}
@@ -140,7 +142,7 @@ local function analyze_composter_inventory(inventory)
 end
 Entity.analyze_composter_inventory = analyze_composter_inventory
 
-local function compostify_items(inventory, count, compostable_items, entry)
+local function compostify_items(inventory, count, compostable_items, entry, mold_amount)
     Tirislib_Tables.shuffle(compostable_items)
 
     local to_remove = count
@@ -149,6 +151,10 @@ local function compostify_items(inventory, count, compostable_items, entry)
         local removed = Inventories.try_remove(inventory, item_name, count)
 
         entry[EK.humus] = entry[EK.humus] + removed * compost_values[item_name]
+
+        if mold_amount < 200 and mold_producers[item_name] then
+            mold_amount = mold_amount + Inventories.try_insert(inventory, "mold", min(removed, 200 - mold_amount))
+        end
 
         to_remove = to_remove - removed
         if to_remove == 0 then
@@ -159,7 +165,8 @@ end
 
 local function update_composter(entry, delta_ticks)
     local inventory = get_chest_inventory(entry)
-    local progress_factor, compostable_items = analyze_composter_inventory(inventory)
+    local contents = inventory.get_contents()
+    local progress_factor, compostable_items = analyze_composter_inventory(contents)
 
     local progress = entry[EK.composting_progress]
 
@@ -171,7 +178,7 @@ local function update_composter(entry, delta_ticks)
 
         local capacity = get_building_details(entry).capacity
         if capacity > entry[EK.humus] then
-            compostify_items(inventory, to_consume, compostable_items, entry)
+            compostify_items(inventory, to_consume, compostable_items, entry, contents["mold"] or 0)
         end
     end
 
@@ -258,7 +265,6 @@ Register.set_entity_updater(Type.farm, update_farm)
 -- << plant care station >>
 
 local function update_plant_care_station(entry, delta_ticks)
-
 end
 Register.set_entity_updater(Type.plant_care_station, update_plant_care_station)
 
@@ -297,11 +303,6 @@ Register.set_settings_paste_handler(Type.plant_care_station, Type.plant_care_sta
 
 ---------------------------------------------------------------------------------------------------
 -- << cooling warehouse >>
-
-
----------------------------------------------------------------------------------------------------
--- << waste dump >>
-
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>
@@ -546,6 +547,7 @@ local function finish_class(entry, class, mode)
     end
 
     local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, DiseaseGroup.new_at_birth(count), genders)
+    Communication.report_immigration(count, ImmigrationCause.birth)
     Inhabitants.add_to_city(graduates)
 
     entry[EK.graduates] = entry[EK.graduates] + count
@@ -612,7 +614,7 @@ end
 Register.set_entity_creation_handler(Type.upbringing_station, create_upbringing_station)
 
 local function copy_upbringing_station(source, destination)
-    destination[EK.mode] = source[EK.mode]
+    destination[EK.education_mode] = source[EK.education_mode]
     destination[EK.classes] = Tirislib_Tables.copy(source[EK.classes])
     destination[EK.graduates] = source[EK.graduates]
 end
@@ -622,6 +624,164 @@ local function paste_upbringing_settings(source, destination)
     destination[EK.education_mode] = source[EK.education_mode]
 end
 Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_station, paste_upbringing_settings)
+
+---------------------------------------------------------------------------------------------------
+-- << waste dump >>
+
+local garbage_values = ItemConstants.garbage_values
+
+local function analyze_waste_dump_inventory(inventory)
+    local garbage_items = {}
+    local garbage_count = 0
+    local non_garbage_items = {}
+
+    for item, count in pairs(inventory.get_contents()) do
+        if garbage_values[item] ~= nil then
+            garbage_values[item] = count
+            garbage_count = garbage_count + count
+        else
+            non_garbage_items[item] = count
+        end
+    end
+
+    return garbage_count, garbage_items, non_garbage_items
+end
+
+local function store_garbage(inventory, garbage_items, stored_garbage, to_store)
+    for item in pairs(garbage_items) do
+        local stored = inventory.remove {name = item, count = to_store}
+        stored_garbage[item] = (stored_garbage[item] or 0) + stored
+        to_store = to_store - stored
+
+        if to_store < 1 then
+            return
+        end
+    end
+end
+
+local function output_garbage(inventory, stored_garbage, to_output)
+    for item, count in pairs(stored_garbage) do
+        local output = inventory.insert {name = item, count = to_output}
+        stored_garbage[item] = count - output
+        to_output = to_output - output
+
+        if to_output < 1 then
+            return
+        end
+    end
+end
+
+local function garbagify(inventory, to_garbagify, items, stored_garbage)
+    local item_names = Tirislib_Tables.get_keyset(items)
+    Tirislib_Tables.shuffle(item_names)
+
+    for _, item_name in pairs(item_names) do
+        local garbagified = inventory.remove {name = item_name, count = to_garbagify}
+        log_item(item_name, -garbagified)
+        log_item("garbage", garbagified)
+        stored_garbage.garbage = (stored_garbage.garbage or 0) + garbagified
+        to_garbagify = to_garbagify - garbagified
+
+        if to_garbagify < 1 then
+            return
+        end
+    end
+end
+
+local press_power_usage = 50 --[[kW]] * 1000 / Time.second
+local dump_store_rate = 50 / Time.second
+local press_multiplier = 3
+
+local dump_output_rate = 200 / Time.second
+
+local garbagify_rate = 1 / Time.second
+
+local function update_waste_dump(entry, delta_ticks)
+    local mode = entry[EK.waste_dump_mode]
+    local store_progress = entry[EK.store_progress]
+    local garbagify_progress = entry[EK.garbagify_progress]
+    local stored_garbage = entry[EK.stored_garbage]
+
+    local capacity = get_building_details(entry).capacity
+
+    local press_is_activated = entry[EK.press_mode]
+    Subentities.set_power_usage(entry, press_is_activated and press_power_usage or 0)
+    local press_is_working = press_is_activated and has_power(entry)
+
+    local inventory = get_chest_inventory(entry)
+    local garbage_count, garbage_items, non_garbage_items = analyze_waste_dump_inventory(inventory)
+
+    if mode == WasteDumpOperationMode.store then
+        store_progress = store_progress + dump_store_rate * delta_ticks * (press_is_working and press_multiplier or 1)
+
+        local to_store = floor(store_progress)
+        store_progress = store_progress - to_store
+
+        to_store = min(to_store, capacity - garbage_count)
+
+        if to_store > 0 then
+            store_garbage(inventory, garbage_items, stored_garbage, to_store)
+        end
+    elseif mode == WasteDumpOperationMode.output then
+        store_progress = store_progress + dump_output_rate * delta_ticks
+
+        local to_output = floor(store_progress)
+        store_progress = store_progress - to_output
+
+        if to_output > 0 then
+            output_garbage(inventory, stored_garbage, to_output)
+        end
+    else
+        store_progress = 0
+    end
+
+    garbagify_progress = garbagify_progress + garbagify_rate * (1 + Tirislib_Tables.sum(stored_garbage) ^ 0.2)
+    local to_garbagify = floor(garbagify_progress)
+    garbagify_progress = garbagify_progress - to_garbagify
+    if to_garbagify > 0 then
+        garbagify(inventory, to_garbagify, non_garbage_items, stored_garbage)
+    end
+
+    --- Garbagified items are stored and can exceed the capacity. This is not ideal but better than stopping the garbagification progress or spilling items.
+    --- We try to output items if the capacity is exceeded.
+    local over_capacity = Tirislib_Tables.sum(stored_garbage) - capacity
+    if over_capacity > 0 then
+        output_garbage(inventory, stored_garbage, over_capacity)
+    end
+
+    entry[EK.store_progress] = store_progress
+    entry[EK.garbagify_progress] = garbagify_progress
+end
+Register.set_entity_updater(Type.waste_dump, update_waste_dump)
+
+local function create_waste_dump(entry)
+    entry[EK.stored_garbage] = {}
+    entry[EK.waste_dump_mode] = WasteDumpOperationMode.store
+    entry[EK.press_mode] = false
+    entry[EK.store_progress] = 0
+    entry[EK.garbagify_progress] = 0
+end
+Register.set_entity_creation_handler(Type.waste_dump, create_waste_dump)
+
+local function copy_waste_dump(source, destination)
+    destination[EK.stored_garbage] = Tirislib_Tables.copy(source[EK.stored_garbage])
+    destination[EK.waste_dump_mode] = source[EK.waste_dump_mode]
+    destination[EK.press_mode] = source[EK.press_mode]
+    destination[EK.store_progress] = source[EK.store_progress]
+    destination[EK.garbagify_progress] = source[EK.garbagify_progress]
+end
+Register.set_entity_copy_handler(Type.waste_dump, copy_waste_dump)
+
+local function paste_waste_dump_settings(source, destination)
+    destination[EK.waste_dump_mode] = source[EK.waste_dump_mode]
+    destination[EK.press_mode] = source[EK.press_mode]
+end
+Register.set_settings_paste_handler(Type.waste_dump, Type.waste_dump, paste_waste_dump_settings)
+
+local function remove_waste_dump(entry)
+    Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
+end
+Register.set_entity_destruction_handler(Type.waste_dump, remove_waste_dump)
 
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>

@@ -12,9 +12,13 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "market-hall",
-    themes = {{"building", 2}, {"window", 15}},
+    themes = {{"building", 2}},
+    ingredients = {
+        {type = "item", name = "window", amount = 20},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 1,
-    category = "sosciencity-architecture"
+    unlock = "architecture-1"
 }
 
 Tirislib_Entity.create {

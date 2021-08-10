@@ -1458,7 +1458,7 @@ local function update_composter_details(container, entry)
     set_kv_pair_value(building_data, "humus", {"sosciencity.humus-count", round(humus / 100)})
 
     local inventory = Inventories.get_chest_inventory(entry)
-    local progress_factor = Entity.analyze_composter_inventory(inventory)
+    local progress_factor = Entity.analyze_composter_inventory(inventory.get_contents())
     -- display the composting speed as zero when the composter is full
     if humus >= get_building_details(entry).capacity then
         progress_factor = 0
@@ -1659,37 +1659,19 @@ local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "diseases", {"sosciencity.diseases"})
 
-    local first = true
-    for category_name, category_id in pairs(DiseaseCategory) do
-        if not first then
-            create_separator_line(tab)
-        end
-        first = false
+    local data_list = create_data_list(tab, "diseases", 1)
 
-        local data_list = create_data_list(tab, category_name, 1)
-
-        -- header
-        local head =
+    -- disease entries
+    for id, disease in pairs(Diseases.values) do
+        local entry =
             data_list.add {
             type = "label",
-            name = "head",
-            caption = {"disease-category-name." .. category_name},
-            tooltip = {"disease-category-description." .. category_name}
+            name = tostring(id),
+            caption = disease.localised_name,
+            tooltip = disease.localised_description
         }
-        head.style.font = "default-bold"
-
-        -- disease entries
-        for id, disease in pairs(Diseases.by_category[category_id]) do
-            local entry =
-                data_list.add {
-                type = "label",
-                name = tostring(id),
-                caption = disease.localised_name,
-                tooltip = disease.localised_description
-            }
-            local style = entry.style
-            style.horizontally_stretchable = true
-        end
+        local style = entry.style
+        style.horizontally_stretchable = true
     end
 end
 

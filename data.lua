@@ -1,5 +1,7 @@
 -- initialisation
 require("lib.init")
+Tirislib_Prototype.modname = "sosciencity"
+
 require("recipe-generator")
 require("integrations")
 require("datastage-configuration")
@@ -12,15 +14,17 @@ require("prototypes.technologies")
 require("prototypes.inhabitant-prototypes")
 require("prototypes.animal-food")
 require("prototypes.beverages")
-require("prototypes.furniture")
 require("prototypes.garbage")
 require("prototypes.materials")
 require("prototypes.medicine")
-require("prototypes.food")
+require("prototypes.microorganisms")
 require("prototypes.drinking-water")
 require("prototypes.ideas")
-require("prototypes.flora")
 require("prototypes.fauna")
+require("prototypes.food")
+require("prototypes.flora")
+
+require("prototypes.hunting_gathering")
 
 require("prototypes.housing")
 require("prototypes.buildings")

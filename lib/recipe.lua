@@ -341,7 +341,7 @@ local function add_results_table(recipe_data)
 end
 
 local function add_basic_structure(prototype)
-    prototype.type = "recipe"
+    prototype.type = prototype.type or "recipe"
     Tirislib_Recipe.call_on_recipe_data(prototype, add_ingredients_table)
     Tirislib_Recipe.call_on_recipe_data(prototype, add_results_table)
 end
@@ -352,7 +352,7 @@ end
 function Tirislib_Recipe.create(prototype)
     add_basic_structure(prototype)
 
-    data:extend {prototype}
+    Tirislib_Prototype.create(prototype)
     return Tirislib_Recipe.get(prototype)
 end
 
@@ -938,6 +938,10 @@ function Tirislib_Recipe:add_catalyst(catalyst, catalyst_type, amount, retrieval
 
     amount = amount or 1
     expensive_amount = expensive_amount or amount
+
+    if retrieval ~= expensive_retrieval or amount ~= expensive_amount then
+        Tirislib_Recipe.create_difficulties(self)
+    end
 
     Tirislib_Recipe.add_ingredient(
         self,

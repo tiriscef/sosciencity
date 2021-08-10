@@ -11,7 +11,8 @@ Tirislib_Item.create {
     stack_size = 1,
     effect = {speed = {bonus = -0.80}},
     localised_name = {"item-name.hidden-module"},
-    localised_description = {"item-description.hidden-module"}
+    localised_description = {"item-description.hidden-module"},
+    is_hack = true
 }
 
 for i = 0, 14 do
@@ -29,7 +30,8 @@ for i = 0, 14 do
         stack_size = 1,
         effect = {speed = {bonus = strength}},
         localised_name = {"item-name.hidden-module"},
-        localised_description = {"item-description.hidden-module"}
+        localised_description = {"item-description.hidden-module"},
+        is_hack = true
     }
 
     Tirislib_Item.create {
@@ -44,7 +46,8 @@ for i = 0, 14 do
         stack_size = 1,
         effect = {productivity = {bonus = strength}},
         localised_name = {"item-name.hidden-module"},
-        localised_description = {"item-description.hidden-module"}
+        localised_description = {"item-description.hidden-module"},
+        is_hack = true
     }
 end
 
@@ -107,5 +110,6 @@ Tirislib_Entity.create {
     icon = "__sosciencity-graphics__/graphics/empty-caste.png",
     icon_size = 256,
     localised_name = {"entity-name.hidden-entity"},
-    localised_description = {"entity-description.hidden-entity"}
+    localised_description = {"entity-description.hidden-entity"},
+    is_hack = true
 }

@@ -175,8 +175,8 @@ local animals = {
         max_group_size = 6,
         sprite_variations = {name = "river-horse-on-belt", count = 1},
         unlock = Unlocks.get_tech_name("river-horse")
-    },
---[[    {
+    }
+    --[[    {
         name = "vels-ant",
         size = 10,
         insect = true,
@@ -237,90 +237,6 @@ local fauna_producing_recipes = {}
 ---------------------------------------------------------------------------------------------------
 -- << gathering recipes >>
 
-local megafauna_hunting =
-    Tirislib_Recipe.create {
-    name = "hunting-for-megafauna",
-    category = "sosciencity-hunting",
-    energy_required = 20,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/megafauna.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
-            scale = 0.3,
-            shift = {-8, -8}
-        }
-    },
-    icon_size = 64,
-    subgroup = "sosciencity-gathering",
-    allow_decomposition = false,
-    always_show_made_in = true,
-    main_product = ""
-}:create_difficulties()
-megafauna_hunting:multiply_expensive_field("energy_required", 2)
-megafauna_hunting:add_catalyst("trap", "item", 5, 0.7, 6, 0.6)
-table.insert(fauna_producing_recipes, megafauna_hunting)
-
-local macrofauna_hunting =
-    Tirislib_Recipe.create {
-    name = "hunting-for-macrofauna",
-    category = "sosciencity-hunting",
-    energy_required = 20,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/macrofauna.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
-            scale = 0.3,
-            shift = {-8, -8}
-        }
-    },
-    icon_size = 64,
-    subgroup = "sosciencity-gathering",
-    allow_decomposition = false,
-    always_show_made_in = true,
-    main_product = ""
-}:create_difficulties()
-macrofauna_hunting:multiply_expensive_field("energy_required", 2)
-macrofauna_hunting:add_catalyst("trap-cage", "item", 2, 0.8, 3, 0.7)
-table.insert(fauna_producing_recipes, macrofauna_hunting)
-
-local microfauna_hunting =
-    Tirislib_Recipe.create {
-    name = "hunting-for-microfauna",
-    category = "sosciencity-hunting",
-    energy_required = 20,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/microfauna.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
-            scale = 0.3,
-            shift = {-8, -8}
-        }
-    },
-    icon_size = 64,
-    subgroup = "sosciencity-gathering",
-    allow_decomposition = false,
-    always_show_made_in = true,
-    main_product = ""
-}:create_difficulties()
-microfauna_hunting:multiply_expensive_field("energy_required", 2)
-microfauna_hunting:add_catalyst("trap-bucket", "item", 10, 0.95, 15, 0.9)
-table.insert(fauna_producing_recipes, microfauna_hunting)
-
-local fishing =
-    Tirislib_Recipe.create {
-    name = "general-fishing",
-    category = "sosciencity-fishery",
-    energy_required = 20,
-    icon = "__sosciencity-graphics__/graphics/icon/fishing.png",
-    icon_size = 64,
-    subgroup = "sosciencity-gathering",
-    allow_decomposition = false,
-    always_show_made_in = true,
-    main_product = ""
-}:create_difficulties()
-fishing:multiply_expensive_field("energy_required", 2)
-fishing:add_catalyst("fishing-net", "item", 2, 0.8, 3, 0.7)
-table.insert(fauna_producing_recipes, fishing)
 
 local function get_result_prototype(animal)
     return {
@@ -332,33 +248,6 @@ local function get_result_prototype(animal)
     }
 end
 
-local function add_to_gather_recipe(animal)
-    local result_prototype = get_result_prototype(animal)
-
-    if is_water_animal(animal) then
-        fishing:add_result(result_prototype)
-        return
-    end
-
-    if animal.insect then
-        microfauna_hunting:add_result(result_prototype)
-        return
-    end
-
-    if animal.size >= 100 then
-        megafauna_hunting:add_result(result_prototype)
-    elseif animal.size >= 10 then
-        macrofauna_hunting:add_result(result_prototype)
-    else
-        microfauna_hunting:add_result(result_prototype)
-    end
-end
-
-for _, animal in pairs(animals) do
-    if animal.probability then
-        add_to_gather_recipe(animal)
-    end
-end
 
 ---------------------------------------------------------------------------------------------------
 -- << slaughter recipes >>
@@ -402,7 +291,7 @@ local function create_slaughter_recipe(animal, index)
                 icon = "__sosciencity-graphics__/graphics/icon/slaughter.png",
                 scale = 0.3,
                 shift = {-8, -8},
-                tint = {r = 1, g = 0.2, b = 0.2, a = 0.8}
+                tint = {r = 1, g = 0.2, b = 0.2}
             }
         },
         icon_size = 64,
@@ -477,7 +366,7 @@ local function get_food_theme(animal, count)
         theme = "breed_herbivores"
     end
 
-    return {theme, get_food_amount(animal, count), animal.level or 0}
+    return {theme, get_food_amount(animal, count), nil, animal.level or 0}
 end
 
 local function create_breeding_recipe(animal)

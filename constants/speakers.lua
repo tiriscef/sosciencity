@@ -1,7 +1,8 @@
 Speakers = {}
 
 Speakers["tiriscef."] = {
-    ["b"] = 50,
+    ["acquisition-unlock"] = 1,
+    ["b"] = 52,
     ["roadkill"] = 6,
     ["report-begin"] = 2,
     ["report-end"] = 2,
@@ -35,13 +36,15 @@ Speakers["tiriscef."] = {
         "b44f",
         "b48",
         "b48f",
-        "b49"
+        "b49",
+        "b52"
     },
     index = 0
 }
 
 Speakers["profanity."] = {
-    ["b"] = 26,
+    ["acquisition-unlock"] = 1,
+    ["b"] = 28,
     ["roadkill"] = 5,
     ["report-begin"] = 3,
     ["report-end"] = 3,

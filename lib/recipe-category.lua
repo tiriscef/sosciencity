@@ -61,11 +61,9 @@ end
 --- @param prototype table
 --- @return RecipeCategoryPrototype prototype
 function Tirislib_RecipeCategory.create(prototype)
-    if not prototype.type then
-        prototype.type = "recipe-category"
-    end
+    prototype.type = prototype.type or "recipe-category"
 
-    data:extend {prototype}
+    Tirislib_Prototype.create(prototype)
     return Tirislib_RecipeCategory.get(prototype.name)
 end
 

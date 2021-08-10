@@ -12,7 +12,8 @@ local medicine_items = {
     {name = "analgesics", sprite_variations = {name = "analgesics-pile", count = 3}},
     {name = "potent-analgesics", sprite_variations = {name = "potent-analgesics-pile", count = 3}},
     {name = "anesthetics", sprite_variations = {name = "anesthetics-pile", count = 3}},
-    {name = "antibiotics", sprite_variations = {name = "antibiotics-pile", count = 3}}
+    {name = "antibiotics", sprite_variations = {name = "antibiotics-pile", count = 3}},
+    {name = "antimycotics", sprite_variations = {name = "antimycotics-pile", count = 3}}
 }
 
 local function find_curable_diseases(item_name)
@@ -46,10 +47,11 @@ Tirislib_Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", s
 Tirislib_RecipeGenerator.create {
     product = "artificial-limp",
     themes = {
-        {"structure", 2, 1},
-        {"wiring", 1, 1},
-        {"electronics", 1, 1}
+        {"structure", 2},
+        {"wiring", 1},
+        {"electronics", 1}
     },
+    default_theme_level = 1,
     energy_required = 3,
     allow_productivity = true,
     unlock = "hospital"
@@ -126,9 +128,18 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
+Tirislib_RecipeGenerator.create {
+    product = "antimycotics",
+    themes = {{"tablet_ingredients", 1}},
+    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "hospital"
+}
+
 Tirislib_Recipe.create {
     name = "donate-blood",
-    category = "handcrafting",
+    category = "sosciencity-handcrafting",
     enabled = true,
     energy_required = 5,
     ingredients = {},
@@ -160,7 +171,7 @@ data:extend {
         type = "sticker",
         name = "blood-donation-3",
         duration_in_ticks = 60 * 7,
-        target_movement_modifier = 0
+        target_movement_modifier = 0.05
     },
     {
         type = "sticker",
@@ -172,6 +183,6 @@ data:extend {
         type = "sticker",
         name = "blood-donation-5",
         duration_in_ticks = 60 * 45,
-        target_movement_modifier = 0
+        target_movement_modifier = 0.05
     }
 }

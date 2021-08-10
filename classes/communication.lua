@@ -154,6 +154,9 @@ local create_flying_text = Communication.create_flying_text
 -- we collect all the produced/consumed stuff and log them collectively
 -- this reduces the amount of API calls and avoids the problem that the statistics log only integer numbers
 
+--- Adds the given item to the production or consumption statistics.
+--- @param item string
+--- @param amount number
 function Communication.log_item(item, amount)
     if amount > 0 then
         item_production[item] = (item_production[item] or 0) + amount
@@ -162,11 +165,38 @@ function Communication.log_item(item, amount)
     end
 end
 
+--- Adds the given items to the production or consumption statistics.
+--- @param items table
+function Communication.log_items(items)
+    for item, amount in pairs(items) do
+        if amount > 0 then
+            item_production[item] = (item_production[item] or 0) + amount
+        else
+            item_consumption[item] = (item_consumption[item] or 0) - amount
+        end
+    end
+end
+
+--- Adds the given fluid to the production or consumption statistics.
+--- @param fluid string
+--- @param amount number
 function Communication.log_fluid(fluid, amount)
     if amount > 0 then
         fluid_production[fluid] = (fluid_production[fluid] or 0) + amount
     else
         fluid_consumption[fluid] = (fluid_consumption[fluid] or 0) - amount
+    end
+end
+
+--- Adds the given fluids to the production or consumption statistics.
+--- @param fluids table
+function Communication.log_fluids(fluids)
+    for fluid, amount in pairs(fluids) do
+        if amount > 0 then
+            fluid_production[fluid] = (fluid_production[fluid] or 0) + amount
+        else
+            fluid_consumption[fluid] = (fluid_consumption[fluid] or 0) - amount
+        end
     end
 end
 
@@ -234,6 +264,7 @@ local function say_random_variant(line, speaker, ...)
     say(speaker, line .. variant, ...)
 end
 Scheduler.set_event("say_random_variant", say_random_variant)
+Communication.say_random_variant = say_random_variant
 
 --- Lets the given speaker say the given line, but only to the given player.
 --- @param player Entity

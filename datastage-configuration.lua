@@ -19,7 +19,9 @@ local default_values = {
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-3.png", scale = 0.25},
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
     },
-    eei_sizes = {}
+    eei_sizes = {},
+    add_glass = true,
+    glass_compatibility_mode = false
 }
 
 function default_values.add_eei_size(width, height)

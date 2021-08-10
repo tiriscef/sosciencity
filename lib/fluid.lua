@@ -61,11 +61,10 @@ end
 --- @param prototype table
 --- @return FluidPrototype prototype
 function Tirislib_Fluid.create(prototype)
-    if not prototype.type then
-        prototype.type = "fluid"
-    end
+    prototype.type = prototype.type or "fluid"
 
-    data:extend {prototype}
+    Tirislib_Prototype.create(prototype)
+
     return Tirislib_Fluid.get(prototype.name)
 end
 
@@ -107,6 +106,18 @@ function Tirislib_Fluid.batch_create(fluid_detail_array, batch_details)
 
     setmetatable(created_items, Tirislib_FluidArray)
     return created_items
+end
+
+--- Returns the localised name of the item.
+--- @return locale
+function Tirislib_Fluid:get_localised_name()
+    return self.localised_name or {"fluid-name." .. self.name}
+end
+
+--- Returns the localised description of the item.
+--- @return locale
+function Tirislib_Fluid:get_localised_description()
+    return self.localised_description or {"fluid-description." .. self.name}
 end
 
 local meta = {}

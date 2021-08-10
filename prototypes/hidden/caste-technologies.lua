@@ -16,14 +16,15 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"automation-science-pack", 1}
+                {"sosciencity-research-blocker", 1}
             }
         },
         enabled = false,
         visible_when_disabled = false,
         hidden = true,
         upgrade = false,
-        prerequisites = {}
+        prerequisites = {},
+        is_hack = true
     }
 
     Tirislib_Technology.create {
@@ -41,14 +42,15 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"automation-science-pack", 1}
+                {"sosciencity-research-blocker", 1}
             }
         },
         enabled = false,
         visible_when_disabled = false,
         hidden = true,
         upgrade = false,
-        prerequisites = {}
+        prerequisites = {},
+        is_hack = true
     }
 
     Tirislib_Technology.create {
@@ -61,13 +63,14 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"automation-science-pack", 1}
+                {"sosciencity-research-blocker", 1}
             }
         },
         enabled = false,
         visible_when_disabled = false,
         hidden = true,
         upgrade = false,
-        prerequisites = {}
+        prerequisites = {},
+        is_hack = true
     }
 end

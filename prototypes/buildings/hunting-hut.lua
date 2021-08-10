@@ -12,8 +12,9 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "hunting-hut",
-    themes = {{"building", 3, 0}},
-    category = "sosciencity-architecture",
+    themes = {{"building", 3}},
+    default_theme_level = 1,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "clockwork-caste"
 }
 

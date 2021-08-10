@@ -90,7 +90,7 @@ local function unlock(technology_name)
     local tech = game.forces.player.technologies[technology_name]
     tech.researched = true
     unlocked[technology_name] = true
-    game.print(tech.localised_description)
+    Communication.say_random_variant("acquisition-unlock", nil, tech.localised_name)
 end
 
 function Technologies.update()
