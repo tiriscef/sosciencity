@@ -13,9 +13,11 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "nightclub",
     themes = {{"building", 7.5}, {"electronics", 10}, {"lamp", 20}},
+    ingredients = {
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 4,
-    unlock = "ember-caste",
-    category = "sosciencity-architecture"
+    unlock = "ember-caste"
 }
 
 local size_x = 20

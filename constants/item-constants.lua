@@ -1,6 +1,12 @@
 --- Item
 ItemConstants = {}
 
+ItemConstants.garbage_items = {
+    ["garbage"] = true,
+    ["food-leftovers"] = true,
+    ["slaughter-waste"] = true
+}
+
 ItemConstants.garbage_values = {
     ["garbage"] = 1,
     ["food-leftovers"] = 1,

@@ -628,7 +628,7 @@ Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_sta
 ---------------------------------------------------------------------------------------------------
 -- << waste dump >>
 
-local garbage_values = ItemConstants.garbage_values
+local garbage_values = ItemConstants.garbage_items
 
 local function analyze_waste_dump_inventory(inventory)
     local garbage_items = {}
@@ -637,7 +637,7 @@ local function analyze_waste_dump_inventory(inventory)
 
     for item, count in pairs(inventory.get_contents()) do
         if garbage_values[item] ~= nil then
-            garbage_values[item] = count
+            garbage_items[item] = count
             garbage_count = garbage_count + count
         else
             non_garbage_items[item] = count
@@ -661,12 +661,15 @@ end
 
 local function output_garbage(inventory, stored_garbage, to_output)
     for item, count in pairs(stored_garbage) do
-        local output = inventory.insert {name = item, count = to_output}
-        stored_garbage[item] = count - output
-        to_output = to_output - output
+        local outputable = min(count, to_output)
+        if outputable > 0 then
+            local output = inventory.insert {name = item, count = outputable}
+            stored_garbage[item] = (count - output > 0) and (count - output) or nil
+            to_output = to_output - output
 
-        if to_output < 1 then
-            return
+            if to_output < 1 then
+                return
+            end
         end
     end
 end
@@ -688,13 +691,9 @@ local function garbagify(inventory, to_garbagify, items, stored_garbage)
     end
 end
 
-local press_power_usage = 50 --[[kW]] * 1000 / Time.second
-local dump_store_rate = 50 / Time.second
-local press_multiplier = 3
-
-local dump_output_rate = 200 / Time.second
-
-local garbagify_rate = 1 / Time.second
+local dump_store_rate = 200 / Time.second
+local dump_output_rate = 400 / Time.second
+local press_garbagify_rate = 120 / Time.second
 
 local function update_waste_dump(entry, delta_ticks)
     local mode = entry[EK.waste_dump_mode]
@@ -704,15 +703,11 @@ local function update_waste_dump(entry, delta_ticks)
 
     local capacity = get_building_details(entry).capacity
 
-    local press_is_activated = entry[EK.press_mode]
-    Subentities.set_power_usage(entry, press_is_activated and press_power_usage or 0)
-    local press_is_working = press_is_activated and has_power(entry)
-
     local inventory = get_chest_inventory(entry)
     local garbage_count, garbage_items, non_garbage_items = analyze_waste_dump_inventory(inventory)
 
     if mode == WasteDumpOperationMode.store then
-        store_progress = store_progress + dump_store_rate * delta_ticks * (press_is_working and press_multiplier or 1)
+        store_progress = store_progress + dump_store_rate * delta_ticks
 
         local to_store = floor(store_progress)
         store_progress = store_progress - to_store
@@ -735,7 +730,9 @@ local function update_waste_dump(entry, delta_ticks)
         store_progress = 0
     end
 
-    garbagify_progress = garbagify_progress + garbagify_rate * (1 + Tirislib_Tables.sum(stored_garbage) ^ 0.2)
+    garbagify_progress =
+        garbagify_progress + delta_ticks * (Tirislib_Tables.sum(stored_garbage) / 6000) ^ 0.2 +
+        delta_ticks * (entry[EK.press_mode] and press_garbagify_rate or 0)
     local to_garbagify = floor(garbagify_progress)
     garbagify_progress = garbagify_progress - to_garbagify
     if to_garbagify > 0 then

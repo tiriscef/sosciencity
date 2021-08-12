@@ -15,7 +15,6 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "cooling-warehouse",
     themes = {{"building", 2}, {"machine", 2}},
-    category = "sosciencity-architecture",
     unlock = "food-processing"
 }
 

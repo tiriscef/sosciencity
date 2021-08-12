@@ -1153,6 +1153,7 @@ end
 local create_enumeration = Tirislib_Locales.create_enumeration
 
 --- Creates a localisation for the real world time for the given ticks.
+--- - Needs Sosciencity's locales
 --- @param ticks integer
 --- @return locale
 function Tirislib_Locales.display_time(ticks)
@@ -1177,6 +1178,7 @@ function Tirislib_Locales.display_time(ticks)
 end
 
 --- Creates a localisation for the ingame time for the given ticks.
+--- - Needs Sosciencity's locales
 --- @param ticks integer
 --- @return locale
 function Tirislib_Locales.display_ingame_time(ticks)
@@ -1201,4 +1203,22 @@ function Tirislib_Locales.display_ingame_time(ticks)
     end
 
     return create_enumeration(points, ", ", {"sosciencity.and"})
+end
+
+--- Creates a localisation for the given item stack.
+--- - Needs Sosciencity's locales
+--- @param item string
+--- @param count integer
+--- @return locale
+function Tirislib_Locales.display_item_stack(item, count)
+    return {"sosciencity.xitems", count, item, game.item_prototypes[item].localised_name}
+end
+
+--- Creates a localisation for the given fluid stack.
+--- - Needs Sosciencity's locales
+--- @param fluid string
+--- @param count integer
+--- @return locale
+function Tirislib_Locales.display_fluid_stack(fluid, count)
+    return {"sosciencity.xfluids", count, fluid, game.fluid_prototypes[fluid].localised_name}
 end
