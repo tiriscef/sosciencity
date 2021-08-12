@@ -30,6 +30,7 @@ local tostring = tostring
 local Luaq_from = Tirislib_Luaq.from
 
 local display_enumeration = Tirislib_Locales.create_enumeration
+local display_item_stack = Tirislib_Locales.display_item_stack
 local display_time = Tirislib_Locales.display_time
 
 ---------------------------------------------------------------------------------------------------
@@ -185,6 +186,75 @@ local function make_squashable(element)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << handlers >>
+---------------------------------------------------------------------------------------------------
+
+--- Lookup for click event handlers.
+--- [element name]: table
+---     [1]: function
+---     [2]: array of arguments
+local click_lookup = {}
+
+--- Sets the 'on_gui_click' event handler for a gui element with the given name. Additional arguments for the call can be specified.
+--- @param name string
+--- @param fn function
+local function set_click_handler(name, fn, ...)
+    Tirislib_Utils.desync_protection()
+    click_lookup[name] = {fn, {...}}
+end
+
+local checkbox_click_lookup = {}
+
+--- Sets the 'on_gui_checked_state_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
+--- @param name string
+--- @param fn function
+local function set_checked_state_handler(name, fn, ...)
+    Tirislib_Utils.desync_protection()
+    checkbox_click_lookup[name] = {fn, {...}}
+end
+
+--- This should be added to every gui element which needs an event handler,
+--- because the gui event handlers get fired for every gui in existance.
+--- So I need to ensure that I'm not reacting to another mods gui.
+local unique_prefix_builder = "sosciencity-%s-%s"
+
+--- Generic handler that verifies that the gui element belongs to my mod, looks for an event handler function and calls it.
+local function look_for_event_handler(event, lookup)
+    local gui_element = event.element
+    local name = gui_element.name
+
+    local handler = lookup[name]
+
+    if handler then
+        local player_id = event.player_index
+        local entry = Register.try_get(global.details_view[player_id])
+
+        handler[1](entry, gui_element, unpack(handler[2]))
+    end
+end
+
+--- Event handler for Gui click events
+function Gui.on_gui_click(event)
+    look_for_event_handler(event, click_lookup)
+end
+
+--- Event handler for checkbox/radiobuttom click events
+function Gui.on_gui_checked_state_changed(event)
+    look_for_event_handler(event, checkbox_click_lookup)
+end
+
+local function generic_radiobutton_handler(entry, element, mode, key, updater)
+    if mode then
+        entry[key] = mode
+        updater(entry, element.parent)
+    end
+end
+
+local function generic_checkbox_handler(entry, element, key)
+    entry[key] = element.state
+end
+
+---------------------------------------------------------------------------------------------------
 -- << gui elements >>
 ---------------------------------------------------------------------------------------------------
 
@@ -233,17 +303,49 @@ local function add_kv_pair(data_list, key, key_caption, value_caption, key_font,
     end
 end
 
-local function add_kv_flow(data_list, key, key_caption, key_font)
+local function add_kv_flow(data_list, key, key_caption, key_font, direction)
     add_key_label(data_list, key, key_caption, key_font)
 
     local value_flow =
         data_list.add {
         type = "flow",
         name = key,
-        direction = "vertical"
+        direction = direction or "vertical"
     }
 
     return value_flow
+end
+
+local function add_kv_checkbox(data_list, key, checkbox_name, key_caption, checkbox_caption, key_font, checkbox_font)
+    local flow = add_kv_flow(data_list, key, key_caption, key_font, "horizontal")
+
+    local checkbox =
+        flow.add {
+        type = "checkbox",
+        name = checkbox_name,
+        state = true
+    }
+
+    local label =
+        flow.add {
+        type = "label",
+        name = "label",
+        caption = checkbox_caption
+    }
+    local style = label.style
+    style.left_padding = 6
+    style.horizontally_stretchable = true
+
+    if checkbox_font then
+        style.font = checkbox_font
+    end
+
+    return checkbox, label
+end
+
+local function get_checkbox(data_list, key)
+    local children = data_list[key].children
+    return children[1], children[2]
 end
 
 local function get_kv_pair(data_list, key)
@@ -466,60 +568,6 @@ local function add_header_label(container, name, caption)
         caption = caption
     }
     header.style.font = "default-bold"
-end
-
----------------------------------------------------------------------------------------------------
--- << handlers >>
----------------------------------------------------------------------------------------------------
-
-local click_lookup = {}
-
---- Sets the 'on_gui_click' event handler for a gui element with the given name. Additional arguments for the call can be specified.
---- @param name string
---- @param fn function
-local function set_click_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
-    click_lookup[name] = {fn, {...}}
-end
-
-local checkbox_click_lookup = {}
-
---- Sets the 'on_gui_checked_state_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
---- @param name string
---- @param fn function
-local function set_checked_state_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
-    checkbox_click_lookup[name] = {fn, {...}}
-end
-
---- This should be added to every gui element which needs an event handler,
---- because the gui event handlers get fired for every gui in existance.
---- So I need to ensure that I'm not reacting to another mods gui.
-local unique_prefix_builder = "sosciencity-%s-%s"
-
---- Generic handler that verifies that the gui element belongs to my mod, looks for an event handler function and calls it.
-local function look_for_event_handler(event, lookup)
-    local gui_element = event.element
-    local name = gui_element.name
-
-    local handler = lookup[name]
-
-    if handler then
-        local player_id = event.player_index
-        local entry = Register.try_get(global.details_view[player_id])
-
-        handler[1](entry, gui_element, unpack(handler[2]))
-    end
-end
-
---- Event handler for Gui click events
-function Gui.on_gui_click(event)
-    look_for_event_handler(event, click_lookup)
-end
-
---- Event handler for checkbox/radiobuttom click events
-function Gui.on_gui_checked_state_changed(event)
-    look_for_event_handler(event, checkbox_click_lookup)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -773,14 +821,12 @@ local function add_caste_chooser_tab(tabbed_pane, details)
 end
 
 -- Event handler function for clicks on the caste assign buttons.
+local function caste_assignment_button_handler(entry, element, caste_id)
+    Inhabitants.try_allow_for_caste(entry, caste_id, true)
+end
+
 for id, caste in pairs(castes) do
-    set_click_handler(
-        format(unique_prefix_builder, "assign-caste", caste.name),
-        function(entry, element, caste_id)
-            Inhabitants.try_allow_for_caste(entry, caste_id, true)
-        end,
-        id
-    )
+    set_click_handler(format(unique_prefix_builder, "assign-caste", caste.name), caste_assignment_button_handler, id)
 end
 
 local function add_empty_house_info_tab(tabbed_pane, house_details)
@@ -1724,7 +1770,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
 
-local function update_mode_radiobuttons(entry, mode_flow)
+local function update_upbringing_mode_radiobuttons(entry, mode_flow)
     local mode = entry[EK.education_mode]
 
     for index, radiobutton in pairs(mode_flow.children) do
@@ -1774,7 +1820,7 @@ local function update_upbringing_station(container, entry)
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
     local mode_flow = get_kv_value_element(building_data, "mode")
-    update_mode_radiobuttons(entry, mode_flow)
+    update_upbringing_mode_radiobuttons(entry, mode_flow)
 
     local probability_flow = get_kv_value_element(building_data, "probabilities")
     local probabilities = Entity.get_upbringing_expectations(entry[EK.education_mode])
@@ -1862,15 +1908,95 @@ end
 for _, caste_id in pairs(Tirislib_Tables.union_array(TypeGroup.breedable_castes, {Type.null})) do
     set_checked_state_handler(
         format(unique_prefix_builder, "education-mode", caste_id),
-        function(entry, element, mode)
-            if mode then
-                entry[EK.education_mode] = mode
-                update_mode_radiobuttons(entry, element.parent)
-            end
-        end,
-        caste_id
+        generic_radiobutton_handler,
+        caste_id,
+        EK.education_mode,
+        update_upbringing_mode_radiobuttons
     )
 end
+
+---------------------------------------------------------------------------------------------------
+-- << waste dump >>
+
+local function update_waste_dump_mode_radiobuttons(entry, mode_flow)
+    local active_mode = entry[EK.waste_dump_mode]
+    for mode_name, mode_id in pairs(WasteDumpOperationMode) do
+        local radiobutton = mode_flow[format(unique_prefix_builder, "waste-dump-mode", mode_name)]
+        radiobutton.state = (active_mode == mode_id)
+    end
+end
+
+local function update_waste_dump(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local stored_garbage = entry[EK.stored_garbage]
+    local capacity = get_building_details(entry).capacity
+    set_kv_pair_value(
+        building_data,
+        "capacity",
+        {"sosciencity.fraction", Tirislib_Tables.sum(stored_garbage), capacity, {"sosciencity.items"}}
+    )
+
+    set_kv_pair_value(
+        building_data,
+        "stored_garbage",
+        Luaq_from(stored_garbage):select(display_item_stack):call(display_enumeration, "\n")
+    )
+
+    update_waste_dump_mode_radiobuttons(entry, get_kv_value_element(building_data, "mode"))
+
+    local checkbox = get_checkbox(building_data, "press")
+    checkbox.state = entry[EK.press_mode]
+end
+
+local function create_waste_dump(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
+    add_kv_pair(building_data, "stored_garbage", {"sosciencity.content"})
+
+    local mode_flow = add_kv_flow(building_data, "mode", {"sosciencity.mode"})
+    for mode_name in pairs(WasteDumpOperationMode) do
+        mode_flow.add {
+            name = format(unique_prefix_builder, "waste-dump-mode", mode_name),
+            type = "radiobutton",
+            caption = {"sosciencity." .. mode_name},
+            state = true
+        }
+    end
+
+    add_kv_checkbox(
+        building_data,
+        "press",
+        format(unique_prefix_builder, "waste-dump-press", ""),
+        {"sosciencity.press"},
+        {"sosciencity.active"}
+    )
+
+    update_waste_dump(container, entry)
+end
+
+for mode_name, mode_id in pairs(WasteDumpOperationMode) do
+    set_checked_state_handler(
+        format(unique_prefix_builder, "waste-dump-mode", mode_name),
+        generic_radiobutton_handler,
+        mode_id,
+        EK.waste_dump_mode,
+        update_waste_dump_mode_radiobuttons
+    )
+end
+
+set_checked_state_handler(
+    format(unique_prefix_builder, "waste-dump-press", ""),
+    generic_checkbox_handler,
+    EK.press_mode
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
@@ -1996,6 +2122,10 @@ local type_gui_specifications = {
     [Type.upbringing_station] = {
         creater = create_upbringing_station,
         updater = update_upbringing_station
+    },
+    [Type.waste_dump] = {
+        creater = create_waste_dump,
+        updater = update_waste_dump
     },
     [Type.water_distributer] = {
         creater = create_general_building_details,

@@ -14,7 +14,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "waste-dump",
-    themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"window", 5}},
+    themes = {{"building", 1}},
     default_theme_level = 2,
     unlock = "architecure-2"
 }
