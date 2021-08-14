@@ -20,6 +20,7 @@ local default_values = {
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
     },
     eei_sizes = {},
+    building_stacksize = 50,
     add_glass = true,
     glass_compatibility_mode = false
 }

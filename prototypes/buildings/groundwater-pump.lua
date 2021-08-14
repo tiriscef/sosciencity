@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-water-buildings",
     order = "aab",
     place_result = "groundwater-pump",
-    stack_size = 50,
+    stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 

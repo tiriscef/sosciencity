@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-water-buildings",
     order = "bac",
     place_result = "chemical-clarifier",
-    stack_size = 10,
+    stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 

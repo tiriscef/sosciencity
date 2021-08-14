@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-fauna-buildings",
     order = "cac",
     place_result = "aquafarm",
-    stack_size = 10,
+    stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
