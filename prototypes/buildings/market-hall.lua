@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "market-hall",
-    stack_size = 10,
+    stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 

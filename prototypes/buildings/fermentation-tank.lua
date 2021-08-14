@@ -6,7 +6,7 @@ Tirislib_Item.create {
     subgroup = "sosciencity-food-buildings",
     order = "aaa",
     place_result = "fermentation-tank",
-    stack_size = 10,
+    stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 

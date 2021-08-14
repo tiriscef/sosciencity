@@ -7,7 +7,7 @@ local function create_test_container(name)
         subgroup = "sosciencity-infrastructure",
         order = "aab",
         place_result = "test-" .. name,
-        stack_size = 10,
+        stack_size = Sosciencity_Config.building_stacksize,
         localised_name = "test-" .. name
     }
 
@@ -62,7 +62,7 @@ local function create_test_assembling_machine(name, categories)
         subgroup = "sosciencity-infrastructure",
         order = "aab",
         place_result = "test-" .. name,
-        stack_size = 10,
+        stack_size = Sosciencity_Config.building_stacksize,
         localised_name = "test-" .. name
     }
 

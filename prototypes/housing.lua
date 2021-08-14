@@ -309,7 +309,7 @@ local function create_item(house_name, house, details)
         icon_size = 64,
         subgroup = "sosciencity-housing",
         order = get_order(house),
-        stack_size = details.stack_size or 20,
+        stack_size = details.stack_size or Sosciencity_Config.building_stacksize,
         place_result = house_name,
         pictures = Sosciencity_Config.blueprint_on_belt,
         localised_description = {
