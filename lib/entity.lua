@@ -355,12 +355,14 @@ function Tirislib_Entity.create_standard_picture(details)
     local layers = {
         {
             filename = path .. "-lr.png",
+            frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
             hr_version = {
                 filename = path .. ".png",
+                frame_count = 1,
                 priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
@@ -373,6 +375,7 @@ function Tirislib_Entity.create_standard_picture(details)
     if details.shadowmap then
         layers[#layers + 1] = {
             filename = path .. "-shadowmap-lr.png",
+            frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
@@ -380,6 +383,7 @@ function Tirislib_Entity.create_standard_picture(details)
             draw_as_shadow = true,
             hr_version = {
                 filename = path .. "-shadowmap.png",
+                frame_count = 1,
                 priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
@@ -393,6 +397,7 @@ function Tirislib_Entity.create_standard_picture(details)
     if details.lightmap then
         layers[#layers + 1] = {
             filename = path .. "-lightmap-lr.png",
+            frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
@@ -400,6 +405,7 @@ function Tirislib_Entity.create_standard_picture(details)
             draw_as_light = true,
             hr_version = {
                 filename = path .. "-lightmap.png",
+                frame_count = 1,
                 priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
@@ -413,6 +419,7 @@ function Tirislib_Entity.create_standard_picture(details)
     if details.glow then
         layers[#layers + 1] = {
             filename = path .. "-glow-lr.png",
+            frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
@@ -420,6 +427,7 @@ function Tirislib_Entity.create_standard_picture(details)
             draw_as_glow = true,
             hr_version = {
                 filename = path .. "-glow.png",
+                frame_count = 1,
                 priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,

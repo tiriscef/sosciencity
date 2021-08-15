@@ -14,8 +14,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "waste-incineration-plant",
-    themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"window", 5}},
-    default_theme_level = 2,
+    themes = {{"machine", 2}},
+    default_theme_level = 4,
     unlock = "architecture-4"
 }
 

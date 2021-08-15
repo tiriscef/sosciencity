@@ -22,6 +22,7 @@ local material_items = {
     },
     {name = "glass-mixture"},
     {name = "glass"},
+    --{name = "fine-glass-instruments"},
     {name = "mineral-mixture"},
     {name = "mineral-wool"},
     {
@@ -287,6 +288,13 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
         {type = "item", name = Tirislib_RecipeGenerator.item_alias.glass, amount = 2}
     )
 end
+
+--[[Tirislib_Recipe.create {
+    name = "fine-glass-instruments",
+    product_amount = 2,
+    energy_required = 2,
+    themes = {{"glass", 5, 10}, {"plastic", 2, 3}}
+}]]
 
 Tirislib_RecipeGenerator.create {
     product = "window",

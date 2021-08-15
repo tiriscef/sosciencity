@@ -18,7 +18,5 @@ for _, recipe in Tirislib_Recipe.iterate() do
         local item = recipe:get_first_result()
         local tech = find_appropriate_architecture_tech(item)
         recipe:add_unlock(tech)
-
-        log(item .. " will be unlocked by " .. tech)
     end
 end
