@@ -730,14 +730,18 @@ local function update_waste_dump(entry, delta_ticks)
         store_progress = 0
     end
 
+    garbage_count = Tirislib_Tables.sum(stored_garbage)
+
     garbagify_progress =
-        garbagify_progress + delta_ticks * (Tirislib_Tables.sum(stored_garbage) / 6000) ^ 0.2 +
+        garbagify_progress + delta_ticks * (garbage_count / 6000) ^ 0.2 +
         delta_ticks * (entry[EK.press_mode] and press_garbagify_rate or 0)
     local to_garbagify = floor(garbagify_progress)
     garbagify_progress = garbagify_progress - to_garbagify
     if to_garbagify > 0 then
         garbagify(inventory, to_garbagify, non_garbage_items, stored_garbage)
     end
+
+    entry[EK.entity].minable = (garbage_count < 1000)
 
     --- Garbagified items are stored and can exceed the capacity. This is not ideal but better than stopping the garbagification progress or spilling items.
     --- We try to output items if the capacity is exceeded.

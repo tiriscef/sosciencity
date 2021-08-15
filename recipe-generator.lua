@@ -244,9 +244,9 @@ RG.ingredient_themes = {
     },
     machine = {
         [0] = {
-            {type = "item", name = "copper-plate", amount = 10},
+            {type = "item", name = "copper-plate", amount = 5},
             {type = "item", name = "iron-plate", amount = 10},
-            {type = "item", name = "iron-gear-wheel", amount = 5}
+            {type = "item", name = "iron-gear-wheel", amount = 3}
         },
         [1] = {
             {type = "item", name = "copper-plate", amount = 10},
@@ -255,11 +255,11 @@ RG.ingredient_themes = {
         },
         [2] = {
             {type = "item", name = "copper-plate", amount = 10},
-            {type = "item", name = "iron-plate", amount = 10},
+            {type = "item", name = "steel-plate", amount = 10},
             {type = "item", name = "iron-gear-wheel", amount = 10}
         },
         [3] = {
-            {type = "item", name = "engine-unit", amount = 5},
+            {type = "item", name = "engine-unit", amount = 3},
             {type = "item", name = "steel-plate", amount = 10},
             {type = "item", name = "iron-gear-wheel", amount = 10}
         },
@@ -300,6 +300,11 @@ RG.ingredient_themes = {
             {type = "item", name = "pipe", amount = 1}
         }
     },
+    plastic = {
+        [2] = {
+            {type = "item", name = "plastic-bar", amount = 1}
+        }
+    },
     plating = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 1}
@@ -338,11 +343,6 @@ RG.ingredient_themes = {
         },
         [2] = {
             {type = "item", name = "storage-tank", amount = 1}
-        }
-    },
-    windows = {
-        [2] = {
-            {type = "item", name = "window", amount = 1}
         }
     },
     wiring = {
@@ -573,7 +573,6 @@ end
 --- **byproducts:** array of ResultPrototypes\
 --- **expensive_byproducts:** array of ResultPrototypes (defaults to the byproducts field)\
 --- **category:** RecipeCategory of the recipe (defaults to "crafting" or "crafting-with-fluid")\
---- **dynamic_category:** Alias for a RecipeCategory. The actual category behind the alias depends in the active mods.\
 --- **themes:** array of themes\
 --- **result_themes:** array of themes\
 --- **default_theme_level:** number\
@@ -643,11 +642,7 @@ function RG.create(details)
 
     recipe:set_fields(details.additional_fields)
 
-    recipe:set_field(
-        "category",
-        (details.dynamic_category and RG.category_alias[details.dynamic_category]) or details.category or
-            get_standard_category(recipe)
-    )
+    recipe:set_field("category", details.category or get_standard_category(recipe))
 
     if details.allow_productivity then
         recipe:allow_productivity_modules()

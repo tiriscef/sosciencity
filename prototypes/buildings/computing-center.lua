@@ -44,11 +44,11 @@ Tirislib_Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-computing-center"},
-    energy_usage = "1.5MW",
+    energy_usage = "1.9MW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
         emissions_per_minute = 0.15,
-        drain = "500kW"
+        drain = "100kW"
     }
 }:set_size(3, 3):copy_localisation_from_item()

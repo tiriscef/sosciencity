@@ -282,7 +282,7 @@ local housing_unlocking_tech = {
 }
 
 local function get_inventory_size(house)
-    return 5 * math.ceil(math.log(house.room_count, 10))
+    return 5 * math.ceil(1 + math.log(house.room_count, 10))
 end
 
 local function get_order(house)
