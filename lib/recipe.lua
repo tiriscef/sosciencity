@@ -258,6 +258,15 @@ end
 -- << class for recipes >>
 Tirislib_Recipe = {}
 
+--- Class for the part of a recipe that the wiki calls "recipe data", which exist for every difficulty.
+Tirislib_RecipeData = {}
+
+Tirislib_RecipeDifficulty = {
+    undefined = "undefined",
+    normal = "normal",
+    expensive = "expensive"
+}
+
 -- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib_Recipe.__index = Tirislib_Recipe
@@ -330,11 +339,11 @@ end
 
 -- << creation >>
 
-local function add_ingredients_table(recipe_data)
+function Tirislib_RecipeData.add_ingredients_table(recipe_data)
     recipe_data.ingredients = recipe_data.ingredients or {}
 end
 
-local function add_results_table(recipe_data)
+function Tirislib_RecipeData.add_results_table(recipe_data)
     if not recipe_data.result and not recipe_data.results then
         recipe_data.results = {}
     end
@@ -342,8 +351,8 @@ end
 
 local function add_basic_structure(prototype)
     prototype.type = prototype.type or "recipe"
-    Tirislib_Recipe.call_on_recipe_data(prototype, add_ingredients_table)
-    Tirislib_Recipe.call_on_recipe_data(prototype, add_results_table)
+    Tirislib_Recipe.call_on_recipe_data(prototype, Tirislib_RecipeData.add_ingredients_table)
+    Tirislib_Recipe.call_on_recipe_data(prototype, Tirislib_RecipeData.add_results_table)
 end
 
 --- Creates an RecipePrototype from the given prototype table.
@@ -354,6 +363,23 @@ function Tirislib_Recipe.create(prototype)
 
     Tirislib_Prototype.create(prototype)
     return Tirislib_Recipe.get(prototype)
+end
+
+--- Copies the given RecipePrototype and adds the copy to data.raw. If the given recipe couldn't be found, a dummy object will be returned.
+--- @param name string|table
+--- @param new_name string
+--- @return RecipePrototype prototype
+--- @return boolean found
+function Tirislib_Recipe.copy(name, new_name)
+    local recipe, found = Tirislib_Recipe.get(name)
+
+    if found then
+        local new = Tirislib_Tables.recursive_copy(recipe)
+        new.name = new_name
+        return Tirislib_Recipe.create(new), true
+    else
+        return recipe --[[the dummy object]], false
+    end
 end
 
 -- << manipulation >>
@@ -418,6 +444,19 @@ end
 function Tirislib_Recipe:call_on_expensive_recipe_data(fn, ...)
     if Tirislib_Recipe.has_expensive_difficulty(self) then
         return fn(self.expensive, ...)
+    end
+end
+
+--- Returns the RecipeData objects defined in this RecipePrototype.
+--- @return table recipe_datas
+function Tirislib_Recipe:get_recipe_datas()
+    if not Tirislib_Recipe.has_difficulties(self) then
+        return {[Tirislib_RecipeDifficulty.undefined] = self}
+    else
+        return {
+            [Tirislib_RecipeDifficulty.normal] = self.normal,
+            [Tirislib_RecipeDifficulty.expensive] = self.expensive
+        }
     end
 end
 
@@ -606,7 +645,7 @@ end
 --- Converts the result of this recipe data to a results table.\
 --- (A single result can be defined in a different way. But it's way easier to work with a results table.)
 --- @param recipe_data table
-local function convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.convert_to_results_table(recipe_data)
     if recipe_data.result and not recipe_data.results then
         recipe_data.results = {
             {type = "item", name = recipe_data.result, amount = recipe_data.result_count or 1}
@@ -617,7 +656,7 @@ local function convert_to_results_table(recipe_data)
     end
 end
 
-local function get_first_result(recipe_data)
+function Tirislib_RecipeData.get_first_result(recipe_data)
     if recipe_data.result then
         return recipe_data.result
     end
@@ -631,11 +670,11 @@ end
 --- Returns the name of the result of this recipe. If there is more than one result, then the first one will be returned.
 --- @return string
 function Tirislib_Recipe:get_first_result()
-    return Tirislib_Recipe.call_on_recipe_data(self, get_first_result)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_first_result)
 end
 
-local function get_result(recipe_data, name, _type)
-    convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.get_result(recipe_data, name, _type)
+    Tirislib_RecipeData.convert_to_results_table(recipe_data)
 
     for _, result in pairs(recipe_data.results) do
         if Entries.get_name(result) == name and Entries.get_type(result) == _type then
@@ -649,11 +688,11 @@ end
 --- @param _type string
 --- @return RecipeEntryPrototype
 function Tirislib_Recipe:get_result(name, _type)
-    return Tirislib_Recipe.call_on_recipe_data(self, get_result, name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_result, name, _type)
 end
 
-local function add_result(recipe_data, result)
-    convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.add_result(recipe_data, result)
+    Tirislib_RecipeData.convert_to_results_table(recipe_data)
 
     for _, current_result in pairs(recipe_data.results) do
         if Entries.can_be_merged(current_result, result) then
@@ -672,22 +711,22 @@ end
 --- @return RecipePrototype itself
 function Tirislib_Recipe:add_result(result, expensive_result)
     if not Tirislib_Recipe.has_difficulties(self) and result then
-        add_result(self, result)
+        Tirislib_RecipeData.add_result(self, result)
         return self
     end
 
     if Tirislib_Recipe.has_normal_difficulty(self) and result then
-        add_result(self.normal, result)
+        Tirislib_RecipeData.add_result(self.normal, result)
     end
     if Tirislib_Recipe.has_expensive_difficulty(self) then
-        add_result(self.expensive, expensive_result or result)
+        Tirislib_RecipeData.add_result(self.expensive, expensive_result or result)
     end
     return self
 end
 
-local function add_results(recipe_data, results)
+function Tirislib_RecipeData.add_results(recipe_data, results)
     for _, entry in pairs(results) do
-        add_result(recipe_data, entry)
+        Tirislib_RecipeData.add_result(recipe_data, entry)
     end
 end
 
@@ -702,15 +741,15 @@ function Tirislib_Recipe:add_result_range(results, expensive_results)
     end
 
     if not Tirislib_Recipe.has_difficulties(self) and results then
-        add_results(self, results)
+        Tirislib_RecipeData.add_results(self, results)
         return self
     end
 
     if Tirislib_Recipe.has_normal_difficulty(self) and results then
-        add_results(self.normal, results)
+        Tirislib_RecipeData.add_results(self.normal, results)
     end
     if Tirislib_Recipe.has_expensive_difficulty(self) then
-        add_results(self.expensive, expensive_results or results)
+        Tirislib_RecipeData.add_results(self.expensive, expensive_results or results)
     end
     return self
 end
@@ -726,7 +765,7 @@ function Tirislib_Recipe:add_new_result(result, amount, _type)
     return self
 end
 
-local function get_first_ingredient(recipe_data)
+function Tirislib_RecipeData.get_first_ingredient(recipe_data)
     for _, current_ingredient in pairs(recipe_data.ingredients) do
         return Entries.get_name(current_ingredient)
     end
@@ -735,10 +774,10 @@ end
 --- Returns the name of the ingredient of this recipe. If there is more than one ingredient, then the first one will be returned.
 --- @return string
 function Tirislib_Recipe:get_first_ingredient()
-    return Tirislib_Recipe.call_on_recipe_data(self, get_first_ingredient)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_first_ingredient)
 end
 
-local function get_ingredient(recipe_data, name, _type)
+function Tirislib_RecipeData.get_ingredient(recipe_data, name, _type)
     for _, ingredient in pairs(recipe_data.ingredients) do
         if Entries.get_name(ingredient) == name and Entries.get_type(ingredient) == _type then
             return ingredient
@@ -751,10 +790,10 @@ end
 --- @param _type string
 --- @return RecipeEntryPrototype
 function Tirislib_Recipe:get_ingredient(name, _type)
-    return Tirislib_Recipe.call_on_recipe_data(self, get_ingredient, name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_ingredient, name, _type)
 end
 
-local function add_ingredient(recipe_data, ingredient)
+function Tirislib_RecipeData.add_ingredient(recipe_data, ingredient)
     -- check if the recipe already has an entry for this ingredient
     for _, current_ingredient in pairs(recipe_data.ingredients) do
         if Tirislib_RecipeEntry.specify_same_stuff(current_ingredient, ingredient) then
@@ -783,8 +822,8 @@ function Tirislib_Recipe:add_ingredient(ingredient, expensive_ingredient)
     Tirislib_RecipeEntry.convert_to_named_keys(ingredient)
     Tirislib_RecipeEntry.convert_to_named_keys(expensive_ingredient)
 
-    Tirislib_Recipe.call_on_normal_recipe_data(self, add_ingredient, ingredient)
-    Tirislib_Recipe.call_on_expensive_recipe_data(self, add_ingredient, expensive_ingredient)
+    Tirislib_Recipe.call_on_normal_recipe_data(self, Tirislib_RecipeData.add_ingredient, ingredient)
+    Tirislib_Recipe.call_on_expensive_recipe_data(self, Tirislib_RecipeData.add_ingredient, expensive_ingredient)
 
     return self
 end
@@ -802,7 +841,7 @@ function Tirislib_Recipe:add_ingredient_range(ingredients, expensive_ingredients
     if not Tirislib_Recipe.has_difficulties(self) then
         if ingredients then
             for _, entry in pairs(ingredients) do
-                add_ingredient(self, entry)
+                Tirislib_RecipeData.add_ingredient(self, entry)
             end
         end
         return self
@@ -810,14 +849,14 @@ function Tirislib_Recipe:add_ingredient_range(ingredients, expensive_ingredients
 
     if ingredients and Tirislib_Recipe.has_normal_difficulty(self) then
         for _, entry in pairs(ingredients) do
-            add_ingredient(self.normal, entry)
+            Tirislib_RecipeData.add_ingredient(self.normal, entry)
         end
     end
     if Tirislib_Recipe.has_expensive_difficulty(self) then
         local ingredients_to_do = expensive_ingredients or ingredients
 
         for _, entry in pairs(ingredients_to_do) do
-            add_ingredient(self.expensive, entry)
+            Tirislib_RecipeData.add_ingredient(self.expensive, entry)
         end
     end
 
@@ -835,7 +874,7 @@ function Tirislib_Recipe:add_new_ingredient(ingredient, amount, _type)
     return self
 end
 
-local function remove_ingredient(recipe_data, ingredient_name, ingredient_type)
+function Tirislib_RecipeData.remove_ingredient(recipe_data, ingredient_name, ingredient_type)
     for index, ingredient in pairs(recipe_data.ingredients) do
         if
             Tirislib_RecipeEntry.get_name(ingredient) == ingredient_name and
@@ -857,13 +896,13 @@ function Tirislib_Recipe:remove_ingredient(ingredient_name, ingredient_type)
         ingredient_type = "item"
     end
 
-    Tirislib_Recipe.call_on_recipe_data(self, remove_ingredient, ingredient_name, ingredient_type)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.remove_ingredient, ingredient_name, ingredient_type)
 
     return self
 end
 
-local function remove_result(recipe_data, ingredient_name, ingredient_type)
-    convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.remove_result(recipe_data, ingredient_name, ingredient_type)
+    Tirislib_RecipeData.convert_to_results_table(recipe_data)
 
     for index, result in pairs(recipe_data.results) do
         if
@@ -886,12 +925,12 @@ function Tirislib_Recipe:remove_result(ingredient_name, ingredient_type)
         ingredient_type = "item"
     end
 
-    Tirislib_Recipe.call_on_recipe_data(self, remove_result, ingredient_name, ingredient_type)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.remove_result, ingredient_name, ingredient_type)
 
     return self
 end
 
-local function replace_ingredient(recipe_data, ingredient_name, ingredient_type, replacement_name, replacement_type)
+function Tirislib_RecipeData.replace_ingredient(recipe_data, ingredient_name, ingredient_type, replacement_name, replacement_type)
     for _, ingredient in pairs(recipe_data.ingredients) do
         if Entries.get_name(ingredient) == ingredient_name and Entries.get_type(ingredient) == ingredient_type then
             Entries.set_name(ingredient, replacement_name)
@@ -912,7 +951,7 @@ function Tirislib_Recipe:replace_ingredient(ingredient_name, replacement_name, i
 
     Tirislib_Recipe.call_on_recipe_data(
         self,
-        replace_ingredient,
+        Tirislib_RecipeData.replace_ingredient,
         ingredient_name,
         ingredient_type,
         replacement_name,
@@ -979,27 +1018,27 @@ function Tirislib_Recipe:add_catalyst(catalyst, catalyst_type, amount, retrieval
     return self
 end
 
-local function clear_ingredients(recipe_data)
+function Tirislib_RecipeData.clear_ingredients(recipe_data)
     recipe_data.ingredients = {}
 end
 
 --- Removes all ingredients.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:clear_ingredients()
-    Tirislib_Recipe.call_on_recipe_data(self, clear_ingredients)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.clear_ingredients)
 
     return self
 end
 
-local function clear_results(recipe_data)
-    convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.clear_results(recipe_data)
+    Tirislib_RecipeData.convert_to_results_table(recipe_data)
     recipe_data.results = {}
 end
 
 --- Removes all results.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:clear_results()
-    Tirislib_Recipe.call_on_recipe_data(self, clear_results)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.clear_results)
 
     return self
 end
@@ -1034,7 +1073,7 @@ function Tirislib_Recipe:add_unlock(technology_name)
     return self
 end
 
-local function set_ingredient_amounts(recipe_data, value)
+function Tirislib_RecipeData.set_ingredient_amounts(recipe_data, value)
     for _, entry in pairs(recipe_data.ingredients) do
         Tirislib_RecipeEntry.set_amount(entry, value)
     end
@@ -1045,14 +1084,14 @@ end
 --- @param expensive_value integer
 --- @return RecipePrototype itself
 function Tirislib_Recipe:set_ingredient_amounts(value, expensive_value)
-    Tirislib_Recipe.call_on_normal_recipe_data(self, set_ingredient_amounts, value)
-    Tirislib_Recipe.call_on_expensive_recipe_data(self, set_ingredient_amounts, expensive_value or value)
+    Tirislib_Recipe.call_on_normal_recipe_data(self, Tirislib_RecipeData.set_ingredient_amounts, value)
+    Tirislib_Recipe.call_on_expensive_recipe_data(self, Tirislib_RecipeData.set_ingredient_amounts, expensive_value or value)
 
     return self
 end
 
-local function set_result_amounts(recipe_data, value)
-    convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.set_result_amounts(recipe_data, value)
+    Tirislib_RecipeData.convert_to_results_table(recipe_data)
 
     for _, entry in pairs(recipe_data.results) do
         Tirislib_RecipeEntry.set_amount(entry, value)
@@ -1064,14 +1103,14 @@ end
 --- @param expensive_value integer
 --- @return RecipePrototype itself
 function Tirislib_Recipe:set_result_amounts(value, expensive_value)
-    Tirislib_Recipe.call_on_normal_recipe_data(self, set_result_amounts, value)
-    Tirislib_Recipe.call_on_expensive_recipe_data(self, set_result_amounts, expensive_value or value)
+    Tirislib_Recipe.call_on_normal_recipe_data(self, Tirislib_RecipeData.set_result_amounts, value)
+    Tirislib_Recipe.call_on_expensive_recipe_data(self, Tirislib_RecipeData.set_result_amounts, expensive_value or value)
 
     return self
 end
 
-local function multiply_ingredient_table_amounts(ingredients, multiplier)
-    for _, ingredient in pairs(ingredients) do
+function Tirislib_RecipeData.multiply_ingredient_amounts(recipe_data, multiplier)
+    for _, ingredient in pairs(recipe_data.ingredients) do
         Tirislib_RecipeEntry.multiply_ingredient_amount(ingredient, multiplier)
     end
 end
@@ -1085,13 +1124,13 @@ function Tirislib_Recipe:multiply_ingredients(normal_multiplier, expensive_multi
     expensive_multiplier = expensive_multiplier or 1
 
     if not Tirislib_Recipe.has_difficulties(self) then
-        multiply_ingredient_table_amounts(self.ingredients, normal_multiplier)
+        Tirislib_RecipeData.multiply_ingredient_amounts(self.ingredients, normal_multiplier)
     else
         if Tirislib_Recipe.has_normal_difficulty(self) then
-            multiply_ingredient_table_amounts(self.normal.ingredients, normal_multiplier)
+            Tirislib_RecipeData.multiply_ingredient_amounts(self.normal.ingredients, normal_multiplier)
         end
         if Tirislib_Recipe.has_expensive_difficulty(self) then
-            multiply_ingredient_table_amounts(self.expensive.ingredients, expensive_multiplier or normal_multiplier)
+            Tirislib_RecipeData.multiply_ingredient_amounts(self.expensive.ingredients, expensive_multiplier or normal_multiplier)
         end
     end
 
@@ -1105,13 +1144,13 @@ function Tirislib_Recipe:multiply_expensive_ingredients(multiplier)
     multiplier = multiplier or 1
 
     if Tirislib_Recipe.has_expensive_difficulty(self) then
-        multiply_ingredient_table_amounts(self.expensive.ingredients, multiplier)
+        Tirislib_RecipeData.multiply_ingredient_amounts(self.expensive.ingredients, multiplier)
     end
 
     return self
 end
 
-local function ceil_ingredient_amounts(recipe_data)
+function Tirislib_RecipeData.ceil_ingredient_amounts(recipe_data)
     for _, ingredient in pairs(recipe_data.ingredients) do
         Entries.transform_amount(ingredient, math.ceil)
     end
@@ -1120,7 +1159,7 @@ end
 --- Rounds all ingredient amounts up. Makes sure that they are integers.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:ceil_ingredients()
-    Tirislib_Recipe.call_on_recipe_data(self, ceil_ingredient_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.ceil_ingredient_amounts)
 
     return self
 end
@@ -1129,7 +1168,7 @@ local function floor_savely(n)
     return math.max(math.floor(n), 1)
 end
 
-local function floor_ingredient_amounts(recipe_data)
+function Tirislib_RecipeData.floor_ingredient_amounts(recipe_data)
     for _, ingredient in pairs(recipe_data.results) do
         Entries.transform_amount(ingredient, floor_savely)
     end
@@ -1138,12 +1177,12 @@ end
 --- Rounds all ingredient amounts down, but not to zero. Makes sure that they are integers.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:floor_ingredients()
-    Tirislib_Recipe.call_on_recipe_data(self, floor_ingredient_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.floor_ingredient_amounts)
 
     return self
 end
 
-local function ceil_result_amounts(recipe_data)
+function Tirislib_RecipeData.ceil_result_amounts(recipe_data)
     if recipe_data.results then
         for _, result in pairs(recipe_data.results) do
             Entries.transform_amount(result, math.ceil)
@@ -1156,12 +1195,12 @@ end
 --- Rounds all result amounts up. Makes sure that they are integers.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:ceil_results()
-    Tirislib_Recipe.call_on_recipe_data(self, ceil_result_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.ceil_result_amounts)
 
     return self
 end
 
-local function floor_result_amounts(recipe_data)
+function Tirislib_RecipeData.floor_result_amounts(recipe_data)
     if recipe_data.results then
         for _, result in pairs(recipe_data.results) do
             Entries.transform_amount(result, floor_savely)
@@ -1174,12 +1213,12 @@ end
 --- Rounds all result amounts down, but not to zero. Makes sure that they are integers.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:floor_results()
-    Tirislib_Recipe.call_on_recipe_data(self, floor_result_amounts)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.floor_result_amounts)
 
     return self
 end
 
-local function transform_ingredient_entries(recipe_data, fn)
+function Tirislib_RecipeData.transform_ingredient_entries(recipe_data, fn)
     for _, entry in pairs(recipe_data.ingredients) do
         fn(entry)
     end
@@ -1189,13 +1228,13 @@ end
 --- @param fn function
 --- @return RecipePrototype itself
 function Tirislib_Recipe:transform_ingredient_entries(fn)
-    Tirislib_Recipe.call_on_recipe_data(self, transform_ingredient_entries, fn)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.transform_ingredient_entries, fn)
 
     return self
 end
 
-local function transform_result_entries(recipe_data, fn)
-    convert_to_results_table(recipe_data)
+function Tirislib_RecipeData.transform_result_entries(recipe_data, fn)
+    Tirislib_RecipeData.convert_to_results_table(recipe_data)
 
     for _, entry in pairs(recipe_data.results) do
         fn(entry)
@@ -1206,7 +1245,7 @@ end
 --- @param fn function
 --- @return RecipePrototype itself
 function Tirislib_Recipe:transform_result_entries(fn)
-    Tirislib_Recipe.call_on_recipe_data(self, transform_result_entries, fn)
+    Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.transform_result_entries, fn)
 
     return self
 end
@@ -1223,7 +1262,7 @@ end
 -- these functions often have the trouble of the recipe definitions having too many options and pitfalls
 -- keep difficulties in mind when using them
 
-local function results_contain(recipe_data, name, _type)
+function Tirislib_RecipeData.results_contain(recipe_data, name, _type)
     if recipe_data.results then
         for _, entry in pairs(recipe_data.results) do
             if Entries.get_type(entry) == "item" and Entries.get_name(entry) == name then
@@ -1244,10 +1283,10 @@ end
 function Tirislib_Recipe:has_result(name, _type)
     _type = _type or "item"
 
-    return Tirislib_Recipe.call_on_recipe_data(self, results_contain, name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.results_contain, name, _type)
 end
 
-local function get_result_count(recipe_data, name, _type)
+function Tirislib_RecipeData.get_result_count(recipe_data, name, _type)
     if recipe_data.results then
         for _, result in pairs(recipe_data.results) do
             if Tirislib_RecipeEntry.get_name(result) == name and Tirislib_RecipeEntry.get_type(result) == _type then
@@ -1270,10 +1309,10 @@ end
 function Tirislib_Recipe:get_result_count(name, _type)
     _type = _type or "item"
 
-    return Tirislib_Recipe.call_on_recipe_data(self, get_result_count, name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_result_count, name, _type)
 end
 
-local function ingredients_contain(recipe_data, name, _type)
+function Tirislib_RecipeData.ingredients_contain(recipe_data, name, _type)
     _type = _type or "item"
 
     for _, entry in pairs(recipe_data.ingredients) do
@@ -1289,19 +1328,19 @@ end
 --- @param _type string
 --- @return boolean
 function Tirislib_Recipe:has_ingredient(name, _type)
-    return Tirislib_Recipe.call_on_recipe_data(self, ingredients_contain, name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.ingredients_contain, name, _type)
 end
 
 -- << high level >>
 
-local function pair_ingredient_with_result(recipe_data, result, result_type, ingredient, ingredient_type, amount_fn)
-    local result_amount = get_result_count(recipe_data, result, result_type)
+function Tirislib_RecipeData.pair_ingredient_with_result(recipe_data, result, result_type, ingredient, ingredient_type, amount_fn)
+    local result_amount = Tirislib_RecipeData.get_result_count(recipe_data, result, result_type)
     if result_amount == 0 then
         return
     end
 
     local amount = amount_fn and amount_fn(result_amount) or result_amount
-    add_ingredient(
+    Tirislib_RecipeData.add_ingredient(
         recipe_data,
         {
             type = ingredient_type,
@@ -1321,7 +1360,7 @@ end
 function Tirislib_Recipe:pair_result_with_ingredient(result, result_type, ingredient, ingredient_type, amount_fn)
     Tirislib_Recipe.call_on_recipe_data(
         self,
-        pair_ingredient_with_result,
+        Tirislib_RecipeData.pair_ingredient_with_result,
         result,
         result_type,
         ingredient,
