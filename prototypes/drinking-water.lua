@@ -1,7 +1,8 @@
 local fluids = {
     {name = "clean-water"},
     {name = "mechanically-cleaned-water"},
-    {name = "biologically-cleaned-water"}
+    {name = "biologically-cleaned-water"},
+    {name = "ultra-pure-water"}
 }
 
 Tirislib_Fluid.batch_create(
@@ -65,3 +66,19 @@ Tirislib_RecipeGenerator.create {
     energy_required = 4,
     unlock = "drinking-water-treatment"
 }
+
+Tirislib_RecipeGenerator.create {
+    product = "ultra-pure-water",
+    product_type = "fluid",
+    product_amount = 50,
+    ingredients = {
+        {type = "fluid", name = "clean-water", amount = 70},
+        {type = "item", name = "semipermeable-membrane", amount = 1}
+    },
+    byproducts = {
+        {type = "item", name = "semipermeable-membrane", amount = 1, probability = 0.8}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.filtration,
+    energy_required = 4,
+    unlock = "genetic-neogenesis"
+}:add_catalyst("semipermeable-membrane", "item", 1, 0.8, 1, 0.7)

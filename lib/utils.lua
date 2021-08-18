@@ -67,7 +67,7 @@ function Tirislib_Luaq:select(fn, ...)
 end
 
 --- Filters the elements of the sequence with the given function.
---- @param fn function
+--- @param fn function function with (index, element, ...) arguments
 --- @return LuaqQuery
 function Tirislib_Luaq:where(fn, ...)
     local new_content = {}

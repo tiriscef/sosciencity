@@ -3,6 +3,18 @@ Tirislib_Prototype = {}
 --- The name of the mod that is currently running. Used to set the inofficial 'owner' field for created prototypes.
 Tirislib_Prototype.modname = nil
 
+--- Class for arrays of prototypes. Setter-functions can be called on them.
+Tirislib_PrototypeArray = {}
+
+--- Makes a function call on a PrototypeArray object to a call on every entry instead.
+function Tirislib_PrototypeArray:__index(method)
+    return function(array, ...)
+        for _, entry in pairs(array) do
+            entry[method](entry, ...)
+        end
+    end
+end
+
 --- Removes all of my metatables so other mods don't call them accidentally.
 local function remove_metatables()
     for _, prototypes in pairs(data.raw) do
@@ -69,6 +81,21 @@ function Tirislib_Prototype.create(prototype)
     data:extend {prototype}
 
     return Tirislib_Prototype.get(prototype.type, prototype.name)
+end
+
+--- Creates the prototypes in the given array and add them to data.raw.
+--- @param prototypes array
+--- @return PrototypeArray created_prototypes
+function Tirislib_Prototype.batch_create(prototypes)
+    local ret = {}
+
+    for _, prototype in pairs(prototypes) do
+        ret[#ret+1] = Tirislib_Prototype.create(prototype)
+    end
+
+    setmetatable(ret, Tirislib_PrototypeArray)
+
+    return ret
 end
 
 --- Some functions (mainly those who make changes to another prototype which might not
@@ -148,17 +175,5 @@ function Tirislib_Prototype.get_unique_name(name, _type)
             return name .. i
         end
         i = i + 1
-    end
-end
-
---- Class for arrays of prototypes. Setter-functions can be called on them.
-Tirislib_PrototypeArray = {}
-
---- Makes a function call on a PrototypeArray object to a call on every entry instead.
-function Tirislib_PrototypeArray:__index(method)
-    return function(array, ...)
-        for _, entry in pairs(array) do
-            entry[method](entry, ...)
-        end
     end
 end

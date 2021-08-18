@@ -88,7 +88,10 @@ Diseases.values = {
     [1003] = {
         name = "gender-dysphoria",
         cure_items = {
-            ["edited-huwan-genome"] = 1
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
         },
         curing_workload = 10,
         curing_facility = Type.gene_clinic,

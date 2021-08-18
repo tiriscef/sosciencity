@@ -28,6 +28,9 @@ RG.ingredient_themes = {
             {type = "fluid", name = "water", amount = 500}
         }
     },
+    battery = {
+        [2] = {{type = "item", name = "battery", amount = 1}}
+    },
     boring = {
         [0] = {
             {type = "item", name = "burner-mining-drill", amount = 1}
@@ -214,9 +217,14 @@ RG.ingredient_themes = {
     },
     genetic_neogenesis = {
         [0] = {
-            {type = "item", name = "nucleic-acid-concentrate", amount = 1},
+            {type = "item", name = "nucleobases", amount = 1},
+            {type = "item", name = "phospholipids", amount = 1},
+            {type = "item", name = "synthetase", amount = 1},
             {type = "item", name = "thermostable-dna-polymerase", amount = 1},
-            {type = "item", name = "agarose", amount = 2}
+            {type = "item", name = "proteins", amount = 1},
+            {type = "item", name = "glass-instruments", amount = 1},
+            {type = "item", name = "agarose", amount = 2},
+            {type = "fluid", name = "ultra-pure-water", amount = 50}
         }
     },
     glass = {
@@ -230,12 +238,11 @@ RG.ingredient_themes = {
     grating = {
         [0] = {{type = "item", name = "iron-stick", amount = 1}}
     },
-    in_vitro_reproduction = {
-        [0] = {
-            {type = "item", name = "nucleic-acid-concentrate", amount = 1},
-            {type = "item", name = "thermostable-dna-polymerase", amount = 1},
-            {type = "item", name = "agarose", amount = 2}
-        }
+    gravel = {
+        [0] = {{type = "item", name = "stone", amount = 1}}
+    },
+    handle = {
+        [0] = {{type = "item", name = "iron-stick", amount = 1}}
     },
     lamp = {
         [0] = {
@@ -284,7 +291,7 @@ RG.ingredient_themes = {
             {type = "item", name = "iron-gear-wheel", amount = 10}
         }
     },
-    mechanic = {
+    mechanism = {
         [0] = {
             {type = "item", name = "iron-stick", amount = 1},
             {type = "item", name = "iron-gear-wheel", amount = 1}
@@ -383,7 +390,8 @@ RG.result_themes = {
 --- Table with (alias, name of RecipeCategory) pairs.
 RG.category_alias = {
     handcrafting = "sosciencity-handcrafting",
-    mixing = "crafting"
+    mixing = "crafting",
+    filtration = "chemistry"
 }
 
 RG.item_alias = {
@@ -521,7 +529,7 @@ local function get_product_prototype(details)
     if not found then
         error(
             "Tirislib RecipeGenerator was told to create a recipe for a non-existant product. A task it's unable to complete. The product's name is " ..
-                product_name
+                tostring(product_name)
         )
     end
 
@@ -584,7 +592,6 @@ end
 --- **unlock:** technology that unlocks the recipe\
 --- **additional_fields:** other fields that should be set for the recipe\
 --- **allow_productivity:** bool\
---- **set_main_product:** bool (defaults to true)\
 --- **localised_name:** locale\
 --- **localised_description:** locale\
 --- **icon:** path to icon\
@@ -605,9 +612,7 @@ function RG.create(details)
         always_show_products = true
     }
 
-    if details.set_main_product or details.set_main_product == nil then
-        recipe.main_product = product.name
-    else
+    if details.localised_name or details.localised_description or details.icon or details.icons then
         recipe.localised_name = details.localised_name or product:get_localised_name()
         if details.localised_name then
             recipe.show_amount_in_title = false
@@ -623,6 +628,8 @@ function RG.create(details)
             recipe.icons = product.icons
             recipe.icon_size = product.icon_size or 64
         end
+    else
+        recipe.main_product = product.name
     end
 
     recipe:create_difficulties()
@@ -635,7 +642,9 @@ function RG.create(details)
     recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
     recipe:add_result_range(details.byproducts, details.expensive_byproducts)
 
-    recipe:multiply_expensive_ingredients(details.expensive_multiplier)
+    if details.expensive_multiplier then
+        recipe:multiply_expensive_ingredients(details.expensive_multiplier)
+    end
     recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)

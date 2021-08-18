@@ -1,4 +1,4 @@
-data:extend {
+Tirislib_Prototype.batch_create {
     {
         type = "item-group",
         name = "sosciencity-infrastructure",
@@ -89,9 +89,21 @@ data:extend {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-fluid-materials",
+        name = "sosciencity-laboratory-materials",
         group = "sosciencity-production",
         order = "abd"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-data",
+        group = "sosciencity-production",
+        order = "abe"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-fluid-materials",
+        group = "sosciencity-production",
+        order = "abx"
     },
     {
         type = "item-subgroup",

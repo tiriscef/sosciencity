@@ -22,7 +22,6 @@ local material_items = {
     },
     {name = "glass-mixture"},
     {name = "glass"},
-    --{name = "fine-glass-instruments"},
     {name = "mineral-mixture"},
     {name = "mineral-wool"},
     {
@@ -94,6 +93,7 @@ local material_items = {
         name = "writing-paper",
         sprite_variations = {name = "writing-paper-pile", count = 4}
     },
+    {name = "semipermeable-membrane"},
     {
         name = "trap",
         distinctions = {subgroup = "sosciencity-gathering"}
@@ -116,23 +116,44 @@ local material_items = {
     },
     {
         name = "humus",
-        sprite_variations = {name = "humus", count = 2, include_icon = true}
+        sprite_variations = {name = "humus", count = 2, include_icon = true},
+        distinctions = {subgroup = "sosciencity-biology-materials"}
     },
     {
         name = "sewage-sludge",
-        sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}
+        sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true},
+        distinctions = {subgroup = "sosciencity-biology-materials"}
     },
     {name = "ferrous-sulfate"},
     {
         name = "salt",
-        sprite_variations = {name = "salt", count = 3, include_icon = true}
+        sprite_variations = {name = "salt", count = 3, include_icon = true},
+        distinctions = {subgroup = "sosciencity-biology-materials"}
     },
-    {name = "amylum"},
-    {name = "empty-hard-drive"},
-    {name = "plant-genome"},
-    {name = "animal-genome"},
-    {name = "huwan-genome"},
-    {name = "edited-huwan-genome"},
+    {
+        name = "empty-hard-drive",
+        distinctions = {subgroup = "sosciencity-data"}
+    },
+    {
+        name = "plant-genome",
+        distinctions = {subgroup = "sosciencity-data"}
+    },
+    {
+        name = "animal-genome",
+        distinctions = {subgroup = "sosciencity-data"}
+    },
+    {
+        name = "huwan-genome",
+        distinctions = {subgroup = "sosciencity-data"}
+    },
+    {
+        name = "edited-huwan-genome",
+        distinctions = {subgroup = "sosciencity-data"}
+    },
+    {
+        name = "amylum",
+        distinctions = {subgroup = "sosciencity-biology-materials"}
+    },
     {
         name = "sugar",
         sprite_variations = {name = "sugar", count = 3, include_icon = true},
@@ -157,14 +178,35 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-biology-materials"}
     },
     {
-        name = "nucleoside-triphosphates",
-        sprite_variations = {name = "thermostable-dna-polymerase-on-belt", count = 1},
+        name = "proteins",
+        sprite_variations = {name = "proteins-pile", count = 3},
         distinctions = {subgroup = "sosciencity-biology-materials"}
+    },
+    {
+        name = "glass-instruments",
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
+        name = "nucleobases",
+        sprite_variations = {name = "nucleobases-on-belt", count = 1},
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
+        name = "phospholipids",
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
+        name = "synthetase",
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
         name = "thermostable-dna-polymerase",
         sprite_variations = {name = "thermostable-dna-polymerase-on-belt", count = 1},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
+        name = "blank-dna-virus",
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
     }
 }
 
@@ -288,13 +330,6 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
         {type = "item", name = Tirislib_RecipeGenerator.item_alias.glass, amount = 2}
     )
 end
-
---[[Tirislib_Recipe.create {
-    name = "fine-glass-instruments",
-    product_amount = 2,
-    energy_required = 2,
-    themes = {{"glass", 5, 10}, {"plastic", 2, 3}}
-}]]
 
 Tirislib_RecipeGenerator.create {
     product = "window",
@@ -464,7 +499,7 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "trap",
     themes = {
-        {"mechanic", 2}
+        {"mechanism", 2}
     },
     energy_required = 0.8,
     allow_productivity = true
@@ -484,7 +519,7 @@ Tirislib_RecipeGenerator.create {
     product = "bucket",
     themes = {
         {"handle", 1},
-        {"small-framework", 1}
+        {"plating", 1}
     },
     energy_required = 0.8
 }
@@ -506,7 +541,7 @@ Tirislib_RecipeGenerator.create {
         {name = "rope", amount = 1},
         {name = "yarn", amount = 1}
     },
-    themes = {{"handle", 1}, {"mechanic", 2}},
+    themes = {{"handle", 1}, {"mechanism", 2}},
     energy_required = 1,
     allow_productivity = true
 }
@@ -646,6 +681,14 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
+    product = "proteins",
+    ingredients = {
+        {type = "item", name = "razha-bean", amount = 1},
+        {type = "fluid", name = "ethanol", amount = 10}
+    }
+}
+
+Tirislib_RecipeGenerator.create {
     product = "soy-milk",
     product_amount = 10,
     ingredients = {
@@ -665,4 +708,43 @@ Tirislib_RecipeGenerator.create {
     },
     category = "sosciencity-fermentation-tank",
     unlock = "brewing"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "glass-instruments",
+    product_amount = 2,
+    energy_required = 2,
+    themes = {{"glass", 5, 10}, {"plastic", 2, 3}},
+    unlock = "genetic-neogenesis"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "semipermeable-membrane",
+    themes = {{"plastic", 5, 7}},
+    default_theme_level = 2,
+    unlock = "genetic-neogenesis"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "nucleobases"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "phospholipids"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "synthetase"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "thermostable-dna-polymerase",
+    ingredients = {
+        {type = "fluid", name = "fiicorum", amount = 10}
+    },
+    unlock = "genetic-neogenesis"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "blank-dna-virus"
 }

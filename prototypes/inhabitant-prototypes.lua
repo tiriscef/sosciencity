@@ -72,7 +72,7 @@ for index, egg in pairs({"huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) 
         ingredients = {
             {type = "item", name = "huwan-genome", amount = 1}
         },
-        themes = {{"genetical", 1}},
+        themes = {{"genetic_neogenesis", 1}},
         category = "sosciencity-reproductive-gene-lab",
         localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index + 1)}},
         unlock = "huwan-genetic-neogenesis"
