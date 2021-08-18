@@ -41,7 +41,6 @@ local function create_enrichment_recipe(details)
         {
             product_amount = 10,
             energy_required = 4,
-            set_main_product = false,
             localised_name = {"recipe-name.enrichment", product:get_localised_name()},
             localised_description = {"recipe-description.enrichment", product:get_localised_name()},
             icons = {
@@ -67,7 +66,6 @@ local function create_pure_culture_recipe(details)
         {
             product_amount = 20,
             energy_required = 0.8,
-            set_main_product = false,
             localised_name = {"recipe-name.pure-culture", product:get_localised_name()},
             localised_description = {"recipe-description.pure-culture", product:get_localised_name()},
             icons = {

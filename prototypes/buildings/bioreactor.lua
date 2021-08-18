@@ -1,5 +1,3 @@
--- TODO: actual graphics
-
 Tirislib_Item.create {
     type = "item",
     name = "sosciencity-bioreactor",
@@ -14,13 +12,13 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "sosciencity-bioreactor",
-    themes = {{"building", 2}, {"machine", 2}, {"electronics", 100}, {"casing", 10}},
+    themes = {{"machine", 2}, {"piping", 20}, {"tank", 3}},
     default_theme_level = 2,
     unlock = "basic-biotechnology"
 }
 
 local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south", "north"}
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",

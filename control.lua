@@ -5,7 +5,6 @@ if script.active_mods["sosciencity-debug"] then
     DEBUG = true
 
     -- development tools
-    pcall(require, "__debugadapter__/debugadapter.lua")
     pcall(require, "__profiler__/profiler.lua")
 
     -- tests

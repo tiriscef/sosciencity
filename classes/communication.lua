@@ -238,8 +238,7 @@ end
 
 local FOLLOWUP_DELAY = 2 * Time.second
 
---- Lets the given speaker to say the given line. This mean an output to the chat will be produced
---- that mimics that of a speaking player.
+--- Lets the given speaker say the given line. This means an output that mimics that of a speaking player will be produced to the chat.
 --- @param speaker string Name of the speaker
 --- @param line string Name of the line to say
 local function say(speaker, line, ...)

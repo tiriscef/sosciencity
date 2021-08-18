@@ -1,3 +1,5 @@
+require("constants.food")
+
 local function create_hunting_gathering_recipe(details)
     Tirislib_RecipeGenerator.merge_details(
         details,
@@ -22,27 +24,20 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "phytofall-blossom", amount = 1, probability = 0.1}
+        {type = "item", name = "phytofall-blossom", amount = 1, probability = 0.1},
+        {type = "item", name = "liontooth", amount = 5, probability = 0.5}
     }
 }
 
-create_hunting_gathering_recipe {
-    name = "sosciencity-gathering-with-bucket",
-    category = "sosciencity-hunting",
-    energy_required = 5,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/gathering.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/bucket.png",
-            scale = 0.3,
-            shift = {8, 8}
-        }
-    },
-    icon_size = 64,
-    results = {
-
-    }
-}:add_catalyst("bucket", "item", 1, 0.9, 2, 0.8)
+local gather_for_food = Tirislib_Recipe.copy("sosciencity-gathering", "sosciencity-gathering-for-food")
+for _, recipe_data in pairs(gather_for_food:get_recipe_datas()) do
+    recipe_data.results =
+        Tirislib_Luaq.from(recipe_data.results):where(
+        function(_, result)
+            return Food.values[result.name]
+        end
+    ):to_array()
+end
 
 create_hunting_gathering_recipe {
     name = "sosciencity-hunting-with-trap",
@@ -57,9 +52,7 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {
-
-    }
+    results = {}
 }:add_catalyst("trap", "item", 2, 0.8, 3, 0.6)
 
 create_hunting_gathering_recipe {
@@ -75,9 +68,7 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {
-
-    }
+    results = {}
 }:add_catalyst("trap-cage", "item", 2, 0.8, 3, 0.6)
 
 create_hunting_gathering_recipe {
@@ -93,9 +84,7 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {
-
-    }
+    results = {}
 }:add_catalyst("fishing-net", "item", 1, 0.7, 1, 0.5)
 
 create_hunting_gathering_recipe {
@@ -111,7 +100,5 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {
-
-    }
+    results = {}
 }:add_catalyst("harpoon", "item", 1, 0.7, 1, 0.5)

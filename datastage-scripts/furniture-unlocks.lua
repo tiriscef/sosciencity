@@ -2,7 +2,7 @@ local function find_appropriate_architecture_tech(item)
     for i = 1, 7 do
         local tech = Tirislib_Technology.get_by_name("architecture-" .. i)
 
-        for _, recipe in tech:get_unlocked_recipes() do
+        for _, recipe in pairs(tech:get_unlocked_recipes()) do
             if recipe:has_ingredient(item) then
                 return tech.name
             end

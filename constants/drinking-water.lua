@@ -13,5 +13,8 @@ DrinkingWater.values = {
     },
     ["biologically-cleaned-water"] = {
         health = -1
+    },
+    ["ultra-pure-water"] = {
+        health = 0
     }
 }

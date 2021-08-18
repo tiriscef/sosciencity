@@ -328,7 +328,7 @@ Food.values = {
         taste_quality = 5,
         luxury = 5,
         portion_size = 10,
-        group = "beans"
+        group = "chickpea"
     },
     ["hummus"] = {
         fat = 10,
@@ -355,40 +355,64 @@ Food.values = {
         group = "algae"
     },
     ["razha-bean"] = { -- TODO values
-        fat = 0.6,
-        carbohydrates = 3.1,
-        proteins = 5.9,
-        healthiness = 7,
-        food_category = "processed",
-        taste_category = Taste.neutral,
-        taste_quality = 2,
-        luxury = 1,
+        fat = 5.1,
+        carbohydrates = 9.8,
+        proteins = 11.2,
+        healthiness = 6,
+        food_category = "alien-legume",
+        taste_category = Taste.umami,
+        taste_quality = 5,
+        luxury = 3,
         portion_size = 10,
-        group = "algae"
+        group = "razha-bean"
     },
-    ["tofu"] = { -- TODO values
-        fat = 0.6,
-        carbohydrates = 3.1,
-        proteins = 5.9,
+    ["tofu"] = {
+        fat = 4.8,
+        carbohydrates = 1.9,
+        proteins = 8.5,
         healthiness = 7,
         food_category = "processed",
         taste_category = Taste.neutral,
-        taste_quality = 2,
-        luxury = 1,
+        taste_quality = 6,
+        luxury = 5,
         portion_size = 10,
-        group = "algae"
+        group = "processed-razha"
     },
-    ["yuba"] = { -- TODO values
-        fat = 0.6,
-        carbohydrates = 3.1,
-        proteins = 5.9,
+    ["yuba"] = {
+        fat = 24.1,
+        carbohydrates = 3.8,
+        proteins = 52.3,
         healthiness = 7,
         food_category = "processed",
-        taste_category = Taste.neutral,
-        taste_quality = 2,
+        taste_category = Taste.umami,
+        taste_quality = 5,
+        luxury = 4,
+        portion_size = 2,
+        group = "processed-razha"
+    },
+    ["liontooth"] = {
+        fat = 0.7,
+        carbohydrates = 2.4,
+        proteins = 3.1,
+        healthiness = 6,
+        food_category = "alien-vegetable",
+        taste_category = Taste.spicy,
+        taste_quality = 4,
         luxury = 1,
         portion_size = 10,
-        group = "algae"
+        group = "liontooth"
+    },
+    ["manok"] = {
+        fat = 0.3,
+        carbohydrates = 23.1,
+        proteins = 1,
+        healthiness = 6,
+        food_category = "alien-vegetable",
+        taste_category = Taste.umami,
+        taste_quality = 5,
+        luxury = 5,
+        portion_size = 10,
+        group = "manok"
     }
 }
 

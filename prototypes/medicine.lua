@@ -152,7 +152,7 @@ Tirislib_Recipe.create {
     main_product = ""
 }
 
-data:extend {
+Tirislib_Prototype.batch_create {
     {
         type = "sticker",
         name = "blood-donation-1",

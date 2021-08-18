@@ -35,11 +35,13 @@ local foods = {
     {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}},
     {name = "avocado", sprite_variations = {name = "avocado-pile", count = 4}},
     {name = "chickpea", sprite_variations = {name = "chickpea-pile", count = 3}},
-    {name = "hummus"},
-    {name = "dried-solfaen", sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true}},
+    {name = "liontooth", sprite_variations = {name = "liontooth-pile", count = 3}},
+    {name = "manok", sprite_variations = {name = "manok-pile", count = 3}},
     {name = "razha-bean", sprite_variations = {name = "razha-bean-pile", count = 3}, probability = 0.1},
+    {name = "dried-solfaen", sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true}},
     {name = "tofu"},
-    {name = "yuba"}
+    {name = "yuba"},
+    {name = "hummus"}
 }
 
 -- add the food values to the... prototype prototype
