@@ -387,13 +387,13 @@ end
 --- Checks if the recipe has a normal difficulty defined.
 --- @return boolean
 function Tirislib_Recipe:has_normal_difficulty()
-    return self.normal ~= nil
+    return self.normal ~= nil and self.normal ~= false
 end
 
 --- Checks if the recipe has an expensive difficulty defined.
 --- @return boolean
 function Tirislib_Recipe:has_expensive_difficulty()
-    return self.expensive ~= nil
+    return self.expensive ~= nil and self.expensive ~= false
 end
 
 --- Checks if the recipe has an difficulties defined.
@@ -454,8 +454,8 @@ function Tirislib_Recipe:get_recipe_datas()
         return {[Tirislib_RecipeDifficulty.undefined] = self}
     else
         return {
-            [Tirislib_RecipeDifficulty.normal] = self.normal,
-            [Tirislib_RecipeDifficulty.expensive] = self.expensive
+            [Tirislib_RecipeDifficulty.normal] = self.normal and self.normal,
+            [Tirislib_RecipeDifficulty.expensive] = self.expensive and self.expensive
         }
     end
 end

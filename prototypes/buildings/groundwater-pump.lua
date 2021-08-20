@@ -82,13 +82,14 @@ Tirislib_Entity.create {
     },
     fluid_boxes = {
         {
+            base_level = 1,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {0, -2}}},
             production_type = "output"
         }
     },
-    fixed_recipe = "clean-water"
+    fixed_recipe = "clean-water-from-ground"
 }:set_size(3, 3):copy_localisation_from_item()
 
 Tirislib_Entity.create {

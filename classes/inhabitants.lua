@@ -662,7 +662,8 @@ local function get_caste_bonus_multiplier(happiness)
 end
 
 function InhabitantGroup.get_power_usage(group)
-    return group[EK.inhabitants] * castes[EK.type].power_demand
+    -- don't return 0 to avoid the problem of the eei showing up in the energy production statistic
+    return max(0.1, group[EK.inhabitants]) * castes[EK.type].power_demand
 end
 local get_power_usage = InhabitantGroup.get_power_usage
 
@@ -972,7 +973,7 @@ local function get_next_free_house(caste_id, improvised)
     next_houses_table[#next_houses_table] = nil
 
     local entry = try_get(unit_number)
-    if entry and entry[EK.type] == caste_id then
+    if entry and entry[EK.type] == caste_id and get_free_capacity(entry) > 0 then
         return entry
     else
         -- remove it from the list of free houses

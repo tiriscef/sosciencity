@@ -596,7 +596,7 @@ local function update_upbringing_station(entry)
     end
 
     -- create new classes
-    if current_tick - most_recent_class >= 30 * Time.second then
+    if current_tick - most_recent_class >= 10 * Time.second then
         local free_capacity = details.capacity - students
         local hatched, genders = Inventories.hatch_eggs(entry, free_capacity)
 

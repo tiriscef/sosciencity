@@ -140,6 +140,16 @@ Types.definitions = {
         localised_name = {"sosciencity.market"},
         localised_description = {"sosciencity.explain-market"},
         signature_color = Colors.orange,
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.bidirectional,
+            [Type.orchid] = ConnectionType.bidirectional,
+            [Type.gunfire] = ConnectionType.bidirectional,
+            [Type.ember] = ConnectionType.bidirectional,
+            [Type.foundry] = ConnectionType.bidirectional,
+            [Type.gleam] = ConnectionType.bidirectional,
+            [Type.aurora] = ConnectionType.bidirectional,
+            [Type.plasma] = ConnectionType.bidirectional
+        },
         is_civil = true
     },
     [Type.composter] = {
@@ -159,6 +169,16 @@ Types.definitions = {
         localised_name = {"sosciencity.water-distributer"},
         localised_description = {"sosciencity.explain-water-distributer"},
         signature_color = Colors.light_teal,
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.to_neighbor,
+            [Type.orchid] = ConnectionType.to_neighbor,
+            [Type.gunfire] = ConnectionType.to_neighbor,
+            [Type.ember] = ConnectionType.to_neighbor,
+            [Type.foundry] = ConnectionType.to_neighbor,
+            [Type.gleam] = ConnectionType.to_neighbor,
+            [Type.aurora] = ConnectionType.to_neighbor,
+            [Type.plasma] = ConnectionType.to_neighbor
+        },
         is_civil = true
     },
     [Type.dumpster] = {
