@@ -108,6 +108,14 @@ function Tirislib_Luaq:group(fn, ...)
     return self
 end
 
+--- Iterator over the sequence, to use with lua's 'for .. in'-syntax.
+--- @return function iterator
+--- @return table content
+--- @return nil first_index
+function Tirislib_Luaq:pairs()
+    return next, self.content, nil
+end
+
 --- Returns the sequence as a table.
 --- @return table
 function Tirislib_Luaq:to_table()

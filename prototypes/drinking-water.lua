@@ -17,6 +17,7 @@ Tirislib_Fluid.batch_create(
 )
 
 Tirislib_RecipeGenerator.create {
+    name = "clean-water-from-ground",
     product = "clean-water",
     product_type = "fluid",
     product_min = 80,

@@ -188,7 +188,7 @@ local material_items = {
     },
     {
         name = "nucleobases",
-        sprite_variations = {name = "nucleobases-on-belt", count = 1},
+        --sprite_variations = {name = "nucleobases-on-belt", count = 1},
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {

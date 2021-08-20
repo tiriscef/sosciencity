@@ -129,10 +129,6 @@ local function display_percentage(percentage)
     return {"sosciencity.percentage", ceil(percentage * 100)}
 end
 
-local function display_fraction(numerator, denominator, localised_name)
-    return {"sosciencity.fraction", numerator, denominator, localised_name}
-end
-
 local function display_convergence(current, target)
     return {"sosciencity.convergenting-value", get_reasonable_number(current), get_reasonable_number(target)}
 end
@@ -580,9 +576,6 @@ local CITY_INFO_SPRITE_SIZE = 48
 local function update_population_flow(frame)
     local population_flow = frame["general"]
 
-    local population_count = Inhabitants.get_population_count()
-    population_flow["population"].caption = {"sosciencity.population", population_count}
-
     population_flow["machine-count"].caption = {"sosciencity.machines", Register.get_machine_count()}
 
     population_flow["turret-count"].caption = {"sosciencity.turrets", Register.get_type_count(Type.turret)}
@@ -606,13 +599,6 @@ local function add_population_flow(container)
         direction = "vertical"
     }
     set_padding(frame, 2)
-
-    local populations =
-        frame.add {
-        type = "label",
-        name = "population"
-    }
-    populations.style.bottom_margin = 4
 
     local machines =
         frame.add {
@@ -685,7 +671,9 @@ end
 
 local function update_caste_flow(container, caste_id)
     local caste_frame = container["caste-" .. caste_id]
-    caste_frame.visible = Inhabitants.caste_is_researched(caste_id)
+
+    -- Always show the clockwork caste, so the player has a chance to understand the maintenance mechanic.
+    caste_frame.visible = (caste_id == Type.clockwork) or Inhabitants.caste_is_researched(caste_id)
 
     -- the frame may not yet exist
     if caste_frame == nil then
@@ -1016,16 +1004,19 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
 
     local disease_progress_flow = get_kv_value_element(general_list, "disease-rate")
-    for category, updater in pairs(Inhabitants.disease_progress_updaters) do
-        local progress_per_tick = updater(entry, 1)
-        local ticks_till_disease = ceil(1 / progress_per_tick)
-        local label = disease_progress_flow[tostring(category)]
-        label.caption = {
-            "sosciencity.show-disease-rate",
-            display_time(ticks_till_disease),
-            {"sosciencity." .. category}
-        }
-        label.visible = (progress_per_tick > 0)
+    for category_name, category_id in pairs(DiseaseCategory) do
+        local updater = Inhabitants.disease_progress_updaters[category_id]
+        if updater then
+            local progress_per_tick = updater(entry, 1)
+            local ticks_till_disease = ceil(1 / progress_per_tick)
+            local label = disease_progress_flow[tostring(category_id)]
+            label.caption = {
+                "sosciencity.show-disease-rate",
+                display_time(ticks_till_disease),
+                {"disease-category-name." .. category_name}
+            }
+            label.visible = (progress_per_tick > 0)
+        end
     end
 end
 
@@ -1515,8 +1506,7 @@ local function update_composter_details(container, entry)
         {
             "sosciencity.fraction",
             get_reasonable_number(Time.minute * progress_factor),
-            {"sosciencity.minute"},
-            ""
+            {"sosciencity.minute"}
         }
     )
 end
@@ -1582,7 +1572,11 @@ local function update_fishery_details(container, entry)
     set_kv_pair_value(
         building_data,
         "water-tiles",
-        {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles, {"sosciencity.tiles"}}
+        {
+            "sosciencity.value-with-unit",
+            {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles},
+            {"sosciencity.tiles"}
+        }
     )
 
     local competition_performance, near_count = Entity.get_fishing_competition(entry)
@@ -1618,7 +1612,7 @@ local function update_hunting_hut_details(container, entry)
     set_kv_pair_value(
         building_data,
         "tree-count",
-        {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count, ""}
+        {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count}
     )
 
     local competition_performance, near_count = Entity.get_hunting_competition(entry)
@@ -1937,7 +1931,11 @@ local function update_waste_dump(container, entry)
     set_kv_pair_value(
         building_data,
         "capacity",
-        {"sosciencity.fraction", Tirislib_Tables.sum(stored_garbage), capacity, {"sosciencity.items"}}
+        {
+            "sosciencity.value-with-unit",
+            {"sosciencity.fraction", Tirislib_Tables.sum(stored_garbage), capacity},
+            {"sosciencity.items"}
+        }
     )
 
     set_kv_pair_value(
@@ -1997,6 +1995,117 @@ set_checked_state_handler(
     generic_checkbox_handler,
     EK.press_mode
 )
+
+---------------------------------------------------------------------------------------------------
+-- << market >>
+
+local function analyse_dependants(entry, consumption_key)
+    local inhabitant_count = 0
+    local consumption = 0
+
+    for _, caste_id in pairs(TypeGroup.all_castes) do
+        local multiplier = Castes.values[caste_id][consumption_key]
+        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+            local inhabitants = house[EK.inhabitants]
+            inhabitant_count = inhabitant_count + inhabitants
+            consumption = consumption + inhabitants * multiplier
+        end
+    end
+
+    return inhabitant_count, consumption
+end
+
+local function update_market(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local amount = Inventories.count_calories(Inventories.get_chest_inventory(entry))
+
+    set_kv_pair_value(building_data, "content", {"sosciencity.value-with-unit", amount, {"sosciencity.kcal"}})
+
+    local inhabitants, consumption = analyse_dependants(entry, "calorific_demand")
+    set_kv_pair_value(
+        building_data,
+        "dependants",
+        {"sosciencity.display-dependants", inhabitants, {"sosciencity.show-calorific-demand", floor(consumption * Time.minute)}}
+    )
+
+    if consumption > 0 then
+        set_kv_pair_value(
+            building_data,
+            "supply",
+            {"sosciencity.display-supply", display_time(floor(amount / consumption))}
+        )
+    else
+        set_kv_pair_value(building_data, "supply", "-")
+    end
+end
+
+local function create_market(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "content", {"sosciencity.content"})
+    add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    add_kv_pair(building_data, "supply", {"sosciencity.supply"})
+
+    update_market(container, entry)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << water distributer >>
+
+local function update_water_distributer(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local water = entry[EK.water_name]
+    local amount
+
+    if water then
+        amount = entry[EK.entity].get_fluid_count(water)
+        set_kv_pair_value(building_data, "content", Tirislib_Locales.display_fluid_stack(water, floor(amount)))
+    else
+        amount = 0
+        set_kv_pair_value(building_data, "content", "-")
+    end
+
+    local inhabitants, consumption = analyse_dependants(entry, "water_demand")
+    set_kv_pair_value(
+        building_data,
+        "dependants",
+        {"sosciencity.display-dependants", inhabitants, {"sosciencity.show-water-demand", floor(consumption * Time.minute)}}
+    )
+
+    if consumption > 0 then
+        set_kv_pair_value(
+            building_data,
+            "supply",
+            {"sosciencity.display-supply", display_time(floor(amount / consumption))}
+        )
+    else
+        set_kv_pair_value(building_data, "supply", "-")
+    end
+end
+
+local function create_water_distributer(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "content", {"sosciencity.content"})
+    add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    add_kv_pair(building_data, "supply", {"sosciencity.supply"})
+
+    update_water_distributer(container, entry)
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
@@ -2112,8 +2221,8 @@ local type_gui_specifications = {
         updater = update_general_building_details
     },
     [Type.market] = {
-        creater = create_general_building_details,
-        updater = update_general_building_details
+        creater = create_market,
+        updater = update_market
     },
     [Type.nightclub] = {
         creater = create_general_building_details,
@@ -2128,8 +2237,8 @@ local type_gui_specifications = {
         updater = update_waste_dump
     },
     [Type.water_distributer] = {
-        creater = create_general_building_details,
-        updater = update_general_building_details
+        creater = create_water_distributer,
+        updater = update_water_distributer
     },
     [Type.waterwell] = {
         creater = create_waterwell_details,
