@@ -12,7 +12,8 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "industrial-animal-farm",
-    themes = {{"silo", 2}, {"piping", 20}, {"building", 10}, {"machine", 5}, {"lamp", 40}},
+    themes = {{"piping", 20}, {"building", 10}, {"machine", 5}, {"lamp", 40}},
+    ingredients = {{type = "item", name = "silo", amount = 2}},
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }

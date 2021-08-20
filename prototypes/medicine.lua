@@ -47,7 +47,7 @@ Tirislib_Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", s
 Tirislib_RecipeGenerator.create {
     product = "artificial-limp",
     themes = {
-        {"structure", 2},
+        {"framework", 2},
         {"wiring", 1},
         {"electronics", 1}
     },

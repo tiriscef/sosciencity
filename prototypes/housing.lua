@@ -2,7 +2,7 @@ require("constants.housing")
 require("constants.castes")
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
-local data_details = {
+local housing_prototype_details = {
     ["improvised-hut"] = {
         picture = {
             layers = {
@@ -255,7 +255,7 @@ local data_details = {
 }
 
 if Sosciencity_Config.DEBUG then
-    data_details["test-house"] = {
+    housing_prototype_details["test-house"] = {
         picture = {
             filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
             priority = "high",
@@ -326,24 +326,29 @@ end
 
 local quality_effect_on_recipe = {
     sheltered = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_sheltered", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(details.themes, {"housing_sheltered", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     green = function(details, house, tech_level)
-        table.insert(details.themes, {"green", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(details.themes, {"housing_green", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     technical = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_technical", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(details.themes, {"housing_technical", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     spacey = function(details, house, tech_level)
-        details.themes[1][2] = details.themes[1][2] * 2
+        -- increase the "building" theme amount
+        details.themes[1][2] = details.themes[1][2] * 1.5
+        details.themes[1][2] = details.themes[1][3] * 1.5
     end,
     compact = function(details, house, tech_level)
-        details.themes[1][2] = details.themes[1][2] / 2
+        -- decrease the "building" theme amount
+        details.themes[1][2] = details.themes[1][2] * 0.75
+        details.themes[1][2] = details.themes[1][3] * 0.75
     end,
     decorated = function(details, house, tech_level)
         table.insert(details.themes, {"furnishing_decorated", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     simple = function(details, house, tech_level)
+        -- change the normal "furnishing" theme to the simple one
         details.themes[2][1] = "simple_furnishing"
     end,
     individualistic = function(details, house, tech_level)
@@ -367,8 +372,8 @@ local quality_effect_on_recipe = {
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
     local ingredient_themes = {
-        {"building", house.room_count, nil, tech_level},
-        {"furnishing", house.room_count, nil, house.comfort}
+        {"building", house.room_count, math.ceil(house.room_count * 1.2), tech_level},
+        {"furnishing", house.room_count, math.ceil(house.room_count * 1.2), house.comfort}
     }
 
     local recipe_details = {
@@ -422,8 +427,8 @@ local function create_entity(house_name, house, details)
     end
 end
 
-for house_name, house in pairs(Housing.values) do
-    local details = data_details[house_name]
+for house_name, details in pairs(housing_prototype_details) do
+    local house = Housing.values[house_name]
 
     -- if the main_entity isn't set, then this house is its own
     details.main_entity = details.main_entity or house_name
@@ -434,4 +439,8 @@ for house_name, house in pairs(Housing.values) do
     end
 
     create_entity(house_name, house, details)
+end
+
+if Sosciencity_Config.DEBUG then
+    Tirislib_Recipe.get_by_name["test-house"]:clear_ingredients()
 end

@@ -70,44 +70,6 @@ RG.ingredient_themes = {
             {type = "fluid", name = "water", amount = 10}
         }
     },
-    building = {
-        [0] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-brick", amount = 5}
-        },
-        [1] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-brick", amount = 5}
-        },
-        [2] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-wall", amount = 5}
-        },
-        [3] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-wall", amount = 5}
-        },
-        [4] = {
-            {type = "item", name = "steel-plate", amount = 6},
-            {type = "item", name = "concrete", amount = 10},
-            {type = "item", name = "mineral-wool", amount = 2}
-        },
-        [5] = {
-            {type = "item", name = "steel-plate", amount = 6},
-            {type = "item", name = "concrete", amount = 10},
-            {type = "item", name = "mineral-wool", amount = 2}
-        },
-        [6] = {
-            {type = "item", name = "steel-plate", amount = 8},
-            {type = "item", name = "refined-concrete", amount = 10},
-            {type = "item", name = "mineral-wool", amount = 2}
-        },
-        [7] = {
-            {type = "item", name = "steel-plate", amount = 8},
-            {type = "item", name = "refined-concrete", amount = 10},
-            {type = "item", name = "mineral-wool", amount = 2}
-        }
-    },
     can = {
         [0] = {{type = "item", name = "iron-plate", amount = 1}}
     },
@@ -133,86 +95,13 @@ RG.ingredient_themes = {
             {type = "item", name = "yarn", amount = 0.1}
         }
     },
-    fiber = {
-        [0] = {
-            {type = "item", name = "pemtenn-cotton", amount = 2}
-        }
-    },
     framework = {
         [0] = {
-            {type = "item", name = "iron-plate", amount = 2}
-        },
-        [1] = {
-            {type = "item", name = "steel-plate", amount = 2}
-        }
-    },
-    furnishing = {
-        [0] = {},
-        [1] = {
-            {type = "item", name = "bed", amount = 1}
+            {type = "item", name = "iron-plate", amount = 1},
+            {type = "item", name = "iron-stick", amount = 1}
         },
         [2] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 0.5}
-        },
-        [3] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1}
-        },
-        [4] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1.5}
-        },
-        [5] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2}
-        },
-        [6] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2},
-            {type = "item", name = "air-conditioner", amount = 1 / 3}
-        },
-        [7] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2},
-            {type = "item", name = "air-conditioner", amount = 1 / 3}
-        },
-        [8] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1.5},
-            {type = "item", name = "cupboard", amount = 2},
-            {type = "item", name = "air-conditioner", amount = 0.5}
-        },
-        [9] = {
-            {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2.5},
-            {type = "item", name = "table", amount = 2},
-            {type = "item", name = "cupboard", amount = 3},
-            {type = "item", name = "air-conditioner", amount = 2 / 3}
-        },
-        [10] = {
-            {type = "item", name = "bed", amount = 3},
-            {type = "item", name = "chair", amount = 5},
-            {type = "item", name = "table", amount = 3},
-            {type = "item", name = "cupboard", amount = 4},
-            {type = "item", name = "air-conditioner", amount = 1}
-        }
-    },
-    furnishing_decorated = {
-        [0] = {
-            {type = "item", name = "painting", amount = 1}
+            {type = "item", name = "steel-plate", amount = 1}
         }
     },
     genetic_neogenesis = {
@@ -230,9 +119,9 @@ RG.ingredient_themes = {
     glass = {
         [0] = {{type = "item", name = "glass", amount = 1}}
     },
+    --- for a lack of a better term. like... the stuff that would be smelted to get glass.
+    --- vanilla doesn't really have something like that and a lot of mods invent different versions for it
     glass_educt = {
-        -- for a lack of a better term. like... the stuff that would be smelted to get glass.
-        -- vanilla doesn't really have something like that and a lot of mods invent different versions for it
         [0] = {{type = "item", name = "stone", amount = 1}}
     },
     grating = {
@@ -243,6 +132,9 @@ RG.ingredient_themes = {
     },
     handle = {
         [0] = {{type = "item", name = "iron-stick", amount = 1}}
+    },
+    iron_ore = {
+        [0] = {{type = "item", name = "iron-ore", amount = 1}}
     },
     lamp = {
         [0] = {
@@ -315,6 +207,9 @@ RG.ingredient_themes = {
     plating = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "steel-plate", amount = 1}
         }
     },
     screw_material = {
@@ -331,11 +226,6 @@ RG.ingredient_themes = {
     soil = {
         [0] = {
             {type = "item", name = "humus", amount = 1}
-        }
-    },
-    structure = {
-        [0] = {
-            {type = "item", name = "iron-plate", amount = 1}
         }
     },
     tablet_ingredients = {
@@ -357,20 +247,238 @@ RG.ingredient_themes = {
             {type = "item", name = "copper-cable", amount = 2}
         }
     },
-    wood = {
+    --- everything that is built to accommodate huwans
+    building = {
         [0] = {
-            {type = "item", name = "wood", amount = 1}
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "stone-brick", amount = 5},
+            {type = "item", name = "window", amount = 2}
         },
         [1] = {
-            {type = "item", name = "tiricefing-willow-wood", amount = 1}
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "stone-brick", amount = 5},
+            {type = "item", name = "window", amount = 2}
         },
         [2] = {
-            {type = "item", name = "cherry-wood", amount = 1}
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "stone-wall", amount = 5},
+            {type = "item", name = "window", amount = 2}
+        },
+        [3] = {
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "stone-wall", amount = 5},
+            {type = "item", name = "mineral-wool", amount = 2},
+            {type = "item", name = "window", amount = 2}
+        },
+        [4] = {
+            {type = "item", name = "steel-plate", amount = 6},
+            {type = "item", name = "concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 2},
+            {type = "item", name = "window", amount = 2}
+        },
+        [5] = {
+            {type = "item", name = "steel-plate", amount = 6},
+            {type = "item", name = "concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 2},
+            {type = "item", name = "window", amount = 2}
+        },
+        [6] = {
+            {type = "item", name = "steel-plate", amount = 8},
+            {type = "item", name = "refined-concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 2},
+            {type = "item", name = "window", amount = 2}
+        },
+        [7] = {
+            {type = "item", name = "steel-plate", amount = 8},
+            {type = "item", name = "refined-concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 2},
+            {type = "item", name = "window", amount = 2}
         }
     },
-    woodwork = {
+    cheap_building = {
         [0] = {
-            {type = "item", name = "lumber", amount = 1}
+            {type = "item", name = "lumber", amount = 1},
+            {type = "item", name = "stone-brick", amount = 2},
+            {type = "item", name = "window", amount = 1}
+        },
+        [1] = {
+            {type = "item", name = "lumber", amount = 1},
+            {type = "item", name = "stone-brick", amount = 2},
+            {type = "item", name = "window", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "lumber", amount = 1},
+            {type = "item", name = "stone-wall", amount = 3},
+            {type = "item", name = "window", amount = 1}
+        },
+        [3] = {
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "stone-wall", amount = 3},
+            {type = "item", name = "mineral-wool", amount = 1},
+            {type = "item", name = "window", amount = 1}
+        },
+        [4] = {
+            {type = "item", name = "iron-plate", amount = 2},
+            {type = "item", name = "concrete", amount = 4},
+            {type = "item", name = "mineral-wool", amount = 1},
+            {type = "item", name = "window", amount = 1}
+        },
+        [5] = {
+            {type = "item", name = "iron-plate", amount = 2},
+            {type = "item", name = "concrete", amount = 4},
+            {type = "item", name = "mineral-wool", amount = 1},
+            {type = "item", name = "window", amount = 1}
+        },
+        [6] = {
+            {type = "item", name = "steel-plate", amount = 2},
+            {type = "item", name = "refined-concrete", amount = 5},
+            {type = "item", name = "mineral-wool", amount = 1},
+            {type = "item", name = "window", amount = 1}
+        },
+        [7] = {
+            {type = "item", name = "steel-plate", amount = 2},
+            {type = "item", name = "refined-concrete", amount = 5},
+            {type = "item", name = "mineral-wool", amount = 1},
+            {type = "item", name = "window", amount = 1}
+        }
+    },
+    pompous_building = {
+        [0] = {
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "iron-plate", amount = 2},
+            {type = "item", name = "stone-brick", amount = 10},
+            {type = "item", name = "window", amount = 5}
+        },
+        [1] = {
+            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "iron-plate", amount = 2},
+            {type = "item", name = "stone-brick", amount = 10},
+            {type = "item", name = "window", amount = 5}
+        },
+        [2] = {
+            {type = "item", name = "lumber", amount = 5},
+            {type = "item", name = "steel-plate", amount = 2},
+            {type = "item", name = "stone-wall", amount = 10},
+            {type = "item", name = "window", amount = 5}
+        },
+        [3] = {
+            {type = "item", name = "lumber", amount = 5},
+            {type = "item", name = "steel-plate", amount = 2},
+            {type = "item", name = "stone-wall", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 4},
+            {type = "item", name = "window", amount = 5}
+        },
+        [4] = {
+            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "steel-plate", amount = 6},
+            {type = "item", name = "concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 4},
+            {type = "item", name = "window", amount = 5}
+        },
+        [5] = {
+            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "steel-plate", amount = 6},
+            {type = "item", name = "concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 4},
+            {type = "item", name = "window", amount = 5}
+        },
+        [6] = {
+            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "steel-plate", amount = 8},
+            {type = "item", name = "refined-concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 5},
+            {type = "item", name = "window", amount = 5}
+        },
+        [7] = {
+            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "steel-plate", amount = 8},
+            {type = "item", name = "refined-concrete", amount = 10},
+            {type = "item", name = "mineral-wool", amount = 5},
+            {type = "item", name = "window", amount = 5}
+        }
+    },
+    furnishing = {
+        [0] = {},
+        [1] = {
+            {type = "item", name = "bed", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1},
+            {type = "item", name = "table", amount = 0.5}
+        },
+        [3] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1}
+        },
+        [4] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1}
+        },
+        [5] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1.5}
+        },
+        [6] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1.5},
+            {type = "item", name = "air-conditioner", amount = 1 / 3}
+        },
+        [7] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "air-conditioner", amount = 1 / 3}
+        },
+        [8] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "air-conditioner", amount = 0.5}
+        },
+        [9] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "air-conditioner", amount = 2 / 3}
+        },
+        [10] = {
+            {type = "item", name = "bed", amount = 3},
+            {type = "item", name = "chair", amount = 2},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 3},
+            {type = "item", name = "air-conditioner", amount = 1}
+        }
+    },
+    furnishing_decorated = {
+        [0] = {
+            {type = "item", name = "painting", amount = 1}
+        }
+    },
+    housing_green = {
+        [0] = {
+            {type = "item", name = "phytofall-blossom", amount = 1}
+        }
+    },
+    housing_technical = {
+        [0] = {
+            {type = "item", name = "electronic-circuit", amount = 1}
+        }
+    },
+    housing_sheltered = {
+        [0] = {
+            {type = "item", name = "iron-plate", amount = 1}
         }
     }
 }

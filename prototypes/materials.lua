@@ -196,6 +196,11 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
+        name = "chloroplasts",
+        sprite_variations = {name = "chloroplasts-on-belt", count = 1},
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
         name = "synthetase",
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
@@ -574,7 +579,7 @@ Tirislib_RecipeGenerator.create {
     product_min = 2,
     product_max = 6,
     ingredients = {
-        {type = "item", name = "potato", amount = 5},
+        {type = "item", name = "manok", amount = 5},
         {type = "fluid", name = "clean-water", amount = 80}
     },
     category = "crafting-with-fluid",

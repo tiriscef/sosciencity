@@ -52,7 +52,7 @@ Tirislib_Recipe.create {
     name = "lay-egg",
     category = "sosciencity-handcrafting",
     enabled = true,
-    energy_required = 5,
+    energy_required = 1,
     ingredients = {},
     results = {
         {type = "item", name = "huwan-neutral-egg", amount_min = 1, amount_max = 3}

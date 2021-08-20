@@ -54,7 +54,7 @@ Food.values = {
         portion_size = 10,
         group = "fish-meat"
     },
-    ["alien-meat"] = {
+    ["biter-meat"] = {
         fat = 17,
         carbohydrates = 1,
         proteins = 21,
@@ -135,7 +135,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 4,
         luxury = 2,
-        portion_size = 10,
+        portion_size = 50,
         group = "brutal-pumpkin"
     },
     ["ortrot-fruit"] = {
@@ -405,7 +405,7 @@ Food.values = {
     ["manok"] = {
         fat = 0.3,
         carbohydrates = 23.1,
-        proteins = 1,
+        proteins = 2.3,
         healthiness = 6,
         food_category = "alien-vegetable",
         taste_category = Taste.umami,
@@ -413,6 +413,30 @@ Food.values = {
         luxury = 5,
         portion_size = 10,
         group = "manok"
+    },
+    ["tello-fruit"] = {
+        fat = 0.2,
+        carbohydrates = 18.1,
+        proteins = 1.7,
+        healthiness = 2,
+        food_category = "alien-vegetable",
+        taste_category = Taste.fruity,
+        taste_quality = 1,
+        luxury = 1,
+        portion_size = 10,
+        group = "tello"
+    },
+    ["sugar-beet"] = {
+        fat = 0.5,
+        carbohydrates = 27.1,
+        proteins = 1.0,
+        healthiness = 4,
+        food_category = "vegetable",
+        taste_category = Taste.fruity,
+        taste_quality = 4,
+        luxury = 2,
+        portion_size = 10,
+        group = "sugar-beet"
     }
 }
 

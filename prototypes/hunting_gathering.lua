@@ -24,17 +24,31 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
+        {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
+        {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.1},
+        {type = "item", name = "leafage", amount = 2},
+        {type = "item", name = "liontooth", amount = 5, probability = 0.5},
+        {type = "item", name = "fawoxylas", amount = 1, probability = 0.1},
         {type = "item", name = "phytofall-blossom", amount = 1, probability = 0.1},
-        {type = "item", name = "liontooth", amount = 5, probability = 0.5}
+        {type = "item", name = "plemnemm-cotton", amount = 5, probability = 0.5},
+        {type = "item", name = "manok", amount = 2, probability = 0.5},
+        {type = "item", name = "ortrot-fruit", amount = 10, probability = 0.1},
+        {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
+        {type = "item", name = "unnamed-fruit", amount = 10, probability = 0.1},
+        {type = "item", name = "zetorn", amount = 10, probability = 0.1}
     }
 }
 
 local gather_for_food = Tirislib_Recipe.copy("sosciencity-gathering", "sosciencity-gathering-for-food")
 for _, recipe_data in pairs(gather_for_food:get_recipe_datas()) do
     recipe_data.results =
-        Tirislib_Luaq.from(recipe_data.results):where(
+        Tirislib_Luaq.from(Tirislib_Tables.recursive_copy(recipe_data.results)):where(
         function(_, result)
             return Food.values[result.name]
+        end
+    ):foreach(
+        function(_, result)
+            result.probability = (result.probability * 1.1 < 1) and (result.probability * 1.1) or nil
         end
     ):to_array()
 end
@@ -44,7 +58,9 @@ create_hunting_gathering_recipe {
     category = "sosciencity-hunting",
     energy_required = 5,
     icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/hunting.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
+        },
         {
             icon = "__sosciencity-graphics__/graphics/icon/trap.png",
             scale = 0.3,
@@ -60,7 +76,9 @@ create_hunting_gathering_recipe {
     category = "sosciencity-hunting",
     energy_required = 5,
     icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/hunting.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
+        },
         {
             icon = "__sosciencity-graphics__/graphics/icon/trap-cage.png",
             scale = 0.3,
@@ -76,7 +94,9 @@ create_hunting_gathering_recipe {
     category = "sosciencity-fishery",
     energy_required = 5,
     icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/fishing.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
+        },
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing-net.png",
             scale = 0.3,
@@ -92,7 +112,9 @@ create_hunting_gathering_recipe {
     category = "sosciencity-fishery",
     energy_required = 5,
     icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/fishing.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
+        },
         {
             icon = "__sosciencity-graphics__/graphics/icon/harpoon.png",
             scale = 0.3,
