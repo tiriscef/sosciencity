@@ -11,6 +11,7 @@ Tirislib_Item.batch_create(animal_food_items, {subgroup = "sosciencity-animal-fo
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+
 Tirislib_RecipeGenerator.create {
     product = "bird-food",
     ingredients = {{type = "item", name = "sesame", amount = 1}},

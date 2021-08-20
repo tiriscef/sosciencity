@@ -546,18 +546,19 @@ local function finish_class(entry, class, mode)
         DiseaseGroup.make_sick_randomly(diseases, DiseaseCategory.birth_defect, sick_count)
     end
 
-    local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, DiseaseGroup.new_at_birth(count), genders)
+    local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, diseases, genders)
     Communication.report_immigration(count, ImmigrationCause.birth)
     Inhabitants.add_to_city(graduates)
 
     entry[EK.graduates] = entry[EK.graduates] + count
 end
 
-Entity.upbringing_time = Time.minute * 5
+Entity.upbringing_time = Time.minute
 local upbringing_time = Entity.upbringing_time
 
 local function update_upbringing_station(entry)
     local mode = entry[EK.education_mode]
+    local details = get_building_details(entry)
 
     -- return if no caste is researched (clockwork has to be researched before all the other castes)
     if not Inhabitants.caste_is_researched(Type.clockwork) then
@@ -596,13 +597,15 @@ local function update_upbringing_station(entry)
 
     -- create new classes
     if current_tick - most_recent_class >= 30 * Time.second then
-        local free_capacity = get_building_details(entry).capacity - students
+        local free_capacity = details.capacity - students
         local hatched, genders = Inventories.hatch_eggs(entry, free_capacity)
 
         if hatched > 0 then
             classes[#classes + 1] = {current_tick, genders}
         end
     end
+
+    Subentities.set_power_usage(entry, (#classes > 0) and details.power_usage or details.power_drain or 0)
 end
 Register.set_entity_updater(Type.upbringing_station, update_upbringing_station)
 

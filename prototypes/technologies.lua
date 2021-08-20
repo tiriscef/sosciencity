@@ -52,7 +52,7 @@ Tirislib_Technology.create {
     name = "orchid-caste",
     icon = "__sosciencity-graphics__/graphics/orchid-caste.png",
     icon_size = 256,
-    prerequisites = {"clockwork-caste"},
+    prerequisites = {"clockwork-caste", "open-environment-farming"},
     effects = {
         {
             type = "nothing",
@@ -789,7 +789,7 @@ Tirislib_Technology.create {
     name = "open-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/open-environment-farming.png",
     icon_size = 128,
-    prerequisites = {"orchid-caste"},
+    prerequisites = {},
     unit = {
         count = 56,
         ingredients = {
@@ -803,7 +803,7 @@ Tirislib_Technology.create {
     name = "indoor-growing",
     icon = "__sosciencity-graphics__/graphics/technology/indoor-growing.png",
     icon_size = 128,
-    prerequisites = {"open-environment-farming", "chemical-science-pack"},
+    prerequisites = {"open-environment-farming", "logistic-science-pack"},
     unit = {
         count = 129,
         ingredients = {

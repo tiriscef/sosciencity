@@ -188,7 +188,9 @@ Buildings.values = {
     },
     ["upbringing-station"] = {
         type = Type.upbringing_station,
-        power_usage = 150
+        power_usage = 150,
+        power_drain = 5,
+        capacity = 20
     },
     ["waste-dump"] = {
         type = Type.waste_dump,

@@ -17,7 +17,7 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_RecipeGenerator.create {
     product = "drying-unit",
-    themes = {{"building", 2}, {"machine", 2}},
+    themes = {{"machine", 2, 3}},
     default_theme_level = 2,
     --unlock = "basic-biotechnology" TODO unlock
 }

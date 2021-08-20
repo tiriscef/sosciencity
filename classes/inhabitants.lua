@@ -1324,7 +1324,7 @@ local function create_disease_cases(entry, disease_group, delta_ticks)
 end
 
 local function is_recoverable(id)
-    return disease_values[id].natural_recovery
+    return disease_values[id].natural_recovery ~= nil
 end
 
 local function has_facility(hospital, facility_type)

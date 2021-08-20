@@ -14,7 +14,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "psych-ward",
-    themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"window", 5}},
+    themes = {{"building", 10}, {"furnishing", 5, 5, 5}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 2,
     unlock = "psychiatry"

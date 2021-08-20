@@ -14,8 +14,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "phyto-gene-lab",
-    themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"window", 5}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}},
     default_theme_level = 2,
     unlock = "genetic-neogenesis"
 }

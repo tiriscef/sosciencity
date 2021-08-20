@@ -18,9 +18,7 @@ local flora_items = {
     {name = "ortrot-wood", wood = true, unlock = Unlocks.get_tech_name("ortrot")},
     {name = "avocado-wood", wood = true},
     {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")},
-    {name = "tello-fruit", sprite_variations = {name = "tello-pile", count = 3, include_icon = true}},
-    {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
-    {name = "sugar-beet", sprite_variations = {name = "sugar-beet-pile", count = 3}}
+    {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}}
 }
 
 for _, item in pairs(flora_items) do
