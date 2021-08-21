@@ -419,8 +419,6 @@ local function create_entity(house_name, house, details)
         localised_description = {"entity-description." .. details.main_entity}
     }:set_size(details.width, details.height)
 
-    Sosciencity_Config.add_eei_size(details.width, details.height)
-
     if details.main_entity ~= "improvised-hut" then
         entity:add_mining_result({name = details.main_entity, amount = 1})
         entity:copy_localisation_from_item(details.main_entity)
@@ -439,6 +437,7 @@ for house_name, details in pairs(housing_prototype_details) do
     end
 
     create_entity(house_name, house, details)
+    Sosciencity_Config.add_eei(house_name)
 end
 
 if Sosciencity_Config.DEBUG then

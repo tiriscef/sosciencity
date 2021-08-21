@@ -528,15 +528,25 @@ function Tirislib_Entity:add_mining_result(mining_result)
     return self
 end
 
+function Tirislib_Entity:get_localised_name()
+    return self.localised_name or {"entity-name." .. self.name}
+end
+
+function Tirislib_Entity:get_localised_description()
+    return self.localised_description or {"entity-description." .. self.name}
+end
+
 --- Copies the localisation of the item with the given name to this EntityPrototype.
 --- @param item_name string
 --- @return EntityPrototype itself
 function Tirislib_Entity:copy_localisation_from_item(item_name)
     item_name = item_name or self.name
-    local item = Tirislib_Item.get_by_name(item_name)
+    local item, found = Tirislib_Item.get_by_name(item_name)
 
-    self.localised_name = item.localised_name or {"item-name." .. item_name}
-    self.localised_description = item.localised_description or {"item-description." .. item_name}
+    if found then
+        self.localised_name = item:get_localised_name()
+        self.localised_description = item:get_localised_description()
+    end
 
     return self
 end

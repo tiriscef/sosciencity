@@ -687,8 +687,32 @@ Tirislib_Technology.create {
             {"chemical-science-pack", 1},
             {"production-science-pack", 1}
         },
-        time = 20
+        time = 60
     }
+}
+
+Tirislib_Technology.create {
+    name = "improved-reproductive-healthcare",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"in-situ-gene-editing"},
+    effects = {
+        {
+            type = "nothing",
+            effect_description = {"sosciencity.reduced-birth-defect-rate"}
+        }
+    },
+    unit = {
+        count_formula = "486*1.5^(L-1)",
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1}
+        },
+        time = 60
+    },
+    max_level = 3
 }
 
 Tirislib_Technology.create {

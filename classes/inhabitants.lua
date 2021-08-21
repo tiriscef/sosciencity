@@ -44,6 +44,7 @@ local immigration
 local homeless
 local free_houses
 local next_free_houses
+local technologies
 
 local Register = Register
 local try_get = Register.try_get
@@ -106,6 +107,7 @@ local function set_locals()
     homeless = global.homeless
     free_houses = global.free_houses
     next_free_houses = global.next_free_houses
+    technologies = global.technologies
 end
 
 local function new_caste_table()
@@ -662,8 +664,7 @@ local function get_caste_bonus_multiplier(happiness)
 end
 
 function InhabitantGroup.get_power_usage(group)
-    -- don't return 0 to avoid the problem of the eei showing up in the energy production statistic
-    return max(0.1, group[EK.inhabitants]) * castes[EK.type].power_demand
+    return group[EK.inhabitants] * castes[EK.type].power_demand
 end
 local get_power_usage = InhabitantGroup.get_power_usage
 
@@ -1282,7 +1283,7 @@ local function cure_side_effects(entry, disease_id, count, cured)
 end
 
 function Inhabitants.get_birth_defect_probability()
-    return 0.1
+    return 0.1 * 0.8 * technologies["improved-reproductive-healthcare"]
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
