@@ -45,3 +45,4 @@ Tirislib_Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(3, 3):copy_localisation_from_item()
+Sosciencity_Config.add_eei("waste-dump")

@@ -25,6 +25,7 @@ local tracked_multi_level_techs = {
     ["gleam-caste-effectivity"] = {},
     ["aurora-caste-effectivity"] = {},
     ["plasma-caste-effectivity"] = {},
+    ["improved-reproductive-healthcare"] = {}
 }
 
 local unlocks = Unlocks.by_item_aquisition

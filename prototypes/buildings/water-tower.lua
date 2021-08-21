@@ -91,7 +91,7 @@ Tirislib_Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(size_x, size_y):copy_localisation_from_item()
-Sosciencity_Config.add_eei_size(size_x, size_y)
+Sosciencity_Config.add_eei("water-tower")
 
 Tirislib_Entity.create {
     type = "corpse",

@@ -19,19 +19,14 @@ local default_values = {
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-3.png", scale = 0.25},
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
     },
-    eei_sizes = {},
+    eei_needing_buildings = {},
     building_stacksize = 50,
     add_glass = true,
     glass_compatibility_mode = false
 }
 
-function default_values.add_eei_size(width, height)
-    local eei_sizes = default_values.eei_sizes
-    if not eei_sizes[width] then
-        eei_sizes[width] = {}
-    end
-
-    eei_sizes[width][height] = true
+function default_values.add_eei(entity_name)
+    default_values.eei_needing_buildings[entity_name] = true
 end
 
 if mods["sosciencity-debug"] then
