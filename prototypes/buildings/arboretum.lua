@@ -34,9 +34,9 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     module_specification = {
-        module_slots = 2
+        module_slots = 3
     },
-    allowed_effects = {"productivity", "consumption", "speed", "pollution"},
+    allowed_effects = {"productivity", "speed"},
     animation = {
         layers = {
             {
@@ -79,12 +79,10 @@ Tirislib_Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-farming-perennial"},
-    energy_usage = "50kW",
+    energy_usage = "10W",
     energy_source = {
-        type = "electric",
-        usage_priority = "secondary-input",
-        emissions_per_minute = 1,
-        drain = "0W"
+        type = "void",
+        emissions_per_minute = 1
     },
     working_sound = {
         sound = {filename = "__sosciencity-graphics__/sound/chainsaw.ogg", volume = 3},

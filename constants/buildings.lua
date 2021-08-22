@@ -67,7 +67,8 @@ Buildings.values = {
         range = 42
     },
     ["arboretum"] = {
-        type = Type.farm
+        type = Type.farm,
+        open_environment = true
     },
     ["architectural-office"] = {
         type = Type.manufactory,
@@ -96,7 +97,8 @@ Buildings.values = {
         range = 40
     },
     ["farm"] = {
-        type = Type.farm
+        type = Type.farm,
+        open_environment = true
     },
     ["fishing-hut"] = {
         type = Type.fishery,

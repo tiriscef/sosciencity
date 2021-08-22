@@ -34,6 +34,10 @@ local display_percentage = Tirislib_Locales.display_percentage
 local display_item_stack = Tirislib_Locales.display_item_stack
 local display_time = Tirislib_Locales.display_time
 
+local climate_locales = Weather.climate_locales
+local humidity_locales = Weather.humidity_locales
+local weather_locales = Weather.weather_locales
+
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
@@ -580,11 +584,11 @@ local function update_population_flow(frame)
     local climate = global.current_climate
     local humidity = global.current_humidity
     local weather_label = population_flow.weather
-    weather_label.caption = {"sosciencity.weather", Weather.weather_locales[humidity][climate]}
+    weather_label.caption = {"sosciencity.weather", weather_locales[humidity][climate]}
     weather_label.tooltip = {
         "sosciencity.explain-weather",
-        Weather.climate_locales[climate],
-        Weather.humidity_locales[humidity]
+        climate_locales[climate],
+        humidity_locales[humidity]
     }
 end
 
@@ -1557,6 +1561,109 @@ local function create_waterwell_details(container, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << farm >>
+
+local function update_farm(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    set_kv_pair_value(building_data, "orchid-bonus", {"sosciencity.percentage-bonus", global.caste_bonuses[Type.orchid]})
+
+    local flora_details = Biology.flora[entry[EK.species]]
+    if flora_details then
+        set_kv_pair_visibility(building_data, "biomass", flora_details.persistent)
+        local biomass = entry[EK.biomass]
+        if biomass ~= nil then
+            set_kv_pair_value(
+                building_data,
+                "biomass",
+                {"sosciencity.display-biomass", floor(biomass), Entity.biomass_to_productivity(biomass)}
+            )
+        end
+
+        set_kv_pair_visibility(building_data, "climate", true)
+        set_kv_pair_visibility(building_data, "humidity", true)
+
+        if get_building_details(entry).open_environment then
+            set_kv_pair_value(
+                building_data,
+                "climate",
+                flora_details.preferred_climate == global.current_climate and
+                    {
+                        "sosciencity.right-climate",
+                        climate_locales[flora_details.preferred_climate]
+                    } or
+                    {
+                        "sosciencity.wrong-climate",
+                        climate_locales[global.current_climate],
+                        climate_locales[flora_details.preferred_climate],
+                        {"sosciencity.percentage-malus", 100 - flora_details.wrong_climate_coefficient * 100}
+                    }
+            )
+            set_kv_pair_value(
+                building_data,
+                "humidity",
+                flora_details.preferred_humidity == global.current_humidity and
+                    {
+                        "sosciencity.right-humidity",
+                        humidity_locales[flora_details.preferred_humidity]
+                    } or
+                    {
+                        "sosciencity.wrong-humidity",
+                        humidity_locales[global.current_humidity],
+                        humidity_locales[flora_details.preferred_humidity],
+                        {"sosciencity.percentage-malus", 100 - flora_details.wrong_humidity_coefficient * 100}
+                    }
+            )
+        else
+            set_kv_pair_value(
+                building_data,
+                "climate",
+                {"sosciencity.closed-climate", climate_locales[flora_details.preferred_climate]}
+            )
+            set_kv_pair_value(
+                building_data,
+                "humidity",
+                {"sosciencity.closed-humidity", humidity_locales[flora_details.preferred_humidity]}
+            )
+        end
+
+        if
+            flora_details.required_module and
+                not Inventories.assembler_has_module(entry[EK.entity], flora_details.required_module)
+         then
+            set_kv_pair_value(building_data, "module", {"sosciencity.module-missing", display_item_stack(flora_details.required_module, 1)})
+            set_kv_pair_visibility(building_data, "module", true)
+        else
+            set_kv_pair_visibility(building_data, "module", false)
+        end
+    else
+        -- no recipe set
+        set_kv_pair_visibility(building_data, "biomass", false)
+        set_kv_pair_visibility(building_data, "climate", false)
+        set_kv_pair_visibility(building_data, "humidity", false)
+        set_kv_pair_visibility(building_data, "module", false)
+    end
+end
+
+local function create_farm(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "orchid-bonus", {"caste-short.orchid"})
+    add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
+    add_kv_pair(building_data, "climate", {"sosciencity.climate"})
+    add_kv_pair(building_data, "humidity", {"sosciencity.humidity"})
+    add_kv_pair(building_data, "module")
+
+    update_farm(container, entry)
+end
+
+---------------------------------------------------------------------------------------------------
 -- << fishing hut >>
 
 local function update_fishery_details(container, entry)
@@ -2026,7 +2133,11 @@ local function update_market(container, entry)
     set_kv_pair_value(
         building_data,
         "dependants",
-        {"sosciencity.display-dependants", inhabitants, {"sosciencity.show-calorific-demand", floor(consumption * Time.minute)}}
+        {
+            "sosciencity.display-dependants",
+            inhabitants,
+            {"sosciencity.show-calorific-demand", floor(consumption * Time.minute)}
+        }
     )
 
     if consumption > 0 then
@@ -2077,7 +2188,11 @@ local function update_water_distributer(container, entry)
     set_kv_pair_value(
         building_data,
         "dependants",
-        {"sosciencity.display-dependants", inhabitants, {"sosciencity.show-water-demand", floor(consumption * Time.minute)}}
+        {
+            "sosciencity.display-dependants",
+            inhabitants,
+            {"sosciencity.show-water-demand", floor(consumption * Time.minute)}
+        }
     )
 
     if consumption > 0 then
@@ -2187,6 +2302,10 @@ local type_gui_specifications = {
     },
     [Type.empty_house] = {
         creater = create_empty_housing_details
+    },
+    [Type.farm] = {
+        creater = create_farm,
+        updater = update_farm
     },
     [Type.fishery] = {
         creater = create_fishery_details,
