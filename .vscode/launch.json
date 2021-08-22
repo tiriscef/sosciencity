@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Factorio Mod Debug",
             "factorioPath": "",
-            "hookData": false
+            "hookData": true
         }
     ]
 }

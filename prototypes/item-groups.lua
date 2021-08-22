@@ -125,6 +125,12 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-saplings",
+        group = "sosciencity-production",
+        order = "acb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-fauna",
         group = "sosciencity-production",
         order = "ada"

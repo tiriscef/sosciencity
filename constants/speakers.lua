@@ -2,7 +2,7 @@ Speakers = {}
 
 Speakers["tiriscef."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 52,
+    ["b"] = 53,
     ["roadkill"] = 6,
     ["report-begin"] = 2,
     ["report-end"] = 2,
@@ -38,7 +38,9 @@ Speakers["tiriscef."] = {
         "b48",
         "b48f",
         "b49",
-        "b52"
+        "b52",
+        "b53",
+        "b53f"
     },
     index = 0
 }

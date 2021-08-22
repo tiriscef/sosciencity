@@ -38,18 +38,28 @@ Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 ---------------------------------------------------------------------------------------------------
 -- << farming recipes >>
 
+local humidity_multipliers = {
+    [Humidity.dry] = 1 / 4,
+    [Humidity.moderate] = 1 / 2,
+    [Humidity.humid] = 1
+}
+
 local function create_annual_recipe(details)
     local product = Tirislib_Item.get_by_name(details.product)
     local plant_details = Biology.flora[product.name]
+
+    local energy_required = 200 * plant_details.growth_coefficient
+    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
 
     Tirislib_RecipeGenerator.merge_details(
         details,
         {
             name = "farming-annual-" .. product.name,
-            product_amount = 110,
-            energy_required = 100,
-            expensive_energy_required = 120,
-            themes = {{"farming_annual", 1, 2}},
+            product_min = 0,
+            product_max = 400,
+            energy_required = energy_required,
+            expensive_energy_required = energy_required * 1.2,
+            themes = {{"water", water_required, water_required * 2}},
             ingredients = {{type = "item", name = product.name, amount = 10}},
             byproducts = {{type = "item", name = "leafage", amount = 20}},
             localised_name = {"recipe-name.annual", product:get_localised_name()},
@@ -62,6 +72,7 @@ local function create_annual_recipe(details)
                 Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-annual",
+            subgroup = "sosciencity-fauna",
             icons = {
                 {icon = product.icon},
                 {
@@ -82,14 +93,17 @@ local function create_perennial_recipe(details)
     local product = Tirislib_Item.get_by_name(details.product)
     local plant_details = Biology.flora[product.name]
 
+    local water_required = 150 * humidity_multipliers[plant_details.preferred_humidity]
+
     Tirislib_RecipeGenerator.merge_details(
         details,
         {
             name = "farming-perennial-" .. product.name,
-            product_amount = 5,
+            product_min = 1,
+            product_max = 5,
             energy_required = 15,
             expensive_energy_required = 17.5,
-            themes = {{"farming_perennial", 1, 2}},
+            themes = {{"water", water_required, water_required * 2}},
             byproducts = {{type = "item", name = "leafage", amount = 1}},
             localised_name = {"recipe-name.perennial", product:get_localised_name()},
             localised_description = {
@@ -101,6 +115,7 @@ local function create_perennial_recipe(details)
                 Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-perennial",
+            subgroup = "sosciencity-fauna",
             icons = {
                 {icon = product.icon},
                 {
@@ -130,7 +145,7 @@ local function create_neogenesis_recipe(details)
                 {type = "item", name = "chloroplasts", amount = 1},
                 {type = "item", name = "plant-genome", amount = 1}
             },
-            byproducts = {{type = "item", name = "empty-hard-drive", amount = 1}},
+            byproducts = {{type = "item", name = "empty-hard-drive", amount = 1, probability = 0.95}},
             localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
             localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
             category = "sosciencity-phyto-gene-lab",
@@ -359,3 +374,157 @@ for _, item in pairs(flora_items) do
         }
     end
 end
+
+---------------------------------------------------------------------------------------------------
+-- << saplings >>
+
+Tirislib_Prototype.create {
+    name = "sosciencity-saplings",
+    type = "module-category"
+}
+
+local saplings = {
+    {
+        name = "apple-sapling",
+        distinctions = {limitation = {"farming-perennial-apple"}}
+    },
+    {
+        name = "avocado-sapling",
+        distinctions = {limitation = {"farming-perennial-avocado"}}
+    },
+    {
+        name = "cherry-sapling",
+        distinctions = {limitation = {"farming-perennial-cherry"}}
+    },
+    {
+        name = "lemon-sapling",
+        distinctions = {limitation = {"farming-perennial-lemon"}}
+    },
+    {
+        name = "orange-sapling",
+        distinctions = {limitation = {"farming-perennial-orange"}}
+    },
+    {
+        name = "ortrot-sapling",
+        distinctions = {limitation = {"farming-perennial-ortrot"}}
+    },
+    {
+        name = "zetorn-sapling",
+        distinctions = {limitation = {"farming-perennial-zetorn"}}
+    }
+}
+
+for _, sapling in pairs(saplings) do
+    local distinctions = Tirislib_Tables.get_subtbl(sapling, "distinctions")
+
+    -- search the flora item that needs this sapling
+    for flora_name, details in pairs(Biology.flora) do
+        if details.required_module == sapling.name then
+            local flora_item = Tirislib_Item.get_by_name(flora_name)
+            distinctions.localised_description = {"sosciencity.sapling", flora_item:get_localised_name()}
+
+            distinctions.icons = {
+                {
+                    icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png"
+                },
+                {
+                    icon = flora_item.icon,
+                    scale = 0.3,
+                    shift = {8, 8}
+                }
+            }
+            distinctions.icon = 64
+        end
+    end
+
+    sapling.sprite_variations = {name = "sapling", count = 3}
+end
+
+Tirislib_Item.batch_create(
+    saplings,
+    {
+        type = "module",
+        effect = {},
+        category = "sosciencity-saplings",
+        tier = 1,
+        subgroup = "sosciencity-saplings",
+        stack_size = 10
+    }
+)
+
+Tirislib_RecipeGenerator.create {
+    product = "apple-sapling",
+    ingredients = {
+        {type = "item", name = "ortrot-sapling", amount = 1},
+        {type = "item", name = "apple", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("apple")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "avocado-sapling",
+    ingredients = {
+        {type = "item", name = "pot", amount = 1},
+        {type = "item", name = "avocado", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 1,
+    unlock = Unlocks.get_tech_name("avocado")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "cherry-sapling",
+    ingredients = {
+        {type = "item", name = "pot", amount = 1},
+        {type = "item", name = "cherry", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 1,
+    unlock = Unlocks.get_tech_name("cherry")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "lemon-sapling",
+    ingredients = {
+        {type = "item", name = "zetorn-sapling", amount = 1},
+        {type = "item", name = "apple", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("lemon")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "orange-sapling",
+    ingredients = {
+        {type = "item", name = "zetorn-sapling", amount = 1},
+        {type = "item", name = "orange", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("orange")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "ortrot-sapling",
+    ingredients = {
+        {type = "item", name = "pot", amount = 1},
+        {type = "item", name = "ortrot", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 0,
+    unlock = Unlocks.get_tech_name("ortrot")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "zetorn-sapling",
+    ingredients = {
+        {type = "item", name = "pot", amount = 1},
+        {type = "item", name = "zetorn", amount = 1}
+    },
+    themes = {{"soil", 10, 25}},
+    default_theme_level = 0,
+    unlock = Unlocks.get_tech_name("zetorn")
+}

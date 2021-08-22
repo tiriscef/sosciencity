@@ -7,6 +7,7 @@ local function get_tech_name(item_name)
 end
 
 Unlocks.by_item_aquisition = {
+    [get_tech_name("apple")] = "apple",
     [get_tech_name("avocado")] = "avocado",
     [get_tech_name("bell-pepper")] = "bell-pepper",
     [get_tech_name("blue-grapes")] = "blue-grapes",
