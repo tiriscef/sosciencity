@@ -21,6 +21,7 @@ local all_neighbors_of_type = Neighborhood.all_of_type
 local get_neighbors_of_type = Neighborhood.get_by_type
 
 local chest = defines.inventory.chest
+local assembler_modules = defines.inventory.assembling_machine_modules
 
 local table_add = Tirislib_Tables.add
 
@@ -57,6 +58,13 @@ function Inventories.get_chest_inventory(entry)
     return entry[EK.entity].get_inventory(chest)
 end
 local get_chest_inventory = Inventories.get_chest_inventory
+
+--- Checks if the given assembler entry has the given module.
+function Inventories.assembler_has_module(entity, module_name)
+    local inventory = entity.get_inventory(assembler_modules)
+
+    return inventory.get_item_count(module_name) > 0
+end
 
 --- Returns a table with the (item, amount)-pairs of the combined contents of the given Inventories.
 --- @param inventories table

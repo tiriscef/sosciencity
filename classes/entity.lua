@@ -202,6 +202,7 @@ end
 Register.set_entity_copy_handler(Type.composter, copy_composter)
 
 -- << composter output >>
+
 local function update_composter_output(entry)
     local inventory = get_chest_inventory(entry)
 
@@ -239,7 +240,7 @@ local function update_farm(entry, delta_ticks)
     local entity = entry[EK.entity]
     local species_name = get_species(entity.get_recipe())
 
-    local productivity = caste_bonuses[Type.ember]
+    local productivity = caste_bonuses[Type.orchid]
     local performance = 1
 
     if species_name ~= entry[EK.species] then
@@ -247,10 +248,24 @@ local function update_farm(entry, delta_ticks)
     end
 
     if species_name then
-        local species_details = flora[species_name]
+        local flora_details = flora[species_name]
 
-        if species_details.persistent then
-            local biomass = entry[EK.biomass] + delta_ticks * species_details.growth_coefficient
+        if flora_details.required_module then
+            performance =
+                performance * (Inventories.assembler_has_module(entity, flora_details.required_module) and 1 or 0)
+        end
+
+        if get_building_details(entry).open_environment then
+            if flora_details.preferred_humidity ~= global.current_humidity then
+                performance = performance * flora_details.wrong_humidity_coefficient
+            end
+            if flora_details.preferred_climate ~= global.current_climate then
+                performance = performance * flora_details.wrong_climate_coefficient
+            end
+        end
+
+        if flora_details.persistent then
+            local biomass = entry[EK.biomass] + delta_ticks * flora_details.growth_coefficient * performance
             entry[EK.biomass] = biomass
 
             productivity = multiply_percentages(productivity, floor(biomass ^ 0.2))

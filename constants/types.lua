@@ -296,7 +296,10 @@ Types.definitions = {
         localised_name = {"sosciencity.machine"},
         localised_description = {"sosciencity.explain-machine"}
     },
-    [Type.farm] = {},
+    [Type.farm] = {
+        localised_name = {"sosciencity.farm"},
+        localised_description = {"sosciencity.explain-farm"}
+    },
     [Type.animal_farm] = {
         signature_color = Colors.brown
     },
