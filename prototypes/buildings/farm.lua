@@ -197,7 +197,7 @@ Tirislib_Entity.create {
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-agriculture"},
+    crafting_categories = {"sosciencity-farming-annual"},
     energy_usage = "10W",
     energy_source = {
         type = "void",

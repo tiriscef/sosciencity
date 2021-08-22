@@ -106,6 +106,7 @@ RG.ingredient_themes = {
     },
     genetic_neogenesis = {
         [0] = {
+            {type = "item", name = "mitochondria", amount = 1},
             {type = "item", name = "nucleobases", amount = 1},
             {type = "item", name = "phospholipids", amount = 1},
             {type = "item", name = "synthetase", amount = 1},
@@ -704,7 +705,8 @@ end
 --- **localised_description:** locale\
 --- **icon:** path to icon\
 --- **icons:** array of SpritePrototypes\
---- **icon_size:** integer
+--- **icon_size:** integer\
+--- **subgroup:** name of the subgroup (defaults to the product's subgroup)
 function RG.create(details)
     local product = get_product_prototype(details)
     local main_product = get_main_product_entry(product, details)
@@ -715,7 +717,7 @@ function RG.create(details)
         enabled = true,
         energy_required = details.energy_required or 0.5,
         results = {main_product},
-        subgroup = product.subgroup,
+        subgroup = details.subgroup or product.subgroup,
         order = product.order,
         always_show_products = true
     }

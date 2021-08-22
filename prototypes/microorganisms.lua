@@ -133,7 +133,7 @@ create_enrichment_recipe {
         {type = "fluid", name = "clean-water", amount = 10}
     },
     category = "sosciencity-fermentation-tank",
-    unlock = "brewing"
+    unlock = "fermentation"
 }
 
 create_pure_culture_recipe {
@@ -143,5 +143,5 @@ create_pure_culture_recipe {
         {type = "fluid", name = "clean-water", amount = 10}
     },
     category = "sosciencity-fermentation-tank",
-    unlock = "brewing"
+    unlock = "fermentation"
 }

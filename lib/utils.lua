@@ -2,6 +2,7 @@ local random = math.random
 local abs = math.abs
 local max = math.max
 local min = math.min
+local ceil = math.ceil
 local floor = math.floor
 local select = select
 
@@ -178,6 +179,19 @@ end
 --- @return number
 function Tirislib_Utils.round(number)
     return floor(number + 0.5)
+end
+local round = Tirislib_Utils.round
+
+function Tirislib_Utils.round_to_step(number, step)
+    return step * floor(number / step + 0.5)
+end
+
+function Tirislib_Utils.floor_to_step(number, step)
+    return step * floor(number / step)
+end
+
+function Tirislib_Utils.ceil_to_step(number, step)
+    return step * ceil(number / step)
 end
 
 --- Returns the average between a and b with the given weights.
@@ -1229,4 +1243,11 @@ end
 --- @return locale
 function Tirislib_Locales.display_fluid_stack(fluid, count)
     return {"sosciencity.xfluids", count, fluid, game.fluid_prototypes[fluid].localised_name}
+end
+
+--- Creates a localisation for the given value.
+--- @param percentage number
+--- @return locale
+function Tirislib_Locales.display_percentage(percentage)
+    return {"sosciencity.percentage", round(percentage * 100)}
 end

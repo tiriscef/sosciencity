@@ -4,60 +4,158 @@ require("constants.enums")
 Biology = {}
 
 Biology.flora = {
+    ["apple"] = {
+        persistent = true,
+        growth_coefficient = 1,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.5,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.5,
+        recipes = {"farming-perennial-apple"}
+    },
     ["avocado"] = {
         persistent = true,
-        growth_coefficient = 0.7,
-        recipes = {}
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.5,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.5,
+        recipes = {"farming-perennial-avocado"}
+    },
+    ["bell-pepper"] = {
+        persistent = false,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.7,
+        recipes = {"farming-annual-bell-pepper"}
+    },
+    ["brutal-pumpkin"] = {
+        persistent = false,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-annual-brutal-pumpkin"}
     },
     ["cherry"] = {
         persistent = true,
         growth_coefficient = 1,
-        recipes = {}
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.7,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-perennial-cherry"}
     },
-    ["tiriscefing-willow"] = {
-        growth_coefficient = 2,
-        recipes = {}
+    ["chickpea"] = {
+        persistent = false,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.7,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-annual-chickpea"}
+    },
+    ["eggplant"] = {
+        persistent = false,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.7,
+        recipes = {"farming-annual-eggplant"}
     },
     ["lemon"] = {
         persistent = true,
-        growth_coefficient = 0.6,
-        recipes = {}
-    },
-    ["orange"] = {
-        persistent = true,
-        growth_coefficient = 0.6,
-        recipes = {}
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.75,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.75,
+        recipes = {"farming-perennial-lemon"}
     },
     ["olive"] = {
         persistent = true,
-        growth_coefficient = 0.8,
-        recipes = {}
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.7,
+        recipes = {"farming-perennial-olive"}
+    },
+    ["orange"] = {
+        persistent = true,
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.75,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.75,
+        recipes = {"farming-perennial-orange"}
+    },
+    ["ortrot"] = {
+        persistent = true,
+        growth_coefficient = 1,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.95,
+        recipes = {"farming-perennial-ortrot"}
+    },
+    ["potato"] = {
+        persistent = false,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-annual-potato"}
+    },
+    ["tomato"] = {
+        persistent = false,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-annual-tomato"}
+    },
+    ["plemnemm-cotton"] = {
+        persistent = false,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-annual-plemnemm-cotton"}
+    },
+    ["tiriscefing-willow-wood"] = {
+        persistent = true,
+        growth_coefficient = 1,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-perennial-tiriscefing-willow-wood"}
+    },
+    ["unnamed-fruit"] = {
+        persistent = false,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-annual-unnamed-fruit"}
+    },
+    ["weird-berry"] = {
+        persistent = false,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-annual-weird-berry"}
     },
     ["zetorn"] = {
         persistent = true,
-        growth_coefficient = 0.6,
-        recipes = {}
-    },
-    ["bell-pepper"] = {
-        recipes = {}
-    },
-    ["brutal-pumpkin"] = {
-        recipes = {}
-    },
-    ["potato"] = {
-        recipes = {}
-    },
-    ["tomato"] = {
-        recipes = {}
-    },
-    ["eggplant"] = {
-        recipes = {}
-    },
-    ["plemnemm-cotton"] = {
-        recipes = {}
-    },
-    ["unnamed-fruit"] = {
-        recipes = {}
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.85,
+        preferred_humidity = Humidity.dry,
+        wrong_humidity_coefficient = 0.85,
+        recipes = {"farming-perennial-zetorn"}
     }
 }
 
@@ -66,10 +164,10 @@ Biology.egg_fertile = "huwan-egg"
 
 Biology.egg_values = {
     ["huwan-egg"] = {
-        [Gender.neutral] = 0.4,
+        [Gender.neutral] = 0.3,
         [Gender.fale] = 0.2,
         [Gender.pachin] = 0.2,
-        [Gender.ga] = 0.2
+        [Gender.ga] = 0.3
     },
     ["huwan-neutral-egg"] = {
         [Gender.neutral] = 1,

@@ -39,7 +39,7 @@ Tirislib_Entity.create {
     module_specification = {
         module_slots = 2
     },
-    allowed_effects = {"productivity", "consumption", "speed", "pollution"},
+    allowed_effects = {"productivity", "speed"},
     animation = {
         layers = {
             {
@@ -78,14 +78,14 @@ Tirislib_Entity.create {
             }
         }
     },
-    crafting_speed = 1,
-    crafting_categories = {"sosciencity-greenhouse"},
+    crafting_speed = 1.5,
+    crafting_categories = {"sosciencity-farming-annual"},
     energy_usage = "195kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
         emissions_per_minute = 1,
-        drain = "5W"
+        drain = "5kW"
     },
     working_sound = {
         -- memo: make sound files louder in the future

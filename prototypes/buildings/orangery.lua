@@ -73,8 +73,8 @@ Tirislib_Entity.create {
             }
         }
     },
-    crafting_speed = 1,
-    crafting_categories = {"sosciencity-orangery"},
+    crafting_speed = 1.5,
+    crafting_categories = {"sosciencity-farming-perennial"},
     energy_usage = "195kW",
     energy_source = {
         type = "electric",

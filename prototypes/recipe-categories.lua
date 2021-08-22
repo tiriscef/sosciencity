@@ -1,15 +1,7 @@
 Tirislib_Prototype.batch_create {
     {
         type = "recipe-category",
-        name = "sosciencity-agriculture"
-    },
-    {
-        type = "recipe-category",
         name = "sosciencity-animal-farming"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-arboretum"
     },
     {
         type = "recipe-category",
@@ -73,15 +65,19 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-farming-annual"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-farming-perennial"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-fermentation-tank"
     },
     {
         type = "recipe-category",
         name = "sosciencity-fishery"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-greenhouse"
     },
     {
         type = "recipe-category",
@@ -98,10 +94,6 @@ Tirislib_Prototype.batch_create {
     {
         type = "recipe-category",
         name = "sosciencity-microalgae-farm"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-orangery"
     },
     {
         type = "recipe-category",

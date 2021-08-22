@@ -32,7 +32,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "phytofall-blossom", amount = 1, probability = 0.1},
         {type = "item", name = "plemnemm-cotton", amount = 5, probability = 0.5},
         {type = "item", name = "manok", amount = 2, probability = 0.5},
-        {type = "item", name = "ortrot-fruit", amount = 10, probability = 0.1},
+        {type = "item", name = "ortrot", amount = 10, probability = 0.1},
         {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 10, probability = 0.1},
         {type = "item", name = "zetorn", amount = 10, probability = 0.1}

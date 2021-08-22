@@ -201,6 +201,11 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
+        name = "mitochondria",
+        sprite_variations = {name = "mitochondria-on-belt", count = 1},
+        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
         name = "synthetase",
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
@@ -289,7 +294,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "tiriscefing-willow-wood", amount = 2},
         {type = "item", name = "screw-set", amount = 1}
     },
-    unlock = "brewing"
+    unlock = "fermentation"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -712,7 +717,7 @@ Tirislib_RecipeGenerator.create {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     category = "sosciencity-fermentation-tank",
-    unlock = "brewing"
+    unlock = "fermentation"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -739,13 +744,22 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
+    product = "chloroplasts"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "mitochondria"
+}
+
+Tirislib_RecipeGenerator.create {
     product = "synthetase"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "thermostable-dna-polymerase",
     ingredients = {
-        {type = "fluid", name = "fiicorum", amount = 10}
+        {type = "fluid", name = "fiicorum", amount = 10},
+        {type = "item", name = "glass-instruments", amount = 1}
     },
     unlock = "genetic-neogenesis"
 }
