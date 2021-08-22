@@ -78,7 +78,7 @@ Tirislib_Entity.create {
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-arboretum"},
+    crafting_categories = {"sosciencity-farming-perennial"},
     energy_usage = "50kW",
     energy_source = {
         type = "electric",

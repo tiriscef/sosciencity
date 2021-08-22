@@ -30,6 +30,7 @@ local tostring = tostring
 local Luaq_from = Tirislib_Luaq.from
 
 local display_enumeration = Tirislib_Locales.create_enumeration
+local display_percentage = Tirislib_Locales.display_percentage
 local display_item_stack = Tirislib_Locales.display_item_stack
 local display_time = Tirislib_Locales.display_time
 
@@ -123,10 +124,6 @@ local function get_entry_representation(entry)
     local entity = entry[EK.entity]
     local position = entity.position
     return {"sosciencity.entry-representation", entity.localised_name, position.x, position.y}
-end
-
-local function display_percentage(percentage)
-    return {"sosciencity.percentage", ceil(percentage * 100)}
 end
 
 local function display_convergence(current, target)

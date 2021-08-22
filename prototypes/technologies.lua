@@ -599,27 +599,26 @@ Tirislib_Technology.create {
 }
 
 Tirislib_Technology.create {
-    name = "basic-biotechnology",
+    name = "fermentation",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"orchid-caste"},
+    prerequisite = {},
     unit = {
-        count = 48,
+        count = 32,
         ingredients = {
-            {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"automation-science-pack", 1}
         },
         time = 30
     }
 }
 
 Tirislib_Technology.create {
-    name = "brewing",
+    name = "basic-biotechnology",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisite = {"basic-biotechnology"},
+    prerequisites = {"fermentation", "logistic-science-pack"},
     unit = {
-        count = 124,
+        count = 48,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1}
@@ -632,7 +631,7 @@ Tirislib_Technology.create {
     name = "genetic-neogenesis",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"sosciencity-computing", "plasma-caste"},
+    prerequisites = {"sosciencity-computing", "basic-biotechnology"},
     unit = {
         count = 107,
         ingredients = {
@@ -752,7 +751,7 @@ Tirislib_Technology.create {
     name = "food-processing",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"orchid-caste"},
+    prerequisites = {"orchid-caste", "logistic-science-pack"},
     unit = {
         count = 132,
         ingredients = {
@@ -767,7 +766,7 @@ Tirislib_Technology.create {
     name = "hummus",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"food-processing", Unlocks.get_tech_name("chickpea"), Unlocks.get_tech_name("sesame")},
+    prerequisites = {"food-processing", "genetic-neogenesis"},
     unit = {
         count = 233,
         ingredients = {

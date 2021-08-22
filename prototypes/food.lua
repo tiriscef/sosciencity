@@ -19,7 +19,7 @@ local foods = {
     {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}, probability = 0.3},
     {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}, probability = 0.1},
     {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
-    {name = "ortrot-fruit", sprite_variations = {name = "ortrot-fruit-pile", count = 4}, probability = 0.1},
+    {name = "ortrot", sprite_variations = {name = "ortrot-pile", count = 4}, probability = 0.1},
     {name = "apple", sprite_variations = {name = "apple-pile", count = 4}},
     {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
     {name = "lemon", sprite_variations = {name = "lemon-pile", count = 3}},

@@ -138,7 +138,7 @@ Food.values = {
         portion_size = 50,
         group = "brutal-pumpkin"
     },
-    ["ortrot-fruit"] = {
+    ["ortrot"] = {
         fat = 0.2,
         carbohydrates = 7.4,
         proteins = 7.3,
