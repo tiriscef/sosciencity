@@ -20,6 +20,7 @@ local material_items = {
         name = "yarn",
         sprite_variations = {name = "yarn-pile", count = 4}
     },
+    {name = "pot"},
     {name = "glass-mixture"},
     {name = "glass"},
     {name = "mineral-mixture"},
@@ -315,6 +316,12 @@ Tirislib_RecipeGenerator.create {
         {name = "yarn", amount = 5}
     },
     allow_productivity = true
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "pot",
+    themes = {{"ceramic", 2, 3}};
+    unlock = "open-environment-farming"
 }
 
 if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode then

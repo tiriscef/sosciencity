@@ -76,6 +76,9 @@ RG.ingredient_themes = {
     casing = {
         [0] = {{type = "item", name = "iron-plate", amount = 2}}
     },
+    ceramic = {
+        [0] = {{type = "item", name = "stone-brick", amount = 1}}
+    },
     cooling_fluid = {
         [0] = {{type = "fluid", name = "petroleum-gas", amount = 1}}
     },
@@ -242,6 +245,9 @@ RG.ingredient_themes = {
         [2] = {
             {type = "item", name = "storage-tank", amount = 1}
         }
+    },
+    water = {
+        [0] = {{type = "fluid", name = "water", amount = 1}}
     },
     wiring = {
         [0] = {
@@ -460,6 +466,69 @@ RG.ingredient_themes = {
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 3},
             {type = "item", name = "air-conditioner", amount = 1}
+        }
+    },
+    simple_furnishing = {
+        [0] = {},
+        [1] = {
+            {type = "item", name = "bed", amount = 2 / 3}
+        },
+        [2] = {
+            {type = "item", name = "bed", amount = 2 / 3},
+            {type = "item", name = "chair", amount = 1 / 2}
+        },
+        [3] = {
+            {type = "item", name = "bed", amount = 2 / 3},
+            {type = "item", name = "chair", amount = 3 / 4},
+            {type = "item", name = "table", amount = 1 / 2},
+            {type = "item", name = "cupboard", amount = 1 / 3}
+        },
+        [4] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1},
+            {type = "item", name = "table", amount = 3 / 4},
+            {type = "item", name = "cupboard", amount = 2 / 3}
+        },
+        [5] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1},
+            {type = "item", name = "table", amount = 3 / 4},
+            {type = "item", name = "cupboard", amount = 2 / 3}
+        },
+        [6] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1},
+            {type = "item", name = "table", amount = 3 / 4},
+            {type = "item", name = "cupboard", amount = 2 / 3},
+            {type = "item", name = "air-conditioner", amount = 1 / 5}
+        },
+        [7] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 1 / 5}
+        },
+        [8] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 1 / 4}
+        },
+        [9] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 1 / 3}
+        },
+        [10] = {
+            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "chair", amount = 1.5},
+            {type = "item", name = "table", amount = 1},
+            {type = "item", name = "cupboard", amount = 1.5},
+            {type = "item", name = "air-conditioner", amount = 1 / 2}
         }
     },
     furnishing_decorated = {

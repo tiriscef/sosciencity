@@ -48,7 +48,8 @@ for _, recipe_data in pairs(gather_for_food:get_recipe_datas()) do
         end
     ):foreach(
         function(_, result)
-            result.probability = (result.probability * 1.1 < 1) and (result.probability * 1.1) or nil
+            result.probability =
+                (result.probability * 1.1 < 1) and Tirislib_Utils.round_to_step(result.probability * 1.1, 0.01) or nil
         end
     ):to_array()
 end

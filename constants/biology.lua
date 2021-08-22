@@ -3,15 +3,21 @@ require("constants.enums")
 --- Values regarding carbon-based life-forms
 Biology = {}
 
+--[[
+    growth coefficient: 
+        persistent: biomass growth per tick
+        non-persistent: multiplier for the 'energy_required'-field, coincidentally also the number of items yielded per second
+]]
 Biology.flora = {
     ["apple"] = {
         persistent = true,
         growth_coefficient = 1,
         preferred_climate = Climate.temperate,
-        wrong_climate_coefficient = 0.5,
+        wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
-        wrong_humidity_coefficient = 0.5,
-        recipes = {"farming-perennial-apple"}
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-perennial-apple"},
+        required_module = "apple-sapling"
     },
     ["avocado"] = {
         persistent = true,
@@ -20,10 +26,12 @@ Biology.flora = {
         wrong_climate_coefficient = 0.5,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.5,
-        recipes = {"farming-perennial-avocado"}
+        recipes = {"farming-perennial-avocado"},
+        required_module = "avocado-sapling"
     },
     ["bell-pepper"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.hot,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
@@ -32,6 +40,7 @@ Biology.flora = {
     },
     ["brutal-pumpkin"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.cold,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.dry,
@@ -45,10 +54,12 @@ Biology.flora = {
         wrong_climate_coefficient = 0.7,
         preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.8,
-        recipes = {"farming-perennial-cherry"}
+        recipes = {"farming-perennial-cherry"},
+        required_module = "cherry-sapling"
     },
     ["chickpea"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.7,
         preferred_humidity = Humidity.moderate,
@@ -57,6 +68,7 @@ Biology.flora = {
     },
     ["eggplant"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.humid,
@@ -70,7 +82,8 @@ Biology.flora = {
         wrong_climate_coefficient = 0.75,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.75,
-        recipes = {"farming-perennial-lemon"}
+        recipes = {"farming-perennial-lemon"},
+        required_module = "lemon-sapling"
     },
     ["olive"] = {
         persistent = true,
@@ -88,7 +101,8 @@ Biology.flora = {
         wrong_climate_coefficient = 0.75,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.75,
-        recipes = {"farming-perennial-orange"}
+        recipes = {"farming-perennial-orange"},
+        required_module = "orange-sapling"
     },
     ["ortrot"] = {
         persistent = true,
@@ -97,10 +111,12 @@ Biology.flora = {
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.95,
-        recipes = {"farming-perennial-ortrot"}
+        recipes = {"farming-perennial-ortrot"},
+        required_module = "ortrot-sapling"
     },
     ["potato"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
@@ -109,6 +125,7 @@ Biology.flora = {
     },
     ["tomato"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.humid,
@@ -117,6 +134,7 @@ Biology.flora = {
     },
     ["plemnemm-cotton"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.humid,
@@ -134,6 +152,7 @@ Biology.flora = {
     },
     ["unnamed-fruit"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.cold,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
@@ -142,6 +161,7 @@ Biology.flora = {
     },
     ["weird-berry"] = {
         persistent = false,
+        growth_coefficient = 1,
         preferred_climate = Climate.hot,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.humid,
@@ -155,7 +175,8 @@ Biology.flora = {
         wrong_climate_coefficient = 0.85,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.85,
-        recipes = {"farming-perennial-zetorn"}
+        recipes = {"farming-perennial-zetorn"},
+        required_module = "zetorn-sapling"
     }
 }
 

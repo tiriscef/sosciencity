@@ -145,6 +145,7 @@ function Tirislib_Item.batch_create(item_detail_array, batch_details)
             end
         end
 
+        Tirislib_Tables.set_fields_passively(item, batch_details)
         Tirislib_Tables.set_fields(item, details.distinctions)
 
         created_items[#created_items + 1] = item
