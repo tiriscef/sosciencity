@@ -72,14 +72,17 @@ Buildings.values = {
     },
     ["architectural-office"] = {
         type = Type.manufactory,
-        range = 50,
         workforce = {
             count = 8,
             castes = {Type.clockwork, Type.gleam, Type.foundry}
         }
     },
     ["bloomhouse"] = {
-        type = Type.farm
+        type = Type.farm,
+        workforce = {
+            count = 2,
+            castes = {Type.orchid}
+        }
     },
     ["composting-silo"] = {
         type = Type.composter,

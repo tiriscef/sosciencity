@@ -1251,3 +1251,37 @@ end
 function Tirislib_Locales.display_percentage(percentage)
     return {"sosciencity.percentage", round(percentage * 100)}
 end
+
+local function transform_to_enumeration(locale)
+    if locale[1] == "" then
+        return
+    end
+    local locale_copy = Tirislib_Tables.copy(locale)
+    Tirislib_Tables.empty(locale)
+
+    locale[1] = ""
+    locale[2] = locale_copy
+end
+
+--- Appends the given elements to the given locale table.
+--- @param locale locale
+function Tirislib_Locales.append(locale, ...)
+    transform_to_enumeration(locale)
+
+    for _, v in pairs {...} do
+        locale[#locale + 1] = v
+    end
+    shorten_enumeration(locale)
+end
+
+--- Prepends the given elements to the given locale table.
+--- @param locale locale
+function Tirislib_Locales.prepend(locale, ...)
+    transform_to_enumeration(locale)
+
+    local args = {...}
+    for i = #args, 1, -1 do
+        table.insert(locale, 2, args[i])
+    end
+    shorten_enumeration(locale)
+end

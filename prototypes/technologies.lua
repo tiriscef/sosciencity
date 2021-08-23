@@ -602,7 +602,7 @@ Tirislib_Technology.create {
     name = "fermentation",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisite = {},
+    prerequisite = {"clockwork-caste"},
     unit = {
         count = 32,
         ingredients = {

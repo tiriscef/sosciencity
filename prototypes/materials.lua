@@ -272,7 +272,8 @@ Tirislib_RecipeGenerator.create {
     byproducts = {
         {name = "sawdust", amount = 1}
     },
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "architecture-1"
 }
 
 Tirislib_RecipeGenerator.create_per_theme_level {
@@ -306,7 +307,8 @@ Tirislib_RecipeGenerator.create {
         {name = "plemnemm-cotton", amount = 20},
         {name = "lumber", amount = 1}
     },
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "architecture-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -315,7 +317,8 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {name = "yarn", amount = 5}
     },
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "architecture-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -382,7 +385,8 @@ Tirislib_RecipeGenerator.create {
     product = "architectural-concept",
     energy_required = 4,
     ingredients = {},
-    category = "sosciencity-architecture"
+    category = "sosciencity-architecture",
+    unlock = "architecture-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -519,7 +523,8 @@ Tirislib_RecipeGenerator.create {
         {"mechanism", 2}
     },
     energy_required = 0.8,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -529,7 +534,8 @@ Tirislib_RecipeGenerator.create {
         {"grating", 10}
     },
     energy_required = 0.8,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -538,7 +544,8 @@ Tirislib_RecipeGenerator.create {
         {"handle", 1},
         {"plating", 1}
     },
-    energy_required = 0.8
+    energy_required = 0.8,
+    unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -549,7 +556,8 @@ Tirislib_RecipeGenerator.create {
         {name = "lumber", amount = 2}
     },
     energy_required = 1,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -560,7 +568,8 @@ Tirislib_RecipeGenerator.create {
     },
     themes = {{"handle", 1}, {"mechanism", 2}},
     energy_required = 1,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -572,7 +581,8 @@ Tirislib_RecipeGenerator.create {
     },
     category = "chemistry",
     energy_required = 1,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "drinking-water-treatment"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -617,7 +627,7 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "sugar",
-    product_amount = 4,
+    product_amount = 3,
     ingredients = {
         {type = "item", name = "sugar-beet", amount = 2}
     },
@@ -627,7 +637,7 @@ Tirislib_RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
-    unlock = "food-processing"
+    unlock = Unlocks.get_tech_name("sugar-beet")
 }
 
 Tirislib_RecipeGenerator.create {
@@ -642,7 +652,7 @@ Tirislib_RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
-    unlock = "food-processing"
+    unlock = Unlocks.get_tech_name("sugar-cane")
 }
 
 Tirislib_RecipeGenerator.create {
@@ -702,7 +712,8 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "razha-bean", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
-    }
+    },
+    unlock = "basic-biotechnology"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -743,23 +754,28 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "nucleobases"
+    product = "nucleobases",
+    unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "phospholipids"
+    product = "phospholipids",
+    unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "chloroplasts"
+    product = "chloroplasts",
+    unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "mitochondria"
+    product = "mitochondria",
+    unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "synthetase"
+    product = "synthetase",
+    unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -772,5 +788,6 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "blank-dna-virus"
+    product = "blank-dna-virus",
+    unlock = "in-situ-gene-editing"
 }

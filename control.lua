@@ -187,6 +187,8 @@ end
 
 local function init()
     global = _ENV.global
+    global.version = game.active_mods["sosciencity"]
+
     global.last_entity_update = -1
     global.last_tile_update = -1
 
