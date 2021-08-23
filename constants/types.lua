@@ -71,7 +71,7 @@ end
 --- **subscriptions:** types that this type subscribes to by default\
 --- **is_civil:** is this type is part of the soscietal infrastructure\
 --- **is_inhabited:** do people live in this entity\
---- **affected_by_clockwork:** is this machine affected by the clockwork-maintainance-mechanic\
+--- **affected_by_clockwork:** is this machine affected by the clockwork-maintenance-mechanic\
 --- **signature_color:** color for this entity, for displaying purposes\
 --- **localised_name:** localised name for this type\
 --- **localised_description:** localised description for this type

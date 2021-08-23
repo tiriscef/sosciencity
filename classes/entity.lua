@@ -81,8 +81,8 @@ local function set_crafting_machine_performance(entry, performance, productivity
     end
 end
 
-local function get_maintainance_performance()
-    return 1 + (caste_bonuses[Type.clockwork] - (global.use_penalty and 80 or 0)) / 100
+local function get_maintenance_performance()
+    return 1 + caste_bonuses[Type.clockwork] / 100
 end
 
 local function is_active(entry)
@@ -100,14 +100,26 @@ end
 -- << beaconed machines >>
 
 local function update_machine(entry)
-    set_beacon_effects(entry, caste_bonuses[Type.clockwork], 0, global.use_penalty)
+    local clockwork_bonus = caste_bonuses[Type.clockwork]
+    local use_penalty_module = (clockwork_bonus < 0)
+    if use_penalty_module then
+        clockwork_bonus = clockwork_bonus + 80
+    end
+
+    set_beacon_effects(entry, clockwork_bonus, 0, use_penalty_module)
 end
 Register.set_entity_updater(Type.assembling_machine, update_machine)
 Register.set_entity_updater(Type.furnace, update_machine)
 Register.set_entity_updater(Type.mining_drill, update_machine)
 
 local function update_rocket_silo(entry)
-    set_beacon_effects(entry, caste_bonuses[Type.clockwork], caste_bonuses[Type.aurora], global.use_penalty)
+    local clockwork_bonus = caste_bonuses[Type.clockwork]
+    local use_penalty_module = (clockwork_bonus < 0)
+    if use_penalty_module then
+        clockwork_bonus = clockwork_bonus + 80
+    end
+
+    set_beacon_effects(entry, clockwork_bonus, caste_bonuses[Type.aurora], use_penalty_module)
 end
 Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
 
@@ -845,7 +857,7 @@ end
 Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
 
 local function update_waterwell(entry)
-    local performance = get_waterwell_competition_performance(entry) * min(1, get_maintainance_performance())
+    local performance = get_waterwell_competition_performance(entry) * min(1, get_maintenance_performance())
     set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)

@@ -68,9 +68,6 @@ end
 
 local function get_caste_bonus(caste_id)
     local bonus = global.caste_bonuses[caste_id]
-    if caste_id == Type.clockwork and global.use_penalty then
-        bonus = bonus - 80
-    end
     return floor(bonus)
 end
 
@@ -2239,6 +2236,7 @@ local function create_details_view_for_player(player)
     frame.style.horizontally_stretchable = true
     make_squashable(frame)
     set_padding(frame, 4)
+    frame.location = {x = 10, y = 100}
 
     frame.add {
         type = "frame",

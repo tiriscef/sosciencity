@@ -172,13 +172,13 @@ end
 local function update_settings()
     global.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
 
-    global.use_penalty = settings.global["sosciencity-penalty-module"].value
+    global.maintenance_enabled = settings.global["sosciencity-penalty-module"].value
+    global.starting_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
 
     global.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
     global.profanity = settings.global["sosciencity-allow-profanity"].value
 
     Communication.settings_update()
-    Inhabitants.settings_update()
 end
 
 local function set_locals()

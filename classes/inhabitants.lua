@@ -11,7 +11,14 @@ Inhabitants = {}
         [caste_id]: float (total caste bonus points)
 
     global.caste_bonuses: table
-        [caste_id]: float (caste bonus value)
+        [Type.clockwork]: integer (machine speed bonus in %)
+        [Type.orchid]: integer (farm productivity bonus in %)
+        [Type.gunfire]: integer (turret damage bonus in %)
+        [Type.ember]: float (happiness bonus)
+        [Type.plasma]: float (health bonus)
+        [Type.foundry]: integer (mining productivity bonus in %)
+        [Type.gleam]: integer (laboratory productivity bonus in %)
+        [Type.aurora]: integer (rocket silo productivity bonus in %)
 
     global.immigration: table
         [caste_id]: float (number of immigrants in the next wave)
@@ -33,6 +40,8 @@ Inhabitants = {}
         [caste_id]: InhabitantGroup
 
     global.last_social_change: tick
+
+    global.starting_clockwork_points: number
 ]]
 -- local often used globals for enormous performance gains
 
@@ -75,6 +84,7 @@ local Tirislib_Tables = Tirislib_Tables
 local Tirislib_Utils = Tirislib_Utils
 
 local floor = math.floor
+local floor_to_step = Tirislib_Utils.floor_to_step
 local ceil = math.ceil
 local round = Tirislib_Utils.round
 local sqrt = math.sqrt
@@ -154,13 +164,6 @@ end
 --- Sets local references during on_load
 function Inhabitants.load()
     set_locals()
-end
-
-function Inhabitants.settings_update()
-    local new_start_points = settings.global["sosciencity-start-clockwork-points"].value
-    local old_start_points = global.start_clockwork_points or 0
-    global.caste_points[Type.clockwork] = global.caste_points[Type.clockwork] - old_start_points + new_start_points
-    global.start_clockwork_points = new_start_points
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -684,26 +687,31 @@ function Inhabitants.get_population_count()
 end
 local get_population_count = Inhabitants.get_population_count
 
-local function clockwork_bonus_no_penalty(effective_pop)
-    effective_pop = max(effective_pop or caste_points[Type.clockwork], 0)
-
-    return floor(10 * sqrt(effective_pop / max(Register.get_machine_count(), 1)))
+local function get_maintenance_speed(points, machine_count)
+    if machine_count > 0 then
+        local remaining_points = max(0, points - machine_count)
+        local speed = map_range(points + global.starting_clockwork_points, 0, machine_count, -80, 0)
+        return floor(speed), remaining_points
+    else
+        return 0, points
+    end
 end
 
-local function clockwork_bonus_with_penalty()
-    local clockwork_points = caste_points[Type.clockwork]
-    local machine_maintenance_costs = max(Register.get_machine_count(), 1) * 10
-
-    return map_range(clockwork_points, 0, machine_maintenance_costs, 0, 80) +
-        clockwork_bonus_no_penalty(clockwork_points - machine_maintenance_costs)
+local function get_machine_speed_bonus(points, machine_count)
+    machine_count = max(1, machine_count)
+    return floor(5 * points / machine_count)
 end
 
 --- Gets the current Clockwork caste bonus.
 local function get_clockwork_bonus()
-    if global.use_penalty then
-        return clockwork_bonus_with_penalty()
+    local machine_count = Register.get_machine_count()
+
+    if global.maintenance_enabled then
+        local points = caste_points[Type.clockwork]
+        local maintenance_speed, remaining_points = get_maintenance_speed(points, machine_count)
+        return maintenance_speed + get_machine_speed_bonus(remaining_points, machine_count)
     else
-        return clockwork_bonus_no_penalty()
+        return get_machine_speed_bonus(caste_points[Type.clockwork], machine_count)
     end
 end
 
@@ -714,12 +722,18 @@ end
 
 --- Gets the current Gunfire caste bonus.
 local function get_gunfire_bonus()
-    return floor(caste_points[Type.gunfire] * 10 / max(Register.get_type_count(Type.turret), 1)) -- TODO balancing
+    -- 1 point per turret increases damage by 10%
+    return floor(10 * caste_points[Type.gunfire] / max(Register.get_type_count(Type.turret), 1))
 end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    return floor(10 * sqrt(caste_points[Type.ember] / max(1, get_population_count())))
+    local non_ember_population = array_sum(population) - population[Type.ember]
+    if non_ember_population > 0 then
+        return floor_to_step(caste_points[Type.ember] / non_ember_population, 0.1)
+    else
+        return 0
+    end
 end
 
 --- Gets the current Foundry caste bonus.
@@ -738,7 +752,12 @@ local function get_aurora_bonus()
 end
 
 local function get_plasma_bonus()
-    return floor(10 * sqrt(caste_points[Type.plasma] / max(1, get_population_count())))
+    local non_plasma_population = array_sum(population) - population[Type.plasma]
+    if non_plasma_population > 0 then
+        return floor_to_step((caste_points[Type.plasma] / non_plasma_population) ^ 0.5, 0.1)
+    else
+        return 0
+    end
 end
 
 -- Assumes value is an integer

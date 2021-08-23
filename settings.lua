@@ -25,7 +25,7 @@ data:extend {
         name = "sosciencity-start-clockwork-points",
         order = "aab",
         setting_type = "runtime-global",
-        default_value = 1000
+        default_value = 100
     },
     {
         type = "bool-setting",
@@ -47,7 +47,6 @@ data:extend {
         order = "zaa",
         setting_type = "runtime-global",
         default_value = 50,
-        maximum_value = 2000,
-        minimum_value = 20
+        minimum_value = 1
     }
 }
