@@ -19,7 +19,7 @@ Tirislib_RecipeGenerator.create {
     product = "drying-unit",
     themes = {{"machine", 2, 3}},
     default_theme_level = 2,
-    --unlock = "basic-biotechnology" TODO unlock
+    unlock = "food-processing"
 }
 
 Tirislib_Entity.create {

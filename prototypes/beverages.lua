@@ -13,5 +13,6 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 50},
         {type = "item", name = "tiriscefing-willow-barrel", amount = 10},
-    }
+    },
+    unlock = "fermentation"
 }

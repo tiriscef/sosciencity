@@ -8,7 +8,8 @@ local function create_hunting_gathering_recipe(details)
             allow_decomposition = false,
             always_show_made_in = true,
             main_product = "",
-            subgroup = "sosciencity-gathering"
+            subgroup = "sosciencity-gathering",
+            unlock = "clockwork-caste"
         }
     )
 
@@ -39,7 +40,8 @@ create_hunting_gathering_recipe {
     }
 }
 
-local gather_for_food = Tirislib_Recipe.copy("sosciencity-gathering", "sosciencity-gathering-for-food")
+local gather_for_food =
+    Tirislib_Recipe.copy("sosciencity-gathering", "sosciencity-gathering-for-food"):add_unlock("clockwork-caste")
 for _, recipe_data in pairs(gather_for_food:get_recipe_datas()) do
     recipe_data.results =
         Tirislib_Luaq.from(Tirislib_Tables.recursive_copy(recipe_data.results)):where(

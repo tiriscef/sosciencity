@@ -31,6 +31,7 @@ Unlocks.by_item_aquisition = {
     [get_tech_name("orange")] = "orange",
     [get_tech_name("ortrot")] = "ortrot",
     [get_tech_name("petunial")] = "petunial",
+    [get_tech_name("phytofall-blossom")] = "phytofall-blossom",
     [get_tech_name("potato")] = "potato",
     [get_tech_name("primal-quacker")] = "primal-quacker",
     [get_tech_name("razha-bean")] = "razha-bean",

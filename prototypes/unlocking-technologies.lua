@@ -14,6 +14,7 @@ Tirislib_Technology.create {
     name = "sosciencity-research-blocker",
     icon = "__core__/graphics/cancel.png",
     icon_size = 64,
+    prerequisites = {"aurora-caste"},
     unit = {
         count = 1,
         time = 1,
@@ -43,6 +44,8 @@ for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
             }
         },
         upgrade = false,
+        enabled = false,
+        visible_when_disabled = true,
         prerequisites = {"sosciencity-research-blocker"},
         localised_name = localised_name,
         localised_description = {"technology-description.acquisition", localised_name},

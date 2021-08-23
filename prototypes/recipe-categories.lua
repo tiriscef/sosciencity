@@ -17,7 +17,11 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "recipe-category",
-        name = "sosciencity-bloomhouse"
+        name = "sosciencity-bloomhouse-annual"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-bloomhouse-perennial"
     },
     {
         type = "recipe-category",
@@ -118,6 +122,10 @@ Tirislib_Prototype.batch_create {
     {
         type = "recipe-category",
         name = "sosciencity-slaughter"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-plant-upbringing"
     },
     {
         type = "recipe-category",
