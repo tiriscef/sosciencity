@@ -4,6 +4,8 @@ require("constants.housing")
 --- Defines the general custom properties for various entities.
 Buildings = {}
 
+local range_by_foot = 50
+
 --- Values of various custom behaviours I implemented for the Custom Buildings.\
 --- **range:** number (tiles) or "global"\
 --- **power_usage:** number (kW)\
@@ -152,7 +154,7 @@ Buildings.values = {
     },
     ["market-hall"] = {
         type = Type.market,
-        range = 42
+        range = range_by_foot
     },
     ["nightclub"] = {
         type = Type.nightclub,
@@ -233,7 +235,7 @@ end
 
 local houses = Housing.values
 local housing_details = {
-    range = 40 -- range 'by foot'
+    range = range_by_foot -- range 'by foot'
 }
 
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
