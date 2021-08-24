@@ -251,7 +251,48 @@ local housing_prototype_details = {
         width = 9,
         height = 8,
         tech_level = 5
-    }
+    },
+    ["house5"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/house5/house5",
+            width = 24.5,
+            height = 19,
+            shift = {7.25, -5.5},
+            shadowmap = true,
+            glow = true
+        },
+        width = 9,
+        height = 7,
+        tech_level = 6
+    },
+    ["house1"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/house1/house1",
+            width = 20,
+            height = 15,
+            shift = {4.0, -3.2},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 10,
+        height = 6,
+        tech_level = 1
+    },
+    ["house8"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/house8/house8",
+            width = 20,
+            height = 12,
+            shift = {2.4, -2.5},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 13,
+        height = 6,
+        tech_level = 1
+    },
 }
 
 if Sosciencity_Config.DEBUG then
@@ -326,13 +367,19 @@ end
 
 local quality_effect_on_recipe = {
     sheltered = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_sheltered", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(
+            details.themes,
+            {"housing_sheltered", house.room_count, math.ceil(house.room_count * 1.2), tech_level}
+        )
     end,
     green = function(details, house, tech_level)
         table.insert(details.themes, {"housing_green", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
     end,
     technical = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_technical", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(
+            details.themes,
+            {"housing_technical", house.room_count, math.ceil(house.room_count * 1.2), tech_level}
+        )
     end,
     spacey = function(details, house, tech_level)
         -- increase the "building" theme amount
@@ -345,7 +392,10 @@ local quality_effect_on_recipe = {
         details.themes[1][2] = details.themes[1][3] * 0.75
     end,
     decorated = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_decorated", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(
+            details.themes,
+            {"furnishing_decorated", house.room_count, math.ceil(house.room_count * 1.2), tech_level}
+        )
     end,
     simple = function(details, house, tech_level)
         -- change the normal "furnishing" theme to the simple one

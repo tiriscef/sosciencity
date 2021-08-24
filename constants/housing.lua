@@ -53,6 +53,21 @@ Housing.values = {
         room_count = 25,
         comfort = 5,
         qualities = {"spacey", "decorated", "individualistic", "pompous", "tall"}
+    },
+    ["house5"] = {
+        room_count = 200,
+        comfort = 8,
+        qualities = {"spacey", "individualistic", "tall"}
+    },
+    ["house1"] = {
+        room_count = 10,
+        comfort = 8,
+        qualities = {"spacey", "individualistic", "tall"}
+    },
+    ["house8"] = {
+        room_count = 10,
+        comfort = 8,
+        qualities = {"spacey", "individualistic", "tall"}
     }
 }
 local houses = Housing.values

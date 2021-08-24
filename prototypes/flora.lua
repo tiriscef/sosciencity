@@ -216,7 +216,9 @@ local function create_neogenesis_recipe(details)
                 {type = "item", name = "chloroplasts", amount = 1},
                 {type = "item", name = "plant-genome", amount = 1}
             },
-            byproducts = {{type = "item", name = "empty-hard-drive", amount = 1, probability = 0.95}},
+            byproducts = {
+                {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.99}
+            },
             localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
             localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
             category = "sosciencity-phyto-gene-lab",
@@ -403,7 +405,8 @@ create_annual_recipe {
 }
 
 create_neogenesis_recipe {
-    product = "hummus"
+    product = "sesame",
+    unlock = "hummus"
 }
 
 -- sugar beet

@@ -179,7 +179,8 @@ Buildings.values = {
     },
     ["orchid-plant-care-station"] = {
         type = Type.plant_care_station,
-        range = 120
+        range = 120,
+        humus_capacity = 10000
     },
     ["pharmacy"] = {
         type = Type.pharmacy,
