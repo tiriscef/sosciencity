@@ -54,13 +54,14 @@ function Tirislib_Luaq:select_key(key)
 end
 
 --- Projects the sequence with the given function.
---- @param fn function
+--- @param fn function function with (index, element, ...) arguments, should return the new element first and optionally the new index second
 --- @return LuaqQuery
 function Tirislib_Luaq:select(fn, ...)
     local new_content = {}
 
     for index, element in pairs(self.content) do
-        new_content[index] = fn(index, element, ...)
+        local new_element, new_index = fn(index, element, ...)
+        new_content[new_index or index] = new_element
     end
 
     self.content = new_content
@@ -68,7 +69,7 @@ function Tirislib_Luaq:select(fn, ...)
 end
 
 --- Filters the elements of the sequence with the given function.
---- @param fn function function with (index, element, ...) arguments
+--- @param fn function function with (index, element, ...) arguments, should return a truthy or falsy value
 --- @return LuaqQuery
 function Tirislib_Luaq:where(fn, ...)
     local new_content = {}

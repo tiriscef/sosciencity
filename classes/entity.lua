@@ -253,7 +253,7 @@ local function update_farm(entry, delta_ticks)
     local species_name = get_species(entity.get_recipe())
 
     local productivity = caste_bonuses[Type.orchid]
-    local performance = 1
+    local performance = evaluate_workforce(entry)
 
     if species_name ~= entry[EK.species] then
         species_change(entry, species_name)
@@ -292,6 +292,10 @@ Register.set_entity_updater(Type.farm, update_farm)
 -- << plant care station >>
 
 local function update_plant_care_station(entry, delta_ticks)
+    local workhours = Inhabitants.evaluate_workforce(entry)
+
+    
+
 end
 Register.set_entity_updater(Type.plant_care_station, update_plant_care_station)
 
@@ -299,12 +303,10 @@ local function create_plant_care_station(entry)
     entry[EK.humus_stored] = 0
     entry[EK.humus_mode] = true
 
-    entry[EK.fertiliser_stored] = 0
-    entry[EK.fertiliser_mode] = true
+    --entry[EK.fertiliser_stored] = 0
+    --entry[EK.fertiliser_mode] = true
 
     entry[EK.pruning_mode] = true
-
-    entry[EK.workhours] = 0
 end
 Register.set_entity_destruction_handler(Type.plant_care_station, create_plant_care_station)
 
@@ -312,18 +314,16 @@ local function copy_plant_care_station(source, destination)
     destination[EK.humus_stored] = source[EK.humus_stored]
     destination[EK.humus_mode] = source[EK.humus_mode]
 
-    destination[EK.fertiliser_stored] = source[EK.fertiliser_stored]
-    destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
+    --destination[EK.fertiliser_stored] = source[EK.fertiliser_stored]
+    --destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
 
     destination[EK.pruning_mode] = source[EK.pruning_mode]
-
-    destination[EK.workhours] = source[EK.workhours]
 end
 Register.set_entity_copy_handler(Type.plant_care_station, copy_plant_care_station)
 
 local function paste_plant_care_station_settings(source, destination)
     destination[EK.humus_mode] = source[EK.humus_mode]
-    destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
+    --destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
     destination[EK.pruning_mode] = source[EK.pruning_mode]
 end
 Register.set_settings_paste_handler(Type.plant_care_station, Type.plant_care_station, paste_plant_care_station_settings)

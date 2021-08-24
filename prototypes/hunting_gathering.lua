@@ -71,7 +71,12 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {}
+    results = {
+        {type = "item", name = "river-horse", amount = 1, probability = 0.1},
+        {type = "item", name = "bonesnake", amount = 1, probability = 0.1},
+        {type = "item", name = "caddle", amount = 1, probability = 0.5},
+        {type = "item", name = "biter-meat", amount_min = 0, amount_max = 10}
+    }
 }:add_catalyst("trap", "item", 2, 0.8, 3, 0.6)
 
 create_hunting_gathering_recipe {
@@ -89,7 +94,17 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {}
+    results = {
+        {type = "item", name = "primal-quackling", amount = 10, probability = 0.1},
+        {type = "item", name = "primal-quacker", amount = 5, probability = 0.5},
+        {type = "item", name = "primal-quackpa", amount = 2, probability = 0.2},
+        {type = "item", name = "nan-swanling", amount = 5, probability = 0.1},
+        {type = "item", name = "nan-swan", amount = 3, probability = 0.3},
+        {type = "item", name = "elder-nan", amount = 2, probability = 0.15},
+        {type = "item", name = "smol-bonesnake", amount = 2, probability = 0.1},
+        {type = "item", name = "cabar", amount = 5, probability = 0.5},
+        {type = "item", name = "caddle", amount = 1, probability = 0.5}
+    }
 }:add_catalyst("trap-cage", "item", 2, 0.8, 3, 0.6)
 
 create_hunting_gathering_recipe {
@@ -107,7 +122,15 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {}
+    results = {
+        {type = "item", name = "shellscript", amount = 3, probability = 0.3},
+        {type = "item", name = "boofish", amount = 20, probability = 0.5},
+        {type = "item", name = "fupper", amount = 10, probability = 0.5},
+        {type = "item", name = "dodkopus", amount = 1, probability = 0.1},
+        {type = "item", name = "ultra-squibbel", amount = 1, probability = 0.1},
+        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
+
+    }
 }:add_catalyst("fishing-net", "item", 1, 0.7, 1, 0.5)
 
 create_hunting_gathering_recipe {
@@ -125,5 +148,12 @@ create_hunting_gathering_recipe {
         }
     },
     icon_size = 64,
-    results = {}
+    results = {
+        {type = "item", name = "young-petunial", amount = 1, probability = 0.01},
+        {type = "item", name = "petunial", amount = 1, probability = 0.01},
+        {type = "item", name = "hellfin", amount = 1, probability = 0.01},
+        {type = "item", name = "warnal", amount = 1, probability = 0.01},
+        {type = "item", name = "ultra-squibbel", amount = 1, probability = 0.1},
+        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
+    }
 }:add_catalyst("harpoon", "item", 1, 0.7, 1, 0.5)
