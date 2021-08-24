@@ -30,6 +30,18 @@ Food.values = {
         portion_size = 10,
         group = "bird-meat"
     },
+    ["biter-meat"] = {
+        fat = 17,
+        carbohydrates = 1,
+        proteins = 21,
+        healthiness = 1,
+        food_category = "meat",
+        taste_category = Taste.salty,
+        taste_quality = 3,
+        luxury = 4,
+        portion_size = 10,
+        group = "biter-meat"
+    },
     ["insect-meat"] = {
         fat = 28.7,
         carbohydrates = 2.7,
@@ -53,18 +65,6 @@ Food.values = {
         luxury = 5,
         portion_size = 10,
         group = "fish-meat"
-    },
-    ["biter-meat"] = {
-        fat = 17,
-        carbohydrates = 1,
-        proteins = 21,
-        healthiness = 3,
-        food_category = "meat",
-        taste_category = Taste.salty,
-        taste_quality = 5,
-        luxury = 4,
-        portion_size = 10,
-        group = "biter-meat"
     },
     ["offal"] = {
         fat = 5.1,
@@ -354,10 +354,10 @@ Food.values = {
         portion_size = 10,
         group = "algae"
     },
-    ["razha-bean"] = { -- TODO values
+    ["razha-bean"] = {
         fat = 5.1,
         carbohydrates = 9.8,
-        proteins = 11.2,
+        proteins = 12.2,
         healthiness = 6,
         food_category = "alien-legume",
         taste_category = Taste.umami,

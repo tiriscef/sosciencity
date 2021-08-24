@@ -85,7 +85,7 @@ Tirislib_Entity.create {
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-bloomhouse"},
+    crafting_categories = {"sosciencity-bloomhouse-annual", "sosciencity-bloomhouse-perennial"},
     energy_usage = "95kW",
     energy_source = {
         type = "electric",

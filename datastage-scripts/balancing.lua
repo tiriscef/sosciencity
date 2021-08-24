@@ -1,42 +1,31 @@
 require("constants.food")
 
-local function get_result_calories(recipe)
-    local result = recipe:get_first_result()
-    local food_values = Food.values[result]
-
-    if food_values ~= nil then
-        local count_normal, count_expensive = recipe:get_result_count(result)
-        count_expensive = count_expensive or count_normal
-        count_normal = count_normal * Food.values[result].calories
-        count_expensive = count_expensive * Food.values[result].calories
-
-        local time, expensive_time
-        if recipe:has_difficulties() then
-            time = recipe:get_field("energy_required", "normal")
-            expensive_time = recipe:get_field("energy_required", "expensive")
-        else
-            time = recipe.energy_required
-            expensive_time = time
+local function get_result_calories(recipe_data)
+    local kcal = 0
+    for _, result in pairs(recipe_data.results) do
+        if Food.values[result.name] then
+            kcal = kcal + Tirislib_RecipeEntry.get_average_yield(result) * Food.values[result.name].calories
         end
-
-        return count_normal, count_expensive, count_normal / time, count_expensive / expensive_time
-    else
-        return 0, 0, 0, 0
     end
+    return kcal
 end
 
 local results = {}
 for _, recipe in Tirislib_Recipe.iterate() do
     if recipe.owner == "sosciencity" then
-        if get_result_calories(recipe) > 0 then
-            table.insert(
-                results,
-                string.format(
-                    "%s produces %d or %d kcal per cycle, %d or %d kg per second",
+        for difficulty, recipe_data in pairs(recipe:get_recipe_datas()) do
+            local kcal = get_result_calories(recipe_data)
+
+            if kcal > 0 then
+                results[#results + 1] =
+                    string.format(
+                    "%s, difficulty %s, produces %d kcal per cycle, %d kcal per second",
                     recipe.name,
-                    get_result_calories(recipe)
+                    difficulty == Tirislib_RecipeDifficulty.expensive and "expensive" or "normal",
+                    kcal,
+                    kcal / recipe_data.energy_required
                 )
-            )
+            end
         end
     end
 end
