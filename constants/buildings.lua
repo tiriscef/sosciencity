@@ -9,7 +9,7 @@ local range_by_foot = 50
 --- Values of various custom behaviours I implemented for the Custom Buildings.\
 --- **range:** number (tiles) or "global"\
 --- **power_usage:** number (kW)\
---- **speed:** number (1/s)
+--- **speed:** number (1/tick)
 Buildings.values = {
     ["test-dumpster"] = {
         type = Type.dumpster,
@@ -22,7 +22,7 @@ Buildings.values = {
     ["test-hospital"] = {
         type = Type.hospital,
         range = 42,
-        speed = 20,
+        speed = 20 / Time.second,
         workforce = {
             count = 20,
             castes = {Type.plasma}
@@ -128,7 +128,7 @@ Buildings.values = {
     ["hospital"] = {
         type = Type.hospital,
         range = 50,
-        speed = 2,
+        speed = 2 / Time.second,
         workforce = {
             count = 10,
             castes = {Type.plasma}
@@ -180,6 +180,7 @@ Buildings.values = {
     ["orchid-plant-care-station"] = {
         type = Type.plant_care_station,
         range = 120,
+        speed = 1,
         humus_capacity = 10000
     },
     ["pharmacy"] = {
@@ -226,11 +227,6 @@ for _, details in pairs(Buildings.values) do
     -- convert power usages to J / tick
     if details.power_usage then
         details.power_usage = details.power_usage * 1000 / Time.second
-    end
-
-    -- convert speed from x / sec to x / tick
-    if details.speed then
-        details.speed = details.speed / Time.second
     end
 end
 

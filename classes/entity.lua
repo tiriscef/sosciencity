@@ -292,10 +292,16 @@ Register.set_entity_updater(Type.farm, update_farm)
 -- << plant care station >>
 
 local function update_plant_care_station(entry, delta_ticks)
-    local workhours = Inhabitants.evaluate_workforce(entry)
+    local building_details = get_building_details(entry)
 
-    
+    entry[EK.workhours] = entry[EK.workhours] + Inhabitants.evaluate_workforce(entry) * delta_ticks * building_details.speed
 
+    local humus_stored = entry[EK.humus_stored]
+    local free_humus_capacity = building_details.humus_capacity - humus_stored
+    if free_humus_capacity > 0 then
+        local inventory = Inventories.get_chest_inventory(entry)
+        entry[EK.humus_stored] = humus_stored + inventory.remove {name = "humus", count = free_humus_capacity}
+    end
 end
 Register.set_entity_updater(Type.plant_care_station, update_plant_care_station)
 
@@ -307,6 +313,8 @@ local function create_plant_care_station(entry)
     --entry[EK.fertiliser_mode] = true
 
     entry[EK.pruning_mode] = true
+
+    entry[EK.workhours] = 0
 end
 Register.set_entity_destruction_handler(Type.plant_care_station, create_plant_care_station)
 
@@ -318,6 +326,8 @@ local function copy_plant_care_station(source, destination)
     --destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
 
     destination[EK.pruning_mode] = source[EK.pruning_mode]
+
+    destination[EK.workhours] = source[EK.workhours]
 end
 Register.set_entity_copy_handler(Type.plant_care_station, copy_plant_care_station)
 
@@ -519,6 +529,7 @@ local function update_hospital(entry, delta_ticks)
     end
 
     entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * get_building_details(entry).speed
+    entry[EK.performance] = performance
 end
 Register.set_entity_updater(Type.hospital, update_hospital)
 

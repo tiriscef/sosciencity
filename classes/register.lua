@@ -12,6 +12,8 @@ Register = {}
 
     global.entry_counts:
         [type]: int (total number)
+
+    global.last_index: int|nil (unit_number of the entry the last update cycle stopped on)
 ]]
 -- local often used globals for almost non-existant performance gains
 
@@ -246,6 +248,12 @@ end
 local function remove_entry_from_register(entry)
     local _type = entry[EK.type]
     local unit_number = entry[EK.unit_number]
+
+    -- The last update cycle stopped at this entry.
+    -- We go to the next one, so the next cycle doesn't need to start from the first entry.
+    if global.last_index == unit_number then
+        global.last_index = next(register, unit_number)
+    end
 
     -- general
     register[unit_number] = nil
