@@ -179,9 +179,13 @@ Buildings.values = {
     },
     ["orchid-plant-care-station"] = {
         type = Type.plant_care_station,
-        range = 120,
-        speed = 1,
-        humus_capacity = 10000
+        range = 30,
+        speed = 60 / Time.minute,
+        humus_capacity = 1000,
+        workforce = {
+            count = 2,
+            castes = {Type.orchid}
+        }
     },
     ["pharmacy"] = {
         type = Type.pharmacy,

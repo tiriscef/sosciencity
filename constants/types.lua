@@ -298,7 +298,10 @@ Types.definitions = {
     },
     [Type.farm] = {
         localised_name = {"sosciencity.farm"},
-        localised_description = {"sosciencity.explain-farm"}
+        localised_description = {"sosciencity.explain-farm"},
+        subscriptions = {
+            [Type.plant_care_station] = ConnectionType.from_neighbor
+        }
     },
     [Type.animal_farm] = {
         signature_color = Colors.brown
@@ -310,7 +313,9 @@ Types.definitions = {
     },
     [Type.plant_care_station] = {
         localised_name = {"sosciencity.plant-care-station"},
-        localised_description = {"sosciencity.plant-care-station"},
+        localised_description = {"sosciencity.explain-plant-care-station"},
+        localised_speed_name = {"sosciencity.work-rate"},
+        localised_speed_key = "sosciencity.display-work-rate",
         is_civil = true,
         subscriptions = {
             [Type.farm] = ConnectionType.to_neighbor

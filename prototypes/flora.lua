@@ -222,6 +222,7 @@ local function create_neogenesis_recipe(details)
             localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
             localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
             category = "sosciencity-phyto-gene-lab",
+            subgroup = "sosciencity-fauna",
             icons = {
                 {icon = product.icon},
                 {
@@ -446,7 +447,7 @@ create_annual_recipe {
 }
 
 -- tiriscefing willow
-create_annual_recipe {
+create_perennial_recipe {
     product = "tiriscefing-willow-wood",
     byproducts = {{type = "item", name = "fawoxylas", amount = 2, probability = 0.5}}
 }

@@ -391,7 +391,7 @@ end
 
 function Communication.report_death(count, cause)
     local current_report = get_subtbl(reports, "death")
-    current_report[cause] = (current_report[cause] + count)
+    current_report[cause] = (current_report[cause] or 0) + count
 
     reported_event_counts.census = reported_event_counts.census + 1
 end
