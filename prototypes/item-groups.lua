@@ -56,12 +56,6 @@ Tirislib_Prototype.batch_create {
         order = "bac"
     },
     {
-        type = "item-subgroup",
-        name = "sosciencity-building-materials",
-        group = "sosciencity-production",
-        order = "caa"
-    },
-    {
         type = "item-group",
         name = "sosciencity-production",
         inventory_order = "zb",
@@ -74,6 +68,12 @@ Tirislib_Prototype.batch_create {
         name = "sosciencity-materials",
         group = "sosciencity-production",
         order = "aba"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-building-materials",
+        group = "sosciencity-production",
+        order = "abb"
     },
     {
         type = "item-subgroup",

@@ -221,6 +221,14 @@ EK.tree_count = 600
 EK.biomass = 700
 --- currently cultivated species
 EK.species = 701
+--- humus related operation mode for this plant care station
+EK.humus_mode = 702
+--- speed bonus due to humus
+EK.humus_bonus = 703
+--- pruning related operation mode for this plant care station
+EK.pruning_mode = 704
+--- productivity bonus due to pruning
+EK.prune_bonus = 705
 
 -- composter
 
@@ -247,14 +255,8 @@ EK.graduates = 1002
 
 --- stored humus in this plant care station
 EK.humus_stored = 1100
---- humus related operation mode for this plant care station
-EK.humus_mode = 1101
 --- stored fertiliser in this plant care station
-EK.fertiliser_stored = 1102
---- fertiliser related operation mode for this plant care station
-EK.fertiliser_mode = 1103
---- pruning related operation mode for this plant care station
-EK.pruning_mode = 1104
+--EK.fertiliser_stored = 1102
 
 -- waste dump
 

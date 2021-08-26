@@ -169,13 +169,17 @@ do
         local points = {{"sosciencity.cure-workload", disease.curing_workload}}
 
         if disease.cure_items then
-            local items = {""}
-            for item, count in pairs(disease.cure_items) do
-                items[#items + 1] = {"sosciencity.multiplier", count, string.format("[item=%s] ", item)}
-                items[#items + 1] = {string.format("item-name.%s", item)}
-            end
-
-            points[#points + 1] = {"sosciencity.cure-medicine", items}
+            points[#points + 1] = {
+                "sosciencity.cure-medicine",
+                Tirislib_Locales.create_enumeration(
+                    Tirislib_Luaq.from(disease.cure_items):select(
+                        function(item, count)
+                            return Tirislib_Locales.display_item_stack_datastage(item, count)
+                        end
+                    ):to_array(),
+                    ", "
+                )
+            }
         end
 
         if disease.curing_facility then

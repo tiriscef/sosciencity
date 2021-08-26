@@ -420,7 +420,7 @@ end
 
 local function add_entries(data_list, enum_table, names, descriptions)
     for name, id in pairs(enum_table) do
-        add_operand_entry(data_list, name, names[id], descriptions[id])
+        add_operand_entry(data_list, name, names[id], nil, descriptions[id])
     end
 end
 
@@ -629,7 +629,7 @@ local function add_caste_flow(container, caste_id)
         name = "caste-" .. caste_id,
         direction = "vertical"
     }
-    make_stretchable(frame)
+    --make_stretchable(frame)
     frame.style.padding = 0
     frame.style.left_margin = 4
 
@@ -641,14 +641,11 @@ local function add_caste_flow(container, caste_id)
         name = "flow",
         direction = "vertical"
     }
-    make_stretchable(flow)
+    --make_stretchable(flow)
     flow.style.vertical_spacing = 0
     flow.style.horizontal_align = "center"
 
     local sprite = create_caste_sprite(flow, caste_id, CITY_INFO_SPRITE_SIZE)
-    sprite.style.height = CITY_INFO_SPRITE_SIZE
-    sprite.style.width = CITY_INFO_SPRITE_SIZE
-    sprite.style.stretch_image_to_widget_size = true
     sprite.style.horizontal_align = "center"
 
     flow.add {
@@ -1451,7 +1448,7 @@ local function create_general_building_details(container, entry)
         )
         add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
 
-        add_header_label(tab, "worker-header", {"sosciencity.worker-header"})
+        add_header_label(tab, "worker-header", {"sosciencity.staff"})
         create_data_list(tab, "workers")
     end
 
@@ -1566,7 +1563,11 @@ local function update_farm(container, entry)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
-    set_kv_pair_value(building_data, "orchid-bonus", {"sosciencity.percentage-bonus", global.caste_bonuses[Type.orchid]})
+    set_kv_pair_value(
+        building_data,
+        "orchid-bonus",
+        {"sosciencity.percentage-bonus", global.caste_bonuses[Type.orchid], {"sosciencity.productivity"}}
+    )
 
     local flora_details = Biology.flora[entry[EK.species]]
     if flora_details then
@@ -1596,7 +1597,11 @@ local function update_farm(container, entry)
                         "sosciencity.wrong-climate",
                         climate_locales[global.current_climate],
                         climate_locales[flora_details.preferred_climate],
-                        {"sosciencity.percentage-malus", 100 - flora_details.wrong_climate_coefficient * 100}
+                        {
+                            "sosciencity.percentage-malus",
+                            100 - flora_details.wrong_climate_coefficient * 100,
+                            {"sosciencity.speed"}
+                        }
                     }
             )
             set_kv_pair_value(
@@ -1611,7 +1616,11 @@ local function update_farm(container, entry)
                         "sosciencity.wrong-humidity",
                         humidity_locales[global.current_humidity],
                         humidity_locales[flora_details.preferred_humidity],
-                        {"sosciencity.percentage-malus", 100 - flora_details.wrong_humidity_coefficient * 100}
+                        {
+                            "sosciencity.percentage-malus",
+                            100 - flora_details.wrong_humidity_coefficient * 100,
+                            {"sosciencity.speed"}
+                        }
                     }
             )
         else
@@ -1631,7 +1640,11 @@ local function update_farm(container, entry)
             flora_details.required_module and
                 not Inventories.assembler_has_module(entry[EK.entity], flora_details.required_module)
          then
-            set_kv_pair_value(building_data, "module", {"sosciencity.module-missing", display_item_stack(flora_details.required_module, 1)})
+            set_kv_pair_value(
+                building_data,
+                "module",
+                {"sosciencity.module-missing", display_item_stack(flora_details.required_module, 1)}
+            )
             set_kv_pair_visibility(building_data, "module", true)
         else
             set_kv_pair_visibility(building_data, "module", false)
@@ -1642,6 +1655,28 @@ local function update_farm(container, entry)
         set_kv_pair_visibility(building_data, "climate", false)
         set_kv_pair_visibility(building_data, "humidity", false)
         set_kv_pair_visibility(building_data, "module", false)
+    end
+
+    local humus_checkbox = get_checkbox(building_data, "humus-mode")
+    humus_checkbox.state = entry[EK.humus_mode]
+    set_kv_pair_visibility(building_data, "humus-bonus", entry[EK.humus_mode])
+    if entry[EK.humus_bonus] then
+        set_kv_pair_value(
+            building_data,
+            "humus-bonus",
+            {"sosciencity.percentage-bonus", ceil(entry[EK.humus_bonus]), {"sosciencity.speed"}}
+        )
+    end
+
+    local pruning_checkbox = get_checkbox(building_data, "pruning-mode")
+    pruning_checkbox.state = entry[EK.pruning_mode]
+    set_kv_pair_visibility(building_data, "prune-bonus", entry[EK.humus_mode])
+    if entry[EK.prune_bonus] then
+        set_kv_pair_value(
+            building_data,
+            "prune-bonus",
+            {"sosciencity.percentage-bonus", ceil(entry[EK.prune_bonus]), {"sosciencity.productivity"}}
+        )
     end
 end
 
@@ -1655,10 +1690,54 @@ local function create_farm(container, entry)
     add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
     add_kv_pair(building_data, "climate", {"sosciencity.climate"})
     add_kv_pair(building_data, "humidity", {"sosciencity.humidity"})
+
+    add_kv_checkbox(
+        building_data,
+        "humus-mode",
+        format(unique_prefix_builder, "humus-mode", "farm"),
+        {"sosciencity.humus-fertilization"},
+        {"sosciencity.active"}
+    )
+    add_kv_pair(
+        building_data,
+        "explain-humus",
+        "",
+        {
+            "sosciencity.explain-humus-fertilization",
+            Entity.humus_fertilization_workhours * Time.minute,
+            Entity.humus_fertilitation_consumption * Time.minute,
+            Entity.humus_fertilization_speed
+        }
+    )
+    add_kv_pair(building_data, "humus-bonus")
+
+    add_kv_checkbox(
+        building_data,
+        "pruning-mode",
+        format(unique_prefix_builder, "pruning-mode", "farm"),
+        {"sosciencity.pruning"},
+        {"sosciencity.active"}
+    )
+    add_kv_pair(
+        building_data,
+        "explain-pruning",
+        "",
+        {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
+    )
+    add_kv_pair(building_data, "prune-bonus")
+
     add_kv_pair(building_data, "module")
 
     update_farm(container, entry)
 end
+
+set_checked_state_handler(format(unique_prefix_builder, "humus-mode", "farm"), generic_checkbox_handler, EK.humus_mode)
+
+set_checked_state_handler(
+    format(unique_prefix_builder, "pruning-mode", "farm"),
+    generic_checkbox_handler,
+    EK.pruning_mode
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << fishing hut >>
@@ -2217,6 +2296,80 @@ local function create_water_distributer(container, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << plant care station >>
+
+local function update_plant_care_station(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
+    set_kv_pair_value(building_data, "humus-stored", display_item_stack("humus", floor(entry[EK.humus_stored])))
+
+    local humus_checkbox = get_checkbox(building_data, "humus-mode")
+    humus_checkbox.state = entry[EK.humus_mode]
+
+    local pruning_checkbox = get_checkbox(building_data, "pruning-mode")
+    pruning_checkbox.state = entry[EK.pruning_mode]
+end
+
+local function create_plant_care_station(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
+    add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
+
+    add_kv_checkbox(
+        building_data,
+        "humus-mode",
+        format(unique_prefix_builder, "humus-mode", "plant-care"),
+        {"sosciencity.humus-fertilization"},
+        {"sosciencity.active"}
+    )
+    add_kv_pair(
+        building_data,
+        "explain-humus",
+        "",
+        {
+            "sosciencity.explain-humus-fertilization",
+            Entity.humus_fertilization_workhours * Time.minute,
+            Entity.humus_fertilitation_consumption * Time.minute,
+            Entity.humus_fertilization_speed
+        }
+    )
+
+    add_kv_checkbox(
+        building_data,
+        "pruning-mode",
+        format(unique_prefix_builder, "pruning-mode", "plant-care"),
+        {"sosciencity.pruning"},
+        {"sosciencity.active"}
+    )
+    add_kv_pair(
+        building_data,
+        "explain-pruning",
+        "",
+        {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
+    )
+end
+
+set_checked_state_handler(
+    format(unique_prefix_builder, "humus-mode", "plant-care"),
+    generic_checkbox_handler,
+    EK.humus_mode
+)
+
+set_checked_state_handler(
+    format(unique_prefix_builder, "pruning-mode", "plant-care"),
+    generic_checkbox_handler,
+    EK.pruning_mode
+)
+
+---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
 
 local function create_details_view_for_player(player)
@@ -2316,6 +2469,10 @@ local type_gui_specifications = {
     [Type.hospital] = {
         creater = create_hospital_details,
         updater = update_hospital_details
+    },
+    [Type.plant_care_station] = {
+        creater = create_plant_care_station,
+        updater = update_plant_care_station
     },
     [Type.psych_ward] = {
         creater = create_general_building_details,

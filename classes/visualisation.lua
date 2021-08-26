@@ -76,8 +76,7 @@ local function highlight_range(player_id, entry, building_details, created_highl
         right_bottom = {x + range, y + range},
         surface = surface,
         players = {player_id},
-        draw_on_ground = true,
-        only_in_alt_mode = true
+        draw_on_ground = true
     }
 end
 
@@ -116,8 +115,7 @@ local function create_neighbor_highlights(players, entry, created_highlights)
         tint = tint,
         surface = surface,
         players = players,
-        target = left_top,
-        only_in_alt_mode = true
+        target = left_top
     }
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
@@ -125,8 +123,7 @@ local function create_neighbor_highlights(players, entry, created_highlights)
         tint = tint,
         surface = surface,
         players = players,
-        target = right_bottom,
-        only_in_alt_mode = true
+        target = right_bottom
     }
 
     -- convert left_top to left_bottom and right_bottom to right_top
@@ -138,8 +135,7 @@ local function create_neighbor_highlights(players, entry, created_highlights)
         tint = tint,
         surface = surface,
         players = players,
-        target = left_top,
-        only_in_alt_mode = true
+        target = left_top
     }
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
@@ -147,8 +143,7 @@ local function create_neighbor_highlights(players, entry, created_highlights)
         tint = tint,
         surface = surface,
         players = players,
-        target = right_bottom,
-        only_in_alt_mode = true
+        target = right_bottom
     }
 end
 

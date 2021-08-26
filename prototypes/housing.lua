@@ -255,14 +255,15 @@ local housing_prototype_details = {
     ["house5"] = {
         picture = Tirislib_Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/house5/house5",
-            width = 24.5,
-            height = 19,
-            shift = {7.25, -5.5},
+            width = 27,
+            height = 21,
+            shift = {7.75, -6.0},
             shadowmap = true,
+            lightmap = true,
             glow = true
         },
-        width = 9,
-        height = 7,
+        width = 10,
+        height = 8,
         tech_level = 6
     },
     ["house1"] = {
@@ -272,7 +273,6 @@ local housing_prototype_details = {
             height = 15,
             shift = {4.0, -3.2},
             shadowmap = true,
-            lightmap = true,
             glow = true
         },
         width = 10,

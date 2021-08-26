@@ -101,12 +101,12 @@ end
 
 local function update_machine(entry)
     local clockwork_bonus = caste_bonuses[Type.clockwork]
-    local use_penalty_module = (clockwork_bonus < 0)
-    if use_penalty_module then
+    local penalty_module_needed = (clockwork_bonus < 0)
+    if penalty_module_needed then
         clockwork_bonus = clockwork_bonus + 80
     end
 
-    set_beacon_effects(entry, clockwork_bonus, 0, use_penalty_module)
+    set_beacon_effects(entry, clockwork_bonus, 0, penalty_module_needed)
 end
 Register.set_entity_updater(Type.assembling_machine, update_machine)
 Register.set_entity_updater(Type.furnace, update_machine)
@@ -236,27 +236,98 @@ Register.set_entity_updater(Type.composter_output, update_composter_output)
 
 local get_species = Biology.get_species
 
-local function species_change(entry, new_species)
-    entry[EK.species] = new_species
-    entry[EK.biomass] = 0
-end
-
 local function biomass_to_productivity(biomass)
-    return floor(biomass ^ 0.2)
+    biomass = biomass - 1000
+    if biomass > 0 then
+        return floor(biomass ^ 0.2)
+    else
+        return 0
+    end
 end
 
 -- put an alias in the global table so the gui can get this value
 Entity.biomass_to_productivity = biomass_to_productivity
 
+Entity.pruning_productivity = 20 --%
+Entity.pruning_workhours = 5 / Time.minute
+
+Entity.humus_fertilization_speed = 30 --%
+Entity.humus_fertilization_workhours = 1 / Time.minute
+Entity.humus_fertilitation_consumption = 2 / Time.minute
+
 local function update_farm(entry, delta_ticks)
     local entity = entry[EK.entity]
-    local species_name = get_species(entity.get_recipe())
+    local recipe = entity.get_recipe()
+    local species_name = get_species(recipe)
 
     local productivity = caste_bonuses[Type.orchid]
     local performance = evaluate_workforce(entry)
 
     if species_name ~= entry[EK.species] then
-        species_change(entry, species_name)
+        entry[EK.species] = species_name
+        entry[EK.biomass] = 0
+    end
+
+    if recipe and entry[EK.humus_mode] then
+        local humus_needed = delta_ticks * Entity.humus_fertilitation_consumption
+        local workhours_needed = delta_ticks * Entity.humus_fertilization_workhours
+
+        local percentage_to_consume = 1
+
+        for _, plant_care_station in Neighborhood.all_of_type(entry, Type.plant_care_station) do
+            if plant_care_station[EK.humus_mode] then
+                local humus_available = plant_care_station[EK.humus_stored]
+                local workhours_available = plant_care_station[EK.workhours]
+
+                local percentage_available =
+                    min(
+                    percentage_to_consume,
+                    humus_available / humus_needed * percentage_to_consume,
+                    workhours_available / workhours_needed * percentage_to_consume
+                )
+
+                percentage_to_consume = percentage_to_consume - percentage_available
+                local consumed_humus = humus_needed * percentage_available
+                plant_care_station[EK.humus_stored] = humus_available - consumed_humus
+                plant_care_station[EK.workhours] = workhours_available - workhours_needed * percentage_available
+
+                log_item("humus", -consumed_humus)
+
+                if percentage_to_consume < 0.0001 then
+                    break
+                end
+            end
+        end
+
+        local humus_bonus = map_range(percentage_to_consume, 1, 0, 0, Entity.humus_fertilization_speed)
+        entry[EK.humus_bonus] = humus_bonus
+        performance = performance * map_range(percentage_to_consume, 1, 0, 1, 1 + humus_bonus / 100)
+    else
+        entry[EK.humus_bonus] = nil
+    end
+
+    if recipe and entry[EK.pruning_mode] then
+        local workhours_needed = delta_ticks * Entity.pruning_workhours
+        local workhours_consumed = 0
+
+        for _, plant_care_station in Neighborhood.all_of_type(entry, Type.plant_care_station) do
+            if plant_care_station[EK.pruning_mode] then
+                local consumed = min(plant_care_station[EK.workhours], workhours_needed - workhours_consumed)
+
+                plant_care_station[EK.workhours] = plant_care_station[EK.workhours] - consumed
+                workhours_consumed = workhours_consumed + consumed
+
+                if workhours_needed - workhours_consumed < 0.0001 then
+                    break
+                end
+            end
+        end
+
+        local pruning_bonus = map_range(workhours_consumed, 0, workhours_needed, 0, Entity.pruning_productivity)
+        entry[EK.prune_bonus] = pruning_bonus
+        productivity = multiply_percentages(productivity, pruning_bonus)
+    else
+        entry[EK.prune_bonus] = nil
     end
 
     if species_name then
@@ -277,10 +348,13 @@ local function update_farm(entry, delta_ticks)
         end
 
         if flora_details.persistent then
-            local biomass = entry[EK.biomass] + delta_ticks * flora_details.growth_coefficient * performance
+            local biomass = entry[EK.biomass]
+            if entity.is_crafting() then
+                biomass = biomass + delta_ticks * flora_details.growth_coefficient * performance / Time.second
+            end
             entry[EK.biomass] = biomass
 
-            productivity = multiply_percentages(productivity, floor(biomass ^ 0.2))
+            productivity = multiply_percentages(productivity, biomass ^ 0.2)
         end
     end
 
@@ -288,19 +362,40 @@ local function update_farm(entry, delta_ticks)
 end
 Register.set_entity_updater(Type.farm, update_farm)
 
+local function create_farm(entry)
+    entry[EK.humus_mode] = true
+    entry[EK.pruning_mode] = true
+end
+Register.set_entity_creation_handler(Type.farm, create_farm)
+
+local function copy_farm(source, destination)
+    destination[EK.biomass] = source[EK.biomass]
+
+    destination[EK.humus_mode] = source[EK.humus_mode]
+    destination[EK.pruning_mode] = source[EK.pruning_mode]
+end
+Register.set_entity_copy_handler(Type.farm, copy_farm)
+
+local function paste_farm_settings(source, destination)
+    destination[EK.humus_mode] = source[EK.humus_mode]
+    destination[EK.pruning_mode] = source[EK.pruning_mode]
+end
+Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
+
 ---------------------------------------------------------------------------------------------------
 -- << plant care station >>
 
 local function update_plant_care_station(entry, delta_ticks)
     local building_details = get_building_details(entry)
 
-    entry[EK.workhours] = entry[EK.workhours] + Inhabitants.evaluate_workforce(entry) * delta_ticks * building_details.speed
+    entry[EK.workhours] =
+        entry[EK.workhours] + Inhabitants.evaluate_workforce(entry) * delta_ticks * building_details.speed
 
     local humus_stored = entry[EK.humus_stored]
     local free_humus_capacity = building_details.humus_capacity - humus_stored
-    if free_humus_capacity > 0 then
+    if free_humus_capacity >= 1 then
         local inventory = Inventories.get_chest_inventory(entry)
-        entry[EK.humus_stored] = humus_stored + inventory.remove {name = "humus", count = free_humus_capacity}
+        entry[EK.humus_stored] = humus_stored + inventory.remove {name = "humus", count = floor(free_humus_capacity)}
     end
 end
 Register.set_entity_updater(Type.plant_care_station, update_plant_care_station)
@@ -316,7 +411,16 @@ local function create_plant_care_station(entry)
 
     entry[EK.workhours] = 0
 end
-Register.set_entity_destruction_handler(Type.plant_care_station, create_plant_care_station)
+Register.set_entity_creation_handler(Type.plant_care_station, create_plant_care_station)
+
+local function destroy_plant_care_station(entry)
+    local humus = floor(entry[EK.humus_stored])
+
+    if humus > 0 then
+        Inventories.spill_items(entry, "humus", humus, true)
+    end
+end
+Register.set_entity_destruction_handler(Type.plant_care_station, destroy_plant_care_station)
 
 local function copy_plant_care_station(source, destination)
     destination[EK.humus_stored] = source[EK.humus_stored]
@@ -330,13 +434,6 @@ local function copy_plant_care_station(source, destination)
     destination[EK.workhours] = source[EK.workhours]
 end
 Register.set_entity_copy_handler(Type.plant_care_station, copy_plant_care_station)
-
-local function paste_plant_care_station_settings(source, destination)
-    destination[EK.humus_mode] = source[EK.humus_mode]
-    --destination[EK.fertiliser_mode] = source[EK.fertiliser_mode]
-    destination[EK.pruning_mode] = source[EK.pruning_mode]
-end
-Register.set_settings_paste_handler(Type.plant_care_station, Type.plant_care_station, paste_plant_care_station_settings)
 
 ---------------------------------------------------------------------------------------------------
 -- << cooling warehouse >>

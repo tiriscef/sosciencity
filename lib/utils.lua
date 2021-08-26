@@ -171,7 +171,7 @@ local clamp = Tirislib_Utils.clamp
 ---@param to_max number
 ---@return number
 function Tirislib_Utils.map_range(val, from_min, from_max, to_min, to_max)
-    val = clamp(val, from_min, from_max)
+    val = clamp(val, min(from_min, from_max), max(from_min, from_max))
     return to_min + (val - from_min) / (from_max - from_min) * (to_max - to_min)
 end
 
@@ -1226,6 +1226,10 @@ function Tirislib_Locales.display_ingame_time(ticks)
     end
 
     return create_enumeration(points, ", ", {"sosciencity.and"})
+end
+
+function Tirislib_Locales.display_item_stack_datastage(item, count)
+    return {"sosciencity.xitems", count, item, {"item-name." .. item}}
 end
 
 --- Creates a localisation for the given item stack.
