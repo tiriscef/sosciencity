@@ -87,7 +87,9 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "psychotropics",
     themes = {{"tablet_ingredients", 1}},
-    ingredients = {{name = "phytofall-blossom", amount = 2}},
+    ingredients = {
+        {type = "item", name = "phytofall-blossom", amount = 5}
+    },
     energy_required = 3,
     allow_productivity = true,
     unlock = "psychiatry"
@@ -96,7 +98,9 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "analgesics",
     themes = {{"tablet_ingredients", 1}},
-    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    ingredients = {
+        {type = "item", name = "phytofall-blossom", amount = 2}
+    },
     energy_required = 3,
     allow_productivity = true,
     unlock = "hospital"

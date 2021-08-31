@@ -104,7 +104,8 @@ RG.ingredient_themes = {
             {type = "item", name = "iron-stick", amount = 1}
         },
         [2] = {
-            {type = "item", name = "steel-plate", amount = 1}
+            {type = "item", name = "steel-plate", amount = 1},
+            {type = "item", name = "iron-stick", amount = 1}
         }
     },
     genetic_neogenesis = {
@@ -430,55 +431,76 @@ RG.ingredient_themes = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1.5}
+            {type = "item", name = "cupboard", amount = 1.5},
+            {type = "item", name = "curtain", amount = 1},
+            {type = "item", name = "stove", amount = 1 / 2}
         },
         [6] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1.5},
-            {type = "item", name = "air-conditioner", amount = 1 / 3}
+            {type = "item", name = "curtain", amount = 1},
+            {type = "item", name = "carpet", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 1 / 3},
+            {type = "item", name = "stove", amount = 1 / 2}
         },
         [7] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 2},
-            {type = "item", name = "air-conditioner", amount = 1 / 3}
+            {type = "item", name = "curtain", amount = 1},
+            {type = "item", name = "carpet", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 1 / 3},
+            {type = "item", name = "stove", amount = 1 / 2},
+            {type = "item", name = "refrigerator", amount = 1 / 2}
         },
         [8] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 2},
-            {type = "item", name = "air-conditioner", amount = 0.5}
+            {type = "item", name = "curtain", amount = 1},
+            {type = "item", name = "carpet", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 0.5},
+            {type = "item", name = "stove", amount = 1 / 2},
+            {type = "item", name = "refrigerator", amount = 1 / 2}
         },
         [9] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 2},
-            {type = "item", name = "air-conditioner", amount = 2 / 3}
+            {type = "item", name = "curtain", amount = 1},
+            {type = "item", name = "carpet", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 2 / 3},
+            {type = "item", name = "stove", amount = 1 / 2},
+            {type = "item", name = "refrigerator", amount = 1 / 2}
         },
         [10] = {
             {type = "item", name = "bed", amount = 3},
             {type = "item", name = "chair", amount = 2},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 3},
-            {type = "item", name = "air-conditioner", amount = 1}
+            {type = "item", name = "curtain", amount = 1},
+            {type = "item", name = "carpet", amount = 1},
+            {type = "item", name = "air-conditioner", amount = 1},
+            {type = "item", name = "stove", amount = 1 / 2},
+            {type = "item", name = "refrigerator", amount = 1 / 2}
         }
     },
     simple_furnishing = {
         [0] = {},
         [1] = {
-            {type = "item", name = "bed", amount = 2 / 3}
+            {type = "item", name = "bed", amount = 1}
         },
         [2] = {
-            {type = "item", name = "bed", amount = 2 / 3},
+            {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1 / 2}
         },
         [3] = {
-            {type = "item", name = "bed", amount = 2 / 3},
+            {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 3 / 4},
             {type = "item", name = "table", amount = 1 / 2},
             {type = "item", name = "cupboard", amount = 1 / 3}
@@ -500,35 +522,43 @@ RG.ingredient_themes = {
             {type = "item", name = "chair", amount = 1},
             {type = "item", name = "table", amount = 3 / 4},
             {type = "item", name = "cupboard", amount = 2 / 3},
-            {type = "item", name = "air-conditioner", amount = 1 / 5}
+            {type = "item", name = "air-conditioner", amount = 1 / 5},
+            {type = "item", name = "stove", amount = 1 / 4}
         },
         [7] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1},
-            {type = "item", name = "air-conditioner", amount = 1 / 5}
+            {type = "item", name = "air-conditioner", amount = 1 / 5},
+            {type = "item", name = "stove", amount = 1 / 4}
         },
         [8] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1},
-            {type = "item", name = "air-conditioner", amount = 1 / 4}
+            {type = "item", name = "air-conditioner", amount = 1 / 4},
+            {type = "item", name = "stove", amount = 1 / 4},
+            {type = "item", name = "refrigerator", amount = 1 / 4}
         },
         [9] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1},
-            {type = "item", name = "air-conditioner", amount = 1 / 3}
+            {type = "item", name = "air-conditioner", amount = 1 / 3},
+            {type = "item", name = "stove", amount = 1 / 4},
+            {type = "item", name = "refrigerator", amount = 1 / 4}
         },
         [10] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1.5},
             {type = "item", name = "table", amount = 1},
             {type = "item", name = "cupboard", amount = 1.5},
-            {type = "item", name = "air-conditioner", amount = 1 / 2}
+            {type = "item", name = "air-conditioner", amount = 1 / 2},
+            {type = "item", name = "stove", amount = 1 / 4},
+            {type = "item", name = "refrigerator", amount = 1 / 4}
         }
     },
     furnishing_decorated = {
