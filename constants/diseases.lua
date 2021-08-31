@@ -94,7 +94,7 @@ Diseases.values = {
             ["thermostable-dna-polymerase"] = 1
         },
         curing_workload = 10,
-        curing_facility = Type.gene_clinic,
+        --curing_facility = Type.gene_clinic,
         categories = {[DiseaseCategory.birth_defect] = 50}
     },
     [2000] = {

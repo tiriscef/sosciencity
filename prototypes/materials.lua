@@ -406,7 +406,7 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "cloth", amount = 2},
-        {type = "item", name = "plemnemm-cotton", amount = 10},
+        {type = "item", name = "plemnemm-cotton", amount = 5},
         {type = "item", name = "screw-set", amount = 1}
     }
 }
@@ -447,7 +447,8 @@ Tirislib_RecipeGenerator.create {
     product = "painting",
     ingredients = {
         {type = "item", name = "lumber", amount = 1},
-        {type = "item", name = "cloth", amount = 1}
+        {type = "item", name = "cloth", amount = 1},
+        {type = "item", name = "ink", amount = 1}
     },
     category = "sosciencity-caste-ember"
 }
@@ -482,7 +483,7 @@ Tirislib_RecipeGenerator.create {
         {"wiring", 5, 10, 0},
         {"casing", 1}
     },
-    default_theme_level = 2
+    default_theme_level = 3
 }
 
 Tirislib_RecipeGenerator.create {
@@ -538,7 +539,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+--[[Tirislib_RecipeGenerator.create {
     product = "bucket",
     themes = {
         {"handle", 1},
@@ -546,7 +547,7 @@ Tirislib_RecipeGenerator.create {
     },
     energy_required = 0.8,
     unlock = "clockwork-caste"
-}
+}]]
 
 Tirislib_RecipeGenerator.create {
     product = "fishing-net",
@@ -743,18 +744,26 @@ Tirislib_RecipeGenerator.create {
     product_amount = 2,
     energy_required = 2,
     themes = {{"glass", 5, 10}, {"plastic", 2, 3}},
-    unlock = "genetic-neogenesis"
-}
-
-Tirislib_RecipeGenerator.create {
-    product = "semipermeable-membrane",
-    themes = {{"plastic", 5, 7}},
     default_theme_level = 2,
     unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
+    product = "semipermeable-membrane",
+    themes = {{"plastic", 5, 7}, {"framework", 1}},
+    default_theme_level = 2,
+    category = "chemistry",
+    unlock = "genetic-neogenesis"
+}
+
+Tirislib_RecipeGenerator.create {
     product = "nucleobases",
+    ingredients = {
+
+    },
+    expensive_ingredients = {
+
+    },
     unlock = "genetic-neogenesis"
 }
 
