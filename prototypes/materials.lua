@@ -724,7 +724,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "razha-bean", amount = 1},
         {type = "fluid", name = "clean-water", amount = 10}
     },
-    category = "sosciencity-orchid-food-processing",
+    category = Tirislib_RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
 }
 

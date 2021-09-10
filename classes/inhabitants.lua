@@ -62,7 +62,6 @@ local get_building_details = Buildings.get
 
 local castes = Castes.values
 local emigration_coefficient = Castes.emigration_coefficient
-local garbage_coefficient = Castes.garbage_coefficient
 
 local evaluate_diet = Inventories.evaluate_diet
 local evaluate_water = Inventories.evaluate_water
@@ -1496,7 +1495,7 @@ local function evaluate_sosciety(happiness_summands, health_summands, sanity_sum
     happiness_summands[HappinessSummand.ember] = caste_bonuses[Type.ember]
     health_summands[HealthSummand.plasma] = caste_bonuses[Type.plasma]
 
-    local fear_malus = global.fear * caste.fear_multiplier
+    local fear_malus = global.fear * caste.fear_resilience
     happiness_summands[HappinessSummand.fear] = fear_malus
     if fear_malus > 5 then
         health_summands[HealthSummand.fear] = fear_malus / 2
@@ -1560,13 +1559,13 @@ local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks
     entry[EK.emigration_trend] = trend
 end
 
-function Inhabitants.get_garbage_progress(inhabitants, delta_ticks)
-    return garbage_coefficient * inhabitants * delta_ticks
+function Inhabitants.get_garbage_progress(entry, delta_ticks)
+    return castes[entry[EK.type]].garbage_coefficient * entry[EK.inhabitants] * delta_ticks
 end
 local get_garbage_progress = Inhabitants.get_garbage_progress
 
 local function update_garbage_output(entry, delta_ticks)
-    local garbage = entry[EK.garbage_progress] + get_garbage_progress(entry[EK.inhabitants], delta_ticks)
+    local garbage = entry[EK.garbage_progress] + get_garbage_progress(entry, delta_ticks)
     if garbage >= 1 then
         local produced_garbage = floor(garbage)
         produce_garbage(entry, "garbage", produced_garbage)

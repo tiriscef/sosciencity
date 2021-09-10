@@ -597,8 +597,10 @@ RG.result_themes = {
 
 --- Table with (alias, name of RecipeCategory) pairs.
 RG.category_alias = {
+    drying = "crafting-with-fluid",
     filtration = "chemistry",
     fluid_mixing = "chemistry",
+    food_processing = "chemistry",
     handcrafting = "sosciencity-handcrafting",
     mixing = "crafting"
 }

@@ -937,38 +937,63 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         (entry[EK.emigration_trend] > 0) and {"sosciencity.positive-trend"} or {"sosciencity.negative-trend"}
     )
 
+    -- the annoying edge case of no inhabitants inside the house
+    if inhabitants == 0 then
+        set_kv_pair_value(general_list, "happiness", "-")
+        set_kv_pair_value(general_list, "health", "-")
+        set_kv_pair_value(general_list, "sanity", "-")
+        set_kv_pair_value(general_list, "calorific-demand", "-")
+        set_kv_pair_value(general_list, "water-demand", "-")
+        set_kv_pair_value(general_list, "power-demand", "-")
+        set_kv_pair_value(general_list, "garbage", "-")
+        set_kv_pair_value(general_list, "bonus", "-")
+        set_kv_pair_value(general_list, "employed-count", "-")
+        set_kv_pair_value(general_list, "diseased-count", "-")
+        set_kv_pair_visibility(general_list, "disease-rate", false)
+        return
+    end
+
     set_kv_pair_value(
         general_list,
         "happiness",
-        (inhabitants > 0) and display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry)) or "-"
+        display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry))
     )
     set_kv_pair_value(
         general_list,
         "health",
-        (inhabitants > 0) and display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry)) or "-"
+        display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry))
     )
     set_kv_pair_value(
         general_list,
         "sanity",
-        (inhabitants > 0) and display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry)) or "-"
+        display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry))
     )
     set_kv_pair_value(
         general_list,
         "calorific-demand",
         {
             "sosciencity.show-calorific-demand",
-            get_reasonable_number(caste.calorific_demand * Time.minute * inhabitants)
+            floor(caste.calorific_demand * Time.minute * inhabitants)
         }
     )
     set_kv_pair_value(
         general_list,
         "water-demand",
-        {"sosciencity.show-water-demand", caste.water_demand * Time.minute * inhabitants}
+        {"sosciencity.show-water-demand", floor(caste.water_demand * Time.minute * inhabitants)}
     )
     set_kv_pair_value(
         general_list,
         "power-demand",
-        {"sosciencity.current-power-demand", caste.power_demand / 1000 * Time.second * inhabitants}
+        {"sosciencity.current-power-demand", floor(caste.power_demand / 1000 * Time.second * inhabitants)}
+    )
+    set_kv_pair_value(
+        general_list,
+        "garbage",
+        {
+            "sosciencity.fraction",
+            display_item_stack("garbage", Inhabitants.get_garbage_progress(entry, Time.minute)),
+            {"sosciencity.minute"}
+        }
     )
 
     -- occupations
@@ -976,28 +1001,19 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_kv_pair_value(
         general_list,
         "bonus",
-        (inhabitants > 0) and
-            {
-                "sosciencity.show-bonus",
-                unemployed,
-                get_reasonable_number(entry[EK.caste_points]),
-                global.technologies[caste.effectivity_tech]
-            } or
-            "-"
+        {
+            "sosciencity.show-bonus",
+            unemployed,
+            get_reasonable_number(entry[EK.caste_points]),
+            global.technologies[caste.effectivity_tech]
+        }
     )
     local employed = entry[EK.employed]
     local diseased = inhabitants - unemployed - employed
-    set_kv_pair_value(
-        general_list,
-        "employed-count",
-        (inhabitants > 0) and {"sosciencity.show-employed-count", employed} or "-"
-    )
-    set_kv_pair_value(
-        general_list,
-        "diseased-count",
-        (inhabitants > 0) and {"sosciencity.show-diseased-count", diseased} or "-"
-    )
+    set_kv_pair_value(general_list, "employed-count", {"sosciencity.show-employed-count", employed})
+    set_kv_pair_value(general_list, "diseased-count", {"sosciencity.show-diseased-count", diseased})
 
+    set_kv_pair_visibility(general_list, "disease-rate", true)
     local disease_progress_flow = get_kv_value_element(general_list, "disease-rate")
     for category_name, category_id in pairs(DiseaseCategory) do
         local updater = Inhabitants.disease_progress_updaters[category_id]
@@ -1031,11 +1047,12 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
     add_kv_pair(general_list, "water-demand", {"sosciencity.water-demand"})
     add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
+    add_kv_pair(general_list, "garbage", {"sosciencity.garbage"})
     add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
     add_kv_pair(general_list, "employed-count", {"sosciencity.employed-count"})
     add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
 
-    local disease_progress_flow = add_kv_flow(general_list, "disease-rate", {"sosciencity.rate"})
+    local disease_progress_flow = add_kv_flow(general_list, "disease-rate")
     for category in pairs(Inhabitants.disease_progress_updaters) do
         local label =
             disease_progress_flow.add {

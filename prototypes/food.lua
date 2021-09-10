@@ -94,7 +94,7 @@ Tirislib_RecipeGenerator.create {
         {name = "chickpea", amount = 2},
         {name = "sesame", amount = 1}
     },
-    category = "sosciencity-orchid-food-processing",
+    category = Tirislib_RecipeGenerator.category_alias.food_processing,
     unlock = "hummus"
 }
 
@@ -103,7 +103,7 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "fluid", name = "solfaen", amount = 10}
     },
-    category = "sosciencity-drying-unit",
+    category = Tirislib_RecipeGenerator.category_alias.drying,
     unlock = "basic-biotechnology"
 }
 
@@ -113,6 +113,6 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "fluid", name = "soy-milk", amount = 20}
     },
-    category = "sosciencity-orchid-food-processing",
+    category = Tirislib_RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
 }
