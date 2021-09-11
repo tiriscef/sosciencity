@@ -1,5 +1,5 @@
 --- Constants related to time
-Time = {}
+local Time = {}
 
 -- realtime related constants
 --- length of a rl second in ticks

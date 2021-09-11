@@ -1,3 +1,6 @@
+local Castes = require("constants.castes")
+local Unlocks = require("constants.unlocks")
+
 --- Static class that keeps track of the research state of important technologies.
 Technologies = {}
 

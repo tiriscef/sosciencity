@@ -3,7 +3,7 @@ local Gender = require("enums.gender")
 local Humidity = require("enums.humidity")
 
 --- Values regarding carbon-based life-forms
-Biology = {}
+local Biology = {}
 
 --[[
     growth coefficient: 
@@ -306,3 +306,5 @@ end
 function Biology.get_species(recipe)
     return recipe and species_lookup[recipe.name] or nil
 end
+
+return Biology

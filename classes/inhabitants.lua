@@ -13,6 +13,13 @@ local HealthFactor = require("enums.health-factor")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
 
+local Buildings = require("constants.buildings")
+local Castes = require("constants.castes")
+local Diseases = require("constants.diseases")
+local Housing = require("constants.housing")
+local Time = require("constants.time")
+local TypeGroup = require("constants.type-groups")
+
 --- Static class that handles the behaviour of the people.
 Inhabitants = {}
 

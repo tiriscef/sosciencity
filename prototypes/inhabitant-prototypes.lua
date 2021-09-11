@@ -1,4 +1,4 @@
-require("constants.biology")
+local Biology = require("constants.biology")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>

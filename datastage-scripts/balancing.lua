@@ -1,4 +1,4 @@
-require("constants.food")
+local Food = require("constants.food")
 
 local all_recipes =
     Tirislib_Luaq.from(Tirislib_Recipe.all()):where(

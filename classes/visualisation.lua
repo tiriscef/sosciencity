@@ -1,5 +1,9 @@
 local EK = require("enums.entry-key")
 
+local Color = require("constants.color")
+local Types = require("constants.types")
+local Housing = require("constants.housing")
+
 --- Static class for all the functions that visualise the mod's concepts.
 Visualisation = {}
 
@@ -13,7 +17,7 @@ Visualisation = {}
 
 local try_get = Register.try_get
 local types = Types.definitions
-local get_building_details = Buildings.get
+local get_building_details = require("constants.buildings").get
 
 local max = math.max
 local get_box_size = Tirislib_Utils.get_box_size
@@ -50,8 +54,8 @@ end
 local range_highlight_alpha = 0.15
 local range_highlight_colors = {}
 
-for _type, definition in pairs(Types.definitions) do
-    local color = Tirislib_Tables.copy(definition.signature_color or Colors.grey)
+for _type, definition in pairs(types) do
+    local color = Tirislib_Tables.copy(definition.signature_color or Color.grey)
     premultiply_with_alpha(color, range_highlight_alpha)
     range_highlight_colors[_type] = color
 end
@@ -173,7 +177,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
         surface = entity.surface,
         players = {player_id},
         alignment = "center",
-        color = Colors.white,
+        color = Color.white,
         only_in_alt_mode = true
     }
 end

@@ -1,22 +1,23 @@
 ---------------------------------------------------------------------------------------------------
--- << load enums >>
+-- << enums >>
 
 local ConnectionType = require("enums.connection-type")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 ---------------------------------------------------------------------------------------------------
--- << load constants >>
+-- << constants >>
 
-require("constants.buildings")
-require("constants.colors")
-require("constants.housing")
-require("constants.type-groups")
-
-Types = {}
+local Buildings = require("constants.buildings")
+local Color = require("constants.color")
+local Housing = require("constants.housing")
+local TypeGroup = require("constants.type-groups")
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
+
+--- Entry type definitions
+local Types = {}
 
 local inhabitant_subscriptions = {
     [Type.market] = ConnectionType.bidirectional,
@@ -106,7 +107,7 @@ Types.definitions = {
     [Type.market] = {
         localised_name = {"sosciencity.market"},
         localised_description = {"sosciencity.explain-market"},
-        signature_color = Colors.orange,
+        signature_color = Color.orange,
         subscriptions = {
             [Type.clockwork] = ConnectionType.bidirectional,
             [Type.orchid] = ConnectionType.bidirectional,
@@ -122,12 +123,12 @@ Types.definitions = {
     [Type.composter] = {
         localised_name = {"sosciencity.composter"},
         localised_description = {"sosciencity.explain-composter"},
-        signature_color = Colors.brown
+        signature_color = Color.brown
     },
     [Type.composter_output] = {
         localised_name = {"sosciencity.composter-output"},
         localised_description = {"sosciencity.explain-composter-output"},
-        signature_color = Colors.brown,
+        signature_color = Color.brown,
         subscriptions = {
             [Type.composter] = ConnectionType.bidirectional
         }
@@ -135,7 +136,7 @@ Types.definitions = {
     [Type.water_distributer] = {
         localised_name = {"sosciencity.water-distributer"},
         localised_description = {"sosciencity.explain-water-distributer"},
-        signature_color = Colors.light_teal,
+        signature_color = Color.light_teal,
         subscriptions = {
             [Type.clockwork] = ConnectionType.to_neighbor,
             [Type.orchid] = ConnectionType.to_neighbor,
@@ -151,7 +152,7 @@ Types.definitions = {
     [Type.dumpster] = {
         localised_name = {"sosciencity.dumpster"},
         localised_description = {"sosciencity.explain-dumpster"},
-        signature_color = Colors.grey,
+        signature_color = Color.grey,
         is_civil = true
     },
     [Type.immigration_port] = {
@@ -162,7 +163,7 @@ Types.definitions = {
     [Type.nightclub] = {
         localised_name = {"sosciencity.nightclub"},
         localised_description = {"sosciencity.explain-nightclub"},
-        signature_color = Colors.purple,
+        signature_color = Color.purple,
         subscriptions = {
             [Type.clockwork] = ConnectionType.from_neighbor,
             [Type.orchid] = ConnectionType.from_neighbor,
@@ -195,26 +196,26 @@ Types.definitions = {
         localised_description = {"sosciencity.explain-hospital"},
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
-        signature_color = Colors.darkish_red,
+        signature_color = Color.darkish_red,
         subscriptions = hospital_subscriptions,
         is_civil = true
     },
     [Type.psych_ward] = {
         localised_name = {"item-name.psych-ward"},
         localised_description = {"item-description.psych-ward"},
-        signature_color = Colors.darkish_red,
+        signature_color = Color.darkish_red,
         is_civil = true
     },
     [Type.intensive_care_unit] = {
         localised_name = {"item-name.intensive-care-unit"},
         localised_description = {"item-description.intensive-care-unit"},
-        signature_color = Colors.darkish_red,
+        signature_color = Color.darkish_red,
         is_civil = true
     },
     [Type.gene_clinic] = {
         localised_name = {"item-name.gene-clinic"},
         localised_description = {"item-description.gene-clinic"},
-        signature_color = Colors.darkish_red,
+        signature_color = Color.darkish_red,
         is_civil = true
     },
     [Type.waterwell] = {
@@ -223,7 +224,7 @@ Types.definitions = {
         subscriptions = {
             [Type.waterwell] = ConnectionType.bidirectional
         },
-        signature_color = Colors.blue,
+        signature_color = Color.blue,
         is_civil = true
     },
     [Type.fishery] = {
@@ -271,7 +272,7 @@ Types.definitions = {
         }
     },
     [Type.animal_farm] = {
-        signature_color = Colors.brown
+        signature_color = Color.brown
     },
     [Type.turret] = {},
     [Type.lab] = {
@@ -287,7 +288,7 @@ Types.definitions = {
         subscriptions = {
             [Type.farm] = ConnectionType.to_neighbor
         },
-        signature_color = Colors.yellowish_green
+        signature_color = Color.yellowish_green
     },
     [Type.cooling_warehouse] = {
         localised_name = {"sosciencity.cooling-warehouse"},
@@ -351,3 +352,5 @@ end
 function Types.get(entry)
     return definitions[entry[EK.type]]
 end
+
+return Types

@@ -4,6 +4,13 @@ local ImmigrationCause = require("enums.immigration-cause")
 local Type = require("enums.type")
 local WasteDumpOperationMode = require("enums.waste-dump-operation-mode")
 
+local Biology = require("constants.biology")
+local Buildings = require("constants.buildings")
+local DrinkingWater = require("constants.drinking-water")
+local ItemConstants = require("constants.item-constants")
+local Time = require("constants.time")
+local TypeGroup = require("constants.type-groups")
+
 ---Static class for the game logic of my entities.
 Entity = {}
 

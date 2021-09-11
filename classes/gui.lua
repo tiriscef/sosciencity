@@ -10,6 +10,19 @@ local HealthFactor = require("enums.health-factor")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
 
+local Biology = require("constants.biology")
+local Buildings = require("constants.buildings")
+local Castes = require("constants.castes")
+local Color = require("constants.color")
+local Diseases = require("constants.diseases")
+local Food = require("constants.food")
+local Housing = require("constants.housing")
+local ItemConstants = require("constants.item-constants")
+local Time = require("constants.time")
+local TypeGroup = require("constants.type-groups")
+local Types = require("constants.types")
+local WeatherLocales = require("constants.weather-locales")
+
 --- Static class for all the gui stuff.
 Gui = {}
 
@@ -46,9 +59,9 @@ local display_percentage = Tirislib_Locales.display_percentage
 local display_item_stack = Tirislib_Locales.display_item_stack
 local display_time = Tirislib_Locales.display_time
 
-local climate_locales = Weather.climate_locales
-local humidity_locales = Weather.humidity_locales
-local weather_locales = Weather.weather_locales
+local climate_locales = WeatherLocales.climate
+local humidity_locales = WeatherLocales.humidity
+local weather_locales = WeatherLocales.weather
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -1094,7 +1107,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
         }
 
         if assessment then
-            quality_text.style.font_color = assessment > 0 and Colors.green or Colors.red
+            quality_text.style.font_color = assessment > 0 and Color.green or Color.red
         end
     end
 

@@ -1,5 +1,4 @@
-require("constants.housing")
-require("constants.castes")
+local Housing = require("constants.housing")
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local housing_prototype_details = {

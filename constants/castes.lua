@@ -2,10 +2,10 @@ local Gender = require("enums.gender")
 local Taste = require("enums.taste")
 local Type = require("enums.type")
 
-require("constants.time")
+local Time = require("constants.time")
 
 --- Things that define different kinds of people.
-Castes = {}
+local Castes = {}
 
 Castes.values = {
     [Type.clockwork] = {
@@ -348,3 +348,5 @@ for _, caste in pairs(Castes.values) do
     -- to immigrants per tick
     caste.immigration_coefficient = caste.immigration_coefficient / Time.minute
 end
+
+return Castes

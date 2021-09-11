@@ -1,15 +1,11 @@
 local EK = require("enums.entry-key")
-require("constants.castes")
+
+local Castes = require("constants.castes")
 
 --- Things that people live in.
-Housing = {}
+local Housing = {}
 
 Housing.values = {
-    ["test-house"] = {
-        room_count = 200,
-        comfort = 10,
-        qualities = {}
-    },
     ["improvised-hut"] = {
         room_count = 4,
         comfort = 0,
@@ -68,6 +64,11 @@ Housing.values = {
         room_count = 10,
         comfort = 8,
         qualities = {"spacey", "individualistic", "tall"}
+    },
+    ["test-house"] = {
+        room_count = 200,
+        comfort = 10,
+        qualities = {}
     }
 }
 local houses = Housing.values
@@ -127,3 +128,5 @@ do
 
     Tirislib_Tables.set_fields(houses, to_add)
 end
+
+return Housing

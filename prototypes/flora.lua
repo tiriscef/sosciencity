@@ -1,8 +1,8 @@
 local Humidity = require("enums.humidity")
 
-require("constants.food")
-require("constants.unlocks")
-require("constants.biology")
+local Biology = require("constants.biology")
+local Unlocks = require("constants.unlocks")
+local WeatherLocales = require("constants.weather-locales")
 
 require("classes.weather")
 
@@ -87,8 +87,8 @@ local function create_annual_recipe(details)
             localised_description = {
                 "recipe-description.annual",
                 product:get_localised_name(),
-                Weather.climate_locales[plant_details.preferred_climate],
-                Weather.humidity_locales[plant_details.preferred_humidity],
+                WeatherLocales.climate[plant_details.preferred_climate],
+                WeatherLocales.humidity[plant_details.preferred_humidity],
                 Tirislib_Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
                 Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
@@ -132,8 +132,8 @@ local function create_perennial_recipe(details)
             localised_description = {
                 "recipe-description.perennial",
                 product:get_localised_name(),
-                Weather.climate_locales[plant_details.preferred_climate],
-                Weather.humidity_locales[plant_details.preferred_humidity],
+                WeatherLocales.climate[plant_details.preferred_climate],
+                WeatherLocales.humidity[plant_details.preferred_humidity],
                 Tirislib_Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
                 Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },

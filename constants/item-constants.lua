@@ -1,5 +1,5 @@
---- Item
-ItemConstants = {}
+--- Various item-related constants
+local ItemConstants = {}
 
 ItemConstants.garbage_items = {
     ["garbage"] = true,
@@ -72,10 +72,6 @@ ItemConstants.compost_values = {
     ["zetorn-wood"] = wood_compost_value,
 }
 
-ItemConstants.beverages = {
-    ["tiriscefing-whiskey"] = {}
-}
-
 ItemConstants.mold_producers = {
     ["bell-pepper"] = true,
     ["blue-grapes"] = true,
@@ -92,3 +88,5 @@ ItemConstants.mold_producers = {
     ["weird-berry"] = true,
     ["zetorn"] = true
 }
+
+return ItemConstants

@@ -1,4 +1,4 @@
-require("constants.food")
+local Food = require("constants.food")
 
 local function create_hunting_gathering_recipe(details)
     Tirislib_RecipeGenerator.merge_details(

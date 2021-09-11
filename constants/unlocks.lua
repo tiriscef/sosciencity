@@ -1,6 +1,6 @@
 --- Returns an array with (technology_name, item_name)-pairs.
 --- The technologies are hidden and get enabled when the player aquired the given item.
-Unlocks = {}
+local Unlocks = {}
 
 local function get_tech_name(item_name)
     return string.format("sosciencity-unlock-%s", item_name)
