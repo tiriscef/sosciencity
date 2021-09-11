@@ -540,12 +540,44 @@ end
 --- @param item_name string
 --- @return EntityPrototype itself
 function Tirislib_Entity:copy_localisation_from_item(item_name)
-    item_name = item_name or self.name
+    if not item_name then
+        if self.minable then
+            item_name = self.minable.result
+            -- TODO: annoying case of results-table instead of single result
+        else
+            item_name = self.name
+        end
+    end
+
     local item, found = Tirislib_Item.get_by_name(item_name)
 
     if found then
         self.localised_name = item:get_localised_name()
         self.localised_description = item:get_localised_description()
+    end
+
+    return self
+end
+
+--- Copies the icon of the item with the given name to this EntityPrototype.
+--- @param item_name string
+--- @return EntityPrototype itself
+function Tirislib_Entity:copy_icon_from_item(item_name)
+    if not item_name then
+        if self.minable then
+            item_name = self.minable.result
+            -- TODO: annoying case of results-table instead of single result
+        else
+            item_name = self.name
+        end
+    end
+
+    local item, found = Tirislib_Item.get_by_name(item_name)
+
+    if found then
+        self.icon = item.icon
+        self.icons = item.icons
+        self.icon_size = item.icon_size
     end
 
     return self
