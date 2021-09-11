@@ -1,3 +1,9 @@
+local DiseaseCategory = require("enums.disease-category")
+local EK = require("enums.entry-key")
+local ImmigrationCause = require("enums.immigration-cause")
+local Type = require("enums.type")
+local WasteDumpOperationMode = require("enums.waste-dump-operation-mode")
+
 ---Static class for the game logic of my entities.
 Entity = {}
 

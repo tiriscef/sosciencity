@@ -1,3 +1,5 @@
+local EK = require("enums.entry-key")
+
 --- Static class for all the functions that visualise the mod's concepts.
 Visualisation = {}
 

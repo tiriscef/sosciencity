@@ -1,3 +1,18 @@
+local DeathCause = require("enums.death-cause")
+local DeconstructionCause = require("enums.deconstruction-cause")
+local DiseaseCategory = require("enums.disease-category")
+local EK = require("enums.entry-key")
+local EmigrationCause = require("enums.emigration-cause")
+local Gender = require("enums.gender")
+local Type = require("enums.type")
+
+local HappinessSummand = require("enums.happiness-summand")
+local HappinessFactor = require("enums.happiness-factor")
+local HealthSummand = require("enums.health-summand")
+local HealthFactor = require("enums.health-factor")
+local SanitySummand = require("enums.sanity-summand")
+local SanityFactor = require("enums.sanity-factor")
+
 --- Static class that handles the behaviour of the people.
 Inhabitants = {}
 
@@ -428,7 +443,7 @@ function GenderGroup.new(neutral, fale, pachin, ga)
 end
 
 function GenderGroup.new_immigrants(count, caste)
-    return dice_rolls(castes[caste].gender_distribution, count, 20)
+    return dice_rolls(castes[caste].immigration_genders, count, 20)
 end
 
 function GenderGroup.merge(lh, rh, keep_rh)

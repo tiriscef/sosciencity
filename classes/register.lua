@@ -1,3 +1,7 @@
+local DeconstructionCause = require("enums.deconstruction-cause")
+local EK = require("enums.entry-key")
+local Type = require("enums.type")
+
 --- Static class that stores and manages entities in hopefully performant ways.
 Register = {}
 

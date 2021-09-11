@@ -1,3 +1,6 @@
+local EK = require("enums.entry-key")
+local DeconstructionCause = require("enums.deconstruction-cause")
+
 ---------------------------------------------------------------------------------------------------
 -- << debug stuff >>
 
@@ -66,7 +69,6 @@ require("constants.biology")
 require("constants.castes")
 require("constants.colors")
 require("constants.diseases")
-require("constants.enums")
 require("constants.item-constants")
 require("constants.types")
 require("constants.food")
@@ -109,6 +111,7 @@ require("classes.gui")
 ---@class DiseaseCategory
 ---@class AgeGroup
 ---@class GenderGroup
+
 
 --[[
     Data this script stores in global

@@ -69,7 +69,7 @@ function Tirislib_Fluid.create(prototype)
 end
 
 --- Creates a bunch of fluid prototypes.\
---- *Fluid specification:*\
+--- **Fluid specification:**\
 --- **name:** name of the fluid prototype\
 --- **distinctions:** table of prototype fields that should be different from the batch specification
 --- @param fluid_detail_array table

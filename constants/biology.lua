@@ -1,4 +1,6 @@
-require("constants.enums")
+local Climate = require("enums.climate")
+local Gender = require("enums.gender")
+local Humidity = require("enums.humidity")
 
 --- Values regarding carbon-based life-forms
 Biology = {}

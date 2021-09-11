@@ -1,4 +1,6 @@
-require("constants.enums")
+local EK = require("enums.entry-key")
+local Type = require("enums.type")
+
 require("constants.housing")
 
 --- Defines the general custom properties for various entities.

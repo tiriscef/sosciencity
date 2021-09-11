@@ -1,3 +1,5 @@
+local Humidity = require("enums.humidity")
+
 require("constants.food")
 require("constants.unlocks")
 require("constants.biology")

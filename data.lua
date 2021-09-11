@@ -36,3 +36,6 @@ require("prototypes.hidden.electric-energy-interface")
 require("prototypes.hidden.sprites")
 
 Tirislib_Prototype:finish()
+
+local enum_test = dofile("enums.test")
+

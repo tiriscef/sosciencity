@@ -15,3 +15,5 @@ Time.nauvis_day = 25000
 Time.nauvis_week = Time.nauvis_day * 7
 --- a month is fixed to 4 weeks or 28 days because that's easier
 Time.nauvis_month = Time.nauvis_week * 4
+
+return Time
