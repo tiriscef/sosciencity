@@ -1,5 +1,5 @@
 --- Things that people like (and need) to drink.
-DrinkingWater = {}
+local DrinkingWater = {}
 
 DrinkingWater.values = {
     ["clean-water"] = {
@@ -18,3 +18,5 @@ DrinkingWater.values = {
         health = 0
     }
 }
+
+return DrinkingWater

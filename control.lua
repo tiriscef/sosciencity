@@ -63,21 +63,9 @@ end
 require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
--- << runtime finals >>
+-- << constants >>
 
-require("constants.biology")
-require("constants.castes")
-require("constants.colors")
-require("constants.diseases")
-require("constants.item-constants")
-require("constants.types")
-require("constants.food")
-require("constants.housing")
-require("constants.buildings")
-require("constants.drinking-water")
-require("constants.speakers")
-require("constants.time")
-require("constants.unlocks")
+local Types = require("constants.types")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>

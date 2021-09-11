@@ -1,6 +1,6 @@
 local Type = require("enums.type")
 
-TypeGroup = {}
+local TypeGroup = {}
 
 TypeGroup.all_castes = {
     Type.clockwork,

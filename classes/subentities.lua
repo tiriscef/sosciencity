@@ -16,9 +16,9 @@ Subentities.subentity_name_lookup = {
 }
 local subentity_names = Subentities.subentity_name_lookup
 
-local get_type = Types.get
+local get_type = require("constants.types").get
 
-local get_building_details = Buildings.get
+local get_building_details = require("constants.buildings").get
 
 local max = math.max
 local get_subtbl = Tirislib_Tables.get_subtbl

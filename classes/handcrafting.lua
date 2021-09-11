@@ -1,3 +1,6 @@
+local Biology = require("constants.biology")
+local Time = require("constants.time")
+
 ---Static class for the game logic of handcrafting side effects.
 Handcrafting = {}
 

@@ -1,7 +1,7 @@
 local Taste = require("enums.taste")
 
 --- Things that people like (and need) to eat.
-Food = {}
+local Food = {}
 
 --fat, carbohydrates and proteins are in g per 100g
 --portion_size is in kg
@@ -467,3 +467,5 @@ for _, food in pairs(Food.values) do
     -- the magic 10 is just to get from 100g to 1kg
     food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
 end
+
+return Food

@@ -2,6 +2,10 @@ local DeathCause = require("enums.death-cause")
 local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
 
+local Castes = require("constants.castes")
+local Speakers = require("constants.speakers")
+local Time = require("constants.time")
+
 --- Static class for all the functions that tell the player something through various means.
 --- Communication is very important in a relationship.
 Communication = {}

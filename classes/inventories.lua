@@ -9,6 +9,11 @@ local HealthFactor = require("enums.health-factor")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
 
+local Biology = require("constants.biology")
+local Castes = require("constants.castes")
+local Food = require("constants.food")
+local ItemConstants = require("constants.item-constants")
+
 --- Static class for the manipulation of inventories, items and fluids.
 Inventories = {}
 

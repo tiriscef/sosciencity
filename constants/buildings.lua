@@ -1,10 +1,11 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
-require("constants.housing")
+local Time = require("constants.time")
+local Housing = require("constants.housing")
 
 --- Defines the general custom properties for various entities.
-Buildings = {}
+local Building = {}
 
 local range_by_foot = 50
 
@@ -12,7 +13,7 @@ local range_by_foot = 50
 --- **range:** number (tiles) or "global"\
 --- **power_usage:** number (kW)\
 --- **speed:** number (1/tick)
-Buildings.values = {
+Building.values = {
     ["arboretum"] = {
         type = Type.farm,
         open_environment = true
@@ -261,10 +262,10 @@ Buildings.values = {
         range = 42
     }
 }
-local buildings = Buildings.values
+local buildings = Building.values
 
 -- values postprocessing
-for _, details in pairs(Buildings.values) do
+for _, details in pairs(Building.values) do
     -- convert power usages to J / tick
     if details.power_usage then
         details.power_usage = details.power_usage * 1000 / Time.second
@@ -277,7 +278,9 @@ local housing_details = {
 }
 
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
-function Buildings.get(entry)
+function Building.get(entry)
     local name = entry[EK.name]
     return buildings[name] or (houses[name] and housing_details) or {}
 end
+
+return Building

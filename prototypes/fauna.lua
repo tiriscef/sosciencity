@@ -1,4 +1,4 @@
-require("constants.unlocks")
+local Unlocks = require("constants.unlocks")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>

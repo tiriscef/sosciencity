@@ -1,4 +1,4 @@
-require("constants.diseases")
+local Diseases = require("constants.diseases")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>

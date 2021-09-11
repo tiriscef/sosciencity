@@ -1,11 +1,11 @@
 local DiseaseCategory = require("enums.disease-category")
 local Type = require("enums.type")
 
-require("constants.time")
-require("constants.types")
+local Time = require("constants.time")
+local Types = require("constants.types")
 
 --- A disease is a particular abnormal condition that negatively affects the structure or function of all or part of an organism
-Diseases = {}
+local Diseases = {}
 
 --- Disease definitions\
 --- **name:** prototype name of the disease\
@@ -285,3 +285,5 @@ do
         end
     end
 end
+
+return Diseases
