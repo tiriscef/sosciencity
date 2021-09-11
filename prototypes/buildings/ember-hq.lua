@@ -34,12 +34,24 @@ Tirislib_Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 1,
+                frame_count = 1
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/ember-caste.png",
+                priority = "high",
+                width = 256,
+                height = 256,
+                scale = 0.8,
+                frame_count = 1
+            }
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-caste-ember"},
@@ -50,4 +62,4 @@ Tirislib_Entity.create {
         emissions_per_minute = 0.25,
         drain = "10kW"
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item()

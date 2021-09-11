@@ -14,6 +14,7 @@ Tirislib_Item.batch_create(idea_items, {subgroup = "sosciencity-ideas", stack_si
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+
 Tirislib_Recipe.create {
     type = "recipe",
     name = "brainstorm",
@@ -50,90 +51,82 @@ Tirislib_Recipe.create {
 
 Tirislib_RecipeGenerator.create {
     product = "note",
+    product_amount = 4,
     category = "sosciencity-caste-clockwork",
-    energy_required = 10,
-    expensive_energy_required = 15,
-    unlock = "clockwork-caste"
-}
-
-Tirislib_RecipeGenerator.create {
-    product = "note",
-    product_amount = 8,
-    category = "sosciencity-caste-clockwork",
-    energy_required = 8,
-    expensive_energy_required = 16,
-    ingredients = {
-        {type = "item", name = "tiriscefing-whisky", amount = 1}
-    },
+    energy_required = 2,
+    expensive_energy_required = 3,
     unlock = "clockwork-caste"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "essay",
-    product_amount = 7,
+    product_amount = 4,
     category = "sosciencity-caste-orchid",
-    energy_required = 5,
-    expensive_energy_required = 10,
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
-        {type = "item", name = "phytofall-blossom", amount = 2}
+        {type = "item", name = "phytofall-blossom", amount = 1}
     },
-    expensive_multiplier = 1.5,
     unlock = "orchid-caste"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "strategic-considerations",
-    product_amount = 7,
+    product_amount = 4,
     category = "sosciencity-caste-gunfire",
-    energy_required = 10,
-    expensive_energy_required = 20,
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
-        {type = "item", name = "tiriscefing-whisky", amount = 1}
+        {type = "item", name = "writing-paper", amount = 1}
     },
     unlock = "gunfire-caste"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "sketchbook",
-    product_amount = 7,
+    product_amount = 4,
     category = "sosciencity-caste-ember",
-    energy_required = 10,
-    expensive_energy_required = 20,
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
+        {type = "item", name = "writing-paper", amount = 1},
+        {type = "item", name = "ink", amount = 1}
     },
     unlock = "ember-caste"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "complex-scientific-data",
-    product_amount = 7,
+    product_amount = 4,
     category = "sosciencity-caste-foundry",
-    energy_required = 10,
-    expensive_energy_required = 20,
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
-        {"empty-hard-drive", 1}
+        {type = "item", name = "empty-hard-drive", amount = 4}
     },
     unlock = "foundry-caste"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "published-paper",
-    product_amount = 7,
+    product_amount = 4,
     category = "sosciencity-caste-gleam",
-    energy_required = 10,
-    expensive_energy_required = 20,
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
+        {type = "item", name = "complex-scientific-data", amount = 2}
     },
     unlock = "gleam-caste"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "well-funded-scientific-thesis",
-    product_amount = 7,
+    product_amount = 4,
     category = "sosciencity-caste-aurora",
-    energy_required = 10,
-    expensive_energy_required = 20,
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
-    },
-    unlock = "aurora-caste"
+        {type = "item", name = "published-paper", amount = 20}
+    }
+    --unlock = "aurora-caste"
 }

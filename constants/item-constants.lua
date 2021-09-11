@@ -4,6 +4,7 @@ ItemConstants = {}
 ItemConstants.garbage_items = {
     ["garbage"] = true,
     ["food-leftovers"] = true,
+    ["leafage"] = true,
     ["slaughter-waste"] = true
 }
 
