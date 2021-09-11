@@ -579,6 +579,10 @@ RG.ingredient_themes = {
     housing_sheltered = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 1}
+        },
+        [2] = {
+            {type = "item", name = "steel-plate", amount = 1},
+            {type = "item", name = "concrete", amount = 1}
         }
     }
 }

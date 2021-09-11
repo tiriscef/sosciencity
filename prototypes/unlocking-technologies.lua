@@ -24,7 +24,9 @@ Tirislib_Technology.create {
     },
     upgrade = false,
     enabled = false,
-    is_hack = true
+    is_hack = true,
+    localised_name = {"technology-name.hidden-technology"},
+    localised_description = {"technology-description.hidden-technology"}
 }
 
 for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
