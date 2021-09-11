@@ -1,3 +1,14 @@
+local EK = require("enums.entry-key")
+local Taste = require("enums.taste")
+local Type = require("enums.type")
+
+local HappinessSummand = require("enums.happiness-summand")
+local HappinessFactor = require("enums.happiness-factor")
+local HealthSummand = require("enums.health-summand")
+local HealthFactor = require("enums.health-factor")
+local SanitySummand = require("enums.sanity-summand")
+local SanityFactor = require("enums.sanity-factor")
+
 --- Static class for the manipulation of inventories, items and fluids.
 Inventories = {}
 

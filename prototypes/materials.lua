@@ -502,8 +502,8 @@ Tirislib_RecipeGenerator.create {
         {name = "tiriscefing-willow-wood", amount = 5}
     },
     allow_productivity = true,
-    unlock = "clockwork-caste"
-}
+    unlock = "ember-caste"
+}:add_unlock("gunfire-caste")
 
 Tirislib_RecipeGenerator.create {
     product = "writing-paper",
@@ -516,7 +516,7 @@ Tirislib_RecipeGenerator.create {
     themes = {{"paper_production", 1}},
     allow_productivity = true,
     unlock = "ember-caste"
-}
+}:add_unlock("gunfire-caste")
 
 Tirislib_RecipeGenerator.create {
     product = "trap",

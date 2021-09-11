@@ -1,4 +1,4 @@
-require("constants.enums")
+local Taste = require("enums.taste")
 
 --- Things that people like (and need) to eat.
 Food = {}

@@ -1,3 +1,6 @@
+local EK = require("enums.entry-key")
+local SubentityType = require("enums.subentity-type")
+
 --- Static class that handles hidden entities that hack additional behaviours.
 Subentities = {}
 

@@ -1,52 +1,19 @@
-require("constants.buildings")
-require("constants.colors")
-require("constants.enums")
-require("constants.housing")
+---------------------------------------------------------------------------------------------------
+-- << load enums >>
 
-Types = {}
+local ConnectionType = require("enums.connection-type")
+local EK = require("enums.entry-key")
+local Type = require("enums.type")
 
 ---------------------------------------------------------------------------------------------------
--- << type groups >>
-TypeGroup = {}
+-- << load constants >>
 
-TypeGroup.all_castes = {
-    Type.clockwork,
-    Type.orchid,
-    Type.gunfire,
-    Type.ember,
-    Type.foundry,
-    Type.gleam,
-    Type.aurora,
-    Type.plasma
-}
+require("constants.buildings")
+require("constants.colors")
+require("constants.housing")
+require("constants.type-groups")
 
-TypeGroup.breedable_castes = {
-    Type.clockwork,
-    Type.orchid,
-    Type.gunfire,
-    Type.ember,
-    Type.foundry,
-    Type.gleam,
-    Type.plasma
-}
-
-TypeGroup.affected_by_clockwork = {
-    Type.assembling_machine,
-    Type.furnace,
-    Type.rocket_silo,
-    Type.mining_drill,
-    Type.waterwell
-}
-
-TypeGroup.social_places = {
-    Type.nightclub
-}
-
-TypeGroup.hospital_complements = {
-    Type.pharmacy,
-    Type.psych_ward,
-    Type.intensive_care_unit
-}
+Types = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>

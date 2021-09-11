@@ -1,3 +1,15 @@
+local DiseaseCategory = require("enums.disease-category")
+local EK = require("enums.entry-key")
+local Type = require("enums.type")
+local WasteDumpOperationMode = require("enums.waste-dump-operation-mode")
+
+local HappinessSummand = require("enums.happiness-summand")
+local HappinessFactor = require("enums.happiness-factor")
+local HealthSummand = require("enums.health-summand")
+local HealthFactor = require("enums.health-factor")
+local SanitySummand = require("enums.sanity-summand")
+local SanityFactor = require("enums.sanity-factor")
+
 --- Static class for all the gui stuff.
 Gui = {}
 

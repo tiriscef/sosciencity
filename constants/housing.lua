@@ -1,4 +1,4 @@
-require("constants.enums")
+local EK = require("enums.entry-key")
 require("constants.castes")
 
 --- Things that people live in.

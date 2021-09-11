@@ -1,3 +1,6 @@
+local ConnectionType = require("enums.connection-type")
+local EK = require("enums.entry-key")
+
 --- Static class that takes care of the relations between entities.
 Neighborhood = {}
 

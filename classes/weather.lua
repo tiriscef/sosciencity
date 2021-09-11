@@ -1,3 +1,6 @@
+local Climate = require("enums.climate")
+local Humidity = require("enums.humidity")
+
 --- Static class that handles the nauvis weather.
 Weather = {}
 

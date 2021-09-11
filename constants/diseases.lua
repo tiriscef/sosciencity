@@ -1,4 +1,6 @@
-require("constants.enums")
+local DiseaseCategory = require("enums.disease-category")
+local Type = require("enums.type")
+
 require("constants.time")
 require("constants.types")
 
