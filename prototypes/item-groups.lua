@@ -179,20 +179,21 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas-per-hand",
+        name = "sosciencity-inhabitants",
         group = "sosciencity-production",
-        order = "aia"
+        order = "aja"
+    },
+    -- idea items/recipes in the vanilla intermediate tab
+    {
+        type = "item-subgroup",
+        name = "sosciencity-ideas-per-hand",
+        group = "intermediate-products",
+        order = "hb"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-ideas",
-        group = "sosciencity-production",
-        order = "aib"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-inhabitants",
-        group = "sosciencity-production",
-        order = "aja"
+        group = "intermediate-products",
+        order = "ha"
     }
 }

@@ -11,6 +11,196 @@ local range_by_foot = 50
 --- **power_usage:** number (kW)\
 --- **speed:** number (1/tick)
 Buildings.values = {
+    ["arboretum"] = {
+        type = Type.farm,
+        open_environment = true
+    },
+    ["architectural-office"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 8,
+            castes = {Type.clockwork, Type.gleam, Type.foundry}
+        }
+    },
+    ["bloomhouse"] = {
+        type = Type.farm,
+        workforce = {
+            count = 2,
+            castes = {Type.orchid}
+        }
+    },
+    ["clockwork-hq"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 20,
+            castes = {Type.clockwork}
+        }
+    },
+    ["composting-silo"] = {
+        type = Type.composter,
+        capacity = 5000
+    },
+    ["composting-silo-output"] = {
+        type = Type.composter_output,
+        range = 5
+    },
+    ["cooling-warehouse"] = {
+        type = Type.cooling_warehouse
+    },
+    ["egg-collecting-station"] = {
+        type = Type.egg_collector,
+        range = 40
+    },
+    ["ember-hq"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 20,
+            castes = {Type.ember}
+        }
+    },
+    ["farm"] = {
+        type = Type.farm,
+        open_environment = true
+    },
+    ["fishing-hut"] = {
+        type = Type.fishery,
+        range = 30,
+        water_tiles = 300,
+        workforce = {
+            count = 4,
+            castes = {Type.clockwork}
+        }
+    },
+    ["foundry-hq"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 20,
+            castes = {Type.foundry}
+        }
+    },
+    ["gene-clinic"] = {
+        type = Type.gene_clinic,
+        range = 7
+    },
+    ["gleam-hq"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 20,
+            castes = {Type.gleam}
+        }
+    },
+    ["greenhouse"] = {
+        type = Type.farm
+    },
+    ["groundwater-pump"] = {
+        type = Type.waterwell,
+        range = 64
+    },
+    ["gunfire-hq"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 20,
+            castes = {Type.gunfire}
+        }
+    },
+    ["hospital"] = {
+        type = Type.hospital,
+        range = 50,
+        speed = 2 / Time.second,
+        workforce = {
+            count = 10,
+            castes = {Type.plasma}
+        },
+        power_usage = 100
+    },
+    ["hunting-hut"] = {
+        type = Type.hunting_hut,
+        range = 30,
+        tree_count = 100,
+        workforce = {
+            count = 4,
+            castes = {Type.clockwork}
+        }
+    },
+    ["industrial-animal-farm"] = {
+        type = Type.animal_farm,
+        range = 50
+    },
+    ["intensive-care-unit"] = {
+        type = Type.intensive_care_unit,
+        range = 7
+    },
+    ["market-hall"] = {
+        type = Type.market,
+        range = range_by_foot
+    },
+    ["nightclub"] = {
+        type = Type.nightclub,
+        power_usage = 100
+    },
+    ["orangery"] = {
+        type = Type.farm
+    },
+    ["orchid-food-factory"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 10,
+            castes = {Type.orchid}
+        }
+    },
+    ["orchid-hq"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 20,
+            castes = {Type.orchid}
+        }
+    },
+    ["orchid-plant-care-station"] = {
+        type = Type.plant_care_station,
+        range = 30,
+        speed = 60 / Time.minute,
+        humus_capacity = 1000,
+        workforce = {
+            count = 2,
+            castes = {Type.orchid}
+        }
+    },
+    ["pharmacy"] = {
+        type = Type.pharmacy,
+        range = "global"
+    },
+    ["psych-ward"] = {
+        type = Type.psych_ward,
+        range = 7
+    },
+    ["trash-site"] = {
+        type = Type.dumpster,
+        range = 25
+    },
+    ["upbringing-station"] = {
+        type = Type.upbringing_station,
+        power_usage = 150,
+        power_drain = 5,
+        capacity = 20
+    },
+    ["waste-dump"] = {
+        type = Type.waste_dump,
+        capacity = 200000
+    },
+    ["water-tower"] = {
+        type = Type.water_distributer,
+        range = 35,
+        power_usage = 50
+    },
+    ["zeppelin-port"] = {
+        type = Type.immigration_port,
+        interval = 1000,
+        random_interval = 1000,
+        capacity = 100,
+        materials = {
+            ["rope"] = 20
+        }
+    },
     ["test-dumpster"] = {
         type = Type.dumpster,
         range = 42
@@ -67,161 +257,6 @@ Buildings.values = {
     ["test-egg-collector"] = {
         type = Type.egg_collector,
         range = 42
-    },
-    ["arboretum"] = {
-        type = Type.farm,
-        open_environment = true
-    },
-    ["architectural-office"] = {
-        type = Type.manufactory,
-        workforce = {
-            count = 8,
-            castes = {Type.clockwork, Type.gleam, Type.foundry}
-        }
-    },
-    ["bloomhouse"] = {
-        type = Type.farm,
-        workforce = {
-            count = 2,
-            castes = {Type.orchid}
-        }
-    },
-    ["composting-silo"] = {
-        type = Type.composter,
-        capacity = 5000
-    },
-    ["composting-silo-output"] = {
-        type = Type.composter_output,
-        range = 5
-    },
-    ["cooling-warehouse"] = {
-        type = Type.cooling_warehouse
-    },
-    ["egg-collecting-station"] = {
-        type = Type.egg_collector,
-        range = 40
-    },
-    ["farm"] = {
-        type = Type.farm,
-        open_environment = true
-    },
-    ["fishing-hut"] = {
-        type = Type.fishery,
-        range = 30,
-        water_tiles = 300,
-        workforce = {
-            count = 4,
-            castes = {Type.clockwork}
-        }
-    },
-    ["gene-clinic"] = {
-        type = Type.gene_clinic,
-        range = 7
-    },
-    ["greenhouse"] = {
-        type = Type.farm
-    },
-    ["groundwater-pump"] = {
-        type = Type.waterwell,
-        range = 64
-    },
-    ["hospital"] = {
-        type = Type.hospital,
-        range = 50,
-        speed = 2 / Time.second,
-        workforce = {
-            count = 10,
-            castes = {Type.plasma}
-        },
-        power_usage = 100
-    },
-    ["hunting-hut"] = {
-        type = Type.hunting_hut,
-        range = 30,
-        tree_count = 100,
-        workforce = {
-            count = 4,
-            castes = {Type.clockwork}
-        }
-    },
-    ["industrial-animal-farm"] = {
-        type = Type.animal_farm,
-        range = 50
-    },
-    ["intensive-care-unit"] = {
-        type = Type.intensive_care_unit,
-        range = 7
-    },
-    ["market-hall"] = {
-        type = Type.market,
-        range = range_by_foot
-    },
-    ["nightclub"] = {
-        type = Type.nightclub,
-        power_usage = 100
-    },
-    ["orangery"] = {
-        type = Type.farm
-    },
-    ["orchid-food-factory"] = {
-        type = Type.manufactory,
-        workforce = {
-            count = 10,
-            castes = {Type.orchid}
-        }
-    },
-    ["orchid-paradise"] = {
-        type = Type.manufactory,
-        workforce = {
-            count = 7,
-            castes = {Type.orchid}
-        }
-    },
-    ["orchid-plant-care-station"] = {
-        type = Type.plant_care_station,
-        range = 30,
-        speed = 60 / Time.minute,
-        humus_capacity = 1000,
-        workforce = {
-            count = 2,
-            castes = {Type.orchid}
-        }
-    },
-    ["pharmacy"] = {
-        type = Type.pharmacy,
-        range = "global"
-    },
-    ["psych-ward"] = {
-        type = Type.psych_ward,
-        range = 7
-    },
-    ["trash-site"] = {
-        type = Type.dumpster,
-        range = 25
-    },
-    ["upbringing-station"] = {
-        type = Type.upbringing_station,
-        power_usage = 150,
-        power_drain = 5,
-        capacity = 20
-    },
-    ["waste-dump"] = {
-        type = Type.waste_dump,
-        capacity = 200000
-    },
-    ["water-tower"] = {
-        type = Type.water_distributer,
-        range = 35,
-        power_usage = 50
-    },
-    ["zeppelin-port"] = {
-        type = Type.immigration_port,
-        interval = 1000,
-        random_interval = 1000,
-        capacity = 100,
-        materials = {
-            ["rope"] = 20
-        }
     }
 }
 local buildings = Buildings.values

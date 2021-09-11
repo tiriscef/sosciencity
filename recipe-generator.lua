@@ -108,6 +108,11 @@ RG.ingredient_themes = {
             {type = "item", name = "iron-stick", amount = 1}
         }
     },
+    gear_wheel = {
+        [0] = {
+            {type = "item", name = "iron-gear-wheel", amount = 1}
+        }
+    },
     genetic_neogenesis = {
         [0] = {
             {type = "item", name = "mitochondria", amount = 1},

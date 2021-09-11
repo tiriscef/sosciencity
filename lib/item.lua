@@ -109,7 +109,7 @@ function Tirislib_Item.create(prototype)
 end
 
 --- Creates a bunch of item prototypes.\
---- *Item specification:*\
+--- **Item specification:**\
 --- **name:** name of the item prototype\
 --- **sprite_variations:** sprite variations for the prototype to use\
 --- **distinctions:** table of prototype fields that should be different from the batch specification

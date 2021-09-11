@@ -651,8 +651,11 @@ function Tirislib_RecipeData.convert_to_results_table(recipe_data)
             {type = "item", name = recipe_data.result, amount = recipe_data.result_count or 1}
         }
 
-        recipe_data.result = nil
-        recipe_data.result_count = nil
+        if recipe_data.result then
+            recipe_data.main_product = recipe_data.main_product or recipe_data.result
+            recipe_data.result = nil
+            recipe_data.result_count = nil
+        end
     end
 end
 
@@ -1295,15 +1298,17 @@ function Tirislib_Recipe:has_result(name, _type)
     return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.results_contain, name, _type)
 end
 
-function Tirislib_RecipeData.get_result_count(recipe_data, name, _type)
+function Tirislib_RecipeData.get_result_amount(recipe_data, name, _type)
     if recipe_data.results then
+        local amount = 0
         for _, result in pairs(recipe_data.results) do
             if Tirislib_RecipeEntry.get_name(result) == name and Tirislib_RecipeEntry.get_type(result) == _type then
-                return Tirislib_RecipeEntry.get_average_yield(result)
+                amount = amount + Tirislib_RecipeEntry.get_average_yield(result)
             end
         end
-        return 0
+        return amount
     end
+
     if _type == "item" and recipe_data.result == name then
         return recipe_data.result_count or 1 -- factorio defaults to 1 if no result_count is specified
     end
@@ -1318,7 +1323,7 @@ end
 function Tirislib_Recipe:get_result_count(name, _type)
     _type = _type or "item"
 
-    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_result_count, name, _type)
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_result_amount, name, _type)
 end
 
 function Tirislib_RecipeData.ingredients_contain(recipe_data, name, _type)
@@ -1340,16 +1345,36 @@ function Tirislib_Recipe:has_ingredient(name, _type)
     return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.ingredients_contain, name, _type)
 end
 
+function Tirislib_RecipeData.get_ingredient_amount(recipe_data, name, _type)
+    for _, ingredient in pairs(recipe_data.ingredients or {}) do
+        if Tirislib_RecipeEntry.get_name(ingredient) == name and Tirislib_RecipeEntry.get_type(ingredient) == _type then
+            return Tirislib_RecipeEntry.get_ingredient_amount(ingredient)
+        end
+    end
+
+    return 0
+end
+
+--- Returns the count of the ingredient with the given name and type.
+--- @param name string
+--- @param _type string|nil
+--- @return RecipePrototype itself
+function Tirislib_Recipe:get_ingredient_count(name, _type)
+    _type = _type or "item"
+
+    return Tirislib_Recipe.call_on_recipe_data(self, Tirislib_RecipeData.get_ingredient_amount, name, _type)
+end
+
 -- << high level >>
 
-function Tirislib_RecipeData.pair_ingredient_with_result(
+function Tirislib_RecipeData.pair_result_with_ingredient(
     recipe_data,
     result,
     result_type,
     ingredient,
     ingredient_type,
     amount_fn)
-    local result_amount = Tirislib_RecipeData.get_result_count(recipe_data, result, result_type)
+    local result_amount = Tirislib_RecipeData.get_result_amount(recipe_data, result, result_type)
     if result_amount == 0 then
         return
     end
@@ -1375,12 +1400,66 @@ end
 function Tirislib_Recipe:pair_result_with_ingredient(result, result_type, ingredient, ingredient_type, amount_fn)
     Tirislib_Recipe.call_on_recipe_data(
         self,
-        Tirislib_RecipeData.pair_ingredient_with_result,
+        Tirislib_RecipeData.pair_result_with_ingredient,
         result,
         result_type,
         ingredient,
         ingredient_type,
         amount_fn
+    )
+
+    return self
+end
+
+function Tirislib_RecipeData.pair_ingredient_with_result(
+    recipe_data,
+    result,
+    result_type,
+    ingredient,
+    ingredient_type,
+    amount_fn,
+    probability)
+    local ingredient_amount = Tirislib_RecipeData.get_ingredient_amount(recipe_data, result, result_type)
+    if ingredient_amount == 0 then
+        return
+    end
+
+    local amount = amount_fn and amount_fn(ingredient_amount) or ingredient_amount
+    Tirislib_RecipeData.add_result(
+        recipe_data,
+        {
+            type = ingredient_type,
+            name = ingredient,
+            amount = math.ceil(amount),
+            probability = probability
+        }
+    )
+end
+
+--- Adds the given result to the recipe, if it contains the given ingredient.
+--- @param ingredient string
+--- @param ingredient_type string
+--- @param result string
+--- @param result_type string
+--- @param amount_fn function|nil
+--- @param probability number|nil
+--- @return RecipePrototype itself
+function Tirislib_Recipe:pair_ingredient_with_result(
+    ingredient,
+    ingredient_type,
+    result,
+    result_type,
+    amount_fn,
+    probability)
+    Tirislib_Recipe.call_on_recipe_data(
+        self,
+        Tirislib_RecipeData.pair_ingredient_with_result,
+        ingredient,
+        ingredient_type,
+        result,
+        result_type,
+        amount_fn,
+        probability
     )
 
     return self
