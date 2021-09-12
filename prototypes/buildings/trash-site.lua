@@ -13,7 +13,7 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "trash-site",
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_Entity.create {

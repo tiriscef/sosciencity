@@ -122,11 +122,11 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "well-funded-scientific-thesis",
     product_amount = 4,
-    category = "sosciencity-caste-aurora",
+    --category = "sosciencity-caste-aurora",
     energy_required = 2,
     expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "published-paper", amount = 20}
-    }
-    --unlock = "aurora-caste"
+    },
+    unlock = "aurora-caste"
 }

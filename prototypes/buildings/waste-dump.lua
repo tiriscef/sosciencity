@@ -16,7 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "waste-dump",
     themes = {{"building", 1}},
     default_theme_level = 2,
-    unlock = "architecure-2"
+    unlock = "infrastructure-2"
 }
 
 Tirislib_Entity.create {

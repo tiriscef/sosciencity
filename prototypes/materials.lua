@@ -388,7 +388,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 4,
     ingredients = {},
     category = "sosciencity-architecture",
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -494,6 +494,17 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 4},
         {type = "item", name = "screw-set", amount = 1}
     }
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "ink",
+    ingredients = {
+        {type = "fluid", name = "water", amount = 10},
+        {type = "item", name = "ferrous-sulfate", amount = 1},
+        -- TODO gallic acid
+    },
+    category = "chemistry",
+    unlock = "ember-caste"
 }
 
 Tirislib_RecipeGenerator.create {

@@ -16,6 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "foundry-hq",
     themes = {{"building", 20}},
     default_theme_level = 3,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "foundry-caste"
 }
 

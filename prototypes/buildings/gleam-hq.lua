@@ -16,6 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "gleam-hq",
     themes = {{"building", 30}},
     default_theme_level = 4,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "gleam-caste"
 }
 

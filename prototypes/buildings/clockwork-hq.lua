@@ -16,6 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "clockwork-hq",
     themes = {{"building", 10}, {"gear_wheel", 10}},
     default_theme_level = 0,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "clockwork-caste"
 }
 

@@ -16,7 +16,6 @@ local animals = {
         name = "primal-quacker",
         size = 24,
         bird = true,
-        probability = 0.12,
         preform = "primal-quackling",
         metabolism_coefficient = 1.5,
         unlock = Unlocks.get_tech_name("primal-quacker")
@@ -42,7 +41,6 @@ local animals = {
         name = "nan-swan",
         size = 40,
         bird = true,
-        probability = 0.2,
         preform = "nan-swanling",
         metabolism_coefficient = 1.5,
         unlock = Unlocks.get_tech_name("nan-swan")
@@ -68,7 +66,6 @@ local animals = {
         size = 100,
         bird = true,
         preform = "smol-bonesnake",
-        probability = 0.15,
         unlock = Unlocks.get_tech_name("bonesnake")
     },
     {
@@ -82,7 +79,6 @@ local animals = {
         name = "petunial",
         size = 15000,
         water_animal = true,
-        probability = 0.05,
         preform = "young-petunial",
         unlock = Unlocks.get_tech_name("petunial")
     },
@@ -90,7 +86,6 @@ local animals = {
         name = "hellfin",
         size = 190,
         water_animal = true,
-        probability = 0.09,
         group_size = 4,
         unlock = Unlocks.get_tech_name("hellfin")
     },
@@ -98,14 +93,12 @@ local animals = {
         name = "warnal",
         size = 1000,
         water_animal = true,
-        probability = 0.09,
         unlock = Unlocks.get_tech_name("warnal")
     },
     {
         name = "shellscript",
         size = 50,
         water_animal = true,
-        probability = 0.15,
         group_size = 4,
         unlock = Unlocks.get_tech_name("shellscript")
     },
@@ -113,7 +106,6 @@ local animals = {
         name = "boofish",
         size = 3,
         fish = true,
-        probability = 0.3,
         group_size = 5,
         unlock = Unlocks.get_tech_name("boofish")
     },
@@ -121,14 +113,12 @@ local animals = {
         name = "fupper",
         size = 5,
         fish = true,
-        probability = 0.5,
         unlock = Unlocks.get_tech_name("fupper")
     },
     {
         name = "dodkopus",
         size = 40,
         water_animal = true,
-        probability = 0.15,
         slaughter_byproducts = {{name = "ink", amount = 3}},
         unlock = Unlocks.get_tech_name("dodkopus")
     },
@@ -136,7 +126,6 @@ local animals = {
         name = "ultra-squibbel",
         size = 50,
         water_animal = true,
-        probability = 0.20,
         slaughter_byproducts = {{name = "ink", amount = 10}},
         not_breedable = true,
         unlock = Unlocks.get_tech_name("squibbel")
@@ -145,7 +134,6 @@ local animals = {
         name = "miniscule-squibbel",
         size = 150,
         water_animal = true,
-        probability = 0.15,
         slaughter_byproducts = {{name = "ink", amount = 4}},
         breeding_byproducts = {{name = "ultra-squibbel", amount = 0.5}},
         unlock = Unlocks.get_tech_name("squibbel")
@@ -153,7 +141,6 @@ local animals = {
     {
         name = "cabar",
         size = 20,
-        probability = 0.2,
         min_group_size = 1,
         max_group_size = 7,
         unlock = Unlocks.get_tech_name("cabar")
@@ -162,7 +149,6 @@ local animals = {
         name = "caddle",
         size = 20,
         carnivore = true,
-        probability = 0.15,
         min_group_size = 1,
         max_group_size = 4,
         unlock = Unlocks.get_tech_name("caddle")
@@ -170,7 +156,6 @@ local animals = {
     {
         name = "river-horse",
         size = 500,
-        probability = 0.01,
         min_group_size = 3,
         max_group_size = 6,
         sprite_variations = {name = "river-horse-on-belt", count = 1},
@@ -237,7 +222,6 @@ local fauna_producing_recipes = {}
 ---------------------------------------------------------------------------------------------------
 -- << gathering recipes >>
 
-
 local function get_result_prototype(animal)
     return {
         name = animal.name,
@@ -247,7 +231,6 @@ local function get_result_prototype(animal)
         amount_max = animal.max_group_size
     }
 end
-
 
 ---------------------------------------------------------------------------------------------------
 -- << slaughter recipes >>
@@ -476,8 +459,7 @@ if settings.startup["sosciencity-modify-environment"].value then
         localised_name = {"item-name.nan-swan"}
     }
 
-    local fishwhirl =
-        Tirislib_Entity.create {
+    Tirislib_Entity.create {
         type = "fish",
         name = "fishwhirl",
         icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl.png",
@@ -485,7 +467,14 @@ if settings.startup["sosciencity-modify-environment"].value then
         flags = {"placeable-neutral", "not-on-map"},
         minable = {
             mining_time = 0.4,
-            results = {}
+            results = {
+                {type = "item", name = "boofish", amount = 10},
+                {type = "item", name = "fupper", amount = 5},
+                {type = "item", name = "dodkopus", amount = 1, probability = 0.2},
+                {type = "item", name = "shellscript", amount = 3, probability = 0.5},
+                {type = "item", name = "ultra-squibbel", amount = 1, probability = 0.2},
+                {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.2}
+            }
         },
         max_health = 40,
         subgroup = "creatures",
@@ -505,11 +494,4 @@ if settings.startup["sosciencity-modify-environment"].value then
             influence = 0.007
         }
     }
-
-    for _, animal in pairs(animals) do
-        if animal.probability and is_water_animal(animal) then
-            local result_prototype = get_result_prototype(animal)
-            fishwhirl:add_mining_result(result_prototype)
-        end
-    end
 end

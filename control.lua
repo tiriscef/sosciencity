@@ -436,6 +436,14 @@ local function on_player_queued_craft(event)
     on_handcrafting_queue(player_id, name, count)
 end
 
+local function on_cheat_mode_enabled()
+    Technologies.on_cheat_mode_enabled()
+end
+
+local function on_cheat_mode_disabled()
+    Technologies.on_cheat_mode_disabled()
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
 
@@ -500,3 +508,7 @@ script.on_event(defines.events.on_player_died, on_player_died)
 -- player crafts
 script.on_event(defines.events.on_player_crafted_item, on_player_crafted)
 script.on_event(defines.events.on_pre_player_crafted_item, on_player_queued_craft)
+
+-- cheat mode
+script.on_event(defines.events.on_player_cheat_mode_enabled, on_cheat_mode_enabled)
+script.on_event(defines.events.on_player_cheat_mode_disabled, on_cheat_mode_disabled)

@@ -1,11 +1,11 @@
 require("lib.init")
 Tirislib_Prototype.modname = "sosciencity"
 
+require("datastage-scripts.biters")
 require("datastage-scripts.crafting-categories")
 require("datastage-scripts.science-pack-ingredients")
 require("datastage-scripts.gunfire-techs")
 require("datastage-scripts.handcrafting")
-require("datastage-scripts.loot")
 require("datastage-scripts.trees")
 require("datastage-scripts.furniture-unlocks")
 

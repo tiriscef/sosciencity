@@ -11,14 +11,14 @@ Housing.values = {
         comfort = 0,
         is_improvised = true,
         one_room_per_inhabitant = true,
-        qualities = {"cheap", "individualistic"}
+        qualities = {"cheap", "individualistic", "low"}
     },
     ["improvised-hut-2"] = {
         room_count = 4,
         comfort = 0,
         is_improvised = true,
         one_room_per_inhabitant = true,
-        qualities = {"cheap", "individualistic"}
+        qualities = {"cheap", "individualistic", "low"}
     },
     ["boring-brick-house"] = {
         room_count = 32,
@@ -57,13 +57,13 @@ Housing.values = {
     },
     ["house1"] = {
         room_count = 10,
-        comfort = 8,
+        comfort = 3,
         qualities = {"spacey", "individualistic", "tall"}
     },
     ["house8"] = {
-        room_count = 10,
-        comfort = 8,
-        qualities = {"spacey", "individualistic", "tall"}
+        room_count = 24,
+        comfort = 1,
+        qualities = {"compact", "simple", "cheap"}
     },
     ["test-house"] = {
         room_count = 200,
