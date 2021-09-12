@@ -263,7 +263,7 @@ RG.ingredient_themes = {
     building = {
         [0] = {
             {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-brick", amount = 5},
+            {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "window", amount = 2}
         },
         [1] = {
@@ -310,7 +310,7 @@ RG.ingredient_themes = {
     cheap_building = {
         [0] = {
             {type = "item", name = "lumber", amount = 1},
-            {type = "item", name = "stone-brick", amount = 2},
+            {type = "item", name = "iron-plate", amount = 4},
             {type = "item", name = "window", amount = 1}
         },
         [1] = {
@@ -605,6 +605,7 @@ RG.result_themes = {
 
 --- Table with (alias, name of RecipeCategory) pairs.
 RG.category_alias = {
+    dissolving = "crafting-with-fluid",
     drying = "crafting-with-fluid",
     filtration = "chemistry",
     fluid_mixing = "chemistry",
@@ -823,7 +824,7 @@ function RG.create(details)
 
     local recipe =
         Tirislib_Recipe.create {
-        name = Tirislib_Prototype.get_unique_name(details.name or product.name, "recipe"),
+        name = details.name or Tirislib_Prototype.get_unique_name(product.name, "recipe"),
         enabled = true,
         energy_required = details.energy_required or 0.5,
         results = {main_product},
@@ -922,25 +923,8 @@ function RG.create_per_theme_level(details)
     return created_recipes
 end
 
---- Merges the given arrays, prioritising the right hand array.
---- @param lh table|array
---- @param rh table|array
-local function get_merged_array(lh, rh)
-    local ret = {}
-
-    for _, v in pairs(rh) do
-        ret[#ret + 1] = v
-    end
-
-    for _, v in pairs(lh) do
-        ret[#ret + 1] = v
-    end
-
-    return ret
-end
-
-local arrays = {"ingredients", "expensive ingredients", "byproducts", "expensive_byproducts", "themes", "result_themes"}
-Tirislib_Tables.array_to_lookup(arrays)
+local arrays = {"ingredients", "expensive_ingredients", "byproducts", "expensive_byproducts", "themes", "result_themes"}
+arrays = Tirislib_Tables.array_to_lookup(arrays)
 
 --- Merges the right hand recipe details into the left hand recipe details.
 --- @param lh table
@@ -952,7 +936,7 @@ function RG.merge_details(lh, rh)
 
     for key, value in pairs(rh) do
         if arrays[key] then
-            lh[key] = get_merged_array(Tirislib_Tables.get_subtbl(lh, key), value)
+            Tirislib_Tables.merge(Tirislib_Tables.get_subtbl(lh, key), value)
         else
             -- set the field passively
             lh[key] = (lh[key] ~= nil) and lh[key] or value

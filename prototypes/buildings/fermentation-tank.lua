@@ -3,7 +3,7 @@ Tirislib_Item.create {
     name = "fermentation-tank",
     icon = "__sosciencity-graphics__/graphics/icon/fermentation-tank.png",
     icon_size = 64,
-    subgroup = "sosciencity-production-buildings",
+    subgroup = "sosciencity-microorganism-buildings",
     order = "aaa",
     place_result = "fermentation-tank",
     stack_size = Sosciencity_Config.building_stacksize,

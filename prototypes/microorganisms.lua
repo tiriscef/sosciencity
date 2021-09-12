@@ -1,13 +1,6 @@
-local fluids = {
+local microorganisms = {
     {
         name = "solfaen",
-        distinctions = {
-            base_color = {r = 0.944, g = 0.180, b = 0.063},
-            flow_color = {r = 0.944, g = 0.383, b = 0.178}
-        }
-    },
-    {
-        name = "fiicorum",
         distinctions = {
             base_color = {r = 0.944, g = 0.180, b = 0.063},
             flow_color = {r = 0.944, g = 0.383, b = 0.178}
@@ -19,11 +12,25 @@ local fluids = {
             base_color = {r = 0.000, g = 0.800, b = 1.000},
             flow_color = {r = 0.000, g = 0.478, b = 0.600}
         }
-    }
+    },
+    {
+        name = "flinnum",
+        distinctions = {
+            base_color = {r = 0.117, g = 0.667, b = 0.231},
+            flow_color = {r = 0.273, g = 0.782, b = 0.632}
+        }
+    },
+    {
+        name = "fiicorum",
+        distinctions = {
+            base_color = {r = 0.944, g = 0.180, b = 0.063},
+            flow_color = {r = 0.944, g = 0.383, b = 0.178}
+        }
+    },
 }
 
 Tirislib_Fluid.batch_create(
-    fluids,
+    microorganisms,
     {
         default_temperature = 10,
         max_temperature = 100,
@@ -76,10 +83,10 @@ local function create_pure_culture_recipe(details)
                     shift = {-8, -8}
                 }
             },
+            icon_size = 64,
             ingredients = {
                 {type = "fluid", name = product.name, amount = 10}
-            },
-            icon_size = 64
+            }
         }
     )
 
@@ -89,6 +96,7 @@ end
 create_enrichment_recipe {
     product = "solfaen",
     product_type = "fluid",
+    product_probability = 0.2,
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10}
     },
@@ -107,41 +115,68 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    product = "fiicorum",
+    product = "pemtenn",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "fluid", name = "clean-water", amount = 10},
+        {type = "item", name = "mold", amount = 2}
     },
-    category = "sosciencity-bioreactor",
-    unlock = "genetic-neogenesis"
+    category = "sosciencity-fermentation-tank",
+    unlock = "fermentation"
 }
 
 create_pure_culture_recipe {
-    product = "fiicorum",
+    product = "pemtenn",
     product_type = "fluid",
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10}
     },
-    category = "sosciencity-bioreactor",
-    unlock = "genetic-neogenesis"
+    category = "sosciencity-fermentation-tank",
+    unlock = "fermentation"
 }
 
 create_enrichment_recipe {
-    product = "pemtenn",
+    product = "flinnum",
     product_type = "fluid",
+    product_probability = 0.2,
     ingredients = {
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 10},
+        {type = "item", name = "mold", amount = 2}
     },
-    category = "sosciencity-fermentation-tank",
-    unlock = "fermentation"
+    category = "sosciencity-bioreactor",
+    unlock = "basic-biotechnology"
 }
 
 create_pure_culture_recipe {
-    product = "pemtenn",
+    product = "flinnum",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 10}
     },
-    category = "sosciencity-fermentation-tank",
-    unlock = "fermentation"
+    category = "sosciencity-bioreactor",
+    unlock = "basic-biotechnology"
+}
+
+create_enrichment_recipe {
+    product = "fiicorum",
+    product_type = "fluid",
+    product_probability = 0.2,
+    themes = {{"soil", 2}},
+    ingredients = {
+        {type = "fluid", name = "clean-water", amount = 10},
+        {type = "fluid", name = "steam", amount = 50}
+    },
+    category = "sosciencity-bioreactor",
+    unlock = "genetic-neogenesis"
+}
+
+create_pure_culture_recipe {
+    product = "fiicorum",
+    product_type = "fluid",
+    ingredients = {
+        {type = "fluid", name = "clean-water", amount = 10},
+        {type = "fluid", name = "steam", amount = 20}
+    },
+    category = "sosciencity-bioreactor",
+    unlock = "genetic-neogenesis"
 }

@@ -50,7 +50,7 @@ Tirislib_Entity.create {
       fuel_category = "garbage",
       fuel_inventory_size = 2,
       effectivity = 1,
-      emissions_per_minute = 150,
+      emissions_per_minute = 10,
       smoke =
       {
         {

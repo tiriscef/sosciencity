@@ -1,4 +1,5 @@
 local Diseases = require("constants.diseases")
+local Food = require("constants.food")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -99,7 +100,8 @@ Tirislib_RecipeGenerator.create {
     product = "analgesics",
     themes = {{"tablet_ingredients", 1}},
     ingredients = {
-        {type = "item", name = "phytofall-blossom", amount = 2}
+        {type = "item", name = "gingil-hemp", amount = 5},
+        {type = "fluid", name = "ethanol", amount = 10}
     },
     energy_required = 3,
     allow_productivity = true,
@@ -189,4 +191,120 @@ Tirislib_Prototype.batch_create {
         duration_in_ticks = 60 * 45,
         target_movement_modifier = 0.05
     }
+}
+
+---------------------------------------------------------------------------------------------------
+-- << consumables >>
+
+local sounds = require("__base__.prototypes.entity.sounds")
+
+local consumable_medicine = {
+    {
+        name = "sosciencity-emergency-ration",
+        distinctions = {
+            icon = "__sosciencity-graphics__/graphics/icon/emergency-ration.png",
+            capsule_action = {
+                type = "use-on-self",
+                attack_parameters = {
+                    type = "projectile",
+                    activation_type = "consume",
+                    ammo_category = "capsule",
+                    cooldown = 15,
+                    range = 0,
+                    ammo_type = {
+                        category = "capsule",
+                        target_type = "position",
+                        action = {
+                            type = "direct",
+                            action_delivery = {
+                                type = "instant",
+                                target_effects = {
+                                    {
+                                        type = "damage",
+                                        damage = {type = "physical", amount = -80}
+                                    },
+                                    {
+                                        type = "play-sound",
+                                        sound = sounds.eat_fish
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        name = "sosciencity-medical-kit",
+        distinctions = {
+            icon = "__sosciencity-graphics__/graphics/icon/medical-kit.png",
+            capsule_action = {
+                type = "use-on-self",
+                attack_parameters = {
+                    type = "projectile",
+                    activation_type = "consume",
+                    ammo_category = "capsule",
+                    cooldown = 15,
+                    range = 0,
+                    ammo_type = {
+                        category = "capsule",
+                        target_type = "position",
+                        action = {
+                            type = "direct",
+                            action_delivery = {
+                                type = "instant",
+                                target_effects = {
+                                    {
+                                        type = "damage",
+                                        damage = {type = "physical", amount = -200}
+                                    },
+                                    {
+                                        type = "play-sound",
+                                        sound = sounds.eat_fish
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+Tirislib_Item.batch_create(
+    consumable_medicine,
+    {
+        type = "capsule",
+        subgroup = "sosciencity-medicine",
+        stack_size = 50
+    }
+)
+
+Tirislib_RecipeGenerator.create {
+    product = "sosciencity-emergency-ration",
+    name = "sosciencity-emergency-ration",
+    category = "sosciencity-handcrafting",
+    localised_description = {"recipe-description.sosciencity-emergency-ration", Food.emergency_ration_calories}
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "sosciencity-medical-kit",
+    product_amount = 1,
+    ingredients = {
+        {type = "item", name = "blood-bag", amount = 1},
+        {type = "item", name = "gingil-hemp", amount = 2}
+    }
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "sosciencity-medical-kit",
+    product_amount = 5,
+    ingredients = {
+        {type = "item", name = "blood-bag", amount = 1},
+        {type = "item", name = "potent-analgesics", amount = 1},
+        {type = "item", name = "bandage", amount = 5}
+    },
+    unlock = "hospital"
 }

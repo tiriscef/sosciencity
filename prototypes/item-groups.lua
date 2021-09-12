@@ -45,7 +45,7 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-water-buildings",
+        name = "sosciencity-microorganism-buildings",
         group = "sosciencity-infrastructure",
         order = "bad"
     },
@@ -53,13 +53,19 @@ Tirislib_Prototype.batch_create {
         type = "item-subgroup",
         name = "sosciencity-food-buildings",
         group = "sosciencity-infrastructure",
-        order = "bac"
+        order = "bae"
     },
     {
         type = "item-subgroup",
         name = "sosciencity-production-buildings",
         group = "sosciencity-infrastructure",
-        order = "bad"
+        order = "baf"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-water-buildings",
+        group = "sosciencity-infrastructure",
+        order = "bag"
     },
     {
         type = "item-group",
@@ -125,63 +131,75 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-growth-media",
+        group = "sosciencity-production",
+        order = "acb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-flora",
-        group = "sosciencity-production",
-        order = "acb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-saplings",
-        group = "sosciencity-production",
-        order = "acb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-fauna",
-        group = "sosciencity-production",
-        order = "ada"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-slaughter",
         group = "sosciencity-production",
         order = "adb"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-animal-food",
+        name = "sosciencity-saplings",
         group = "sosciencity-production",
-        order = "adc"
+        order = "adb"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-food",
+        name = "sosciencity-fauna",
         group = "sosciencity-production",
         order = "aea"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-beverages",
+        name = "sosciencity-slaughter",
         group = "sosciencity-production",
         order = "aeb"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-medicine",
+        name = "sosciencity-animal-food",
+        group = "sosciencity-production",
+        order = "aec"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-neogenesis-recipes",
+        group = "sosciencity-production",
+        order = "aed"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-food",
         group = "sosciencity-production",
         order = "afa"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-drinking-water",
+        name = "sosciencity-beverages",
+        group = "sosciencity-production",
+        order = "afb"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-medicine",
         group = "sosciencity-production",
         order = "aga"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-garbage",
+        name = "sosciencity-drinking-water",
         group = "sosciencity-production",
         order = "aha"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-garbage",
+        group = "sosciencity-production",
+        order = "aia"
     },
     {
         type = "item-subgroup",
@@ -192,14 +210,14 @@ Tirislib_Prototype.batch_create {
     -- idea items/recipes in the vanilla intermediate tab
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas-per-hand",
-        group = "intermediate-products",
-        order = "hb"
-    },
-    {
-        type = "item-subgroup",
         name = "sosciencity-ideas",
         group = "intermediate-products",
         order = "ha"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-ideas-per-hand",
+        group = "intermediate-products",
+        order = "hb"
     }
 }
