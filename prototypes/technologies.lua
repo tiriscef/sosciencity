@@ -781,8 +781,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "huwan-genetic-neogenesis",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/huwan-genetic-neogenesis.png",
+    icon_size = 256,
     prerequisites = {"genetic-neogenesis", "plasma-caste", "chemical-science-pack"},
     unit = {
         count = 267,

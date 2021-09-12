@@ -5,7 +5,7 @@ Tirislib_Item.create {
     name = "computing-center",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-production-buildings",
     order = "daa",
     place_result = "computing-center",
     stack_size = Sosciencity_Config.building_stacksize,

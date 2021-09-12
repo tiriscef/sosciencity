@@ -4,7 +4,7 @@ Tirislib_Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
     icon_size = 64,
     subgroup = "sosciencity-water-buildings",
-    order = "aab",
+    order = "aaa",
     place_result = "groundwater-pump",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt

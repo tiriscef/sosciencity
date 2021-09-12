@@ -56,6 +56,12 @@ Tirislib_Prototype.batch_create {
         order = "bac"
     },
     {
+        type = "item-subgroup",
+        name = "sosciencity-production-buildings",
+        group = "sosciencity-infrastructure",
+        order = "bad"
+    },
+    {
         type = "item-group",
         name = "sosciencity-production",
         inventory_order = "zb",

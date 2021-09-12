@@ -5,7 +5,7 @@ Tirislib_Item.create {
     name = "phyto-gene-lab",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-production-buildings",
     order = "daa",
     place_result = "phyto-gene-lab",
     stack_size = Sosciencity_Config.building_stacksize,

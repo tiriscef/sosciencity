@@ -3,8 +3,8 @@
 Tirislib_Item.create {
     type = "item",
     name = "ember-hq",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
+    icon = "__sosciencity-graphics__/graphics/ember-caste.png",
+    icon_size = 256,
     subgroup = "sosciencity-hqs",
     order = "daa",
     place_result = "ember-hq",
@@ -23,8 +23,6 @@ Tirislib_RecipeGenerator.create {
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "ember-hq",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "ember-hq"},
     max_health = 200,
@@ -63,4 +61,4 @@ Tirislib_Entity.create {
         emissions_per_minute = 0.25,
         drain = "10kW"
     }
-}:set_size(7, 7):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item():copy_icon_from_item()

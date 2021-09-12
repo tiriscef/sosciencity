@@ -122,8 +122,7 @@ RG.ingredient_themes = {
             {type = "item", name = "thermostable-dna-polymerase", amount = 1},
             {type = "item", name = "proteins", amount = 1},
             {type = "item", name = "glass-instruments", amount = 1},
-            {type = "item", name = "agarose", amount = 2},
-            {type = "fluid", name = "ultra-pure-water", amount = 50}
+            {type = "item", name = "agarose", amount = 2}
         }
     },
     glass = {

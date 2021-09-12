@@ -5,8 +5,8 @@ Tirislib_Item.create {
     name = "composting-silo-output",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
-    order = "daa",
+    subgroup = "sosciencity-flora-buildings",
+    order = "gab",
     place_result = "composting-silo-output",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
@@ -15,7 +15,7 @@ Tirislib_Item.create {
 Tirislib_RecipeGenerator.create {
     product = "composting-silo-output",
     themes = {{"plating", 2}, {"framework", 2}},
-    default_theme_level = 2,
+    default_theme_level = 1,
     unlock = "open-environment-farming"
 }
 

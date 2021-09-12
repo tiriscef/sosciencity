@@ -5,7 +5,7 @@ Tirislib_Item.create {
     name = "waste-incineration-plant",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-buildings",
     order = "daa",
     place_result = "waste-incineration-plant",
     stack_size = Sosciencity_Config.building_stacksize,
