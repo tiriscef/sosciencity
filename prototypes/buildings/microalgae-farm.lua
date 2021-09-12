@@ -5,7 +5,7 @@ Tirislib_Item.create {
     name = "microalgae-farm",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-flora-buildings",
     order = "daa",
     place_result = "microalgae-farm",
     stack_size = Sosciencity_Config.building_stacksize,

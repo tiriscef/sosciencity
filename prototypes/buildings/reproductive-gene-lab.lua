@@ -3,9 +3,9 @@
 Tirislib_Item.create {
     type = "item",
     name = "reproductive-gene-lab",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/reproductive-gene-lab.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-production-buildings",
     order = "daa",
     place_result = "reproductive-gene-lab",
     stack_size = Sosciencity_Config.building_stacksize,
@@ -22,8 +22,6 @@ Tirislib_RecipeGenerator.create {
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "reproductive-gene-lab",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "reproductive-gene-lab"},
     max_health = 200,
@@ -33,21 +31,22 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+    animation = Tirislib_Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/reproductive-gene-lab/reproductive-gene-lab",
+        width = 12,
+        height = 8,
+        shift = {2.5, 0.5},
+        shadowmap = true,
+        lightmap = true,
+        glow = true
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-reproductive-gene-lab"},
-    energy_usage = "190kW",
+    energy_usage = "230kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
         emissions_per_minute = 0.25,
-        drain = "10kW"
+        drain = "20kW"
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()

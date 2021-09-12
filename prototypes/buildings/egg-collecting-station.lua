@@ -5,7 +5,7 @@ Tirislib_Item.create {
     name = "egg-collecting-station",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-infrastructure",
     order = "daa",
     place_result = "egg-collecting-station",
     stack_size = Sosciencity_Config.building_stacksize,
@@ -23,8 +23,6 @@ Tirislib_RecipeGenerator.create {
 Tirislib_Entity.create {
     type = "container",
     name = "egg-collecting-station",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "egg-collecting-station"},
     max_health = 200,
@@ -45,5 +43,6 @@ Tirislib_Entity.create {
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(3, 3):copy_localisation_from_item():copy_icon_from_icon()
+
 Sosciencity_Config.add_eei("egg-collecting-station")
