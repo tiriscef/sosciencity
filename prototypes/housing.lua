@@ -126,7 +126,7 @@ local housing_prototype_details = {
         },
         width = 8,
         height = 6,
-        tech_level = 2,
+        tech_level = 3,
         main_entity = "boring-brick-house"
     },
     ["khrushchyovka"] = {
@@ -140,7 +140,7 @@ local housing_prototype_details = {
         },
         width = 7,
         height = 4,
-        tech_level = 1,
+        tech_level = 2,
         main_entity = "khrushchyovka"
     },
     ["sheltered-house"] = {
@@ -235,7 +235,7 @@ local housing_prototype_details = {
         },
         width = 8,
         height = 6,
-        tech_level = 3
+        tech_level = 2
     },
     ["huwanic-mansion"] = {
         picture = Tirislib_Entity.create_standard_picture {
@@ -290,7 +290,7 @@ local housing_prototype_details = {
         },
         width = 13,
         height = 6,
-        tech_level = 1
+        tech_level = 0
     },
 }
 
@@ -310,8 +310,8 @@ if Sosciencity_Config.DEBUG then
     }
 end
 
-local housing_unlocking_tech = {
-    [0] = nil,
+local unlocks = {
+    [0] = "infrastructure-1",
     [1] = "architecture-1",
     [2] = "architecture-2",
     [3] = "architecture-3",
@@ -428,7 +428,7 @@ local function create_recipe(house_name, house, details)
     local recipe_details = {
         product = house_name,
         themes = ingredient_themes,
-        unlock = housing_unlocking_tech[tech_level],
+        unlock = unlocks[tech_level],
         energy_required = house.room_count,
         ingredients = {{type = "item", name = "architectural-concept", amount = 1}}
     }

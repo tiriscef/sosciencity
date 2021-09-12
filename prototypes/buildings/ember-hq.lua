@@ -16,6 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "ember-hq",
     themes = {{"building", 10}},
     default_theme_level = 2,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "ember-caste"
 }
 

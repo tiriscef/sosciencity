@@ -14,7 +14,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "orchid-plant-care-station",
-    themes = {{"building", 10}, {"machine", 2}},
+    themes = {{"building", 10}, {"silo", 2}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 2,
     unlock = "orchid-caste"

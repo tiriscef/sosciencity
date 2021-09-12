@@ -121,6 +121,18 @@ function Technologies.on_mined_entity(inventory)
     end
 end
 
+function Technologies.on_cheat_mode_enabled()
+    for technology_name in pairs(unlocked) do
+        game.forces.player.technologies[technology_name].researched = true
+    end
+end
+
+function Technologies.on_cheat_mode_disabled()
+    for technology_name, already_unlocked in pairs(unlocked) do
+        game.forces.player.technologies[technology_name].researched = already_unlocked
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 

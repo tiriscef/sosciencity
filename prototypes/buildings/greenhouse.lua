@@ -14,8 +14,7 @@ Tirislib_RecipeGenerator.create {
     product = "greenhouse",
     themes = {{"piping", 20}, {"soil", 100}, {"machine", 5}},
     ingredients = {
-        {type = "item", name = "window", amount = 50},
-        {type = "item", name = "architectural-concept", amount = 1}
+        {type = "item", name = "window", amount = 50}
     },
     default_theme_level = 4,
     unlock = "controlled-environment-farming"

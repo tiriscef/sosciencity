@@ -17,7 +17,7 @@ Tirislib_RecipeGenerator.create {
     themes = {{"building", 2}, {"machine", 2}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 2,
-    unlock = "huwan-genetic-neogenesis"
+    unlock = "infrastructure-3"
 }
 
 Tirislib_Entity.create {

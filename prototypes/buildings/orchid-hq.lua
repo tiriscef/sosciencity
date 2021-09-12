@@ -16,6 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "orchid-hq",
     themes = {{"building", 10}, {"soil", 50}},
     default_theme_level = 1,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "orchid-caste"
 }
 

@@ -17,8 +17,8 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_RecipeGenerator.create {
     product = "salt-pond",
-    themes = {{"building", 2}, {"machine", 2}},
-    default_theme_level = 2,
+    themes = {{"piping", 5}, {"machine", 1}},
+    default_theme_level = 1,
     unlock = "food-processing"
 }
 

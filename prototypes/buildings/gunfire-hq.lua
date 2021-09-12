@@ -16,6 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "gunfire-hq",
     themes = {{"building", 20}, {"housing_sheltered", 20}},
     default_theme_level = 2,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "gunfire-caste"
 }
 
