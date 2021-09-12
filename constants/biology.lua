@@ -86,6 +86,15 @@ Biology.flora = {
         wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-eggplant"}
     },
+    ["gingil-hemp"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-annual-gingil-hemp"},
+    },
     ["lemon"] = {
         persistent = true,
         growth_coefficient = 1,

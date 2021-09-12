@@ -37,9 +37,20 @@ Tirislib_Recipe.create {
     energy_required = 1,
     category = "crafting",
     ingredients = {
-        {"garbage", 20}
+        {type = "item", name = "garbage", amount = 20}
     },
     results = {
-        {"landfill", 1}
+        {type = "item", name = "landfill", amount = 1}
     }
 }:add_unlock("landfill")
+
+Tirislib_Recipe.create {
+    name = "burn-garbage",
+    emissions_multiplier = 2.5,
+    energy_required = 1.6,
+    category = "smelting",
+    ingredients = {
+        {type = "item", name = "garbage", amount = 1}
+    },
+    subgroup = "sosciencity-garbage"
+}:add_unlock("infrastructure-1"):copy_icon_from_item("garbage")

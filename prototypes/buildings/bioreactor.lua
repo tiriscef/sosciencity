@@ -1,9 +1,9 @@
 Tirislib_Item.create {
     type = "item",
     name = "sosciencity-bioreactor",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/bioreactor.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
+    subgroup = "sosciencity-microorganism-buildings",
     order = "daa",
     place_result = "sosciencity-bioreactor",
     stack_size = Sosciencity_Config.building_stacksize,
@@ -23,8 +23,6 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "sosciencity-bioreactor",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "sosciencity-bioreactor"},
     max_health = 200,
@@ -95,4 +93,4 @@ Tirislib_Entity.create {
             production_type = "output"
         }
     }
-}:set_size(7, 7):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item():copy_icon_from_item()

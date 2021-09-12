@@ -22,6 +22,7 @@ local material_items = {
         name = "yarn",
         sprite_variations = {name = "yarn-pile", count = 4}
     },
+    {name = "rope"},
     {name = "pot"},
     {name = "glass-mixture"},
     {name = "glass"},
@@ -35,7 +36,6 @@ local material_items = {
             pictures = Sosciencity_Config.blueprint_on_belt
         }
     },
-    {name = "rope"},
     {
         name = "window",
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100}
@@ -272,10 +272,10 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "wood", amount = 1}
     },
     byproducts = {
-        {name = "sawdust", amount = 1}
+        {type = "item", name = "sawdust", amount = 1}
     },
     allow_productivity = true,
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create_per_theme_level {
@@ -296,6 +296,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 1,
     ingredients = {
         {type = "item", name = "tiriscefing-willow-wood", amount = 2},
+        {type = "item", name = "rope", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
     },
     unlock = "fermentation"
@@ -306,8 +307,8 @@ Tirislib_RecipeGenerator.create {
     product_amount = 10,
     energy_required = 8,
     ingredients = {
-        {name = "plemnemm-cotton", amount = 20},
-        {name = "lumber", amount = 1}
+        {type = "item", name = "plemnemm-cotton", amount = 20},
+        {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
     unlock = "architecture-1"
@@ -317,7 +318,17 @@ Tirislib_RecipeGenerator.create {
     product = "cloth",
     energy_required = 8,
     ingredients = {
-        {name = "yarn", amount = 5}
+        {type = "item", name = "yarn", amount = 5}
+    },
+    allow_productivity = true,
+    unlock = "architecture-1"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "rope",
+    energy_required = 0.8,
+    ingredients = {
+        {type = "item", name = "gingil-hemp", amount = 2}
     },
     allow_productivity = true,
     unlock = "architecture-1"
@@ -338,7 +349,7 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
         category = Tirislib_RecipeGenerator.category_alias[
             Sosciencity_Config.glass_compatibility_mode and "handcrafting" or "mixing"
         ],
-        unlock = "architecture-1"
+        unlock = "infrastructure-1"
     }
 
     Tirislib_Recipe.create {
@@ -348,7 +359,7 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
         results = {},
         category = "smelting",
         main_result = Tirislib_RecipeGenerator.item_alias.glass
-    }:create_difficulties():multiply_expensive_ingredients(2):add_unlock("architecture-1"):add_result(
+    }:create_difficulties():multiply_expensive_ingredients(2):add_unlock("infrastructure-1"):add_result(
         {type = "item", name = Tirislib_RecipeGenerator.item_alias.glass, amount = 2}
     )
 end
@@ -360,7 +371,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
     },
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {

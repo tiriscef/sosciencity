@@ -1,5 +1,3 @@
--- TODO: actual graphics
-
 Tirislib_Item.create {
     type = "item",
     name = "reproductive-gene-lab",

@@ -1,4 +1,5 @@
 local Biology = require("constants.biology")
+local Food = require("constants.food")
 local Time = require("constants.time")
 
 ---Static class for the game logic of handcrafting side effects.
@@ -86,15 +87,15 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << handcrafting queued stuff >>
 
-local function produce_eggs(player_id, recipe_name, count)
+local function consume_calories_per_craft(player_id, recipe_name, count, calories_per_craft, not_enough_calories_key)
     local player = game.players[player_id]
     local inventory = player.get_main_inventory()
 
-    local calories = Inventories.count_calories(inventory)
-    local possible_eggs = min(floor(calories / Biology.egg_calories), count)
+    local calories_available = Inventories.count_calories(inventory)
+    local actual_crafts = min(floor(calories_available / calories_per_craft), count)
 
-    if possible_eggs < count then
-        player.print {"sosciencity.less-eggs", possible_eggs}
+    if actual_crafts < count then
+        player.print {not_enough_calories_key, actual_crafts}
 
         local character = player.character
 
@@ -110,16 +111,33 @@ local function produce_eggs(player_id, recipe_name, count)
         if crafting_index > 0 then
             character.cancel_crafting {
                 index = crafting_index,
-                count = count - possible_eggs
+                count = count - actual_crafts
             }
         end
     end
 
-    Inventories.consume_calories(inventory, possible_eggs * Biology.egg_calories)
+    Inventories.consume_calories(inventory, actual_crafts * calories_per_craft)
+
+    return actual_crafts
+end
+
+local function produce_eggs(player_id, recipe_name, count)
+    consume_calories_per_craft(player_id, recipe_name, count, Biology.egg_calories, "sosciencity.less-eggs")
+end
+
+local function produce_rations(player_id, recipe_name, count)
+    consume_calories_per_craft(
+        player_id,
+        recipe_name,
+        count,
+        Food.emergency_ration_calories,
+        "sosciencity.less-calorie-consuming-crafts"
+    )
 end
 
 local queued_lookup = {
-    ["lay-egg"] = produce_eggs
+    ["lay-egg"] = produce_eggs,
+    ["sosciencity-emergency-ration"] = produce_rations
 }
 
 function Handcrafting.on_queued(player_id, recipe_name, count)

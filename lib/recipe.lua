@@ -615,6 +615,43 @@ function Tirislib_Recipe:multiply_expensive_field(field, multiplier)
     return self
 end
 
+--- Copies the localisation of the item with the given name to this RecipePrototype.
+--- @param item_name string
+--- @return RecipePrototype itself
+function Tirislib_Recipe:copy_localisation_from_item(item_name)
+    if not item_name then
+        item_name = self.name
+    end
+
+    local item, found = Tirislib_Item.get_by_name(item_name)
+
+    if found then
+        self.localised_name = item:get_localised_name()
+        self.localised_description = item:get_localised_description()
+    end
+
+    return self
+end
+
+--- Copies the icon of the item with the given name to this RecipePrototype.
+--- @param item_name string
+--- @return RecipePrototype itself
+function Tirislib_Recipe:copy_icon_from_item(item_name)
+    if not item_name then
+        item_name = self.name
+    end
+
+    local item, found = Tirislib_Item.get_by_name(item_name)
+
+    if found then
+        self.icon = item.icon
+        self.icons = item.icons
+        self.icon_size = item.icon_size
+    end
+
+    return self
+end
+
 --- Defines difficulties for this recipe, if they aren't defined already.
 --- @return RecipePrototype itself
 function Tirislib_Recipe:create_difficulties()

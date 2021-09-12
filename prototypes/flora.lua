@@ -24,7 +24,7 @@ local flora_items = {
     {name = "avocado-wood", wood = true, unlock = Unlocks.get_tech_name("avocado")},
     {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")},
     {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
-    --{name = "gingil-hemp"}
+    {name = "gingil-hemp"}
 }
 
 for _, item in pairs(flora_items) do
@@ -93,7 +93,7 @@ local function create_annual_recipe(details)
                 Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-annual",
-            subgroup = "sosciencity-fauna",
+            subgroup = "sosciencity-flora",
             icons = {
                 {icon = product.icon},
                 {
@@ -138,7 +138,7 @@ local function create_perennial_recipe(details)
                 Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-perennial",
-            subgroup = "sosciencity-fauna",
+            subgroup = "sosciencity-flora",
             icons = {
                 {icon = product.icon},
                 {
@@ -187,7 +187,7 @@ local function create_annual_bloomhouse_recipe(details)
                 product:get_localised_name()
             },
             category = "sosciencity-bloomhouse-annual",
-            subgroup = "sosciencity-fauna",
+            subgroup = "sosciencity-flora",
             icons = {
                 {icon = product.icon},
                 {
@@ -225,7 +225,7 @@ local function create_neogenesis_recipe(details)
             localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
             localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
             category = "sosciencity-phyto-gene-lab",
-            subgroup = "sosciencity-fauna",
+            subgroup = "sosciencity-neogenesis-recipes",
             icons = {
                 {icon = product.icon},
                 {
@@ -250,7 +250,8 @@ create_perennial_recipe {
 }
 
 create_neogenesis_recipe {
-    product = "apple"
+    product = "apple",
+    unlock = "ortrot-variations"
 }
 
 -- avocado
@@ -320,6 +321,11 @@ create_neogenesis_recipe {
     unlock = "nightshades"
 }
 
+-- gingil hemp
+create_annual_recipe {
+    product = "gingil-hemp"
+}
+
 -- lemon
 create_perennial_recipe {
     product = "lemon",
@@ -382,7 +388,8 @@ create_annual_recipe {
 }
 
 create_annual_bloomhouse_recipe {
-    product = "phytofall-blossom"
+    product = "phytofall-blossom",
+    unlock = Unlocks.get_tech_name("phytofall-blossom")
 }
 
 -- potato

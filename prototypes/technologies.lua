@@ -465,7 +465,7 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "infrastructure-1",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
     upgrade = true,
     prerequisites = {},
@@ -481,7 +481,7 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "infrastructure-2",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
     upgrade = true,
     prerequisites = {"logistic-science-pack", "infrastructure-1"},
@@ -497,7 +497,7 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "infrastructure-3",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
     upgrade = true,
     prerequisites = {"chemical-science-pack", "infrastructure-2"},
@@ -647,7 +647,7 @@ Tirislib_Technology.create {
     icon_size = 128,
     prerequisites = {"plasma-caste"},
     unit = {
-        count = 166,
+        count = 51,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1}
@@ -660,12 +660,13 @@ Tirislib_Technology.create {
     name = "transfusion-medicine",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"hospital"},
+    prerequisites = {"infrastructure-3", "hospital"},
     unit = {
-        count = 166,
+        count = 86,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 30
     }
@@ -690,7 +691,7 @@ Tirislib_Technology.create {
     name = "intensive-care",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"hospital", "architecture-3"},
+    prerequisites = {"infrastructure-3", "hospital"},
     unit = {
         count = 248,
         ingredients = {
@@ -722,8 +723,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "fermentation",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/fermentation.png",
+    icon_size = 256,
     prerequisite = {"clockwork-caste"},
     unit = {
         count = 32,
@@ -736,8 +737,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "basic-biotechnology",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/basic-biotechnology.png",
+    icon_size = 256,
     prerequisites = {"fermentation", "logistic-science-pack"},
     unit = {
         count = 48,
@@ -838,8 +839,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "zetorn-variations",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/zetorn-variations.png",
+    icon_size = 256,
     prerequisites = {Unlocks.get_tech_name("zetorn"), "genetic-neogenesis"},
     unit = {
         count = 73,
@@ -853,8 +854,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "ortrot-variations",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/ortrot-variations.png",
+    icon_size = 256,
     prerequisites = {Unlocks.get_tech_name("ortrot"), "genetic-neogenesis"},
     unit = {
         count = 68,
@@ -886,8 +887,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "hummus",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/hummus.png",
+    icon_size = 256,
     prerequisites = {"food-processing", "genetic-neogenesis"},
     unit = {
         count = 233,
@@ -901,8 +902,8 @@ Tirislib_Technology.create {
 
 Tirislib_Technology.create {
     name = "soy-products",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/soy-products.png",
+    icon_size = 256,
     prerequisites = {"food-processing", Unlocks.get_tech_name("razha-bean")},
     unit = {
         count = 188,

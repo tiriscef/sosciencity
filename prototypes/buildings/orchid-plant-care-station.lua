@@ -5,8 +5,8 @@ Tirislib_Item.create {
     name = "orchid-plant-care-station",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
-    subgroup = "sosciencity-food-buildings",
-    order = "daa",
+    subgroup = "sosciencity-flora-buildings",
+    order = "gaa",
     place_result = "orchid-plant-care-station",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
@@ -14,8 +14,11 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "orchid-plant-care-station",
-    themes = {{"building", 10}, {"silo", 2}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    themes = {{"building", 10}},
+    ingredients = {
+        {type = "item", name = "silo", amount = 2},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 2,
     unlock = "orchid-caste"
 }
