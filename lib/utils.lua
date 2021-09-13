@@ -424,6 +424,14 @@ function Tirislib_Utils.add_random_offset(position, offset)
     position.y = position.y + random(-offset, offset)
 end
 
+--- Adds a random floating point offset to the given position.
+--- @param position point2d
+--- @param offset number
+function Tirislib_Utils.add_random_float_offset(position, offset)
+    position.x = position.x + random() * 2 * offset - offset
+    position.y = position.y + random() * 2 * offset - offset
+end
+
 --- Checks that it is not the control stage. Otherwise throws an error.\
 --- Used to secure that specific functions can only be called during the initialisation stage, as they would otherwise be a cause for desyncs.
 function Tirislib_Utils.desync_protection()

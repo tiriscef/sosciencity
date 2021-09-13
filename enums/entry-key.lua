@@ -154,6 +154,8 @@ EK.prune_bonus = 705
 EK.humus = 800
 --- progress toward the next composted item
 EK.composting_progress = 801
+--- progress toward the next spawned necrofall circle
+EK.necrofall_progress = 802
 
 -- hospital
 

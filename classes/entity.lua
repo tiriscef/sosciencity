@@ -142,12 +142,15 @@ Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
 local function create_composter(entry)
     entry[EK.humus] = 0
     entry[EK.composting_progress] = 0
+    entry[EK.necrofall_progress] = 0
 end
 Register.set_entity_creation_handler(Type.composter, create_composter)
 
 local compost_values = ItemConstants.compost_values
 local composting_coefficient = 1 / 400 / 600
 local mold_producers = ItemConstants.mold_producers
+local necrofall_coefficient = 1 / (5 * Time.minute)
+local necrofall_radius = 10 -- tiles
 
 --- Analyzes the given inventory and returns the composting progress per tick and an array of the compostable items.
 local function analyze_composter_inventory(content)
@@ -188,14 +191,34 @@ local function compostify_items(inventory, count, compostable_items, entry, mold
     end
 end
 
+local function spawn_necrofall(entry, count)
+    local entity = entry[EK.entity]
+    local position = entity.position
+    local surface = entity.surface
+
+    while count > 0 do
+        local pos = surface.find_non_colliding_position("necrofall-circle", position, necrofall_radius, 1.5, false)
+        if not pos then
+            break
+        end
+        Tirislib_Utils.add_random_float_offset(pos, 1)
+
+        surface.create_entity {
+            name = "necrofall-circle",
+            position = pos,
+            force = "neutral"
+        }
+
+        count = count - 1
+    end
+end
+
 local function update_composter(entry, delta_ticks)
     local inventory = get_chest_inventory(entry)
     local contents = inventory.get_contents()
     local progress_factor, compostable_items = analyze_composter_inventory(contents)
 
-    local progress = entry[EK.composting_progress]
-
-    progress = progress + progress_factor * delta_ticks
+    local progress = entry[EK.composting_progress] + progress_factor * delta_ticks
 
     if progress >= 1 then
         local to_consume = floor(progress)
@@ -208,6 +231,20 @@ local function update_composter(entry, delta_ticks)
     end
 
     entry[EK.composting_progress] = progress
+
+    -- check if something is composting at all
+    if progress_factor > 0 then
+        local necrofall_progress = entry[EK.necrofall_progress] + necrofall_coefficient * delta_ticks
+
+        if necrofall_progress >= 1 then
+            local to_spawn = floor(necrofall_progress)
+
+            necrofall_progress = necrofall_progress - to_spawn
+            spawn_necrofall(entry, to_spawn)
+        end
+
+        entry[EK.necrofall_progress] = necrofall_progress
+    end
 end
 Register.set_entity_updater(Type.composter, update_composter)
 
@@ -223,6 +260,7 @@ Register.set_entity_destruction_handler(Type.composter, remove_composter)
 local function copy_composter(source, destination)
     destination[EK.composting_progress] = source[EK.composting_progress]
     destination[EK.humus] = source[EK.humus]
+    destination[EK.necrofall_progress] = source[EK.necrofall_progress]
 end
 Register.set_entity_copy_handler(Type.composter, copy_composter)
 

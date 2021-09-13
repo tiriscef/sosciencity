@@ -237,11 +237,6 @@ RG.ingredient_themes = {
             {type = "item", name = "humus", amount = 1}
         }
     },
-    tablet_ingredients = {
-        [0] = {
-            {type = "item", name = "amylum", amount = 1}
-        }
-    },
     tank = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 5},
@@ -257,6 +252,17 @@ RG.ingredient_themes = {
     wiring = {
         [0] = {
             {type = "item", name = "copper-cable", amount = 2}
+        }
+    },
+    cream_ingredients = {
+        [0] = {
+            {type = "fluid", name = "clean-water", amount = 10},
+            {type = "fluid", name = "fatty-oil", amount = 1}
+        }
+    },
+    tablet_ingredients = {
+        [0] = {
+            {type = "item", name = "amylum", amount = 1}
         }
     },
     --- everything that is built to accommodate huwans
