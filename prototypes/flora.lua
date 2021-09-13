@@ -24,7 +24,8 @@ local flora_items = {
     {name = "avocado-wood", wood = true, unlock = Unlocks.get_tech_name("avocado")},
     {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")},
     {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
-    {name = "gingil-hemp"}
+    {name = "gingil-hemp", sprite_variations = {name = "gingil-hemp-pile", count = 3}},
+    {name = "necrofall"}
 }
 
 for _, item in pairs(flora_items) do
@@ -350,6 +351,18 @@ create_annual_recipe {
     unlock = Unlocks.get_tech_name("manok")
 }
 
+-- necrofall
+create_annual_recipe {
+    product = "necrofall",
+    product_probability = 0.25,
+    unlock = Unlocks.get_tech_name("necrofall")
+}
+
+create_annual_bloomhouse_recipe {
+    product = "necrofall",
+    unlock = Unlocks.get_tech_name("necrofall")
+}
+
 -- olive
 create_perennial_recipe {
     product = "olive",
@@ -670,3 +683,39 @@ Tirislib_RecipeGenerator.create {
     default_theme_level = 0,
     unlock = Unlocks.get_tech_name("zetorn")
 }
+
+---------------------------------------------------------------------------------------------------
+-- << necrofall decorative >>
+
+Tirislib_Entity.create {
+    name = "necrofall-circle",
+    type = "simple-entity",
+    count_as_rock_for_filtered_deconstruction = true,
+    minable = {
+        mining_time = 1.5,
+        results = {{name = "necrofall", amount_min = 10, amount_max = 15}}
+    },
+    pictures = {
+        {
+            filename = "__sosciencity-graphics__/graphics/entity/necrofall-circle/necrofall-circle-1.png",
+            width = 256,
+            height = 256,
+            shift = {0.0, 0.0},
+            scale = 0.25
+        },
+        {
+            filename = "__sosciencity-graphics__/graphics/entity/necrofall-circle/necrofall-circle-2.png",
+            width = 256,
+            height = 256,
+            shift = {0.0, 0.0},
+            scale = 0.25
+        },
+        {
+            filename = "__sosciencity-graphics__/graphics/entity/necrofall-circle/necrofall-circle-3.png",
+            width = 256,
+            height = 256,
+            shift = {0.0, 0.0},
+            scale = 0.25
+        }
+    }
+}:set_size(1.8, 1.8):copy_localisation_from_item("necrofall")

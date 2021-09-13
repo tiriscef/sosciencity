@@ -26,6 +26,7 @@ Unlocks.by_item_aquisition = {
     [get_tech_name("lemon")] = "lemon",
     [get_tech_name("liontooth")] = "liontooth",
     [get_tech_name("manok")] = "manok",
+    [get_tech_name("necrofall")] = "necrofall",
     [get_tech_name("nan-swan")] = "nan-swan",
     [get_tech_name("olive")] = "olive",
     [get_tech_name("orange")] = "orange",

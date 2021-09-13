@@ -105,6 +105,10 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-pharma"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-phyto-gene-lab"
     },
     {

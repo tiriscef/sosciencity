@@ -93,7 +93,7 @@ Biology.flora = {
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.9,
-        recipes = {"farming-annual-gingil-hemp"},
+        recipes = {"farming-annual-gingil-hemp"}
     },
     ["lemon"] = {
         persistent = true,
@@ -112,7 +112,7 @@ Biology.flora = {
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.9,
-        recipes = {"farming-annual-liontooth"},
+        recipes = {"farming-annual-liontooth"}
     },
     ["manok"] = {
         persistent = false,
@@ -122,6 +122,18 @@ Biology.flora = {
         preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.8,
         recipes = {"farming-annual-manok"}
+    },
+    ["necrofall"] = {
+        persistent = false,
+        growth_coefficient = 0.5,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.7,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.7,
+        recipes = {
+            "farming-annual-necrofall",
+            "farming-annual-bloomhouse-necrofall"
+        }
     },
     ["olive"] = {
         persistent = true,

@@ -91,6 +91,7 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "phytofall-blossom", amount = 5}
     },
+    category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
     unlock = "psychiatry"
@@ -103,6 +104,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "gingil-hemp", amount = 5},
         {type = "fluid", name = "ethanol", amount = 10}
     },
+    category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
     unlock = "hospital"
@@ -111,7 +113,11 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "potent-analgesics",
     themes = {{"tablet_ingredients", 1}},
-    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    ingredients = {
+        {type = "item", name = "necrofall", amount = 2},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
     unlock = "intensive-care"
@@ -119,7 +125,11 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "anesthetics",
-    ingredients = {{name = "clean-water", amount = 2, type = "fluid"}},
+    ingredients = {
+        {type = "item", name = "necrofall", amount = 5},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
     unlock = "intensive-care"
@@ -128,7 +138,11 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "antibiotics",
     themes = {{"tablet_ingredients", 1}},
-    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    ingredients = {
+        {type = "fluid", name = "flinnum", amount = 10},
+        {type = "item", name = "sugar", amount = 3}
+    },
+    category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
     unlock = "hospital"
@@ -136,8 +150,13 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "antimycotics",
-    themes = {{"tablet_ingredients", 1}},
-    --ingredients = {{name = "phytofall-blossom", amount = 2}}, TODO: ingredient
+    themes = {{"cream_ingredients", 1}},
+    ingredients = {
+        {type = "item", name = "zetorn", amount = 5},
+        -- at the moment I don't have a building for pharmaceuticals and am limited to the 2 fluid boxes of chem plants
+        --{type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
     unlock = "hospital"
@@ -303,7 +322,7 @@ Tirislib_RecipeGenerator.create {
     product_amount = 5,
     ingredients = {
         {type = "item", name = "blood-bag", amount = 1},
-        {type = "item", name = "potent-analgesics", amount = 1},
+        {type = "item", name = "analgesics", amount = 1},
         {type = "item", name = "bandage", amount = 5}
     },
     unlock = "hospital"
