@@ -8,6 +8,7 @@ local medicine_items = {
     {name = "artificial-limp"},
     {name = "artificial-heart"},
     {name = "bandage", sprite_variations = {name = "bandage-pile", count = 3}},
+    {name = "isotonic-saline-solution"},
     {name = "blood-bag"},
     {name = "psychotropics", sprite_variations = {name = "psychotropics-pile", count = 3}},
     {name = "analgesics", sprite_variations = {name = "analgesics-pile", count = 3}},
@@ -76,12 +77,23 @@ Tirislib_RecipeGenerator.create {
     product = "bandage",
     product_amount = 15,
     ingredients = {
-        {name = "cloth", amount = 10},
-        {name = "steam", amount = 300, type = "fluid"}
+        {type = "item", name = "cloth", amount = 10},
+        {type = "fluid", name = "steam", amount = 300}
     },
     category = "crafting-with-fluid",
     energy_required = 5,
     allow_productivity = true,
+    unlock = "hospital"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "isotonic-saline-solution",
+    ingredients = {
+        {type = "fluid", name = "clean-water", amount = 10},
+        {type = "item", name = "salt", amount = 1}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.dissolving,
+    energy_required = 1.6,
     unlock = "hospital"
 }
 

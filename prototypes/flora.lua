@@ -179,7 +179,7 @@ local function create_annual_bloomhouse_recipe(details)
                 {type = "item", name = "pot", amount = 20}
             },
             byproducts = {
-                {type = "item", name = "leafage", amount_min = 1, amount_max = 5},
+                {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
                 {type = "item", name = "pot", amount_min = 19, amount_max = 20}
             },
             localised_name = {"recipe-name.annual", product:get_localised_name()},

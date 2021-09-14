@@ -24,6 +24,7 @@ local Diseases = {}
 --- **complication_probability:** the probability of a complication\
 --- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured
 Diseases.values = {
+    -- 1+: primarily accidents
     [1] = {
         name = "limp-loss",
         cure_items = {
@@ -37,9 +38,13 @@ Diseases.values = {
     },
     [2] = {
         name = "broken-bone",
+        cure_items = {
+            ["bandage"] = 1,
+            ["analgesics"] = 1
+        },
         curing_workload = 3,
         natural_recovery = 3 * Time.nauvis_week,
-        categories = {[DiseaseCategory.accident] = 300}
+        categories = {[DiseaseCategory.accident] = 150}
     },
     [3] = {
         name = "burnt-skin",
@@ -60,6 +65,20 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.accident] = 300}
     },
+    [5] = {
+        name = "biter-bite",
+        cure_items = {
+            ["bandage"] = 1,
+            ["antibiotics"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.1,
+        natural_recovery = 1 * Time.nauvis_week,
+        categories = {[DiseaseCategory.accident] = 50},
+        escalation = "necrosis",
+        escalation_probability = 0.25
+    },
+    -- 1000+: primarily mental health related
     [1000] = {
         name = "depression",
         cure_items = {
@@ -68,9 +87,19 @@ Diseases.values = {
         curing_workload = 15,
         curing_facility = Type.psych_ward,
         lethality = 0.1,
-        categories = {[DiseaseCategory.sanity] = 100}
+        categories = {[DiseaseCategory.sanity] = 50}
     },
     [1001] = {
+        name = "schizophrenia",
+        cure_items = {
+            ["psychotropics"] = 1
+        },
+        curing_workload = 15,
+        curing_facility = Type.psych_ward,
+        lethality = 0.2,
+        categories = {[DiseaseCategory.sanity] = 50}
+    },
+    [1002] = {
         name = "reality-loss",
         cure_items = {
             ["psychotropics"] = 1
@@ -80,25 +109,21 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100}
     },
-    [1002] = {
+    [1003] = {
         name = "factorio-addiction",
         curing_workload = 5,
         curing_facility = Type.psych_ward,
         natural_recovery = 2 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100}
     },
-    [1003] = {
-        name = "gender-dysphoria",
-        cure_items = {
-            ["edited-huwan-genome"] = 1,
-            ["blank-dna-virus"] = 1,
-            ["nucleobases"] = 1,
-            ["thermostable-dna-polymerase"] = 1
-        },
-        curing_workload = 10,
-        --curing_facility = Type.gene_clinic,
-        categories = {[DiseaseCategory.birth_defect] = 50}
+    [1004] = {
+        name = "burnout",
+        curing_workload = 5,
+        curing_facility = Type.psych_ward,
+        natural_recovery = 3 * Time.nauvis_week,
+        categories = {[DiseaseCategory.sanity] = 100}
     },
+    -- 2000+: primarily health related
     [2000] = {
         name = "rare-cold",
         curing_workload = 1,
@@ -115,12 +140,44 @@ Diseases.values = {
         },
         curing_workload = 2,
         contagiousness = 0.1,
-        natural_recovery = 2 * Time.nauvis_day,
+        natural_recovery = 3 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",
         escalation_probability = 0.1
     },
-    [2100] = {
+    [2002] = {
+        name = "riverhorse-flu",
+        cure_items = {
+            ["antibiotics"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.02,
+        contagiousness = 0.15,
+        natural_recovery = 5 * Time.nauvis_day,
+        categories = {[DiseaseCategory.health] = 100},
+        escalation = "lung-infection",
+        escalation_probability = 0.1
+    },
+    [2003] = {
+        name = "headaches",
+        cure_items = {
+            ["analgesics"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 1 * Time.nauvis_day,
+        categories = {[DiseaseCategory.health] = 100}
+    },
+    [2004] = {
+        name = "diarrhea",
+        cure_items = {
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 2 * Time.nauvis_day,
+        categories = {[DiseaseCategory.health] = 100}
+    },
+    -- 3000+: primarily escalation diseases
+    [3000] = {
         name = "lung-infection",
         cure_items = {
             ["antibiotics"] = 1,
@@ -131,7 +188,20 @@ Diseases.values = {
         natural_recovery = 2 * Time.nauvis_week,
         categories = {[DiseaseCategory.health] = 10}
     },
-    [2200] = {
+    [3001] = {
+        name = "necrosis",
+        cure_items = {
+            ["antibiotics"] = 2,
+            ["analgesics"] = 1,
+            ["bandage"] = 1
+        },
+        curing_workload = 10,
+        lethality = 0.35,
+        natural_recovery = 2 * Time.nauvis_week,
+        categories = {[DiseaseCategory.health] = 10}
+    },
+    -- 4000+: primarily birth defects
+    [4000] = {
         name = "weak-heart",
         cure_items = {
             ["artificial-heart"] = 1,
@@ -142,13 +212,27 @@ Diseases.values = {
         curing_workload = 10,
         curing_facility = Type.intensive_care_unit,
         lethality = 0.7,
+        complication = "lung-infection",
+        complication_probability = 0.1,
         complication_lethality = 0.1,
         natural_recovery = 2 * Time.nauvis_month,
         categories = {
             [DiseaseCategory.health] = 5,
             [DiseaseCategory.birth_defect] = 100
         }
-    }
+    },
+    [4001] = {
+        name = "gender-dysphoria",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
+        },
+        curing_workload = 10,
+        --curing_facility = Type.gene_clinic,
+        categories = {[DiseaseCategory.birth_defect] = 50}
+    },
 }
 
 --- table with (disease category, table of diseases)-pairs
