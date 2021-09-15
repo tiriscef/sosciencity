@@ -1,3 +1,5 @@
+-- enums
+
 local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
@@ -9,6 +11,8 @@ local HealthSummand = require("enums.health-summand")
 local HealthFactor = require("enums.health-factor")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
+
+-- constants
 
 local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
@@ -1483,7 +1487,7 @@ local function create_general_building_details(container, entry)
         add_kv_pair(building_data, "staff-performance")
 
         local castes_needed =
-            Luaq_from(worker_specification.castes):select(display_caste, true):call(
+            Luaq_from(worker_specification.castes):select_element(display_caste, true):call(
             display_enumeration,
             nil,
             {"sosciencity.or"}
