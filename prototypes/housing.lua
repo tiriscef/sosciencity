@@ -194,7 +194,7 @@ local housing_prototype_details = {
         ),
         width = 5,
         height = 5,
-        tech_level = 1
+        tech_level = 2
     },
     ["bunkerhouse"] = {
         picture = {
@@ -290,8 +290,21 @@ local housing_prototype_details = {
         },
         width = 13,
         height = 6,
-        tech_level = 0
+        tech_level = 1
     },
+    ["living-container"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/living-container/living-container",
+            width = 8,
+            height = 7,
+            shift = {0.5, 0.0},
+            shadowmap = true,
+            glow = true
+        },
+        width = 5,
+        height = 5,
+        tech_level = 0
+    }
 }
 
 if Sosciencity_Config.DEBUG then
