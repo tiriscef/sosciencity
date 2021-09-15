@@ -288,7 +288,7 @@ Tirislib_RecipeGenerator.create_per_theme_level {
         end
     },
     allow_productivity = true,
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -311,7 +311,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -321,7 +321,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "yarn", amount = 5}
     },
     allow_productivity = true,
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {

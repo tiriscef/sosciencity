@@ -65,6 +65,11 @@ Housing.values = {
         comfort = 1,
         qualities = {"compact", "simple", "cheap"}
     },
+    ["living-container"] = {
+        room_count = 6,
+        comfort = 0,
+        qualities = {"compact", "simple", "cheap", "low", "copy-paste"}
+    },
     ["test-house"] = {
         room_count = 200,
         comfort = 10,
