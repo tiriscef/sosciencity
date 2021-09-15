@@ -192,7 +192,7 @@ Diseases.values = {
         name = "necrosis",
         cure_items = {
             ["antibiotics"] = 2,
-            ["analgesics"] = 1,
+            ["potent-analgesics"] = 1,
             ["bandage"] = 1
         },
         curing_workload = 10,

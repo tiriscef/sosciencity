@@ -756,7 +756,7 @@ Tirislib_RecipeGenerator.create {
     product = "ethanol",
     product_amount = 50,
     ingredients = {
-        {type = "item", name = "sugar", amount = 10},
+        {type = "item", name = "sugar", amount = 2},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     category = "sosciencity-fermentation-tank",

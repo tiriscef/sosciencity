@@ -68,6 +68,20 @@ function Tirislib_Luaq:select(fn, ...)
     return self
 end
 
+--- Projects the elements of the sequence with the given function.
+--- @param fn function function with (element, ...) arguments, should return the new element
+--- @return LuaqQuery
+function Tirislib_Luaq:select_element(fn, ...)
+    local new_content = {}
+
+    for index, element in pairs(self.content) do
+        new_content[index] = fn(element, ...)
+    end
+
+    self.content = new_content
+    return self
+end
+
 --- Filters the elements of the sequence with the given function.
 --- @param fn function function with (index, element, ...) arguments, should return a truthy or falsy value
 --- @return LuaqQuery

@@ -4,8 +4,6 @@ local Biology = require("constants.biology")
 local Unlocks = require("constants.unlocks")
 local WeatherLocales = require("constants.weather-locales")
 
-require("classes.weather")
-
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 
@@ -687,13 +685,50 @@ Tirislib_RecipeGenerator.create {
 ---------------------------------------------------------------------------------------------------
 -- << necrofall decorative >>
 
+local sounds = require("__base__.prototypes.entity.sounds")
+
 Tirislib_Entity.create {
     name = "necrofall-circle",
     type = "simple-entity",
+    flags = {"placeable-neutral", "placeable-off-grid"},
     count_as_rock_for_filtered_deconstruction = true,
+    subgroup = "grass",
     minable = {
-        mining_time = 1.5,
-        results = {{name = "necrofall", amount_min = 10, amount_max = 15}}
+        mining_particle = "wooden-particle",
+        mining_time = 1,
+        results = {
+            {name = "necrofall", amount_min = 10, amount_max = 15},
+            {name = "leafage", amount_min = 10, amount_max = 15}
+        }
+    },
+    mined_sound = sounds.tree_leaves,
+    mining_sound = {
+        variations = {
+            {
+                filename = "__core__/sound/mining-wood-1.ogg",
+                volume = 0.4
+            },
+            {
+                filename = "__core__/sound/mining-wood-2.ogg",
+                volume = 0.4
+            },
+            {
+                filename = "__core__/sound/mining-wood-3.ogg",
+                volume = 0.4
+            },
+            {
+                filename = "__core__/sound/mining-wood-4.ogg",
+                volume = 0.4
+            },
+            {
+                filename = "__core__/sound/mining-wood-5.ogg",
+                volume = 0.4
+            },
+            {
+                filename = "__core__/sound/mining-wood-6.ogg",
+                volume = 0.4
+            }
+        }
     },
     pictures = {
         {
@@ -718,4 +753,4 @@ Tirislib_Entity.create {
             scale = 0.25
         }
     }
-}:set_size(1.8, 1.8):copy_localisation_from_item("necrofall")
+}:set_size(1.8, 1.8):copy_localisation_from_item("necrofall"):copy_icon_from_item("necrofall")

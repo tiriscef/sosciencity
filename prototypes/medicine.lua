@@ -101,7 +101,8 @@ Tirislib_RecipeGenerator.create {
     product = "psychotropics",
     themes = {{"tablet_ingredients", 1}},
     ingredients = {
-        {type = "item", name = "phytofall-blossom", amount = 5}
+        {type = "item", name = "phytofall-blossom", amount = 5},
+        {type = "fluid", name = "ethanol", amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -164,7 +165,7 @@ Tirislib_RecipeGenerator.create {
     product = "antimycotics",
     themes = {{"cream_ingredients", 1}},
     ingredients = {
-        {type = "item", name = "zetorn", amount = 5},
+        {type = "item", name = "zetorn", amount = 5}
         -- at the moment I don't have a building for pharmaceuticals and am limited to the 2 fluid boxes of chem plants
         --{type = "fluid", name = "ethanol", amount = 10}
     },
