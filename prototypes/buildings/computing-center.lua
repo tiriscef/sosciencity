@@ -33,14 +33,25 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    allowed_effects = {"productivity", "speed"},
-    animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+    allowed_effects = {"productivity", "speed"},    animation = {
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 5/7,
+                frame_count = 1
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/icon/empty-hard-drive.png",
+                priority = "high",
+                width = 64,
+                height = 64,
+                scale = 1,
+                frame_count = 1
+            }
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-computing-center"},
@@ -51,4 +62,4 @@ Tirislib_Entity.create {
         emissions_per_minute = 0.15,
         drain = "100kW"
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(5, 5):copy_localisation_from_item()

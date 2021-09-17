@@ -137,9 +137,15 @@ Tirislib_Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-microorganism-products",
+        group = "sosciencity-production",
+        order = "acc"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-flora",
         group = "sosciencity-production",
-        order = "adb"
+        order = "ada"
     },
     {
         type = "item-subgroup",

@@ -25,7 +25,7 @@ require("prototypes.fauna")
 require("prototypes.food")
 require("prototypes.flora")
 
-require("prototypes.hunting_gathering")
+require("prototypes.hunting-gathering")
 
 require("prototypes.housing")
 require("prototypes.buildings")

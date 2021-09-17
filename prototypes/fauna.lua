@@ -421,7 +421,7 @@ if settings.startup["sosciencity-modify-environment"].value then
         },
         autoplace = {
             order = "sosciencity-a",
-            influence = 0.01
+            influence = 0.001
         },
         localised_name = {"item-name.primal-quacker"}
     }
@@ -454,7 +454,7 @@ if settings.startup["sosciencity-modify-environment"].value then
         },
         autoplace = {
             order = "sosciencity-b",
-            influence = 0.005
+            influence = 0.001
         },
         localised_name = {"item-name.nan-swan"}
     }
@@ -468,8 +468,8 @@ if settings.startup["sosciencity-modify-environment"].value then
         minable = {
             mining_time = 0.4,
             results = {
-                {type = "item", name = "boofish", amount = 10},
-                {type = "item", name = "fupper", amount = 5},
+                {type = "item", name = "boofish", amount_min = 5, amount_max = 15},
+                {type = "item", name = "fupper", amount = 4, amount_max = 10},
                 {type = "item", name = "dodkopus", amount = 1, probability = 0.2},
                 {type = "item", name = "shellscript", amount = 3, probability = 0.5},
                 {type = "item", name = "ultra-squibbel", amount = 1, probability = 0.2},

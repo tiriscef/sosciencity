@@ -17,9 +17,9 @@ local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_RecipeGenerator.create {
     product = "drying-unit",
-    themes = {{"machine", 2, 3}},
-    default_theme_level = 2,
-    unlock = "food-processing"
+    themes = {{"machine", 2, 3}, {"piping", 8, 12}},
+    default_theme_level = 1,
+    unlock = "fermentation"
 }
 
 Tirislib_Entity.create {
@@ -37,12 +37,16 @@ Tirislib_Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 5/7,
+                frame_count = 1
+            }
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-drying-unit"},
@@ -56,15 +60,15 @@ Tirislib_Entity.create {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0, -2}}},
+            pipe_connections = {{position = {0, -3}}},
             production_type = "input"
         },
         {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0, 2}}},
+            pipe_connections = {{position = {0, 3}}},
             production_type = "input"
         }
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(5, 5):copy_localisation_from_item()

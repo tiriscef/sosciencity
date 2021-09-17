@@ -13,6 +13,7 @@ local foods = {
     {name = "insect-meat"},
     {name = "fish-meat"},
     {name = "biter-meat", sprite_variations = {name = "biter-meat", count = 2, include_icon = true}},
+    {name = "fermented-biter-meat", sprite_variations = {name = "fermented-biter-meat", count = 2, include_icon = true}},
     {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
     {name = "nan-egg"},
     {name = "primal-egg"},
@@ -40,7 +41,11 @@ local foods = {
     {name = "manok", sprite_variations = {name = "manok-pile", count = 3}},
     {name = "tello-fruit", sprite_variations = {name = "tello-pile", count = 3, include_icon = true}},
     {name = "razha-bean", sprite_variations = {name = "razha-bean-pile", count = 3}, probability = 0.1},
-    {name = "dried-solfaen", sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true}},
+    {
+        name = "dried-solfaen",
+        sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true},
+        distinctions = {subgroup = "sosciencity-microorganism-products"}
+    },
     {name = "tofu"},
     {name = "yuba"},
     {name = "hummus"}
@@ -87,6 +92,18 @@ Tirislib_Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"}
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+
+Tirislib_RecipeGenerator.create {
+    product = "fermented-biter-meat",
+    product_amount = 10,
+    ingredients = {
+        {type = "item", name = "biter-meat", amount = 10},
+        {type = "item", name = "salt", amount = 2},
+        {type = "fluid", name = "pemtenn", amount = 10}
+    },
+    category = "sosciencity-fermentation-tank",
+    unlock = "fermentation"
+}
 
 Tirislib_RecipeGenerator.create {
     product = "hummus",
