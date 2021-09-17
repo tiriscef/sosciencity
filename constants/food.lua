@@ -42,6 +42,18 @@ Food.values = {
         portion_size = 10,
         group = "biter-meat"
     },
+    ["fermented-biter-meat"] = {
+        fat = 13,
+        carbohydrates = 0.7,
+        proteins = 22,
+        healthiness = 5,
+        food_category = "meat",
+        taste_category = Taste.acidic,
+        taste_quality = 5,
+        luxury = 5,
+        portion_size = 10,
+        group = "biter-meat"
+    },
     ["insect-meat"] = {
         fat = 28.7,
         carbohydrates = 2.7,

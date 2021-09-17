@@ -138,11 +138,11 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-data"}
     },
     {
-        name = "plant-genome",
+        name = "virus-genome",
         distinctions = {subgroup = "sosciencity-data"}
     },
     {
-        name = "animal-genome",
+        name = "plant-genome",
         distinctions = {subgroup = "sosciencity-data"}
     },
     {
@@ -178,7 +178,11 @@ local material_items = {
     },
     {
         name = "solid-fat",
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        distinctions = {
+            subgroup = "sosciencity-biology-materials",
+            fuel_value = "500kJ",
+            fuel_category = "chemical"
+        }
     },
     {
         name = "proteins",
@@ -220,6 +224,10 @@ local material_items = {
     {
         name = "blank-dna-virus",
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
+    },
+    {
+        name = "pemtenn-extract",
+        distinctions = {subgroup = "sosciencity-microorganism-products"}
     }
 }
 
@@ -247,7 +255,8 @@ local fluids = {
         }
     },
     {
-        name = "ethanol"
+        name = "ethanol",
+        distinctions = {subgroup = "sosciencity-microorganism-products"}
     }
 }
 
@@ -336,7 +345,7 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "pot",
-    themes = {{"ceramic", 2, 3}};
+    themes = {{"ceramic", 2, 3}},
     unlock = "open-environment-farming"
 }
 
@@ -383,7 +392,7 @@ Tirislib_RecipeGenerator.create {
         {"iron_ore", 1}
     },
     category = Tirislib_RecipeGenerator.category_alias.mixing,
-    unlock = "architecture-4"
+    unlock = "architecture-3"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -391,7 +400,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 3.2,
     ingredients = {{type = "item", name = "mineral-mixture", amount = 1}},
     category = "smelting",
-    unlock = "architecture-4"
+    unlock = "architecture-3"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -511,7 +520,7 @@ Tirislib_RecipeGenerator.create {
     product = "ink",
     ingredients = {
         {type = "fluid", name = "water", amount = 10},
-        {type = "item", name = "ferrous-sulfate", amount = 1},
+        {type = "item", name = "ferrous-sulfate", amount = 1}
         -- TODO gallic acid
     },
     category = "chemistry",
@@ -693,6 +702,16 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
+    product = "virus-genome",
+    ingredients = {
+        {"empty-hard-drive", 1}
+    },
+    category = "sosciencity-computing-center",
+    energy_required = 10,
+    unlock = "huwan-genetic-neogenesis"
+}
+
+Tirislib_RecipeGenerator.create {
     product = "plant-genome",
     ingredients = {
         {"empty-hard-drive", 1}
@@ -733,6 +752,56 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
+    product = "fatty-oil",
+    product_type = "fluid",
+    product_amount = 20,
+    energy_required = 1.6,
+    ingredients = {
+        {type = "item", name = "weird-berry", amount = 5}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.plant_oil_extraction,
+    unlock = Unlocks.get_tech_name("weird-berry")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "fatty-oil",
+    product_type = "fluid",
+    product_amount = 30,
+    energy_required = 1.6,
+    ingredients = {
+        {type = "item", name = "avocado", amount = 5}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.plant_oil_extraction,
+    unlock = Unlocks.get_tech_name("avocado")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "fatty-oil",
+    product_type = "fluid",
+    product_amount = 30,
+    energy_required = 1.6,
+    ingredients = {
+        {type = "item", name = "olive", amount = 5}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.plant_oil_extraction,
+    unlock = Unlocks.get_tech_name("olive")
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "solid-fat",
+    energy_required = 1.6,
+    expensive_energy_required = 2.4,
+    themes = {
+        {"hydrogen", 10}
+    },
+    ingredients = {
+        {type = "fluid", name = "fatty-oil", amount = 10}
+    },
+    category = "chemistry",
+    unlock = "food-processing"
+}:add_catalyst(Tirislib_RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.99, 1, 0.98)
+
+Tirislib_RecipeGenerator.create {
     product = "proteins",
     ingredients = {
         {type = "item", name = "razha-bean", amount = 1},
@@ -765,7 +834,8 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "glass-instruments",
-    product_amount = 2,
+    product_min = 1,
+    product_max = 5,
     energy_required = 2,
     themes = {{"glass", 5, 10}, {"plastic", 2, 3}},
     default_theme_level = 2,
@@ -782,32 +852,65 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "nucleobases",
+    energy_required = 3.2,
     ingredients = {
-
+        {type = "item", name = "pemtenn-extract", amount = 2},
+        {type = "item", name = "glass-instruments", amount = 1},
+        {type = "fluid", name = "ethanol", amount = 15}
     },
     expensive_ingredients = {
-
+        {type = "item", name = "pemtenn-extract", amount = 3},
+        {type = "item", name = "glass-instruments", amount = 2},
+        {type = "fluid", name = "ethanol", amount = 20}
     },
+    category = "chemistry",
     unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "phospholipids",
+    energy_required = 3.2,
+    theme = {{"phosphorus_source", 1}},
+    ingredients = {
+        {type = "item", name = "solid-fat", amount = 1},
+        {type = "item", name = "glass-instruments", amount = 1},
+        {type = "fluid", name = "flinnum", amount = 10}
+    },
+    category = "sosciencity-bioreactor",
     unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "chloroplasts",
+    energy_required = 3.2,
+    ingredients = {
+        {type = "item", name = "glass-instruments", amount = 1},
+        {type = "fluid", name = "mynellia", amount = 25}
+    },
+    category = "chemistry",
     unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "mitochondria",
+    energy_required = 3.2,
+    ingredients = {
+        {type = "item", name = "glass-instruments", amount = 1},
+        {type = "fluid", name = "pemtenn", amount = 25}
+    },
+    category = "chemistry",
     unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "synthetase",
+    energy_required = 3.2,
+    ingredients = {
+        {type = "item", name = "glass-instruments", amount = 1},
+        {type = "fluid", name = "pemtenn", amount = 10},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "chemistry",
     unlock = "genetic-neogenesis"
 }
 
@@ -817,10 +920,31 @@ Tirislib_RecipeGenerator.create {
         {type = "fluid", name = "fiicorum", amount = 10},
         {type = "item", name = "glass-instruments", amount = 1}
     },
+    category = "chemistry",
     unlock = "genetic-neogenesis"
 }
 
 Tirislib_RecipeGenerator.create {
     product = "blank-dna-virus",
+    ingredients = {
+        {type = "item", name = "proteins", amount = 1},
+        {type = "item", name = "nucleobases", amount = 1},
+        {type = "item", name = "synthetase", amount = 1},
+        {type = "item", name = "glass-instruments", amount = 1},
+        {type = "item", name = "virus-genome", amount = 1}
+    },
+    byproducts = {
+        {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.95}
+    },
+    category = "sosciencity-reproductive-gene-lab",
     unlock = "in-situ-gene-editing"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "pemtenn-extract",
+    ingredients = {
+        {type = "fluid", name = "pemtenn", amount = 10}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.drying,
+    unlock = "fermentation"
 }

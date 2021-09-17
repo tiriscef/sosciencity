@@ -21,7 +21,7 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "fish-food",
-    ingredients = {{type = "item", name = "leafage", amount = 1}},
+    ingredients = {{type = "item", name = "dried-solfaen", amount = 2}},
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -36,6 +36,13 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "herbivore-food",
     ingredients = {{type = "item", name = "leafage", amount = 1}},
+    allow_productivity = true,
+    unlock = "animal-husbandry"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "herbivore-food",
+    ingredients = {{type = "item", name = "razha-bean", amount = 1}},
     allow_productivity = true,
     unlock = "animal-husbandry"
 }

@@ -3,7 +3,7 @@
 Tirislib_RecipeGenerator = {}
 
 -- shorthand alias for more readability
-RG = Tirislib_RecipeGenerator
+local RG = Tirislib_RecipeGenerator
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
@@ -142,6 +142,9 @@ RG.ingredient_themes = {
     handle = {
         [0] = {{type = "item", name = "iron-stick", amount = 1}}
     },
+    hydrogen = {
+        [0] = {{type = "fluid", name = "steam", amount = 1}}
+    },
     iron_ore = {
         [0] = {{type = "item", name = "iron-ore", amount = 1}}
     },
@@ -201,6 +204,11 @@ RG.ingredient_themes = {
     paper_production = {
         [0] = {
             {type = "fluid", name = "steam", amount = 200}
+        }
+    },
+    phosphorus_source = {
+        [0] = {
+            {type = "item", name = "stone", amount = 1}
         }
     },
     piping = {
@@ -612,16 +620,18 @@ RG.result_themes = {
 --- Table with (alias, name of RecipeCategory) pairs.
 RG.category_alias = {
     dissolving = "crafting-with-fluid",
-    drying = "crafting-with-fluid",
+    drying = "sosciencity-drying-unit",
     filtration = "chemistry",
     fluid_mixing = "chemistry",
     food_processing = "chemistry",
     handcrafting = "sosciencity-handcrafting",
-    mixing = "crafting"
+    mixing = "crafting",
+    plant_oil_extraction = "crafting-with-fluid"
 }
 
 RG.item_alias = {
-    glass = "glass"
+    glass = "glass",
+    nickel_catalyst = "iron-plate"
 }
 
 -- << generation >>
