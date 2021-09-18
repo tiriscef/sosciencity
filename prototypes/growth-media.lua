@@ -25,6 +25,19 @@ Tirislib_RecipeGenerator.create {
     product_amount = 100,
     energy_required = 0.8,
     ingredients = {
+        {type = "item", name = "blue-grapes", amount = 15},
+        {type = "fluid", name = "clean-water", amount = 100}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.dissolving,
+    unlock = "fermentation"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "sugar-medium",
+    product_type = "fluid",
+    product_amount = 100,
+    energy_required = 0.8,
+    ingredients = {
         {type = "item", name = "sugar", amount = 10},
         {type = "fluid", name = "clean-water", amount = 100}
     },

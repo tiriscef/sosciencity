@@ -22,6 +22,7 @@ Unlocks.by_item_aquisition = {
     [get_tech_name("eggplant")] = "eggplant",
     [get_tech_name("fawoxylas")] = "fawoxylas",
     [get_tech_name("fupper")] = "fupper",
+    [get_tech_name("hardcorn-punk")] = "hardcorn-punk",
     [get_tech_name("hellfin")] = "hellfin",
     [get_tech_name("lemon")] = "lemon",
     [get_tech_name("liontooth")] = "liontooth",

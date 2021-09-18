@@ -146,6 +146,7 @@ create_enrichment_recipe {
     product_type = "fluid",
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10},
+        {type = "item", name = "blue-grapes", amount = 2},
         {type = "item", name = "mold", amount = 2}
     },
     category = "sosciencity-fermentation-tank",

@@ -343,9 +343,9 @@ Food.values = {
         group = "chickpea"
     },
     ["hummus"] = {
-        fat = 10,
-        carbohydrates = 14,
-        proteins = 8,
+        fat = 20,
+        carbohydrates = 28,
+        proteins = 16,
         healthiness = 9,
         food_category = "processed",
         taste_category = Taste.spicy,
@@ -387,7 +387,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 6,
         luxury = 5,
-        portion_size = 10,
+        portion_size = 50,
         group = "processed-razha"
     },
     ["yuba"] = {

@@ -96,6 +96,7 @@ Tirislib_Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"}
 Tirislib_RecipeGenerator.create {
     product = "fermented-biter-meat",
     product_amount = 10,
+    energy_required = 5,
     ingredients = {
         {type = "item", name = "biter-meat", amount = 10},
         {type = "item", name = "salt", amount = 2},
@@ -107,6 +108,7 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "hummus",
+    product_amount = 2,
     ingredients = {
         {name = "chickpea", amount = 2},
         {name = "sesame", amount = 1}
