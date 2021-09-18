@@ -154,7 +154,7 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-data"}
     },
     {
-        name = "amylum",
+        name = "flour",
         distinctions = {subgroup = "sosciencity-biology-materials"}
     },
     {
@@ -169,6 +169,10 @@ local material_items = {
     },
     {
         name = "mold",
+        distinctions = {subgroup = "sosciencity-biology-materials"}
+    },
+    {
+        name = "amylum",
         distinctions = {subgroup = "sosciencity-biology-materials"}
     },
     {
@@ -639,6 +643,19 @@ Tirislib_RecipeGenerator.create {
         {type = "fluid", name = "clean-water", amount = 80}
     },
     category = "crafting-with-fluid",
+    energy_required = 4,
+    allow_productivity = true,
+    unlock = "hospital"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "flour",
+    product_amount = 5,
+    ingredients = {
+        {type = "item", name = "manok", amount = 5},
+        {type = "fluid", name = "clean-water", amount = 80}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.milling,
     energy_required = 4,
     allow_productivity = true,
     unlock = "hospital"

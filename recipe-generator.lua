@@ -625,6 +625,7 @@ RG.category_alias = {
     fluid_mixing = "chemistry",
     food_processing = "chemistry",
     handcrafting = "sosciencity-handcrafting",
+    milling = "crafting",
     mixing = "crafting",
     plant_oil_extraction = "crafting-with-fluid"
 }

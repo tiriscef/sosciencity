@@ -217,20 +217,6 @@ local function get_preform(animal)
     end
 end
 
-local fauna_producing_recipes = {}
-
----------------------------------------------------------------------------------------------------
--- << gathering recipes >>
-
-local function get_result_prototype(animal)
-    return {
-        name = animal.name,
-        amount = (not animal.min_group_size) and (animal.group_size or 1) or nil,
-        probability = animal.probability,
-        amount_min = animal.min_group_size,
-        amount_max = animal.max_group_size
-    }
-end
 
 ---------------------------------------------------------------------------------------------------
 -- << slaughter recipes >>
@@ -377,8 +363,6 @@ local function create_breeding_recipe(animal)
         end
         recipe:add_result_range(animal.breeding_byproducts)
     end
-
-    table.insert(fauna_producing_recipes, recipe)
 end
 
 for _, animal in pairs(animals) do

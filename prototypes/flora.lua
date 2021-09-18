@@ -13,6 +13,10 @@ local flora_items = {
         sprite_variations = {name = "leafage", count = 3, include_icon = true},
         distinctions = {fuel_value = "200kJ", fuel_category = "chemical"}
     },
+    {
+        name = "hardcorn-punk",
+        sprite_variations = {name = "hardcorn-punk-pile", count = 3},
+    },
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "phytofall-blossom"},
     {name = "tiriscefing-willow-wood", wood = true, unlock = "open-environment-farming"},
@@ -338,7 +342,7 @@ create_neogenesis_recipe {
 }
 
 -- liontooth
-create_perennial_recipe {
+create_annual_recipe {
     product = "liontooth",
     unlock = Unlocks.get_tech_name("liontooth")
 }
