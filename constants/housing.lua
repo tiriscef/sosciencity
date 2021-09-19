@@ -23,16 +23,16 @@ Housing.values = {
     ["boring-brick-house"] = {
         room_count = 32,
         comfort = 5,
-        qualities = {"cheap"}
+        qualities = {"cheap", "simple", "copy-paste"}
     },
     ["khrushchyovka"] = {
-        room_count = 25,
+        room_count = 40,
         comfort = 4,
         qualities = {"compact", "simple", "copy-paste", "cheap", "tall"}
     },
     ["sheltered-house"] = {
-        room_count = 25,
-        comfort = 4,
+        room_count = 20,
+        comfort = 6,
         qualities = {"sheltered", "compact", "simple", "low"}
     },
     ["small-prefabricated-house"] = {
@@ -41,24 +41,24 @@ Housing.values = {
         qualities = {"compact", "simple", "copy-paste", "cheap"}
     },
     ["bunkerhouse"] = {
-        room_count = 25,
-        comfort = 5,
+        room_count = 18,
+        comfort = 4,
         qualities = {"sheltered", "compact", "simple", "low"}
     },
     ["huwanic-mansion"] = {
-        room_count = 25,
+        room_count = 50,
         comfort = 5,
         qualities = {"spacey", "decorated", "individualistic", "pompous", "tall"}
     },
     ["house5"] = {
-        room_count = 200,
+        room_count = 180,
         comfort = 8,
         qualities = {"spacey", "individualistic", "tall"}
     },
     ["house1"] = {
-        room_count = 10,
+        room_count = 12,
         comfort = 3,
-        qualities = {"spacey", "individualistic", "tall"}
+        qualities = {"spacey", "technical", "individualistic", "tall"}
     },
     ["house8"] = {
         room_count = 24,

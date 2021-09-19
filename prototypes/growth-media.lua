@@ -23,9 +23,9 @@ Tirislib_RecipeGenerator.create {
     product = "sugar-medium",
     product_type = "fluid",
     product_amount = 100,
-    energy_required = 0.8,
+    energy_required = 3.2,
     ingredients = {
-        {type = "item", name = "blue-grapes", amount = 15},
+        {type = "item", name = "hardcorn-punk", amount = 20},
         {type = "fluid", name = "clean-water", amount = 100}
     },
     category = Tirislib_RecipeGenerator.category_alias.dissolving,
@@ -38,7 +38,7 @@ Tirislib_RecipeGenerator.create {
     product_amount = 100,
     energy_required = 0.8,
     ingredients = {
-        {type = "item", name = "sugar", amount = 10},
+        {type = "item", name = "sugar", amount = 5},
         {type = "fluid", name = "clean-water", amount = 100}
     },
     category = Tirislib_RecipeGenerator.category_alias.dissolving,
@@ -51,7 +51,7 @@ Tirislib_RecipeGenerator.create {
     product_amount = 100,
     energy_required = 0.8,
     ingredients = {
-        {type = "item", name = "molasses", amount = 10},
+        {type = "item", name = "molasses", amount = 5},
         {type = "fluid", name = "clean-water", amount = 100}
     },
     category = Tirislib_RecipeGenerator.category_alias.dissolving,

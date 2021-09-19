@@ -32,12 +32,22 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     picture = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 3/7
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/icon/humus.png",
+                priority = "high",
+                width = 64,
+                height = 64,
+                scale = 1
+            }
+        }
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,

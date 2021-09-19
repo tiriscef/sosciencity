@@ -155,6 +155,7 @@ local material_items = {
     },
     {
         name = "flour",
+        sprite_variations = {name = "flour", count = 2, include_icon = true},
         distinctions = {subgroup = "sosciencity-biology-materials"}
     },
     {
@@ -195,15 +196,17 @@ local material_items = {
     },
     {
         name = "glass-instruments",
+        sprite_variations = {name = "glass-instruments-on-belt", count = 3},
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
         name = "nucleobases",
-        --sprite_variations = {name = "nucleobases-on-belt", count = 1},
+        sprite_variations = {name = "nucleobases-on-belt", count = 3},
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
         name = "phospholipids",
+        sprite_variations = {name = "phospholipids-on-belt", count = 3},
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
@@ -218,6 +221,7 @@ local material_items = {
     },
     {
         name = "synthetase",
+        sprite_variations = {name = "synthetase-on-belt", count = 1},
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
@@ -227,6 +231,7 @@ local material_items = {
     },
     {
         name = "blank-dna-virus",
+        sprite_variations = {name = "blank-dna-virus-on-belt", count = 1},
         distinctions = {subgroup = "sosciencity-laboratory-materials"}
     },
     {
@@ -294,7 +299,6 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create_per_theme_level {
     product = "screw-set",
     followed_theme = "screw_material",
-    energy_required = 1,
     dynamic_fields = {
         product_amount = function(n)
             return math.ceil(n / 10) * 2
@@ -652,13 +656,11 @@ Tirislib_RecipeGenerator.create {
     product = "flour",
     product_amount = 5,
     ingredients = {
-        {type = "item", name = "manok", amount = 5},
-        {type = "fluid", name = "clean-water", amount = 80}
+        {type = "item", name = "hardcorn-punk", amount = 5}
     },
     category = Tirislib_RecipeGenerator.category_alias.milling,
-    energy_required = 4,
-    allow_productivity = true,
-    unlock = "hospital"
+    energy_required = 1,
+    unlock = Unlocks.get_tech_name("hardcorn-punk")
 }
 
 Tirislib_RecipeGenerator.create {
@@ -839,17 +841,6 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
-    product = "ethanol",
-    product_amount = 50,
-    ingredients = {
-        {type = "item", name = "sugar", amount = 2},
-        {type = "fluid", name = "pemtenn", amount = 10}
-    },
-    category = "sosciencity-fermentation-tank",
-    unlock = "fermentation"
-}
-
-Tirislib_RecipeGenerator.create {
     product = "glass-instruments",
     product_min = 1,
     product_max = 5,
@@ -963,5 +954,16 @@ Tirislib_RecipeGenerator.create {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     category = Tirislib_RecipeGenerator.category_alias.drying,
+    unlock = "fermentation"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "ethanol",
+    product_amount = 50,
+    ingredients = {
+        {type = "item", name = "sugar", amount = 2},
+        {type = "fluid", name = "pemtenn", amount = 10}
+    },
+    category = "sosciencity-fermentation-tank",
     unlock = "fermentation"
 }

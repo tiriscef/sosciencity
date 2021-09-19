@@ -12,15 +12,15 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
-
 Tirislib_RecipeGenerator.create {
     product = "salt-pond",
     themes = {{"piping", 5}, {"machine", 1}},
     default_theme_level = 1,
     unlock = "food-processing"
 }
+
+local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",

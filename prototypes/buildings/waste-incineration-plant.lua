@@ -16,7 +16,7 @@ Tirislib_RecipeGenerator.create {
     product = "waste-incineration-plant",
     themes = {{"machine", 2}},
     default_theme_level = 4,
-    unlock = "architecture-4"
+    unlock = "infrastructure-4"
 }
 
 Tirislib_Entity.create {
@@ -33,34 +33,35 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 6 / 7
+            }
+        }
     },
     energy_source = {
         type = "electric",
         usage_priority = "primary-output"
     },
-    burner =
-    {
-      type = "burner",
-      fuel_category = "garbage",
-      fuel_inventory_size = 2,
-      effectivity = 1,
-      emissions_per_minute = 10,
-      smoke =
-      {
-        {
-          name = "smoke",
-          frequency = 10,
-          north_position = {0.0, 0.0},
-          east_position = {0.0, 0.0},
-          starting_vertical_speed = 0.05,
+    burner = {
+        type = "burner",
+        fuel_category = "garbage",
+        fuel_inventory_size = 2,
+        effectivity = 1,
+        emissions_per_minute = 10,
+        smoke = {
+            {
+                name = "smoke",
+                frequency = 10,
+                north_position = {0.0, 0.0},
+                east_position = {0.0, 0.0},
+                starting_vertical_speed = 0.05
+            }
         }
-      }
     },
     max_power_output = "2.5MW"
 }:set_size(3, 3):copy_localisation_from_item()

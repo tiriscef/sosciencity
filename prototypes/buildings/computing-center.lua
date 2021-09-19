@@ -33,7 +33,8 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    allowed_effects = {"productivity", "speed"},    animation = {
+    allowed_effects = {"productivity", "speed"},
+    animation = {
         layers = {
             {
                 filename = "__sosciencity-graphics__/graphics/placeholder.png",

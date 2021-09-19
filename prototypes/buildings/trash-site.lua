@@ -12,6 +12,7 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "trash-site",
+    themes = {{"building", 2}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "infrastructure-1"
 }

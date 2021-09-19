@@ -17,10 +17,10 @@ local foods = {
     {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
     {name = "nan-egg"},
     {name = "primal-egg"},
-    {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}, probability = 0.3},
-    {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}, probability = 0.1},
+    {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
+    {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}},
     {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
-    {name = "ortrot", sprite_variations = {name = "ortrot-pile", count = 4}, probability = 0.1},
+    {name = "ortrot", sprite_variations = {name = "ortrot-pile", count = 4}},
     {name = "apple", sprite_variations = {name = "apple-pile", count = 4}},
     {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
     {name = "lemon", sprite_variations = {name = "lemon-pile", count = 3}},
@@ -40,7 +40,7 @@ local foods = {
     {name = "liontooth", sprite_variations = {name = "liontooth-pile", count = 3}},
     {name = "manok", sprite_variations = {name = "manok-pile", count = 3}},
     {name = "tello-fruit", sprite_variations = {name = "tello-pile", count = 3, include_icon = true}},
-    {name = "razha-bean", sprite_variations = {name = "razha-bean-pile", count = 3}, probability = 0.1},
+    {name = "razha-bean", sprite_variations = {name = "razha-bean-pile", count = 3}},
     {
         name = "dried-solfaen",
         sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true},
@@ -48,7 +48,8 @@ local foods = {
     },
     {name = "tofu"},
     {name = "yuba"},
-    {name = "hummus"}
+    {name = "hummus"},
+    {name = "bread", sprite_variations = {name = "bread-pile", count = 3}}
 }
 
 -- add the food values to the... prototype prototype
@@ -134,4 +135,18 @@ Tirislib_RecipeGenerator.create {
     },
     category = Tirislib_RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
+}
+
+Tirislib_RecipeGenerator.create {
+    product = "bread",
+    product_min = 5,
+    product_max = 10,
+    energy_required = 1.5,
+    ingredients = {
+        {type = "item", name = "flour", amount = 5},
+        {type = "fluid", name = "pemtenn", amount = 5},
+        {type = "fluid", name = "clean-water", amount = 20}
+    },
+    category = Tirislib_RecipeGenerator.category_alias.food_processing,
+    unlock = "food-processing"
 }
