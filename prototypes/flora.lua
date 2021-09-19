@@ -329,6 +329,11 @@ create_annual_recipe {
     product = "gingil-hemp"
 }
 
+-- hardcorn punk
+create_annual_recipe {
+    product = "hardcorn-punk"
+}
+
 -- lemon
 create_perennial_recipe {
     product = "lemon",

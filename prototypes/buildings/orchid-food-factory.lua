@@ -14,11 +14,14 @@ Tirislib_Item.create {
 
 Tirislib_RecipeGenerator.create {
     product = "orchid-food-factory",
-    themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}},
+    themes = {{"machine", 2}, {"piping", 25}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 2,
     unlock = "food-processing"
 }
+
+local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib_Entity.create {
     type = "assembling-machine",
@@ -35,12 +38,24 @@ Tirislib_Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 1,
+                frame_count = 1
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/icon/hummus.png",
+                priority = "high",
+                width = 64,
+                height = 64,
+                scale = 1,
+                frame_count = 1
+            }
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-orchid-food-processing"},
@@ -50,5 +65,22 @@ Tirislib_Entity.create {
         usage_priority = "secondary-input",
         emissions_per_minute = 0.25,
         drain = "10kW"
+    },
+    fluid_boxes = {
+        {
+            base_level = -1,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {4.0, -1.0}}},
+            production_type = "input"
+        },
+        {
+            base_level = -1,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {4.0, 1.0}}},
+            production_type = "input"
+        },
+        off_when_no_fluid_recipe = true
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item()

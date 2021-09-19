@@ -35,14 +35,17 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     picture = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 6/7
+            }
+        }
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(6, 6):copy_localisation_from_item()

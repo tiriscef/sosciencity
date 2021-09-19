@@ -449,6 +449,18 @@ Food.values = {
         luxury = 2,
         portion_size = 10,
         group = "sugar-beet"
+    },
+    ["bread"] = {
+        fat = 1.2,
+        carbohydrates = 48.8,
+        proteins = 7.6,
+        healthiness = 4,
+        food_category = "processed",
+        taste_category = Taste.fruity,
+        taste_quality = 7,
+        luxury = 5,
+        portion_size = 10,
+        group = "bread"
     }
 }
 

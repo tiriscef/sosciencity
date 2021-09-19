@@ -512,6 +512,24 @@ Tirislib_Technology.create {
     }
 }
 
+Tirislib_Technology.create {
+    name = "infrastructure-4",
+    icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
+    icon_size = 128,
+    upgrade = true,
+    prerequisites = {"production-science-pack", "infrastructure-3"},
+    unit = {
+        count = 364,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1}
+        },
+        time = 60
+    }
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << architecture technologies >>
 

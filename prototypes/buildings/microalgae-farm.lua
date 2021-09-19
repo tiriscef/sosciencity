@@ -42,7 +42,7 @@ Tirislib_Entity.create {
                 frame_count = 1
             },
             {
-                filename = "__sosciencity-graphics__/graphics/icon/mynellia.png",
+                filename = "__sosciencity-graphics__/graphics/icon/solfaen.png",
                 priority = "high",
                 width = 64,
                 height = 64,

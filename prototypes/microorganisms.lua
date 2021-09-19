@@ -157,7 +157,7 @@ create_pure_culture_recipe {
     product = "pemtenn",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 10}
     },
     category = "sosciencity-fermentation-tank",
     unlock = "fermentation"

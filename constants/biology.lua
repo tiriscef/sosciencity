@@ -88,12 +88,21 @@ Biology.flora = {
     },
     ["gingil-hemp"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 1.5,
         preferred_climate = Climate.cold,
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.9,
         recipes = {"farming-annual-gingil-hemp"}
+    },
+    ["hardcorn-punk"] = {
+        persistent = false,
+        growth_coefficient = 2,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-annual-hardcorn-punk"}
     },
     ["lemon"] = {
         persistent = true,
