@@ -163,7 +163,7 @@ Castes.values = {
             ["tall"] = 3,
             ["simple"] = -2
         },
-        accident_disease_resilience = 0,
+        accident_disease_resilience = 0.1,
         health_disease_resilience = 1,
         sanity_disease_resilience = 1
     },
@@ -241,7 +241,7 @@ Castes.values = {
             ["technical"] = -2,
             ["cheap"] = -3
         },
-        accident_disease_resilience = 0,
+        accident_disease_resilience = 0.2,
         health_disease_resilience = 2,
         sanity_disease_resilience = 2
     },
@@ -285,7 +285,7 @@ Castes.values = {
             ["copy-paste"] = -2,
             ["cheap"] = -5
         },
-        accident_disease_resilience = 0,
+        accident_disease_resilience = 0.2,
         health_disease_resilience = 1.5,
         sanity_disease_resilience = 1
     },

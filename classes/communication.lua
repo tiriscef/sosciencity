@@ -416,7 +416,7 @@ end
 
 function Communication.report_recovery(disease_id, count)
     local current_report = get_subtbl(reports, "disease-recovery")
-    current_report = get_subtbl(current_report, false)
+    current_report = get_subtbl(current_report, true)
 
     current_report[disease_id] = (current_report[disease_id] or 0) + count
 
@@ -516,7 +516,7 @@ function Communication.update(current_tick)
         look_for_report(current_tick)
     end
 
-    if current_tick % (7 * Time.minute) == (2 * Time.minute) then -- every 7 minutes, first time after 2 minutes
+    if current_tick % (15 * Time.minute) == (2 * Time.minute) then -- every 15 minutes, first time after 2 minutes
         useless_banter()
     end
 end

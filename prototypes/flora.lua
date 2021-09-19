@@ -331,7 +331,8 @@ create_annual_recipe {
 
 -- hardcorn punk
 create_annual_recipe {
-    product = "hardcorn-punk"
+    product = "hardcorn-punk",
+    unlock = Unlocks.get_tech_name("hardcorn-punk")
 }
 
 -- lemon
@@ -424,7 +425,7 @@ create_neogenesis_recipe {
 }
 
 -- razha bean
-create_perennial_recipe {
+create_annual_recipe {
     product = "razha-bean",
     unlock = Unlocks.get_tech_name("razha-bean")
 }
@@ -479,6 +480,7 @@ create_annual_recipe {
 -- tiriscefing willow
 create_perennial_recipe {
     product = "tiriscefing-willow-wood",
+    energy_required = 30,
     byproducts = {{type = "item", name = "fawoxylas", amount = 2, probability = 0.5}}
 }
 

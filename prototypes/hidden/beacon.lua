@@ -97,16 +97,13 @@ Tirislib_Entity.create {
     },
     distribution_effectivity = 1,
     module_specification = {
-        module_slots = 40
+        module_slots = 41
     },
     allowed_effects = {
-        "consumption",
         "speed",
-        "productivity",
-        "pollution"
+        "productivity"
     },
-    selection_box = nil,
-    collision_box = nil,
+    collision_mask = {},
     icon = "__sosciencity-graphics__/graphics/empty-caste.png",
     icon_size = 256,
     localised_name = {"entity-name.hidden-entity"},

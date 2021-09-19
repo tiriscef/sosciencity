@@ -203,7 +203,8 @@ RG.ingredient_themes = {
     },
     paper_production = {
         [0] = {
-            {type = "fluid", name = "steam", amount = 200}
+            {type = "fluid", name = "steam", amount = 200},
+            {type = "fluid", name = "sulfuric-acid", amount = 20}
         }
     },
     phosphorus_source = {
