@@ -1,6 +1,7 @@
 local DeathCause = require("enums.death-cause")
 local DeconstructionCause = require("enums.deconstruction-cause")
 local DiseaseCategory = require("enums.disease-category")
+local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
 local EmigrationCause = require("enums.emigration-cause")
 local Gender = require("enums.gender")
@@ -288,12 +289,14 @@ for _, disease_category in pairs(DiseaseCategory) do
     frequency_keys[disease_category] = "frequency" .. disease_category
 end
 
---- Tried to make the given number of people sick with random diseases of the given category.
+--- Tries to make the given number of people sick with random diseases of the given category.
+--- Returns the number of actually diseased inhabitants.
 --- @param group DiseaseGroup
 --- @param disease_category DiseaseCategory
 --- @param count integer
 --- @param actual_count integer
-function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_count)
+--- @param suppress_logging boolean
+function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_count, suppress_logging)
     actual_count = min(count, actual_count or 20)
 
     local count_per_pick = 1
@@ -310,7 +313,11 @@ function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_
             frequency_keys[disease_category],
             Diseases.frequency_sums[disease_category]
         )
-        make_sick(group, disease_id, count_per_pick + (i <= modulo and 1 or 0))
+        local sickened = make_sick(group, disease_id, count_per_pick + (i <= modulo and 1 or 0))
+
+        if not suppress_logging and sickened > 0 then
+            Communication.report_diseased(disease_id, sickened, disease_category)
+        end
     end
 end
 local make_sick_randomly = DiseaseGroup.make_sick_randomly
@@ -1291,10 +1298,10 @@ end
 local function cure_side_effects(entry, disease_id, count, cured)
     local disease = disease_values[disease_id]
 
-    local lethal_probability = (cured and disease.complication_lethality) or (not cured and disease.lethality)
+    local lethal_probability = cured and disease.complication_lethality or disease.lethality
     local dead_count = 0
     if lethal_probability then
-        dead_count = coin_flips(cured and disease.complication_lethality or disease.lethality, count)
+        dead_count = coin_flips(lethal_probability, count)
         if dead_count > 0 then
             take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
             Communication.report_disease_death(disease_id, dead_count)
@@ -1310,6 +1317,7 @@ local function cure_side_effects(entry, disease_id, count, cured)
         escalation_count = coin_flips(disease.escalation_probability, count, 5)
         if escalation_count > 0 then
             make_sick(entry[EK.diseases], escalation_disease, escalation_count)
+            Communication.report_diseased(escalation_disease, escalation_count, DiseasedCause.escalation)
         end
     end
 
@@ -1318,16 +1326,17 @@ local function cure_side_effects(entry, disease_id, count, cured)
         local complication_count = coin_flips(disease.complication_probability, count - escalation_count, 5)
         if complication_count > 0 then
             make_sick(entry[EK.diseases], complication_disease, complication_count)
+            Communication.report_diseased(complication_disease, complication_count, DiseasedCause.complication)
         end
     end
 end
 
 function Inhabitants.get_birth_defect_probability()
-    return 0.1 * 0.8 * technologies["improved-reproductive-healthcare"]
+    return 0.1 * 0.8 ^ technologies["improved-reproductive-healthcare"]
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.employed] * delta_ticks / 100000 * castes[entry[EK.type]].accident_disease_resilience
+    return entry[EK.employed] * delta_ticks / 200000 * castes[entry[EK.type]].accident_disease_resilience
 end
 
 function Inhabitants.get_health_disease_progress(entry, delta_ticks)

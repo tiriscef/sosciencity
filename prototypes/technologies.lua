@@ -959,7 +959,7 @@ Tirislib_Technology.create {
         ingredients = {
             {"automation-science-pack", 1}
         },
-        time = 30
+        time = 15
     }
 }
 

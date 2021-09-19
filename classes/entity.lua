@@ -149,7 +149,7 @@ Register.set_entity_creation_handler(Type.composter, create_composter)
 local compost_values = ItemConstants.compost_values
 local composting_coefficient = 1 / 400 / 600
 local mold_producers = ItemConstants.mold_producers
-local necrofall_coefficient = 1 / (5 * Time.minute)
+local necrofall_coefficient = 1 / (10 * Time.minute)
 local necrofall_radius = 10 -- tiles
 
 --- Analyzes the given inventory and returns the composting progress per tick and an array of the compostable items.

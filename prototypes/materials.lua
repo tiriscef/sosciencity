@@ -7,7 +7,8 @@ local material_items = {
     {name = "lumber"},
     {
         name = "sawdust",
-        sprite_variations = {name = "sawdust", count = 2, include_icon = true}
+        sprite_variations = {name = "sawdust", count = 2, include_icon = true},
+        distinctions = {fuel_value = "200kJ", fuel_category = "chemical"}
     },
     {
         name = "screw-set",
@@ -343,9 +344,11 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "rope",
-    energy_required = 0.8,
+    product_amount = 10,
+    energy_required = 8,
     ingredients = {
-        {type = "item", name = "gingil-hemp", amount = 2}
+        {type = "item", name = "gingil-hemp", amount = 20},
+        {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
     unlock = "architecture-1"
@@ -528,8 +531,8 @@ Tirislib_RecipeGenerator.create {
     product = "ink",
     ingredients = {
         {type = "fluid", name = "water", amount = 10},
-        {type = "item", name = "ferrous-sulfate", amount = 1}
-        -- TODO gallic acid
+        {type = "item", name = "ferrous-sulfate", amount = 1},
+        {type = "item", name = "necrofall", amount = 2}
     },
     category = "chemistry",
     unlock = "ember-caste"
@@ -552,7 +555,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 5,
     category = "chemistry",
     ingredients = {
-        {name = "tiriscefing-willow-wood", amount = 5}
+        {name = "sawdust", amount = 5}
     },
     themes = {{"paper_production", 1}},
     allow_productivity = true,

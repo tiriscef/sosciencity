@@ -38,7 +38,7 @@ Tirislib_Entity.create {
                 priority = "high",
                 width = 224,
                 height = 224,
-                scale = 3/7
+                scale = 6/7
             },
             {
                 filename = "__sosciencity-graphics__/graphics/icon/humus.png",
@@ -52,4 +52,4 @@ Tirislib_Entity.create {
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(6, 6):copy_localisation_from_item():copy_icon_from_item()

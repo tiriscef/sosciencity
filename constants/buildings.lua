@@ -35,7 +35,7 @@ Building.values = {
     ["clockwork-hq"] = {
         type = Type.manufactory,
         workforce = {
-            count = 20,
+            count = 5,
             castes = {Type.clockwork}
         }
     },
@@ -102,7 +102,7 @@ Building.values = {
     ["gunfire-hq"] = {
         type = Type.manufactory,
         workforce = {
-            count = 20,
+            count = 10,
             castes = {Type.gunfire}
         }
     },
@@ -154,7 +154,7 @@ Building.values = {
     ["orchid-hq"] = {
         type = Type.manufactory,
         workforce = {
-            count = 20,
+            count = 10,
             castes = {Type.orchid}
         }
     },
@@ -192,7 +192,7 @@ Building.values = {
     },
     ["water-tower"] = {
         type = Type.water_distributer,
-        range = 35,
+        range = 50,
         power_usage = 50
     },
     ["zeppelin-port"] = {
