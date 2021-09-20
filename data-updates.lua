@@ -1,6 +1,7 @@
 require("lib.init")
 Tirislib_Prototype.modname = "sosciencity"
 
+require("datastage-scripts.allowed-effects")
 require("datastage-scripts.biters")
 require("datastage-scripts.crafting-categories")
 require("datastage-scripts.science-pack-ingredients")
