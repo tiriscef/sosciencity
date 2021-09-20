@@ -93,6 +93,46 @@ function Register.load()
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << custom building systems >>
+
+local function init_custom_building(entry)
+    local building_details = get_building_details(entry)
+
+    if building_details.workforce then
+        entry[EK.worker_count] = 0
+        entry[EK.workers] = {}
+        entry[EK.target_worker_count] = building_details.workforce.count
+    end
+end
+
+local function update_custom_building(entry)
+    local building_details = get_building_details(entry)
+
+    local workforce = building_details.workforce
+    if workforce then
+        update_workforce(entry, workforce)
+    end
+end
+
+local function destroy_custom_building(entry)
+    local building_details = get_building_details(entry)
+
+    if building_details.workforce then
+        fire_all_workers(entry)
+    end
+end
+
+local function paste_custom_building_settings(source, destination)
+    local source_details = get_building_details(source)
+    local destination_details = get_building_details(destination)
+
+    if source_details.workforce and destination_details.workforce then
+        destination[EK.target_worker_count] =
+            math.min(source[EK.target_worker_count], destination_details.workforce.count)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << entity event handlers >>
 
 local on_creation_lookup = {}
@@ -191,6 +231,8 @@ end
 --- @param destination_type Type
 --- @param destination Entry
 function Register.on_settings_pasted(source_type, source, destination_type, destination)
+    paste_custom_building_settings(source, destination)
+
     local tbl = on_settings_paste_lookup[destination_type]
 
     if tbl then
@@ -198,36 +240,6 @@ function Register.on_settings_pasted(source_type, source, destination_type, dest
         if fn then
             fn(source, destination)
         end
-    end
-end
-
----------------------------------------------------------------------------------------------------
--- << custom building systems >>
-
-local function init_custom_building(entry)
-    local building_details = get_building_details(entry)
-
-    if building_details.workforce then
-        entry[EK.worker_count] = 0
-        entry[EK.workers] = {}
-        entry[EK.target_worker_count] = building_details.workforce.count
-    end
-end
-
-local function update_custom_building(entry)
-    local building_details = get_building_details(entry)
-
-    local workforce = building_details.workforce
-    if workforce then
-        update_workforce(entry, workforce)
-    end
-end
-
-local function destroy_custom_building(entry)
-    local building_details = get_building_details(entry)
-
-    if building_details.workforce then
-        fire_all_workers(entry)
     end
 end
 
