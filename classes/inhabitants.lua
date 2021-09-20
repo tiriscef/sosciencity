@@ -290,7 +290,6 @@ for _, disease_category in pairs(DiseaseCategory) do
 end
 
 --- Tries to make the given number of people sick with random diseases of the given category.
---- Returns the number of actually diseased inhabitants.
 --- @param group DiseaseGroup
 --- @param disease_category DiseaseCategory
 --- @param count integer
@@ -906,6 +905,44 @@ function Inhabitants.unemploy_all_workers(manufactory)
     manufactory[EK.workers] = {}
 end
 
+--- Fires the given number of workers from the given manufactory. Returns the count of actually fired workers.
+--- @param manufactory Entry
+--- @param count integer
+--- @return integer
+local function unemploy_workers(manufactory, count)
+    local workers = manufactory[EK.workers]
+    local manufactory_worker_count = manufactory[EK.worker_count]
+    count = min(count, manufactory_worker_count)
+    local to_fire = count
+
+    local manufactory_number = manufactory[EK.unit_number]
+
+    for unit_number, worker_count in pairs(workers) do
+        local fired
+
+        local house = try_get(unit_number)
+        if house then
+            fired = min(worker_count, to_fire)
+
+            -- housing side
+            local employments = house[EK.employments]
+            employments[manufactory_number] = (fired == worker_count) and nil or (worker_count - fired)
+            house[EK.employed] = house[EK.employed] - fired
+        else
+            -- the house got lost without unemploying the inhabitants
+            fired = min(worker_count, to_fire)
+        end
+
+        -- manufactory side
+        to_fire = to_fire - fired
+        workers[unit_number] = (fired == worker_count) and nil or (worker_count - fired)
+    end
+
+    local actually_fired = count - to_fire
+    manufactory[EK.worker_count] = manufactory_worker_count - actually_fired
+    return actually_fired
+end
+
 --- Tries to free the given number of inhabitants from their employment.
 --- Returns the number of fired inhabitants.
 local function unemploy_inhabitants(house, count)
@@ -947,11 +984,13 @@ end
 
 --- Looks for employees if this entry needs then.
 function Inhabitants.update_workforce(manufactory, workforce)
-    local nominal_count = workforce.count
+    local nominal_count = manufactory[EK.target_worker_count] or workforce.count
     local current_workers = manufactory[EK.worker_count]
 
     if current_workers < nominal_count then
         look_for_workers(manufactory, workforce.castes, nominal_count - current_workers)
+    elseif current_workers > nominal_count then
+        unemploy_workers(manufactory, current_workers - nominal_count)
     end
 end
 

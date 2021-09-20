@@ -236,6 +236,13 @@ local function set_checked_state_handler(name, fn, ...)
     checkbox_click_lookup[name] = {fn, {...}}
 end
 
+local value_changed_lookup = {}
+
+local function set_value_changed_handler(name, fn, ...)
+    Tirislib_Utils.desync_protection()
+    value_changed_lookup[name] = {fn, {...}}
+end
+
 --- This should be added to every gui element which needs an event handler,
 --- because the gui event handlers get fired for every gui in existance.
 --- So I need to ensure that I'm not reacting to another mods gui.
@@ -275,6 +282,15 @@ end
 
 local function generic_checkbox_handler(entry, element, key)
     entry[key] = element.state
+end
+
+--- Event handler for slider change events
+function Gui.on_gui_value_changed(event)
+    look_for_event_handler(event, value_changed_lookup)
+end
+
+local function generic_slider_handler(entry, element, key)
+    entry[key] = element.slider_value
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1394,15 +1410,17 @@ local function update_general_building_details(container, entry)
 
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
-        local count_needed = worker_specification.count
-        set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], count_needed})
+        local target_count = entry[EK.target_worker_count]
+        set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], target_count})
+
+        building_data[format(unique_prefix_builder, "general", "staff-target")].slider_value = target_count
 
         local staff_performance = Inhabitants.evaluate_workforce(entry)
         set_kv_pair_value(
             building_data,
             "staff-performance",
             staff_performance >= 0.2 and {"sosciencity.staff-performance", ceil(staff_performance * 100)} or
-                {"sosciencity.not-enough-staff", ceil(0.2 * count_needed)}
+                {"sosciencity.not-enough-staff", ceil(0.2 * worker_specification.count)}
         )
 
         local worker_data = tab.workers
@@ -1484,6 +1502,17 @@ local function create_general_building_details(container, entry)
     local worker_specification = building_details.workforce
     if worker_specification then
         add_kv_pair(building_data, "staff", {"sosciencity.staff"})
+
+        add_key_label(building_data, "staff-target", "")
+        building_data.add {
+            type = "slider",
+            name = format(unique_prefix_builder, "general", "staff-target"),
+            minimum_value = 0,
+            maximum_value = worker_specification.count,
+            value = entry[EK.target_worker_count],
+            value_step = 1
+        }
+
         add_kv_pair(building_data, "staff-performance")
 
         local castes_needed =
@@ -1506,6 +1535,12 @@ local function create_general_building_details(container, entry)
 
     return tabbed_pane
 end
+
+set_value_changed_handler(
+    format(unique_prefix_builder, "general", "staff-target"),
+    generic_slider_handler,
+    EK.target_worker_count
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << composter >>

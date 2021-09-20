@@ -210,6 +210,7 @@ local function init_custom_building(entry)
     if building_details.workforce then
         entry[EK.worker_count] = 0
         entry[EK.workers] = {}
+        entry[EK.target_worker_count] = building_details.workforce.count
     end
 end
 

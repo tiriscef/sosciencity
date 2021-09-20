@@ -495,6 +495,7 @@ script.on_event(defines.events.on_gui_closed, on_gui_closed)
 -- gui events
 script.on_event(defines.events.on_gui_click, Gui.on_gui_click)
 script.on_event(defines.events.on_gui_checked_state_changed, Gui.on_gui_checked_state_changed)
+script.on_event(defines.events.on_gui_value_changed, Gui.on_gui_value_changed)
 
 -- research
 script.on_event(defines.events.on_research_finished, on_research_finished)
