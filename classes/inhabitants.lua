@@ -6,6 +6,7 @@ local EK = require("enums.entry-key")
 local EmigrationCause = require("enums.emigration-cause")
 local Gender = require("enums.gender")
 local Type = require("enums.type")
+local WarningType = require("enums.warning-type")
 
 local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
@@ -726,7 +727,7 @@ end
 
 local function get_machine_speed_bonus(points, machine_count)
     machine_count = max(1, machine_count)
-    return floor(5 * points / machine_count)
+    return floor(5 * (points / machine_count) ^ 0.8)
 end
 
 --- Gets the current Clockwork caste bonus.
@@ -1299,7 +1300,7 @@ local function social_meeting(entry, meeting_count)
                     local random_house = try_get(environment[random(#environment)])
                     if random_house then
                         local infected = make_sick(random_house[EK.diseases], disease_id, infections)
-                        Communication.log_infected(disease_id, infected)
+                        Communication.report_diseased(disease_id, infected, DiseasedCause.infection)
                     end
                 end
             end
@@ -1624,7 +1625,9 @@ local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks
         trend = trend + emigrating
 
         local emigrants = take_inhabitants(entry, emigrating)
-        Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
+        if emigrants[EK.inhabitants] > 0 then
+            Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
+        end
     end
     entry[EK.emigration_trend] = trend
 end

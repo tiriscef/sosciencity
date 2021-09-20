@@ -1,6 +1,7 @@
 local DeathCause = require("enums.death-cause")
 local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
+local WarningType = require("enums.warning-type")
 
 local Castes = require("constants.castes")
 local Speakers = require("constants.speakers")
@@ -32,6 +33,9 @@ Communication = {}
 
     global.report_ticks: table
         [name]: tick of creation
+
+    global.warnings: table
+        [WarningType]: table
 ]]
 -- local often used globals for smallish performance gains
 
@@ -49,6 +53,8 @@ local reports
 local current_reports
 local report_ticks
 local reported_event_counts
+
+local warnings
 
 local castes = Castes.values
 
@@ -94,6 +100,8 @@ local function set_locals()
     report_ticks = global.report_ticks
     reported_event_counts = global.reported_event_counts
 
+    warnings = global.warnings
+
     generate_speakers_list()
 end
 
@@ -129,6 +137,13 @@ function Communication.init()
 
     global.past_banter = {}
     global.past_banter_index = 1
+
+    global.warnings = {}
+    for _, warning_type in pairs(WarningType) do
+        global.warnings[warning_type] = {
+            last_warning_tick = 0
+        }
+    end
 
     set_locals()
 end
@@ -494,16 +509,81 @@ local report_lookup = {
     healthcare = healthcare_report
 }
 
---- Looks for a type of report that makes sense to fire at the moment.
+--- Looks for a type of report that makes sense to publish at the moment.
 local function look_for_report(current_tick)
     for report_name, last_report_tick in pairs(report_ticks) do
         if current_tick - last_report_tick >= (10 * Time.minute) and reported_event_counts[report_name] > 5 then
             report_lookup[report_name]()
             report_ticks[report_name] = current_tick
             reported_event_counts[report_name] = 0
-            return
+            return true
         end
     end
+
+    return false
+end
+
+---------------------------------------------------------------------------------------------------
+-- << warnings >>
+
+function Communication.warning(warning_type, ...)
+    if game.tick - warnings[warning_type].last_warning_tick >= 2 * Time.minute then
+        warnings.do_warn = true
+        warnings.params = {...}
+    end
+end
+
+local function get_entry_localisation(entry)
+    local entity = entry[EK.entity]
+    local position = entity.position
+
+    return {"sosciencity.display-entry", entity.localised_name, position.x, position.y, entity.surface.name}
+end
+
+local warn_fns = {
+    [WarningType.no_food] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-no-food", get_entry_localisation(entry))
+        end
+    end,
+    [WarningType.no_water] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-no-water", get_entry_localisation(entry))
+        end
+    end,
+    [WarningType.garbage] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-garbage", get_entry_localisation(entry))
+        end
+    end,
+    [WarningType.insufficient_maintenance] = function()
+        say_random_variant("warning-insufficient-maintenance")
+    end,
+    [WarningType.emigration] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-emigration", get_entry_localisation(entry))
+        end
+    end
+}
+
+local function warn(warning_type)
+    local warn_table = warnings[warning_type]
+    warn_fns[warning_type](unpack(warn_table.params))
+
+    warn_table.do_warn = false
+    warn_table.params = nil
+    warn_table.last_warning_tick = game.tick
+end
+
+local function look_for_warning()
+    for warning_type, details in pairs(warnings) do
+        if details.do_warn then
+            warn(warning_type)
+            return true
+        end
+    end
+
+    return false
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -512,8 +592,17 @@ end
 function Communication.update(current_tick)
     flush_logs()
 
-    if #allowed_speakers > 0 and current_tick % Time.minute == (30 * Time.second) then
-        look_for_report(current_tick)
+    if #allowed_speakers > 0 then
+        local said_something = false
+
+        if current_tick % Time.minute == (30 * Time.second) then
+            said_something = look_for_report(current_tick)
+        end
+
+        -- a warning will be searched every 10 seconds (except for full minutes) if no report got published
+        if not said_something and current_tick % Time.minute ~= 0 and current_tick % (10 * Time.second) == 0 then
+            look_for_warning()
+        end
     end
 
     if current_tick % (15 * Time.minute) == (2 * Time.minute) then -- every 15 minutes, first time after 2 minutes
