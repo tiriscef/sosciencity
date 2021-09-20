@@ -53,8 +53,8 @@ Tirislib_RecipeGenerator.create {
     product = "note",
     product_amount = 4,
     category = "sosciencity-caste-clockwork",
-    energy_required = 2,
-    expensive_energy_required = 3,
+    energy_required = 4,
+    expensive_energy_required = 6,
     unlock = "clockwork-caste"
 }
 
