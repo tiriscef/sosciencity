@@ -416,6 +416,7 @@ Register.set_entity_updater(Type.farm, update_farm)
 local function create_farm(entry)
     entry[EK.humus_mode] = true
     entry[EK.pruning_mode] = true
+    entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.farm, create_farm)
 
@@ -523,6 +524,11 @@ local function update_manufactory(entry)
     set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.manufactory, update_manufactory)
+
+local function create_manufactory(entry)
+    entry[EK.performance] = 1
+end
+Register.set_entity_creation_handler(Type.manufactory, create_manufactory)
 
 ---------------------------------------------------------------------------------------------------
 -- << nightclub >>

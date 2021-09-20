@@ -36,6 +36,8 @@ EK.neighbors = 40
 EK.worker_count = 50
 --- workers as a table of (housing_number, count)-pairs
 EK.workers = 51
+--- the number of workers this entry wants to have
+EK.target_worker_count = 52
 
 -- subentity stuff
 
