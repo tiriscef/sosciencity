@@ -35,40 +35,15 @@ Tirislib_Entity.create {
         filename = "__base__/sound/car-metal-impact.ogg",
         volume = 0.65
     },
-    picture = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall-hr.png",
-                    priority = "high",
-                    width = 448,
-                    height = 448,
-                    scale = 0.5
-                }
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall-shadowmap.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall-shadowmap-hr.png",
-                    priority = "high",
-                    width = 448,
-                    height = 448,
-                    scale = 0.5,
-                    draw_as_shadow = true
-                }
-            }
-        }
+    picture = Tirislib_Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall",
+        shift = {1.0, 0.0},
+        width = 11,
+        height = 9,
+        shadowmap = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(5, 5):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item()
 Sosciencity_Config.add_eei("market-hall")
