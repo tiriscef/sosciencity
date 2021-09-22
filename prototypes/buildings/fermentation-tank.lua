@@ -102,5 +102,24 @@ Tirislib_Entity.create {
             pipe_connections = {{position = {0.5, -2.5}}},
             production_type = "output"
         }
+    },
+    working_sound = {
+        sound = {
+            {
+                filename = "__base__/sound/chemical-plant-1.ogg",
+                volume = 0.5
+            },
+            {
+                filename = "__base__/sound/chemical-plant-2.ogg",
+                volume = 0.5
+            },
+            {
+                filename = "__base__/sound/chemical-plant-3.ogg",
+                volume = 0.5
+            }
+        },
+        apparent_volume = 1.5,
+        fade_in_ticks = 4,
+        fade_out_ticks = 20
     }
 }:set_size(4, 4):copy_localisation_from_item()

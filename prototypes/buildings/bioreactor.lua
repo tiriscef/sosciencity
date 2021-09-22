@@ -32,11 +32,11 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib_Entity.create_standard_picture{
+    animation = Tirislib_Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/bioreactor/bioreactor",
-        width = 12,
-        height = 8,
-        shift = {1.5, 0.5},
+        width = 15,
+        height = 11,
+        shift = {2.0, 0.0},
         shadowmap = true,
         glow = true
     },
@@ -54,43 +54,62 @@ Tirislib_Entity.create {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.0, 4.0}}},
+            pipe_connections = {{position = {-1.0, 5.0}}},
             production_type = "input"
         },
         {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0.0, 4.0}}},
+            pipe_connections = {{position = {0.0, 5.0}}},
             production_type = "input"
         },
         {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.0, 4.0}}},
+            pipe_connections = {{position = {1.0, 5.0}}},
             production_type = "input"
         },
         {
             base_level = 1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.0, -4.0}}},
+            pipe_connections = {{position = {-1.0, -5.0}}},
             production_type = "output"
         },
         {
             base_level = 1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0.0, -4.0}}},
+            pipe_connections = {{position = {0.0, -5.0}}},
             production_type = "output"
         },
         {
             base_level = 1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.0, -4.0}}},
+            pipe_connections = {{position = {1.0, -5.0}}},
             production_type = "output"
         }
+    },
+    working_sound = {
+        sound = {
+            {
+                filename = "__base__/sound/chemical-plant-1.ogg",
+                volume = 0.5
+            },
+            {
+                filename = "__base__/sound/chemical-plant-2.ogg",
+                volume = 0.5
+            },
+            {
+                filename = "__base__/sound/chemical-plant-3.ogg",
+                volume = 0.5
+            }
+        },
+        apparent_volume = 1.5,
+        fade_in_ticks = 4,
+        fade_out_ticks = 20
     }
-}:set_size(7, 7):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(9, 9):copy_localisation_from_item():copy_icon_from_item()
