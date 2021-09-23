@@ -34,24 +34,44 @@ Tirislib_Entity.create {
     allowed_effects = {"productivity", "speed"},
     animation = {
         layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 1,
-                frame_count = 1
+          {
+            filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-lr.png",
+            frame_count = 1,
+            height = 672,
+            hr_version = {
+              filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
+              frame_count = 1,
+              height = 1344,
+              priority = "high",
+              scale = 0.5,
+              shift = {6.75, -5.0},
+              width = 2304
             },
-            {
-                filename = "__sosciencity-graphics__/graphics/orchid-caste.png",
-                priority = "high",
-                width = 256,
-                height = 256,
-                scale = 0.8,
-                frame_count = 1
-            }
+            priority = "high",
+            shift = {6.75, -5.0},
+            width = 1152
+          },
+          {
+            draw_as_shadow = true,
+            filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap-lr.png",
+            frame_count = 1,
+            height = 672,
+            hr_version = {
+              draw_as_shadow = true,
+              filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
+              frame_count = 1,
+              height = 1344,
+              priority = "high",
+              scale = 0.5,
+              shift = {6.25, -5.5},
+              width = 2304
+            },
+            priority = "high",
+            shift = {6.25, -5.5},
+            width = 1152
+          }
         }
-    },
+      },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-caste-orchid"},
     energy_usage = "190kW",
@@ -61,4 +81,4 @@ Tirislib_Entity.create {
         emissions_per_minute = 0.25,
         drain = "10kW"
     }
-}:set_size(7, 7):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(11, 8):copy_localisation_from_item():copy_icon_from_item()
