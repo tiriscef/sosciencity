@@ -808,7 +808,14 @@ end
 
 --- Updates all the caste bonuses and sets the ones that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
 local function update_caste_bonuses()
+    local old_clockwork_bonus = caste_bonuses[Type.clockwork]
+    local new_clockwork_bonus = get_clockwork_bonus()
     caste_bonuses[Type.clockwork] = get_clockwork_bonus()
+
+    if old_clockwork_bonus >= 0 and new_clockwork_bonus < 0 then
+        Communication.warning(WarningType.insufficient_maintenance)
+    end
+
     caste_bonuses[Type.orchid] = get_orchid_bonus()
     caste_bonuses[Type.ember] = get_ember_bonus()
     caste_bonuses[Type.aurora] = get_aurora_bonus()
@@ -931,7 +938,7 @@ local function unemploy_workers(manufactory, count)
             house[EK.employed] = house[EK.employed] - fired
         else
             -- the house got lost without unemploying the inhabitants
-            fired = min(worker_count, to_fire)
+            fired = worker_count
         end
 
         -- manufactory side
@@ -1551,7 +1558,11 @@ local function evaluate_housing(entry, happiness_summands, sanity_summands, cast
     end
     happiness_summands[HappinessSummand.suitable_housing] = quality_assessment
 
-    happiness_summands[HappinessSummand.garbage] = get_garbage_influence(entry)
+    local garbage_influence = get_garbage_influence(entry)
+    happiness_summands[HappinessSummand.garbage] = garbage_influence
+    if garbage_influence < 0 then
+        Communication.warning(WarningType.garbage, entry)
+    end
 
     if has_power(entry) then
         happiness_summands[HappinessSummand.power] = caste.power_bonus
@@ -1627,6 +1638,7 @@ local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks
         local emigrants = take_inhabitants(entry, emigrating)
         if emigrants[EK.inhabitants] > 0 then
             Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
+            Communication.warning(WarningType.emigration, entry)
         end
     end
     entry[EK.emigration_trend] = trend

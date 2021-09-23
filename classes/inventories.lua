@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 local Taste = require("enums.taste")
 local Type = require("enums.type")
+local WarningType = require("enums.warning-type")
 
 local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
@@ -608,6 +609,11 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
         sanity[SanitySummand.single_food] = 0
         sanity[SanitySummand.no_variety] = 0
         sanity[SanitySummand.just_neutral] = 0
+
+        if entry[EK.inhabitants] > 0 then
+            Communication.warning(WarningType.no_food, entry)
+        end
+
         return
     end
 
@@ -731,6 +737,10 @@ function Inventories.evaluate_water(entry, delta_ticks, happiness_factors, healt
 
     if water_to_consume > 0 then
         satisfaction, quality = consume_water(distributers, water_to_consume)
+
+        if satisfaction < 0.1 then
+            Communication.warning(WarningType.no_water, entry)
+        end
     else
         -- annoying edge case of no inhabitants
         -- test if there is at least one distributer with water

@@ -3,8 +3,8 @@
 Tirislib_Item.create {
     type = "item",
     name = "clockwork-hq",
-    icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
-    icon_size = 256,
+    icon = "__sosciencity-graphics__/graphics/icon/clockwork-hq.png",
+    icon_size = 64,
     subgroup = "sosciencity-hqs",
     order = "aaa",
     place_result = "clockwork-hq",
