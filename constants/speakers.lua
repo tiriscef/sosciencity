@@ -11,6 +11,11 @@ Speakers["tiriscef."] = {
     ["healthcare"] = 2,
     ["healthcare-recovery"] = 2,
     ["healthcare-infection-warning"] = 2,
+    ["warning-no-food"] = 3,
+    ["warning-no-water"] = 3,
+    ["warning-garbage"] = 3,
+    ["warning-insufficient-maintenance"] = 3,
+    ["warning-emigration"] = 3,
     lines_with_followup = {
         "b2",
         "b3",
@@ -40,7 +45,15 @@ Speakers["tiriscef."] = {
         "b49",
         "b52",
         "b53",
-        "b53f"
+        "b53f",
+        "b54",
+        "b56",
+        "b56f",
+        "b57",
+        "b59",
+        "b60",
+        "b63",
+        "b64"
     },
     index = 0
 }
@@ -56,6 +69,11 @@ Speakers["profanity."] = {
     ["healthcare"] = 2,
     ["healthcare-recovery"] = 2,
     ["healthcare-infection-warning"] = 2,
+    ["warning-no-food"] = 3,
+    ["warning-no-water"] = 3,
+    ["warning-garbage"] = 3,
+    ["warning-insufficient-maintenance"] = 3,
+    ["warning-emigration"] = 3,
     lines_with_followup = {
         "b1",
         "b7",

@@ -527,9 +527,10 @@ end
 -- << warnings >>
 
 function Communication.warning(warning_type, ...)
-    if game.tick - warnings[warning_type].last_warning_tick >= 2 * Time.minute then
-        warnings.do_warn = true
-        warnings.params = {...}
+    local warning_details = warnings[warning_type]
+    if game.tick - warning_details.last_warning_tick >= 2 * Time.minute then
+        warning_details.do_warn = true
+        warning_details.params = {...}
     end
 end
 
@@ -543,17 +544,17 @@ end
 local warn_fns = {
     [WarningType.no_food] = function(entry)
         if entry[EK.entity].valid then
-            say_random_variant("warning-no-food", get_entry_localisation(entry))
+            say_random_variant("warning-no-food", nil, get_entry_localisation(entry))
         end
     end,
     [WarningType.no_water] = function(entry)
         if entry[EK.entity].valid then
-            say_random_variant("warning-no-water", get_entry_localisation(entry))
+            say_random_variant("warning-no-water", nil, get_entry_localisation(entry))
         end
     end,
     [WarningType.garbage] = function(entry)
         if entry[EK.entity].valid then
-            say_random_variant("warning-garbage", get_entry_localisation(entry))
+            say_random_variant("warning-garbage", nil, get_entry_localisation(entry))
         end
     end,
     [WarningType.insufficient_maintenance] = function()
@@ -561,7 +562,7 @@ local warn_fns = {
     end,
     [WarningType.emigration] = function(entry)
         if entry[EK.entity].valid then
-            say_random_variant("warning-emigration", get_entry_localisation(entry))
+            say_random_variant("warning-emigration", nil, get_entry_localisation(entry))
         end
     end
 }
@@ -592,6 +593,11 @@ end
 function Communication.update(current_tick)
     flush_logs()
 
+    if current_tick % (15 * Time.minute) == (2 * Time.minute) then -- every 15 minutes, first time after 2 minutes
+        useless_banter()
+        return
+    end
+
     if #allowed_speakers > 0 then
         local said_something = false
 
@@ -599,14 +605,10 @@ function Communication.update(current_tick)
             said_something = look_for_report(current_tick)
         end
 
-        -- a warning will be searched every 10 seconds (except for full minutes) if no report got published
-        if not said_something and current_tick % Time.minute ~= 0 and current_tick % (10 * Time.second) == 0 then
+        -- a warning will be searched every 15 seconds if there was no report or random banter
+        if not said_something and current_tick % (15 * Time.second) == 0 then
             look_for_warning()
         end
-    end
-
-    if current_tick % (15 * Time.minute) == (2 * Time.minute) then -- every 15 minutes, first time after 2 minutes
-        useless_banter()
     end
 end
 

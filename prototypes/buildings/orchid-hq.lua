@@ -3,8 +3,8 @@
 Tirislib_Item.create {
     type = "item",
     name = "orchid-hq",
-    icon = "__sosciencity-graphics__/graphics/orchid-caste.png",
-    icon_size = 256,
+    icon = "__sosciencity-graphics__/graphics/icon/orchid-hq.png",
+    icon_size = 64,
     subgroup = "sosciencity-hqs",
     order = "baa",
     place_result = "orchid-hq",
