@@ -378,7 +378,6 @@ function Tirislib_Entity.create_standard_picture(details)
         layers[#layers + 1] = {
             filename = path .. "-shadowmap-lr.png",
             frame_count = 1,
-            priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
@@ -387,7 +386,6 @@ function Tirislib_Entity.create_standard_picture(details)
             hr_version = {
                 filename = path .. "-shadowmap.png",
                 frame_count = 1,
-                priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
@@ -401,7 +399,6 @@ function Tirislib_Entity.create_standard_picture(details)
         layers[#layers + 1] = {
             filename = path .. "-lightmap-lr.png",
             frame_count = 1,
-            priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
@@ -410,7 +407,6 @@ function Tirislib_Entity.create_standard_picture(details)
             hr_version = {
                 filename = path .. "-lightmap.png",
                 frame_count = 1,
-                priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
@@ -424,7 +420,6 @@ function Tirislib_Entity.create_standard_picture(details)
         layers[#layers + 1] = {
             filename = path .. "-glow-lr.png",
             frame_count = 1,
-            priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
@@ -433,7 +428,6 @@ function Tirislib_Entity.create_standard_picture(details)
             hr_version = {
                 filename = path .. "-glow.png",
                 frame_count = 1,
-                priority = "high",
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
