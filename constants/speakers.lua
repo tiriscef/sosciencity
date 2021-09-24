@@ -2,7 +2,7 @@ local Speakers = {}
 
 Speakers["tiriscef."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 53,
+    ["b"] = 65,
     ["roadkill"] = 6,
     ["report-begin"] = 2,
     ["report-end"] = 2,

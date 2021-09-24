@@ -3,86 +3,28 @@ local Housing = require("constants.housing")
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local housing_prototype_details = {
     ["improvised-hut"] = {
-        picture = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-1.png",
-                    priority = "high",
-                    width = 128,
-                    height = 128,
-                    shift = {0.5, -0.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-hr-1.png",
-                        priority = "high",
-                        width = 256,
-                        height = 256,
-                        shift = {0.5, -0.5},
-                        scale = 0.5
-                    }
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-1.png",
-                    priority = "high",
-                    width = 128,
-                    height = 128,
-                    shift = {0.5, -0.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-hr-1.png",
-                        priority = "high",
-                        width = 256,
-                        height = 256,
-                        shift = {0.5, -0.5},
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
-                }
-            }
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-1",
+            width = 6,
+            height = 6,
+            shift = {1.0, 0.0},
+            shadowmap = true
         },
-        width = 3,
-        height = 3,
+        width = 4,
+        height = 4,
         tech_level = 0,
         main_entity = "improvised-hut"
     },
     ["improvised-hut-2"] = {
-        picture = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-2.png",
-                    priority = "high",
-                    width = 128,
-                    height = 128,
-                    shift = {0.5, -0.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-hr-2.png",
-                        priority = "high",
-                        width = 256,
-                        height = 256,
-                        shift = {0.5, -0.5},
-                        scale = 0.5
-                    }
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-2.png",
-                    priority = "high",
-                    width = 128,
-                    height = 128,
-                    shift = {0.5, -0.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-shadowmap-hr-2.png",
-                        priority = "high",
-                        width = 256,
-                        height = 256,
-                        shift = {0.5, -0.5},
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
-                }
-            }
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-2",
+            width = 6,
+            height = 6,
+            shift = {1.0, 0.0},
+            shadowmap = true
         },
-        width = 3,
-        height = 3,
+        width = 4,
+        height = 4,
         tech_level = 0,
         icon = "improvised-hut",
         main_entity = "improvised-hut"
@@ -144,44 +86,18 @@ local housing_prototype_details = {
         main_entity = "khrushchyovka"
     },
     ["sheltered-house"] = {
-        picture = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-hr.png",
-                    priority = "high",
-                    width = 576,
-                    height = 448,
-                    shift = {0.0, 0.0},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-hr.png",
-                        priority = "high",
-                        width = 576,
-                        height = 448,
-                        shift = {0.0, 0.0},
-                        scale = 0.5
-                    }
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-shadowmap-hr.png",
-                    priority = "high",
-                    width = 576,
-                    height = 448,
-                    shift = {0.0, 0.0},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house-shadowmap-hr.png",
-                        priority = "high",
-                        width = 576,
-                        height = 448,
-                        shift = {0.0, 0.0},
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
-                }
-            }
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house",
+            width = 29,
+            height = 20,
+            shift = {1.75, 0.3},
+            scale = 0.65,
+            shadowmap = true,
+            lightmap = true,
+            glow = true
         },
-        width = 7,
-        height = 5,
+        width = 11,
+        height = 7,
         tech_level = 3,
         main_entity = "sheltered-house"
     },
@@ -304,6 +220,36 @@ local housing_prototype_details = {
         width = 5,
         height = 5,
         tech_level = 0
+    },
+    ["barrack-container"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/barrack-container/barrack-container",
+            width = 19,
+            height = 12,
+            shift = {-0.25, 1.25},
+            scale = 1.2,
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 8,
+        height = 5,
+        tech_level = 2
+    },
+    ["balcony-house"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/balcony-house/balcony-house",
+            width = 22.390625,
+            height = 18.796875,
+            shift = {4.9, 0.0},
+            scale = 0.8,
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 7,
+        height = 6,
+        tech_level = 3
     }
 }
 
@@ -395,13 +341,13 @@ local quality_effect_on_recipe = {
     end,
     spacey = function(details, house, tech_level)
         -- increase the "building" theme amount
-        details.themes[1][2] = details.themes[1][2] * 1.5
-        details.themes[1][2] = details.themes[1][3] * 1.5
+        details.themes[1][2] = details.themes[1][2] * 1.25
+        details.themes[1][2] = details.themes[1][3] * 1.25
     end,
     compact = function(details, house, tech_level)
         -- decrease the "building" theme amount
-        details.themes[1][2] = details.themes[1][2] * 0.75
-        details.themes[1][2] = details.themes[1][3] * 0.75
+        details.themes[1][2] = details.themes[1][2] * 0.8
+        details.themes[1][2] = details.themes[1][3] * 0.8
     end,
     decorated = function(details, house, tech_level)
         table.insert(
@@ -434,7 +380,7 @@ local quality_effect_on_recipe = {
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
     local ingredient_themes = {
-        {"building", house.room_count, math.ceil(house.room_count * 1.2), tech_level},
+        {"building", house.room_count * 0.5, math.ceil(house.room_count * 0.6), tech_level},
         {"furnishing", house.room_count, math.ceil(house.room_count * 1.2), house.comfort}
     }
 

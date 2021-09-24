@@ -674,7 +674,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+--[[Tirislib_Technology.create {
     name = "transfusion-medicine",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -688,7 +688,7 @@ Tirislib_Technology.create {
         },
         time = 30
     }
-}
+}]]
 
 Tirislib_Technology.create {
     name = "psychiatry",

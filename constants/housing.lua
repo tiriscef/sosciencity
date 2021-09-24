@@ -31,7 +31,7 @@ Housing.values = {
         qualities = {"compact", "simple", "copy-paste", "cheap", "tall"}
     },
     ["sheltered-house"] = {
-        room_count = 20,
+        room_count = 40,
         comfort = 6,
         qualities = {"sheltered", "compact", "simple", "low"}
     },
@@ -47,7 +47,7 @@ Housing.values = {
     },
     ["huwanic-mansion"] = {
         room_count = 50,
-        comfort = 5,
+        comfort = 7,
         qualities = {"spacey", "decorated", "individualistic", "pompous", "tall"}
     },
     ["house5"] = {
@@ -69,6 +69,16 @@ Housing.values = {
         room_count = 6,
         comfort = 0,
         qualities = {"compact", "simple", "cheap", "low", "copy-paste"}
+    },
+    ["barrack-container"] = {
+        room_count = 40,
+        comfort = 3,
+        qualities = {"compact", "simple", "copy-paste"}
+    },
+    ["balcony-house"] = {
+        room_count = 6,
+        comfort = 5,
+        qualities = {"spacey", "low", "individualistic"}
     },
     ["test-house"] = {
         room_count = 200,

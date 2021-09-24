@@ -351,6 +351,7 @@ function Tirislib_Entity.create_standard_picture(details)
     local width = details.width
     local height = details.height
     local shift = details.shift
+    local scale = details.scale or 1
 
     local layers = {
         {
@@ -360,6 +361,7 @@ function Tirislib_Entity.create_standard_picture(details)
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
+            scale = scale,
             hr_version = {
                 filename = path .. ".png",
                 frame_count = 1,
@@ -367,7 +369,7 @@ function Tirislib_Entity.create_standard_picture(details)
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
-                scale = 0.5
+                scale = 0.5 * scale
             }
         }
     }
@@ -380,6 +382,7 @@ function Tirislib_Entity.create_standard_picture(details)
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
+            scale = scale,
             draw_as_shadow = true,
             hr_version = {
                 filename = path .. "-shadowmap.png",
@@ -388,7 +391,7 @@ function Tirislib_Entity.create_standard_picture(details)
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
-                scale = 0.5,
+                scale = 0.5 * scale,
                 draw_as_shadow = true
             }
         }
@@ -402,6 +405,7 @@ function Tirislib_Entity.create_standard_picture(details)
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
+            scale = scale,
             draw_as_light = true,
             hr_version = {
                 filename = path .. "-lightmap.png",
@@ -410,7 +414,7 @@ function Tirislib_Entity.create_standard_picture(details)
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
-                scale = 0.5,
+                scale = 0.5 * scale,
                 draw_as_light = true
             }
         }
@@ -424,6 +428,7 @@ function Tirislib_Entity.create_standard_picture(details)
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
+            scale = scale,
             draw_as_glow = true,
             hr_version = {
                 filename = path .. "-glow.png",
@@ -432,7 +437,7 @@ function Tirislib_Entity.create_standard_picture(details)
                 width = width * PIXEL_PER_TILE_HR,
                 height = height * PIXEL_PER_TILE_HR,
                 shift = shift,
-                scale = 0.5,
+                scale = 0.5 * scale,
                 draw_as_glow = true
             }
         }
