@@ -396,6 +396,7 @@ Tirislib_RecipeGenerator.create {
 
 Tirislib_RecipeGenerator.create {
     product = "mineral-mixture",
+    product_amount = 2,
     energy_required = 1.6,
     themes = {
         {"glass", 1},

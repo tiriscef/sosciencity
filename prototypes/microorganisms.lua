@@ -2,8 +2,8 @@ local microorganisms = {
     {
         name = "mynellia",
         distinctions = {
-            base_color = {r = 0.944, g = 0.180, b = 0.063},
-            flow_color = {r = 0.944, g = 0.383, b = 0.178}
+            base_color = {r = 0.164, g = 0.813, b = 0.411},
+            flow_color = {r = 0.164, g = 0.813, b = 0.411}
         }
     },
     {

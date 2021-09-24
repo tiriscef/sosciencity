@@ -278,12 +278,12 @@ RG.ingredient_themes = {
     building = {
         [0] = {
             {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "iron-plate", amount = 10},
+            {type = "item", name = "iron-plate", amount = 15},
             {type = "item", name = "window", amount = 2}
         },
         [1] = {
             {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-brick", amount = 5},
+            {type = "item", name = "stone-brick", amount = 15},
             {type = "item", name = "window", amount = 2}
         },
         [2] = {
@@ -325,12 +325,12 @@ RG.ingredient_themes = {
     cheap_building = {
         [0] = {
             {type = "item", name = "lumber", amount = 1},
-            {type = "item", name = "iron-plate", amount = 4},
+            {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "window", amount = 1}
         },
         [1] = {
             {type = "item", name = "lumber", amount = 1},
-            {type = "item", name = "stone-brick", amount = 2},
+            {type = "item", name = "stone-brick", amount = 10},
             {type = "item", name = "window", amount = 1}
         },
         [2] = {
