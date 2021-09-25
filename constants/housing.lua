@@ -80,6 +80,11 @@ Housing.values = {
         comfort = 5,
         qualities = {"spacey", "low", "individualistic"}
     },
+    ["octopus-complex"] = {
+        room_count = 210,
+        comfort = 9,
+        qualities = {"low", "technical", "compact"}
+    },
     ["test-house"] = {
         room_count = 200,
         comfort = 10,
