@@ -250,6 +250,20 @@ local housing_prototype_details = {
         width = 7,
         height = 6,
         tech_level = 3
+    },
+    ["octopus-complex"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/octopus-complex/octopus-complex",
+            width = 24,
+            height = 17,
+            shift = {0.0, 0.0},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 12,
+        height = 10,
+        tech_level = 6
     }
 }
 
