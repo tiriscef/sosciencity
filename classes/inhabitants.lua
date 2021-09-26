@@ -705,7 +705,7 @@ local get_power_usage = InhabitantGroup.get_power_usage
 --- Checks if the given caste has been researched by the player.
 --- @param caste_id Type
 function Inhabitants.caste_is_researched(caste_id)
-    return global.technologies[castes[caste_id].tech_name]
+    return technologies[castes[caste_id].tech_name]
 end
 local is_researched = Inhabitants.caste_is_researched
 

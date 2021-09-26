@@ -176,6 +176,21 @@ local function set_locals()
     global = _ENV.global
 end
 
+local function on_load()
+    set_locals()
+
+    Scheduler.load()
+    Neighborhood.load()
+    Technologies.load()
+    Register.load()
+    Inventories.load()
+    Inhabitants.load()
+    Gui.load()
+    Communication.load()
+    Visualisation.load()
+    Entity.load()
+end
+
 local function init()
     global = _ENV.global
     global.version = game.active_mods["sosciencity"]
@@ -186,10 +201,10 @@ local function init()
     Scheduler.init()
     Weather.init()
     Neighborhood.init()
-    Inhabitants.init()
-    Inventories.init()
-    Register.init()
     Technologies.init()
+    Register.init()
+    Inventories.init()
+    Inhabitants.init()
     Gui.init()
     Communication.init()
     Visualisation.init()
@@ -198,23 +213,9 @@ local function init()
 
     update_settings()
 
-    set_locals()
     global.last_update = game.tick
-end
 
-local function on_load()
-    set_locals()
-
-    Scheduler.load()
-    Neighborhood.load()
-    Technologies.load()
-    Register.load()
-    Gui.load()
-    Inhabitants.load()
-    Inventories.load()
-    Communication.load()
-    Visualisation.load()
-    Entity.load()
+    on_load()
 end
 
 local function on_entity_built(event)
