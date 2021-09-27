@@ -420,7 +420,10 @@ Tirislib_RecipeGenerator.create {
     energy_required = 4,
     ingredients = {},
     category = "sosciencity-architecture",
-    unlock = "infrastructure-1"
+    unlock = "infrastructure-1",
+    additional_fields = {
+        always_show_made_in = true
+    }
 }
 
 Tirislib_RecipeGenerator.create {
@@ -882,7 +885,7 @@ Tirislib_RecipeGenerator.create {
 Tirislib_RecipeGenerator.create {
     product = "phospholipids",
     energy_required = 3.2,
-    theme = {{"phosphorus_source", 1}},
+    theme = {{"phosphorous_source", 1}},
     ingredients = {
         {type = "item", name = "solid-fat", amount = 1},
         {type = "item", name = "glass-instruments", amount = 1},

@@ -1,9 +1,3 @@
-local integrations = {
-    "bspmod"
-}
-
-for _, mod_name in pairs(integrations) do
-    if mods[mod_name] then
-        require("integrations." .. mod_name)
-    end
+for mod_name in pairs(mods) do
+    pcall(require, "integrations." .. mod_name)
 end
