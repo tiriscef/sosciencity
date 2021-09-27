@@ -23,7 +23,7 @@ Tirislib_RecipeGenerator.create {
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "clockwork-hq",
-    flags = {"placeable-neutral", "player-creation"},
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
     minable = {mining_time = 0.5, result = "clockwork-hq"},
     max_health = 200,
     corpse = "small-remnants",
