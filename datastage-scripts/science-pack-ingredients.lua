@@ -95,4 +95,4 @@ for result_name, details in pairs(launchable_item_ingredients) do
     )
 end
 
-all_recipes:pair_ingredient_with_result("complex-scientific-data", "item", "empty-hard-drive", "item", identity)
+all_recipes:pair_result_with_result(Sosciencity_Config.foundry_pack, "item", "empty-hard-drive", "item", identity)

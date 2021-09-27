@@ -42,6 +42,13 @@ Tirislib_Entity.create {
                 width = 224,
                 height = 224,
                 scale = 6/7
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/icon/huwan-egg.png",
+                priority = "high",
+                width = 64,
+                height = 64,
+                scale = 1
             }
         }
     },

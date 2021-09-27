@@ -1448,6 +1448,50 @@ function Tirislib_Recipe:pair_result_with_ingredient(result, result_type, ingred
     return self
 end
 
+function Tirislib_RecipeData.pair_result_with_result(
+    recipe_data,
+    result,
+    result_type,
+    result_to_add,
+    result_to_add_type,
+    amount_fn)
+    local result_amount = Tirislib_RecipeData.get_result_amount(recipe_data, result, result_type)
+    if result_amount == 0 then
+        return
+    end
+
+    local amount = amount_fn and amount_fn(result_amount) or result_amount
+    Tirislib_RecipeData.add_result(
+        recipe_data,
+        {
+            type = result_to_add_type,
+            name = result_to_add,
+            amount = math.ceil(amount)
+        }
+    )
+end
+
+--- Adds the given result to the recipe, if it contains the given result.
+--- @param result string
+--- @param result_type string
+--- @param result_to_add string
+--- @param result_to_add_type string
+--- @param amount_fn function
+--- @return RecipePrototype itself
+function Tirislib_Recipe:pair_result_with_result(result, result_type, result_to_add, result_to_add_type, amount_fn)
+    Tirislib_Recipe.call_on_recipe_data(
+        self,
+        Tirislib_RecipeData.pair_result_with_result,
+        result,
+        result_type,
+        result_to_add,
+        result_to_add_type,
+        amount_fn
+    )
+
+    return self
+end
+
 function Tirislib_RecipeData.pair_ingredient_with_result(
     recipe_data,
     result,
