@@ -207,7 +207,7 @@ RG.ingredient_themes = {
             {type = "fluid", name = "sulfuric-acid", amount = 20}
         }
     },
-    phosphorus_source = {
+    phosphorous_source = {
         [0] = {
             {type = "item", name = "stone", amount = 1}
         }
