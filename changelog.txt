@@ -1,0 +1,16 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.0.2
+Date: 2021.09.27
+  Bugfixes:
+    - Fixed a crash related to a wrong class init order when starting a new map
+    - Fixed a crash when all healthy inhabitants move out of a house
+
+  Features:
+    - Added a new house
+    - Added graphics to the egg collecting station
+
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 2021.09.24
+  Changes:
+    - initial alpha version
