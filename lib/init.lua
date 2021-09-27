@@ -28,6 +28,7 @@
 
 ---@class locale
 ---@class point2d
+---@class BoundingBox
 ---@class array
 
 require("lib.utils")
