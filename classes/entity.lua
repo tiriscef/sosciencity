@@ -304,7 +304,7 @@ Entity.pruning_workhours = 5 / Time.minute
 
 Entity.humus_fertilization_speed = 30 --%
 Entity.humus_fertilization_workhours = 1 / Time.minute
-Entity.humus_fertilitation_consumption = 2 / Time.minute
+Entity.humus_fertilitation_consumption = 10 / Time.minute
 
 local function update_farm(entry, delta_ticks)
     local entity = entry[EK.entity]

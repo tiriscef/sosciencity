@@ -10,6 +10,8 @@ require("datastage-scripts.handcrafting")
 require("datastage-scripts.trees")
 require("datastage-scripts.furniture-unlocks")
 
+require("integrations-updates")
+
 if Sosciencity_Config.BALANCING then
     require("datastage-scripts.balancing")
 end
