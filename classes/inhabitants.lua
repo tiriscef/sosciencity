@@ -243,7 +243,10 @@ function DiseaseGroup.take(group, to_take, total_count)
             to_take = to_take - current_take
 
             ret[disease] = (ret[disease] or 0) + current_take
-            group[disease] = (current_count ~= current_take) and current_count - current_take or nil
+            group[disease] = current_count - current_take
+            if disease ~= HEALTHY and group[disease] == 0 then
+                group[disease] = nil
+            end
 
             if to_take == 0 then
                 return ret
