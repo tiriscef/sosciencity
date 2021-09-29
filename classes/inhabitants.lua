@@ -1354,7 +1354,7 @@ local function cure_side_effects(entry, disease_id, count, cured)
         dead_count = coin_flips(lethal_probability, count)
         if dead_count > 0 then
             take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
-            Communication.report_disease_death(disease_id, dead_count)
+            Communication.report_disease_death(dead_count, disease_id)
         end
     end
 
