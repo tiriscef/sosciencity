@@ -3,7 +3,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "egg-collecting-station",
-    icon = "__sosciencity-graphics__/graphics/icon/egg-collecting-station.png",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "daa",
@@ -32,14 +32,23 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = Tirislib_Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/egg-collecting-station/egg-collecting-station",
-        width = 10,
-        height = 7,
-        shift = {0.5, -0.2},
-        shadowmap = true,
-        lightmap = true,
-        glow = true
+    picture = {
+        layers = {
+            {
+                filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                priority = "high",
+                width = 224,
+                height = 224,
+                scale = 6/7
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/icon/huwan-egg.png",
+                priority = "high",
+                width = 64,
+                height = 64,
+                scale = 1
+            }
+        }
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,

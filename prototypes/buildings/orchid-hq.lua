@@ -23,7 +23,7 @@ Tirislib_RecipeGenerator.create {
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "orchid-hq",
-    flags = {"placeable-neutral", "player-creation"},
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
     minable = {mining_time = 0.5, result = "orchid-hq"},
     max_health = 200,
     corpse = "small-remnants",
@@ -34,44 +34,44 @@ Tirislib_Entity.create {
     allowed_effects = {"productivity", "speed"},
     animation = {
         layers = {
-          {
-            filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-lr.png",
-            frame_count = 1,
-            height = 672,
-            hr_version = {
-              filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
-              frame_count = 1,
-              height = 1344,
-              priority = "high",
-              scale = 0.5,
-              shift = {6.75, -5.0},
-              width = 2304
+            {
+                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-lr.png",
+                frame_count = 1,
+                height = 672,
+                hr_version = {
+                    filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
+                    frame_count = 1,
+                    height = 1344,
+                    priority = "high",
+                    scale = 0.5,
+                    shift = {6.75, -5.0},
+                    width = 2304
+                },
+                priority = "high",
+                shift = {6.75, -5.0},
+                width = 1152
             },
-            priority = "high",
-            shift = {6.75, -5.0},
-            width = 1152
-          },
-          {
-            draw_as_shadow = true,
-            filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap-lr.png",
-            frame_count = 1,
-            height = 672,
-            hr_version = {
-              draw_as_shadow = true,
-              filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
-              frame_count = 1,
-              height = 1344,
-              priority = "high",
-              scale = 0.5,
-              shift = {6.25, -5.5},
-              width = 2304
-            },
-            priority = "high",
-            shift = {6.25, -5.5},
-            width = 1152
-          }
+            {
+                draw_as_shadow = true,
+                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap-lr.png",
+                frame_count = 1,
+                height = 672,
+                hr_version = {
+                    draw_as_shadow = true,
+                    filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
+                    frame_count = 1,
+                    height = 1344,
+                    priority = "high",
+                    scale = 0.5,
+                    shift = {6.25, -5.5},
+                    width = 2304
+                },
+                priority = "high",
+                shift = {6.25, -5.5},
+                width = 1152
+            }
         }
-      },
+    },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-caste-orchid"},
     energy_usage = "190kW",

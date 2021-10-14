@@ -45,7 +45,7 @@ Castes.values = {
             ["green"] = -1,
             ["pompous"] = -1
         },
-        accident_disease_resilience = 1,
+        accident_disease_resilience = 0.7,
         health_disease_resilience = 0.65,
         sanity_disease_resilience = 0.35
     },

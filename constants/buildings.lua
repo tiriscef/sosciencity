@@ -177,8 +177,7 @@ Building.values = {
         range = 7
     },
     ["trash-site"] = {
-        type = Type.dumpster,
-        range = 25
+        type = Type.dumpster
     },
     ["upbringing-station"] = {
         type = Type.upbringing_station,

@@ -85,9 +85,18 @@ Tirislib_Entity.create {
         emissions_per_minute = 1
     },
     working_sound = {
-        sound = {filename = "__sosciencity-graphics__/sound/chainsaw.ogg", volume = 3},
+        sound = {
+            {
+                filename = "__sosciencity-graphics__/sound/chainsaw.ogg",
+                volume = 2
+            },
+            {
+                filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg",
+                volume = 3
+            }
+        },
         apparent_volume = 1.5,
-        probability = 1 / (20 * 60) -- average 20 seconds between sounds
+        probability = 1 / (60 * 60) -- average 60 seconds between sounds
     },
     fluid_boxes = {
         {

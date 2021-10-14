@@ -25,20 +25,20 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
+        {type = "item", name = "blue-grapes", amount = 3, probability = 0.2},
         {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.1},
         {type = "item", name = "leafage", amount = 2},
-        {type = "item", name = "liontooth", amount = 5, probability = 0.5},
+        {type = "item", name = "liontooth", amount = 3, probability = 0.5},
         {type = "item", name = "fawoxylas", amount = 1, probability = 0.1},
-        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5},
-        {type = "item", name = "hardcorn-punk", amount = 5, probability = 0.5},
-        {type = "item", name = "phytofall-blossom", amount = 1, probability = 0.1},
-        {type = "item", name = "plemnemm-cotton", amount = 5, probability = 0.5},
-        {type = "item", name = "manok", amount = 2, probability = 0.5},
-        {type = "item", name = "ortrot", amount = 10, probability = 0.1},
-        {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
-        {type = "item", name = "unnamed-fruit", amount = 10, probability = 0.1},
-        {type = "item", name = "zetorn", amount = 10, probability = 0.1}
+        {type = "item", name = "gingil-hemp", amount = 3, probability = 0.5},
+        {type = "item", name = "hardcorn-punk", amount = 3, probability = 0.5},
+        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.1},
+        {type = "item", name = "plemnemm-cotton", amount = 3, probability = 0.5},
+        {type = "item", name = "manok", amount = 2, probability = 0.35},
+        {type = "item", name = "ortrot", amount = 8, probability = 0.1},
+        {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
+        {type = "item", name = "unnamed-fruit", amount = 8, probability = 0.1},
+        {type = "item", name = "zetorn", amount = 8, probability = 0.1}
     }
 }
 
@@ -79,7 +79,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "caddle", amount = 1, probability = 0.5},
         {type = "item", name = "biter-meat", amount_min = 0, amount_max = 10}
     }
-}:add_catalyst("trap", "item", 2, 0.8, 3, 0.6):add_unlock("clockwork-caste")
+}:add_catalyst("trap", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
     name = "sosciencity-hunting-with-trap-cage",
@@ -107,7 +107,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "cabar", amount = 5, probability = 0.5},
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
     }
-}:add_catalyst("trap-cage", "item", 2, 0.8, 3, 0.6):add_unlock("clockwork-caste")
+}:add_catalyst("trap-cage", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
     name = "sosciencity-fishing-with-fishing-net",
@@ -125,14 +125,14 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "shellscript", amount = 3, probability = 0.3},
-        {type = "item", name = "boofish", amount = 20, probability = 0.5},
-        {type = "item", name = "fupper", amount = 10, probability = 0.5},
+        {type = "item", name = "shellscript", amount = 3, probability = 0.5},
+        {type = "item", name = "boofish", amount = 20, probability = 0.8},
+        {type = "item", name = "fupper", amount = 10, probability = 0.8},
         {type = "item", name = "dodkopus", amount = 1, probability = 0.1},
-        {type = "item", name = "ultra-squibbel", amount = 1, probability = 0.1},
+        {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
     }
-}:add_catalyst("fishing-net", "item", 1, 0.7, 1, 0.5):add_unlock("clockwork-caste")
+}:add_catalyst("fishing-net", "item", 1, 0.95, 1, 0.9):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
     name = "sosciencity-fishing-with-harpoon",
@@ -152,9 +152,9 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "young-petunial", amount = 1, probability = 0.01},
         {type = "item", name = "petunial", amount = 1, probability = 0.01},
-        {type = "item", name = "hellfin", amount = 1, probability = 0.01},
+        {type = "item", name = "hellfin", amount = 1, probability = 0.05},
         {type = "item", name = "warnal", amount = 1, probability = 0.01},
-        {type = "item", name = "ultra-squibbel", amount = 1, probability = 0.1},
+        {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
     }
-}:add_catalyst("harpoon", "item", 1, 0.7, 1, 0.5):add_unlock("clockwork-caste")
+}:add_catalyst("harpoon", "item", 1, 0.85, 1, 0.7):add_unlock("clockwork-caste")
