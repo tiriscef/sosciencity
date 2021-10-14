@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
 Tirislib_Item.create {
     type = "item",
     name = "computing-center",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/computing-center.png",
     icon_size = 64,
     subgroup = "sosciencity-production-buildings",
     order = "daa",
@@ -23,7 +21,7 @@ Tirislib_RecipeGenerator.create {
 Tirislib_Entity.create {
     type = "assembling-machine",
     name = "computing-center",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/computing-center.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "computing-center"},
@@ -34,25 +32,14 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 5/7,
-                frame_count = 1
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/empty-hard-drive.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1,
-                frame_count = 1
-            }
-        }
+    animation = Tirislib_Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/computing-center/computing-center",
+        width = 10,
+        height = 7,
+        shift = {0.5, -0.2},
+        shadowmap = true,
+        lightmap = true,
+        glow = true
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-computing-center"},
