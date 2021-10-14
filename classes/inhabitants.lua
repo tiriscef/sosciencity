@@ -243,7 +243,10 @@ function DiseaseGroup.take(group, to_take, total_count)
             to_take = to_take - current_take
 
             ret[disease] = (ret[disease] or 0) + current_take
-            group[disease] = (current_count ~= current_take) and current_count - current_take or nil
+            group[disease] = current_count - current_take
+            if disease ~= HEALTHY and group[disease] == 0 then
+                group[disease] = nil
+            end
 
             if to_take == 0 then
                 return ret
@@ -1351,7 +1354,7 @@ local function cure_side_effects(entry, disease_id, count, cured)
         dead_count = coin_flips(lethal_probability, count)
         if dead_count > 0 then
             take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
-            Communication.report_disease_death(disease_id, dead_count)
+            Communication.report_disease_death(dead_count, disease_id)
         end
     end
 

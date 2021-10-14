@@ -397,12 +397,10 @@ end
 --- Returns a bounding box around the given position with the given size.
 --- @param position point2d
 --- @param range number
---- @return point2d left_top
---- @return point2d right_bottom
+--- @return BoundingBox
 function Tirislib_Utils.get_range_bounding_box(position, range)
     local x = position.x
     local y = position.y
-    range = range / 2
 
     return {{x - range, y - range}, {x + range, y + range}}
 end

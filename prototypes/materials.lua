@@ -351,7 +351,7 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
-    unlock = "architecture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {
@@ -420,10 +420,7 @@ Tirislib_RecipeGenerator.create {
     energy_required = 4,
     ingredients = {},
     category = "sosciencity-architecture",
-    unlock = "infrastructure-1",
-    additional_fields = {
-        always_show_made_in = true
-    }
+    unlock = "infrastructure-1"
 }
 
 Tirislib_RecipeGenerator.create {

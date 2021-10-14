@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
 Tirislib_Item.create {
     type = "item",
     name = "composting-silo",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/composting-silo.png",
     icon_size = 64,
     subgroup = "sosciencity-flora-buildings",
     order = "gaa",
@@ -31,23 +29,12 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 6/7
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/humus.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1
-            }
-        }
+    picture = Tirislib_Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/composting-silo/composting-silo",
+        width = 10,
+        height = 8,
+        shift = {1.0, 0.0},
+        shadowmap = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,

@@ -15,7 +15,7 @@ Tirislib_RecipeGenerator.create {
     themes = {{"building", 5}, {"machine", 3}, {"lamp", 10}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 1,
-    unlock = "architecture-1"
+    unlock = "architecture-2"
 }
 
 Tirislib_Entity.create {
@@ -64,7 +64,7 @@ Tirislib_Entity.create {
             }
         }
     },
-    crafting_speed = 1,
+    crafting_speed = 0.5,
     crafting_categories = {"sosciencity-architecture"},
     energy_usage = "95kW",
     energy_source = {
