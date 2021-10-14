@@ -848,7 +848,8 @@ function RG.create(details)
         results = {main_product},
         subgroup = details.subgroup or product.subgroup,
         order = product.order,
-        always_show_products = true
+        always_show_products = true,
+        always_show_made_in = (details.category ~= "crafting" and details.category ~= "crafting-with-fluid")
     }
 
     if details.localised_name or details.localised_description or details.icon or details.icons then
@@ -887,10 +888,9 @@ function RG.create(details)
     recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)
+    recipe:set_field("category", details.category or get_standard_category(recipe))
 
     recipe:set_fields(details.additional_fields)
-
-    recipe:set_field("category", details.category or get_standard_category(recipe))
 
     if details.allow_productivity then
         recipe:allow_productivity_modules()
