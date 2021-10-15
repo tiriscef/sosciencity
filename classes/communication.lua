@@ -342,7 +342,7 @@ function Communication.caste_allowed_in(entry, caste_id)
         {
             "sosciencity.set-caste",
             "[img=technology/" .. caste.tech_name .. "]",
-            {"caste-name." .. caste.name}
+            caste.localised_name
         }
     )
 end
@@ -355,7 +355,7 @@ function Communication.caste_not_allowed_in(entry, caste_id)
         {
             "sosciencity.set-caste-denied",
             "[img=technology/" .. caste.tech_name .. "]",
-            {"caste-name." .. caste.name}
+            caste.localised_name
         }
     )
 end
