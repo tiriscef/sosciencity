@@ -1,7 +1,7 @@
 Tirislib_Item.create {
     type = "item",
     name = "upbringing-station",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/upbringing-station.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "daa",

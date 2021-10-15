@@ -10,6 +10,8 @@ local Castes = {}
 Castes.values = {
     [Type.clockwork] = {
         name = "clockwork",
+        localised_name = {"caste-name.clockwork"},
+        localised_name_short = {"caste-short.clockwork"},
         tech_name = "clockwork-caste",
         effectivity_tech = "clockwork-caste-effectivity",
         fear_resilience = 0.5,
@@ -51,6 +53,8 @@ Castes.values = {
     },
     [Type.orchid] = {
         name = "orchid",
+        localised_name = {"caste-name.orchid"},
+        localised_name_short = {"caste-short.orchid"},
         tech_name = "orchid-caste",
         effectivity_tech = "orchid-caste-effectivity",
         fear_resilience = 1,
@@ -90,6 +94,8 @@ Castes.values = {
     },
     [Type.gunfire] = {
         name = "gunfire",
+        localised_name = {"caste-name.gunfire"},
+        localised_name_short = {"caste-short.gunfire"},
         tech_name = "gunfire-caste",
         effectivity_tech = "gunfire-caste-effectivity",
         fear_resilience = 0,
@@ -133,6 +139,8 @@ Castes.values = {
     },
     [Type.ember] = {
         name = "ember",
+        localised_name = {"caste-name.ember"},
+        localised_name_short = {"caste-short.ember"},
         tech_name = "ember-caste",
         effectivity_tech = "ember-caste-effectivity",
         fear_resilience = 1.2,
@@ -169,6 +177,8 @@ Castes.values = {
     },
     [Type.foundry] = {
         name = "foundry",
+        localised_name = {"caste-name.foundry"},
+        localised_name_short = {"caste-short.foundry"},
         tech_name = "foundry-caste",
         effectivity_tech = "foundry-caste-effectivity",
         fear_resilience = 0.7,
@@ -209,6 +219,8 @@ Castes.values = {
     },
     [Type.gleam] = {
         name = "gleam",
+        localised_name = {"caste-name.gleam"},
+        localised_name_short = {"caste-short.gleam"},
         tech_name = "gleam-caste",
         effectivity_tech = "gleam-caste-effectivity",
         fear_resilience = 1,
@@ -247,6 +259,8 @@ Castes.values = {
     },
     [Type.aurora] = {
         name = "aurora",
+        localised_name = {"caste-name.aurora"},
+        localised_name_short = {"caste-short.aurora"},
         tech_name = "aurora-caste",
         effectivity_tech = "aurora-caste-effectivity",
         fear_resilience = 2,
@@ -291,6 +305,8 @@ Castes.values = {
     },
     [Type.plasma] = {
         name = "plasma",
+        localised_name = {"caste-name.plasma"},
+        localised_name_short = {"caste-short.plasma"},
         tech_name = "plasma-caste",
         effectivity_tech = "plasma-caste-effectivity",
         fear_resilience = 1,
