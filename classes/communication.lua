@@ -342,7 +342,7 @@ function Communication.caste_allowed_in(entry, caste_id)
         {
             "sosciencity.set-caste",
             "[img=technology/" .. caste.tech_name .. "]",
-            {"caste-name." .. caste.name}
+            caste.localised_name
         }
     )
 end
@@ -355,7 +355,7 @@ function Communication.caste_not_allowed_in(entry, caste_id)
         {
             "sosciencity.set-caste-denied",
             "[img=technology/" .. caste.tech_name .. "]",
-            {"caste-name." .. caste.name}
+            caste.localised_name
         }
     )
 end
@@ -563,6 +563,16 @@ local warn_fns = {
     [WarningType.emigration] = function(entry)
         if entry[EK.entity].valid then
             say_random_variant("warning-emigration", nil, get_entry_localisation(entry))
+        end
+    end,
+    [WarningType.insufficient_food_variety] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-food-variety", nil, get_entry_localisation(entry))
+        end
+    end,
+    [WarningType.insufficient_workers] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-workers", nil, get_entry_localisation(entry))
         end
     end
 }

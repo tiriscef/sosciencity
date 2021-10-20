@@ -1003,6 +1003,10 @@ function Inhabitants.update_workforce(manufactory, workforce)
     elseif current_workers > nominal_count then
         unemploy_workers(manufactory, current_workers - nominal_count)
     end
+
+    if nominal_count > manufactory[EK.worker_count] then
+        Communication.warning(WarningType.insufficient_workers)
+    end
 end
 
 --- Returns a percentage on how satisfied the given buildings need for workers is.
