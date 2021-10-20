@@ -675,6 +675,9 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     happiness[HappinessSummand.food_variety] = (variety > 0) and (variety * 0.5) or 0
 
     happiness_factors[HappinessFactor.not_enough_food_variety] = (variety < 0) and 0.6 or 1.
+    if variety < 0 then
+        Communication.warning(WarningType.insufficient_food_variety, entry)
+    end
 
     health[HealthSummand.nutrients] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
     health[HealthSummand.food] = intrinsic_healthiness * hunger_satisfaction

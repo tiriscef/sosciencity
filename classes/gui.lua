@@ -140,9 +140,9 @@ end
 
 local function display_caste(caste_id, short)
     if short then
-        return {format("caste-short.%s", castes[caste_id].name)}
+        return castes[caste_id].localised_name_short
     else
-        return {format("caste-name.%s", castes[caste_id].name)}
+        return castes[caste_id].localised_name
     end
 end
 
@@ -521,14 +521,14 @@ local function is_confirmed(button)
 end
 
 local function create_caste_sprite(container, caste_id, size)
-    local caste_name = castes[caste_id].name
+    local caste = castes[caste_id]
 
     local sprite =
         container.add {
         type = "sprite",
         name = "caste-sprite",
-        sprite = "technology/" .. caste_name .. "-caste",
-        tooltip = {"caste-name." .. caste_name}
+        sprite = "technology/" .. caste.name .. "-caste",
+        tooltip = caste.localised_name
     }
     local style = sprite.style
     style.height = size
@@ -1294,7 +1294,7 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
     create_caste_sprite(flow, caste_id, 128)
 
     local caste_data = create_data_list(flow, "caste-infos")
-    add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, {"caste-name." .. caste.name})
+    add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, caste.localised_name)
     add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
     add_kv_pair(
         caste_data,
@@ -2091,7 +2091,7 @@ local function update_upbringing_station(container, entry)
 
             label.caption = {
                 "sosciencity.caste-probability",
-                {"caste-short." .. caste.name},
+                caste.localised_name_short,
                 display_percentage(probability)
             }
         end
