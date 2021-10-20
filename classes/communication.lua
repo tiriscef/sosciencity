@@ -564,6 +564,16 @@ local warn_fns = {
         if entry[EK.entity].valid then
             say_random_variant("warning-emigration", nil, get_entry_localisation(entry))
         end
+    end,
+    [WarningType.insufficient_food_variety] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-food-variety", nil, get_entry_localisation(entry))
+        end
+    end,
+    [WarningType.insufficient_workers] = function(entry)
+        if entry[EK.entity].valid then
+            say_random_variant("warning-workers", nil, get_entry_localisation(entry))
+        end
     end
 }
 

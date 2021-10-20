@@ -102,3 +102,10 @@ Tirislib_Prototype.create {
     scale = 0.5,
     shift = {-0.4, -0.4}
 }
+
+Tirislib_Prototype.create {
+    type = "sprite",
+    name = "sosciencity-people",
+    filename = "__sosciencity-graphics__/graphics/utility/people.png",
+    size = 64
+}
