@@ -16,6 +16,8 @@ Speakers["tiriscef."] = {
     ["warning-garbage"] = 3,
     ["warning-insufficient-maintenance"] = 3,
     ["warning-emigration"] = 3,
+    ["warning-food-variety"] = 3,
+    ["warning-workers"] = 3,
     lines_with_followup = {
         "b2",
         "b3",
