@@ -1,4 +1,27 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.3
+Date: 2021.10.15
+  Balancing:
+    - Nerfed the food gain by Gathering, buffed the Phytofall blossom yield
+
+  Bugfixes:
+    - Disease deaths were reported in a wrong way
+    - Entities like the fishing hut used a smaller range when looking for water than shown
+
+  Changes:
+    - Compostable items now state their humus yield in the item tooltip
+    - Compound entities state their energy usage and workforce requirements in the tooltip
+
+  Features:
+    - Added graphics to composting silo
+    - Added graphics to composting silo output
+    - Added graphics to upbringing station
+    - Removed graphics of egg collecting station
+    - Instead the computing center now has the look of the egg collecting station. Fits more.
+    - Tiriscef and Profanity warn you if inhabitants don't have enough food variety.
+    - Tiriscef and Profanity warn you if an entity doesn't have enough workers.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.2
 Date: 2021.09.27
   Bugfixes:
