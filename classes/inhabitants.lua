@@ -1005,7 +1005,7 @@ function Inhabitants.update_workforce(manufactory, workforce)
     end
 
     if nominal_count > manufactory[EK.worker_count] then
-        Communication.warning(WarningType.insufficient_workers)
+        Communication.warning(WarningType.insufficient_workers, manufactory)
     end
 end
 
