@@ -29,8 +29,8 @@ Castes.values = {
         minimum_comfort = 0,
         social_coefficient = 1,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 1.5, -- immigrants per minute,
+        emigration_threshold = 5,
+        emigration_coefficient = 0.3 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 50,
             [Gender.fale] = 25,
@@ -72,8 +72,8 @@ Castes.values = {
         minimum_comfort = 2,
         social_coefficient = 1,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 1.1,
+        emigration_threshold = 5,
+        emigration_coefficient = 0.5 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 15,
             [Gender.fale] = 5,
@@ -113,8 +113,8 @@ Castes.values = {
         minimum_comfort = 0,
         social_coefficient = 0.5,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 1.5,
+        emigration_threshold = 5,
+        emigration_coefficient = 0.3 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 91,
             [Gender.fale] = 3,
@@ -158,8 +158,8 @@ Castes.values = {
         minimum_comfort = 3,
         social_coefficient = 2,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 2,
+        emigration_threshold = 8,
+        emigration_coefficient = 0.3 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 5,
             [Gender.fale] = 35,
@@ -196,8 +196,8 @@ Castes.values = {
         minimum_comfort = 6,
         social_coefficient = 0.8,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 0.5,
+        emigration_threshold = 10,
+        emigration_coefficient = 1 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 10,
             [Gender.fale] = 30,
@@ -238,8 +238,8 @@ Castes.values = {
         minimum_comfort = 7,
         social_coefficient = 1.5,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 0.5,
+        emigration_threshold = 10,
+        emigration_coefficient = 1 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 10,
             [Gender.fale] = 30,
@@ -278,8 +278,8 @@ Castes.values = {
         minimum_comfort = 9,
         social_coefficient = 5,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 0.2,
+        emigration_threshold = 15,
+        emigration_coefficient = 0.8 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 25,
             [Gender.fale] = 25,
@@ -324,8 +324,8 @@ Castes.values = {
         minimum_comfort = 5,
         social_coefficient = 1.2,
         innate_sanity = 10,
-        immigration_threshold = 5,
-        immigration_coefficient = 0.8,
+        emigration_threshold = 10,
+        emigration_coefficient = 0.5 / Time.minute,
         immigration_genders = {
             [Gender.neutral] = 10,
             [Gender.fale] = 40,
@@ -347,9 +347,6 @@ Castes.values = {
     }
 }
 
---- The number of people that leave a house per tick if they are unhappy.
-Castes.emigration_coefficient = -0.8 / Time.minute
-
 -- postprocessing
 for _, caste in pairs(Castes.values) do
     -- convert calorific demand to kcal per tick
@@ -359,10 +356,6 @@ for _, caste in pairs(Castes.values) do
 
     -- convert power demand to J / tick: https://wiki.factorio.com/Types/Energy
     caste.power_demand = caste.power_demand * 1000 / Time.second
-
-    -- convert immigration coefficients from immigrants per minute
-    -- to immigrants per tick
-    caste.immigration_coefficient = caste.immigration_coefficient / Time.minute
 end
 
 return Castes
