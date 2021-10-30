@@ -1003,7 +1003,8 @@ function Inhabitants.update_workforce(manufactory, workforce)
         unemploy_workers(manufactory, current_workers - nominal_count)
     end
 
-    if nominal_count > manufactory[EK.worker_count] then
+    current_workers = manufactory[EK.worker_count]
+    if nominal_count > current_workers and current_workers / workforce.count < 0.2 then
         Communication.warning(WarningType.insufficient_workers, manufactory)
     end
 end
