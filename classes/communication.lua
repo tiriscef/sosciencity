@@ -574,6 +574,10 @@ local warn_fns = {
         if entry[EK.entity].valid then
             say_random_variant("warning-workers", nil, get_entry_localisation(entry))
         end
+    end,
+    [WarningType.homelessness] = function(caste_id)
+        local caste = castes[caste_id]
+        say_random_variant("warning-homelessness", nil, caste.localised_name_short, caste.localised_name)
     end
 }
 
