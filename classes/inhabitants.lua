@@ -85,7 +85,6 @@ local try_get = Register.try_get
 local get_building_details = Buildings.get
 
 local castes = Castes.values
-local emigration_coefficient = Castes.emigration_coefficient
 
 local evaluate_diet = Inventories.evaluate_diet
 local evaluate_water = Inventories.evaluate_water
@@ -1005,7 +1004,7 @@ function Inhabitants.update_workforce(manufactory, workforce)
     end
 
     if nominal_count > manufactory[EK.worker_count] then
-        Communication.warning(WarningType.insufficient_workers)
+        Communication.warning(WarningType.insufficient_workers, manufactory)
     end
 end
 
@@ -1185,21 +1184,28 @@ local function add_to_homeless_pool(group)
 end
 
 local function update_homelessness()
-    for _, homeless_group in pairs(homeless) do
+    -- try to house the homeless people
+    try_house_homeless()
+    create_improvised_huts()
+
+    -- apply effects to the remaining guys
+    for caste_id, homeless_group in pairs(homeless) do
+        local count = homeless_group[EK.inhabitants]
+
+        if count > 0 then
+            Communication.warning(WarningType.homelessness, caste_id)
+        end
+
         update_happiness(homeless_group, 0, 1800)
         update_health(homeless_group, 0, 1800)
         update_sanity(homeless_group, 0, 1800)
 
-        local count = homeless_group[EK.inhabitants]
-        local emigrating = ceil(count * 0.1)
+        local emigrating = ceil(count * 0.05)
         if emigrating > 0 then
             local emigrated = take_inhabitants(homeless_group, emigrating)
             Communication.report_emigration(emigrated[EK.inhabitants], EmigrationCause.homeless)
         end
     end
-
-    try_house_homeless()
-    create_improvised_huts()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1621,33 +1627,35 @@ end
 
 --- Gets the trend toward the next inhabitant that moves out.
 function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
-    local threshold_diff = nominal_happiness - caste.immigration_threshold
-
-    if threshold_diff > 0 then
-        return caste.immigration_coefficient * delta_ticks * (1 + threshold_diff / 4)
-    else
-        return emigration_coefficient * delta_ticks * (1 - threshold_diff / 4)
-    end
+    return map_range(nominal_happiness, 0, caste.emigration_threshold, caste.emigration_coefficient, 0) * delta_ticks
 end
 local get_emigration_trend = Inhabitants.get_emigration_trend
 
 local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
-    local trend = entry[EK.emigration_trend]
-    trend = trend + get_emigration_trend(nominal_happiness, castes[caste_id], delta_ticks)
-    if trend > 1 then
-        -- buffer caps at one
-        trend = 1
-    elseif trend <= -1 then
-        -- let people move out
-        local emigrating = -ceil(trend)
-        trend = trend + emigrating
+    local emigration_trend = get_emigration_trend(nominal_happiness, castes[caste_id], delta_ticks)
 
-        local emigrants = take_inhabitants(entry, emigrating)
-        if emigrants[EK.inhabitants] > 0 then
+    -- reset the trend value if the people are happy or if the house is empty
+    if emigration_trend == 0 or entry[EK.inhabitants] == 0 then
+        entry[EK.emigration_trend] = 0
+        return
+    end
+
+    if emigration_trend > 0 then
+        Communication.warning(WarningType.emigration, entry)
+    end
+
+    local trend = entry[EK.emigration_trend] + emigration_trend
+
+    if trend > 1 then
+        local emigrating = floor(trend)
+
+        if emigrating > 0 then
+            trend = trend - emigrating
+            local emigrants = take_inhabitants(entry, emigrating)
             Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
-            Communication.warning(WarningType.emigration, entry)
         end
     end
+
     entry[EK.emigration_trend] = trend
 end
 
@@ -1750,14 +1758,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << immigration >>
 
-local function update_immigration(delta_ticks)
-    for caste = 1, #immigration do
-        if is_researched(caste) then
-            immigration[caste] = immigration[caste] + castes[caste].immigration_coefficient * delta_ticks
-        end
-    end
-end
-
 function Inhabitants.migration_wave(immigration_port_details)
     local capacity = immigration_port_details.capacity
     local order = Tirislib_Tables.sequence(1, #immigration)
@@ -1812,7 +1812,6 @@ end
 
 function Inhabitants.update(current_tick)
     update_caste_bonuses()
-    update_immigration(10)
 
     if current_tick % Time.minute == 0 then
         update_homelessness()

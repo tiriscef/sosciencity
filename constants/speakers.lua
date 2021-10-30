@@ -18,6 +18,7 @@ Speakers["tiriscef."] = {
     ["warning-emigration"] = 3,
     ["warning-food-variety"] = 3,
     ["warning-workers"] = 3,
+    ["warning-homelessness"] = 3,
     lines_with_followup = {
         "b2",
         "b3",
@@ -76,6 +77,9 @@ Speakers["profanity."] = {
     ["warning-garbage"] = 3,
     ["warning-insufficient-maintenance"] = 3,
     ["warning-emigration"] = 3,
+    ["warning-food-variety"] = 3,
+    ["warning-workers"] = 3,
+    ["warning-homelessness"] = 3,
     lines_with_followup = {
         "b1",
         "b7",

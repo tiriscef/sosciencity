@@ -23,6 +23,7 @@ ItemConstants.compost_values = {
     ["avocado-wood"] = wood_compost_value,
     ["bell-pepper"] = 1,
     ["bird-meat"] = 0.5,
+    ["biter-meat"] = 0.5,
     ["blue-grapes"] = 1,
     ["bread"] = 0.2,
     ["brutal-pumpkin"] = 1,
