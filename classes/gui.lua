@@ -965,7 +965,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
 
     local capacity = Housing.get_capacity(entry)
     local emigration = Inhabitants.get_emigration_trend(nominal_happiness, caste, Time.minute)
-    local display_emigration = inhabitants > 0 and emigration < 0
+    local display_emigration = inhabitants > 0 and emigration > 0
 
     set_kv_pair_value(
         general_list,
@@ -973,7 +973,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         {
             "",
             {"sosciencity.show-inhabitants", inhabitants, capacity},
-            display_emigration and {"sosciencity.migration", get_migration_string(emigration)} or ""
+            display_emigration and {"sosciencity.migration", get_migration_string(-emigration)} or ""
         }
     )
     set_datalist_value_tooltip(
@@ -1918,7 +1918,7 @@ local function update_immigration_port_details(container, entry)
             {
                 "",
                 floor(immigrants),
-                {"sosciencity.migration", get_migration_string(castes[caste].immigration_coefficient * Time.minute)}
+                {"sosciencity.migration", get_migration_string(castes[caste].emigration_coefficient * Time.minute)}
             }
         )
         set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
