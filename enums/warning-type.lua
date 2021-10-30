@@ -8,5 +8,6 @@ WarningType.insufficient_maintenance = 4
 WarningType.emigration = 5
 WarningType.insufficient_food_variety = 6
 WarningType.insufficient_workers = 7
+WarningType.homelessness = 8
 
 return WarningType
