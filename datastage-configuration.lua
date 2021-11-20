@@ -22,7 +22,8 @@ local default_values = {
     eei_needing_buildings = {},
     building_stacksize = 50,
     add_glass = true,
-    glass_compatibility_mode = false
+    glass_compatibility_mode = false,
+    agriculture_pollutes = settings.startup["sosciencity-agriculture-pollution"].value
 }
 
 function default_values.add_eei(entity_name)

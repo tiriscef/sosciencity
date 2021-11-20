@@ -201,7 +201,7 @@ Tirislib_Entity.create {
     energy_usage = "10W",
     energy_source = {
         type = "void",
-        emissions_per_minute = 1
+        emissions_per_minute = Sosciencity_Config.agriculture_pollutes and 1 or -5
     },
     working_sound = {
         -- memo: make sound files louder in the future
