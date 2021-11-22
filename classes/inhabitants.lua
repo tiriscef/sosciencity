@@ -1397,16 +1397,16 @@ function Inhabitants.get_birth_defect_probability()
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.employed] * delta_ticks / 200000 * castes[entry[EK.type]].accident_disease_resilience
+    return entry[EK.employed] * delta_ticks / 400000 * castes[entry[EK.type]].accident_disease_resilience
 end
 
 function Inhabitants.get_health_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + 1) *
+    return entry[EK.inhabitants] * delta_ticks / 200000 / (entry[EK.health] + 1) *
         castes[entry[EK.type]].health_disease_resilience
 end
 
 function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.sanity] + 1) *
+    return entry[EK.inhabitants] * delta_ticks / 200000 / (entry[EK.sanity] + 1) *
         castes[entry[EK.type]].sanity_disease_resilience
 end
 
@@ -1872,7 +1872,7 @@ function Inhabitants.create_house(entry)
 
     local progresses = {}
     for disease_category in pairs(disease_progress_updaters) do
-        progresses[disease_category] = 0.
+        progresses[disease_category] = 0.5 * random()
     end
     entry[EK.disease_progress] = progresses
 
