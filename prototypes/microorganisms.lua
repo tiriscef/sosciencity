@@ -78,8 +78,8 @@ local function create_pure_culture_recipe(details)
     Tirislib_RecipeGenerator.merge_details(
         details,
         {
-            product_amount = 20,
-            energy_required = 0.8,
+            product_amount = 100,
+            energy_required = 4,
             localised_name = {"recipe-name.pure-culture", product:get_localised_name()},
             localised_description = {"recipe-description.pure-culture", product:get_localised_name()},
             icons = {
@@ -114,7 +114,7 @@ create_pure_culture_recipe {
     product = "mynellia",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "water", amount = 10}
+        {type = "fluid", name = "water", amount = 90}
     },
     category = "sosciencity-microalgae-farm",
     unlock = "basic-biotechnology"
@@ -135,7 +135,7 @@ create_pure_culture_recipe {
     product = "solfaen",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "fluid", name = "clean-water", amount = 90}
     },
     category = "sosciencity-microalgae-farm",
     unlock = "basic-biotechnology"
@@ -157,7 +157,7 @@ create_pure_culture_recipe {
     product = "pemtenn",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "sugar-medium", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 90}
     },
     category = "sosciencity-fermentation-tank",
     unlock = "fermentation"
@@ -179,7 +179,7 @@ create_pure_culture_recipe {
     product = "flinnum",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "sugar-medium", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 90}
     },
     category = "sosciencity-bioreactor",
     unlock = "basic-biotechnology"
@@ -203,8 +203,8 @@ create_pure_culture_recipe {
     product = "fiicorum",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "sugar-medium", amount = 10},
-        {type = "fluid", name = "steam", amount = 20},
+        {type = "fluid", name = "sugar-medium", amount = 90},
+        {type = "fluid", name = "steam", amount = 50},
         {type = "item", name = "pemtenn-extract", amount = 1}
     },
     category = "sosciencity-bioreactor",

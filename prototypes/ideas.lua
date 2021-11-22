@@ -71,6 +71,18 @@ Tirislib_RecipeGenerator.create {
 }
 
 Tirislib_RecipeGenerator.create {
+    product = "essay",
+    product_amount = 4,
+    category = "sosciencity-caste-orchid",
+    energy_required = 2,
+    expensive_energy_required = 3,
+    ingredients = {
+        {type = "item", name = "necrofall", amount = 2}
+    },
+    unlock = "orchid-caste"
+}
+
+Tirislib_RecipeGenerator.create {
     product = "strategic-considerations",
     product_amount = 4,
     category = "sosciencity-caste-gunfire",

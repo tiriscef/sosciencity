@@ -25,7 +25,7 @@ for _, recipe in all_recipes:pairs() do
         if kcal > 0 then
             results[#results + 1] =
                 string.format(
-                "%s, difficulty %s, produces %d kcal per cycle, %d kcal per second",
+                "%s;%s;%d;%d",
                 recipe.name,
                 difficulty == Tirislib_RecipeDifficulty.expensive and "expensive" or "normal",
                 kcal,
@@ -35,7 +35,7 @@ for _, recipe in all_recipes:pairs() do
     end
 end
 
-log(Tirislib_String.join("\n", "Food Producing Recipes:", results))
+log(Tirislib_String.join("\n", "Food Producing Recipes:", "name;difficulty;kcal per cycle;kcal per second", results))
 
 local animal_calorie_values =
     Tirislib_Luaq.from(all_recipes.content):where(
@@ -90,34 +90,3 @@ for _, recipe in all_recipes:pairs() do
 end
 
 log(Tirislib_String.join("\n", "Fauna Producing Recipes:", results))
-
---[[
-local function get_result_mass(recipe, difficulty)
-    local ret = 0
-    for _, result in pairs(recipe[difficulty].results) do
-        ret = ret + (get_animal_size(result.name) or 0) * Tirislib_RecipeEntry.get_average_yield(result)
-    end
-    return ret
-end
-
-local results = {}
-for _, recipe in pairs(fauna_producing_recipes) do
-    local mass = get_result_mass(recipe, "normal")
-    local mass_expensive = get_result_mass(recipe, "expensive")
-    local time = recipe:get_field("energy_required", "normal")
-    local time_expensive = recipe:get_field("energy_required", "expensive")
-    table.insert(
-        results,
-        string.format(
-            "%s produces %d or %d kg per cycle, %d or %d kg per second",
-            recipe.name,
-            mass,
-            mass_expensive,
-            mass / time,
-            mass_expensive / time_expensive
-        )
-    )
-end
-
-log(Tirislib_String.join("\n", "Fauna Balancing Values:", results))
-]]

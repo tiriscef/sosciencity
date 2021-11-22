@@ -28,17 +28,17 @@ create_hunting_gathering_recipe {
         {type = "item", name = "blue-grapes", amount = 3, probability = 0.2},
         {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.1},
         {type = "item", name = "leafage", amount = 2},
-        {type = "item", name = "liontooth", amount = 3, probability = 0.5},
+        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
         {type = "item", name = "fawoxylas", amount = 1, probability = 0.1},
         {type = "item", name = "gingil-hemp", amount = 3, probability = 0.5},
         {type = "item", name = "hardcorn-punk", amount = 3, probability = 0.5},
-        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.1},
+        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.3},
         {type = "item", name = "plemnemm-cotton", amount = 3, probability = 0.5},
         {type = "item", name = "manok", amount = 2, probability = 0.35},
-        {type = "item", name = "ortrot", amount = 8, probability = 0.1},
+        {type = "item", name = "ortrot", amount = 5, probability = 0.1},
         {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
-        {type = "item", name = "unnamed-fruit", amount = 8, probability = 0.1},
-        {type = "item", name = "zetorn", amount = 8, probability = 0.1}
+        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.1},
+        {type = "item", name = "zetorn", amount = 5, probability = 0.1}
     }
 }
 
