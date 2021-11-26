@@ -45,19 +45,21 @@ end
 -- << mouseover visualisations >>
 
 local function premultiply_with_alpha(color, a)
-    color.r = color.r * a
-    color.g = color.g * a
-    color.b = color.b * a
-    color.a = color.a * a
+    return {
+        r = color.r * a,
+        g = color.g * a,
+        b = color.b * a,
+        a = color.a * a
+    }
 end
 
-local range_highlight_alpha = 0.15
 local range_highlight_colors = {}
+local range_border_highlight_colors = {}
 
 for _type, definition in pairs(types) do
-    local color = Tirislib_Tables.copy(definition.signature_color or Color.grey)
-    premultiply_with_alpha(color, range_highlight_alpha)
-    range_highlight_colors[_type] = color
+    local color = definition.signature_color or Color.grey
+    range_highlight_colors[_type] = premultiply_with_alpha(color, 0.15)
+    range_border_highlight_colors[_type] = premultiply_with_alpha(color, 0.5)
 end
 
 local function highlight_range(player_id, entry, building_details, created_highlights)
@@ -74,6 +76,7 @@ local function highlight_range(player_id, entry, building_details, created_highl
     local x = position.x
     local y = position.y
 
+    -- on ground
     created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle {
         color = range_highlight_colors[entry[EK.type]],
@@ -83,6 +86,17 @@ local function highlight_range(player_id, entry, building_details, created_highl
         surface = surface,
         players = {player_id},
         draw_on_ground = true
+    }
+    -- border
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_rectangle {
+        color = range_border_highlight_colors[entry[EK.type]],
+        width = 8,
+        filled = false,
+        left_top = {x - range + 0.375, y - range + 0.375},
+        right_bottom = {x + range - 0.375, y + range - 0.375},
+        surface = surface,
+        players = {player_id}
     }
 end
 
