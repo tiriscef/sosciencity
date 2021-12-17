@@ -1403,6 +1403,9 @@ local function update_general_building_details(container, entry)
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
 
+    local building_details = get_building_details(entry)
+    local type_details = type_definitions[entry[EK.type]]
+
     local active = entry[EK.active]
     if active ~= nil then
         set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
@@ -1428,7 +1431,11 @@ local function update_general_building_details(container, entry)
     end
 
     local performance = entry[EK.performance]
-    if performance then
+    if building_details.speed then
+        -- convert to x / minute
+        local speed = round(building_details.speed * Time.minute * (entry[EK.performance] or 1))
+        set_kv_pair_value(building_data, "speed", {type_details.localised_speed_key, speed})
+    elseif performance then
         set_kv_pair_value(
             building_data,
             "general-performance",
@@ -1484,18 +1491,10 @@ local function create_general_building_details(container, entry)
         add_kv_pair(building_data, "power", {"sosciencity.power-demand"}, {"sosciencity.current-power-demand", power})
     end
 
+    -- display for the main performance metric
     if building_details.speed then
-        -- convert to x / minute
-        local speed = get_reasonable_number(building_details.speed * Time.minute)
-        add_kv_pair(
-            building_data,
-            "speed",
-            type_details.localised_speed_name,
-            {type_details.localised_speed_key, speed}
-        )
-    end
-
-    if entry[EK.performance] then
+        add_kv_pair(building_data, "speed", type_details.localised_speed_name)
+    elseif entry[EK.performance] then
         add_kv_pair(building_data, "general-performance", {"sosciencity.general-performance"})
     end
 
