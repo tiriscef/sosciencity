@@ -603,6 +603,11 @@ RG.ingredient_themes = {
             {type = "item", name = "steel-plate", amount = 1},
             {type = "item", name = "concrete", amount = 1}
         }
+    },
+    tall_building_structure = {
+        [0] = {
+            {type = "item", name = "iron-stick", amount = 1}
+        }
     }
 }
 
