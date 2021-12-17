@@ -11,7 +11,7 @@ for item_name, humus in pairs(ItemConstants.compost_values) do
     if found then
         -- XXX: Make sure the description isn't implicit. Not the most beautiful code..
         item.localised_description = item:get_localised_description()
-        Tirislib_Locales.append(item.localised_description, "\n", {"sosciencity-util.compostables", humus})
+        Tirislib_Locales.append(item.localised_description, "\n\n", {"sosciencity-util.compostables", humus})
     end
 end
 
@@ -27,7 +27,7 @@ for building_name, details in pairs(Buildings.values) do
 
             Tirislib_Locales.append(
                 item.localised_description,
-                "\n",
+                "\n\n",
                 {"sosciencity-util.power-usage", details.power_usage * Time.second / 1000}
             )
 
@@ -46,7 +46,7 @@ for building_name, details in pairs(Buildings.values) do
 
             Tirislib_Locales.append(
                 item.localised_description,
-                "\n",
+                "\n\n",
                 {
                     "sosciencity-util.workforce",
                     details.workforce.count,
