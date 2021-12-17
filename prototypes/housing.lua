@@ -98,7 +98,7 @@ local housing_prototype_details = {
         },
         width = 11,
         height = 7,
-        tech_level = 3,
+        tech_level = 4,
         main_entity = "sheltered-house"
     },
     ["small-prefabricated-house"] = {
@@ -264,6 +264,35 @@ local housing_prototype_details = {
         width = 12,
         height = 10,
         tech_level = 6
+    },
+    ["spring-house"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/spring-house/spring-house",
+            width = 16,
+            height = 14,
+            shift = {1.7, 0.0},
+            scale = 0.8,
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 8,
+        height = 5,
+        tech_level = 1
+    },
+    ["summer-house"] = {
+        picture = Tirislib_Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/summer-house/summer-house",
+            width = 13,
+            height = 9,
+            shift = {1.5, 0.6},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 8,
+        height = 6,
+        tech_level = 3
     }
 }
 
@@ -377,7 +406,7 @@ local quality_effect_on_recipe = {
         details.energy_required = details.energy_required * 3
     end,
     ["copy-paste"] = function(details, house, tech_level)
-        details.energy_required = details.energy_required / 10
+        details.energy_required = details.energy_required / 2
     end,
     pompous = function(details, house, tech_level)
         details.themes[1][1] = "pompous_building"
@@ -386,8 +415,10 @@ local quality_effect_on_recipe = {
         details.themes[1][1] = "cheap_building"
     end,
     tall = function(details, house, tech_level)
+        table.insert(details.themes, {"tall_building_structure", house.room_count, house.room_count, tech_level})
     end,
     low = function(details, house, tech_level)
+        table.insert(details.themes, {"soil", house.room_count, house.room_count, tech_level})
     end
 }
 
@@ -402,7 +433,7 @@ local function create_recipe(house_name, house, details)
         product = house_name,
         themes = ingredient_themes,
         unlock = unlocks[tech_level],
-        energy_required = house.room_count,
+        energy_required = house.room_count / 5,
         ingredients = {{type = "item", name = "architectural-concept", amount = 1}}
     }
 
