@@ -440,8 +440,10 @@ Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
 local function update_plant_care_station(entry, delta_ticks)
     local building_details = get_building_details(entry)
 
-    entry[EK.workhours] =
-        entry[EK.workhours] + Inhabitants.evaluate_workforce(entry) * delta_ticks * building_details.speed
+    local performance = Inhabitants.evaluate_workforce(entry)
+    entry[EK.performance] = performance
+
+    entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
 
     local humus_stored = entry[EK.humus_stored]
     local free_humus_capacity = building_details.humus_capacity - humus_stored
