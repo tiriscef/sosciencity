@@ -1,4 +1,4 @@
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "fuel-category",
     name = "garbage"
 }
@@ -30,9 +30,9 @@ local garbage_items = {
     }
 }
 
-Tirislib_Item.batch_create(garbage_items, {subgroup = "sosciencity-garbage", stack_size = 200})
+Tirislib.Item.batch_create(garbage_items, {subgroup = "sosciencity-garbage", stack_size = 200})
 
-Tirislib_Recipe.create {
+Tirislib.Recipe.create {
     name = "garbage-to-landfill",
     energy_required = 1,
     category = "crafting",
@@ -44,7 +44,7 @@ Tirislib_Recipe.create {
     }
 }:add_unlock("landfill")
 
-Tirislib_Recipe.create {
+Tirislib.Recipe.create {
     name = "burn-garbage",
     emissions_multiplier = 2.5,
     energy_required = 1.6,

@@ -29,7 +29,7 @@ local climate_pattern = {
     Climate.temperate,
     Climate.temperate
 }
-local climate_count = Tirislib_Tables.count(climate_pattern)
+local climate_count = Tirislib.Tables.count(climate_pattern)
 
 local humidity_pattern = {
     [0] = Humidity.humid,
@@ -46,9 +46,9 @@ local humidity_pattern = {
     Humidity.dry,
     Humidity.dry
 }
-local humidity_count = Tirislib_Tables.count(humidity_pattern)
+local humidity_count = Tirislib.Tables.count(humidity_pattern)
 
-local weather_pattern_length = Tirislib_Utils.lowest_common_multiple(humidity_count, climate_count)
+local weather_pattern_length = Tirislib.Utils.lowest_common_multiple(humidity_count, climate_count)
 
 local min_weather_duration = Time.nauvis_day
 local max_weather_duration = Time.nauvis_day * 3

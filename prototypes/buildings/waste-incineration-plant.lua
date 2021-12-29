@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "waste-incineration-plant",
     icon = "__sosciencity-graphics__/graphics/icon/waste-incineration-plant.png",
@@ -10,14 +10,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "waste-incineration-plant",
     themes = {{"machine", 2}},
     default_theme_level = 4,
     unlock = "infrastructure-4"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "burner-generator",
     name = "waste-incineration-plant",
     flags = {"placeable-neutral", "player-creation"},
@@ -28,7 +28,7 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    animation = Tirislib_Entity.create_standard_picture {
+    animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/waste-incineration-plant/waste-incineration-plant",
         shift = {2.0, 0.5},
         width = 21,

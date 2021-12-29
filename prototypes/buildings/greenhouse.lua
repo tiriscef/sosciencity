@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "greenhouse",
     icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "greenhouse",
     themes = {{"piping", 20}, {"soil", 100}, {"machine", 5}},
     ingredients = {
@@ -20,9 +20,9 @@ Tirislib_RecipeGenerator.create {
     unlock = "controlled-environment-farming"
 }
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "greenhouse",
     icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",
@@ -135,7 +135,7 @@ Tirislib_Entity.create {
     }
 }:set_size(15, 15):copy_localisation_from_item()
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "corpse",
     name = "greenhouse-remnants",
     icon = "__sosciencity-graphics__/graphics/icon/greenhouse.png",

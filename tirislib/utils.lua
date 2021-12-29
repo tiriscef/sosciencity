@@ -23,18 +23,18 @@ end
 
 ---------------------------------------------------------------------------------------------------
 --- Table query functions
-Tirislib_Luaq = {}
+Tirislib.Luaq = {}
 
-Tirislib_Luaq.__index = Tirislib_Luaq
+Tirislib.Luaq.__index = Tirislib.Luaq
 
 --- Creates a luaq query for the given source.
 --- @param source table
 --- @return LuaqQuery
-function Tirislib_Luaq.from(source)
+function Tirislib.Luaq.from(source)
     local ret = {
         content = source
     }
-    setmetatable(ret, Tirislib_Luaq)
+    setmetatable(ret, Tirislib.Luaq)
 
     return ret
 end
@@ -42,7 +42,7 @@ end
 --- Selects the given key of every element.
 --- @param key any
 --- @return LuaqQuery
-function Tirislib_Luaq:select_key(key)
+function Tirislib.Luaq:select_key(key)
     local new_content = {}
 
     for index, element in pairs(self.content) do
@@ -56,7 +56,7 @@ end
 --- Projects the sequence with the given function.
 --- @param fn function function with (index, element, ...) arguments, should return the new element first and optionally the new index second
 --- @return LuaqQuery
-function Tirislib_Luaq:select(fn, ...)
+function Tirislib.Luaq:select(fn, ...)
     local new_content = {}
 
     for index, element in pairs(self.content) do
@@ -71,7 +71,7 @@ end
 --- Projects the elements of the sequence with the given function.
 --- @param fn function function with (element, ...) arguments, should return the new element
 --- @return LuaqQuery
-function Tirislib_Luaq:select_element(fn, ...)
+function Tirislib.Luaq:select_element(fn, ...)
     local new_content = {}
 
     for index, element in pairs(self.content) do
@@ -85,7 +85,7 @@ end
 --- Filters the elements of the sequence with the given function.
 --- @param fn function function with (index, element, ...) arguments, should return a truthy or falsy value
 --- @return LuaqQuery
-function Tirislib_Luaq:where(fn, ...)
+function Tirislib.Luaq:where(fn, ...)
     local new_content = {}
 
     for index, element in pairs(self.content) do
@@ -101,7 +101,7 @@ end
 --- Calls the given function on every element of the sequence.
 --- @param fn function
 --- @return LuaqQuery
-function Tirislib_Luaq:foreach(fn, ...)
+function Tirislib.Luaq:foreach(fn, ...)
     for index, element in pairs(self.content) do
         fn(index, element, ...)
     end
@@ -112,7 +112,7 @@ end
 --- Groups the sequence by the return value of the given function.
 --- @param fn function
 --- @return LuaqQuery
-function Tirislib_Luaq:group(fn, ...)
+function Tirislib.Luaq:group(fn, ...)
     local new_content = {}
 
     for index, element in pairs(self.content) do
@@ -128,19 +128,19 @@ end
 --- @return function iterator
 --- @return table content
 --- @return nil first_index
-function Tirislib_Luaq:pairs()
+function Tirislib.Luaq:pairs()
     return next, self.content, nil
 end
 
 --- Returns the sequence as a table.
 --- @return table
-function Tirislib_Luaq:to_table()
+function Tirislib.Luaq:to_table()
     return self.content
 end
 
 --- Returns the sequence as an array.
 --- @return table
-function Tirislib_Luaq:to_array()
+function Tirislib.Luaq:to_array()
     local ret = {}
 
     for _, element in pairs(self.content) do
@@ -153,20 +153,20 @@ end
 --- Calls the given function on the sequence.
 --- @param fn function
 --- @return any
-function Tirislib_Luaq:call(fn, ...)
+function Tirislib.Luaq:call(fn, ...)
     return fn(self.content, ...)
 end
 
 ---------------------------------------------------------------------------------------------------
 --- Just some helper functions
-Tirislib_Utils = {}
+Tirislib.Utils = {}
 
 --- Clamps the given value, so it falls in the given interval.
 --- @param val number
 --- @param value_min number
 --- @param value_max number
 --- @return number
-function Tirislib_Utils.clamp(val, value_min, value_max)
+function Tirislib.Utils.clamp(val, value_min, value_max)
     if val < value_min then
         return value_min
     elseif val > value_max then
@@ -175,7 +175,7 @@ function Tirislib_Utils.clamp(val, value_min, value_max)
         return val
     end
 end
-local clamp = Tirislib_Utils.clamp
+local clamp = Tirislib.Utils.clamp
 
 --- Maps the given value, so it falls in the 'to' interval proportional to the 'from' interval.
 ---@param val number
@@ -184,7 +184,7 @@ local clamp = Tirislib_Utils.clamp
 ---@param to_min number
 ---@param to_max number
 ---@return number
-function Tirislib_Utils.map_range(val, from_min, from_max, to_min, to_max)
+function Tirislib.Utils.map_range(val, from_min, from_max, to_min, to_max)
     val = clamp(val, min(from_min, from_max), max(from_min, from_max))
     return to_min + (val - from_min) / (from_max - from_min) * (to_max - to_min)
 end
@@ -192,20 +192,20 @@ end
 --- Rounds the given value mathematically.
 --- @param number number
 --- @return number
-function Tirislib_Utils.round(number)
+function Tirislib.Utils.round(number)
     return floor(number + 0.5)
 end
-local round = Tirislib_Utils.round
+local round = Tirislib.Utils.round
 
-function Tirislib_Utils.round_to_step(number, step)
+function Tirislib.Utils.round_to_step(number, step)
     return step * floor(number / step + 0.5)
 end
 
-function Tirislib_Utils.floor_to_step(number, step)
+function Tirislib.Utils.floor_to_step(number, step)
     return step * floor(number / step)
 end
 
-function Tirislib_Utils.ceil_to_step(number, step)
+function Tirislib.Utils.ceil_to_step(number, step)
     return step * ceil(number / step)
 end
 
@@ -215,7 +215,7 @@ end
 --- @param b number
 --- @param weight_b number
 --- @return number
-function Tirislib_Utils.weighted_average(a, weight_a, b, weight_b)
+function Tirislib.Utils.weighted_average(a, weight_a, b, weight_b)
     if weight_a == 0 and weight_b == 0 then
         return 0
     end
@@ -225,7 +225,7 @@ end
 --- Returns the sign of the given number.
 --- @param x number
 --- @return integer
-function Tirislib_Utils.sgn(x)
+function Tirislib.Utils.sgn(x)
     if x > 0 then
         return 1
     elseif x < 0 then
@@ -240,7 +240,7 @@ end
 --- @param weights array
 --- @param sum number
 --- @return integer
-function Tirislib_Utils.weighted_random(weights, sum)
+function Tirislib.Utils.weighted_random(weights, sum)
     if sum == nil then
         sum = 0
         for i = 1, #weights do
@@ -258,7 +258,7 @@ function Tirislib_Utils.weighted_random(weights, sum)
 
     return index
 end
-local weighted_random = Tirislib_Utils.weighted_random
+local weighted_random = Tirislib.Utils.weighted_random
 
 --- Generates the weights array, key-lookup array, result array and the weights sum for the given dice.
 --- @param dice table
@@ -293,7 +293,7 @@ end
 --- @param count integer
 --- @param actual_count integer|nil defaults to 20
 --- @return table
-function Tirislib_Utils.dice_rolls(dice, count, actual_count)
+function Tirislib.Utils.dice_rolls(dice, count, actual_count)
     actual_count = actual_count or 20
 
     local weights, lookup, ret, sum = prepare_dice(dice)
@@ -319,7 +319,7 @@ end
 --- @param count integer
 --- @param actual_count integer|nil defaults to 20
 --- @return integer success_count
-function Tirislib_Utils.coin_flips(probability, count, actual_count)
+function Tirislib.Utils.coin_flips(probability, count, actual_count)
     actual_count = actual_count or 20
 
     local successes = 0
@@ -344,7 +344,7 @@ end
 --- @param probability number
 --- @param tries number
 --- @return number
-function Tirislib_Utils.occurence_probability(probability, tries)
+function Tirislib.Utils.occurence_probability(probability, tries)
     return 1 - (1 - probability) ^ tries
 end
 
@@ -352,7 +352,7 @@ end
 --- @param m integer
 --- @param n integer
 --- @return integer
-function Tirislib_Utils.greatest_common_divisor(m, n)
+function Tirislib.Utils.greatest_common_divisor(m, n)
     while n ~= 0 do
         local q = m
         m = n
@@ -360,13 +360,13 @@ function Tirislib_Utils.greatest_common_divisor(m, n)
     end
     return m
 end
-local gcd = Tirislib_Utils.greatest_common_divisor
+local gcd = Tirislib.Utils.greatest_common_divisor
 
 --- Returns the lowest number that has both given numbers as divisors.
 --- @param m integer
 --- @param n integer
 --- @return integer
-function Tirislib_Utils.lowest_common_multiple(m, n)
+function Tirislib.Utils.lowest_common_multiple(m, n)
     return (m ~= 0 and n ~= 0) and m * n / gcd(m, n) or 0
 end
 
@@ -376,7 +376,7 @@ end
 --- @param x2 number
 --- @param y2 number
 --- @return number
-function Tirislib_Utils.maximum_metric_distance(x1, y1, x2, y2)
+function Tirislib.Utils.maximum_metric_distance(x1, y1, x2, y2)
     local dist_x = abs(x1 - x2)
     local dist_y = abs(y1 - y2)
 
@@ -390,7 +390,7 @@ end
 --- @param x2 number
 --- @param y2 number
 --- @return number
-function Tirislib_Utils.n_metric_distance(n, x1, y1, x2, y2)
+function Tirislib.Utils.n_metric_distance(n, x1, y1, x2, y2)
     return ((x1 - x2) ^ n + (y1 - y2) ^ n) ^ (1 / n)
 end
 
@@ -398,7 +398,7 @@ end
 --- @param position point2d
 --- @param range number
 --- @return BoundingBox
-function Tirislib_Utils.get_range_bounding_box(position, range)
+function Tirislib.Utils.get_range_bounding_box(position, range)
     local x = position.x
     local y = position.y
 
@@ -409,7 +409,7 @@ end
 --- @param entity LuaEntity
 --- @return number height
 --- @return number width
-function Tirislib_Utils.get_entity_size(entity)
+function Tirislib.Utils.get_entity_size(entity)
     local selection_box = entity.selection_box
     local left_top = selection_box.left_top
     local right_bottom = selection_box.right_bottom
@@ -421,7 +421,7 @@ end
 --- @param box table
 --- @return number height
 --- @return number width
-function Tirislib_Utils.get_box_size(box)
+function Tirislib.Utils.get_box_size(box)
     local left_top = box.left_top
     local right_bottom = box.right_bottom
 
@@ -431,7 +431,7 @@ end
 --- Adds a random integer offset to the given position.
 --- @param position point2d
 --- @param offset integer
-function Tirislib_Utils.add_random_offset(position, offset)
+function Tirislib.Utils.add_random_offset(position, offset)
     position.x = position.x + random(-offset, offset)
     position.y = position.y + random(-offset, offset)
 end
@@ -439,14 +439,19 @@ end
 --- Adds a random floating point offset to the given position.
 --- @param position point2d
 --- @param offset number
-function Tirislib_Utils.add_random_float_offset(position, offset)
+function Tirislib.Utils.add_random_float_offset(position, offset)
     position.x = position.x + random() * 2 * offset - offset
     position.y = position.y + random() * 2 * offset - offset
 end
 
+--- Returns true if the game is currently in the data stage.
+function Tirislib.Utils.is_data_stage()
+    return (data ~= nil)
+end
+
 --- Checks that it is not the control stage. Otherwise throws an error.\
 --- Used to secure that specific functions can only be called during the initialisation stage, as they would otherwise be a cause for desyncs.
-function Tirislib_Utils.desync_protection()
+function Tirislib.Utils.desync_protection()
     if game then
         error(
             "A function that is supposed to only be called during the control initialization stage got called at a later stage."
@@ -456,13 +461,13 @@ end
 
 ---------------------------------------------------------------------------------------------------
 --- Just some string helper functions
-Tirislib_String = {}
+Tirislib.String = {}
 
 --- Checks if the given string begins with the given prefix.
 --- @param str string
 --- @param prefix string
 --- @return boolean
-function Tirislib_String.begins_with(str, prefix)
+function Tirislib.String.begins_with(str, prefix)
     return str:sub(1, prefix:len()) == prefix
 end
 
@@ -495,7 +500,7 @@ end
 --- Returns a string that presents all given elements, separated by the given separator.\
 --- Returns an empty string if no elements are given.
 --- @param separator string
-function Tirislib_String.join(separator, ...)
+function Tirislib.String.join(separator, ...)
     return join_table(separator, {...}) or ""
 end
 
@@ -503,7 +508,7 @@ end
 --- @param s string
 --- @param separator string
 --- @return table
-function Tirislib_String.split(s, separator)
+function Tirislib.String.split(s, separator)
     local ret = {}
 
     for part in string.gmatch(s, "([^" .. separator .. "]+)") do
@@ -518,19 +523,19 @@ end
 --- @param ins string
 --- @param pos integer
 --- @return string
-function Tirislib_String.insert(s, ins, pos)
+function Tirislib.String.insert(s, ins, pos)
     return s:sub(1, pos) .. ins .. s:sub(pos + 1)
 end
 
 ---------------------------------------------------------------------------------------------------
 --- Just some table helper functions
-Tirislib_Tables = {}
+Tirislib.Tables = {}
 
 --- Recursively checks if the contents of the given tables are equal.
 --- @param lh table
 --- @param rh table
 --- @return boolean
-function Tirislib_Tables.equal(lh, rh)
+function Tirislib.Tables.equal(lh, rh)
     if lh == rh then
         return true
     end
@@ -541,7 +546,7 @@ function Tirislib_Tables.equal(lh, rh)
 
     for k, v in pairs(lh) do
         if type(v) == "table" then
-            if not Tirislib_Tables.equal(v, rh[k]) then
+            if not Tirislib.Tables.equal(v, rh[k]) then
                 return false
             end
         else
@@ -564,7 +569,7 @@ end
 --- @param lh table
 --- @param rh table
 --- @return boolean
-function Tirislib_Tables.shallow_equal(lh, rh)
+function Tirislib.Tables.shallow_equal(lh, rh)
     for k, v in pairs(lh) do
         if v ~= rh[k] then
             return false
@@ -583,7 +588,7 @@ end
 --- Returns the number of elements in this table.
 --- @param tbl table
 --- @return integer
-function Tirislib_Tables.count(tbl)
+function Tirislib.Tables.count(tbl)
     local count = 0
 
     for _ in pairs(tbl) do
@@ -597,7 +602,7 @@ end
 --- This function doesn't preserve the original order.
 --- @param tbl table
 --- @param value any
-function Tirislib_Tables.remove_all(tbl, value)
+function Tirislib.Tables.remove_all(tbl, value)
     for i = #tbl, 1, -1 do
         if tbl[i] == value then
             tbl[i] = tbl[#tbl]
@@ -609,7 +614,7 @@ end
 --- Returns an array with all the keys of the given table.
 --- @param tbl table
 --- @return table
-function Tirislib_Tables.get_keyset(tbl)
+function Tirislib.Tables.get_keyset(tbl)
     local ret = {}
     local index = 1
 
@@ -620,12 +625,12 @@ function Tirislib_Tables.get_keyset(tbl)
 
     return ret
 end
-local get_keyset = Tirislib_Tables.get_keyset
+local get_keyset = Tirislib.Tables.get_keyset
 
 --- Returns a table with the elements of the given array as keys.
 --- @param array table
 --- @return table
-function Tirislib_Tables.array_to_lookup(array)
+function Tirislib.Tables.array_to_lookup(array)
     local ret = {}
 
     for i = 1, #array do
@@ -634,12 +639,12 @@ function Tirislib_Tables.array_to_lookup(array)
 
     return ret
 end
-local array_to_lookup = Tirislib_Tables.array_to_lookup
+local array_to_lookup = Tirislib.Tables.array_to_lookup
 
 --- Shuffles the elements of the given array.
 --- @param tbl array
 --- @return array itself
-function Tirislib_Tables.shuffle(tbl)
+function Tirislib.Tables.shuffle(tbl)
     --https://gist.github.com/Uradamus/10323382
     for i = #tbl, 2, -1 do
         local j = random(i)
@@ -652,7 +657,7 @@ end
 --- Clones the table, nested tables will be referenced.
 --- @param tbl table
 --- @return table
-function Tirislib_Tables.copy(tbl)
+function Tirislib.Tables.copy(tbl)
     local ret = {}
 
     for key, value in pairs(tbl) do
@@ -685,16 +690,16 @@ end
 --- Clones the table and all tables inside.
 --- @param tbl table
 --- @return table
-function Tirislib_Tables.recursive_copy(tbl)
+function Tirislib.Tables.recursive_copy(tbl)
     return recursive_copy(tbl, {})
 end
-local rec_copy = Tirislib_Tables.recursive_copy
+local rec_copy = Tirislib.Tables.recursive_copy
 
 --- Checks if a field of the given table contains the given value.
 --- @param tbl table
 --- @param element any
 --- @return boolean
-function Tirislib_Tables.contains(tbl, element)
+function Tirislib.Tables.contains(tbl, element)
     for _, value in pairs(tbl) do
         if element == value then
             return true
@@ -708,7 +713,7 @@ end
 --- @param tbl table
 --- @param key any
 --- @return boolean
-function Tirislib_Tables.contains_key(tbl, key)
+function Tirislib.Tables.contains_key(tbl, key)
     return tbl[key] ~= nil
 end
 
@@ -716,7 +721,7 @@ end
 --- @param tbl table
 --- @param fields table
 --- @return table
-function Tirislib_Tables.set_fields(tbl, fields)
+function Tirislib.Tables.set_fields(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
             tbl[key] = value
@@ -730,7 +735,7 @@ end
 --- @param tbl table
 --- @param fields table
 --- @return table
-function Tirislib_Tables.set_fields_passively(tbl, fields)
+function Tirislib.Tables.set_fields_passively(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
             tbl[key] = (tbl[key] ~= nil) and tbl[key] or value
@@ -744,7 +749,7 @@ end
 --- @param tbl table
 --- @param fields table
 --- @return table
-function Tirislib_Tables.copy_fields(tbl, fields)
+function Tirislib.Tables.copy_fields(tbl, fields)
     if fields ~= nil then
         for key, value in pairs(fields) do
             if type(value) == "table" then
@@ -762,7 +767,7 @@ end
 --- @param lh table
 --- @param rh table
 --- @return table
-function Tirislib_Tables.merge(lh, rh)
+function Tirislib.Tables.merge(lh, rh)
     for _, value in pairs(rh) do
         lh[#lh + 1] = value
     end
@@ -774,7 +779,7 @@ end
 --- @param lh table
 --- @param rh table
 --- @return table
-function Tirislib_Tables.merge_arrays(lh, rh)
+function Tirislib.Tables.merge_arrays(lh, rh)
     for i = 1, #rh do
         lh[#lh + 1] = rh[i]
     end
@@ -785,7 +790,7 @@ end
 --- Calculates the sum of all elements in the given table.
 --- @param tbl table
 --- @return number
-function Tirislib_Tables.sum(tbl)
+function Tirislib.Tables.sum(tbl)
     local ret = 0.
 
     for _, value in pairs(tbl) do
@@ -794,12 +799,12 @@ function Tirislib_Tables.sum(tbl)
 
     return ret
 end
-local sum = Tirislib_Tables.sum
+local sum = Tirislib.Tables.sum
 
 --- Calculates the sum of all elements in the given array.
 --- @param tbl table
 --- @return number
-function Tirislib_Tables.array_sum(tbl)
+function Tirislib.Tables.array_sum(tbl)
     local ret = 0.
 
     for i = 1, #tbl do
@@ -812,7 +817,7 @@ end
 --- Calculates the product of all elements in the given table.
 --- @param tbl table
 --- @return number
-function Tirislib_Tables.product(tbl)
+function Tirislib.Tables.product(tbl)
     local ret = 1.
 
     for _, value in pairs(tbl) do
@@ -825,7 +830,7 @@ end
 --- Calculates the product of all elements in the given array.
 --- @param tbl table
 --- @return number
-function Tirislib_Tables.array_product(tbl)
+function Tirislib.Tables.array_product(tbl)
     local ret = 1.
 
     for i = 1, #tbl do
@@ -837,7 +842,7 @@ end
 
 --- Removes all fields of the given table. Useful if you need to preserve references.
 --- @param tbl table
-function Tirislib_Tables.empty(tbl)
+function Tirislib.Tables.empty(tbl)
     for k in pairs(tbl) do
         tbl[k] = nil
     end
@@ -847,7 +852,7 @@ end
 --- @param size integer
 --- @param value any
 --- @return table
-function Tirislib_Tables.new_array(size, value)
+function Tirislib.Tables.new_array(size, value)
     local ret = {}
 
     for i = 1, size do
@@ -860,7 +865,7 @@ end
 --- Creates a new array with the given number of nested tables.
 --- @param count integer
 --- @return table
-function Tirislib_Tables.new_array_of_arrays(count)
+function Tirislib.Tables.new_array_of_arrays(count)
     local ret = {}
 
     for i = 1, count do
@@ -875,7 +880,7 @@ end
 ---@param array table
 ---@param key any
 ---@return table
-function Tirislib_Tables.insertion_sort_by_key(array, key)
+function Tirislib.Tables.insertion_sort_by_key(array, key)
     local length = #array
 
     for j = 2, length do
@@ -895,7 +900,7 @@ end
 
 --- Returns the union set of the contents of the given tables.
 --- @return array
-function Tirislib_Tables.union_array(...)
+function Tirislib.Tables.union_array(...)
     local ret = {}
     local values = {}
 
@@ -914,7 +919,7 @@ end
 
 --- Returns the intersection set of the contents of the given tables.
 --- @return array
-function Tirislib_Tables.intersection_array(...)
+function Tirislib.Tables.intersection_array(...)
     local set_count = select("#", ...)
     local value_counts = {}
 
@@ -939,7 +944,7 @@ end
 --- Returns the complement set of content of the given tables.
 --- @param set table
 --- @return array
-function Tirislib_Tables.complement_array(set, ...)
+function Tirislib.Tables.complement_array(set, ...)
     set = array_to_lookup(set)
     local ret = {}
 
@@ -958,7 +963,7 @@ end
 --- Returns a random key out of the given table.
 --- @param tbl table
 --- @return any key
-function Tirislib_Tables.pick_random_key(tbl)
+function Tirislib.Tables.pick_random_key(tbl)
     local keys = get_keyset(tbl)
     return keys[random(#keys)]
 end
@@ -966,7 +971,7 @@ end
 --- Returns a random value out of the given table.
 --- @param tbl table
 --- @return any
-function Tirislib_Tables.pick_random_value(tbl)
+function Tirislib.Tables.pick_random_value(tbl)
     local keys = get_keyset(tbl)
     return tbl[keys[random(#keys)]]
 end
@@ -975,7 +980,7 @@ end
 --- @param tbl table
 --- @param n integer
 --- @return array
-function Tirislib_Tables.pick_n_random_keys(tbl, n)
+function Tirislib.Tables.pick_n_random_keys(tbl, n)
     local keys = get_keyset(tbl)
     local key_count = #keys
     local ret = {}
@@ -991,7 +996,7 @@ end
 --- @param tbl any
 --- @param n any
 --- @return array
-function Tirislib_Tables.pick_n_random_values(tbl, n)
+function Tirislib.Tables.pick_n_random_values(tbl, n)
     local keys = get_keyset(tbl)
     local key_count = #keys
     local ret = {}
@@ -1010,8 +1015,8 @@ end
 --- @param weight_sum number|nil
 --- @return any index
 --- @return table subtable
-function Tirislib_Tables.pick_random_subtable_weighted_by_key(tbl, key, weight_sum)
-    weight_sum = weight_sum or Tirislib_Luaq.from(tbl):select_key(key):call(sum)
+function Tirislib.Tables.pick_random_subtable_weighted_by_key(tbl, key, weight_sum)
+    weight_sum = weight_sum or Tirislib.Luaq.from(tbl):select_key(key):call(sum)
 
     local random_index = random() * weight_sum
 
@@ -1029,7 +1034,7 @@ end
 --- @param finish number
 --- @param steps number|nil
 --- @return array
-function Tirislib_Tables.sequence(start, finish, steps)
+function Tirislib.Tables.sequence(start, finish, steps)
     local ret = {}
     local i = 1
 
@@ -1046,12 +1051,12 @@ function Tirislib_Tables.sequence(start, finish, steps)
     return ret
 end
 
-Tirislib_Tables.get_subtbl = get_subtbl
+Tirislib.Tables.get_subtbl = get_subtbl
 
 --- Gets or creates the subtable that is nested with the given sequence of keys inside the given table.
 --- @param tbl table
 --- @return table
-function Tirislib_Tables.get_subtbl_recursive(tbl, ...)
+function Tirislib.Tables.get_subtbl_recursive(tbl, ...)
     local ret = tbl
 
     for i = 1, select("#", ...) do
@@ -1073,7 +1078,7 @@ end
 --- @param key any
 --- @param default_key any|nil
 --- @return table
-function Tirislib_Tables.group_by_key(tbl, key, default_key)
+function Tirislib.Tables.group_by_key(tbl, key, default_key)
     local ret = {}
     local default_inner = default_key and get_subtbl(default_key)
 
@@ -1094,7 +1099,7 @@ end
 --- Adds the contents of the given right hand side table to the given left hand side table.
 --- @param lh table
 --- @param rh table
-function Tirislib_Tables.add(lh, rh)
+function Tirislib.Tables.add(lh, rh)
     for key, value in pairs(rh) do
         lh[key] = (lh[key] or 0) + value
     end
@@ -1103,7 +1108,7 @@ end
 --- Multiplies all containing values of the given table with the given multiplier.
 --- @param tbl table
 --- @param multiplier number
-function Tirislib_Tables.multiply(tbl, multiplier)
+function Tirislib.Tables.multiply(tbl, multiplier)
     for key, value in pairs(tbl) do
         tbl[key] = value * multiplier
     end
@@ -1122,7 +1127,7 @@ local function partial_iterator(tbl, index_table)
     end
 end
 
-function Tirislib_Tables.iterate_partially(tbl, start, count)
+function Tirislib.Tables.iterate_partially(tbl, start, count)
     if tbl[start] == nil then
         start = nil
     end
@@ -1134,7 +1139,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 --- Just some locale helper functions
-Tirislib_Locales = {}
+Tirislib.Locales = {}
 
 --- Shortens the ""-enumeration to ensure that there aren't more than the allowed number of elements.
 --- @param enumeration locale
@@ -1161,14 +1166,14 @@ local function shorten_enumeration(enumeration)
     shorten_enumeration(enumeration)
 end
 
-Tirislib_Locales.shorten_enumeration = shorten_enumeration
+Tirislib.Locales.shorten_enumeration = shorten_enumeration
 
 --- Creates a localised enumeration of the given elements.
 --- @param elements array
 --- @param separator string|locale
 --- @param last_separator string|locale|nil
 --- @return locale
-function Tirislib_Locales.create_enumeration(elements, separator, last_separator)
+function Tirislib.Locales.create_enumeration(elements, separator, last_separator)
     separator = separator or ", "
     local ret = {""}
     local at_least_one = false
@@ -1193,13 +1198,13 @@ function Tirislib_Locales.create_enumeration(elements, separator, last_separator
 
     return ret
 end
-local create_enumeration = Tirislib_Locales.create_enumeration
+local create_enumeration = Tirislib.Locales.create_enumeration
 
 --- Creates a localisation for the real world time for the given ticks.
 --- - Needs Sosciencity's locales
 --- @param ticks integer
 --- @return locale
-function Tirislib_Locales.display_time(ticks)
+function Tirislib.Locales.display_time(ticks)
     local seconds = floor(ticks / 60)
     local minutes = floor(seconds / 60)
     seconds = seconds % 60
@@ -1224,7 +1229,7 @@ end
 --- - Needs Sosciencity's locales
 --- @param ticks integer
 --- @return locale
-function Tirislib_Locales.display_ingame_time(ticks)
+function Tirislib.Locales.display_ingame_time(ticks)
     local days = floor(ticks / 25000)
     local weeks = floor(days / 7)
     days = days % 7
@@ -1248,7 +1253,7 @@ function Tirislib_Locales.display_ingame_time(ticks)
     return create_enumeration(points, ", ", {"sosciencity.and"})
 end
 
-function Tirislib_Locales.display_item_stack_datastage(item, count)
+function Tirislib.Locales.display_item_stack_datastage(item, count)
     return {"sosciencity.xitems", count, item, {"item-name." .. item}}
 end
 
@@ -1257,7 +1262,7 @@ end
 --- @param item string
 --- @param count integer
 --- @return locale
-function Tirislib_Locales.display_item_stack(item, count)
+function Tirislib.Locales.display_item_stack(item, count)
     return {"sosciencity.xitems", count, item, game.item_prototypes[item].localised_name}
 end
 
@@ -1266,14 +1271,14 @@ end
 --- @param fluid string
 --- @param count integer
 --- @return locale
-function Tirislib_Locales.display_fluid_stack(fluid, count)
+function Tirislib.Locales.display_fluid_stack(fluid, count)
     return {"sosciencity.xfluids", count, fluid, game.fluid_prototypes[fluid].localised_name}
 end
 
 --- Creates a localisation for the given value.
 --- @param percentage number
 --- @return locale
-function Tirislib_Locales.display_percentage(percentage)
+function Tirislib.Locales.display_percentage(percentage)
     return {"sosciencity.percentage", round(percentage * 100)}
 end
 
@@ -1281,8 +1286,8 @@ local function transform_to_enumeration(locale)
     if locale[1] == "" then
         return
     end
-    local locale_copy = Tirislib_Tables.copy(locale)
-    Tirislib_Tables.empty(locale)
+    local locale_copy = Tirislib.Tables.copy(locale)
+    Tirislib.Tables.empty(locale)
 
     locale[1] = ""
     locale[2] = locale_copy
@@ -1290,7 +1295,7 @@ end
 
 --- Appends the given elements to the given locale table.
 --- @param locale locale
-function Tirislib_Locales.append(locale, ...)
+function Tirislib.Locales.append(locale, ...)
     transform_to_enumeration(locale)
 
     for _, v in pairs {...} do
@@ -1301,7 +1306,7 @@ end
 
 --- Prepends the given elements to the given locale table.
 --- @param locale locale
-function Tirislib_Locales.prepend(locale, ...)
+function Tirislib.Locales.prepend(locale, ...)
     transform_to_enumeration(locale)
 
     local args = {...}

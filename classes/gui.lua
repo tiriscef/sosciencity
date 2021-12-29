@@ -53,15 +53,15 @@ local type_definitions = Types.definitions
 local ceil = math.ceil
 local floor = math.floor
 local format = string.format
-local round = Tirislib_Utils.round
+local round = Tirislib.Utils.round
 local tostring = tostring
 
-local Luaq_from = Tirislib_Luaq.from
+local Luaq_from = Tirislib.Luaq.from
 
-local display_enumeration = Tirislib_Locales.create_enumeration
-local display_percentage = Tirislib_Locales.display_percentage
-local display_item_stack = Tirislib_Locales.display_item_stack
-local display_time = Tirislib_Locales.display_time
+local display_enumeration = Tirislib.Locales.create_enumeration
+local display_percentage = Tirislib.Locales.display_percentage
+local display_item_stack = Tirislib.Locales.display_item_stack
+local display_time = Tirislib.Locales.display_time
 
 local climate_locales = WeatherLocales.climate
 local humidity_locales = WeatherLocales.humidity
@@ -222,7 +222,7 @@ local click_lookup = {}
 --- @param name string
 --- @param fn function
 local function set_click_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     click_lookup[name] = {fn, {...}}
 end
 
@@ -232,14 +232,14 @@ local checkbox_click_lookup = {}
 --- @param name string
 --- @param fn function
 local function set_checked_state_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     checkbox_click_lookup[name] = {fn, {...}}
 end
 
 local value_changed_lookup = {}
 
 local function set_value_changed_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     value_changed_lookup[name] = {fn, {...}}
 end
 
@@ -2048,7 +2048,7 @@ local function update_classes_flow(entry, classes_flow)
 
     for index, class in pairs(classes) do
         local percentage = (current_tick - class[1]) / Entity.upbringing_time
-        local count = Tirislib_Tables.array_sum(class[2])
+        local count = Tirislib.Tables.array_sum(class[2])
         classes_flow.add {
             name = tostring(index),
             type = "label",
@@ -2159,7 +2159,7 @@ local function create_upbringing_station(container, entry)
     update_upbringing_station(container, entry)
 end
 
-for _, caste_id in pairs(Tirislib_Tables.union_array(TypeGroup.breedable_castes, {Type.null})) do
+for _, caste_id in pairs(Tirislib.Tables.union_array(TypeGroup.breedable_castes, {Type.null})) do
     set_checked_state_handler(
         format(unique_prefix_builder, "education-mode", caste_id),
         generic_radiobutton_handler,
@@ -2193,7 +2193,7 @@ local function update_waste_dump(container, entry)
         "capacity",
         {
             "sosciencity.value-with-unit",
-            {"sosciencity.fraction", Tirislib_Tables.sum(stored_garbage), capacity},
+            {"sosciencity.fraction", Tirislib.Tables.sum(stored_garbage), capacity},
             {"sosciencity.items"}
         }
     )
@@ -2334,7 +2334,7 @@ local function update_water_distributer(container, entry)
 
     if water then
         amount = entry[EK.entity].get_fluid_count(water)
-        set_kv_pair_value(building_data, "content", Tirislib_Locales.display_fluid_stack(water, floor(amount)))
+        set_kv_pair_value(building_data, "content", Tirislib.Locales.display_fluid_stack(water, floor(amount)))
     else
         amount = 0
         set_kv_pair_value(building_data, "content", "-")

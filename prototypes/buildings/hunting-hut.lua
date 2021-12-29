@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "hunting-hut",
     icon = "__sosciencity-graphics__/graphics/icon/hunting-hut.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "hunting-hut",
     themes = {{"building", 3}},
     default_theme_level = 1,
@@ -22,7 +22,7 @@ local shift = {0.35, -0.5}
 local width = 160
 local height = 160
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "hunting-hut",
     icon = "__sosciencity-graphics__/graphics/icon/hunting-hut.png",

@@ -257,10 +257,10 @@ do
         if disease.cure_items then
             points[#points + 1] = {
                 "sosciencity.cure-medicine",
-                Tirislib_Locales.create_enumeration(
-                    Tirislib_Luaq.from(disease.cure_items):select(
+                Tirislib.Locales.create_enumeration(
+                    Tirislib.Luaq.from(disease.cure_items):select(
                         function(item, count)
-                            return Tirislib_Locales.display_item_stack_datastage(item, count)
+                            return Tirislib.Locales.display_item_stack_datastage(item, count)
                         end
                     ):to_array(),
                     ", "
@@ -283,7 +283,7 @@ do
             }
         end
 
-        return Tirislib_Locales.create_enumeration(points, "\n")
+        return Tirislib.Locales.create_enumeration(points, "\n")
     end
 
     local function get_localised_properties(disease)
@@ -291,8 +291,8 @@ do
             disease.natural_recovery and
                 {
                     "sosciencity.natural-recovery",
-                    Tirislib_Locales.display_ingame_time(disease.natural_recovery),
-                    Tirislib_Locales.display_time(math.ceil(disease.natural_recovery / 3600) * 3600)
+                    Tirislib.Locales.display_ingame_time(disease.natural_recovery),
+                    Tirislib.Locales.display_time(math.ceil(disease.natural_recovery / 3600) * 3600)
                 } or
                 {"sosciencity.no-natural-recovery"}
         }
@@ -325,11 +325,11 @@ do
             }
         end
 
-        return Tirislib_Locales.create_enumeration(points, "\n")
+        return Tirislib.Locales.create_enumeration(points, "\n")
     end
 
     local function get_localised_description(disease)
-        return Tirislib_Locales.create_enumeration(
+        return Tirislib.Locales.create_enumeration(
             {
                 {"sosciencity.bold", disease.localised_name},
                 {"sosciencity.grey", {"disease-description." .. disease.name}},

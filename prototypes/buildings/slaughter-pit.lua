@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "slaughter-pit",
     icon = "__sosciencity-graphics__/graphics/icon/slaughter-pit.png",
@@ -10,14 +10,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "slaughter-pit",
     themes = {{"machine", 2}},
     default_theme_level = 1,
     unlock = "clockwork-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "furnace",
     name = "slaughter-pit",
     icon = "__sosciencity-graphics__/graphics/icon/slaughter-pit.png",

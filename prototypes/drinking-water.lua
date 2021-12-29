@@ -5,7 +5,7 @@ local fluids = {
     {name = "ultra-pure-water"}
 }
 
-Tirislib_Fluid.batch_create(
+Tirislib.Fluid.batch_create(
     fluids,
     {
         default_temperature = 10,
@@ -16,7 +16,7 @@ Tirislib_Fluid.batch_create(
     }
 )
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     name = "clean-water-from-ground",
     product = "clean-water",
     product_type = "fluid",
@@ -27,7 +27,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "mechanically-cleaned-water",
     product_type = "fluid",
     product_amount = 600,
@@ -40,7 +40,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "biologically-cleaned-water",
     product_type = "fluid",
     product_amount = 600,
@@ -55,7 +55,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "clean-water",
     product_type = "fluid",
     product_amount = 600,
@@ -68,7 +68,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "ultra-pure-water",
     product_type = "fluid",
     product_amount = 50,
@@ -79,7 +79,7 @@ Tirislib_RecipeGenerator.create {
     byproducts = {
         {type = "item", name = "semipermeable-membrane", amount = 1, probability = 0.8}
     },
-    category = Tirislib_RecipeGenerator.category_alias.filtration,
+    category = Tirislib.RecipeGenerator.category_alias.filtration,
     energy_required = 4,
     unlock = "genetic-neogenesis"
 }:add_catalyst("semipermeable-membrane", "item", 1, 0.8, 1, 0.7)

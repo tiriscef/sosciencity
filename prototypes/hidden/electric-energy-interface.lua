@@ -1,8 +1,8 @@
 -- Create an eei with a fitting size for every entity that will need one in control stage.
 for entity_name in pairs(Sosciencity_Config.eei_needing_buildings) do
-    local entity = Tirislib_Entity.get_by_name(entity_name)
+    local entity = Tirislib.Entity.get_by_name(entity_name)
 
-    Tirislib_Entity.create {
+    Tirislib.Entity.create {
         type = "electric-energy-interface",
         name = "sosciencity-hidden-eei-" .. entity_name,
         collision_box = entity.collision_box,

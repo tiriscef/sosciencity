@@ -1,5 +1,5 @@
 --<< modules >>
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "module",
     name = "sosciencity-penalty",
     icon = "__sosciencity-graphics__/graphics/empty.png",
@@ -18,7 +18,7 @@ Tirislib_Item.create {
 for i = 0, 14 do
     local strength = 2 ^ i * 0.01
 
-    Tirislib_Item.create {
+    Tirislib.Item.create {
         type = "module",
         name = i .. "-sosciencity-speed",
         icon = "__sosciencity-graphics__/graphics/empty.png",
@@ -34,7 +34,7 @@ for i = 0, 14 do
         is_hack = true
     }
 
-    Tirislib_Item.create {
+    Tirislib.Item.create {
         type = "module",
         name = i .. "-sosciencity-productivity",
         icon = "__sosciencity-graphics__/graphics/empty.png",
@@ -52,7 +52,7 @@ for i = 0, 14 do
 end
 
 --<< beacon >>
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "beacon",
     name = "sosciencity-hidden-beacon",
     energy_usage = "10W",

@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "water-tower",
     icon = "__sosciencity-graphics__/graphics/icon/water-tower.png",
@@ -10,18 +10,18 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "water-tower",
     themes = {{"tank", 1}, {"piping", 15}, {"framework", 10}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 local size_x = 3
 local size_y = 3
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "storage-tank",
     name = "water-tower",
     icon = "__sosciencity-graphics__/graphics/icon/water-tower.png",
@@ -42,7 +42,7 @@ Tirislib_Entity.create {
             {position = {-2, 0}}
         }
     },
-    vehicle_impact_sound = Tirislib_Entity.get_standard_impact_sound(),
+    vehicle_impact_sound = Tirislib.Entity.get_standard_impact_sound(),
     pictures = {
         picture = {
             sheets = {
@@ -80,20 +80,20 @@ Tirislib_Entity.create {
                 }
             }
         },
-        fluid_background = Tirislib_Entity.get_empty_sprite(),
-        window_background = Tirislib_Entity.get_empty_sprite(),
-        flow_sprite = Tirislib_Entity.get_empty_sprite(),
-        gas_flow = Tirislib_Entity.get_empty_animation()
+        fluid_background = Tirislib.Entity.get_empty_sprite(),
+        window_background = Tirislib.Entity.get_empty_sprite(),
+        flow_sprite = Tirislib.Entity.get_empty_sprite(),
+        gas_flow = Tirislib.Entity.get_empty_animation()
     },
     flow_length_in_ticks = 360,
-    window_bounding_box = Tirislib_Entity.get_selection_box(0, 0),
+    window_bounding_box = Tirislib.Entity.get_selection_box(0, 0),
     circuit_wire_connection_points = circuit_connector_definitions["storage-tank"].points,
     circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(size_x, size_y):copy_localisation_from_item()
 Sosciencity_Config.add_eei("water-tower")
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "corpse",
     name = "water-tower-remnants",
     icon = "__sosciencity-graphics__/graphics/icon/water-tower.png",

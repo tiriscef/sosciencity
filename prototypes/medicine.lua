@@ -37,16 +37,16 @@ for _, medicine in pairs(medicine_items) do
     distinctions.localised_description = {
         "sosciencity-util.medicine",
         {"item-description." .. medicine.name},
-        Tirislib_Locales.create_enumeration(find_curable_diseases(medicine.name), "[color=#FFFFFF], [/color]")
+        Tirislib.Locales.create_enumeration(find_curable_diseases(medicine.name), "[color=#FFFFFF], [/color]")
     }
 end
 
-Tirislib_Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
+Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "artificial-limp",
     themes = {
         {"framework", 2},
@@ -59,7 +59,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "artificial-heart",
     themes = {
         {"casing", 1},
@@ -73,7 +73,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "intensive-care"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "bandage",
     product_amount = 15,
     ingredients = {
@@ -86,18 +86,18 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "isotonic-saline-solution",
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "item", name = "salt", amount = 1}
     },
-    category = Tirislib_RecipeGenerator.category_alias.dissolving,
+    category = Tirislib.RecipeGenerator.category_alias.dissolving,
     energy_required = 1.6,
     unlock = "hospital"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "psychotropics",
     themes = {{"tablet_ingredients", 1}},
     ingredients = {
@@ -110,7 +110,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "psychiatry"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "analgesics",
     themes = {{"tablet_ingredients", 1}},
     ingredients = {
@@ -123,7 +123,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "potent-analgesics",
     themes = {{"tablet_ingredients", 1}},
     ingredients = {
@@ -136,7 +136,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "intensive-care"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "anesthetics",
     ingredients = {
         {type = "item", name = "necrofall", amount = 5},
@@ -148,7 +148,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "intensive-care"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "antibiotics",
     themes = {{"tablet_ingredients", 1}},
     ingredients = {
@@ -161,7 +161,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "antimycotics",
     themes = {{"cream_ingredients", 1}},
     ingredients = {
@@ -175,7 +175,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
-Tirislib_Recipe.create {
+Tirislib.Recipe.create {
     name = "donate-blood",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -190,7 +190,7 @@ Tirislib_Recipe.create {
     main_product = ""
 }
 
-Tirislib_Prototype.batch_create {
+Tirislib.Prototype.batch_create {
     {
         type = "sticker",
         name = "blood-donation-1",
@@ -305,7 +305,7 @@ local consumable_medicine = {
     }
 }
 
-Tirislib_Item.batch_create(
+Tirislib.Item.batch_create(
     consumable_medicine,
     {
         type = "capsule",
@@ -314,14 +314,14 @@ Tirislib_Item.batch_create(
     }
 )
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sosciencity-emergency-ration",
     name = "sosciencity-emergency-ration",
     category = "sosciencity-handcrafting",
     localised_description = {"recipe-description.sosciencity-emergency-ration", Food.emergency_ration_calories}
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sosciencity-medical-kit",
     product_amount = 1,
     ingredients = {
@@ -330,7 +330,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sosciencity-medical-kit",
     product_amount = 5,
     ingredients = {

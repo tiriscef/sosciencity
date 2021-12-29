@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "arboretum",
     icon = "__sosciencity-graphics__/graphics/icon/arboretum.png",
@@ -10,17 +10,17 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "arboretum",
     themes = {{"soil", 20}, {"tank", 1}, {"piping", 10}},
     default_theme_level = 0,
     unlock = "open-environment-farming"
 }
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "arboretum",
     icon = "__sosciencity-graphics__/graphics/icon/arboretum.png",
@@ -131,7 +131,7 @@ Tirislib_Entity.create {
     }
 }:set_size(15, 15):copy_localisation_from_item()
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "corpse",
     name = "arboretum-remnants",
     icon = "__sosciencity-graphics__/graphics/icon/arboretum.png",

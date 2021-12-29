@@ -21,7 +21,7 @@ local get_type = require("constants.types").get
 local get_building_details = require("constants.buildings").get
 
 local max = math.max
-local get_subtbl = Tirislib_Tables.get_subtbl
+local get_subtbl = Tirislib.Tables.get_subtbl
 local get_subentity
 
 ---------------------------------------------------------------------------------------------------

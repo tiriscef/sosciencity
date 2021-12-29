@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "orchid-plant-care-station",
     icon = "__sosciencity-graphics__/graphics/icon/plant-care-station.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orchid-plant-care-station",
     themes = {{"building", 10}},
     ingredients = {
@@ -23,7 +23,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "orchid-plant-care-station",
     flags = {"placeable-neutral", "player-creation"},
@@ -35,7 +35,7 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = Tirislib_Entity.create_standard_picture {
+    picture = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/plant-care-station/plant-care-station",
         shift = {0.4, 0.0},
         width = 9,

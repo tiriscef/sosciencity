@@ -10,12 +10,12 @@ local idea_items = {
     {name = "well-funded-scientific-thesis"}
 }
 
-Tirislib_Item.batch_create(idea_items, {subgroup = "sosciencity-ideas", stack_size = 100})
+Tirislib.Item.batch_create(idea_items, {subgroup = "sosciencity-ideas", stack_size = 100})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib_Recipe.create {
+Tirislib.Recipe.create {
     type = "recipe",
     name = "brainstorm",
     category = "sosciencity-handcrafting",
@@ -32,7 +32,7 @@ Tirislib_Recipe.create {
     main_product = ""
 }
 
-Tirislib_Recipe.create {
+Tirislib.Recipe.create {
     type = "recipe",
     name = "write-essay",
     category = "sosciencity-handcrafting",
@@ -49,7 +49,7 @@ Tirislib_Recipe.create {
     main_product = ""
 }:add_unlock("orchid-caste")
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "note",
     product_amount = 4,
     category = "sosciencity-caste-clockwork",
@@ -58,7 +58,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "essay",
     product_amount = 4,
     category = "sosciencity-caste-orchid",
@@ -70,7 +70,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "essay",
     product_amount = 4,
     category = "sosciencity-caste-orchid",
@@ -82,7 +82,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "strategic-considerations",
     product_amount = 4,
     category = "sosciencity-caste-gunfire",
@@ -94,7 +94,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "gunfire-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sketchbook",
     product_amount = 4,
     category = "sosciencity-caste-ember",
@@ -107,7 +107,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "ember-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "complex-scientific-data",
     product_amount = 4,
     category = "sosciencity-caste-foundry",
@@ -119,7 +119,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "foundry-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "published-paper",
     product_amount = 4,
     category = "sosciencity-caste-gleam",
@@ -131,7 +131,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "gleam-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "well-funded-scientific-thesis",
     product_amount = 4,
     --category = "sosciencity-caste-aurora",

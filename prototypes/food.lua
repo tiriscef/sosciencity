@@ -62,7 +62,7 @@ for _, food in pairs(foods) do
     local health = food_details.healthiness
     local luxury = food_details.luxury
 
-    local distinctions = Tirislib_Tables.get_subtbl(food, "distinctions")
+    local distinctions = Tirislib.Tables.get_subtbl(food, "distinctions")
 
     distinctions.durability = food_details.calories
     distinctions.durability_description_key = "description.food-key"
@@ -89,12 +89,12 @@ for _, food in pairs(foods) do
     }
 end
 
-Tirislib_Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"})
+Tirislib.Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fermented-biter-meat",
     product_amount = 10,
     energy_required = 5,
@@ -107,37 +107,37 @@ Tirislib_RecipeGenerator.create {
     unlock = "fermentation"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "hummus",
     product_amount = 2,
     ingredients = {
         {name = "chickpea", amount = 2},
         {name = "sesame", amount = 1}
     },
-    category = Tirislib_RecipeGenerator.category_alias.food_processing,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "hummus"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "dried-solfaen",
     ingredients = {
         {type = "fluid", name = "solfaen", amount = 10}
     },
-    category = Tirislib_RecipeGenerator.category_alias.drying,
+    category = Tirislib.RecipeGenerator.category_alias.drying,
     unlock = "basic-biotechnology"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "tofu",
     byproducts = {{name = "yuba", amount = 1}},
     ingredients = {
         {type = "fluid", name = "soy-milk", amount = 20}
     },
-    category = Tirislib_RecipeGenerator.category_alias.food_processing,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "bread",
     product_min = 5,
     product_max = 10,
@@ -147,6 +147,6 @@ Tirislib_RecipeGenerator.create {
         {type = "fluid", name = "pemtenn", amount = 5},
         {type = "fluid", name = "clean-water", amount = 20}
     },
-    category = Tirislib_RecipeGenerator.category_alias.food_processing,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "food-processing"
 }

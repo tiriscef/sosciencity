@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "composting-silo",
     icon = "__sosciencity-graphics__/graphics/icon/composting-silo.png",
@@ -10,14 +10,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "composting-silo",
     themes = {{"plating", 20}, {"framework", 2}},
     default_theme_level = 1,
     unlock = "open-environment-farming"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "composting-silo",
     flags = {"placeable-neutral", "player-creation"},
@@ -29,7 +29,7 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = Tirislib_Entity.create_standard_picture {
+    picture = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/composting-silo/composting-silo",
         width = 10,
         height = 8,

@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "orangery",
     icon = "__sosciencity-graphics__/graphics/icon/orangery.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orangery",
     themes = {{"building", 5}, {"machine", 3}, {"piping", 10}, {"lamp", 40}},
     ingredients = {
@@ -20,9 +20,9 @@ Tirislib_RecipeGenerator.create {
     unlock = "controlled-environment-farming"
 }
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "orangery",
     icon = "__sosciencity-graphics__/graphics/icon/orangery.png",

@@ -20,7 +20,7 @@ local types = Types.definitions
 local get_building_details = require("constants.buildings").get
 
 local max = math.max
-local get_box_size = Tirislib_Utils.get_box_size
+local get_box_size = Tirislib.Utils.get_box_size
 
 local highlights
 

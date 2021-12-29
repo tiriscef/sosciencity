@@ -1,7 +1,7 @@
 local Food = require("constants.food")
 
 local all_recipes =
-    Tirislib_Luaq.from(Tirislib_Recipe.all()):where(
+    Tirislib.Luaq.from(Tirislib.Recipe.all()):where(
     function(_, recipe)
         return recipe.owner == "sosciencity"
     end
@@ -11,7 +11,7 @@ local function get_result_calories(recipe_data)
     local kcal = 0
     for _, result in pairs(recipe_data.results) do
         if Food.values[result.name] then
-            kcal = kcal + Tirislib_RecipeEntry.get_average_yield(result) * Food.values[result.name].calories
+            kcal = kcal + Tirislib.RecipeEntry.get_average_yield(result) * Food.values[result.name].calories
         end
     end
     return kcal
@@ -27,7 +27,7 @@ for _, recipe in all_recipes:pairs() do
                 string.format(
                 "%s;%s;%d;%d",
                 recipe.name,
-                difficulty == Tirislib_RecipeDifficulty.expensive and "expensive" or "normal",
+                difficulty == Tirislib.RecipeDifficulty.expensive and "expensive" or "normal",
                 kcal,
                 kcal / recipe_data.energy_required
             )
@@ -35,10 +35,10 @@ for _, recipe in all_recipes:pairs() do
     end
 end
 
-log(Tirislib_String.join("\n", "Food Producing Recipes:", "name;difficulty;kcal per cycle;kcal per second", results))
+log(Tirislib.String.join("\n", "Food Producing Recipes:", "name;difficulty;kcal per cycle;kcal per second", results))
 
 local animal_calorie_values =
-    Tirislib_Luaq.from(all_recipes.content):where(
+    Tirislib.Luaq.from(all_recipes.content):where(
     function(_, recipe)
         return recipe.category == "sosciencity-slaughter"
     end
@@ -52,10 +52,10 @@ local animal_calorie_values =
 ):to_table()
 
 log(
-    Tirislib_String.join(
+    Tirislib.String.join(
         "\n",
         "Animal-Calorie-equivalents:",
-        Tirislib_Luaq.from(animal_calorie_values):select(
+        Tirislib.Luaq.from(animal_calorie_values):select(
             function(animal, calories)
                 return string.format("%s: %d kcal", animal, calories)
             end
@@ -81,7 +81,7 @@ for _, recipe in all_recipes:pairs() do
                 string.format(
                 "%s, difficulty %s, produces %d kcal per cycle, %d kcal per second",
                 recipe.name,
-                difficulty == Tirislib_RecipeDifficulty.expensive and "expensive" or "normal",
+                difficulty == Tirislib.RecipeDifficulty.expensive and "expensive" or "normal",
                 kcal,
                 kcal / recipe_data.energy_required
             )
@@ -89,4 +89,4 @@ for _, recipe in all_recipes:pairs() do
     end
 end
 
-log(Tirislib_String.join("\n", "Fauna Producing Recipes:", results))
+log(Tirislib.String.join("\n", "Fauna Producing Recipes:", results))
