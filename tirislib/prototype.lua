@@ -1,13 +1,13 @@
-Tirislib_Prototype = {}
+Tirislib.Prototype = Tirislib.Prototype or {}
 
 --- The name of the mod that is currently running. Used to set the inofficial 'owner' field for created prototypes.
-Tirislib_Prototype.modname = nil
+Tirislib.Prototype.modname = nil
 
 --- Class for arrays of prototypes. Setter-functions can be called on them.
-Tirislib_PrototypeArray = {}
+Tirislib.PrototypeArray = {}
 
 --- Makes a function call on a PrototypeArray object to a call on every entry instead.
-function Tirislib_PrototypeArray:__index(method)
+function Tirislib.PrototypeArray:__index(method)
     return function(array, ...)
         for _, entry in pairs(array) do
             entry[method](entry, ...)
@@ -39,7 +39,7 @@ setmetatable(dummy_prototype, dummy_metatable)
 --- Checks if the given Prototype is legit or a dummy.
 --- @param prototype Prototype
 --- @return boolean
-function Tirislib_Prototype.is_dummy(prototype)
+function Tirislib.Prototype.is_dummy(prototype)
     return prototype == dummy_prototype
 end
 
@@ -51,7 +51,7 @@ end
 --- @param mt table
 --- @return Prototype Prototype prototype or dummy
 --- @return boolean found
-function Tirislib_Prototype.get(prototype_type, name, mt)
+function Tirislib.Prototype.get(prototype_type, name, mt)
     local ret
     if type(prototype_type) == "string" then
         ret = data.raw[prototype_type][name]
@@ -75,25 +75,25 @@ end
 --- Creates the given prototype and adds it to data.raw.
 --- @param prototype table
 --- @return Prototype Prototype
-function Tirislib_Prototype.create(prototype)
-    prototype.owner = prototype.owner or Tirislib_Prototype.modname
+function Tirislib.Prototype.create(prototype)
+    prototype.owner = prototype.owner or Tirislib.Prototype.modname
 
     data:extend {prototype}
 
-    return Tirislib_Prototype.get(prototype.type, prototype.name)
+    return Tirislib.Prototype.get(prototype.type, prototype.name)
 end
 
 --- Creates the prototypes in the given array and add them to data.raw.
 --- @param prototypes array
 --- @return PrototypeArray created_prototypes
-function Tirislib_Prototype.batch_create(prototypes)
+function Tirislib.Prototype.batch_create(prototypes)
     local ret = {}
 
     for _, prototype in pairs(prototypes) do
-        ret[#ret+1] = Tirislib_Prototype.create(prototype)
+        ret[#ret+1] = Tirislib.Prototype.create(prototype)
     end
 
-    setmetatable(ret, Tirislib_PrototypeArray)
+    setmetatable(ret, Tirislib.PrototypeArray)
 
     return ret
 end
@@ -104,28 +104,28 @@ end
 --- Prototype.postpones_functions table.
 --- A call to finish_postponed will iterate repeatedly over the table and execute the
 --- stored functions.
-Tirislib_Prototype.postponed_functions = {}
+Tirislib.Prototype.postponed_functions = Tirislib.Prototype.postponed_functions or {}
 
---- Postpones the function call to when Tirislib_Prototype.finish gets called. 
+--- Postpones the function call to when Tirislib.Prototype.finish gets called. 
 --- @param fn function
-function Tirislib_Prototype.postpone(fn, ...)
-    table.insert(Tirislib_Prototype.postponed_functions, {fn = fn, arg = {...}})
+function Tirislib.Prototype.postpone(fn, ...)
+    table.insert(Tirislib.Prototype.postponed_functions, {fn = fn, arg = {...}})
 end
 
 -- This assumes that a 'successful' call to a postponed function will not result in
 -- another postponed function
-function Tirislib_Prototype.finish_postponed()
-    local to_do = Tirislib_Prototype.postponed_functions
+function Tirislib.Prototype.finish_postponed()
+    local to_do = Tirislib.Prototype.postponed_functions
     local to_do_count = table_size(to_do)
     local last_to_do_count = to_do_count + 1 -- bogus value to ensure that the while loop gets executed
 
     while to_do_count < last_to_do_count do
-        Tirislib_Prototype.postponed_functions = {}
+        Tirislib.Prototype.postponed_functions = {}
         for _, postponed in pairs(to_do) do
             postponed.fn(unpack(postponed.arg))
         end
 
-        to_do = Tirislib_Prototype.postponed_functions
+        to_do = Tirislib.Prototype.postponed_functions
         last_to_do_count = to_do_count
         to_do_count = table_size(to_do)
     end
@@ -134,28 +134,28 @@ function Tirislib_Prototype.finish_postponed()
 end
 
 --- A table with all the recipes which should be added to productivity modules
-Tirislib_Prototype.productivity_recipes = {}
+Tirislib.Prototype.productivity_recipes = Tirislib.Prototype.productivity_recipes or {}
 
 --- Adds the given recipe name to the recipe whitelist of productivity modules.
 --- @param recipe_name string
-function Tirislib_Prototype.add_recipe_to_productivity_modules(recipe_name)
-    table.insert(Tirislib_Prototype.productivity_recipes, recipe_name)
+function Tirislib.Prototype.add_recipe_to_productivity_modules(recipe_name)
+    table.insert(Tirislib.Prototype.productivity_recipes, recipe_name)
 end
 
 --- Actually adds the marked recipe names to the whitelist of productivity modules.
-function Tirislib_Prototype.finish_productivity_modules()
-    for _, _module in Tirislib_Item.iterate("module") do
+function Tirislib.Prototype.finish_productivity_modules()
+    for _, _module in Tirislib.Item.iterate("module") do
         if _module.category == "productivity" and _module.limitation then
-            Tirislib_Tables.merge(_module.limitation, Tirislib_Prototype.productivity_recipes)
+            Tirislib.Tables.merge(_module.limitation, Tirislib.Prototype.productivity_recipes)
         end
     end
-    Tirislib_Prototype.productivity_recipes = {}
+    Tirislib.Prototype.productivity_recipes = {}
 end
 
 --- Boilerplate function. Has to be called at the end of a data stage.
-function Tirislib_Prototype.finish()
-    Tirislib_Prototype.finish_postponed()
-    Tirislib_Prototype.finish_productivity_modules()
+function Tirislib.Prototype.finish()
+    Tirislib.Prototype.finish_postponed()
+    Tirislib.Prototype.finish_productivity_modules()
 
     remove_metatables()
 end
@@ -164,7 +164,7 @@ end
 --- @param name string
 --- @param _type string
 --- @return string unique_name
-function Tirislib_Prototype.get_unique_name(name, _type)
+function Tirislib.Prototype.get_unique_name(name, _type)
     if not data.raw[_type][name] then
         return name
     end

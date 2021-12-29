@@ -11,7 +11,7 @@ local techs = {
 
 local function find_appropriate_architecture_tech(item)
     for _, tech_name in pairs(techs) do
-        local tech = Tirislib_Technology.get_by_name(tech_name)
+        local tech = Tirislib.Technology.get_by_name(tech_name)
 
         for _, recipe in pairs(tech:get_unlocked_recipes()) do
             if recipe:has_ingredient(item) then
@@ -24,7 +24,7 @@ local function find_appropriate_architecture_tech(item)
     return techs[#techs]
 end
 
-for _, recipe in Tirislib_Recipe.iterate() do
+for _, recipe in Tirislib.Recipe.iterate() do
     if recipe.subgroup == "sosciencity-furniture" then
         local item = recipe:get_first_result()
         local tech = find_appropriate_architecture_tech(item)

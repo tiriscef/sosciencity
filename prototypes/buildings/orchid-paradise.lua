@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "orchid-paradise",
     icon = "__sosciencity-graphics__/graphics/icon/orchid-paradise.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orchid-paradise",
     themes = {{"building", 2}, {"lamp", 15}},
     ingredients = {
@@ -21,7 +21,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "orchid-paradise",
     icon = "__sosciencity-graphics__/graphics/icon/orchid-paradise.png",

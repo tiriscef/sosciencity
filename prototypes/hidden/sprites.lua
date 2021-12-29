@@ -11,7 +11,7 @@ local sprites_to_create = {
 }
 
 for _, name in pairs(sprites_to_create) do
-    Tirislib_Prototype.create {
+    Tirislib.Prototype.create {
         type = "sprite",
         name = name .. "-caste",
         width = 256,
@@ -31,7 +31,7 @@ for _, name in pairs(sprites_to_create) do
     }
 end
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-left-top",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-left-top.png",
@@ -40,7 +40,7 @@ Tirislib_Prototype.create {
     shift = {0.4, 0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-left-top-big",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-left-top-big.png",
@@ -49,7 +49,7 @@ Tirislib_Prototype.create {
     shift = {0.4, 0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-right-top",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-right-top.png",
@@ -58,7 +58,7 @@ Tirislib_Prototype.create {
     shift = {-0.4, 0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-right-top-big",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-right-top-big.png",
@@ -67,7 +67,7 @@ Tirislib_Prototype.create {
     shift = {-0.4, 0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-left-bottom",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-left-bottom.png",
@@ -76,7 +76,7 @@ Tirislib_Prototype.create {
     shift = {0.4, -0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-left-bottom-big",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-left-bottom-big.png",
@@ -85,7 +85,7 @@ Tirislib_Prototype.create {
     shift = {0.4, -0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-right-bottom",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-right-bottom.png",
@@ -94,7 +94,7 @@ Tirislib_Prototype.create {
     shift = {-0.4, -0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "highlight-right-bottom-big",
     filename = "__sosciencity-graphics__/graphics/utility/highlight-right-bottom-big.png",
@@ -103,7 +103,7 @@ Tirislib_Prototype.create {
     shift = {-0.4, -0.4}
 }
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     type = "sprite",
     name = "sosciencity-people",
     filename = "__sosciencity-graphics__/graphics/utility/people.png",

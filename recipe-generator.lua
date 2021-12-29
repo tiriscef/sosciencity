@@ -1,9 +1,9 @@
 --- Generator for generic recipes with configurable ingredients to facilitate integration/compatibility with other mods.
 --- Assumes the result items already exist.
-Tirislib_RecipeGenerator = {}
+Tirislib.RecipeGenerator = {}
 
 -- shorthand alias for more readability
-local RG = Tirislib_RecipeGenerator
+local RG = Tirislib.RecipeGenerator
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
@@ -671,7 +671,7 @@ local function get_theme_definition(name, level, for_result)
         log("Tirislib RecipeGenerator was told to generate a recipe with an undefined theme: " .. name)
     end
 
-    return ret and Tirislib_Tables.recursive_copy(ret)
+    return ret and Tirislib.Tables.recursive_copy(ret)
 end
 
 function RG.add_ingredient_theme(recipe, theme, default_level)
@@ -751,13 +751,13 @@ local function get_product_prototype(details)
     local product, found
 
     if details.product_type then -- explicitly set
-        product, found = (details.product_type == "item" and Tirislib_Item or Tirislib_Fluid).get_by_name(product_name)
+        product, found = (details.product_type == "item" and Tirislib.Item or Tirislib.Fluid).get_by_name(product_name)
     else -- implicit, look if an item or a fluid exists
-        product, found = Tirislib_Item.get_by_name(product_name)
+        product, found = Tirislib.Item.get_by_name(product_name)
 
         if found then
             -- check that no fluid with the same name exists
-            local _, found_again = Tirislib_Fluid.get_by_name(product_name)
+            local _, found_again = Tirislib.Fluid.get_by_name(product_name)
             if found_again then
                 error(
                     "Tirislib RecipeGenerator was told to create a recipe for a product with an implicit type, but there is is both an item and a fluid with the given name:  " ..
@@ -765,7 +765,7 @@ local function get_product_prototype(details)
                 )
             end
         else
-            product, found = Tirislib_Fluid.get_by_name(product_name)
+            product, found = Tirislib.Fluid.get_by_name(product_name)
         end
     end
 
@@ -800,7 +800,7 @@ end
 
 local function has_fluid_ingredient(recipe_data)
     for _, ingredient in pairs(recipe_data.ingredients) do
-        if Tirislib_RecipeEntry.yields_fluid(ingredient) then
+        if Tirislib.RecipeEntry.yields_fluid(ingredient) then
             return true
         end
     end
@@ -846,8 +846,8 @@ function RG.create(details)
     local main_product = get_main_product_entry(product, details)
 
     local recipe =
-        Tirislib_Recipe.create {
-        name = details.name or Tirislib_Prototype.get_unique_name(product.name, "recipe"),
+        Tirislib.Recipe.create {
+        name = details.name or Tirislib.Prototype.get_unique_name(product.name, "recipe"),
         enabled = true,
         energy_required = details.energy_required or 0.5,
         results = {main_product},
@@ -916,7 +916,7 @@ function RG.create_per_theme_level(details)
     local dynamic = details.dynamic_fields or {}
 
     local created_recipes = {}
-    setmetatable(created_recipes, Tirislib_RecipeArray)
+    setmetatable(created_recipes, Tirislib.RecipeArray)
 
     if not theme_definition then
         log("Tirislib RecipeGenerator was told to follow an undefined theme: " .. details.followed_theme)
@@ -924,7 +924,7 @@ function RG.create_per_theme_level(details)
     end
 
     for level in pairs(theme_definition) do
-        local current_details = Tirislib_Tables.copy(details)
+        local current_details = Tirislib.Tables.copy(details)
 
         -- set dynamic fields
         for field, fn in pairs(dynamic) do
@@ -932,7 +932,7 @@ function RG.create_per_theme_level(details)
         end
 
         -- set the current followed theme
-        local themes = Tirislib_Tables.get_subtbl(current_details, "themes")
+        local themes = Tirislib.Tables.get_subtbl(current_details, "themes")
         themes[#themes + 1] = {
             theme_name,
             type(theme_amount) == "function" and theme_amount(level) or theme_amount,
@@ -947,7 +947,7 @@ function RG.create_per_theme_level(details)
 end
 
 local arrays = {"ingredients", "expensive_ingredients", "byproducts", "expensive_byproducts", "themes", "result_themes"}
-arrays = Tirislib_Tables.array_to_lookup(arrays)
+arrays = Tirislib.Tables.array_to_lookup(arrays)
 
 --- Merges the right hand recipe details into the left hand recipe details.
 --- @param lh table
@@ -959,7 +959,7 @@ function RG.merge_details(lh, rh)
 
     for key, value in pairs(rh) do
         if arrays[key] then
-            Tirislib_Tables.merge(Tirislib_Tables.get_subtbl(lh, key), value)
+            Tirislib.Tables.merge(Tirislib.Tables.get_subtbl(lh, key), value)
         else
             -- set the field passively
             lh[key] = (lh[key] ~= nil) and lh[key] or value

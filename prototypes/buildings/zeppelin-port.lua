@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "zeppelin-port",
     icon = "__sosciencity-graphics__/graphics/icon/zeppelin-port.png",
@@ -10,13 +10,13 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
---[[Tirislib_RecipeGenerator.create {
+--[[Tirislib.RecipeGenerator.create {
     product = "zeppelin-port",
     themes = {{"building", 3}, {"fabric", 50}, {"rope", 20}, {"framework", 10}},
     default_theme_level = 0
 }]]
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "zeppelin-port",
     icon = "__sosciencity-graphics__/graphics/icon/zeppelin-port.png",
@@ -68,7 +68,7 @@ Tirislib_Entity.create {
     }
 }:set_size(15, 5):copy_localisation_from_item()
 
---[[Tirislib_Entity.create {
+--[[Tirislib.Entity.create {
     type = "corpse",
     name = "zeppelin-port-remnants",
     icon = "__sosciencity-graphics__/graphics/icon/zeppelin-port.png",

@@ -1,7 +1,7 @@
 for i = 0, 20 do
     local strength = 2 ^ i
 
-    Tirislib_Technology.create {
+    Tirislib.Technology.create {
         type = "technology",
         name = i .. "-gleam-caste",
         icon = "__sosciencity-graphics__/graphics/empty.png",
@@ -29,7 +29,7 @@ for i = 0, 20 do
         localised_description = {"technology-description.hidden-technology"}
     }
 
-    Tirislib_Technology.create {
+    Tirislib.Technology.create {
         type = "technology",
         name = i .. "-foundry-caste",
         icon = "__sosciencity-graphics__/graphics/empty.png",
@@ -57,7 +57,7 @@ for i = 0, 20 do
         localised_description = {"technology-description.hidden-technology"}
     }
 
-    Tirislib_Technology.create {
+    Tirislib.Technology.create {
         type = "technology",
         name = i .. "-gunfire-caste",
         icon = "__sosciencity-graphics__/graphics/empty.png",

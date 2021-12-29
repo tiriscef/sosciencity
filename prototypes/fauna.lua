@@ -190,7 +190,7 @@ for _, animal in pairs(animals) do
     distinctions.stack_size = get_stack_size(animal)
 end
 
-Tirislib_Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
+Tirislib.Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
 
 local function is_water_animal(animal)
     return animal.water_animal or animal.fish
@@ -244,10 +244,10 @@ local function get_feather_amount(animal)
 end
 
 local function create_slaughter_recipe(animal, index)
-    local item = Tirislib_Item.get_by_name(animal.name)
+    local item = Tirislib.Item.get_by_name(animal.name)
 
     local recipe =
-        Tirislib_Recipe.create {
+        Tirislib.Recipe.create {
         name = "slaughter-" .. animal.name,
         category = "sosciencity-slaughter",
         energy_required = get_required_energy_slaughter(animal),
@@ -343,7 +343,7 @@ local function create_breeding_recipe(animal)
     local energy = get_required_energy_breeding(animal)
 
     local recipe =
-        Tirislib_RecipeGenerator.create {
+        Tirislib.RecipeGenerator.create {
         product = animal.name,
         product_amount = cycle_amount,
         category = is_water_animal(animal) and "sosciencity-water-animal-farming" or "sosciencity-animal-farming",
@@ -377,7 +377,7 @@ end
 if settings.startup["sosciencity-modify-environment"].value then
     -- 'fish' entity to have ducks swimming on water bodies
     -- it seems like the factorio engine treats the order-string of the autoplace definition as some kind of ID, so I'm giving them a distinct one to be sure
-    Tirislib_Entity.create {
+    Tirislib.Entity.create {
         type = "fish",
         name = "primal-quacker",
         icon = "__sosciencity-graphics__/graphics/icon/primal-quacker.png",
@@ -410,7 +410,7 @@ if settings.startup["sosciencity-modify-environment"].value then
         localised_name = {"item-name.primal-quacker"}
     }
 
-    Tirislib_Entity.create {
+    Tirislib.Entity.create {
         type = "fish",
         name = "nan-swan",
         icon = "__sosciencity-graphics__/graphics/icon/nan-swan.png",
@@ -443,7 +443,7 @@ if settings.startup["sosciencity-modify-environment"].value then
         localised_name = {"item-name.nan-swan"}
     }
 
-    Tirislib_Entity.create {
+    Tirislib.Entity.create {
         type = "fish",
         name = "fishwhirl",
         icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl.png",

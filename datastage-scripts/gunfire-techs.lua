@@ -5,11 +5,11 @@ for i = 0, 20 do
 
     table.insert(
         gunfire_techs,
-        {strength = strength, prototype = Tirislib_Technology.get_by_name(i .. "-gunfire-caste")}
+        {strength = strength, prototype = Tirislib.Technology.get_by_name(i .. "-gunfire-caste")}
     )
 end
 
-local turret_types = require("lib.prototype-types.turret-types")
+local turret_types = require("tirislib.prototype-types.turret-types")
 
 local function add_turret_to_gunfire(turret)
     for _, gunfire_tech in pairs(gunfire_techs) do
@@ -21,7 +21,7 @@ local function add_turret_to_gunfire(turret)
     end
 end
 
-for _, turret in Tirislib_Entity.iterate(turret_types) do
+for _, turret in Tirislib.Entity.iterate(turret_types) do
     -- try to filter worms, because they are also turrets
     if turret.subgroup ~= "enemies" and not string.find(turret.name, "worm") then
         add_turret_to_gunfire(turret)

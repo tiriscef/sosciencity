@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "sosciencity-bioreactor",
     icon = "__sosciencity-graphics__/graphics/icon/bioreactor.png",
@@ -10,17 +10,17 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sosciencity-bioreactor",
     themes = {{"machine", 2}, {"piping", 20}, {"tank", 3}},
     default_theme_level = 2,
     unlock = "basic-biotechnology"
 }
 
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "sosciencity-bioreactor",
     flags = {"placeable-neutral", "player-creation"},
@@ -32,7 +32,7 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib_Entity.create_standard_picture {
+    animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/bioreactor/bioreactor",
         width = 15,
         height = 11,

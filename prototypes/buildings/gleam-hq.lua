@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "gleam-hq",
     icon = "__sosciencity-graphics__/graphics/gleam-caste.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "gleam-hq",
     themes = {{"building", 30}},
     default_theme_level = 4,
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "gleam-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "gleam-hq",
     flags = {"placeable-neutral", "player-creation"},

@@ -59,16 +59,16 @@ local warnings
 local castes = Castes.values
 
 local Scheduler = Scheduler
-local Tirislib_Tables = Tirislib_Tables
+local Table = Tirislib.Tables
 
 local speakers
 local allowed_speakers
 
 local floor = math.floor
 local random = math.random
-local pick_random_subtable_weighted_by_key = Tirislib_Tables.pick_random_subtable_weighted_by_key
-local get_subtbl = Tirislib_Tables.get_subtbl
-local sum = Tirislib_Tables.sum
+local pick_random_subtable_weighted_by_key = Table.pick_random_subtable_weighted_by_key
+local get_subtbl = Table.get_subtbl
+local sum = Table.sum
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -319,7 +319,7 @@ function Communication.useless_banter()
         speaker_name, speaker = pick_random_subtable_weighted_by_key(speakers, "b")
         line = random(speaker.b)
         line_index = line + speaker.index
-    until not Tirislib_Tables.contains(global.past_banter, line_index)
+    until not Table.contains(global.past_banter, line_index)
 
     -- log the chosen banter
     local index = global.past_banter_index

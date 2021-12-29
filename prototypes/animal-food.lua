@@ -7,12 +7,12 @@ local animal_food_items = {
     {name = "herbivore-food"}
 }
 
-Tirislib_Item.batch_create(animal_food_items, {subgroup = "sosciencity-animal-food", stack_size = 200})
+Tirislib.Item.batch_create(animal_food_items, {subgroup = "sosciencity-animal-food", stack_size = 200})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "bird-food",
     product_amount = 2,
     ingredients = {{type = "item", name = "hardcorn-punk", amount = 2}},
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "animal-husbandry"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "bird-food",
     product_amount = 2,
     ingredients = {
@@ -31,7 +31,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "animal-husbandry"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fish-food",
     product_amount = 2,
     ingredients = {{type = "item", name = "dried-solfaen", amount = 2}},
@@ -39,7 +39,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "animal-husbandry"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "carnivore-food",
     product_amount = 2,
     ingredients = {{type = "item", name = "slaughter-waste", amount = 2}},
@@ -47,7 +47,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "animal-husbandry"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "herbivore-food",
     product_amount = 2,
     ingredients = {
@@ -58,7 +58,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "animal-husbandry"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "herbivore-food",
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 1},

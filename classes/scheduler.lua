@@ -42,7 +42,7 @@ local event_lookup = {}
 --- @param name any
 --- @param fn function
 function Scheduler.set_event(name, fn)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     event_lookup[name] = fn
 end
 

@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "gunfire-hq",
     icon = "__sosciencity-graphics__/graphics/gunfire-caste.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "gunfire-hq",
     themes = {{"building", 20}, {"housing_sheltered", 20}},
     default_theme_level = 2,
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "gunfire-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "gunfire-hq",
     flags = {"placeable-neutral", "player-creation"},

@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "reproductive-gene-lab",
     icon = "__sosciencity-graphics__/graphics/icon/reproductive-gene-lab.png",
@@ -10,14 +10,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "reproductive-gene-lab",
     themes = {{"building", 2}, {"machine", 10}, {"piping", 20}},
     default_theme_level = 3,
     unlock = "huwan-genetic-neogenesis"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "reproductive-gene-lab",
     flags = {"placeable-neutral", "player-creation"},
@@ -29,7 +29,7 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib_Entity.create_standard_picture {
+    animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/reproductive-gene-lab/reproductive-gene-lab",
         width = 12,
         height = 8,

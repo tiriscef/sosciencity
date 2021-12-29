@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "clockwork-hq",
     icon = "__sosciencity-graphics__/graphics/icon/clockwork-hq.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "clockwork-hq",
     themes = {{"building", 10}, {"gear_wheel", 10}},
     default_theme_level = 0,
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "clockwork-hq",
     flags = {"placeable-neutral", "player-creation", "not-rotatable"},
@@ -32,7 +32,7 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib_Entity.create_standard_picture {
+    animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/clockwork-hq/clockwork-hq",
         shift = {6.5, -0.5},
         width = 32,

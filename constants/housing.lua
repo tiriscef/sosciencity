@@ -148,7 +148,7 @@ do
             Housing.next[house_name] = alternatives[1]
             table.insert(alternatives, house_name)
 
-            alternatives = Tirislib_Tables.array_to_lookup(house.alternatives)
+            alternatives = Tirislib.Tables.array_to_lookup(house.alternatives)
         end
 
         table.sort(house.qualities)
@@ -156,7 +156,7 @@ do
         house.is_improvised = house.is_improvised or false
     end
 
-    Tirislib_Tables.set_fields(houses, to_add)
+    Tirislib.Tables.set_fields(houses, to_add)
 end
 
 return Housing

@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "computing-center",
     icon = "__sosciencity-graphics__/graphics/icon/computing-center.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "computing-center",
     themes = {{"building", 2}, {"machine", 2}, {"electronics", 100}, {"casing", 10}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
@@ -18,7 +18,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "sosciencity-computing"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "computing-center",
     icon = "__sosciencity-graphics__/graphics/icon/computing-center.png",
@@ -32,7 +32,7 @@ Tirislib_Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib_Entity.create_standard_picture {
+    animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/computing-center/computing-center",
         width = 10,
         height = 7,

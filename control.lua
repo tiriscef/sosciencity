@@ -2,6 +2,11 @@ local EK = require("enums.entry-key")
 local DeconstructionCause = require("enums.deconstruction-cause")
 
 ---------------------------------------------------------------------------------------------------
+-- << helper functions >>
+
+require("tirislib.init")
+
+---------------------------------------------------------------------------------------------------
 -- << debug stuff >>
 
 if script.active_mods["sosciencity-debug"] then
@@ -10,9 +15,6 @@ if script.active_mods["sosciencity-debug"] then
     -- development tools
     pcall(require, "__profiler__/profiler.lua")
 
-    -- tests
-    require("lib.testing")
-
     commands.add_command(
         "sosciencity-tests",
         "",
@@ -20,9 +22,9 @@ if script.active_mods["sosciencity-debug"] then
             local results
             local group = input.parameter
             if group then
-                results = Tiristest.run_group_suite(group, true)
+                results = Tirislib.Testing.run_group_suite(group, true)
             else
-                results = Tiristest.run_all(true)
+                results = Tirislib.Testing.run_all(true)
             end
 
             game.print(results)
@@ -37,9 +39,9 @@ if script.active_mods["sosciencity-debug"] then
             local results
             local group = input.parameter
             if group then
-                results = Tiristest.run_group_suite(group, false)
+                results = Tirislib.Testing.run_group_suite(group, false)
             else
-                results = Tiristest.run_all(false)
+                results = Tirislib.Testing.run_all(false)
             end
 
             game.print(results)
@@ -56,11 +58,6 @@ if script.active_mods["sosciencity-debug"] then
         end
     )
 end
-
----------------------------------------------------------------------------------------------------
--- << helper functions >>
-
-require("lib.utils")
 
 ---------------------------------------------------------------------------------------------------
 -- << constants >>
@@ -401,7 +398,7 @@ local function on_tile_update()
 end
 
 local train_types =
-    Tirislib_Tables.array_to_lookup {
+    Tirislib.Tables.array_to_lookup {
     "locomotive",
     "artillery-wagon",
     "cargo-wagon",

@@ -7,7 +7,7 @@ local growth_media = {
     }
 }
 
-Tirislib_Fluid.batch_create(
+Tirislib.Fluid.batch_create(
     growth_media,
     {
         default_temperature = 10,
@@ -19,7 +19,7 @@ Tirislib_Fluid.batch_create(
     }
 )
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sugar-medium",
     product_type = "fluid",
     product_amount = 100,
@@ -28,11 +28,11 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "hardcorn-punk", amount = 20},
         {type = "fluid", name = "clean-water", amount = 100}
     },
-    category = Tirislib_RecipeGenerator.category_alias.dissolving,
+    category = Tirislib.RecipeGenerator.category_alias.dissolving,
     unlock = "fermentation"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sugar-medium",
     product_type = "fluid",
     product_amount = 100,
@@ -41,11 +41,11 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "sugar", amount = 5},
         {type = "fluid", name = "clean-water", amount = 100}
     },
-    category = Tirislib_RecipeGenerator.category_alias.dissolving,
+    category = Tirislib.RecipeGenerator.category_alias.dissolving,
     unlock = "basic-biotechnology"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sugar-medium",
     product_type = "fluid",
     product_amount = 100,
@@ -54,6 +54,6 @@ Tirislib_RecipeGenerator.create {
         {type = "item", name = "molasses", amount = 5},
         {type = "fluid", name = "clean-water", amount = 100}
     },
-    category = Tirislib_RecipeGenerator.category_alias.dissolving,
+    category = Tirislib.RecipeGenerator.category_alias.dissolving,
     unlock = "basic-biotechnology"
 }

@@ -1,6 +1,6 @@
-local Assert = Tiristest.Assert
+local Assert = Tirislib.Testing.Assert
 
-Tiristest.add_test_case(
+Tirislib.Testing.add_test_case(
     "failing asserts get reported",
     "testing",
     function()
@@ -9,7 +9,7 @@ Tiristest.add_test_case(
     end
 )
 
-Tiristest.add_test_case(
+Tirislib.Testing.add_test_case(
     "failing tests get reported",
     "testing",
     function()

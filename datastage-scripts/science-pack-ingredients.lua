@@ -1,4 +1,4 @@
-local all_recipes = Tirislib_Recipe.all()
+local all_recipes = Tirislib.Recipe.all()
 
 local function identity(n)
     return n
@@ -54,13 +54,13 @@ local sp_ingredients = {
 
 -- find launchable items that produce the science packs
 local launchable_item_ingredients = {}
-for _, item in Tirislib_Item.iterate() do
+for _, item in Tirislib.Item.iterate() do
     for _, launch_product in pairs(item:get_launch_products()) do
-        local launch_product_name = Tirislib_RecipeEntry.get_name(launch_product)
+        local launch_product_name = Tirislib.RecipeEntry.get_name(launch_product)
 
         if sp_ingredients[launch_product_name] then
             local details = sp_ingredients[launch_product_name]
-            local launch_product_amount = Tirislib_RecipeEntry.get_average_yield(launch_product)
+            local launch_product_amount = Tirislib.RecipeEntry.get_average_yield(launch_product)
 
             launchable_item_ingredients[item.name] = {
                 result_type = "item",

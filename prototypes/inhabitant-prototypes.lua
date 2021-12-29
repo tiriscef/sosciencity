@@ -46,9 +46,9 @@ local items = {
     }
 }
 
-Tirislib_Item.batch_create(items, {subgroup = "sosciencity-inhabitants", stack_size = 10})
+Tirislib.Item.batch_create(items, {subgroup = "sosciencity-inhabitants", stack_size = 10})
 
-Tirislib_Recipe.create {
+Tirislib.Recipe.create {
     name = "lay-egg",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -65,7 +65,7 @@ Tirislib_Recipe.create {
 }:add_unlock("clockwork-caste")
 
 for index, egg in pairs({"huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
-    Tirislib_RecipeGenerator.create {
+    Tirislib.RecipeGenerator.create {
         product = egg,
         energy_required = 120,
         expensive_energy_required = 160,

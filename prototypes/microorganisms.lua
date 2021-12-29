@@ -36,7 +36,7 @@ local microorganisms = {
     },
 }
 
-Tirislib_Fluid.batch_create(
+Tirislib.Fluid.batch_create(
     microorganisms,
     {
         default_temperature = 10,
@@ -48,9 +48,9 @@ Tirislib_Fluid.batch_create(
 )
 
 local function create_enrichment_recipe(details)
-    local product = Tirislib_Fluid.get_by_name(details.product)
+    local product = Tirislib.Fluid.get_by_name(details.product)
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             product_amount = 10,
@@ -69,13 +69,13 @@ local function create_enrichment_recipe(details)
         }
     )
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 local function create_pure_culture_recipe(details)
-    local product = Tirislib_Fluid.get_by_name(details.product)
+    local product = Tirislib.Fluid.get_by_name(details.product)
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             product_amount = 100,
@@ -97,7 +97,7 @@ local function create_pure_culture_recipe(details)
         }
     )
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 create_enrichment_recipe {

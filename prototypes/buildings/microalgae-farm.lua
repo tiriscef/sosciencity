@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "microalgae-farm",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -12,14 +12,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "microalgae-farm",
     themes = {{"building", 2}, {"machine", 2}, {"electronics", 100}, {"casing", 10}}, -- TODO actual themes
     default_theme_level = 2,
     unlock = "basic-biotechnology"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "microalgae-farm",
     flags = {"placeable-neutral", "player-creation"},
