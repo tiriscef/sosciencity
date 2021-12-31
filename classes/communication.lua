@@ -58,7 +58,6 @@ local warnings
 
 local castes = Castes.values
 
-local Scheduler = Scheduler
 local Table = Tirislib.Tables
 
 local speakers
@@ -67,6 +66,7 @@ local allowed_speakers
 local floor = math.floor
 local random = math.random
 local pick_random_subtable_weighted_by_key = Table.pick_random_subtable_weighted_by_key
+local plan_event_in = Scheduler.plan_event_in
 local get_subtbl = Table.get_subtbl
 local sum = Table.sum
 
@@ -259,16 +259,15 @@ local function pick_speaker(line)
     return pick_random_subtable_weighted_by_key(speakers, line)
 end
 
-local FOLLOWUP_DELAY = 2 * Time.second
-
 --- Lets the given speaker say the given line. This means an output that mimics that of a speaking player will be produced to the chat.
 --- @param speaker string Name of the speaker
 --- @param line string Name of the line to say
 local function say(speaker, line, ...)
     game.print {"", {speaker .. "prefix"}, {speaker .. line, ...}}
 
-    if Speakers[speaker].lines_with_followup[line] then
-        Scheduler.plan_event_in("say", FOLLOWUP_DELAY, speaker, line .. "f")
+    local delay = Speakers[speaker].lines_with_followup[line]
+    if delay then
+        plan_event_in("say", delay, speaker, line .. "f")
     end
 end
 Scheduler.set_event("say", say)
@@ -295,8 +294,9 @@ Communication.say_random_variant = say_random_variant
 local function tell(player, speaker, line, ...)
     player.print {"", {speaker .. "prefix"}, {speaker .. line, ...}}
 
-    if Speakers[speaker].lines_with_followup[line] then
-        Scheduler.plan_event_in("tell", FOLLOWUP_DELAY, player, speaker, line .. "f")
+    local delay = Speakers[speaker].lines_with_followup[line]
+    if delay then
+        plan_event_in("tell", delay, player, speaker, line .. "f")
     end
 end
 Scheduler.set_event("tell", tell)
@@ -365,7 +365,7 @@ function Communication.player_got_run_over()
         return
     end
 
-    Scheduler.plan_event_in("say_random_variant", FOLLOWUP_DELAY, "roadkill")
+    plan_event_in("say_random_variant", Time.second, "roadkill")
 end
 
 --[[

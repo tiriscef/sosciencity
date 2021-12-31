@@ -25,7 +25,10 @@ Inventories = {}
 ]]
 -- local often used globals for great performance gains
 
-local sort_by_key = Tirislib.Tables.insertion_sort_by_key
+local Table = Tirislib.Tables
+local Utils = Tirislib.Utils
+
+local sort_by_key = Table.insertion_sort_by_key
 
 local castes = Castes.values
 local garbage_values = ItemConstants.garbage_values
@@ -40,7 +43,7 @@ local get_neighbors_of_type = Neighborhood.get_by_type
 local chest = defines.inventory.chest
 local assembler_modules = defines.inventory.assembling_machine_modules
 
-local table_add = Tirislib.Tables.add
+local table_add = Table.add
 
 local food_values = Food.values
 
@@ -306,8 +309,8 @@ end
 local egg_values = Biology.egg_values
 
 function Inventories.hatch_eggs(entry, max_count)
-    local eggs = Tirislib.Tables.get_keyset(egg_values)
-    Tirislib.Tables.shuffle(eggs)
+    local eggs = Table.get_keyset(egg_values)
+    Table.shuffle(eggs)
 
     local genders = GenderGroup.new()
     local count = 0
@@ -320,7 +323,7 @@ function Inventories.hatch_eggs(entry, max_count)
         local consumed = try_remove(inventory, egg, max_count - count)
 
         count = count + consumed
-        GenderGroup.merge(genders, Tirislib.Utils.dice_rolls(egg_values[egg], consumed, 5), true)
+        GenderGroup.merge(genders, Utils.dice_rolls(egg_values[egg], consumed, 5), true)
     end
 
     return count, genders
@@ -562,9 +565,9 @@ end
 
 --- Tries to consume the given amount of calories. Returns the percentage of the amount that was consumed.
 local function consume_food(entry, inventories, amount, diet, count)
-    local items = Tirislib.Tables.get_keyset(diet)
+    local items = Table.get_keyset(diet)
     local to_consume = amount
-    Tirislib.Tables.shuffle(items)
+    Table.shuffle(items)
 
     for i = 1, count do
         to_consume = to_consume - consume_specific_food(entry, inventories, to_consume, items[i])
@@ -576,7 +579,7 @@ local function consume_food(entry, inventories, amount, diet, count)
     return (amount - to_consume) / amount
 end
 
-local taste_category_count = Tirislib.Tables.count(Taste)
+local taste_category_count = Table.count(Taste)
 
 local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local happiness = entry[EK.happiness_summands]
@@ -623,7 +626,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local carbohydrates = 0
     local proteins = 0
     local taste_quality = 0
-    local taste_counts = Tirislib.Tables.new_array(taste_category_count, 0)
+    local taste_counts = Table.new_array(taste_category_count, 0)
     local luxury = 0
     local favorite_taste = caste.favorite_taste
     local least_favored_taste = caste.least_favored_taste
