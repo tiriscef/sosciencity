@@ -59,9 +59,12 @@ local tostring = tostring
 local Luaq_from = Tirislib.Luaq.from
 
 local display_enumeration = Tirislib.Locales.create_enumeration
+local display_fluid_stack = Tirislib.Locales.display_fluid_stack
 local display_percentage = Tirislib.Locales.display_percentage
 local display_item_stack = Tirislib.Locales.display_item_stack
 local display_time = Tirislib.Locales.display_time
+
+local Table = Tirislib.Tables
 
 local climate_locales = WeatherLocales.climate
 local humidity_locales = WeatherLocales.humidity
@@ -2048,7 +2051,7 @@ local function update_classes_flow(entry, classes_flow)
 
     for index, class in pairs(classes) do
         local percentage = (current_tick - class[1]) / Entity.upbringing_time
-        local count = Tirislib.Tables.array_sum(class[2])
+        local count = Table.array_sum(class[2])
         classes_flow.add {
             name = tostring(index),
             type = "label",
@@ -2159,7 +2162,7 @@ local function create_upbringing_station(container, entry)
     update_upbringing_station(container, entry)
 end
 
-for _, caste_id in pairs(Tirislib.Tables.union_array(TypeGroup.breedable_castes, {Type.null})) do
+for _, caste_id in pairs(Table.union_array(TypeGroup.breedable_castes, {Type.null})) do
     set_checked_state_handler(
         format(unique_prefix_builder, "education-mode", caste_id),
         generic_radiobutton_handler,
@@ -2193,7 +2196,7 @@ local function update_waste_dump(container, entry)
         "capacity",
         {
             "sosciencity.value-with-unit",
-            {"sosciencity.fraction", Tirislib.Tables.sum(stored_garbage), capacity},
+            {"sosciencity.fraction", Table.sum(stored_garbage), capacity},
             {"sosciencity.items"}
         }
     )
@@ -2334,7 +2337,7 @@ local function update_water_distributer(container, entry)
 
     if water then
         amount = entry[EK.entity].get_fluid_count(water)
-        set_kv_pair_value(building_data, "content", Tirislib.Locales.display_fluid_stack(water, floor(amount)))
+        set_kv_pair_value(building_data, "content", display_fluid_stack(water, floor(amount)))
     else
         amount = 0
         set_kv_pair_value(building_data, "content", "-")
