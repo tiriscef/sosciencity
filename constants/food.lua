@@ -1,4 +1,4 @@
-local Taste = require("enums.taste")
+local Taste = require("__sosciencity__.enums.taste")
 
 --- Things that people like (and need) to eat.
 local Food = {}
