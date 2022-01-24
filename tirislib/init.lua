@@ -54,4 +54,5 @@ if Tirislib.Utils.is_data_stage() then
     require("technology")
     require("fluid")
     require("recipe-category")
+    require("recipe-generator")
 end
