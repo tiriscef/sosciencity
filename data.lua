@@ -2,7 +2,7 @@
 require("tirislib.init")
 Tirislib.Prototype.modname = "sosciencity"
 
-require("recipe-generator")
+require("recipe-generator-config")
 require("integrations")
 require("datastage-configuration")
 
