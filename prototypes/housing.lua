@@ -418,7 +418,7 @@ local quality_effect_on_recipe = {
         table.insert(details.themes, {"tall_building_structure", house.room_count, house.room_count, tech_level})
     end,
     low = function(details, house, tech_level)
-        table.insert(details.themes, {"soil", house.room_count, house.room_count, tech_level})
+        -- no idea
     end
 }
 

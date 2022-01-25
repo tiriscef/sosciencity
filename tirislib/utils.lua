@@ -840,6 +840,21 @@ function Tirislib.Tables.array_product(tbl)
     return ret
 end
 
+--- Calculates the average of all elements in the given array.
+--- @param tbl table
+--- @return number
+function Tirislib.Tables.average(tbl)
+    local ret = 0
+    local count = 0
+
+    for _, value in pairs(tbl) do
+        ret = ret + value
+        count = count + 1
+    end
+
+    return ret / count
+end
+
 --- Removes all fields of the given table. Useful if you need to preserve references.
 --- @param tbl table
 function Tirislib.Tables.empty(tbl)
