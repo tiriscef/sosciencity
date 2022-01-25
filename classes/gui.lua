@@ -54,6 +54,7 @@ local ceil = math.ceil
 local floor = math.floor
 local format = string.format
 local round = Tirislib.Utils.round
+local round_to_step = Tirislib.Utils.round_to_step
 local tostring = tostring
 
 local Luaq_from = Tirislib.Luaq.from
@@ -2267,12 +2268,13 @@ local function analyse_dependants(entry, consumption_key)
     local consumption = 0
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
-        local multiplier = Castes.values[caste_id][consumption_key]
+        local caste_inhabitants = 0
         for _, house in Neighborhood.all_of_type(entry, caste_id) do
-            local inhabitants = house[EK.inhabitants]
-            inhabitant_count = inhabitant_count + inhabitants
-            consumption = consumption + inhabitants * multiplier
+            caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
         end
+
+        inhabitant_count = inhabitant_count + caste_inhabitants
+        consumption = consumption + caste_inhabitants * Castes.values[caste_id][consumption_key]
     end
 
     return inhabitant_count, consumption
@@ -2295,7 +2297,7 @@ local function update_market(container, entry)
         {
             "sosciencity.display-dependants",
             inhabitants,
-            {"sosciencity.show-calorific-demand", floor(consumption * Time.minute)}
+            {"sosciencity.show-calorific-demand", round_to_step(consumption * Time.minute, 0.1)}
         }
     )
 
@@ -2350,7 +2352,7 @@ local function update_water_distributer(container, entry)
         {
             "sosciencity.display-dependants",
             inhabitants,
-            {"sosciencity.show-water-demand", floor(consumption * Time.minute)}
+            {"sosciencity.show-water-demand", round_to_step(consumption * Time.minute, 0.1)}
         }
     )
 
@@ -2376,6 +2378,80 @@ local function create_water_distributer(container, entry)
     add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_water_distributer(container, entry)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << dumpster >>
+
+local average_calories = Luaq_from(Food.values):select_key("calories"):call(Table.average)
+
+local function analyse_garbage_output(entry)
+    local inhabitant_count = 0
+    local garbage = 0
+    local calorific_demand = 0
+
+    for _, caste_id in pairs(TypeGroup.all_castes) do
+        local caste_inhabitants = 0
+        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+            caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
+        end
+        inhabitant_count = inhabitant_count + caste_inhabitants
+
+        local caste = Castes.values[caste_id]
+        garbage = garbage + caste_inhabitants * caste.garbage_coefficient
+        calorific_demand = calorific_demand + caste_inhabitants * caste.calorific_demand
+    end
+
+    return inhabitant_count, garbage, calorific_demand / average_calories
+end
+
+local function update_dumpster(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local inhabitants, garbage, food_leftovers = analyse_garbage_output(entry)
+    set_kv_pair_value(
+        building_data,
+        "dependants",
+        {
+            "sosciencity.value-with-unit",
+            inhabitants,
+            {"sosciencity.inhabitants"}
+        }
+    )
+    set_kv_pair_value(
+        building_data,
+        "garbage",
+        {
+            "sosciencity.fraction",
+            display_item_stack("garbage", round_to_step(garbage * Time.minute, 0.1)),
+            {"sosciencity.minute"}
+        }
+    )
+    set_kv_pair_value(
+        building_data,
+        "food_leftovers",
+        {
+            "sosciencity.fraction",
+            display_item_stack("food-leftovers", round_to_step(food_leftovers * Time.minute, 0.1)),
+            {"sosciencity.minute"}
+        }
+    )
+end
+
+local function create_dumpster(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    add_kv_pair(building_data, "garbage", {"item-name.garbage"})
+    add_kv_pair(building_data, "food_leftovers")
+
+    update_dumpster(container, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2527,8 +2603,8 @@ local type_gui_specifications = {
         updater = update_general_building_details
     },
     [Type.dumpster] = {
-        creater = create_general_building_details,
-        updater = update_general_building_details
+        creater = create_dumpster,
+        updater = update_dumpster
     },
     [Type.egg_collector] = {
         creater = create_general_building_details,
