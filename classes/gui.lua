@@ -620,56 +620,87 @@ end
 local CITY_INFO_NAME = "sosciencity-city-info"
 local CITY_INFO_SPRITE_SIZE = 48
 
-local function update_population_flow(frame)
-    local population_flow = frame["general"]
+local function update_population_flow(container)
+    local datalist = container.general.flow.datalist
 
-    population_flow["machine-count"].caption = {"sosciencity.machines", Register.get_machine_count()}
-
-    population_flow["turret-count"].caption = {"sosciencity.turrets", Register.get_type_count(Type.turret)}
+    datalist.population.caption = Table.array_sum(population)
+    datalist.machine_count.caption = Register.get_machine_count()
+    datalist.turret_count.caption = Register.get_type_count(Type.turret)
 
     local climate = global.current_climate
     local humidity = global.current_humidity
-    local weather_label = population_flow.weather
-    weather_label.caption = {"sosciencity.weather", weather_locales[humidity][climate]}
-    weather_label.tooltip = {
+    datalist.weather.caption = weather_locales[humidity][climate]
+    datalist.weather.tooltip = {
+        "sosciencity.explain-weather",
+        climate_locales[climate],
+        humidity_locales[humidity]
+    }
+    datalist.key_weather.tooltip = {
         "sosciencity.explain-weather",
         climate_locales[climate],
         humidity_locales[humidity]
     }
 end
 
-local function add_population_flow(container)
+local function add_city_info_entry(data_list, key, key_caption, caption_color)
+    local key_label =
+        data_list.add {
+        type = "label",
+        name = "key-" .. key,
+        caption = key_caption
+    }
+    local key_style = key_label.style
+    key_style.font = "default-bold"
+    key_style.font_color = Color.grey
+
+    local value_label =
+        data_list.add {
+        type = "label",
+        name = key,
+        caption = "testtesttest"
+    }
+    local style = value_label.style
+    style.horizontal_align = "right"
+    style.minimal_width = 40
+    style.font_color = caption_color
+end
+
+local function create_population_flow(container)
     local frame =
         container.add {
         type = "frame",
         name = "general",
+        direction = "horizontal"
+    }
+    frame.style.padding = 2
+
+    local flow =
+        frame.add {
+        type = "flow",
+        name = "flow",
         direction = "vertical"
     }
-    set_padding(frame, 2)
 
-    local machines =
-        frame.add {
-        type = "label",
-        name = "machine-count"
+    local datalist =
+        flow.add {
+        type = "table",
+        name = "datalist",
+        column_count = 2
     }
-    machines.style.bottom_margin = 4
+    local style = datalist.style
+    style.right_cell_padding = 0
+    style.left_cell_padding = 0
+    style.column_alignments[2] = "right"
 
-    local turrets =
-        frame.add {
-        type = "label",
-        name = "turret-count"
-    }
-    turrets.style.bottom_margin = 4
-
-    frame.add {
-        type = "label",
-        name = "weather"
-    }
+    add_city_info_entry(datalist, "population", {"sosciencity.population"})
+    add_city_info_entry(datalist, "machine_count", {"sosciencity.machines"})
+    add_city_info_entry(datalist, "turret_count", {"sosciencity.turrets"})
+    add_city_info_entry(datalist, "weather", {"sosciencity.weather"}, Color.yellowish_green)
 
     update_population_flow(container)
 end
 
-local function add_caste_flow(container, caste_id)
+local function create_caste_flow(container, caste_id)
     local caste_name = castes[caste_id].name
 
     local frame =
@@ -678,7 +709,6 @@ local function add_caste_flow(container, caste_id)
         name = "caste-" .. caste_id,
         direction = "vertical"
     }
-    --make_stretchable(frame)
     frame.style.padding = 0
     frame.style.left_margin = 4
 
@@ -690,7 +720,6 @@ local function add_caste_flow(container, caste_id)
         name = "flow",
         direction = "vertical"
     }
-    --make_stretchable(flow)
     flow.style.vertical_spacing = 0
     flow.style.horizontal_align = "center"
 
@@ -721,7 +750,7 @@ local function update_caste_flow(container, caste_id)
 
     -- the frame may not yet exist
     if caste_frame == nil then
-        add_caste_flow(container, caste_id)
+        create_caste_flow(container, caste_id)
         return
     end
 
@@ -755,10 +784,10 @@ local function create_city_info_for_player(player)
     }
     make_stretchable(frame)
 
-    add_population_flow(frame)
+    create_population_flow(frame)
 
     for id, _ in pairs(castes) do
-        add_caste_flow(frame, id)
+        create_caste_flow(frame, id)
     end
 end
 
