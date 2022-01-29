@@ -31,6 +31,10 @@ Inhabitants = {}
     global.population: table
         [caste_id]: int (inhabitants count)
 
+    global.housing_capacity: table
+        [caste_id]: table
+            [bool (improvised)]: integer (capacity of all houses)
+
     global.caste_points: table
         [caste_id]: float (total caste bonus points)
 
@@ -96,6 +100,7 @@ local get_garbage_value = Inventories.get_garbage_value
 
 local get_housing_details = Housing.get
 local get_free_capacity = Housing.get_free_capacity
+local get_capacity = Housing.get_capacity
 
 local set_power_usage = Subentities.set_power_usage
 local has_power = Subentities.has_power
@@ -161,6 +166,7 @@ function Inhabitants.init()
 
     global.fear = 0
     global.population = new_caste_table()
+    global.housing_capacity = {}
     global.caste_points = new_caste_table()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
@@ -177,6 +183,7 @@ function Inhabitants.init()
     set_locals()
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
+        global.housing_capacity[caste_id] = {[true] = 0, [false] = 0}
         homeless[caste_id] = InhabitantGroup.new(caste_id)
     end
 
@@ -1888,6 +1895,10 @@ function Inhabitants.create_house(entry)
 
     Inhabitants.social_environment_change()
     build_social_environment(entry)
+
+    local housing_details = get_housing_details(entry)
+    global.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
+        global.housing_capacity[entry[EK.type]][housing_details.is_improvised] + get_capacity(entry)
 end
 
 function Inhabitants.copy_house(source, destination)
@@ -1916,6 +1927,10 @@ function Inhabitants.remove_house(entry, cause)
     end
 
     Inhabitants.social_environment_change()
+
+    local housing_details = get_housing_details(entry)
+    global.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
+        global.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
 end
 
 -- Set event handlers for the housing entities.
