@@ -1,4 +1,25 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.5
+Date: 2022.02.04
+  Balancing:
+    - The emigration speed of unhappy citizens now depends on their caste and is a lot slower in general
+
+  Bugfixes:
+    - The Clockwork Caste Bonus was not calculated as intended.
+
+  Changes:
+    - I tried to improve the visibility of the range highlighting by adding a border
+
+  Features:
+    - Added graphics to Orchid Plant Care Station
+    - Added graphics to Waste Dump
+    - Added graphics to Waste Incineration Plant
+    - Added two new houses which are suitable for the Orchid caste
+    - Setting to specify if agricultural plants pollute or clean pollution
+    - The trash site's GUI states how many inhabitants live in its range and an estimate of the produced garbage
+    - I tried to enhance the caste tooltips at the top of the screen. They should explain the mechanic of the caste's bonus.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.4
 Date: 2021.10.30
   Bugfixes:

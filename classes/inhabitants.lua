@@ -722,34 +722,23 @@ local is_researched = Inhabitants.caste_is_researched
 function Inhabitants.get_population_count()
     return array_sum(population)
 end
-local get_population_count = Inhabitants.get_population_count
-
-local function get_maintenance_speed(points, machine_count)
-    if machine_count > 0 then
-        local remaining_points = max(0, points - machine_count)
-        local speed = map_range(points + global.starting_clockwork_points, 0, machine_count, -80, 0)
-        return floor(speed), remaining_points
-    else
-        return 0, points
-    end
-end
-
-local function get_machine_speed_bonus(points, machine_count)
-    machine_count = max(1, machine_count)
-    return floor(5 * (points / machine_count) ^ 0.8)
-end
 
 --- Gets the current Clockwork caste bonus.
 local function get_clockwork_bonus()
     local machine_count = Register.get_machine_count()
+    local points = caste_points[Type.clockwork]
 
     if global.maintenance_enabled then
-        local points = caste_points[Type.clockwork]
-        local maintenance_speed, remaining_points = get_maintenance_speed(points, machine_count)
-        return maintenance_speed + get_machine_speed_bonus(remaining_points, machine_count)
-    else
-        return get_machine_speed_bonus(caste_points[Type.clockwork], machine_count)
+        local maintenance_cost = max(0, machine_count - global.starting_clockwork_points)
+
+        if maintenance_cost > points then
+            return floor(map_range(points, 0, maintenance_cost, -80, 0))
+        end
+
+        points = points - maintenance_cost
     end
+
+    return floor(5 * (points / max(1, machine_count)) ^ 0.8)
 end
 
 --- Gets the current Orchid caste bonus.
