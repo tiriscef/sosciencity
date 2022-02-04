@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "waste-dump",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/waste-dump.png",
     icon_size = 64,
     subgroup = "sosciencity-buildings",
     order = "daa",
@@ -12,18 +10,16 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "waste-dump",
     themes = {{"building", 1}},
     default_theme_level = 2,
     unlock = "infrastructure-2"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "waste-dump",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "waste-dump"},
     max_health = 200,
@@ -33,26 +29,16 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 6/7
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/garbage.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1
-            }
-        }
+    picture = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/waste-dump/waste-dump",
+        shift = {1.0, 0.0},
+        width = 16,
+        height = 8,
+        shadowmap = true,
+        glow = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(6, 6):copy_localisation_from_item()
+}:set_size(12, 6):copy_localisation_from_item():copy_icon_from_item()
 Sosciencity_Config.add_eei("waste-dump")

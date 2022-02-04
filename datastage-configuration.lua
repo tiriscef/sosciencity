@@ -5,7 +5,6 @@ end
 
 local default_values = {
     DEBUG = false,
-    BALANCING = false,
     clockwork_pack = "automation-science-pack",
     orchid_pack = "logistic-science-pack",
     gunfire_pack = "military-science-pack",
@@ -22,7 +21,8 @@ local default_values = {
     eei_needing_buildings = {},
     building_stacksize = 50,
     add_glass = true,
-    glass_compatibility_mode = false
+    glass_compatibility_mode = false,
+    agriculture_pollutes = settings.startup["sosciencity-agriculture-pollution"].value
 }
 
 function default_values.add_eei(entity_name)
@@ -31,9 +31,6 @@ end
 
 if mods["sosciencity-debug"] then
     default_values.DEBUG = true
-end
-if mods["sosciencity-balancing"] then
-    default_values.BALANCING = true
 end
 
 default_values.__index = default_values

@@ -1,31 +1,31 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for entities >>
-Tirislib_Entity = {}
+Tirislib.Entity = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
-Tirislib_Entity.__index = Tirislib_Entity
+Tirislib.Entity.__index = Tirislib.Entity
 
 --- Class for arrays of entities. Setter-functions can be called on them.
-Tirislib_EntityArray = {}
-Tirislib_EntityArray.__index = Tirislib_PrototypeArray.__index
+Tirislib.EntityArray = {}
+Tirislib.EntityArray.__index = Tirislib.PrototypeArray.__index
 
 -- << getter functions >>
-local entity_types = require("lib.prototype-types.entity-types")
+local entity_types = require("prototype-types.entity-types")
 
 --- Gets the EntityPrototype of the given name. If no such Entity exists, a dummy object will be returned instead.
 --- @param name string
 --- @return EntityPrototype prototype
 --- @return boolean found
-function Tirislib_Entity.get_by_name(name)
-    return Tirislib_Prototype.get(entity_types, name, Tirislib_Entity)
+function Tirislib.Entity.get_by_name(name)
+    return Tirislib.Prototype.get(entity_types, name, Tirislib.Entity)
 end
 
 --- Creates the EntityPrototype metatable for the given prototype.
 --- @param prototype table
 --- @return EntityPrototype
-function Tirislib_Entity.get_from_prototype(prototype)
-    setmetatable(prototype, Tirislib_Entity)
+function Tirislib.Entity.get_from_prototype(prototype)
+    setmetatable(prototype, Tirislib.Entity)
     return prototype
 end
 
@@ -33,11 +33,11 @@ end
 --- @param name string|table
 --- @return EntityPrototype prototype
 --- @return boolean|nil found
-function Tirislib_Entity.get(name)
+function Tirislib.Entity.get(name)
     if type(name) == "string" then
-        return Tirislib_Entity.get_by_name(name)
+        return Tirislib.Entity.get_by_name(name)
     else
-        return Tirislib_Entity.get_from_prototype(name)
+        return Tirislib.Entity.get_from_prototype(name)
     end
 end
 
@@ -46,7 +46,7 @@ end
 --- @return function
 --- @return string
 --- @return EntityPrototype
-function Tirislib_Entity.iterate(types)
+function Tirislib.Entity.iterate(types)
     -- no argument - iterate over all types
     if types == nil then
         types = entity_types
@@ -63,7 +63,7 @@ function Tirislib_Entity.iterate(types)
         name, entity = next(data.raw[prototype_type], name)
 
         if name then
-            setmetatable(entity, Tirislib_Entity)
+            setmetatable(entity, Tirislib.Entity)
             return name, entity
         else
             type_index, prototype_type = next(types, type_index)
@@ -78,7 +78,7 @@ end
 
 --- Returns an ItemPrototypeArray with all ItemPrototypes of the given subtypes.
 --- @return ItemPrototypeArray prototypes
-function Tirislib_Entity.all(...)
+function Tirislib.Entity.all(...)
     local types = {...}
     if #types == 0 then
         -- return all entities if no types are given
@@ -86,9 +86,9 @@ function Tirislib_Entity.all(...)
     end
 
     local array = {}
-    setmetatable(array, Tirislib_EntityArray)
+    setmetatable(array, Tirislib.EntityArray)
 
-    for _, item in Tirislib_Entity.iterate(types) do
+    for _, item in Tirislib.Entity.iterate(types) do
         array[#array + 1] = item
     end
 
@@ -100,17 +100,17 @@ end
 --- Creates an EntityPrototype from the given prototype table.
 --- @param prototype table
 --- @return EntityPrototype prototype
-function Tirislib_Entity.create(prototype)
-    Tirislib_Prototype.create(prototype)
+function Tirislib.Entity.create(prototype)
+    Tirislib.Prototype.create(prototype)
 
-    return Tirislib_Entity.get(prototype)
+    return Tirislib.Entity.get(prototype)
 end
 
 --- Creates a selection box with the given width and height in tiles.
 --- @param width number
 --- @param height number
 --- @return table selection_box
-function Tirislib_Entity.get_selection_box(width, height)
+function Tirislib.Entity.get_selection_box(width, height)
     return {
         {-width / 2., -height / 2.},
         {width / 2., height / 2.}
@@ -122,7 +122,7 @@ end
 --- @param width number
 --- @param height number
 --- @return table collision_box
-function Tirislib_Entity.get_collision_box(width, height)
+function Tirislib.Entity.get_collision_box(width, height)
     local margin = 0.25
     return {
         {-width / 2. + margin, -height / 2. + margin},
@@ -134,8 +134,8 @@ end
 --- @param width number
 --- @param height number
 --- @return EntityPrototype itself
-function Tirislib_Entity:set_collision_box(width, height)
-    self.collision_box = Tirislib_Entity.get_collision_box(width, height)
+function Tirislib.Entity:set_collision_box(width, height)
+    self.collision_box = Tirislib.Entity.get_collision_box(width, height)
     return self
 end
 
@@ -143,8 +143,8 @@ end
 --- @param width number
 --- @param height number
 --- @return EntityPrototype itself
-function Tirislib_Entity:set_selection_box(width, height)
-    self.selection_box = Tirislib_Entity.get_selection_box(width, height)
+function Tirislib.Entity:set_selection_box(width, height)
+    self.selection_box = Tirislib.Entity.get_selection_box(width, height)
     return self
 end
 
@@ -152,16 +152,16 @@ end
 --- @param width number
 --- @param height number
 --- @return EntityPrototype itself
-function Tirislib_Entity:set_size(width, height)
-    self.selection_box = Tirislib_Entity.get_selection_box(width, height)
-    self.collision_box = Tirislib_Entity.get_collision_box(width, height)
+function Tirislib.Entity:set_size(width, height)
+    self.selection_box = Tirislib.Entity.get_selection_box(width, height)
+    self.collision_box = Tirislib.Entity.get_collision_box(width, height)
 
     return self
 end
 
 --- Creates an empty sprite.
 --- @return SpritePrototype empty
-function Tirislib_Entity.get_empty_sprite()
+function Tirislib.Entity.get_empty_sprite()
     return {
         filename = "__sosciencity-graphics__/graphics/empty.png",
         size = 1
@@ -170,7 +170,7 @@ end
 
 --- Creates an empty animation.
 --- @return AnimationPrototype empty
-function Tirislib_Entity.get_empty_animation()
+function Tirislib.Entity.get_empty_animation()
     return {
         filename = "__sosciencity-graphics__/graphics/empty.png",
         size = 1,
@@ -180,7 +180,7 @@ end
 
 --- Creates a placeholder picture.
 --- @return PicturePrototype placeholder
-function Tirislib_Entity.get_placeholder_picture()
+function Tirislib.Entity.get_placeholder_picture()
     return {
         filename = "__sosciencity-graphics__/graphics/placeholder.png",
         width = 64,
@@ -202,7 +202,7 @@ local function copy_directions(definition, directions)
     end
 
     for _, direction in pairs(all_directions) do
-        ret[direction] = ret[direction] or Tirislib_Entity.get_empty_sprite()
+        ret[direction] = ret[direction] or Tirislib.Entity.get_empty_sprite()
     end
 
     return ret
@@ -266,7 +266,7 @@ local pipepictures = {
 --- Creates the standart pipe pictures for the given directions.
 --- @param directions table
 --- @return PicturePrototype pipe_picture
-function Tirislib_Entity.get_standard_pipe_pictures(directions)
+function Tirislib.Entity.get_standard_pipe_pictures(directions)
     return copy_directions(pipepictures, directions)
 end
 
@@ -284,7 +284,7 @@ end
 --- Creates the standart pipe cover pictures for the given directions.
 --- @param directions table
 --- @return PicturePrototype cover_picture
-function Tirislib_Entity.get_standard_pipe_cover(directions)
+function Tirislib.Entity.get_standard_pipe_cover(directions)
     return copy_directions(pipecovers, directions)
 end
 
@@ -297,7 +297,7 @@ local PIXEL_PER_TILE_HR = 64
 --- @param height number
 --- @param shift table
 --- @return PicturePrototype
-function Tirislib_Entity.create_standard_picture_old(path, width, height, shift)
+function Tirislib.Entity.create_standard_picture_old(path, width, height, shift)
     return {
         layers = {
             {
@@ -346,7 +346,7 @@ end
 --- **glow**: boolean
 --- @param details table
 --- @return PicturePrototype
-function Tirislib_Entity.create_standard_picture(details)
+function Tirislib.Entity.create_standard_picture(details)
     local path = details.path
     local width = details.width
     local height = details.height
@@ -442,7 +442,7 @@ end
 
 --- Creates the standard impact sound.
 --- @return SoundPrototype
-function Tirislib_Entity.get_standard_impact_sound()
+function Tirislib.Entity.get_standard_impact_sound()
     return {
         filename = "__base__/sound/car-metal-impact.ogg",
         volume = 0.65
@@ -452,12 +452,12 @@ end
 --- Adds the given crafting category to the entity.
 --- @param category_name string
 --- @return EntityPrototype itself
-function Tirislib_Entity:add_crafting_category(category_name)
+function Tirislib.Entity:add_crafting_category(category_name)
     if not self.crafting_categories then
         self.crafting_categories = {}
     end
 
-    if not Tirislib_Tables.contains(self.crafting_categories, category_name) then
+    if not Tirislib.Tables.contains(self.crafting_categories, category_name) then
         table.insert(self.crafting_categories, category_name)
     end
 
@@ -467,16 +467,16 @@ end
 --- Checks if the EntityPrototype has the given crafting category.
 --- @param category_name string
 --- @return boolean
-function Tirislib_Entity:has_crafting_category(category_name)
+function Tirislib.Entity:has_crafting_category(category_name)
     local categories = self.crafting_categories
 
-    return categories ~= nil and Tirislib_Tables.contains(categories, category_name)
+    return categories ~= nil and Tirislib.Tables.contains(categories, category_name)
 end
 
 --- Adds the given RecipeEntryPrototype to the EntityPrototype's loot.
 --- @param loot RecipeEntryPrototype
 --- @return EntityPrototype itself
-function Tirislib_Entity:add_loot(loot)
+function Tirislib.Entity:add_loot(loot)
     if not self.loot then
         self.loot = {}
     end
@@ -497,7 +497,7 @@ end
 --- Adds the given RecipeEntryPrototype to the EntityPrototype's mining results.
 ---@param mining_result RecipeEntryPrototype
 ---@return EntityPrototype itself
-function Tirislib_Entity:add_mining_result(mining_result)
+function Tirislib.Entity:add_mining_result(mining_result)
     local minable = self.minable
 
     if not minable then
@@ -516,8 +516,8 @@ function Tirislib_Entity:add_mining_result(mining_result)
     end
 
     for _, result in pairs(minable.results) do
-        if Tirislib_RecipeEntry.can_be_merged(result, mining_result) then
-            Tirislib_RecipeEntry.merge(result, mining_result)
+        if Tirislib.RecipeEntry.can_be_merged(result, mining_result) then
+            Tirislib.RecipeEntry.merge(result, mining_result)
             return self
         end
     end
@@ -527,18 +527,18 @@ function Tirislib_Entity:add_mining_result(mining_result)
     return self
 end
 
-function Tirislib_Entity:get_localised_name()
+function Tirislib.Entity:get_localised_name()
     return self.localised_name or {"entity-name." .. self.name}
 end
 
-function Tirislib_Entity:get_localised_description()
+function Tirislib.Entity:get_localised_description()
     return self.localised_description or {"entity-description." .. self.name}
 end
 
 --- Copies the localisation of the item with the given name to this EntityPrototype.
 --- @param item_name string
 --- @return EntityPrototype itself
-function Tirislib_Entity:copy_localisation_from_item(item_name)
+function Tirislib.Entity:copy_localisation_from_item(item_name)
     if not item_name then
         if self.minable then
             item_name = self.minable.result
@@ -548,7 +548,7 @@ function Tirislib_Entity:copy_localisation_from_item(item_name)
         end
     end
 
-    local item, found = Tirislib_Item.get_by_name(item_name)
+    local item, found = Tirislib.Item.get_by_name(item_name)
 
     if found then
         self.localised_name = item:get_localised_name()
@@ -561,7 +561,7 @@ end
 --- Copies the icon of the item with the given name to this EntityPrototype.
 --- @param item_name string
 --- @return EntityPrototype itself
-function Tirislib_Entity:copy_icon_from_item(item_name)
+function Tirislib.Entity:copy_icon_from_item(item_name)
     if not item_name then
         if self.minable then
             item_name = self.minable.result
@@ -571,7 +571,7 @@ function Tirislib_Entity:copy_icon_from_item(item_name)
         end
     end
 
-    local item, found = Tirislib_Item.get_by_name(item_name)
+    local item, found = Tirislib.Item.get_by_name(item_name)
 
     if found then
         self.icon = item.icon
@@ -585,7 +585,7 @@ end
 local meta = {}
 
 function meta:__call(name)
-    return Tirislib_Entity.get(name)
+    return Tirislib.Entity.get(name)
 end
 
-setmetatable(Tirislib_Entity, meta)
+setmetatable(Tirislib.Entity, meta)

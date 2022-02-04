@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "market-hall",
     icon = "__sosciencity-graphics__/graphics/icon/market-hall.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "market-hall",
     themes = {{"building", 2}},
     ingredients = {
@@ -21,7 +21,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "market-hall",
     icon = "__sosciencity-graphics__/graphics/icon/market-hall.png",
@@ -35,7 +35,7 @@ Tirislib_Entity.create {
         filename = "__base__/sound/car-metal-impact.ogg",
         volume = 0.65
     },
-    picture = Tirislib_Entity.create_standard_picture {
+    picture = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall",
         shift = {1.0, 0.0},
         width = 11,

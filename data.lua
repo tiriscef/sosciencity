@@ -1,8 +1,8 @@
 -- initialisation
-require("lib.init")
-Tirislib_Prototype.modname = "sosciencity"
+require("tirislib.init")
+Tirislib.Prototype.modname = "sosciencity"
 
-require("recipe-generator")
+require("recipe-generator-config")
 require("integrations")
 require("datastage-configuration")
 
@@ -36,4 +36,4 @@ require("prototypes.hidden.caste-technologies")
 require("prototypes.hidden.electric-energy-interface")
 require("prototypes.hidden.sprites")
 
-Tirislib_Prototype:finish()
+Tirislib.Prototype:finish()

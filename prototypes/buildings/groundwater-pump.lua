@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "groundwater-pump",
     icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
@@ -10,16 +10,16 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "groundwater-pump",
     themes = {{"boring", 1}, {"piping", 5}, {"machine", 1}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "groundwater-pump",
     icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",
@@ -92,7 +92,7 @@ Tirislib_Entity.create {
     fixed_recipe = "clean-water-from-ground"
 }:set_size(3, 3):copy_localisation_from_item()
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "corpse",
     name = "groundwater-pump-remnants",
     icon = "__sosciencity-graphics__/graphics/icon/groundwater-pump.png",

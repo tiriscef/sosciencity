@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "industrial-animal-farm",
     icon = "__sosciencity-graphics__/graphics/icon/industrial-animal-farm.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "industrial-animal-farm",
     themes = {{"piping", 20}, {"building", 10}, {"machine", 5}, {"lamp", 40}},
     ingredients = {{type = "item", name = "silo", amount = 2}},
@@ -18,9 +18,9 @@ Tirislib_RecipeGenerator.create {
     unlock = "animal-husbandry"
 }
 
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "industrial-animal-farm",
     icon = "__sosciencity-graphics__/graphics/icon/industrial-animal-farm.png",

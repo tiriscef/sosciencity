@@ -1,6 +1,6 @@
 local Unlocks = require("constants.unlocks")
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     name = "sosciencity-research-blocker",
     type = "tool",
     icon = "__core__/graphics/cancel.png",
@@ -12,12 +12,12 @@ Tirislib_Item.create {
 }
 
 for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
-    local item = Tirislib_Item.get_by_name(item_name)
+    local item = Tirislib.Item.get_by_name(item_name)
     local localised_name = item:get_localised_name()
 
-    Tirislib_Technology.create {
+    Tirislib.Technology.create {
         name = tech_name,
-        icon = Tirislib_String.insert(item.icon, "-hr", -5),
+        icon = Tirislib.String.insert(item.icon, "-hr", -5),
         icon_size = 128,
         effects = {},
         unit = {

@@ -241,7 +241,7 @@ local material_items = {
     }
 }
 
-Tirislib_Item.batch_create(
+Tirislib.Item.batch_create(
     material_items,
     {prefix = Sosciencity_Config.prefix, subgroup = "sosciencity-materials", stack_size = 200}
 )
@@ -270,7 +270,7 @@ local fluids = {
     }
 }
 
-Tirislib_Fluid.batch_create(
+Tirislib.Fluid.batch_create(
     fluids,
     {
         default_temperature = 10,
@@ -284,7 +284,7 @@ Tirislib_Fluid.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "lumber",
     product_amount = 3,
     ingredients = {
@@ -297,7 +297,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create_per_theme_level {
+Tirislib.RecipeGenerator.create_per_theme_level {
     product = "screw-set",
     followed_theme = "screw_material",
     dynamic_fields = {
@@ -309,7 +309,7 @@ Tirislib_RecipeGenerator.create_per_theme_level {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "tiriscefing-willow-barrel",
     energy_required = 1,
     ingredients = {
@@ -320,7 +320,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "fermentation"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "yarn",
     product_amount = 10,
     energy_required = 8,
@@ -332,7 +332,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "cloth",
     energy_required = 8,
     ingredients = {
@@ -342,7 +342,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "rope",
     product_amount = 10,
     energy_required = 8,
@@ -354,37 +354,37 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "pot",
     themes = {{"ceramic", 2, 3}},
     unlock = "open-environment-farming"
 }
 
 if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode then
-    Tirislib_RecipeGenerator.create {
+    Tirislib.RecipeGenerator.create {
         product = "glass-mixture",
         energy_required = 1.6,
         expensive_energy_required = 3.2,
         themes = {{"glass_educt", 2}},
-        category = Tirislib_RecipeGenerator.category_alias[
+        category = Tirislib.RecipeGenerator.category_alias[
             Sosciencity_Config.glass_compatibility_mode and "handcrafting" or "mixing"
         ],
         unlock = "infrastructure-1"
     }
 
-    Tirislib_Recipe.create {
+    Tirislib.Recipe.create {
         name = "sosciencity-glass",
         energy_required = 3.2,
         ingredients = {{name = "glass-mixture", amount = 1}},
         results = {},
         category = "smelting",
-        main_result = Tirislib_RecipeGenerator.item_alias.glass
+        main_result = Tirislib.RecipeGenerator.item_alias.glass
     }:create_difficulties():multiply_expensive_ingredients(2):add_unlock("infrastructure-1"):add_result(
-        {type = "item", name = Tirislib_RecipeGenerator.item_alias.glass, amount = 2}
+        {type = "item", name = Tirislib.RecipeGenerator.item_alias.glass, amount = 2}
     )
 end
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "window",
     themes = {{"glass", 2}},
     ingredients = {
@@ -394,7 +394,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "mineral-mixture",
     product_amount = 2,
     energy_required = 1.6,
@@ -403,11 +403,11 @@ Tirislib_RecipeGenerator.create {
         {"gravel", 1},
         {"iron_ore", 1}
     },
-    category = Tirislib_RecipeGenerator.category_alias.mixing,
+    category = Tirislib.RecipeGenerator.category_alias.mixing,
     unlock = "architecture-3"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "mineral-wool",
     energy_required = 3.2,
     ingredients = {{type = "item", name = "mineral-mixture", amount = 1}},
@@ -415,7 +415,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "architecture-3"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "architectural-concept",
     energy_required = 4,
     ingredients = {},
@@ -423,7 +423,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "air-conditioner",
     ingredients = {
         {type = "item", name = "screw-set", amount = 1}
@@ -435,7 +435,7 @@ Tirislib_RecipeGenerator.create {
     default_theme_level = 3
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "bed",
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -445,7 +445,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "carpet",
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
@@ -453,7 +453,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "chair",
     ingredients = {
         {type = "item", name = "lumber", amount = 2},
@@ -461,7 +461,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "cupboard",
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -469,7 +469,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "curtain",
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
@@ -477,7 +477,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "painting",
     ingredients = {
         {type = "item", name = "lumber", amount = 1},
@@ -487,7 +487,7 @@ Tirislib_RecipeGenerator.create {
     category = "sosciencity-caste-ember"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "refrigerator",
     themes = {
         {"electronics", 1, 2},
@@ -498,7 +498,7 @@ Tirislib_RecipeGenerator.create {
     category = "crafting-with-fluid"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sofa",
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -508,7 +508,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "stove",
     ingredients = {
         {type = "item", name = "screw-set", amount = 1}
@@ -520,7 +520,7 @@ Tirislib_RecipeGenerator.create {
     default_theme_level = 3
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "table",
     ingredients = {
         {type = "item", name = "lumber", amount = 4},
@@ -528,7 +528,7 @@ Tirislib_RecipeGenerator.create {
     }
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "ink",
     ingredients = {
         {type = "fluid", name = "water", amount = 10},
@@ -539,7 +539,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "ember-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "writing-paper",
     product_amount = 2,
     energy_required = 5,
@@ -550,7 +550,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "ember-caste"
 }:add_unlock("gunfire-caste")
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "writing-paper",
     product_amount = 10,
     energy_required = 5,
@@ -563,7 +563,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "ember-caste"
 }:add_unlock("gunfire-caste")
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "trap",
     themes = {
         {"mechanism", 2}
@@ -573,7 +573,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "trap-cage",
     themes = {
         {"framework", 1},
@@ -584,7 +584,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
---[[Tirislib_RecipeGenerator.create {
+--[[Tirislib.RecipeGenerator.create {
     product = "bucket",
     themes = {
         {"handle", 1},
@@ -594,7 +594,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }]]
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fishing-net",
     ingredients = {
         {name = "rope", amount = 5},
@@ -606,7 +606,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "harpoon",
     ingredients = {
         {name = "rope", amount = 1},
@@ -618,7 +618,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "clockwork-caste"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "ferrous-sulfate",
     product_amount = 3,
     ingredients = {
@@ -631,7 +631,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "salt",
     product_amount = 5,
     ingredients = {
@@ -642,7 +642,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "food-processing"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "amylum",
     product_min = 2,
     product_max = 6,
@@ -656,18 +656,18 @@ Tirislib_RecipeGenerator.create {
     unlock = "hospital"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "flour",
     product_amount = 5,
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 5}
     },
-    category = Tirislib_RecipeGenerator.category_alias.milling,
+    category = Tirislib.RecipeGenerator.category_alias.milling,
     energy_required = 1,
     unlock = Unlocks.get_tech_name("hardcorn-punk")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sugar",
     product_amount = 1,
     ingredients = {
@@ -682,7 +682,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "food-processing"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sugar",
     product_amount = 3,
     ingredients = {
@@ -697,7 +697,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("sugar-beet")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sugar",
     product_amount = 3,
     ingredients = {
@@ -712,7 +712,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("sugar-cane")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "empty-hard-drive",
     themes = {
         {"electronics", 20},
@@ -724,7 +724,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "sosciencity-computing"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "virus-genome",
     ingredients = {
         {"empty-hard-drive", 1}
@@ -734,7 +734,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "huwan-genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "plant-genome",
     ingredients = {
         {"empty-hard-drive", 1}
@@ -744,7 +744,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "huwan-genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "huwan-genome",
     ingredients = {
         {"empty-hard-drive", 1}
@@ -754,7 +754,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "huwan-genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "edited-huwan-genome",
     ingredients = {
         {"empty-hard-drive", 1}
@@ -764,7 +764,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "in-situ-gene-editing"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "agarose",
     ingredients = {
         {type = "item", name = "dried-solfaen", amount = 1},
@@ -774,7 +774,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "biotechnology-1"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fatty-oil",
     product_type = "fluid",
     product_amount = 20,
@@ -782,11 +782,11 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "weird-berry", amount = 5}
     },
-    category = Tirislib_RecipeGenerator.category_alias.plant_oil_extraction,
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     unlock = Unlocks.get_tech_name("weird-berry")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fatty-oil",
     product_type = "fluid",
     product_amount = 30,
@@ -794,11 +794,11 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "avocado", amount = 5}
     },
-    category = Tirislib_RecipeGenerator.category_alias.plant_oil_extraction,
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     unlock = Unlocks.get_tech_name("avocado")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fatty-oil",
     product_type = "fluid",
     product_amount = 30,
@@ -806,11 +806,11 @@ Tirislib_RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "olive", amount = 5}
     },
-    category = Tirislib_RecipeGenerator.category_alias.plant_oil_extraction,
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     unlock = Unlocks.get_tech_name("olive")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "solid-fat",
     energy_required = 1.6,
     expensive_energy_required = 2.4,
@@ -822,9 +822,9 @@ Tirislib_RecipeGenerator.create {
     },
     category = "chemistry",
     unlock = "food-processing"
-}:add_catalyst(Tirislib_RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.99, 1, 0.98)
+}:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.99, 1, 0.98)
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "proteins",
     ingredients = {
         {type = "item", name = "razha-bean", amount = 1},
@@ -833,18 +833,18 @@ Tirislib_RecipeGenerator.create {
     unlock = "basic-biotechnology"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "soy-milk",
     product_amount = 10,
     ingredients = {
         {type = "item", name = "razha-bean", amount = 1},
         {type = "fluid", name = "clean-water", amount = 10}
     },
-    category = Tirislib_RecipeGenerator.category_alias.food_processing,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "glass-instruments",
     product_min = 1,
     product_max = 5,
@@ -854,7 +854,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "semipermeable-membrane",
     themes = {{"plastic", 5, 7}, {"framework", 1}},
     default_theme_level = 2,
@@ -862,7 +862,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "nucleobases",
     energy_required = 3.2,
     ingredients = {
@@ -879,7 +879,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "phospholipids",
     energy_required = 3.2,
     theme = {{"phosphorous_source", 1}},
@@ -892,7 +892,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "chloroplasts",
     energy_required = 3.2,
     ingredients = {
@@ -903,7 +903,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "mitochondria",
     energy_required = 3.2,
     ingredients = {
@@ -914,7 +914,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "synthetase",
     energy_required = 3.2,
     ingredients = {
@@ -926,7 +926,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "thermostable-dna-polymerase",
     ingredients = {
         {type = "fluid", name = "fiicorum", amount = 10},
@@ -936,7 +936,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "blank-dna-virus",
     ingredients = {
         {type = "item", name = "proteins", amount = 1},
@@ -952,16 +952,16 @@ Tirislib_RecipeGenerator.create {
     unlock = "in-situ-gene-editing"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "pemtenn-extract",
     ingredients = {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
-    category = Tirislib_RecipeGenerator.category_alias.drying,
+    category = Tirislib.RecipeGenerator.category_alias.drying,
     unlock = "fermentation"
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "ethanol",
     product_amount = 50,
     ingredients = {

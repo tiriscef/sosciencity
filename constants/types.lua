@@ -153,6 +153,16 @@ Types.definitions = {
         localised_name = {"sosciencity.dumpster"},
         localised_description = {"sosciencity.explain-dumpster"},
         signature_color = Color.grey,
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.bidirectional,
+            [Type.orchid] = ConnectionType.bidirectional,
+            [Type.gunfire] = ConnectionType.bidirectional,
+            [Type.ember] = ConnectionType.bidirectional,
+            [Type.foundry] = ConnectionType.bidirectional,
+            [Type.gleam] = ConnectionType.bidirectional,
+            [Type.aurora] = ConnectionType.bidirectional,
+            [Type.plasma] = ConnectionType.bidirectional
+        },
         is_civil = true
     },
     [Type.immigration_port] = {

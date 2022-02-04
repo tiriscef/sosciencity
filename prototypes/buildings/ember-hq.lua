@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "ember-hq",
     icon = "__sosciencity-graphics__/graphics/ember-caste.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "ember-hq",
     themes = {{"building", 10}},
     default_theme_level = 2,
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "ember-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "ember-hq",
     flags = {"placeable-neutral", "player-creation"},

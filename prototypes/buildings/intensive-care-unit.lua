@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "intensive-care-unit",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "intensive-care-unit",
     themes = {{"building", 2}, {"machine", 2}}, -- TODO actual themes
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "intensive-care"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "intensive-care-unit",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",

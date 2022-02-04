@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "bloomhouse",
     icon = "__sosciencity-graphics__/graphics/icon/bloomhouse.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "bloomhouse",
     themes = {{"piping", 20}, {"soil", 50}, {"machine", 2}},
     ingredients = {
@@ -25,10 +25,10 @@ local height = 7
 local width = 7
 local sprite_height = height + 2
 local sprite_width = width + 2
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "bloomhouse",
     icon = "__sosciencity-graphics__/graphics/icon/bloomhouse.png",
@@ -90,7 +90,7 @@ Tirislib_Entity.create {
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = 0.4,
+        emissions_per_minute = Sosciencity_Config.agriculture_pollutes and 1 or -5,
         drain = "5kW"
     },
     fluid_boxes = {

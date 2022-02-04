@@ -23,8 +23,8 @@ local Register = Register
 local try_get = Register.try_get
 local get_type_definition = require("constants.types").get
 local get_building_details = require("constants.buildings").get
-local distance = Tirislib_Utils.maximum_metric_distance
-local get_subtbl = Tirislib_Tables.get_subtbl
+local distance = Tirislib.Utils.maximum_metric_distance
+local get_subtbl = Tirislib.Tables.get_subtbl
 local subscriptions
 
 ---------------------------------------------------------------------------------------------------

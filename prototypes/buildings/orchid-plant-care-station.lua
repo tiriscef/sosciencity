@@ -1,9 +1,9 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "orchid-plant-care-station",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/plant-care-station.png",
     icon_size = 64,
     subgroup = "sosciencity-flora-buildings",
     order = "gaa",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orchid-plant-care-station",
     themes = {{"building", 10}},
     ingredients = {
@@ -23,11 +23,9 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "orchid-plant-care-station",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "orchid-plant-care-station"},
     max_health = 200,
@@ -37,26 +35,15 @@ Tirislib_Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 6/7
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/leafage.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1
-            }
-        }
+    picture = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/plant-care-station/plant-care-station",
+        shift = {0.4, 0.0},
+        width = 9,
+        height = 6,
+        shadowmap = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(6, 6):copy_localisation_from_item()
+}:set_size(6, 4):copy_localisation_from_item():copy_icon_from_item()
 Sosciencity_Config.add_eei("orchid-plant-care-station")

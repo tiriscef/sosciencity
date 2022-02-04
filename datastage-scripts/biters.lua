@@ -20,7 +20,7 @@ local PROBABILITY = 0.5
 -- biters and spitters are units, worms are turrets
 local types = {"unit", "turret"}
 
-for _, unit in Tirislib_Entity.iterate(types) do
+for _, unit in Tirislib.Entity.iterate(types) do
     if not unit.is_hack and is_likely_an_alien(unit) then
         local count_min, count_max = get_meat_amounts(unit)
 

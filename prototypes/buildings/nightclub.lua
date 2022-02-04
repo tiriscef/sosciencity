@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "nightclub",
     icon = "__sosciencity-graphics__/graphics/icon/nightclub.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "nightclub",
     themes = {{"building", 7.5}, {"electronics", 10}, {"lamp", 20}},
     ingredients = {
@@ -22,7 +22,7 @@ Tirislib_RecipeGenerator.create {
 
 local size_x = 20
 local size_y = 9
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "nightclub",
     icon = "__sosciencity-graphics__/graphics/icon/nightclub.png",

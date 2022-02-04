@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "fermentation-tank",
     icon = "__sosciencity-graphics__/graphics/icon/fermentation-tank.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "fermentation-tank",
     themes = {{"piping", 10}, {"tank", 2}, {"machine", 1}},
     default_theme_level = 2,
@@ -19,10 +19,10 @@ Tirislib_RecipeGenerator.create {
 
 local sprite_height = 6
 local sprite_width = 6
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "fermentation-tank",
     icon = "__sosciencity-graphics__/graphics/icon/fermentation-tank.png",

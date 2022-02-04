@@ -1,8 +1,12 @@
+local Time = require("constants.time")
+
+local standard_delay = 2 * Time.second
+
 local Speakers = {}
 
 Speakers["tiriscef."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 65,
+    ["b"] = 72,
     ["roadkill"] = 6,
     ["report-begin"] = 2,
     ["report-end"] = 2,
@@ -20,43 +24,47 @@ Speakers["tiriscef."] = {
     ["warning-workers"] = 3,
     ["warning-homelessness"] = 3,
     lines_with_followup = {
-        "b2",
-        "b3",
-        "b4",
-        "b5",
-        "b6",
-        "b7",
-        "b8",
-        "b9",
-        "b15",
-        "b19",
-        "b20",
-        "b23",
-        "b24",
-        "b27",
-        "b28",
-        "b35",
-        "b38",
-        "b39",
-        "b39f",
-        "b42",
-        "b43",
-        "b44",
-        "b44f",
-        "b48",
-        "b48f",
-        "b49",
-        "b52",
-        "b53",
-        "b53f",
-        "b54",
-        "b56",
-        "b56f",
-        "b57",
-        "b59",
-        "b60",
-        "b63",
-        "b64"
+        ["b2"] = 10 * Time.second,
+        ["b3"] = 14 * Time.second,
+        ["b4"] = Time.second,
+        ["b5"] = standard_delay,
+        ["b6"] = 3 * Time.second,
+        ["b7"] = standard_delay,
+        ["b8"] = standard_delay,
+        ["b9"] = 3 * Time.second,
+        ["b15"] = 4 * Time.second,
+        ["b19"] = standard_delay,
+        ["b20"] = standard_delay,
+        ["b23"] = standard_delay,
+        ["b24"] = standard_delay,
+        ["b27"] = standard_delay,
+        ["b28"] = standard_delay,
+        ["b35"] = standard_delay,
+        ["b38"] = standard_delay,
+        ["b39"] = 4 * Time.second,
+        ["b39f"] = 4 * Time.second,
+        ["b42"] = 3 * Time.second,
+        ["b43"] = 3 * Time.second,
+        ["b44"] = 3 * Time.second,
+        ["b44f"] = 3 * Time.second,
+        ["b48"] = standard_delay,
+        ["b48f"] = 3 * Time.second,
+        ["b49"] = standard_delay,
+        ["b52"] = standard_delay,
+        ["b53"] = standard_delay,
+        ["b53f"] = standard_delay,
+        ["b54"] = standard_delay,
+        ["b56"] = standard_delay,
+        ["b56f"] = standard_delay,
+        ["b57"] = 6 * Time.second,
+        ["b59"] = standard_delay,
+        ["b60"] = standard_delay,
+        ["b63"] = standard_delay,
+        ["b64"] = standard_delay,
+        ["b67"] = standard_delay,
+        ["b67f"] = standard_delay,
+        ["b67ff"] = standard_delay,
+        ["b70"] = 4 * Time.second
     },
     index = 0
 }
@@ -81,23 +89,19 @@ Speakers["profanity."] = {
     ["warning-workers"] = 3,
     ["warning-homelessness"] = 3,
     lines_with_followup = {
-        "b1",
-        "b7",
-        "b9",
-        "b13",
-        "b14",
-        "b15",
-        "b18",
-        "b19",
-        "b21",
-        "b21f",
-        "b24"
+        ["b1"] = standard_delay,
+        ["b7"] = standard_delay,
+        ["b9"] = 3 * Time.second,
+        ["b13"] = standard_delay,
+        ["b14"] = standard_delay,
+        ["b15"] = standard_delay,
+        ["b18"] = standard_delay,
+        ["b19"] = standard_delay,
+        ["b21"] = 5 * Time.second,
+        ["b21f"] = 6 * Time.second,
+        ["b24"] = standard_delay
     },
     index = 10000
 }
-
-for _, speaker in pairs(Speakers) do
-    speaker.lines_with_followup = Tirislib_Tables.array_to_lookup(speaker.lines_with_followup)
-end
 
 return Speakers

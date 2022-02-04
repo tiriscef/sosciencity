@@ -3,7 +3,7 @@ local Unlocks = require("constants.unlocks")
 ---------------------------------------------------------------------------------------------------
 -- << caste technologies >>
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "clockwork-caste",
     icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
     icon_size = 256,
@@ -24,7 +24,7 @@ Tirislib_Technology.create {
     ignore_tech_cost_multiplier = true
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "clockwork-caste-effectivity",
     icons = {
         {
@@ -56,7 +56,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.clockwork"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "orchid-caste",
     icon = "__sosciencity-graphics__/graphics/orchid-caste.png",
     icon_size = 256,
@@ -76,9 +76,9 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology("logistic-science-pack"):add_prerequisite("orchid-caste")
+Tirislib.Technology("logistic-science-pack"):add_prerequisite("orchid-caste")
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "orchid-caste-effectivity",
     icons = {
         {
@@ -111,7 +111,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.orchid"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "gunfire-caste",
     icon = "__sosciencity-graphics__/graphics/gunfire-caste.png",
     icon_size = 256,
@@ -132,9 +132,9 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology("military-science-pack"):add_prerequisite("gunfire-caste")
+Tirislib.Technology("military-science-pack"):add_prerequisite("gunfire-caste")
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "gunfire-caste-effectivity",
     icons = {
         {
@@ -168,7 +168,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.gunfire"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "plasma-caste",
     icon = "__sosciencity-graphics__/graphics/plasma-caste.png",
     icon_size = 256,
@@ -189,7 +189,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "plasma-caste-effectivity",
     icons = {
         {
@@ -222,7 +222,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.plasma"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "ember-caste",
     icon = "__sosciencity-graphics__/graphics/ember-caste.png",
     icon_size = 256,
@@ -243,9 +243,9 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology("chemical-science-pack"):add_prerequisite("ember-caste")
+Tirislib.Technology("chemical-science-pack"):add_prerequisite("ember-caste")
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "ember-caste-effectivity",
     icons = {
         {
@@ -279,7 +279,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.ember"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "foundry-caste",
     icon = "__sosciencity-graphics__/graphics/foundry-caste.png",
     icon_size = 256,
@@ -301,9 +301,9 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology("production-science-pack"):add_prerequisite("foundry-caste")
+Tirislib.Technology("production-science-pack"):add_prerequisite("foundry-caste")
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "foundry-caste-effectivity",
     icons = {
         {
@@ -338,7 +338,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.foundry"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "gleam-caste",
     icon = "__sosciencity-graphics__/graphics/gleam-caste.png",
     icon_size = 256,
@@ -360,9 +360,9 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology("utility-science-pack"):add_prerequisite("gleam-caste")
+Tirislib.Technology("utility-science-pack"):add_prerequisite("gleam-caste")
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "gleam-caste-effectivity",
     icons = {
         {
@@ -397,7 +397,7 @@ Tirislib_Technology.create {
     localised_name = {"technology-name.caste-effectivity", {"caste-short.gleam"}}
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "aurora-caste",
     icon = "__sosciencity-graphics__/graphics/aurora-caste.png",
     icon_size = 256,
@@ -421,9 +421,9 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology("space-science-pack"):add_prerequisite("aurora-caste")
+Tirislib.Technology("space-science-pack"):add_prerequisite("aurora-caste")
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "aurora-caste-effectivity",
     icons = {
         {
@@ -463,7 +463,7 @@ Tirislib_Technology.create {
 ---------------------------------------------------------------------------------------------------
 -- << infrastructure technologies >>
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "infrastructure-1",
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
@@ -479,7 +479,7 @@ Tirislib_Technology.create {
     ignore_tech_cost_multiplier = true
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "infrastructure-2",
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
@@ -495,7 +495,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "infrastructure-3",
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
@@ -512,7 +512,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "infrastructure-4",
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
@@ -533,7 +533,7 @@ Tirislib_Technology.create {
 ---------------------------------------------------------------------------------------------------
 -- << architecture technologies >>
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-1",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -548,7 +548,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-2",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -564,7 +564,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-3",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -581,7 +581,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-4",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -599,7 +599,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-5",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -617,7 +617,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-6",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -636,7 +636,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "architecture-7",
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
@@ -659,7 +659,7 @@ Tirislib_Technology.create {
 ---------------------------------------------------------------------------------------------------
 -- << healthcare >>
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "hospital",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -674,7 +674,7 @@ Tirislib_Technology.create {
     }
 }
 
---[[Tirislib_Technology.create {
+--[[Tirislib.Technology.create {
     name = "transfusion-medicine",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -690,7 +690,7 @@ Tirislib_Technology.create {
     }
 }]]
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "psychiatry",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -705,7 +705,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "intensive-care",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -724,7 +724,7 @@ Tirislib_Technology.create {
 ---------------------------------------------------------------------------------------------------
 -- << all things biology >>
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "sosciencity-computing",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -739,7 +739,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "fermentation",
     icon = "__sosciencity-graphics__/graphics/technology/fermentation.png",
     icon_size = 256,
@@ -753,7 +753,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "basic-biotechnology",
     icon = "__sosciencity-graphics__/graphics/technology/basic-biotechnology.png",
     icon_size = 256,
@@ -768,7 +768,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "genetic-neogenesis",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -783,7 +783,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "nightshades",
     icon = "__sosciencity-graphics__/graphics/technology/nightshades.png",
     icon_size = 128,
@@ -798,7 +798,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "huwan-genetic-neogenesis",
     icon = "__sosciencity-graphics__/graphics/technology/huwan-genetic-neogenesis.png",
     icon_size = 256,
@@ -814,7 +814,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "in-situ-gene-editing",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -831,7 +831,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "improved-reproductive-healthcare",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -855,7 +855,7 @@ Tirislib_Technology.create {
     max_level = 3
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "zetorn-variations",
     icon = "__sosciencity-graphics__/graphics/technology/zetorn-variations.png",
     icon_size = 256,
@@ -870,7 +870,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "ortrot-variations",
     icon = "__sosciencity-graphics__/graphics/technology/ortrot-variations.png",
     icon_size = 256,
@@ -888,7 +888,7 @@ Tirislib_Technology.create {
 ---------------------------------------------------------------------------------------------------
 -- << processing >>
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "food-processing",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -903,7 +903,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "hummus",
     icon = "__sosciencity-graphics__/graphics/technology/hummus.png",
     icon_size = 256,
@@ -918,7 +918,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "soy-products",
     icon = "__sosciencity-graphics__/graphics/technology/soy-products.png",
     icon_size = 256,
@@ -933,7 +933,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "drinking-water-treatment",
     icon = "__sosciencity-graphics__/graphics/technology/drinking-water-treatment.png",
     icon_size = 128,
@@ -949,7 +949,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "open-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/open-environment-farming.png",
     icon_size = 128,
@@ -963,7 +963,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "indoor-growing",
     icon = "__sosciencity-graphics__/graphics/technology/indoor-growing.png",
     icon_size = 128,
@@ -978,7 +978,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "controlled-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/controlled-environment-farming.png",
     icon_size = 128,
@@ -995,7 +995,7 @@ Tirislib_Technology.create {
     }
 }
 
-Tirislib_Technology.create {
+Tirislib.Technology.create {
     name = "animal-husbandry",
     icon = "__sosciencity-graphics__/graphics/technology/animal-husbandry.png",
     icon_size = 128,

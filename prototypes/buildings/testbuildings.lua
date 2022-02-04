@@ -1,5 +1,5 @@
 local function create_test_container(name)
-    Tirislib_Item.create {
+    Tirislib.Item.create {
         type = "item",
         name = "test-" .. name,
         icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -11,11 +11,11 @@ local function create_test_container(name)
         localised_name = "test-" .. name
     }
 
-    Tirislib_RecipeGenerator.create {
+    Tirislib.RecipeGenerator.create {
         product = "test-" .. name
     }
 
-    Tirislib_Entity.create {
+    Tirislib.Entity.create {
         type = "container",
         name = "test-" .. name,
         icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -54,7 +54,7 @@ create_test_container("upbringing-station")
 create_test_container("egg-collector")
 
 local function create_test_assembling_machine(name, categories)
-    Tirislib_Item.create {
+    Tirislib.Item.create {
         type = "item",
         name = "test-" .. name,
         icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -66,11 +66,11 @@ local function create_test_assembling_machine(name, categories)
         localised_name = "test-" .. name
     }
 
-    Tirislib_RecipeGenerator.create {
+    Tirislib.RecipeGenerator.create {
         product = "test-" .. name
     }
 
-    Tirislib_Entity.create {
+    Tirislib.Entity.create {
         type = "assembling-machine",
         name = "test-" .. name,
         icon = "__sosciencity-graphics__/graphics/icon/test-house.png",

@@ -3,7 +3,7 @@ local Housing = require("constants.housing")
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local housing_prototype_details = {
     ["improvised-hut"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-1",
             width = 6,
             height = 6,
@@ -16,7 +16,7 @@ local housing_prototype_details = {
         main_entity = "improvised-hut"
     },
     ["improvised-hut-2"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/improvised-hut/improvised-hut-2",
             width = 6,
             height = 6,
@@ -72,7 +72,7 @@ local housing_prototype_details = {
         main_entity = "boring-brick-house"
     },
     ["khrushchyovka"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka",
             width = 13,
             height = 13,
@@ -86,7 +86,7 @@ local housing_prototype_details = {
         main_entity = "khrushchyovka"
     },
     ["sheltered-house"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/sheltered-house/sheltered-house",
             width = 29,
             height = 20,
@@ -98,11 +98,11 @@ local housing_prototype_details = {
         },
         width = 11,
         height = 7,
-        tech_level = 3,
+        tech_level = 4,
         main_entity = "sheltered-house"
     },
     ["small-prefabricated-house"] = {
-        picture = Tirislib_Entity.create_standard_picture_old(
+        picture = Tirislib.Entity.create_standard_picture_old(
             "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
             13,
             12,
@@ -154,7 +154,7 @@ local housing_prototype_details = {
         tech_level = 2
     },
     ["huwanic-mansion"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/huwanic-mansion/huwanic-mansion",
             width = 22,
             height = 20,
@@ -168,7 +168,7 @@ local housing_prototype_details = {
         tech_level = 5
     },
     ["house5"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/house5/house5",
             width = 27,
             height = 21,
@@ -182,7 +182,7 @@ local housing_prototype_details = {
         tech_level = 6
     },
     ["house1"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/house1/house1",
             width = 20,
             height = 15,
@@ -195,7 +195,7 @@ local housing_prototype_details = {
         tech_level = 1
     },
     ["house8"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/house8/house8",
             width = 20,
             height = 12,
@@ -209,7 +209,7 @@ local housing_prototype_details = {
         tech_level = 1
     },
     ["living-container"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/living-container/living-container",
             width = 8,
             height = 7,
@@ -222,7 +222,7 @@ local housing_prototype_details = {
         tech_level = 0
     },
     ["barrack-container"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/barrack-container/barrack-container",
             width = 19,
             height = 12,
@@ -237,7 +237,7 @@ local housing_prototype_details = {
         tech_level = 2
     },
     ["balcony-house"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/balcony-house/balcony-house",
             width = 22.390625,
             height = 18.796875,
@@ -252,7 +252,7 @@ local housing_prototype_details = {
         tech_level = 3
     },
     ["octopus-complex"] = {
-        picture = Tirislib_Entity.create_standard_picture {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/octopus-complex/octopus-complex",
             width = 24,
             height = 17,
@@ -264,6 +264,35 @@ local housing_prototype_details = {
         width = 12,
         height = 10,
         tech_level = 6
+    },
+    ["spring-house"] = {
+        picture = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/spring-house/spring-house",
+            width = 16,
+            height = 14,
+            shift = {1.7, 0.0},
+            scale = 0.8,
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 8,
+        height = 5,
+        tech_level = 1
+    },
+    ["summer-house"] = {
+        picture = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/summer-house/summer-house",
+            width = 13,
+            height = 9,
+            shift = {1.5, 0.6},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 8,
+        height = 6,
+        tech_level = 3
     }
 }
 
@@ -315,7 +344,7 @@ end
 
 local function create_item(house_name, house, details)
     local item_prototype =
-        Tirislib_Item.create {
+        Tirislib.Item.create {
         type = "item",
         name = house_name,
         icon = "__sosciencity-graphics__/graphics/icon/" .. (details.icon or house_name) .. ".png",
@@ -334,7 +363,7 @@ local function create_item(house_name, house, details)
         }
     }
 
-    Tirislib_Tables.set_fields(item_prototype, details.distinctions)
+    Tirislib.Tables.set_fields(item_prototype, details.distinctions)
 end
 
 local quality_effect_on_recipe = {
@@ -377,7 +406,7 @@ local quality_effect_on_recipe = {
         details.energy_required = details.energy_required * 3
     end,
     ["copy-paste"] = function(details, house, tech_level)
-        details.energy_required = details.energy_required / 10
+        details.energy_required = details.energy_required / 2
     end,
     pompous = function(details, house, tech_level)
         details.themes[1][1] = "pompous_building"
@@ -386,8 +415,10 @@ local quality_effect_on_recipe = {
         details.themes[1][1] = "cheap_building"
     end,
     tall = function(details, house, tech_level)
+        table.insert(details.themes, {"tall_building_structure", house.room_count, house.room_count, tech_level})
     end,
     low = function(details, house, tech_level)
+        -- no idea
     end
 }
 
@@ -402,7 +433,7 @@ local function create_recipe(house_name, house, details)
         product = house_name,
         themes = ingredient_themes,
         unlock = unlocks[tech_level],
-        energy_required = house.room_count,
+        energy_required = house.room_count / 5,
         ingredients = {{type = "item", name = "architectural-concept", amount = 1}}
     }
 
@@ -410,12 +441,12 @@ local function create_recipe(house_name, house, details)
         quality_effect_on_recipe[quality](recipe_details, house, tech_level)
     end
 
-    Tirislib_RecipeGenerator.create(recipe_details)
+    Tirislib.RecipeGenerator.create(recipe_details)
 end
 
 local function create_entity(house_name, house, details)
     local entity =
-        Tirislib_Entity.create {
+        Tirislib.Entity.create {
         type = "container",
         name = house_name,
         order = get_order(house),
@@ -463,5 +494,5 @@ for house_name, details in pairs(housing_prototype_details) do
 end
 
 if Sosciencity_Config.DEBUG then
-    Tirislib_Recipe.get_by_name["test-house"]:clear_ingredients()
+    Tirislib.Recipe.get_by_name["test-house"]:clear_ingredients()
 end

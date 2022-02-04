@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "aquafarm",
     icon = "__sosciencity-graphics__/graphics/icon/aquafarm.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "aquafarm",
     themes = {{"tank", 2}, {"piping", 50}, {"building", 3}, {"machine", 5}, {"lamp", 20}},
     default_theme_level = 3,
@@ -19,9 +19,9 @@ Tirislib_RecipeGenerator.create {
 
 local sprite_height = 14
 local sprite_width = 12
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "aquafarm",
     icon = "__sosciencity-graphics__/graphics/icon/aquafarm.png",

@@ -36,7 +36,7 @@ local microorganisms = {
     },
 }
 
-Tirislib_Fluid.batch_create(
+Tirislib.Fluid.batch_create(
     microorganisms,
     {
         default_temperature = 10,
@@ -48,9 +48,9 @@ Tirislib_Fluid.batch_create(
 )
 
 local function create_enrichment_recipe(details)
-    local product = Tirislib_Fluid.get_by_name(details.product)
+    local product = Tirislib.Fluid.get_by_name(details.product)
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             product_amount = 10,
@@ -69,17 +69,17 @@ local function create_enrichment_recipe(details)
         }
     )
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 local function create_pure_culture_recipe(details)
-    local product = Tirislib_Fluid.get_by_name(details.product)
+    local product = Tirislib.Fluid.get_by_name(details.product)
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
-            product_amount = 20,
-            energy_required = 0.8,
+            product_amount = 100,
+            energy_required = 4,
             localised_name = {"recipe-name.pure-culture", product:get_localised_name()},
             localised_description = {"recipe-description.pure-culture", product:get_localised_name()},
             icons = {
@@ -97,7 +97,7 @@ local function create_pure_culture_recipe(details)
         }
     )
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 create_enrichment_recipe {
@@ -114,7 +114,7 @@ create_pure_culture_recipe {
     product = "mynellia",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "water", amount = 10}
+        {type = "fluid", name = "water", amount = 90}
     },
     category = "sosciencity-microalgae-farm",
     unlock = "basic-biotechnology"
@@ -135,7 +135,7 @@ create_pure_culture_recipe {
     product = "solfaen",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "fluid", name = "clean-water", amount = 90}
     },
     category = "sosciencity-microalgae-farm",
     unlock = "basic-biotechnology"
@@ -157,7 +157,7 @@ create_pure_culture_recipe {
     product = "pemtenn",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "sugar-medium", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 90}
     },
     category = "sosciencity-fermentation-tank",
     unlock = "fermentation"
@@ -179,7 +179,7 @@ create_pure_culture_recipe {
     product = "flinnum",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "sugar-medium", amount = 10}
+        {type = "fluid", name = "sugar-medium", amount = 90}
     },
     category = "sosciencity-bioreactor",
     unlock = "basic-biotechnology"
@@ -203,8 +203,8 @@ create_pure_culture_recipe {
     product = "fiicorum",
     product_type = "fluid",
     ingredients = {
-        {type = "fluid", name = "sugar-medium", amount = 10},
-        {type = "fluid", name = "steam", amount = 20},
+        {type = "fluid", name = "sugar-medium", amount = 90},
+        {type = "fluid", name = "steam", amount = 50},
         {type = "item", name = "pemtenn-extract", amount = 1}
     },
     category = "sosciencity-bioreactor",

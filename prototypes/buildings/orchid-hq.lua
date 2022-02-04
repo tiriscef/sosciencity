@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "orchid-hq",
     icon = "__sosciencity-graphics__/graphics/icon/orchid-hq.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orchid-hq",
     themes = {{"building", 10}, {"soil", 50}},
     default_theme_level = 1,
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "orchid-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "orchid-hq",
     flags = {"placeable-neutral", "player-creation", "not-rotatable"},

@@ -15,7 +15,7 @@ Handcrafting = {}
 local floor = math.floor
 local min = math.min
 local format = string.format
-local get_subtbl = Tirislib_Tables.get_subtbl
+local get_subtbl = Tirislib.Tables.get_subtbl
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
