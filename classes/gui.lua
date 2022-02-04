@@ -43,6 +43,8 @@ local diseases = Diseases.values
 local global
 local immigration
 local population
+local housing_capacity
+local caste_bonuses
 local caste_points
 local Entity = Entity
 local Register = Register
@@ -53,6 +55,7 @@ local type_definitions = Types.definitions
 local ceil = math.ceil
 local floor = math.floor
 local format = string.format
+local max = math.max
 local round = Tirislib.Utils.round
 local round_to_step = Tirislib.Utils.round_to_step
 local tostring = tostring
@@ -78,6 +81,8 @@ local function set_locals()
     global = _ENV.global
     immigration = global.immigration
     population = global.population
+    housing_capacity = global.housing_capacity
+    caste_bonuses = global.caste_bonuses
     caste_points = global.caste_points
 end
 
@@ -98,11 +103,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
 ---------------------------------------------------------------------------------------------------
-
-local function get_caste_bonus(caste_id)
-    local bonus = global.caste_bonuses[caste_id]
-    return floor(bonus)
-end
 
 local function get_reasonable_number(number)
     return format("%.1f", number)
@@ -531,8 +531,7 @@ local function create_caste_sprite(container, caste_id, size)
         container.add {
         type = "sprite",
         name = "caste-sprite",
-        sprite = "technology/" .. caste.name .. "-caste",
-        tooltip = caste.localised_name
+        sprite = "technology/" .. caste.name .. "-caste"
     }
     local style = sprite.style
     style.height = size
@@ -624,7 +623,16 @@ local function update_population_flow(container)
     local datalist = container.general.flow.datalist
 
     datalist.population.caption = Table.array_sum(population)
-    datalist.machine_count.caption = Register.get_machine_count()
+
+    local machine_count = Register.get_machine_count()
+    local machine_count_label = datalist.machine_count
+    machine_count_label.caption = machine_count
+    machine_count_label.tooltip = {
+        "sosciencity.tooltip-machines",
+        global.starting_clockwork_points,
+        max(0, machine_count - global.starting_clockwork_points)
+    }
+
     datalist.turret_count.caption = Register.get_type_count(Type.turret)
 
     local climate = global.current_climate
@@ -635,7 +643,7 @@ local function update_population_flow(container)
         climate_locales[climate],
         humidity_locales[humidity]
     }
-    datalist.key_weather.tooltip = {
+    datalist["key-weather"].tooltip = {
         "sosciencity.explain-weather",
         climate_locales[climate],
         humidity_locales[humidity]
@@ -650,14 +658,13 @@ local function add_city_info_entry(data_list, key, key_caption, caption_color)
         caption = key_caption
     }
     local key_style = key_label.style
-    key_style.font = "default-bold"
-    key_style.font_color = Color.grey
+    key_style.font = "default-semibold"
+    key_style.font_color = Color.tooltip_orange
 
     local value_label =
         data_list.add {
         type = "label",
-        name = key,
-        caption = "testtesttest"
+        name = key
     }
     local style = value_label.style
     style.horizontal_align = "right"
@@ -700,19 +707,235 @@ local function create_population_flow(container)
     update_population_flow(container)
 end
 
-local function create_caste_flow(container, caste_id)
-    local caste_name = castes[caste_id].name
+local tooltip_fns = {
+    [Type.clockwork] = function()
+        local housing = housing_capacity[Type.clockwork]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.clockwork], 0.1)
+        local machines = Register.get_machine_count()
+        local maintenance_cost = max(0, machines - global.starting_clockwork_points)
 
+        local points_locale = points
+        if global.maintenance_enabled and maintenance_cost > 0 then
+            local remaining_points = max(0, points - maintenance_cost)
+            points_locale = {
+                "sosciencity.tooltip-maintenance-calc",
+                remaining_points,
+                points,
+                maintenance_cost
+            }
+            points = remaining_points
+        end
+
+        local ret = {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.clockwork],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points_locale
+            }
+        }
+
+        if points >= maintenance_cost then
+            ret[#ret + 1] = {
+                "sosciencity.tooltip-clockwork-bonus",
+                machines,
+                round_to_step(points / max(1, machines), 0.1),
+                caste_bonuses[Type.clockwork]
+            }
+        else
+            ret[#ret + 1] = {"sosciencity.tooltip-insufficient-maintenance", caste_bonuses[Type.clockwork]}
+        end
+
+        return ret
+    end,
+    [Type.orchid] = function()
+        local housing = housing_capacity[Type.orchid]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.orchid], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.orchid],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-orchid-bonus",
+                caste_bonuses[Type.orchid]
+            }
+        }
+    end,
+    [Type.gunfire] = function()
+        local housing = housing_capacity[Type.gunfire]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.gunfire], 0.1)
+        local turrets = Register.get_type_count(Type.turret)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.gunfire],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-gunfire-bonus",
+                turrets,
+                round_to_step(points / max(1, turrets), 0.1),
+                caste_bonuses[Type.gunfire]
+            }
+        }
+    end,
+    [Type.ember] = function()
+        local housing = housing_capacity[Type.ember]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.ember], 0.1)
+        local non_ember_pop = Table.array_sum(population) - population[Type.ember]
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.ember],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-ember-bonus",
+                non_ember_pop,
+                round_to_step(points / max(1, non_ember_pop), 0.01),
+                caste_bonuses[Type.ember]
+            }
+        }
+    end,
+    [Type.foundry] = function()
+        local housing = housing_capacity[Type.foundry]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.foundry], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.foundry],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-foundry-bonus",
+                caste_bonuses[Type.foundry]
+            }
+        }
+    end,
+    [Type.gleam] = function()
+        local housing = housing_capacity[Type.gleam]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.gleam], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.gleam],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-gleam-bonus",
+                caste_bonuses[Type.gleam]
+            }
+        }
+    end,
+    [Type.aurora] = function()
+        local housing = housing_capacity[Type.aurora]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.aurora], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.clockwork],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-aurora-bonus",
+                caste_bonuses[Type.aurora]
+            }
+        }
+    end,
+    [Type.plasma] = function()
+        local housing = housing_capacity[Type.plasma]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.plasma], 0.1)
+        local non_plasma_pop = Table.array_sum(population) - population[Type.plasma]
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.plasma],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-plasma-bonus",
+                non_plasma_pop,
+                round_to_step(points / max(1, non_plasma_pop), 0.01),
+                caste_bonuses[Type.plasma]
+            }
+        }
+    end
+}
+
+local function update_caste_flow(container, caste_id, caste_tooltips)
+    local caste_frame = container["caste-" .. caste_id]
+
+    -- Always show the clockwork caste, so the player has a chance to understand the maintenance mechanic.
+    local visibility = (caste_id == Type.clockwork) or Inhabitants.caste_is_researched(caste_id)
+    caste_frame.visible = visibility
+
+    if visibility then
+        local flow = caste_frame.flow
+
+        local population_label = flow["caste-population"]
+        population_label.caption = population[caste_id]
+
+        local bonus_value = caste_bonuses[caste_id]
+        local caste_bonus_label = flow["caste-bonus"]
+        caste_bonus_label.caption = {
+            "caste-bonus.show-" .. castes[caste_id].name,
+            bonus_value
+        }
+        caste_bonus_label.style.font_color =
+            ((bonus_value > 0) and Color.green) or ((bonus_value < 0) and Color.red) or Color.white
+
+        local tooltip = caste_tooltips[caste_id]
+        caste_frame.tooltip = tooltip
+        flow.tooltip = tooltip
+        flow["caste-sprite"].tooltip = tooltip
+        population_label.tooltip = tooltip
+        caste_bonus_label.tooltip = tooltip
+    end
+end
+
+local function create_caste_flow(container, caste_id, caste_tooltips)
     local frame =
         container.add {
         type = "frame",
         name = "caste-" .. caste_id,
         direction = "vertical"
     }
-    frame.style.padding = 0
-    frame.style.left_margin = 4
-
-    frame.visible = Inhabitants.caste_is_researched(caste_id)
+    local frame_style = frame.style
+    frame_style.padding = 0
+    frame_style.left_margin = 4
 
     local flow =
         frame.add {
@@ -728,49 +951,19 @@ local function create_caste_flow(container, caste_id)
 
     flow.add {
         type = "label",
-        name = "caste-population",
-        caption = global.population[caste_id],
-        tooltip = {"sosciencity.caste-points", get_reasonable_number(caste_points[caste_id])}
+        name = "caste-population"
     }
 
-    local caste_bonus = get_caste_bonus(caste_id)
     flow.add {
         type = "label",
-        name = "caste-bonus",
-        caption = {"caste-bonus.show-" .. caste_name, display_integer_summand(caste_bonus)},
-        tooltip = {"caste-bonus." .. caste_name}
+        name = "caste-bonus"
+        --tooltip = {"caste-bonus." .. caste_name}
     }
+
+    update_caste_flow(container, caste_id, caste_tooltips or {})
 end
 
-local function update_caste_flow(container, caste_id)
-    local caste_frame = container["caste-" .. caste_id]
-
-    -- Always show the clockwork caste, so the player has a chance to understand the maintenance mechanic.
-    caste_frame.visible = (caste_id == Type.clockwork) or Inhabitants.caste_is_researched(caste_id)
-
-    -- the frame may not yet exist
-    if caste_frame == nil then
-        create_caste_flow(container, caste_id)
-        return
-    end
-
-    local flow = caste_frame.flow
-
-    local population_label = flow["caste-population"]
-    population_label.caption = population[caste_id]
-    population_label.tooltip = {
-        "sosciencity.caste-points",
-        get_reasonable_number(caste_points[caste_id])
-    }
-
-    local caste_bonus = get_caste_bonus(caste_id)
-    flow["caste-bonus"].caption = {
-        "caste-bonus.show-" .. castes[caste_id].name,
-        display_integer_summand(caste_bonus)
-    }
-end
-
-local function create_city_info_for_player(player)
+local function create_city_info_for_player(player, caste_tooltips)
     local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
@@ -786,29 +979,34 @@ local function create_city_info_for_player(player)
 
     create_population_flow(frame)
 
-    for id, _ in pairs(castes) do
-        create_caste_flow(frame, id)
+    for id in pairs(castes) do
+        create_caste_flow(frame, id, caste_tooltips)
     end
 end
 
-local function update_city_info(frame)
+local function update_city_info(frame, caste_tooltips)
     update_population_flow(frame)
 
-    for id, _ in pairs(castes) do
-        update_caste_flow(frame, id)
+    for id in pairs(castes) do
+        update_caste_flow(frame, id, caste_tooltips)
     end
 end
 
 --- Updates the city info gui for all existing players.
 function Gui.update_city_info()
-    for _, player in pairs(game.players) do
+    local caste_tooltips = {}
+    for id in pairs(castes) do
+        caste_tooltips[id] = tooltip_fns[id]()
+    end
+
+    for _, player in pairs(game.connected_players) do
         local city_info_gui = player.gui.top[CITY_INFO_NAME]
 
         -- we check if the gui still exists, as other mods can delete them
         if city_info_gui ~= nil and city_info_gui.valid then
-            update_city_info(city_info_gui)
+            update_city_info(city_info_gui, caste_tooltips)
         else
-            create_city_info_for_player(player)
+            create_city_info_for_player(player, caste_tooltips)
         end
     end
 end
@@ -1476,9 +1674,8 @@ local function update_general_building_details(container, entry)
         )
     end
 
-    local type_details = type_definitions[entry[EK.type]]
     if type_details.affected_by_clockwork then
-        local clockwork_value = get_caste_bonus(Type.clockwork)
+        local clockwork_value = caste_bonuses[Type.clockwork]
         set_kv_pair_value(
             building_data,
             "maintenance",
@@ -2772,7 +2969,7 @@ end
 --- Closes and reopens all the Guis related to the given entry.
 --- @param entry Entry
 function Gui.rebuild_details_view_for_entry(entry)
-    local unit_number = entry[EK.entity].unit_number
+    local unit_number = entry[EK.unit_number]
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then

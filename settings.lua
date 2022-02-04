@@ -32,7 +32,7 @@ data:extend {
         name = "sosciencity-start-clockwork-points",
         order = "aab",
         setting_type = "runtime-global",
-        default_value = 100
+        default_value = 30
     },
     {
         type = "bool-setting",
