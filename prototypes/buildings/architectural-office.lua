@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "architectural-office",
     icon = "__sosciencity-graphics__/graphics/icon/architectural-office.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "architectural-office",
     themes = {{"building", 5}, {"machine", 3}, {"lamp", 10}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
@@ -18,7 +18,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "architecture-2"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "architectural-office",
     icon = "__sosciencity-graphics__/graphics/icon/architectural-office.png",

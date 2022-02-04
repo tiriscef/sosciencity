@@ -15,6 +15,13 @@ data:extend {
     },
     {
         type = "bool-setting",
+        name = "sosciencity-agriculture-pollution",
+        order = "aac",
+        setting_type = "startup",
+        default_value = true
+    },
+    {
+        type = "bool-setting",
         name = "sosciencity-penalty-module",
         order = "aaa",
         setting_type = "runtime-global",
@@ -25,7 +32,7 @@ data:extend {
         name = "sosciencity-start-clockwork-points",
         order = "aab",
         setting_type = "runtime-global",
-        default_value = 100
+        default_value = 30
     },
     {
         type = "bool-setting",

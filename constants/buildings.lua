@@ -71,7 +71,7 @@ Building.values = {
         water_tiles = 300,
         workforce = {
             count = 4,
-            castes = {Type.clockwork}
+            castes = {Type.clockwork, Type.orchid}
         }
     },
     ["foundry-hq"] = {
@@ -122,7 +122,7 @@ Building.values = {
         tree_count = 100,
         workforce = {
             count = 4,
-            castes = {Type.clockwork}
+            castes = {Type.clockwork, Type.orchid}
         }
     },
     ["industrial-animal-farm"] = {

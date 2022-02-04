@@ -31,12 +31,28 @@
 ---@class BoundingBox
 ---@class array
 
-require("lib.utils")
+local tirislib_internal_version = 1
 
-require("lib.prototype")
-require("lib.recipe")
-require("lib.item")
-require("lib.entity")
-require("lib.technology")
-require("lib.fluid")
-require("lib.recipe-category")
+if Tirislib then
+    if tirislib_internal_version <= (Tirislib.internal_version or 0) then
+        -- avoid loading an older version if another mod already loaded Tirislib
+        return
+    end
+end
+
+Tirislib = Tirislib or {}
+Tirislib.internal_version = tirislib_internal_version
+
+require("testing")
+require("utils")
+
+if Tirislib.Utils.is_data_stage() then
+    require("prototype")
+    require("recipe")
+    require("item")
+    require("entity")
+    require("technology")
+    require("fluid")
+    require("recipe-category")
+    require("recipe-generator")
+end

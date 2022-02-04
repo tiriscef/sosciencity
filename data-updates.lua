@@ -1,5 +1,5 @@
-require("lib.init")
-Tirislib_Prototype.modname = "sosciencity"
+require("tirislib.init")
+Tirislib.Prototype.modname = "sosciencity"
 
 require("datastage-scripts.allowed-effects")
 require("datastage-scripts.biters")
@@ -13,8 +13,4 @@ require("datastage-scripts.furniture-unlocks")
 
 require("integrations-updates")
 
-if Sosciencity_Config.BALANCING then
-    require("datastage-scripts.balancing")
-end
-
-Tirislib_Prototype.finish()
+Tirislib.Prototype.finish()

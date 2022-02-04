@@ -31,7 +31,7 @@ Housing.values = {
         qualities = {"compact", "simple", "copy-paste", "cheap", "tall"}
     },
     ["sheltered-house"] = {
-        room_count = 40,
+        room_count = 48,
         comfort = 6,
         qualities = {"sheltered", "compact", "simple", "low"}
     },
@@ -84,6 +84,16 @@ Housing.values = {
         room_count = 210,
         comfort = 9,
         qualities = {"low", "technical", "compact"}
+    },
+    ["spring-house"] = {
+        room_count = 15,
+        comfort = 3,
+        qualities = {"low", "green"}
+    },
+    ["summer-house"] = {
+        room_count = 30,
+        comfort = 5,
+        qualities = {"low", "green", "spacey"}
     },
     ["test-house"] = {
         room_count = 200,
@@ -138,7 +148,7 @@ do
             Housing.next[house_name] = alternatives[1]
             table.insert(alternatives, house_name)
 
-            alternatives = Tirislib_Tables.array_to_lookup(house.alternatives)
+            alternatives = Tirislib.Tables.array_to_lookup(house.alternatives)
         end
 
         table.sort(house.qualities)
@@ -146,7 +156,7 @@ do
         house.is_improvised = house.is_improvised or false
     end
 
-    Tirislib_Tables.set_fields(houses, to_add)
+    Tirislib.Tables.set_fields(houses, to_add)
 end
 
 return Housing

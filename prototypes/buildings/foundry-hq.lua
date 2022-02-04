@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "foundry-hq",
     icon = "__sosciencity-graphics__/graphics/foundry-caste.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "foundry-hq",
     themes = {{"building", 20}},
     default_theme_level = 3,
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "foundry-caste"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "foundry-hq",
     flags = {"placeable-neutral", "player-creation"},

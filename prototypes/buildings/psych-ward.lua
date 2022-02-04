@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "psych-ward",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "psych-ward",
     themes = {{"building", 10}, {"furnishing", 5, 5, 5}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
@@ -20,7 +20,7 @@ Tirislib_RecipeGenerator.create {
     unlock = "psychiatry"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "psych-ward",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",

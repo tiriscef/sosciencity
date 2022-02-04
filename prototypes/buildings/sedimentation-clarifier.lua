@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "sedimentation-clarifier",
     icon = "__sosciencity-graphics__/graphics/icon/sedimentation-clarifier.png",
@@ -10,7 +10,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "sedimentation-clarifier",
     themes = {{"piping", 30}, {"tank", 3}, {"machine", 1}},
     default_theme_level = 4,
@@ -19,10 +19,10 @@ Tirislib_RecipeGenerator.create {
 
 local sprite_height = 9
 local sprite_width = 9
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "sedimentation-clarifier",
     icon = "__sosciencity-graphics__/graphics/icon/sedimentation-clarifier.png",

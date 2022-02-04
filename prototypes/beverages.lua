@@ -4,9 +4,9 @@ local beverage_items = {
     {name = "tiriscefing-whisky", distinctions = {durability = 300}}
 }
 
-Tirislib_Item.batch_create(beverage_items, {type = "tool", subgroup = "sosciencity-beverages"})
+Tirislib.Item.batch_create(beverage_items, {type = "tool", subgroup = "sosciencity-beverages"})
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "tiriscefing-whisky",
     product_amount = 10,
     energy_required = 20,

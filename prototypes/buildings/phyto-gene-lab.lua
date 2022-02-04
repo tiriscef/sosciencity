@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "phyto-gene-lab",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -12,14 +12,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "phyto-gene-lab",
     themes = {{"building", 2}, {"machine", 2}, {"lamp", 5}, {"piping", 20}},
     default_theme_level = 2,
     unlock = "genetic-neogenesis"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "phyto-gene-lab",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",

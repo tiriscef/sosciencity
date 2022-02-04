@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "orchid-food-factory",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -12,7 +12,7 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orchid-food-factory",
     themes = {{"machine", 2}, {"piping", 25}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
@@ -20,10 +20,10 @@ Tirislib_RecipeGenerator.create {
     unlock = "food-processing"
 }
 
-local pipe_covers = Tirislib_Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib_Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "assembling-machine",
     name = "orchid-food-factory",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",

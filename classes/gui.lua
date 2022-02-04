@@ -43,6 +43,8 @@ local diseases = Diseases.values
 local global
 local immigration
 local population
+local housing_capacity
+local caste_bonuses
 local caste_points
 local Entity = Entity
 local Register = Register
@@ -53,15 +55,20 @@ local type_definitions = Types.definitions
 local ceil = math.ceil
 local floor = math.floor
 local format = string.format
-local round = Tirislib_Utils.round
+local max = math.max
+local round = Tirislib.Utils.round
+local round_to_step = Tirislib.Utils.round_to_step
 local tostring = tostring
 
-local Luaq_from = Tirislib_Luaq.from
+local Luaq_from = Tirislib.Luaq.from
 
-local display_enumeration = Tirislib_Locales.create_enumeration
-local display_percentage = Tirislib_Locales.display_percentage
-local display_item_stack = Tirislib_Locales.display_item_stack
-local display_time = Tirislib_Locales.display_time
+local display_enumeration = Tirislib.Locales.create_enumeration
+local display_fluid_stack = Tirislib.Locales.display_fluid_stack
+local display_percentage = Tirislib.Locales.display_percentage
+local display_item_stack = Tirislib.Locales.display_item_stack
+local display_time = Tirislib.Locales.display_time
+
+local Table = Tirislib.Tables
 
 local climate_locales = WeatherLocales.climate
 local humidity_locales = WeatherLocales.humidity
@@ -74,6 +81,8 @@ local function set_locals()
     global = _ENV.global
     immigration = global.immigration
     population = global.population
+    housing_capacity = global.housing_capacity
+    caste_bonuses = global.caste_bonuses
     caste_points = global.caste_points
 end
 
@@ -94,11 +103,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << formatting functions >>
 ---------------------------------------------------------------------------------------------------
-
-local function get_caste_bonus(caste_id)
-    local bonus = global.caste_bonuses[caste_id]
-    return floor(bonus)
-end
 
 local function get_reasonable_number(number)
     return format("%.1f", number)
@@ -222,7 +226,7 @@ local click_lookup = {}
 --- @param name string
 --- @param fn function
 local function set_click_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     click_lookup[name] = {fn, {...}}
 end
 
@@ -232,14 +236,14 @@ local checkbox_click_lookup = {}
 --- @param name string
 --- @param fn function
 local function set_checked_state_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     checkbox_click_lookup[name] = {fn, {...}}
 end
 
 local value_changed_lookup = {}
 
 local function set_value_changed_handler(name, fn, ...)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     value_changed_lookup[name] = {fn, {...}}
 end
 
@@ -527,8 +531,7 @@ local function create_caste_sprite(container, caste_id, size)
         container.add {
         type = "sprite",
         name = "caste-sprite",
-        sprite = "technology/" .. caste.name .. "-caste",
-        tooltip = caste.localised_name
+        sprite = "technology/" .. caste.name .. "-caste"
     }
     local style = sprite.style
     style.height = size
@@ -616,69 +619,67 @@ end
 local CITY_INFO_NAME = "sosciencity-city-info"
 local CITY_INFO_SPRITE_SIZE = 48
 
-local function update_population_flow(frame)
-    local population_flow = frame["general"]
+local function update_population_flow(container)
+    local datalist = container.general.flow.datalist
 
-    population_flow["machine-count"].caption = {"sosciencity.machines", Register.get_machine_count()}
+    datalist.population.caption = Table.array_sum(population)
 
-    population_flow["turret-count"].caption = {"sosciencity.turrets", Register.get_type_count(Type.turret)}
+    local machine_count = Register.get_machine_count()
+    local machine_count_label = datalist.machine_count
+    machine_count_label.caption = machine_count
+    machine_count_label.tooltip = {
+        "sosciencity.tooltip-machines",
+        global.starting_clockwork_points,
+        max(0, machine_count - global.starting_clockwork_points)
+    }
+
+    datalist.turret_count.caption = Register.get_type_count(Type.turret)
 
     local climate = global.current_climate
     local humidity = global.current_humidity
-    local weather_label = population_flow.weather
-    weather_label.caption = {"sosciencity.weather", weather_locales[humidity][climate]}
-    weather_label.tooltip = {
+    datalist.weather.caption = weather_locales[humidity][climate]
+    datalist.weather.tooltip = {
+        "sosciencity.explain-weather",
+        climate_locales[climate],
+        humidity_locales[humidity]
+    }
+    datalist["key-weather"].tooltip = {
         "sosciencity.explain-weather",
         climate_locales[climate],
         humidity_locales[humidity]
     }
 end
 
-local function add_population_flow(container)
+local function add_city_info_entry(data_list, key, key_caption, caption_color)
+    local key_label =
+        data_list.add {
+        type = "label",
+        name = "key-" .. key,
+        caption = key_caption
+    }
+    local key_style = key_label.style
+    key_style.font = "default-semibold"
+    key_style.font_color = Color.tooltip_orange
+
+    local value_label =
+        data_list.add {
+        type = "label",
+        name = key
+    }
+    local style = value_label.style
+    style.horizontal_align = "right"
+    style.minimal_width = 40
+    style.font_color = caption_color
+end
+
+local function create_population_flow(container)
     local frame =
         container.add {
         type = "frame",
         name = "general",
-        direction = "vertical"
+        direction = "horizontal"
     }
-    set_padding(frame, 2)
-
-    local machines =
-        frame.add {
-        type = "label",
-        name = "machine-count"
-    }
-    machines.style.bottom_margin = 4
-
-    local turrets =
-        frame.add {
-        type = "label",
-        name = "turret-count"
-    }
-    turrets.style.bottom_margin = 4
-
-    frame.add {
-        type = "label",
-        name = "weather"
-    }
-
-    update_population_flow(container)
-end
-
-local function add_caste_flow(container, caste_id)
-    local caste_name = castes[caste_id].name
-
-    local frame =
-        container.add {
-        type = "frame",
-        name = "caste-" .. caste_id,
-        direction = "vertical"
-    }
-    --make_stretchable(frame)
-    frame.style.padding = 0
-    frame.style.left_margin = 4
-
-    frame.visible = Inhabitants.caste_is_researched(caste_id)
+    frame.style.padding = 2
 
     local flow =
         frame.add {
@@ -686,7 +687,262 @@ local function add_caste_flow(container, caste_id)
         name = "flow",
         direction = "vertical"
     }
-    --make_stretchable(flow)
+
+    local datalist =
+        flow.add {
+        type = "table",
+        name = "datalist",
+        column_count = 2
+    }
+    local style = datalist.style
+    style.right_cell_padding = 0
+    style.left_cell_padding = 0
+    style.column_alignments[2] = "right"
+
+    add_city_info_entry(datalist, "population", {"sosciencity.population"})
+    add_city_info_entry(datalist, "machine_count", {"sosciencity.machines"})
+    add_city_info_entry(datalist, "turret_count", {"sosciencity.turrets"})
+    add_city_info_entry(datalist, "weather", {"sosciencity.weather"}, Color.yellowish_green)
+
+    update_population_flow(container)
+end
+
+local tooltip_fns = {
+    [Type.clockwork] = function()
+        local housing = housing_capacity[Type.clockwork]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.clockwork], 0.1)
+        local machines = Register.get_machine_count()
+        local maintenance_cost = max(0, machines - global.starting_clockwork_points)
+
+        local points_locale = points
+        if global.maintenance_enabled and maintenance_cost > 0 then
+            local remaining_points = max(0, points - maintenance_cost)
+            points_locale = {
+                "sosciencity.tooltip-maintenance-calc",
+                remaining_points,
+                points,
+                maintenance_cost
+            }
+            points = remaining_points
+        end
+
+        local ret = {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.clockwork],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points_locale
+            }
+        }
+
+        if points >= maintenance_cost then
+            ret[#ret + 1] = {
+                "sosciencity.tooltip-clockwork-bonus",
+                machines,
+                round_to_step(points / max(1, machines), 0.1),
+                caste_bonuses[Type.clockwork]
+            }
+        else
+            ret[#ret + 1] = {"sosciencity.tooltip-insufficient-maintenance", caste_bonuses[Type.clockwork]}
+        end
+
+        return ret
+    end,
+    [Type.orchid] = function()
+        local housing = housing_capacity[Type.orchid]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.orchid], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.orchid],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-orchid-bonus",
+                caste_bonuses[Type.orchid]
+            }
+        }
+    end,
+    [Type.gunfire] = function()
+        local housing = housing_capacity[Type.gunfire]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.gunfire], 0.1)
+        local turrets = Register.get_type_count(Type.turret)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.gunfire],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-gunfire-bonus",
+                turrets,
+                round_to_step(points / max(1, turrets), 0.1),
+                caste_bonuses[Type.gunfire]
+            }
+        }
+    end,
+    [Type.ember] = function()
+        local housing = housing_capacity[Type.ember]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.ember], 0.1)
+        local non_ember_pop = Table.array_sum(population) - population[Type.ember]
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.ember],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-ember-bonus",
+                non_ember_pop,
+                round_to_step(points / max(1, non_ember_pop), 0.01),
+                caste_bonuses[Type.ember]
+            }
+        }
+    end,
+    [Type.foundry] = function()
+        local housing = housing_capacity[Type.foundry]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.foundry], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.foundry],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-foundry-bonus",
+                caste_bonuses[Type.foundry]
+            }
+        }
+    end,
+    [Type.gleam] = function()
+        local housing = housing_capacity[Type.gleam]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.gleam], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.gleam],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-gleam-bonus",
+                caste_bonuses[Type.gleam]
+            }
+        }
+    end,
+    [Type.aurora] = function()
+        local housing = housing_capacity[Type.aurora]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.aurora], 0.1)
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.clockwork],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-aurora-bonus",
+                caste_bonuses[Type.aurora]
+            }
+        }
+    end,
+    [Type.plasma] = function()
+        local housing = housing_capacity[Type.plasma]
+        local housing_improvised = housing[true]
+        local points = round_to_step(caste_points[Type.plasma], 0.1)
+        local non_plasma_pop = Table.array_sum(population) - population[Type.plasma]
+        return {
+            "",
+            {
+                "sosciencity.tooltip-caste-general",
+                population[Type.plasma],
+                housing[false] + housing_improvised,
+                housing_improvised,
+                points
+            },
+            {
+                "sosciencity.tooltip-plasma-bonus",
+                non_plasma_pop,
+                round_to_step(points / max(1, non_plasma_pop), 0.01),
+                caste_bonuses[Type.plasma]
+            }
+        }
+    end
+}
+
+local function update_caste_flow(container, caste_id, caste_tooltips)
+    local caste_frame = container["caste-" .. caste_id]
+
+    -- Always show the clockwork caste, so the player has a chance to understand the maintenance mechanic.
+    local visibility = (caste_id == Type.clockwork) or Inhabitants.caste_is_researched(caste_id)
+    caste_frame.visible = visibility
+
+    if visibility then
+        local flow = caste_frame.flow
+
+        local population_label = flow["caste-population"]
+        population_label.caption = population[caste_id]
+
+        local bonus_value = caste_bonuses[caste_id]
+        local caste_bonus_label = flow["caste-bonus"]
+        caste_bonus_label.caption = {
+            "caste-bonus.show-" .. castes[caste_id].name,
+            bonus_value
+        }
+        caste_bonus_label.style.font_color =
+            ((bonus_value > 0) and Color.green) or ((bonus_value < 0) and Color.red) or Color.white
+
+        local tooltip = caste_tooltips[caste_id]
+        caste_frame.tooltip = tooltip
+        flow.tooltip = tooltip
+        flow["caste-sprite"].tooltip = tooltip
+        population_label.tooltip = tooltip
+        caste_bonus_label.tooltip = tooltip
+    end
+end
+
+local function create_caste_flow(container, caste_id, caste_tooltips)
+    local frame =
+        container.add {
+        type = "frame",
+        name = "caste-" .. caste_id,
+        direction = "vertical"
+    }
+    local frame_style = frame.style
+    frame_style.padding = 0
+    frame_style.left_margin = 4
+
+    local flow =
+        frame.add {
+        type = "flow",
+        name = "flow",
+        direction = "vertical"
+    }
     flow.style.vertical_spacing = 0
     flow.style.horizontal_align = "center"
 
@@ -695,49 +951,19 @@ local function add_caste_flow(container, caste_id)
 
     flow.add {
         type = "label",
-        name = "caste-population",
-        caption = global.population[caste_id],
-        tooltip = {"sosciencity.caste-points", get_reasonable_number(caste_points[caste_id])}
+        name = "caste-population"
     }
 
-    local caste_bonus = get_caste_bonus(caste_id)
     flow.add {
         type = "label",
-        name = "caste-bonus",
-        caption = {"caste-bonus.show-" .. caste_name, display_integer_summand(caste_bonus)},
-        tooltip = {"caste-bonus." .. caste_name}
+        name = "caste-bonus"
+        --tooltip = {"caste-bonus." .. caste_name}
     }
+
+    update_caste_flow(container, caste_id, caste_tooltips or {})
 end
 
-local function update_caste_flow(container, caste_id)
-    local caste_frame = container["caste-" .. caste_id]
-
-    -- Always show the clockwork caste, so the player has a chance to understand the maintenance mechanic.
-    caste_frame.visible = (caste_id == Type.clockwork) or Inhabitants.caste_is_researched(caste_id)
-
-    -- the frame may not yet exist
-    if caste_frame == nil then
-        add_caste_flow(container, caste_id)
-        return
-    end
-
-    local flow = caste_frame.flow
-
-    local population_label = flow["caste-population"]
-    population_label.caption = population[caste_id]
-    population_label.tooltip = {
-        "sosciencity.caste-points",
-        get_reasonable_number(caste_points[caste_id])
-    }
-
-    local caste_bonus = get_caste_bonus(caste_id)
-    flow["caste-bonus"].caption = {
-        "caste-bonus.show-" .. castes[caste_id].name,
-        display_integer_summand(caste_bonus)
-    }
-end
-
-local function create_city_info_for_player(player)
+local function create_city_info_for_player(player, caste_tooltips)
     local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
@@ -751,31 +977,36 @@ local function create_city_info_for_player(player)
     }
     make_stretchable(frame)
 
-    add_population_flow(frame)
+    create_population_flow(frame)
 
-    for id, _ in pairs(castes) do
-        add_caste_flow(frame, id)
+    for id in pairs(castes) do
+        create_caste_flow(frame, id, caste_tooltips)
     end
 end
 
-local function update_city_info(frame)
+local function update_city_info(frame, caste_tooltips)
     update_population_flow(frame)
 
-    for id, _ in pairs(castes) do
-        update_caste_flow(frame, id)
+    for id in pairs(castes) do
+        update_caste_flow(frame, id, caste_tooltips)
     end
 end
 
 --- Updates the city info gui for all existing players.
 function Gui.update_city_info()
-    for _, player in pairs(game.players) do
+    local caste_tooltips = {}
+    for id in pairs(castes) do
+        caste_tooltips[id] = tooltip_fns[id]()
+    end
+
+    for _, player in pairs(game.connected_players) do
         local city_info_gui = player.gui.top[CITY_INFO_NAME]
 
         -- we check if the gui still exists, as other mods can delete them
         if city_info_gui ~= nil and city_info_gui.valid then
-            update_city_info(city_info_gui)
+            update_city_info(city_info_gui, caste_tooltips)
         else
-            create_city_info_for_player(player)
+            create_city_info_for_player(player, caste_tooltips)
         end
     end
 end
@@ -1403,6 +1634,9 @@ local function update_general_building_details(container, entry)
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
 
+    local building_details = get_building_details(entry)
+    local type_details = type_definitions[entry[EK.type]]
+
     local active = entry[EK.active]
     if active ~= nil then
         set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
@@ -1428,7 +1662,11 @@ local function update_general_building_details(container, entry)
     end
 
     local performance = entry[EK.performance]
-    if performance then
+    if building_details.speed then
+        -- convert to x / minute
+        local speed = round(building_details.speed * Time.minute * (entry[EK.performance] or 1))
+        set_kv_pair_value(building_data, "speed", {type_details.localised_speed_key, speed})
+    elseif performance then
         set_kv_pair_value(
             building_data,
             "general-performance",
@@ -1436,9 +1674,8 @@ local function update_general_building_details(container, entry)
         )
     end
 
-    local type_details = type_definitions[entry[EK.type]]
     if type_details.affected_by_clockwork then
-        local clockwork_value = get_caste_bonus(Type.clockwork)
+        local clockwork_value = caste_bonuses[Type.clockwork]
         set_kv_pair_value(
             building_data,
             "maintenance",
@@ -1484,18 +1721,10 @@ local function create_general_building_details(container, entry)
         add_kv_pair(building_data, "power", {"sosciencity.power-demand"}, {"sosciencity.current-power-demand", power})
     end
 
+    -- display for the main performance metric
     if building_details.speed then
-        -- convert to x / minute
-        local speed = get_reasonable_number(building_details.speed * Time.minute)
-        add_kv_pair(
-            building_data,
-            "speed",
-            type_details.localised_speed_name,
-            {type_details.localised_speed_key, speed}
-        )
-    end
-
-    if entry[EK.performance] then
+        add_kv_pair(building_data, "speed", type_details.localised_speed_name)
+    elseif entry[EK.performance] then
         add_kv_pair(building_data, "general-performance", {"sosciencity.general-performance"})
     end
 
@@ -2049,7 +2278,7 @@ local function update_classes_flow(entry, classes_flow)
 
     for index, class in pairs(classes) do
         local percentage = (current_tick - class[1]) / Entity.upbringing_time
-        local count = Tirislib_Tables.array_sum(class[2])
+        local count = Table.array_sum(class[2])
         classes_flow.add {
             name = tostring(index),
             type = "label",
@@ -2160,7 +2389,7 @@ local function create_upbringing_station(container, entry)
     update_upbringing_station(container, entry)
 end
 
-for _, caste_id in pairs(Tirislib_Tables.union_array(TypeGroup.breedable_castes, {Type.null})) do
+for _, caste_id in pairs(Table.union_array(TypeGroup.breedable_castes, {Type.null})) do
     set_checked_state_handler(
         format(unique_prefix_builder, "education-mode", caste_id),
         generic_radiobutton_handler,
@@ -2194,7 +2423,7 @@ local function update_waste_dump(container, entry)
         "capacity",
         {
             "sosciencity.value-with-unit",
-            {"sosciencity.fraction", Tirislib_Tables.sum(stored_garbage), capacity},
+            {"sosciencity.fraction", Table.sum(stored_garbage), capacity},
             {"sosciencity.items"}
         }
     )
@@ -2265,12 +2494,13 @@ local function analyse_dependants(entry, consumption_key)
     local consumption = 0
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
-        local multiplier = Castes.values[caste_id][consumption_key]
+        local caste_inhabitants = 0
         for _, house in Neighborhood.all_of_type(entry, caste_id) do
-            local inhabitants = house[EK.inhabitants]
-            inhabitant_count = inhabitant_count + inhabitants
-            consumption = consumption + inhabitants * multiplier
+            caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
         end
+
+        inhabitant_count = inhabitant_count + caste_inhabitants
+        consumption = consumption + caste_inhabitants * Castes.values[caste_id][consumption_key]
     end
 
     return inhabitant_count, consumption
@@ -2293,7 +2523,7 @@ local function update_market(container, entry)
         {
             "sosciencity.display-dependants",
             inhabitants,
-            {"sosciencity.show-calorific-demand", floor(consumption * Time.minute)}
+            {"sosciencity.show-calorific-demand", round_to_step(consumption * Time.minute, 0.1)}
         }
     )
 
@@ -2335,7 +2565,7 @@ local function update_water_distributer(container, entry)
 
     if water then
         amount = entry[EK.entity].get_fluid_count(water)
-        set_kv_pair_value(building_data, "content", Tirislib_Locales.display_fluid_stack(water, floor(amount)))
+        set_kv_pair_value(building_data, "content", display_fluid_stack(water, floor(amount)))
     else
         amount = 0
         set_kv_pair_value(building_data, "content", "-")
@@ -2348,7 +2578,7 @@ local function update_water_distributer(container, entry)
         {
             "sosciencity.display-dependants",
             inhabitants,
-            {"sosciencity.show-water-demand", floor(consumption * Time.minute)}
+            {"sosciencity.show-water-demand", round_to_step(consumption * Time.minute, 0.1)}
         }
     )
 
@@ -2374,6 +2604,80 @@ local function create_water_distributer(container, entry)
     add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_water_distributer(container, entry)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << dumpster >>
+
+local average_calories = Luaq_from(Food.values):select_key("calories"):call(Table.average)
+
+local function analyse_garbage_output(entry)
+    local inhabitant_count = 0
+    local garbage = 0
+    local calorific_demand = 0
+
+    for _, caste_id in pairs(TypeGroup.all_castes) do
+        local caste_inhabitants = 0
+        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+            caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
+        end
+        inhabitant_count = inhabitant_count + caste_inhabitants
+
+        local caste = Castes.values[caste_id]
+        garbage = garbage + caste_inhabitants * caste.garbage_coefficient
+        calorific_demand = calorific_demand + caste_inhabitants * caste.calorific_demand
+    end
+
+    return inhabitant_count, garbage, calorific_demand / average_calories
+end
+
+local function update_dumpster(container, entry)
+    update_general_building_details(container, entry)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local inhabitants, garbage, food_leftovers = analyse_garbage_output(entry)
+    set_kv_pair_value(
+        building_data,
+        "dependants",
+        {
+            "sosciencity.value-with-unit",
+            inhabitants,
+            {"sosciencity.inhabitants"}
+        }
+    )
+    set_kv_pair_value(
+        building_data,
+        "garbage",
+        {
+            "sosciencity.fraction",
+            display_item_stack("garbage", round_to_step(garbage * Time.minute, 0.1)),
+            {"sosciencity.minute"}
+        }
+    )
+    set_kv_pair_value(
+        building_data,
+        "food_leftovers",
+        {
+            "sosciencity.fraction",
+            display_item_stack("food-leftovers", round_to_step(food_leftovers * Time.minute, 0.1)),
+            {"sosciencity.minute"}
+        }
+    )
+end
+
+local function create_dumpster(container, entry)
+    local tabbed_pane = create_general_building_details(container, entry)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    add_kv_pair(building_data, "garbage", {"item-name.garbage"})
+    add_kv_pair(building_data, "food_leftovers")
+
+    update_dumpster(container, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2525,8 +2829,8 @@ local type_gui_specifications = {
         updater = update_general_building_details
     },
     [Type.dumpster] = {
-        creater = create_general_building_details,
-        updater = update_general_building_details
+        creater = create_dumpster,
+        updater = update_dumpster
     },
     [Type.egg_collector] = {
         creater = create_general_building_details,
@@ -2665,7 +2969,7 @@ end
 --- Closes and reopens all the Guis related to the given entry.
 --- @param entry Entry
 function Gui.rebuild_details_view_for_entry(entry)
-    local unit_number = entry[EK.entity].unit_number
+    local unit_number = entry[EK.unit_number]
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then

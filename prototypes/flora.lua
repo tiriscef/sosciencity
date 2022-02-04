@@ -31,7 +31,7 @@ local flora_items = {
 }
 
 for _, item in pairs(flora_items) do
-    local distinctions = Tirislib_Tables.get_subtbl(item, "distinctions")
+    local distinctions = Tirislib.Tables.get_subtbl(item, "distinctions")
 
     if item.wood then
         distinctions.fuel_value = "1MJ"
@@ -39,7 +39,7 @@ for _, item in pairs(flora_items) do
     end
 end
 
-Tirislib_Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
+Tirislib.Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
 
 ---------------------------------------------------------------------------------------------------
 -- << farming recipes >>
@@ -52,7 +52,7 @@ local humidity_multipliers = {
 
 local function add_general_growing_attributes(details, plant_details)
     if plant_details.required_module then
-        Tirislib_Locales.append(
+        Tirislib.Locales.append(
             details.localised_description,
             "\n\n",
             {
@@ -69,13 +69,13 @@ local function add_general_growing_attributes(details, plant_details)
 end
 
 local function create_annual_recipe(details)
-    local product = Tirislib_Item.get_by_name(details.product)
+    local product = Tirislib.Item.get_by_name(details.product)
     local plant_details = Biology.flora[product.name]
 
     local energy_required = 200 / plant_details.growth_coefficient
     local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             name = "farming-annual-" .. product.name,
@@ -92,8 +92,8 @@ local function create_annual_recipe(details)
                 product:get_localised_name(),
                 WeatherLocales.climate[plant_details.preferred_climate],
                 WeatherLocales.humidity[plant_details.preferred_humidity],
-                Tirislib_Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
-                Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
+                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-annual",
             subgroup = "sosciencity-flora",
@@ -112,16 +112,16 @@ local function create_annual_recipe(details)
 
     add_general_growing_attributes(details, plant_details)
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 local function create_perennial_recipe(details)
-    local product = Tirislib_Item.get_by_name(details.product)
+    local product = Tirislib.Item.get_by_name(details.product)
     local plant_details = Biology.flora[product.name]
 
     local water_required = 150 * humidity_multipliers[plant_details.preferred_humidity]
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             name = "farming-perennial-" .. product.name,
@@ -137,8 +137,8 @@ local function create_perennial_recipe(details)
                 product:get_localised_name(),
                 WeatherLocales.climate[plant_details.preferred_climate],
                 WeatherLocales.humidity[plant_details.preferred_humidity],
-                Tirislib_Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
-                Tirislib_Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
+                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-perennial",
             subgroup = "sosciencity-flora",
@@ -157,17 +157,17 @@ local function create_perennial_recipe(details)
 
     add_general_growing_attributes(details, plant_details)
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 local function create_annual_bloomhouse_recipe(details)
-    local product = Tirislib_Item.get_by_name(details.product)
+    local product = Tirislib.Item.get_by_name(details.product)
     local plant_details = Biology.flora[product.name]
 
     local energy_required = 200 / plant_details.growth_coefficient
     local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             name = "farming-annual-bloomhouse-" .. product.name,
@@ -206,13 +206,13 @@ local function create_annual_bloomhouse_recipe(details)
 
     add_general_growing_attributes(details, plant_details)
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 local function create_neogenesis_recipe(details)
-    local product = Tirislib_Item.get_by_name(details.product)
+    local product = Tirislib.Item.get_by_name(details.product)
 
-    Tirislib_RecipeGenerator.merge_details(
+    Tirislib.RecipeGenerator.merge_details(
         details,
         {
             product_amount = 1,
@@ -242,7 +242,7 @@ local function create_neogenesis_recipe(details)
         }
     )
 
-    return Tirislib_RecipeGenerator.create(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 -- apple
@@ -508,7 +508,7 @@ create_perennial_recipe {
 
 for _, item in pairs(flora_items) do
     if item.wood then
-        Tirislib_RecipeGenerator.create {
+        Tirislib.RecipeGenerator.create {
             product = "lumber",
             product_amount = 2,
             ingredients = {
@@ -521,7 +521,7 @@ for _, item in pairs(flora_items) do
             unlock = item.unlock
         }
 
-        Tirislib_RecipeGenerator.create {
+        Tirislib.RecipeGenerator.create {
             product = "sawdust",
             product_amount = 10,
             ingredients = {
@@ -535,7 +535,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << saplings >>
 
-Tirislib_Prototype.create {
+Tirislib.Prototype.create {
     name = "sosciencity-saplings",
     type = "module-category"
 }
@@ -572,12 +572,12 @@ local saplings = {
 }
 
 for _, sapling in pairs(saplings) do
-    local distinctions = Tirislib_Tables.get_subtbl(sapling, "distinctions")
+    local distinctions = Tirislib.Tables.get_subtbl(sapling, "distinctions")
 
     -- search the flora item that needs this sapling
     for flora_name, details in pairs(Biology.flora) do
         if details.required_module == sapling.name then
-            local flora_item = Tirislib_Item.get_by_name(flora_name)
+            local flora_item = Tirislib.Item.get_by_name(flora_name)
             distinctions.localised_description = {"sosciencity.sapling", flora_item:get_localised_name()}
 
             distinctions.icons = {
@@ -597,7 +597,7 @@ for _, sapling in pairs(saplings) do
     sapling.sprite_variations = {name = "sapling", count = 3}
 end
 
-Tirislib_Item.batch_create(
+Tirislib.Item.batch_create(
     saplings,
     {
         type = "module",
@@ -609,7 +609,7 @@ Tirislib_Item.batch_create(
     }
 )
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "apple-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -621,7 +621,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("apple")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "avocado-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -633,7 +633,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("avocado")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "cherry-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -645,7 +645,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("cherry")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "lemon-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -657,7 +657,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("lemon")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "orange-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -669,7 +669,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("orange")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "ortrot-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -681,7 +681,7 @@ Tirislib_RecipeGenerator.create {
     unlock = Unlocks.get_tech_name("ortrot")
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "zetorn-sapling",
     themes = {{"soil", 10, 25}},
     ingredients = {
@@ -698,7 +698,7 @@ Tirislib_RecipeGenerator.create {
 
 local sounds = require("__base__.prototypes.entity.sounds")
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     name = "necrofall-circle",
     type = "simple-entity",
     flags = {"placeable-neutral", "placeable-off-grid"},

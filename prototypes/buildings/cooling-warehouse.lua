@@ -1,6 +1,6 @@
 -- TODO: actual graphics
 
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "cooling-warehouse",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
@@ -12,13 +12,13 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "cooling-warehouse",
     themes = {{"building", 2}, {"machine", 2}},
     unlock = "food-processing"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "cooling-warehouse",
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",

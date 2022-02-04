@@ -31,6 +31,10 @@ Inhabitants = {}
     global.population: table
         [caste_id]: int (inhabitants count)
 
+    global.housing_capacity: table
+        [caste_id]: table
+            [bool (improvised)]: integer (capacity of all houses)
+
     global.caste_points: table
         [caste_id]: float (total caste bonus points)
 
@@ -96,36 +100,37 @@ local get_garbage_value = Inventories.get_garbage_value
 
 local get_housing_details = Housing.get
 local get_free_capacity = Housing.get_free_capacity
+local get_capacity = Housing.get_capacity
 
 local set_power_usage = Subentities.set_power_usage
 local has_power = Subentities.has_power
 
 local set_binary_techs = Technologies.set_binary_techs
 
-local Tirislib_Tables = Tirislib_Tables
-local Tirislib_Utils = Tirislib_Utils
+local Table = Tirislib.Tables
+local Utils = Tirislib.Utils
 
 local floor = math.floor
-local floor_to_step = Tirislib_Utils.floor_to_step
+local floor_to_step = Utils.floor_to_step
 local ceil = math.ceil
-local round = Tirislib_Utils.round
+local round = Utils.round
 local sqrt = math.sqrt
 local max = math.max
 local min = math.min
-local map_range = Tirislib_Utils.map_range
-local array_sum = Tirislib_Tables.array_sum
-local array_product = Tirislib_Tables.array_product
-local coin_flips = Tirislib_Utils.coin_flips
-local dice_rolls = Tirislib_Utils.dice_rolls
-local occurence_probability = Tirislib_Utils.occurence_probability
-local shuffle = Tirislib_Tables.shuffle
-local weighted_average = Tirislib_Utils.weighted_average
+local map_range = Utils.map_range
+local array_sum = Table.array_sum
+local array_product = Table.array_product
+local coin_flips = Utils.coin_flips
+local dice_rolls = Utils.dice_rolls
+local occurence_probability = Utils.occurence_probability
+local shuffle = Table.shuffle
+local weighted_average = Utils.weighted_average
 local random = math.random
 
-local table_copy = Tirislib_Tables.copy
-local table_multiply = Tirislib_Tables.multiply
+local table_copy = Table.copy
+local table_multiply = Table.multiply
 
-local Luaq_from = Tirislib_Luaq.from
+local Luaq_from = Tirislib.Luaq.from
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -161,22 +166,24 @@ function Inhabitants.init()
 
     global.fear = 0
     global.population = new_caste_table()
+    global.housing_capacity = {}
     global.caste_points = new_caste_table()
     global.caste_bonuses = new_caste_table()
     global.immigration = new_caste_table()
     global.free_houses = {
-        [true] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes),
-        [false] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+        [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
+        [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
     }
     global.next_free_houses = {
-        [true] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes),
-        [false] = Tirislib_Tables.new_array_of_arrays(#TypeGroup.all_castes)
+        [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
+        [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
     }
     global.homeless = {}
 
     set_locals()
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
+        global.housing_capacity[caste_id] = {[true] = 0, [false] = 0}
         homeless[caste_id] = InhabitantGroup.new(caste_id)
     end
 
@@ -205,7 +212,7 @@ end
 local new_disease_group = DiseaseGroup.new
 
 local function empty_disease_group(group)
-    Tirislib_Tables.empty(group)
+    Table.empty(group)
     group[HEALTHY] = 0
 end
 
@@ -228,7 +235,7 @@ end
 --- @param to_take integer
 --- @param total_count integer|nil
 function DiseaseGroup.take(group, to_take, total_count)
-    total_count = total_count or Tirislib_Tables.sum(group)
+    total_count = total_count or Table.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = new_disease_group(0)
@@ -310,7 +317,7 @@ function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_
 
     for i = 1, actual_count do
         local disease_id =
-            Tirislib_Tables.pick_random_subtable_weighted_by_key(
+            Table.pick_random_subtable_weighted_by_key(
             Diseases.by_category[disease_category],
             frequency_keys[disease_category],
             Diseases.frequency_sums[disease_category]
@@ -398,12 +405,12 @@ function AgeGroup.merge(lh, rh, keep_rh)
     end
 
     if not keep_rh then
-        Tirislib_Tables.empty(rh)
+        Table.empty(rh)
     end
 end
 
 function AgeGroup.take(group, to_take, total_count)
-    total_count = total_count or Tirislib_Tables.sum(group)
+    total_count = total_count or Table.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = {}
@@ -441,8 +448,8 @@ function AgeGroup.subtract(lh, rh)
 end
 
 function AgeGroup.shift(group, time)
-    local copy = Tirislib_Tables.copy(group)
-    Tirislib_Tables.empty(group)
+    local copy = Table.copy(group)
+    Table.empty(group)
 
     for age, count in pairs(copy) do
         group[age + time] = count
@@ -473,7 +480,7 @@ function GenderGroup.merge(lh, rh, keep_rh)
 end
 
 function GenderGroup.take(group, to_take, total_count)
-    total_count = total_count or Tirislib_Tables.sum(group)
+    total_count = total_count or Table.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = GenderGroup.new()
@@ -715,34 +722,23 @@ local is_researched = Inhabitants.caste_is_researched
 function Inhabitants.get_population_count()
     return array_sum(population)
 end
-local get_population_count = Inhabitants.get_population_count
-
-local function get_maintenance_speed(points, machine_count)
-    if machine_count > 0 then
-        local remaining_points = max(0, points - machine_count)
-        local speed = map_range(points + global.starting_clockwork_points, 0, machine_count, -80, 0)
-        return floor(speed), remaining_points
-    else
-        return 0, points
-    end
-end
-
-local function get_machine_speed_bonus(points, machine_count)
-    machine_count = max(1, machine_count)
-    return floor(5 * (points / machine_count) ^ 0.8)
-end
 
 --- Gets the current Clockwork caste bonus.
 local function get_clockwork_bonus()
     local machine_count = Register.get_machine_count()
+    local points = caste_points[Type.clockwork]
 
     if global.maintenance_enabled then
-        local points = caste_points[Type.clockwork]
-        local maintenance_speed, remaining_points = get_maintenance_speed(points, machine_count)
-        return maintenance_speed + get_machine_speed_bonus(remaining_points, machine_count)
-    else
-        return get_machine_speed_bonus(caste_points[Type.clockwork], machine_count)
+        local maintenance_cost = max(0, machine_count - global.starting_clockwork_points)
+
+        if maintenance_cost > points then
+            return floor(map_range(points, 0, maintenance_cost, -80, 0))
+        end
+
+        points = points - maintenance_cost
     end
+
+    return floor(5 * (points / max(1, machine_count)) ^ 0.8)
 end
 
 --- Gets the current Orchid caste bonus.
@@ -1003,7 +999,8 @@ function Inhabitants.update_workforce(manufactory, workforce)
         unemploy_workers(manufactory, current_workers - nominal_count)
     end
 
-    if nominal_count > manufactory[EK.worker_count] then
+    current_workers = manufactory[EK.worker_count]
+    if nominal_count > current_workers and current_workers / workforce.count < 0.2 then
         Communication.warning(WarningType.insufficient_workers, manufactory)
     end
 end
@@ -1061,7 +1058,7 @@ local function get_next_free_house(caste_id, improvised)
 
     if #next_houses_table == 0 then
         -- create the next free houses queue
-        Tirislib_Tables.merge(next_houses_table, free_houses[improvised][caste_id])
+        Table.merge(next_houses_table, free_houses[improvised][caste_id])
         shuffle(next_houses_table)
 
         -- check if there are any free houses at all
@@ -1143,7 +1140,7 @@ local function create_improvised_huts()
             local surface = entity.surface
             local range = get_building_details(market).range
 
-            local bounding_box = Tirislib_Utils.get_range_bounding_box(position, range)
+            local bounding_box = Utils.get_range_bounding_box(position, range)
 
             while group[EK.inhabitants] > 0 do
                 -- we look for positions of market-hall, because it is a 5x5 entity, so there will be a
@@ -1152,7 +1149,7 @@ local function create_improvised_huts()
                 if not pos then
                     break
                 end
-                Tirislib_Utils.add_random_offset(pos, 1)
+                Utils.add_random_offset(pos, 1)
 
                 local hut_to_create = HUTS[random(#HUTS)]
                 local new_hut =
@@ -1246,7 +1243,7 @@ local function build_social_environment(entry)
         end
     end
 
-    entry[EK.social_environment] = Tirislib_Tables.get_keyset(in_reach)
+    entry[EK.social_environment] = Table.get_keyset(in_reach)
 end
 
 local function get_social_value(environment)
@@ -1396,16 +1393,16 @@ function Inhabitants.get_birth_defect_probability()
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.employed] * delta_ticks / 200000 * castes[entry[EK.type]].accident_disease_resilience
+    return entry[EK.employed] * delta_ticks / 400000 * castes[entry[EK.type]].accident_disease_resilience
 end
 
 function Inhabitants.get_health_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + 1) *
+    return entry[EK.inhabitants] * delta_ticks / 200000 / (entry[EK.health] + 1) *
         castes[entry[EK.type]].health_disease_resilience
 end
 
 function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.sanity] + 1) *
+    return entry[EK.inhabitants] * delta_ticks / 200000 / (entry[EK.sanity] + 1) *
         castes[entry[EK.type]].sanity_disease_resilience
 end
 
@@ -1760,7 +1757,7 @@ end
 
 function Inhabitants.migration_wave(immigration_port_details)
     local capacity = immigration_port_details.capacity
-    local order = Tirislib_Tables.sequence(1, #immigration)
+    local order = Table.sequence(1, #immigration)
     shuffle(order)
 
     for i = 1, #immigration do
@@ -1857,21 +1854,21 @@ function Inhabitants.create_house(entry)
 
     entry[EK.last_age_shift] = game.tick
 
-    entry[EK.happiness_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessSummand), 0.)
-    entry[EK.happiness_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HappinessFactor), 1.)
+    entry[EK.happiness_summands] = Table.new_array(Table.count(HappinessSummand), 0.)
+    entry[EK.happiness_factors] = Table.new_array(Table.count(HappinessFactor), 1.)
 
-    entry[EK.health_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(HealthSummand), 0.)
-    entry[EK.health_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(HealthFactor), 1.)
+    entry[EK.health_summands] = Table.new_array(Table.count(HealthSummand), 0.)
+    entry[EK.health_factors] = Table.new_array(Table.count(HealthFactor), 1.)
 
-    entry[EK.sanity_summands] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanitySummand), 0.)
-    entry[EK.sanity_factors] = Tirislib_Tables.new_array(Tirislib_Tables.count(SanityFactor), 1.)
+    entry[EK.sanity_summands] = Table.new_array(Table.count(SanitySummand), 0.)
+    entry[EK.sanity_factors] = Table.new_array(Table.count(SanityFactor), 1.)
 
     entry[EK.emigration_trend] = 0
     entry[EK.garbage_progress] = 0
 
     local progresses = {}
     for disease_category in pairs(disease_progress_updaters) do
-        progresses[disease_category] = 0.
+        progresses[disease_category] = 0.5 * random()
     end
     entry[EK.disease_progress] = progresses
 
@@ -1887,12 +1884,16 @@ function Inhabitants.create_house(entry)
 
     Inhabitants.social_environment_change()
     build_social_environment(entry)
+
+    local housing_details = get_housing_details(entry)
+    global.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
+        global.housing_capacity[entry[EK.type]][housing_details.is_improvised] + get_capacity(entry)
 end
 
 function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
-    destination[EK.disease_progress] = Tirislib_Tables.copy(source[EK.disease_progress])
+    destination[EK.disease_progress] = Table.copy(source[EK.disease_progress])
     destination[EK.recovery_progress] = source[EK.recovery_progress]
 end
 
@@ -1906,7 +1907,7 @@ function Inhabitants.remove_house(entry, cause)
     local caste_id = entry[EK.type]
     local improvised = get_housing_details(entry).is_improvised
     free_houses[improvised][caste_id][unit_number] = nil
-    Tirislib_Tables.remove_all(next_free_houses[improvised][caste_id], unit_number)
+    Table.remove_all(next_free_houses[improvised][caste_id], unit_number)
 
     if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
@@ -1915,6 +1916,10 @@ function Inhabitants.remove_house(entry, cause)
     end
 
     Inhabitants.social_environment_change()
+
+    local housing_details = get_housing_details(entry)
+    global.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
+        global.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
 end
 
 -- Set event handlers for the housing entities.

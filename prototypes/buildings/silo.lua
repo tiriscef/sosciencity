@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "silo",
     icon = "__sosciencity-graphics__/graphics/icon/silo.png",
@@ -10,14 +10,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "silo",
     themes = {{"plating", 20}, {"framework", 1}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "silo",
     icon = "__sosciencity-graphics__/graphics/icon/silo.png",

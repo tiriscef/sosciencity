@@ -6,28 +6,28 @@ local Time = require("constants.time")
 -- Compostable items
 
 for item_name, humus in pairs(ItemConstants.compost_values) do
-    local item, found = Tirislib_Item.get_by_name(item_name)
+    local item, found = Tirislib.Item.get_by_name(item_name)
 
     if found then
         -- XXX: Make sure the description isn't implicit. Not the most beautiful code..
         item.localised_description = item:get_localised_description()
-        Tirislib_Locales.append(item.localised_description, "\n", {"sosciencity-util.compostables", humus})
+        Tirislib.Locales.append(item.localised_description, "\n\n", {"sosciencity-util.compostables", humus})
     end
 end
 
 -- Custom Building Behaviour
 
 for building_name, details in pairs(Buildings.values) do
-    local item, found = Tirislib_Item.get_by_name(building_name)
-    local entity = Tirislib_Entity.get_by_name(item.place_result)
+    local item, found = Tirislib.Item.get_by_name(building_name)
+    local entity = Tirislib.Entity.get_by_name(item.place_result)
 
     if found then
         if details.power_usage then
             item.localised_description = item:get_localised_description()
 
-            Tirislib_Locales.append(
+            Tirislib.Locales.append(
                 item.localised_description,
-                "\n",
+                "\n\n",
                 {"sosciencity-util.power-usage", details.power_usage * Time.second / 1000}
             )
 
@@ -38,15 +38,15 @@ for building_name, details in pairs(Buildings.values) do
             item.localised_description = item:get_localised_description()
 
             local castes =
-                Tirislib_Luaq.from(details.workforce.castes):select(
+                Tirislib.Luaq.from(details.workforce.castes):select(
                 function(_, caste_id)
                     return Castes.values[caste_id].localised_name_short
                 end
-            ):call(Tirislib_Locales.create_enumeration, nil, {"sosciencity.or"})
+            ):call(Tirislib.Locales.create_enumeration, nil, {"sosciencity.or"})
 
-            Tirislib_Locales.append(
+            Tirislib.Locales.append(
                 item.localised_description,
-                "\n",
+                "\n\n",
                 {
                     "sosciencity-util.workforce",
                     details.workforce.count,

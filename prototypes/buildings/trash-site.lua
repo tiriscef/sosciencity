@@ -1,4 +1,4 @@
-Tirislib_Item.create {
+Tirislib.Item.create {
     type = "item",
     name = "trash-site",
     icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",
@@ -10,14 +10,14 @@ Tirislib_Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib_RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "trash-site",
     themes = {{"building", 2}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "infrastructure-1"
 }
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "container",
     name = "trash-site",
     icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",
@@ -58,7 +58,7 @@ Tirislib_Entity.create {
     circuit_wire_max_distance = 13
 }:set_size(4, 4):copy_localisation_from_item()
 
-Tirislib_Entity.create {
+Tirislib.Entity.create {
     type = "corpse",
     name = "trash-site-remnants",
     icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",

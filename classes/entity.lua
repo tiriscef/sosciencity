@@ -21,13 +21,18 @@ Entity = {}
 ]]
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
 
+local Inhabitants = Inhabitants
+local Neighborhood = Neighborhood
+local Utils = Tirislib.Utils
+local Table = Tirislib.Tables
+
 local global
 local caste_bonuses
 local flora = Biology.flora
 local water_values = DrinkingWater.values
 
 local floor = math.floor
-local map_range = Tirislib_Utils.map_range
+local map_range = Utils.map_range
 local min = math.min
 local max = math.max
 local random = math.random
@@ -40,11 +45,6 @@ local set_beacon_effects = Subentities.set_beacon_effects
 local evaluate_workforce = Inhabitants.evaluate_workforce
 
 local get_chest_inventory = Inventories.get_chest_inventory
-
-local Inhabitants = Inhabitants
-local Neighborhood = Neighborhood
-local Tirislib_Utils = Tirislib_Utils
-local Tirislib_Tables = Tirislib_Tables
 
 local log_item = Communication.log_item
 
@@ -171,7 +171,7 @@ end
 Entity.analyze_composter_inventory = analyze_composter_inventory
 
 local function compostify_items(inventory, count, compostable_items, entry, mold_amount)
-    Tirislib_Tables.shuffle(compostable_items)
+    Table.shuffle(compostable_items)
 
     local to_remove = count
     for i = 1, #compostable_items do
@@ -201,7 +201,7 @@ local function spawn_necrofall(entry, count)
         if not pos then
             break
         end
-        Tirislib_Utils.add_random_float_offset(pos, 1)
+        Utils.add_random_float_offset(pos, 1)
 
         surface.create_entity {
             name = "necrofall-circle",
@@ -440,8 +440,10 @@ Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
 local function update_plant_care_station(entry, delta_ticks)
     local building_details = get_building_details(entry)
 
-    entry[EK.workhours] =
-        entry[EK.workhours] + Inhabitants.evaluate_workforce(entry) * delta_ticks * building_details.speed
+    local performance = Inhabitants.evaluate_workforce(entry)
+    entry[EK.performance] = performance
+
+    entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
 
     local humus_stored = entry[EK.humus_stored]
     local free_humus_capacity = building_details.humus_capacity - humus_stored
@@ -566,7 +568,7 @@ local function get_water_tiles(entry, building_details)
     if not cached_value or global.last_tile_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
         local position = entity.position
-        local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
+        local area = Utils.get_range_bounding_box(position, building_details.range)
         local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water-tile"}
 
         entry[EK.water_tiles] = water_tiles
@@ -614,7 +616,7 @@ local function get_tree_count(entry, building_details)
     if not cached_value or global.last_entity_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
         local position = entity.position
-        local area = Tirislib_Utils.get_range_bounding_box(position, building_details.range)
+        local area = Utils.get_range_bounding_box(position, building_details.range)
         local trees = entity.surface.count_entities_filtered {area = area, type = "tree"}
 
         entry[EK.tree_count] = trees
@@ -695,7 +697,7 @@ Register.set_entity_creation_handler(Type.hospital, create_hospital)
 
 local function copy_hospital(source, destination)
     destination[EK.workhours] = source[EK.workhours]
-    destination[EK.treated] = Tirislib_Tables.copy(source[EK.treated])
+    destination[EK.treated] = Table.copy(source[EK.treated])
 end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
 
@@ -728,12 +730,12 @@ Entity.get_upbringing_expectations = get_upbringing_expectations
 
 local function finish_class(entry, class, mode)
     local probabilities = get_upbringing_expectations(mode)
-    local caste = Tirislib_Utils.weighted_random(probabilities, 1)
+    local caste = Utils.weighted_random(probabilities, 1)
     local genders = class[2]
-    local count = Tirislib_Tables.array_sum(genders)
+    local count = Table.array_sum(genders)
 
     local diseases = DiseaseGroup.new(count)
-    local sick_count = Tirislib_Utils.coin_flips(Inhabitants.get_birth_defect_probability(), count)
+    local sick_count = Utils.coin_flips(Inhabitants.get_birth_defect_probability(), count)
     if sick_count > 0 then
         DiseaseGroup.make_sick_randomly(diseases, DiseaseCategory.birth_defect, sick_count)
     end
@@ -783,7 +785,7 @@ local function update_upbringing_station(entry)
             classes[#classes] = nil
         else
             most_recent_class = max(most_recent_class, tick_of_creation)
-            students = students + Tirislib_Tables.array_sum(class[2])
+            students = students + Table.array_sum(class[2])
         end
     end
 
@@ -810,7 +812,7 @@ Register.set_entity_creation_handler(Type.upbringing_station, create_upbringing_
 
 local function copy_upbringing_station(source, destination)
     destination[EK.education_mode] = source[EK.education_mode]
-    destination[EK.classes] = Tirislib_Tables.copy(source[EK.classes])
+    destination[EK.classes] = Table.copy(source[EK.classes])
     destination[EK.graduates] = source[EK.graduates]
 end
 Register.set_entity_copy_handler(Type.upbringing_station, copy_upbringing_station)
@@ -870,8 +872,8 @@ local function output_garbage(inventory, stored_garbage, to_output)
 end
 
 local function garbagify(inventory, to_garbagify, items, stored_garbage)
-    local item_names = Tirislib_Tables.get_keyset(items)
-    Tirislib_Tables.shuffle(item_names)
+    local item_names = Table.get_keyset(items)
+    Table.shuffle(item_names)
 
     for _, item_name in pairs(item_names) do
         local garbagified = inventory.remove {name = item_name, count = to_garbagify}
@@ -925,7 +927,7 @@ local function update_waste_dump(entry, delta_ticks)
         store_progress = 0
     end
 
-    garbage_count = Tirislib_Tables.sum(stored_garbage)
+    garbage_count = Table.sum(stored_garbage)
 
     garbagify_progress =
         garbagify_progress + delta_ticks * (garbage_count / 6000) ^ 0.2 +
@@ -940,7 +942,7 @@ local function update_waste_dump(entry, delta_ticks)
 
     --- Garbagified items are stored and can exceed the capacity. This is not ideal but better than stopping the garbagification progress or spilling items.
     --- We try to output items if the capacity is exceeded.
-    local over_capacity = Tirislib_Tables.sum(stored_garbage) - capacity
+    local over_capacity = Table.sum(stored_garbage) - capacity
     if over_capacity > 0 then
         output_garbage(inventory, stored_garbage, over_capacity)
     end
@@ -960,7 +962,7 @@ end
 Register.set_entity_creation_handler(Type.waste_dump, create_waste_dump)
 
 local function copy_waste_dump(source, destination)
-    destination[EK.stored_garbage] = Tirislib_Tables.copy(source[EK.stored_garbage])
+    destination[EK.stored_garbage] = Table.copy(source[EK.stored_garbage])
     destination[EK.waste_dump_mode] = source[EK.waste_dump_mode]
     destination[EK.press_mode] = source[EK.press_mode]
     destination[EK.store_progress] = source[EK.store_progress]

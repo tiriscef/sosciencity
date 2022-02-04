@@ -1,4 +1,4 @@
-Tirislib_Prototype.batch_create {
+Tirislib.Prototype.batch_create {
     {
         type = "item-group",
         name = "sosciencity-infrastructure",

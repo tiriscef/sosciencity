@@ -10,6 +10,7 @@ Color.grey = {r = 0.8, g = 0.8, b = 0.8}
 Color.yellowish_green = {r = 0.7, g = 0.9, b = 0.2}
 Color.light_teal = {r = 0, g = 0.8, b = 1}
 Color.orange = {r = 1, g = 0.45, b = 0}
+Color.tooltip_orange = {r = 1, g = 0.9, b = 0.75}
 Color.purple = {r = 0.5, g = 0, b = 0.5}
 Color.white = {r = 1, g = 1, b = 1}
 

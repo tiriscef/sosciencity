@@ -44,7 +44,7 @@ local unsubscribe_neighborhood
 
 local update_workforce
 
-local get_subtbl = Tirislib_Tables.get_subtbl
+local get_subtbl = Tirislib.Tables.get_subtbl
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -141,7 +141,7 @@ local on_creation_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_creation_handler(_type, fn)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     on_creation_lookup[_type] = fn
 end
 
@@ -160,7 +160,7 @@ local on_copy_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_copy_handler(_type, fn)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     on_copy_lookup[_type] = fn
 end
 
@@ -178,7 +178,7 @@ local update_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_updater(_type, fn)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     update_lookup[_type] = fn
 end
 
@@ -198,7 +198,7 @@ local on_destroyed_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_destruction_handler(_type, fn)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
     on_destroyed_lookup[_type] = fn
 end
 
@@ -219,7 +219,7 @@ local on_settings_paste_lookup = {}
 --- @param destination_type Type
 --- @param fn function
 function Register.set_settings_paste_handler(source_type, destination_type, fn)
-    Tirislib_Utils.desync_protection()
+    Tirislib.Utils.desync_protection()
 
     local tbl = get_subtbl(on_settings_paste_lookup, destination_type)
     tbl[source_type] = fn
