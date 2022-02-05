@@ -292,9 +292,9 @@ end
 --- @return RecipePrototype prototype
 --- @return boolean found
 function Tirislib.Recipe.get_by_name(name)
-    local ret = Tirislib.Prototype.get("recipe", name, Tirislib.Recipe)
+    local ret, found = Tirislib.Prototype.get("recipe", name, Tirislib.Recipe)
     ret:enforce_invariants()
-    return ret
+    return ret, found
 end
 
 --- Creates the RecipePrototype metatable for the given prototype.
