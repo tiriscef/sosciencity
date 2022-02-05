@@ -729,13 +729,13 @@ local function get_clockwork_bonus()
     local points = caste_points[Type.clockwork]
 
     if global.maintenance_enabled then
-        local maintenance_cost = max(0, machine_count - global.starting_clockwork_points)
+        local maintenance_points = points + global.starting_clockwork_points
 
-        if maintenance_cost > points then
-            return floor(map_range(points, 0, maintenance_cost, -80, 0))
+        if machine_count > maintenance_points then
+            return floor(map_range(maintenance_points, 0, machine_count, -80, 0))
         end
 
-        points = points - maintenance_cost
+        points = points - max(0, machine_count - global.starting_clockwork_points)
     end
 
     return floor(5 * (points / max(1, machine_count)) ^ 0.8)
