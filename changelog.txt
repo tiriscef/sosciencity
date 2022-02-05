@@ -2,7 +2,7 @@
 Version: 0.0.6
 Date: 2022.02.05
   Balancing:
-    - It turned out I didn't like the intended way for the Clockwork Caste to work. So I reverted the last versions change.
+    - It turned out I didn't like the intended way for the Clockwork Caste to work. So I reverted the last version's change.
 
   Changes:
     - The standard Gathering is now unlocked from the start of the game.
