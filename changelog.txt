@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.6
+Date: 2022.02.05
+  Balancing:
+    - It turned out I didn't like the intended way for the Clockwork Caste to work. So I reverted the last versions change.
+
+  Changes:
+    - The standard Gathering is now unlocked from the start of the game.
+
+  Bugfixes:
+    - Fixed a bug in my datastage-library that resulted in missing furniture recipes and a broken gathering recipe.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.5
 Date: 2022.02.04
   Balancing:
