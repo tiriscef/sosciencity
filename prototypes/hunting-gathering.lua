@@ -8,8 +8,7 @@ local function create_hunting_gathering_recipe(details)
             allow_decomposition = false,
             always_show_made_in = true,
             main_product = "",
-            subgroup = "sosciencity-gathering",
-            unlock = "clockwork-caste"
+            subgroup = "sosciencity-gathering"
         }
     )
 
@@ -78,7 +77,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "bonesnake", amount = 1, probability = 0.1},
         {type = "item", name = "caddle", amount = 1, probability = 0.5},
         {type = "item", name = "biter-meat", amount_min = 0, amount_max = 10}
-    }
+    },
+    unlock = "clockwork-caste"
 }:add_catalyst("trap", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
@@ -106,7 +106,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "smol-bonesnake", amount = 2, probability = 0.1},
         {type = "item", name = "cabar", amount = 5, probability = 0.5},
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
-    }
+    },
+    unlock = "clockwork-caste"
 }:add_catalyst("trap-cage", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
@@ -131,7 +132,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "dodkopus", amount = 1, probability = 0.1},
         {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
-    }
+    },
+    unlock = "clockwork-caste"
 }:add_catalyst("fishing-net", "item", 1, 0.95, 1, 0.9):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
@@ -156,5 +158,6 @@ create_hunting_gathering_recipe {
         {type = "item", name = "warnal", amount = 1, probability = 0.01},
         {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
-    }
+    },
+    unlock = "clockwork-caste"
 }:add_catalyst("harpoon", "item", 1, 0.85, 1, 0.7):add_unlock("clockwork-caste")
