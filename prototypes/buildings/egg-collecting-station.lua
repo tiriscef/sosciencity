@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "egg-collecting-station",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/egg-collecting-station.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "daa",
@@ -32,27 +30,17 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 6/7
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/huwan-egg.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1
-            }
-        }
+    picture = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/egg-collecting-station/egg-collecting-station",
+        shift = {2.0 * 5 / 6, -0.5 * 5 / 6},
+        width = 12,
+        height = 9,
+        scale = 5/6,
+        shadowmap = true,
+        glow = true,
+        lightmap = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
-
-Sosciencity_Config.add_eei("egg-collecting-station")
