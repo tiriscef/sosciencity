@@ -267,6 +267,20 @@ local housing_prototype_details = {
     },
     ["spring-house"] = {
         picture = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/summer-house/summer-house",
+            width = 13,
+            height = 9,
+            shift = {1.5, 0.6},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        },
+        width = 8,
+        height = 6,
+        tech_level = 1
+    },
+    ["summer-house"] = {
+        picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/spring-house/spring-house",
             width = 16,
             height = 14,
@@ -278,20 +292,6 @@ local housing_prototype_details = {
         },
         width = 8,
         height = 5,
-        tech_level = 1
-    },
-    ["summer-house"] = {
-        picture = Tirislib.Entity.create_standard_picture {
-            path = "__sosciencity-graphics__/graphics/entity/summer-house/summer-house",
-            width = 13,
-            height = 9,
-            shift = {1.5, 0.6},
-            shadowmap = true,
-            lightmap = true,
-            glow = true
-        },
-        width = 8,
-        height = 6,
         tech_level = 3
     }
 }
