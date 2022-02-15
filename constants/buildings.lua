@@ -191,8 +191,7 @@ Building.values = {
     },
     ["water-tower"] = {
         type = Type.water_distributer,
-        range = 50,
-        power_usage = 50
+        range = 50
     },
     ["zeppelin-port"] = {
         type = Type.immigration_port,
