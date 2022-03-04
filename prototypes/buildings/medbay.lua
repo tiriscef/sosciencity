@@ -14,8 +14,12 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "medbay",
-    themes = {{"building", 2}, {"machine", 2}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    themes = {{"building", 2}},
+    ingredients = {
+        {type = "item", name = "cloth", amount = 10},
+        {type = "item", name = "bed", amount = 10},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 1,
     unlock = "medbay"
 }
