@@ -26,6 +26,7 @@ local inhabitant_subscriptions = {
     [Type.nightclub] = ConnectionType.to_neighbor,
     [Type.egg_collector] = ConnectionType.to_neighbor,
     [Type.hospital] = ConnectionType.bidirectional,
+    [Type.improvised_hospital] = ConnectionType.bidirectional,
     [Type.animal_farm] = ConnectionType.from_neighbor
 }
 
@@ -208,6 +209,14 @@ Types.definitions = {
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
         subscriptions = hospital_subscriptions,
+        is_civil = true
+    },
+    [Type.improvised_hospital] = {
+        localised_name = {"sosciencity.hospital"},
+        localised_description = {"sosciencity.explain-hospital"},
+        localised_speed_name = {"sosciencity.rate"},
+        localised_speed_key = "sosciencity.show-hospital-rate",
+        signature_color = Color.darkish_red,
         is_civil = true
     },
     [Type.psych_ward] = {
