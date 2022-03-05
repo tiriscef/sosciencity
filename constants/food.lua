@@ -295,8 +295,8 @@ Food.values = {
         group = "tomato"
     },
     ["eggplant"] = {
-        fat = 0.33,
-        carbohydrates = 4,
+        fat = 0.4,
+        carbohydrates = 4.6,
         proteins = 1.5,
         healthiness = 6,
         food_category = "vegetable",
@@ -331,9 +331,9 @@ Food.values = {
         group = "avocado"
     },
     ["chickpea"] = {
-        fat = 6,
-        carbohydrates = 44,
-        proteins = 19,
+        fat = 4,
+        carbohydrates = 29.4,
+        proteins = 12.6,
         healthiness = 7,
         food_category = "legume",
         taste_category = Taste.umami,
@@ -387,7 +387,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 6,
         luxury = 5,
-        portion_size = 50,
+        portion_size = 10,
         group = "processed-razha"
     },
     ["yuba"] = {
