@@ -102,12 +102,15 @@ local housing_prototype_details = {
         main_entity = "sheltered-house"
     },
     ["small-prefabricated-house"] = {
-        picture = Tirislib.Entity.create_standard_picture_old(
-            "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
-            13,
-            12,
-            {3.0, -1.5}
-        ),
+        picture = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
+            width = 21,
+            height = 17,
+            shift = {3.5, -2.0},
+            scale = 0.625,
+            shadowmap = true,
+            glow = true
+        },
         width = 5,
         height = 5,
         tech_level = 2
@@ -293,6 +296,19 @@ local housing_prototype_details = {
         width = 8,
         height = 5,
         tech_level = 3
+    },
+    ["barrack"] = {
+        picture = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/barrack/barrack",
+            width = 9,
+            height = 10,
+            shift = {1.5, 0.0},
+            shadowmap = true,
+            glow = true
+        },
+        width = 4,
+        height = 8,
+        tech_level = 2
     }
 }
 
