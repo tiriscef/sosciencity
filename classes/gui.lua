@@ -2847,6 +2847,10 @@ local type_gui_specifications = {
         creater = create_fishery_details,
         updater = update_fishery_details
     },
+    [Type.improvised_hospital] = {
+        creater = create_hospital_details,
+        updater = update_hospital_details
+    },
     [Type.pharmacy] = {
         creater = create_general_building_details,
         updater = update_general_building_details
