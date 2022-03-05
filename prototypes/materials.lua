@@ -111,6 +111,10 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-gathering"}
     },
     {
+        name = "simple-fishtrap",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    },
+    {
         name = "fishing-net",
         distinctions = {subgroup = "sosciencity-gathering"}
     },
@@ -595,6 +599,16 @@ Tirislib.RecipeGenerator.create {
 }]]
 
 Tirislib.RecipeGenerator.create {
+    product = "simple-fishtrap",
+    ingredients = {
+        {name = "gingil-hemp", amount = 2}
+    },
+    energy_required = 1.5,
+    allow_productivity = true,
+    unlock = "clockwork-caste"
+}
+
+Tirislib.RecipeGenerator.create {
     product = "fishing-net",
     ingredients = {
         {name = "rope", amount = 5},
@@ -603,7 +617,7 @@ Tirislib.RecipeGenerator.create {
     },
     energy_required = 1,
     allow_productivity = true,
-    unlock = "clockwork-caste"
+    unlock = "advanced-fishing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -615,7 +629,7 @@ Tirislib.RecipeGenerator.create {
     themes = {{"handle", 1}, {"mechanism", 2}},
     energy_required = 1,
     allow_productivity = true,
-    unlock = "clockwork-caste"
+    unlock = "advanced-fishing"
 }
 
 Tirislib.RecipeGenerator.create {
