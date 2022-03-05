@@ -6,8 +6,8 @@ local Speakers = {}
 
 Speakers["tiriscef."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 72,
-    ["roadkill"] = 6,
+    ["b"] = 80,
+    ["roadkill"] = 7,
     ["report-begin"] = 2,
     ["report-end"] = 2,
     ["census-immigration"] = 2,
@@ -61,10 +61,16 @@ Speakers["tiriscef."] = {
         ["b60"] = standard_delay,
         ["b63"] = standard_delay,
         ["b64"] = standard_delay,
+        ["b66"] = standard_delay,
+        ["b66f"] = standard_delay,
         ["b67"] = standard_delay,
         ["b67f"] = standard_delay,
         ["b67ff"] = standard_delay,
-        ["b70"] = 4 * Time.second
+        ["b70"] = 4 * Time.second,
+        ["b73"] = standard_delay,
+        ["b74"] = standard_delay,
+        ["b78"] = standard_delay,
+        ["b78f"] = standard_delay
     },
     index = 0
 }
