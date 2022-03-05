@@ -146,13 +146,12 @@ Diseases.values = {
         escalation_probability = 0.1
     },
     [2002] = {
-        name = "riverhorse-flu",
+        name = "riverhorse-like-flu",
         cure_items = {
             ["antibiotics"] = 1
         },
         curing_workload = 1,
-        lethality = 0.02,
-        contagiousness = 0.15,
+        lethality = 0.01,
         natural_recovery = 5 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",
@@ -232,6 +231,20 @@ Diseases.values = {
         curing_workload = 10,
         --curing_facility = Type.gene_clinic,
         categories = {[DiseaseCategory.birth_defect] = 50}
+    },
+    -- 5000+: primarily zoonoses
+    [5001] = {
+        name = "real-riverhorse-flu",
+        cure_items = {
+            --["antibiotics"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.03,
+        contagiousness = 0.15,
+        natural_recovery = 5 * Time.nauvis_day,
+        categories = {[DiseaseCategory.zoonosis] = 100},
+        escalation = "lung-infection",
+        escalation_probability = 0.1
     },
 }
 
