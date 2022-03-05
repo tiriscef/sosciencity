@@ -67,9 +67,9 @@ Food.values = {
         group = "insect-meat"
     },
     ["fish-meat"] = {
-        fat = 17,
-        carbohydrates = 1,
-        proteins = 21,
+        fat = 13.6,
+        carbohydrates = 0.6,
+        proteins = 18.4,
         healthiness = 3,
         food_category = "meat",
         taste_category = Taste.salty,
