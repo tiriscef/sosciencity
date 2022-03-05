@@ -60,7 +60,7 @@ end
 create_hunting_gathering_recipe {
     name = "sosciencity-hunting-with-trap",
     category = "sosciencity-hunting",
-    energy_required = 5,
+    energy_required = 20,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
@@ -76,15 +76,14 @@ create_hunting_gathering_recipe {
         {type = "item", name = "river-horse", amount = 1, probability = 0.1},
         {type = "item", name = "bonesnake", amount = 1, probability = 0.1},
         {type = "item", name = "caddle", amount = 1, probability = 0.5},
-        {type = "item", name = "biter-meat", amount_min = 0, amount_max = 10}
-    },
-    unlock = "clockwork-caste"
+        {type = "item", name = "biter-meat", amount_min = 0, amount_max = 20}
+    }
 }:add_catalyst("trap", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
     name = "sosciencity-hunting-with-trap-cage",
     category = "sosciencity-hunting",
-    energy_required = 5,
+    energy_required = 20,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
@@ -97,23 +96,43 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "primal-quackling", amount = 10, probability = 0.1},
-        {type = "item", name = "primal-quacker", amount = 5, probability = 0.5},
-        {type = "item", name = "primal-quackpa", amount = 2, probability = 0.2},
+        {type = "item", name = "primal-quackling", amount = 2, probability = 0.5},
+        {type = "item", name = "primal-quacker", amount = 2, probability = 0.5},
+        {type = "item", name = "primal-quackpa", amount = 1, probability = 0.2},
         {type = "item", name = "nan-swanling", amount = 5, probability = 0.1},
-        {type = "item", name = "nan-swan", amount = 3, probability = 0.3},
-        {type = "item", name = "elder-nan", amount = 2, probability = 0.15},
-        {type = "item", name = "smol-bonesnake", amount = 2, probability = 0.1},
-        {type = "item", name = "cabar", amount = 5, probability = 0.5},
+        {type = "item", name = "nan-swan", amount = 1, probability = 0.4},
+        {type = "item", name = "elder-nan", amount = 1, probability = 0.15},
+        {type = "item", name = "smol-bonesnake", amount = 4, probability = 0.1},
+        {type = "item", name = "cabar", amount = 4, probability = 0.5},
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
-    },
-    unlock = "clockwork-caste"
+    }
 }:add_catalyst("trap-cage", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
+
+create_hunting_gathering_recipe {
+    name = "sosciencity-fishing-with-simple-fishtrap",
+    category = "sosciencity-fishery",
+    energy_required = 13.5,
+    icons = {
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
+        },
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/simple-fishtrap.png",
+            scale = 0.3,
+            shift = {8, 8}
+        }
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "boofish", amount_min = 1, amount_max = 2},
+        {type = "item", name = "fupper", amount_min = 0, amount_max = 1}
+    }
+}:add_catalyst("simple-fishtrap", "item", 1, 0.9, 1, 0.8):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
     name = "sosciencity-fishing-with-fishing-net",
     category = "sosciencity-fishery",
-    energy_required = 5,
+    energy_required = 30,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
@@ -131,15 +150,14 @@ create_hunting_gathering_recipe {
         {type = "item", name = "fupper", amount = 10, probability = 0.8},
         {type = "item", name = "dodkopus", amount = 1, probability = 0.1},
         {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
-        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
-    },
-    unlock = "clockwork-caste"
-}:add_catalyst("fishing-net", "item", 1, 0.95, 1, 0.9):add_unlock("clockwork-caste")
+        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.08}
+    }
+}:add_catalyst("fishing-net", "item", 1, 0.95, 1, 0.9):add_unlock("advanced-fishing")
 
 create_hunting_gathering_recipe {
     name = "sosciencity-fishing-with-harpoon",
     category = "sosciencity-fishery",
-    energy_required = 5,
+    energy_required = 40,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
@@ -152,12 +170,10 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "young-petunial", amount = 1, probability = 0.01},
-        {type = "item", name = "petunial", amount = 1, probability = 0.01},
-        {type = "item", name = "hellfin", amount = 1, probability = 0.05},
-        {type = "item", name = "warnal", amount = 1, probability = 0.01},
-        {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
-        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.1}
-    },
-    unlock = "clockwork-caste"
-}:add_catalyst("harpoon", "item", 1, 0.85, 1, 0.7):add_unlock("clockwork-caste")
+        {type = "item", name = "petunial", amount = 1, probability = 0.07},
+        {type = "item", name = "hellfin", amount = 1, probability = 0.5},
+        {type = "item", name = "warnal", amount = 1, probability = 0.1},
+        {type = "item", name = "ultra-squibbel", amount_min = 1, amount_max = 3},
+        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.4}
+    }
+}:add_catalyst("harpoon", "item", 1, 0.85, 1, 0.7):add_unlock("advanced-fishing")

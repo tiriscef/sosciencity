@@ -14,8 +14,8 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "microalgae-farm",
-    themes = {{"building", 2}, {"machine", 2}, {"electronics", 100}, {"casing", 10}}, -- TODO actual themes
-    default_theme_level = 2,
+    themes = {{"piping", 30}, {"machine", 2}, {"glass", 30}},
+    default_theme_level = 1,
     unlock = "basic-biotechnology"
 }
 

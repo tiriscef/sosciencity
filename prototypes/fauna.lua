@@ -6,7 +6,7 @@ local Unlocks = require("constants.unlocks")
 local animals = {
     {
         name = "primal-quackling",
-        size = 5,
+        size = 20,
         bird = true,
         preform = "primal-egg",
         metabolism_coefficient = 1.7,
@@ -14,7 +14,7 @@ local animals = {
     },
     {
         name = "primal-quacker",
-        size = 24,
+        size = 40,
         bird = true,
         preform = "primal-quackling",
         metabolism_coefficient = 1.5,
@@ -22,7 +22,7 @@ local animals = {
     },
     {
         name = "primal-quackpa",
-        size = 28,
+        size = 50,
         bird = true,
         preform = "primal-quacker",
         metabolism_coefficient = 4,
@@ -31,7 +31,7 @@ local animals = {
     },
     {
         name = "nan-swanling",
-        size = 10,
+        size = 20,
         bird = true,
         preform = "nan-egg",
         metabolism_coefficient = 1.7,
@@ -39,7 +39,7 @@ local animals = {
     },
     {
         name = "nan-swan",
-        size = 40,
+        size = 60,
         bird = true,
         preform = "nan-swanling",
         metabolism_coefficient = 1.5,
@@ -47,7 +47,7 @@ local animals = {
     },
     {
         name = "elder-nan",
-        size = 45,
+        size = 70,
         bird = true,
         preform = "nan-swan",
         metabolism_coefficient = 3.5,
@@ -56,28 +56,28 @@ local animals = {
     },
     {
         name = "smol-bonesnake",
-        size = 15,
+        size = 20,
         bird = true,
         unlock = Unlocks.get_tech_name("bonesnake")
     },
     {
         name = "bonesnake",
         -- TODO old form
-        size = 100,
+        size = 160,
         bird = true,
         preform = "smol-bonesnake",
         unlock = Unlocks.get_tech_name("bonesnake")
     },
     {
         name = "young-petunial",
-        size = 2500,
+        size = 2000,
         water_animal = true,
         metabolism_coefficient = 1.2,
         unlock = Unlocks.get_tech_name("petunial")
     },
     {
         name = "petunial",
-        size = 15000,
+        size = 10000,
         water_animal = true,
         preform = "young-petunial",
         unlock = Unlocks.get_tech_name("petunial")
@@ -97,34 +97,34 @@ local animals = {
     },
     {
         name = "shellscript",
-        size = 50,
+        size = 70,
         water_animal = true,
         group_size = 4,
         unlock = Unlocks.get_tech_name("shellscript")
     },
     {
         name = "boofish",
-        size = 3,
+        size = 20,
         fish = true,
         group_size = 5,
         unlock = Unlocks.get_tech_name("boofish")
     },
     {
         name = "fupper",
-        size = 5,
+        size = 40,
         fish = true,
         unlock = Unlocks.get_tech_name("fupper")
     },
     {
         name = "dodkopus",
-        size = 40,
+        size = 80,
         water_animal = true,
         slaughter_byproducts = {{name = "ink", amount = 3}},
         unlock = Unlocks.get_tech_name("dodkopus")
     },
     {
         name = "ultra-squibbel",
-        size = 50,
+        size = 100,
         water_animal = true,
         slaughter_byproducts = {{name = "ink", amount = 10}},
         not_breedable = true,
@@ -132,7 +132,7 @@ local animals = {
     },
     {
         name = "miniscule-squibbel",
-        size = 150,
+        size = 250,
         water_animal = true,
         slaughter_byproducts = {{name = "ink", amount = 4}},
         breeding_byproducts = {{name = "ultra-squibbel", amount = 0.5}},
@@ -140,14 +140,14 @@ local animals = {
     },
     {
         name = "cabar",
-        size = 20,
+        size = 40,
         min_group_size = 1,
         max_group_size = 7,
         unlock = Unlocks.get_tech_name("cabar")
     },
     {
         name = "caddle",
-        size = 20,
+        size = 30,
         carnivore = true,
         min_group_size = 1,
         max_group_size = 4,
@@ -155,7 +155,7 @@ local animals = {
     },
     {
         name = "river-horse",
-        size = 500,
+        size = 750,
         min_group_size = 3,
         max_group_size = 6,
         sprite_variations = {name = "river-horse-on-belt", count = 1},
@@ -276,9 +276,9 @@ local function create_slaughter_recipe(animal, index)
     recipe:add_new_result("offal", get_offal_amount(animal))
     recipe:add_new_result("slaughter-waste", get_slaughter_waste_amount(animal))
 
-    if animal.bird then
+    --[[if animal.bird then
         recipe:add_new_result("feathers", get_feather_amount(animal))
-    end
+    end]]
 
     if animal.slaughter_byproducts then
         recipe:add_result_range(animal.slaughter_byproducts)
@@ -296,7 +296,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << breeding recipes >>
 
-local food_item_weight = 50
 local farm_size = 2000
 
 local function get_weight_gain(animal)
@@ -310,7 +309,7 @@ local function get_weight_gain(animal)
 end
 
 local function get_food_amount(animal, count)
-    return math.ceil(count * get_weight_gain(animal) * (animal.metabolism_coefficient or 2) / food_item_weight)
+    return math.ceil(count * get_weight_gain(animal) / (animal.metabolism_coefficient or 1))
 end
 
 local function get_cycle_animal_amount(animal)
@@ -339,6 +338,8 @@ local function get_food_theme(animal, count)
 end
 
 local function create_breeding_recipe(animal)
+    local item = Tirislib.Item.get_by_name(animal.name)
+
     local cycle_amount = get_cycle_animal_amount(animal)
     local energy = get_required_energy_breeding(animal)
 
@@ -350,7 +351,15 @@ local function create_breeding_recipe(animal)
         byproducts = animal.breeding_byproducts or nil,
         themes = {get_food_theme(animal, cycle_amount)},
         energy_required = energy,
-        unlock = animal.unlock
+        unlock = animal.unlock,
+        icons = {
+            {icon = item.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
     }
 
     if animal.preform then

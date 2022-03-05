@@ -129,6 +129,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "tofu",
+    product_amount = 3,
     byproducts = {{name = "yuba", amount = 1}},
     ingredients = {
         {type = "fluid", name = "soy-milk", amount = 20}

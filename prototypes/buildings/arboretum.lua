@@ -88,7 +88,7 @@ Tirislib.Entity.create {
         sound = {
             {
                 filename = "__sosciencity-graphics__/sound/chainsaw.ogg",
-                volume = 2
+                volume = 0.5
             },
             {
                 filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg",

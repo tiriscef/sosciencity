@@ -172,7 +172,7 @@ Tirislib.Technology.create {
     name = "plasma-caste",
     icon = "__sosciencity-graphics__/graphics/plasma-caste.png",
     icon_size = 256,
-    prerequisites = {"logistic-science-pack"},
+    prerequisites = {"logistic-science-pack", "medbay"},
     effects = {
         {
             type = "nothing",
@@ -660,6 +660,20 @@ Tirislib.Technology.create {
 -- << healthcare >>
 
 Tirislib.Technology.create {
+    name = "medbay",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"clockwork-caste"},
+    unit = {
+        count = 29,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
+Tirislib.Technology.create {
     name = "hospital",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
@@ -763,6 +777,22 @@ Tirislib.Technology.create {
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib.Technology.create {
+    name = "advanced-fishing",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"chemical-science-pack"},
+    unit = {
+        count = 87,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 30
     }

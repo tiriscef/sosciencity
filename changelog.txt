@@ -1,8 +1,43 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.7
+Date: 2022.03.05
+  Balancing:
+    - Changed the Clockwork Caste Bonus again. The "insufficient maintenance"-malus will now reach -80% when the maintenance cost exceeds two times your available Clockwork points.
+    - Increased the calorific demand of all castes by a factor of 8, because it was p'ss easy to feed thousands of them with just a few farms.
+    - Reworked the internal 'size' parameters of most animals, which specifies the slaughter yields and husbandry recipes. This first step aims to overall betterfy the slaughter recipes. In a soonish patch I will rework the husbandry recipes, because I really don't like them.
+    - Increased the maluses for wrong climate/humidity for most annual plants because they mattered little before.
+    - Changed the growth rate of most annual plants to reduce the variance in efficiency. These are still a bit too efficient for my taste, but I would like to see this first step in action.
+    - The Gathering, Hunting and Fishing Recipes were nerfed greatly by reducing their yield and increasing the time. You wouldn't believe how insanely effective they were before.
+
+  Changes:
+    - Removed the power usage of the water tower.
+    - Changed the recipe of the microalgae farm, because it had a placeholder one before.
+    - The aquafarm now also counts as an animal farm for inhabitant health malus reasons. No idea why it wasn't before.
+    - Updated the graphics of the Big Living Container (formerly known as House 8) and the Small Prefabricated House.
+    - Husbandry recipes now have the circle-icon like the farming recipes to make it easier to distinguish them from the slaughter recipes.
+    - The Fishing recipes with Harpoon/Fish Net are now delayed to after chemical science.
+    - Reduced the tofu's calorie amount because it had a weird intern 'portion_size' parameter. To counter this the recipe now returns 3 items.
+    - Reduced the chickpea's calorie amount as it was a bit too high. Aparently I got the nutrients of dried chickpeas when I was researching that. :)
+    - Changed the eggplant's nutrient values because they had the tomato ones for some copy-paste-and-forget reasons.
+    - Changed the fish meat's nutrient values because they had the biter meat ones for some copy-paste-and-forget reasons.
+
+  Features:
+    - Added the medbay, an improvised hospital for the early game. Though it has a placeholder graphic for now.
+    - Added a new house, the Barrack, which aims to be suitable for the Gunfire caste.
+    - Added graphics to Gunfire HQ
+    - Added graphics to Ember HQ. They might change again soon, but I'd like to use this patch to update the entity size.
+    - Added graphics to Egg Collecting Station
+    - Added the Simple Fishtrap as an early game fishing tool
+
+  Factory-Breaking Changes:
+    - Swapped the graphics of the spring-house and the summer-house, because I missunderstood my graphics department. This changes the height of both entities. You might need to mine and replace the existing ones.
+    - The entity size of the Gunfire HQ, Ember HQ, Egg Collecting Station and the Big Living Container changed to accommodate their new graphics. You might need to mine and re-place the existing ones.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.6
 Date: 2022.02.05
   Balancing:
-    - It turned out I didn't like the intended way for the Clockwork Caste to work. So I reverted the last versions change.
+    - It turned out I didn't like the intended way for the Clockwork Caste to work. So I reverted the last version's change.
 
   Changes:
     - The standard Gathering is now unlocked from the start of the game.

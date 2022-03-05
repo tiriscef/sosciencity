@@ -2,9 +2,6 @@
 --- Assumes the result items already exist.
 Tirislib.RecipeGenerator = {}
 
--- shorthand alias for more readability
-local RG = Tirislib.RecipeGenerator
-
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
 
@@ -20,7 +17,7 @@ local ingredient_themes = {}
 --- **5:** utility science\
 --- **6:** space science\
 --- **7:** post space science
-function RG.add_themes(themes)
+function Tirislib.RecipeGenerator.add_themes(themes)
     for k, v in pairs(themes) do
         ingredient_themes[k] = v
     end
@@ -30,24 +27,24 @@ local result_themes = {}
 
 --- Table with Theme -> table with (level, array of ResultPrototypes) pairs\
 --- These are separate from the ingredient themes, because ResultPrototypes aren't valid IngredientPrototypes.
-function RG.add_result_themes(themes)
+function Tirislib.RecipeGenerator.add_result_themes(themes)
     for k, v in pairs(themes) do
         result_themes[k] = v
     end
 end
 
-RG.category_alias = {}
+Tirislib.RecipeGenerator.category_alias = {}
 
 --- Table with (alias, name of RecipeCategory) pairs.
-function RG.add_category_aliases(aliases)
-    Tirislib.Tables.set_fields(RG.category_alias, aliases)
+function Tirislib.RecipeGenerator.add_category_aliases(aliases)
+    Tirislib.Tables.set_fields(Tirislib.RecipeGenerator.category_alias, aliases)
 end
 
-RG.item_alias = {}
+Tirislib.RecipeGenerator.item_alias = {}
 
 --- Table with (alias, name of item) pairs.
-function RG.add_item_aliases(aliases)
-    Tirislib.Tables.set_fields(RG.item_alias, aliases)
+function Tirislib.RecipeGenerator.add_item_aliases(aliases)
+    Tirislib.Tables.set_fields(Tirislib.RecipeGenerator.item_alias, aliases)
 end
 
 -- << generation >>
@@ -83,7 +80,7 @@ local function get_theme_definition(name, level, for_result)
     return ret and Tirislib.Tables.recursive_copy(ret)
 end
 
-function RG.add_ingredient_theme(recipe, theme, default_level)
+function Tirislib.RecipeGenerator.add_ingredient_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
     local expensive_amount = theme[3]
@@ -109,17 +106,17 @@ function RG.add_ingredient_theme(recipe, theme, default_level)
     recipe:add_ingredient_range(theme_definition, expensive_theme_definition)
 end
 
-function RG.add_ingredient_theme_range(recipe, themes, default_level)
+function Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, themes, default_level)
     if themes then
         for _, theme in pairs(themes) do
-            RG.add_ingredient_theme(recipe, theme, default_level)
+            Tirislib.RecipeGenerator.add_ingredient_theme(recipe, theme, default_level)
         end
 
         recipe:floor_ingredients()
     end
 end
 
-function RG.add_result_theme(recipe, theme, default_level)
+function Tirislib.RecipeGenerator.add_result_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
     local expensive_amount = theme[3]
@@ -145,10 +142,10 @@ function RG.add_result_theme(recipe, theme, default_level)
     recipe:add_result_range(results, expensive_results)
 end
 
-function RG.add_result_theme_range(recipe, themes, default_level)
+function Tirislib.RecipeGenerator.add_result_theme_range(recipe, themes, default_level)
     if themes then
         for _, theme in pairs(themes) do
-            RG.add_result_theme(recipe, theme, default_level)
+            Tirislib.RecipeGenerator.add_result_theme(recipe, theme, default_level)
         end
 
         recipe:floor_results()
@@ -250,7 +247,7 @@ end
 --- **icons:** array of SpritePrototypes\
 --- **icon_size:** integer\
 --- **subgroup:** name of the subgroup (defaults to the product's subgroup)
-function RG.create(details)
+function Tirislib.RecipeGenerator.create(details)
     local product = get_product_prototype(details)
     local main_product = get_main_product_entry(product, details)
 
@@ -289,8 +286,8 @@ function RG.create(details)
     recipe:create_difficulties()
 
     -- theme defined
-    RG.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
-    RG.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
+    Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
+    Tirislib.RecipeGenerator.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
 
     -- explicit defined
     recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
@@ -318,7 +315,7 @@ end
 --- **followed_theme:** name\
 --- **followed_theme_amount:** number or function\
 --- **dynamic_fields:** table with (detail field, fn) pairs. The functions will be called with the theme level as the argument.\
-function RG.create_per_theme_level(details)
+function Tirislib.RecipeGenerator.create_per_theme_level(details)
     local theme_name = details.followed_theme
     local theme_definition = ingredient_themes[theme_name]
     local theme_amount = details.followed_theme_amount or 1
@@ -349,7 +346,7 @@ function RG.create_per_theme_level(details)
             level
         }
 
-        created_recipes[#created_recipes + 1] = RG.create(current_details)
+        created_recipes[#created_recipes + 1] = Tirislib.RecipeGenerator.create(current_details)
     end
 
     return created_recipes
@@ -361,7 +358,7 @@ arrays = Tirislib.Tables.array_to_lookup(arrays)
 --- Merges the right hand recipe details into the left hand recipe details.
 --- @param lh table
 --- @param rh table
-function RG.merge_details(lh, rh)
+function Tirislib.RecipeGenerator.merge_details(lh, rh)
     if not lh or not rh then
         return
     end

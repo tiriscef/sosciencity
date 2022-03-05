@@ -14,6 +14,10 @@ local range_by_foot = 50
 --- **power_usage:** number (kW)\
 --- **speed:** number (1/tick)
 Building.values = {
+    ["aquafarm"] = {
+        type = Type.animal_farm,
+        range = 50
+    },
     ["arboretum"] = {
         type = Type.farm,
         open_environment = true
@@ -108,7 +112,7 @@ Building.values = {
     },
     ["hospital"] = {
         type = Type.hospital,
-        range = 50,
+        range = 150,
         speed = 2 / Time.second,
         workforce = {
             count = 10,
@@ -176,6 +180,16 @@ Building.values = {
         type = Type.psych_ward,
         range = 7
     },
+    ["medbay"] = {
+        type = Type.improvised_hospital,
+        range = 50,
+        speed = 0.4 / Time.second,
+        workforce = {
+            count = 5,
+            castes = {Type.clockwork, Type.plasma}
+        },
+        power_usage = 50
+    },
     ["trash-site"] = {
         type = Type.dumpster
     },
@@ -191,8 +205,7 @@ Building.values = {
     },
     ["water-tower"] = {
         type = Type.water_distributer,
-        range = 50,
-        power_usage = 50
+        range = 50
     },
     ["zeppelin-port"] = {
         type = Type.immigration_port,
