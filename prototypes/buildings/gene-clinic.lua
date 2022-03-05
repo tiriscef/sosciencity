@@ -6,7 +6,7 @@ Tirislib.Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
-    order = "daa",
+    order = "fac",
     place_result = "gene-clinic",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
