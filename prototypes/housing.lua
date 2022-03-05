@@ -194,17 +194,17 @@ local housing_prototype_details = {
         height = 6,
         tech_level = 1
     },
-    ["house8"] = {
+    ["big-living-container"] = {
         picture = Tirislib.Entity.create_standard_picture {
-            path = "__sosciencity-graphics__/graphics/entity/house8/house8",
-            width = 20,
-            height = 12,
-            shift = {2.4, -2.5},
+            path = "__sosciencity-graphics__/graphics/entity/big-living-container/big-living-container",
+            width = 17,
+            height = 10,
+            shift = {2.0, -1.0},
             shadowmap = true,
             lightmap = true,
             glow = true
         },
-        width = 13,
+        width = 11,
         height = 6,
         tech_level = 1
     },

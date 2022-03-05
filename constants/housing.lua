@@ -60,7 +60,7 @@ Housing.values = {
         comfort = 3,
         qualities = {"spacey", "technical", "individualistic", "tall"}
     },
-    ["house8"] = {
+    ["big-living-container"] = {
         room_count = 24,
         comfort = 1,
         qualities = {"compact", "simple", "cheap"}
