@@ -1,10 +1,8 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "gunfire-hq",
-    icon = "__sosciencity-graphics__/graphics/gunfire-caste.png",
-    icon_size = 256,
+    icon = "__sosciencity-graphics__/graphics/icon/gunfire-hq.png",
+    icon_size = 64,
     subgroup = "sosciencity-hqs",
     order = "caa",
     place_result = "gunfire-hq",
@@ -23,7 +21,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "gunfire-hq",
-    flags = {"placeable-neutral", "player-creation"},
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
     minable = {mining_time = 0.5, result = "gunfire-hq"},
     max_health = 200,
     corpse = "small-remnants",
@@ -32,25 +30,14 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 1,
-                frame_count = 1
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/gunfire-caste.png",
-                priority = "high",
-                width = 256,
-                height = 256,
-                scale = 0.8,
-                frame_count = 1
-            }
-        }
+    animation = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/gunfire-hq/gunfire-hq",
+        shift = {1.5, 0.0},
+        width = 20,
+        height = 14,
+        shadowmap = true,
+        glow = true,
+        lightmap = true
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-caste-gunfire"},
@@ -61,4 +48,4 @@ Tirislib.Entity.create {
         emissions_per_minute = 0.25,
         drain = "10kW"
     }
-}:set_size(7, 7):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(15, 12):copy_localisation_from_item():copy_icon_from_item()
