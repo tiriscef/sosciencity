@@ -8,3 +8,9 @@ for _, water_distributer in Register.all_of_type(Type.water_distributer) do
         water_distributer[EK.power_usage] = nil
     end
 end
+
+for _, entry in pairs(global.register) do
+    if entry[EK.name] == "house8" then
+        entry[EK.name] = "big-living-container"
+    end
+end
