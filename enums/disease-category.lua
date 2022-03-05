@@ -9,5 +9,7 @@ DiseaseCategory.sanity = 2
 DiseaseCategory.accident = 3
 --- consequences of genetic dispositions or complications during upbringing
 DiseaseCategory.birth_defect = 4
+--- infectious diseases steming from sick animals
+DiseaseCategory.zoonosis = 5
 
 return DiseaseCategory

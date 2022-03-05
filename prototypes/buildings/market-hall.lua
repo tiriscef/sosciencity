@@ -4,7 +4,7 @@ Tirislib.Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/market-hall.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
-    order = "aab",
+    order = "aaa",
     place_result = "market-hall",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt

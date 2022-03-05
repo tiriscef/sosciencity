@@ -51,9 +51,9 @@ Biology.flora = {
     },
     ["brutal-pumpkin"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 0.5,
         preferred_climate = Climate.cold,
-        wrong_climate_coefficient = 0.8,
+        wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.dry,
         wrong_humidity_coefficient = 0.9,
         recipes = {"farming-annual-brutal-pumpkin"}
@@ -72,14 +72,14 @@ Biology.flora = {
         persistent = false,
         growth_coefficient = 1,
         preferred_climate = Climate.temperate,
-        wrong_climate_coefficient = 0.7,
+        wrong_climate_coefficient = 0.6,
         preferred_humidity = Humidity.moderate,
-        wrong_humidity_coefficient = 0.8,
+        wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-chickpea"}
     },
     ["eggplant"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 2,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.humid,
@@ -99,9 +99,9 @@ Biology.flora = {
         persistent = false,
         growth_coefficient = 2,
         preferred_climate = Climate.temperate,
-        wrong_climate_coefficient = 0.9,
+        wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
-        wrong_humidity_coefficient = 0.9,
+        wrong_humidity_coefficient = 0.8,
         recipes = {"farming-annual-hardcorn-punk"}
     },
     ["lemon"] = {
@@ -116,7 +116,7 @@ Biology.flora = {
     },
     ["liontooth"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 1.5,
         preferred_climate = Climate.cold,
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.dry,
@@ -125,11 +125,11 @@ Biology.flora = {
     },
     ["manok"] = {
         persistent = false,
-        growth_coefficient = 1.25,
+        growth_coefficient = 1,
         preferred_climate = Climate.hot,
-        wrong_climate_coefficient = 0.9,
+        wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
-        wrong_humidity_coefficient = 0.8,
+        wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-manok"}
     },
     ["necrofall"] = {
@@ -187,20 +187,20 @@ Biology.flora = {
     },
     ["potato"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 1.5,
         preferred_climate = Climate.temperate,
-        wrong_climate_coefficient = 0.8,
+        wrong_climate_coefficient = 0.7,
         preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.9,
         recipes = {"farming-annual-potato"}
     },
     ["razha-bean"] = {
         persistent = false,
-        growth_coefficient = 2,
+        growth_coefficient = 1.75,
         preferred_climate = Climate.temperate,
-        wrong_climate_coefficient = 0.8,
+        wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.humid,
-        wrong_humidity_coefficient = 0.9,
+        wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-razha-bean"}
     },
     ["sesame"] = {
@@ -232,7 +232,7 @@ Biology.flora = {
     },
     ["tomato"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 2,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.9,
         preferred_humidity = Humidity.humid,
