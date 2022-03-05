@@ -4,7 +4,7 @@ Tirislib.Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/egg-collecting-station.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
-    order = "daa",
+    order = "dab",
     place_result = "egg-collecting-station",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
@@ -37,8 +37,7 @@ Tirislib.Entity.create {
         height = 9,
         scale = 5/6,
         shadowmap = true,
-        glow = true,
-        lightmap = true
+        glow = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,

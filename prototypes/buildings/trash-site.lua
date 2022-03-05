@@ -4,7 +4,7 @@ Tirislib.Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/trash-site.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
-    order = "aab",
+    order = "caa",
     place_result = "trash-site",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
