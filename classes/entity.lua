@@ -828,7 +828,7 @@ Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_sta
 ---------------------------------------------------------------------------------------------------
 -- << waste dump >>
 
-local garbage_values = ItemConstants.garbage_items
+local garbage_values = ItemConstants.garbage_values
 
 local function analyze_waste_dump_inventory(inventory)
     local garbage_items = {}
