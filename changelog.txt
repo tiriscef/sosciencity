@@ -17,7 +17,7 @@ Date: 2022.03.05
     - Husbandry recipes now have the circle-icon like the farming recipes to make it easier to distinguish them from the slaughter recipes.
     - The Fishing recipes with Harpoon/Fish Net are now delayed to after chemical science.
     - Reduced the tofu's calorie amount because it had a weird intern 'portion_size' parameter. To counter this the recipe now returns 3 items.
-    - Reduced the chickpea's calorie amount as it was a bit too high. Aparently I got the nutrients of dried chickpeas when I was researching that. :)
+    - Reduced the chickpea's calorie amount as it was a bit too high. Apparently I got the nutrients of dried chickpeas when I was researching that. :)
     - Changed the eggplant's nutrient values because they had the tomato ones for some copy-paste-and-forget reasons.
     - Changed the fish meat's nutrient values because they had the biter meat ones for some copy-paste-and-forget reasons.
 
