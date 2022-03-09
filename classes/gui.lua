@@ -19,6 +19,7 @@ local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Color = require("constants.color")
 local Diseases = require("constants.diseases")
+local DrinkingWater = require("constants.drinking-water")
 local Food = require("constants.food")
 local Housing = require("constants.housing")
 local ItemConstants = require("constants.item-constants")
@@ -1321,7 +1322,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "health", {"sosciencity.health"})
     add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
     add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
-    add_kv_pair(general_list, "water-demand", {"sosciencity.water-demand"})
+    add_kv_pair(general_list, "water-demand", {"sosciencity.water"})
     add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
     add_kv_pair(general_list, "garbage", {"sosciencity.garbage"})
     add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
@@ -1774,13 +1775,16 @@ set_value_changed_handler(
 ---------------------------------------------------------------------------------------------------
 -- << composter >>
 
-local function create_composting_values_tab(container)
+local function create_composting_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "compostables", {"sosciencity.compostables"})
+
     local composting_list = create_data_list(tab, "compostables")
+    composting_list.style.column_alignments[2] = "right"
 
     -- header
     add_kv_pair(composting_list, "head", {"sosciencity.item"}, {"sosciencity.humus"}, "default-bold", "default-bold")
+    composting_list["key-head"].style.width = 220
 
     local item_prototypes = game.item_prototypes
 
@@ -1832,7 +1836,7 @@ local function create_composter_details(container, entry)
     add_kv_pair(building_data, "composting-speed", {"sosciencity.composting-speed"})
 
     update_composter_details(container, entry)
-    create_composting_values_tab(container)
+    create_composting_catalogue(container)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2083,7 +2087,7 @@ local function create_fishery_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "water-tiles", {"sosciencity.water-tiles"})
+    add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
     add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_fishery_details(container, entry)
@@ -2554,6 +2558,25 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
 
+local function create_water_catalogue(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
+    local tab = create_tab(tabbed_pane, "waters", {"sosciencity.drinking-water"})
+
+    local data_list = create_data_list(tab, "waters", 2)
+    data_list.style.column_alignments[2] = "right"
+
+    -- header
+    add_kv_pair(data_list, "head", {"sosciencity.drinking-water"}, {"sosciencity.health"}, "default-bold", "default-bold")
+    data_list["key-head"].style.width = 220
+
+    local fluid_prototypes = game.fluid_prototypes
+
+    for water, effect in pairs(DrinkingWater.values) do
+        local water_representation = {"", format("[fluid=%s]  ", water), fluid_prototypes[water].localised_name}
+        add_operand_entry(data_list, water, water_representation, display_integer_summand(effect))
+    end
+end
+
 local function update_water_distributer(container, entry)
     update_general_building_details(container, entry)
 
@@ -2604,6 +2627,8 @@ local function create_water_distributer(container, entry)
     add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_water_distributer(container, entry)
+
+    create_water_catalogue(container)
 end
 
 ---------------------------------------------------------------------------------------------------

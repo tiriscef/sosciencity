@@ -997,7 +997,7 @@ local function update_water_distributer(entry)
         for fluid_name in pairs(entity.get_fluid_contents()) do
             local water_value = water_values[fluid_name]
             if water_value then
-                entry[EK.water_quality] = water_value.health
+                entry[EK.water_quality] = water_value
                 entry[EK.water_name] = fluid_name
                 return
             end

@@ -2,21 +2,11 @@
 local DrinkingWater = {}
 
 DrinkingWater.values = {
-    ["clean-water"] = {
-        health = 2
-    },
-    ["water"] = {
-        health = -5
-    },
-    ["mechanically-cleaned-water"] = {
-        health = -3
-    },
-    ["biologically-cleaned-water"] = {
-        health = -1
-    },
-    ["ultra-pure-water"] = {
-        health = 0
-    }
+    ["clean-water"] = 2,
+    ["water"] = -5,
+    ["mechanically-cleaned-water"] = -3,
+    ["biologically-cleaned-water"] = -1,
+    ["ultra-pure-water"] = 0
 }
 
 return DrinkingWater
