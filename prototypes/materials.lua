@@ -86,7 +86,7 @@ local material_items = {
     {
         name = "painting",
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100},
-        sprite_variations = {name = "painting-on-belt", count = 6}
+        sprite_variations = {name = "painting-on-belt", count = 7}
     },
     {
         name = "feathers",

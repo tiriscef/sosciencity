@@ -90,6 +90,7 @@ require("classes.gui")
 ---@class Inventory
 ---@class Entry
 ---@class Type
+---@class SubentityType
 ---@class InhabitantGroup
 ---@class DiseaseGroup
 ---@class DiseaseID

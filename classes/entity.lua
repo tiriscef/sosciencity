@@ -87,7 +87,10 @@ local function set_crafting_machine_performance(entry, performance, productivity
     local entity = entry[EK.entity]
 
     local is_active = performance >= 0.2
+
+    entry[EK.active] = is_active
     entity.active = is_active
+    Subentities.set_active(entry, is_active)
 
     if is_active then
         set_beacon_effects(entry, get_speed_from_performance(performance), productivity or 0, true)
