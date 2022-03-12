@@ -1352,7 +1352,28 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << healthcare >>
 
-local function cure_side_effects(entry, disease_id, count, cured)
+-- XXX: this part has magic numbers - but at the moment I don't know how to avoid them without overcomplicating stuff
+local special_sideeffect_fns = {
+    [4001] = function(entry, count)
+        local gender_group = entry[EK.genders]
+
+        for _ = 1, count do
+            local gender_before = Utils.weighted_random(gender_group)
+            local gender_after = Utils.random_different(1, 4, gender_before)
+
+            gender_group[gender_before] = gender_group[gender_before] - 1
+            gender_group[gender_after] = gender_group[gender_after] + 1
+        end
+    end
+}
+
+--- Determines the side effects of a cured disease.
+---@param entry Entry
+---@param disease_id DiseaseID
+---@param count integer
+---@param cured boolean
+---@param new_diseases table Holds the escalation or complication diseases that are to be added.
+local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
     local disease = disease_values[disease_id]
 
     local lethal_probability = cured and disease.complication_lethality or disease.lethality
@@ -1373,7 +1394,7 @@ local function cure_side_effects(entry, disease_id, count, cured)
     if not cured and escalation_disease then
         escalation_count = coin_flips(disease.escalation_probability, count, 5)
         if escalation_count > 0 then
-            make_sick(entry[EK.diseases], escalation_disease, escalation_count)
+            new_diseases[escalation_disease] = (new_diseases[escalation_disease] or 0) + escalation_count
             Communication.report_diseased(escalation_disease, escalation_count, DiseasedCause.escalation)
         end
     end
@@ -1382,9 +1403,14 @@ local function cure_side_effects(entry, disease_id, count, cured)
     if complication_disease then
         local complication_count = coin_flips(disease.complication_probability, count - escalation_count, 5)
         if complication_count > 0 then
-            make_sick(entry[EK.diseases], complication_disease, complication_count)
+            new_diseases[complication_disease] = (new_diseases[complication_disease] or 0) + complication_count
             Communication.report_diseased(complication_disease, complication_count, DiseasedCause.complication)
         end
+    end
+
+    local fn = special_sideeffect_fns[disease_id]
+    if fn then
+        fn(entry, count, cured)
     end
 end
 
@@ -1464,19 +1490,21 @@ local function try_treat_disease(hospital, hospital_contents, inventories, disea
         to_treat = min(to_treat, floor((hospital_contents[item_name] or 0) / item_count))
     end
 
-    to_treat = cure(disease_group, disease_id, to_treat)
+    if to_treat > 0 then
+        to_treat = cure(disease_group, disease_id, to_treat)
 
-    -- consume operations and items
-    hospital[EK.workhours] = operations - to_treat * workload_per_case
+        -- consume operations and items
+        hospital[EK.workhours] = operations - to_treat * workload_per_case
 
-    local items = table_copy(items_per_case)
-    table_multiply(items, to_treat)
-    Inventories.remove_item_range_from_inventory_range(inventories, items)
+        local items = table_copy(items_per_case)
+        table_multiply(items, to_treat)
+        Inventories.remove_item_range_from_inventory_range(inventories, items)
+    end
 
     return to_treat
 end
 
-local function treat_diseases(entry, hospitals, diseases, disease_group)
+local function treat_diseases(entry, hospitals, diseases, disease_group, new_diseases)
     if not diseases then
         return
     end
@@ -1489,7 +1517,7 @@ local function treat_diseases(entry, hospitals, diseases, disease_group)
             local treated = try_treat_disease(hospital, contents, inventories, disease_group, disease_id, count)
 
             if treated > 0 then
-                cure_side_effects(entry, disease_id, treated, true)
+                cure_side_effects(entry, disease_id, treated, true, new_diseases)
                 local statistics = hospital[EK.treated]
                 statistics[disease_id] = (statistics[disease_id] or 0) + treated
                 Communication.report_treatment(disease_id, treated)
@@ -1509,11 +1537,18 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
         return
     end
 
+    -- A table with all the diseases which happen as a side effect of the treatments/recoveries.
+    -- They have to be added later to avoid problems with instantly treated-diseases and to avoid
+    -- mixing removing and adding keys to the DiseaseGroup (which can break the pairs-loop).
+    local new_diseases = {}
+
     -- treat disease cases in hospitals
     local hospitals = Neighborhood.get_by_type(entry, Type.hospital)
+    Table.merge_arrays(hospitals, Neighborhood.get_by_type(entry, Type.improvised_hospital))
+
     local grouped = Luaq_from(disease_group):where(not_healthy):group(is_recoverable):to_table()
-    treat_diseases(entry, hospitals, grouped[false], disease_group)
-    treat_diseases(entry, hospitals, grouped[true], disease_group)
+    treat_diseases(entry, hospitals, grouped[false], disease_group, new_diseases)
+    treat_diseases(entry, hospitals, grouped[true], disease_group, new_diseases)
 
     for disease_id, count in pairs(disease_group) do
         if disease_id ~= HEALTHY then
@@ -1523,11 +1558,15 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
                 recovered = cure(disease_group, disease_id, recovered)
 
                 if recovered > 0 then
-                    cure_side_effects(entry, disease_id, recovered)
+                    cure_side_effects(entry, disease_id, recovered, false, new_diseases)
                     Communication.report_recovery(disease_id, recovered)
                 end
             end
         end
+    end
+
+    for disease_id, count in pairs(new_diseases) do
+        make_sick(disease_group, disease_id, count)
     end
 end
 
