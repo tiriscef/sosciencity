@@ -285,8 +285,14 @@ local function generic_radiobutton_handler(entry, element, mode, key, updater)
     end
 end
 
-local function generic_checkbox_handler(entry, element, key)
-    entry[key] = element.state
+local function generic_checkbox_handler(entry, element, ...)
+    local keys = {...}
+    local subtable = entry
+
+    for i = 1, #keys - 1 do
+        subtable = subtable[keys[i]]
+    end
+    subtable[keys[#keys]] = element.state
 end
 
 --- Event handler for slider change events
@@ -2189,24 +2195,77 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << hospital >>
 
+local function update_disease_catalogue(container, entry)
+    local tabbed_pane = container.tabpane
+    local data_list = get_tab_contents(tabbed_pane, "diseases").diseases
+
+    local statistics = entry[EK.treated]
+    local permissions = entry[EK.treatment_permissions]
+
+    for id in pairs(Diseases.values) do
+        data_list[tostring(id)].caption = statistics[id] or 0
+
+        data_list[format(unique_prefix_builder, "treatment-permission", tostring(id))].state =
+            permissions[id] == nil and true or permissions[id]
+    end
+end
+
 local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "diseases", {"sosciencity.diseases"})
 
-    local data_list = create_data_list(tab, "diseases", 1)
+    local data_list = create_data_list(tab, "diseases", 3)
+    data_list.style.column_alignments[2] = "right"
+
+    -- build the header
+    local head = data_list.add {
+        type = "label",
+        name = "head",
+        caption = {"sosciencity.diseases"}
+    }
+    head.style.font = "default-bold"
+    local head_count = data_list.add {
+        type = "label",
+        name = "head-count"
+    }
+    head_count.style.minimal_width = 30
+    data_list.add {
+        type = "label",
+        name = "head-permission"
+    }
 
     -- disease entries
     for id, disease in pairs(Diseases.values) do
-        local entry =
+        local key =
             data_list.add {
             type = "label",
-            name = tostring(id),
+            name = "key-" .. id,
             caption = disease.localised_name,
             tooltip = disease.localised_description
         }
-        local style = entry.style
-        style.horizontally_stretchable = true
+        key.style.horizontally_stretchable = true
+
+        data_list.add {
+            type = "label",
+            name = tostring(id)
+        }
+
+        data_list.add {
+            type = "checkbox",
+            name = format(unique_prefix_builder, "treatment-permission", tostring(id)),
+            state = true,
+            tooltip = {"sosciencity.permission"}
+        }
     end
+end
+
+for id in pairs(Diseases.values) do
+    set_checked_state_handler(
+        format(unique_prefix_builder, "treatment-permission", tostring(id)),
+        generic_checkbox_handler,
+        EK.treatment_permissions,
+        id
+    )
 end
 
 local function update_hospital_details(container, entry)
@@ -2239,6 +2298,8 @@ local function update_hospital_details(container, entry)
             }
         end
     end
+
+    update_disease_catalogue(container, entry)
 end
 
 local function create_hospital_details(container, entry)
@@ -2250,9 +2311,9 @@ local function create_hospital_details(container, entry)
     add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
     add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
 
-    update_hospital_details(container, entry)
-
     create_disease_catalogue(container)
+
+    update_hospital_details(container, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2566,7 +2627,14 @@ local function create_water_catalogue(container)
     data_list.style.column_alignments[2] = "right"
 
     -- header
-    add_kv_pair(data_list, "head", {"sosciencity.drinking-water"}, {"sosciencity.health"}, "default-bold", "default-bold")
+    add_kv_pair(
+        data_list,
+        "head",
+        {"sosciencity.drinking-water"},
+        {"sosciencity.health"},
+        "default-bold",
+        "default-bold"
+    )
     data_list["key-head"].style.width = 220
 
     local fluid_prototypes = game.fluid_prototypes

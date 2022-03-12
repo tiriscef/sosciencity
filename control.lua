@@ -351,6 +351,12 @@ local function on_configuration_change()
             force.reset_technologies()
             force.reset_technology_effects()
         end
+
+        -- Close the details view for every player.
+        -- This avoids the unnecessary migration of those guis.
+        for _, player in pairs(game.players) do
+            Gui.close_details_view_for_player(player)
+        end
     end
 end
 

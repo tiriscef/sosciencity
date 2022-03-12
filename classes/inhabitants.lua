@@ -1472,6 +1472,11 @@ local function has_facility(hospital, facility_type)
 end
 
 local function try_treat_disease(hospital, hospital_contents, inventories, disease_group, disease_id, count)
+    -- check if the player disallowed treating this disease
+    if hospital[EK.treatment_permissions][disease_id] == false then
+        return 0
+    end
+
     local disease = disease_values[disease_id]
     local necessary_facility = disease.curing_facility
 
