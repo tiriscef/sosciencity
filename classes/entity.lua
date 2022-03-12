@@ -696,6 +696,7 @@ Register.set_entity_updater(Type.improvised_hospital, update_hospital)
 local function create_hospital(entry)
     entry[EK.workhours] = 0
     entry[EK.treated] = {}
+    entry[EK.treatment_permissions] = {}
 end
 Register.set_entity_creation_handler(Type.hospital, create_hospital)
 Register.set_entity_creation_handler(Type.improvised_hospital, create_hospital)
@@ -703,6 +704,7 @@ Register.set_entity_creation_handler(Type.improvised_hospital, create_hospital)
 local function copy_hospital(source, destination)
     destination[EK.workhours] = source[EK.workhours]
     destination[EK.treated] = Table.copy(source[EK.treated])
+    destination[EK.treatment_permissions] = Table.copy(source[EK.treatment_permissions])
 end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
 Register.set_entity_copy_handler(Type.improvised_hospital, copy_hospital)
