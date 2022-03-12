@@ -340,6 +340,21 @@ function Tirislib.Utils.coin_flips(probability, count, actual_count)
     return successes
 end
 
+--- Returns an integer in the given intervall that is different that the given number n.
+--- @param value_min integer
+--- @param value_max integer
+--- @param n integer
+--- @return integer
+function Tirislib.Utils.random_different(value_min, value_max, n)
+    local ret = random(value_min, value_max - 1)
+
+    if ret >= n then
+        return ret + 1
+    else
+        return ret
+    end
+end
+
 --- Returns the probability of at least one success after n tries.
 --- @param probability number
 --- @param tries number
