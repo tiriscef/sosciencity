@@ -285,13 +285,13 @@ function Tirislib.RecipeGenerator.create(details)
 
     recipe:create_difficulties()
 
+    -- explicit defined
+    recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
+    recipe:add_result_range(details.byproducts, details.expensive_byproducts, true)
+
     -- theme defined
     Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
     Tirislib.RecipeGenerator.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
-
-    -- explicit defined
-    recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
-    recipe:add_result_range(details.byproducts, details.expensive_byproducts)
 
     if details.expensive_multiplier then
         recipe:multiply_expensive_ingredients(details.expensive_multiplier)
