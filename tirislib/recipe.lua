@@ -745,13 +745,15 @@ function Tirislib.Recipe:get_result(name, _type)
     return Tirislib.Recipe.call_on_recipe_data(self, Tirislib.RecipeData.get_result, name, _type)
 end
 
-function Tirislib.RecipeData.add_result(recipe_data, result)
+function Tirislib.RecipeData.add_result(recipe_data, result, suppress_merge)
     Tirislib.RecipeData.convert_to_results_table(recipe_data)
 
-    for _, current_result in pairs(recipe_data.results) do
-        if Entries.can_be_merged(current_result, result) then
-            Entries.merge(current_result, result)
-            return
+    if suppress_merge then
+        for _, current_result in pairs(recipe_data.results) do
+            if Entries.can_be_merged(current_result, result) then
+                Entries.merge(current_result, result)
+                return
+            end
         end
     end
 
@@ -763,24 +765,24 @@ end
 --- @param result RecipeEntryPrototype
 --- @param expensive_result RecipeEntryPrototype
 --- @return RecipePrototype itself
-function Tirislib.Recipe:add_result(result, expensive_result)
+function Tirislib.Recipe:add_result(result, expensive_result, suppress_merge)
     if not Tirislib.Recipe.has_difficulties(self) and result then
-        Tirislib.RecipeData.add_result(self, result)
+        Tirislib.RecipeData.add_result(self, result, suppress_merge)
         return self
     end
 
     if Tirislib.Recipe.has_normal_difficulty(self) and result then
-        Tirislib.RecipeData.add_result(self.normal, result)
+        Tirislib.RecipeData.add_result(self.normal, result, suppress_merge)
     end
     if Tirislib.Recipe.has_expensive_difficulty(self) then
-        Tirislib.RecipeData.add_result(self.expensive, expensive_result or result)
+        Tirislib.RecipeData.add_result(self.expensive, expensive_result or result, suppress_merge)
     end
     return self
 end
 
-function Tirislib.RecipeData.add_results(recipe_data, results)
+function Tirislib.RecipeData.add_results(recipe_data, results, suppress_merge)
     for _, entry in pairs(results) do
-        Tirislib.RecipeData.add_result(recipe_data, entry)
+        Tirislib.RecipeData.add_result(recipe_data, entry, suppress_merge)
     end
 end
 
@@ -789,21 +791,21 @@ end
 --- @param results table of RecipeEntryPrototypes
 --- @param expensive_results table of RecipeEntryPrototypes
 --- @return RecipePrototype itself
-function Tirislib.Recipe:add_result_range(results, expensive_results)
+function Tirislib.Recipe:add_result_range(results, expensive_results, suppress_merge)
     if not results and not expensive_results then
         return self
     end
 
     if not Tirislib.Recipe.has_difficulties(self) and results then
-        Tirislib.RecipeData.add_results(self, results)
+        Tirislib.RecipeData.add_results(self, results, suppress_merge)
         return self
     end
 
     if Tirislib.Recipe.has_normal_difficulty(self) and results then
-        Tirislib.RecipeData.add_results(self.normal, results)
+        Tirislib.RecipeData.add_results(self.normal, results, suppress_merge)
     end
     if Tirislib.Recipe.has_expensive_difficulty(self) then
-        Tirislib.RecipeData.add_results(self.expensive, expensive_results or results)
+        Tirislib.RecipeData.add_results(self.expensive, expensive_results or results, suppress_merge)
     end
     return self
 end
@@ -813,8 +815,8 @@ end
 --- @param amount number
 --- @param _type string|nil
 --- @return RecipePrototype itself
-function Tirislib.Recipe:add_new_result(result, amount, _type)
-    Tirislib.Recipe.add_result(self, Tirislib.RecipeEntry.create_result_prototype(result, amount, _type))
+function Tirislib.Recipe:add_new_result(result, amount, _type, suppress_merge)
+    Tirislib.Recipe.add_result(self, Tirislib.RecipeEntry.create_result_prototype(result, amount, _type), nil, suppress_merge)
 
     return self
 end
