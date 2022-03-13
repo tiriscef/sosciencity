@@ -13,11 +13,11 @@ Subentities = {}
 
 Subentities.subentity_name_lookup = {
     [SubentityType.beacon] = "sosciencity-hidden-beacon",
-    [SubentityType.turret_gunfire] = "sosciencity-gunfire-turret",
-    [SubentityType.turret_gunfire_hq1] = "sosciencity-gunfire-turret",
-    [SubentityType.turret_gunfire_hq2] = "sosciencity-gunfire-turret",
-    [SubentityType.turret_gunfire_hq3] = "sosciencity-gunfire-turret",
-    [SubentityType.turret_gunfire_hq4] = "sosciencity-gunfire-turret"
+    [SubentityType.turret_gunfire] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq1] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq2] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq3] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq4] = "gunfire-hq-turret"
 }
 local subentity_names = Subentities.subentity_name_lookup
 

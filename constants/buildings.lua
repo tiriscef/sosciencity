@@ -117,10 +117,10 @@ Building.values = {
             SubentityType.turret_gunfire_hq4
         },
         subentity_offsets = {
-            [SubentityType.turret_gunfire_hq1] = {x = 3.75, y = 1.0},
-            [SubentityType.turret_gunfire_hq2] = {x = 3.75, y = -5.0},
-            [SubentityType.turret_gunfire_hq3] = {x = -3.75, y = 1.0},
-            [SubentityType.turret_gunfire_hq4] = {x = -3.75, y = -5.0}
+            [SubentityType.turret_gunfire_hq1] = {x = 3.875, y = 0.9},
+            [SubentityType.turret_gunfire_hq2] = {x = 3.875, y = -4.875},
+            [SubentityType.turret_gunfire_hq3] = {x = -3.875, y = 0.9},
+            [SubentityType.turret_gunfire_hq4] = {x = -3.875, y = -4.875}
         }
     },
     ["hospital"] = {
