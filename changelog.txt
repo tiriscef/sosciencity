@@ -1,4 +1,24 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.8
+Date: 2022.03.13
+  Balancing:
+    - Experimental: The output of annual plant recipes is now split into two entries. This may look confusing. It doesn't change the average output and output range. It changes the probability distribution so that very low or very high outcomes are less likely; average outcomes are more likely to occur.
+
+  Bugfixes:
+    - Fixed a crash related to an unsave 'pairs'-loop in the disease-update function.
+    - The recipe for Ferrous Sulfate is now unlocked with the Ember Caste to avoid a technology deadlock.
+
+  Features:
+    - Added a range indicator for buildings before they are placed.
+    - Added a range indicator for buildings with a global range.
+    - The Gunfire HQ now has 4 defensive turrets. These are active if the building is staffed.
+    - Hospitals can be allowed or disallowed to treat specific diseases.
+
+  Gui:
+    - Added a Drinking Water catalogue to the water tower's gui.
+    - Added a statistic of the treated diseases to the hospital's gui. These statistics were already recorded, just not displayed until now.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.7
 Date: 2022.03.05
   Balancing:
