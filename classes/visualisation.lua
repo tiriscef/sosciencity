@@ -66,7 +66,6 @@ local function highlight_range(player_id, entry, building_details, created_highl
     local range = building_details.range
 
     if range == "global" then
-        -- TODO highlight that somehow
         return
     end
 

@@ -163,6 +163,8 @@ EK.necrofall_progress = 802
 
 --- statistics over treated disease cases as (disease_id, count)-pairs
 EK.treated = 900
+--- table with treatment permissions for this hospital as (disease_id, boolean)-pairs
+EK.treatment_permissions = 901
 
 -- upbringing station
 

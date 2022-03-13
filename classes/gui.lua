@@ -19,6 +19,7 @@ local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Color = require("constants.color")
 local Diseases = require("constants.diseases")
+local DrinkingWater = require("constants.drinking-water")
 local Food = require("constants.food")
 local Housing = require("constants.housing")
 local ItemConstants = require("constants.item-constants")
@@ -284,8 +285,14 @@ local function generic_radiobutton_handler(entry, element, mode, key, updater)
     end
 end
 
-local function generic_checkbox_handler(entry, element, key)
-    entry[key] = element.state
+local function generic_checkbox_handler(entry, element, ...)
+    local keys = {...}
+    local subtable = entry
+
+    for i = 1, #keys - 1 do
+        subtable = subtable[keys[i]]
+    end
+    subtable[keys[#keys]] = element.state
 end
 
 --- Event handler for slider change events
@@ -1321,7 +1328,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "health", {"sosciencity.health"})
     add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
     add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
-    add_kv_pair(general_list, "water-demand", {"sosciencity.water-demand"})
+    add_kv_pair(general_list, "water-demand", {"sosciencity.water"})
     add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
     add_kv_pair(general_list, "garbage", {"sosciencity.garbage"})
     add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
@@ -1774,13 +1781,16 @@ set_value_changed_handler(
 ---------------------------------------------------------------------------------------------------
 -- << composter >>
 
-local function create_composting_values_tab(container)
+local function create_composting_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "compostables", {"sosciencity.compostables"})
+
     local composting_list = create_data_list(tab, "compostables")
+    composting_list.style.column_alignments[2] = "right"
 
     -- header
     add_kv_pair(composting_list, "head", {"sosciencity.item"}, {"sosciencity.humus"}, "default-bold", "default-bold")
+    composting_list["key-head"].style.width = 220
 
     local item_prototypes = game.item_prototypes
 
@@ -1832,7 +1842,7 @@ local function create_composter_details(container, entry)
     add_kv_pair(building_data, "composting-speed", {"sosciencity.composting-speed"})
 
     update_composter_details(container, entry)
-    create_composting_values_tab(container)
+    create_composting_catalogue(container)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2083,7 +2093,7 @@ local function create_fishery_details(container, entry)
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
 
-    add_kv_pair(building_data, "water-tiles", {"sosciencity.water-tiles"})
+    add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
     add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_fishery_details(container, entry)
@@ -2185,24 +2195,77 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << hospital >>
 
+local function update_disease_catalogue(container, entry)
+    local tabbed_pane = container.tabpane
+    local data_list = get_tab_contents(tabbed_pane, "diseases").diseases
+
+    local statistics = entry[EK.treated]
+    local permissions = entry[EK.treatment_permissions]
+
+    for id in pairs(Diseases.values) do
+        data_list[tostring(id)].caption = statistics[id] or 0
+
+        data_list[format(unique_prefix_builder, "treatment-permission", tostring(id))].state =
+            permissions[id] == nil and true or permissions[id]
+    end
+end
+
 local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "diseases", {"sosciencity.diseases"})
 
-    local data_list = create_data_list(tab, "diseases", 1)
+    local data_list = create_data_list(tab, "diseases", 3)
+    data_list.style.column_alignments[2] = "right"
+
+    -- build the header
+    local head = data_list.add {
+        type = "label",
+        name = "head",
+        caption = {"sosciencity.diseases"}
+    }
+    head.style.font = "default-bold"
+    local head_count = data_list.add {
+        type = "label",
+        name = "head-count"
+    }
+    head_count.style.minimal_width = 30
+    data_list.add {
+        type = "label",
+        name = "head-permission"
+    }
 
     -- disease entries
     for id, disease in pairs(Diseases.values) do
-        local entry =
+        local key =
             data_list.add {
             type = "label",
-            name = tostring(id),
+            name = "key-" .. id,
             caption = disease.localised_name,
             tooltip = disease.localised_description
         }
-        local style = entry.style
-        style.horizontally_stretchable = true
+        key.style.horizontally_stretchable = true
+
+        data_list.add {
+            type = "label",
+            name = tostring(id)
+        }
+
+        data_list.add {
+            type = "checkbox",
+            name = format(unique_prefix_builder, "treatment-permission", tostring(id)),
+            state = true,
+            tooltip = {"sosciencity.permission"}
+        }
     end
+end
+
+for id in pairs(Diseases.values) do
+    set_checked_state_handler(
+        format(unique_prefix_builder, "treatment-permission", tostring(id)),
+        generic_checkbox_handler,
+        EK.treatment_permissions,
+        id
+    )
 end
 
 local function update_hospital_details(container, entry)
@@ -2235,6 +2298,8 @@ local function update_hospital_details(container, entry)
             }
         end
     end
+
+    update_disease_catalogue(container, entry)
 end
 
 local function create_hospital_details(container, entry)
@@ -2246,9 +2311,9 @@ local function create_hospital_details(container, entry)
     add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
     add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
 
-    update_hospital_details(container, entry)
-
     create_disease_catalogue(container)
+
+    update_hospital_details(container, entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2554,6 +2619,32 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
 
+local function create_water_catalogue(container)
+    local tabbed_pane = get_or_create_tabbed_pane(container)
+    local tab = create_tab(tabbed_pane, "waters", {"sosciencity.drinking-water"})
+
+    local data_list = create_data_list(tab, "waters", 2)
+    data_list.style.column_alignments[2] = "right"
+
+    -- header
+    add_kv_pair(
+        data_list,
+        "head",
+        {"sosciencity.drinking-water"},
+        {"sosciencity.health"},
+        "default-bold",
+        "default-bold"
+    )
+    data_list["key-head"].style.width = 220
+
+    local fluid_prototypes = game.fluid_prototypes
+
+    for water, effect in pairs(DrinkingWater.values) do
+        local water_representation = {"", format("[fluid=%s]  ", water), fluid_prototypes[water].localised_name}
+        add_operand_entry(data_list, water, water_representation, display_integer_summand(effect))
+    end
+end
+
 local function update_water_distributer(container, entry)
     update_general_building_details(container, entry)
 
@@ -2604,6 +2695,8 @@ local function create_water_distributer(container, entry)
     add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_water_distributer(container, entry)
+
+    create_water_catalogue(container)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2846,6 +2939,10 @@ local type_gui_specifications = {
     [Type.fishery] = {
         creater = create_fishery_details,
         updater = update_fishery_details
+    },
+    [Type.improvised_hospital] = {
+        creater = create_hospital_details,
+        updater = update_hospital_details
     },
     [Type.pharmacy] = {
         creater = create_general_building_details,

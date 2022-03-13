@@ -87,7 +87,10 @@ local function set_crafting_machine_performance(entry, performance, productivity
     local entity = entry[EK.entity]
 
     local is_active = performance >= 0.2
+
+    entry[EK.active] = is_active
     entity.active = is_active
+    Subentities.set_active(entry, is_active)
 
     if is_active then
         set_beacon_effects(entry, get_speed_from_performance(performance), productivity or 0, true)
@@ -688,18 +691,23 @@ local function update_hospital(entry, delta_ticks)
     entry[EK.performance] = performance
 end
 Register.set_entity_updater(Type.hospital, update_hospital)
+Register.set_entity_updater(Type.improvised_hospital, update_hospital)
 
 local function create_hospital(entry)
     entry[EK.workhours] = 0
     entry[EK.treated] = {}
+    entry[EK.treatment_permissions] = {}
 end
 Register.set_entity_creation_handler(Type.hospital, create_hospital)
+Register.set_entity_creation_handler(Type.improvised_hospital, create_hospital)
 
 local function copy_hospital(source, destination)
     destination[EK.workhours] = source[EK.workhours]
     destination[EK.treated] = Table.copy(source[EK.treated])
+    destination[EK.treatment_permissions] = Table.copy(source[EK.treatment_permissions])
 end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
+Register.set_entity_copy_handler(Type.improvised_hospital, copy_hospital)
 
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
@@ -825,7 +833,7 @@ Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_sta
 ---------------------------------------------------------------------------------------------------
 -- << waste dump >>
 
-local garbage_values = ItemConstants.garbage_items
+local garbage_values = ItemConstants.garbage_values
 
 local function analyze_waste_dump_inventory(inventory)
     local garbage_items = {}
@@ -994,7 +1002,7 @@ local function update_water_distributer(entry)
         for fluid_name in pairs(entity.get_fluid_contents()) do
             local water_value = water_values[fluid_name]
             if water_value then
-                entry[EK.water_quality] = water_value.health
+                entry[EK.water_quality] = water_value
                 entry[EK.water_name] = fluid_name
                 return
             end
