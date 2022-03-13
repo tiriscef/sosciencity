@@ -80,12 +80,15 @@ local function create_annual_recipe(details)
         {
             name = "farming-annual-" .. product.name,
             product_min = 0,
-            product_max = 400,
+            product_max = 200,
             energy_required = energy_required,
             expensive_energy_required = energy_required * 1.2,
             themes = {{"water", water_required, water_required * 2}},
             ingredients = {{type = "item", name = product.name, amount = 10}},
-            byproducts = {{type = "item", name = "leafage", amount_min = 1, amount_max = 40}},
+            byproducts = {
+                {type = "item", name = product.name, amount_min = 0, amount_max = 200, probability = details.product_probability},
+                {type = "item", name = "leafage", amount_min = 1, amount_max = 40}
+            },
             localised_name = {"recipe-name.annual", product:get_localised_name()},
             localised_description = {
                 "recipe-description.annual",
@@ -171,8 +174,8 @@ local function create_annual_bloomhouse_recipe(details)
         details,
         {
             name = "farming-annual-bloomhouse-" .. product.name,
-            product_min = 150,
-            product_max = 250,
+            product_min = 75,
+            product_max = 125,
             energy_required = energy_required,
             expensive_energy_required = energy_required * 1.2,
             themes = {{"water", water_required, water_required * 2}},
@@ -181,6 +184,7 @@ local function create_annual_bloomhouse_recipe(details)
                 {type = "item", name = "pot", amount = 20}
             },
             byproducts = {
+                {type = "item", name = product.name, amount_min = 75, amount_max = 125, probability = details.product_probability},
                 {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
                 {type = "item", name = "pot", amount_min = 19, amount_max = 20}
             },
