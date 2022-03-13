@@ -12,7 +12,12 @@ Subentities = {}
 -- local often used globals for extreme performance gains
 
 Subentities.subentity_name_lookup = {
-    [SubentityType.beacon] = "sosciencity-hidden-beacon"
+    [SubentityType.beacon] = "sosciencity-hidden-beacon",
+    [SubentityType.turret_gunfire] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq1] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq2] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq3] = "gunfire-hq-turret",
+    [SubentityType.turret_gunfire_hq4] = "gunfire-hq-turret"
 }
 local subentity_names = Subentities.subentity_name_lookup
 
@@ -22,7 +27,7 @@ local get_building_details = require("constants.buildings").get
 
 local max = math.max
 local get_subtbl = Tirislib.Tables.get_subtbl
-local get_subentity
+local get_or_create_subentity
 
 ---------------------------------------------------------------------------------------------------
 -- << hidden beacons >>
@@ -58,7 +63,7 @@ end
 --- @param productivity number
 --- @param add_penalty boolean
 function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
-    local beacon, new = get_subentity(entry, SubentityType.beacon)
+    local beacon, new = get_or_create_subentity(entry, SubentityType.beacon)
 
     -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
     if
@@ -104,7 +109,7 @@ function Subentities.has_power(entry)
         return true
     end
 
-    local eei, new = get_subentity(entry, SubentityType.eei)
+    local eei, new = get_or_create_subentity(entry, SubentityType.eei)
     if new then
         -- the new eei needs to be told its power usage
         set_eei_power_usage(eei, power_usage)
@@ -121,7 +126,7 @@ end
 --- @param entry Entry
 --- @param usage number
 function Subentities.set_power_usage(entry, usage)
-    local eei, new = get_subentity(entry, SubentityType.eei)
+    local eei, new = get_or_create_subentity(entry, SubentityType.eei)
 
     -- we don't update the eei if nothing has changed to avoid unnecessary API calls
     if new or entry[EK.power_usage] ~= usage then
@@ -143,14 +148,26 @@ local function get_subentity_name(entry, _type)
 end
 
 local function add(entry, _type)
+    local building_details = get_building_details(entry)
     local subentities = get_subtbl(entry, EK.subentities)
 
     local entity = entry[EK.entity]
+
+    local position = entity.position
+    local offsets = building_details.subentity_offsets
+    if offsets then
+        local offset = offsets[_type]
+        if offset then
+            position.x = position.x + offset.x
+            position.y = position.y + offset.y
+        end
+    end
+
     local subentity =
         entity.surface.create_entity(
         {
             name = get_subentity_name(entry, _type),
-            position = entity.position,
+            position = position,
             force = entity.force
         }
     )
@@ -181,6 +198,13 @@ function Subentities.add_all_for(entry)
     if power_usage then
         add(entry, SubentityType.eei)
         set_power_usage(entry, power_usage)
+    end
+
+    local subentities = building_details.subentities
+    if subentities then
+        for _, _type in pairs(subentities) do
+            add(entry, _type)
+        end
     end
 
     local type_definition = get_type(entry)
@@ -216,8 +240,8 @@ end
 --- Gets the hidden entity of the given type and if it had to be recreated.\
 --- Implicitly creates the subentity when the entry didn't have one.
 --- @param entry Entry
---- @param _type Type
-function Subentities.get(entry, _type)
+--- @param _type SubentityType
+function Subentities.get_or_create(entry, _type)
     -- the encapsulating table doesn't even exist, the subentity has to be added
     local subentities = entry[EK.subentities]
     if not subentities then
@@ -231,6 +255,36 @@ function Subentities.get(entry, _type)
         return add(entry, _type), true
     end
 end
-get_subentity = Subentities.get
+get_or_create_subentity = Subentities.get_or_create
+
+local subentity_types_where_active_status_makes_sense = {
+    SubentityType.turret_gunfire,
+    SubentityType.turret_gunfire_hq1,
+    SubentityType.turret_gunfire_hq2,
+    SubentityType.turret_gunfire_hq3,
+    SubentityType.turret_gunfire_hq4
+}
+
+--- Sets the active status of all subentities to the given boolean.
+--- @param entry Entry
+--- @param is_active boolean
+function Subentities.set_active(entry, is_active)
+    local subentities = entry[EK.subentities]
+    if not subentities then
+        return
+    end
+
+    for _, _type in pairs(subentity_types_where_active_status_makes_sense) do
+        local subentity = subentities[_type]
+
+        if subentity then
+            if not subentity.valid then
+                subentity = add(entry, _type)
+            end
+
+            subentity.active = is_active
+        end
+    end
+end
 
 return Subentities

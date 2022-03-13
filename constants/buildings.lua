@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local SubentityType = require("enums.subentity-type")
 local Type = require("enums.type")
 
 local Time = require("constants.time")
@@ -108,6 +109,18 @@ Building.values = {
         workforce = {
             count = 10,
             castes = {Type.gunfire}
+        },
+        subentities = {
+            SubentityType.turret_gunfire_hq1,
+            SubentityType.turret_gunfire_hq2,
+            SubentityType.turret_gunfire_hq3,
+            SubentityType.turret_gunfire_hq4
+        },
+        subentity_offsets = {
+            [SubentityType.turret_gunfire_hq1] = {x = 3.875, y = 0.9},
+            [SubentityType.turret_gunfire_hq2] = {x = 3.875, y = -4.875},
+            [SubentityType.turret_gunfire_hq3] = {x = -3.875, y = 0.9},
+            [SubentityType.turret_gunfire_hq4] = {x = -3.875, y = -4.875}
         }
     },
     ["hospital"] = {

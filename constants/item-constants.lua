@@ -1,18 +1,13 @@
 --- Various item-related constants
 local ItemConstants = {}
 
-ItemConstants.garbage_items = {
-    ["garbage"] = true,
-    ["food-leftovers"] = true,
-    ["leafage"] = true,
-    ["slaughter-waste"] = true
-}
-
 ItemConstants.garbage_values = {
     ["garbage"] = 1,
     ["food-leftovers"] = 1,
+    ["leafage"] = 0.5,
     ["slaughter-waste"] = 1.5,
-    ["sewage-sludge"] = 1.5
+    ["sewage-sludge"] = 1.5,
+    ["mold"] = 2
 }
 
 local wood_compost_value = 4
