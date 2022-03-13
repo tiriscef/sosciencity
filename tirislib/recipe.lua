@@ -748,7 +748,7 @@ end
 function Tirislib.RecipeData.add_result(recipe_data, result, suppress_merge)
     Tirislib.RecipeData.convert_to_results_table(recipe_data)
 
-    if suppress_merge then
+    if not suppress_merge then
         for _, current_result in pairs(recipe_data.results) do
             if Entries.can_be_merged(current_result, result) then
                 Entries.merge(current_result, result)
