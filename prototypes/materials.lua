@@ -642,7 +642,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1,
     allow_productivity = true,
-    unlock = "drinking-water-treatment"
+    unlock = "ember-caste"
 }
 
 Tirislib.RecipeGenerator.create {
