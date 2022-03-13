@@ -1,7 +1,7 @@
 --<< find all turrets and add them to the hidden gunfire techs >>
 local gunfire_techs = {}
 for i = 0, 20 do
-    local strength = 2 ^ i
+    local strength = 0.01 * 2 ^ i
 
     table.insert(
         gunfire_techs,
