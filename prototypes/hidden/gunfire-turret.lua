@@ -261,7 +261,7 @@ end
 
 Tirislib.Entity.create {
     type = "turret",
-    name = "sosciencity-gunfire-turret",
+    name = "gunfire-hq-turret",
     icon = "__base__/graphics/icons/gun-turret.png",
     icon_size = 64,
     icon_mipmaps = 4,
