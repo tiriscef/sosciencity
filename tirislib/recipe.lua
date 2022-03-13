@@ -163,8 +163,10 @@ end
 function Entries.transform_amount(entry, fn)
     if entry.amount then
         entry.amount = fn(entry.amount)
+        entry.amount = math.max(entry.amount, 1)
     elseif entry[2] then
         entry[2] = fn(entry[2])
+        entry[2] = math.max(entry[2], 1)
     elseif entry.amount_min then
         entry.amount_min = fn(entry.amount_min)
         entry.amount_max = fn(entry.amount_max)
@@ -816,7 +818,12 @@ end
 --- @param _type string|nil
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_new_result(result, amount, _type, suppress_merge)
-    Tirislib.Recipe.add_result(self, Tirislib.RecipeEntry.create_result_prototype(result, amount, _type), nil, suppress_merge)
+    Tirislib.Recipe.add_result(
+        self,
+        Tirislib.RecipeEntry.create_result_prototype(result, amount, _type),
+        nil,
+        suppress_merge
+    )
 
     return self
 end
@@ -1229,13 +1236,9 @@ function Tirislib.Recipe:ceil_ingredients()
     return self
 end
 
-local function floor_savely(n)
-    return math.max(math.floor(n), 1)
-end
-
 function Tirislib.RecipeData.floor_ingredient_amounts(recipe_data)
     for _, ingredient in pairs(recipe_data.results) do
-        Entries.transform_amount(ingredient, floor_savely)
+        Entries.transform_amount(ingredient, math.floor)
     end
 end
 
@@ -1268,10 +1271,10 @@ end
 function Tirislib.RecipeData.floor_result_amounts(recipe_data)
     if recipe_data.results then
         for _, result in pairs(recipe_data.results) do
-            Entries.transform_amount(result, floor_savely)
+            Entries.transform_amount(result, math.floor)
         end
     elseif recipe_data.result_count then
-        recipe_data.result_count = floor_savely(recipe_data.result_count)
+        recipe_data.result_count = math.max(math.floor(recipe_data.result_count), 1)
     end
 end
 
