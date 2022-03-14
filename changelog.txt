@@ -1,8 +1,22 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.9
+Date: 2022.03.14
+  Changes:
+    - The Gunfire HQ Defense Turrets now have their base-graphic - because that looks nicer. Existing ones might look weird, because that changes their offset. So maybe mine and re-place them.
+    - After popular complaint, the Orchid Plant Care Station now is cheaper.
+
+  Bugfixes:
+    - Fixed a freeze related to a broken loop in the water-consumption code.
+    - Fixed that the Gunfire Bonus sometimes was off by a factor of 100.
+
+  Factory-Breaking Changes:
+    - Reduced the size of the Barrack. You might need to mine and replace the existing ones if that breaks your layout.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.8
 Date: 2022.03.13
   Balancing:
-    - Experimental: The output of annual plant recipes is now split into two entries. This may look confusing. It doesn't change the average output and output range. It changes the probability distribution so that very low or very high outcomes are less likely; average outcomes are more likely to occur.
+    - Experimental: The output of annual plant recipes is now split into two entries. This may look confusing as it doesn't change the average output and output range. It changes the probability distribution so that very low or very high outcomes are less likely and average outcomes are more likely to occur.
 
   Bugfixes:
     - Fixed a crash related to an unsave 'pairs'-loop in the disease-update function.
@@ -13,6 +27,9 @@ Date: 2022.03.13
     - Added a range indicator for buildings with a global range.
     - The Gunfire HQ now has 4 defensive turrets. These are active if the building is staffed.
     - Hospitals can be allowed or disallowed to treat specific diseases.
+
+  Minor Features:
+    - Treating Gender Dysphoria now will actually change the gender of the inhabitant.
 
   Gui:
     - Added a Drinking Water catalogue to the water tower's gui.
