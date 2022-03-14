@@ -266,8 +266,7 @@ Tirislib.Entity.create {
     icon_size = 64,
     icon_mipmaps = 4,
     flags = {"placeable-player", "player-creation", "placeable-off-grid"},
-    collision_box = {{-0.7, -0.7}, {0.7, 0.7}},
-    selection_box = {{-1, -1}, {1, 1}},
+    selection_box = {{-1, -0.5}, {1, 0.5}},
     damaged_trigger_effect = hit_effects.entity(),
     rotation_speed = 0.015,
     preparing_speed = 0.08,
@@ -279,6 +278,56 @@ Tirislib.Entity.create {
     alert_when_attacking = true,
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
+    base_picture = {
+        layers = {
+            {
+                filename = "__base__/graphics/entity/gun-turret/gun-turret-base.png",
+                priority = "high",
+                width = 76,
+                height = 60,
+                axially_symmetrical = false,
+                direction_count = 1,
+                frame_count = 1,
+                shift = util.by_pixel(1, -1),
+                hr_version = {
+                    filename = "__base__/graphics/entity/gun-turret/hr-gun-turret-base.png",
+                    priority = "high",
+                    width = 150,
+                    height = 118,
+                    axially_symmetrical = false,
+                    direction_count = 1,
+                    frame_count = 1,
+                    shift = util.by_pixel(0.5, -1),
+                    scale = 0.5
+                }
+            },
+            {
+                filename = "__base__/graphics/entity/gun-turret/gun-turret-base-mask.png",
+                flags = {"mask", "low-object"},
+                line_length = 1,
+                width = 62,
+                height = 52,
+                axially_symmetrical = false,
+                direction_count = 1,
+                frame_count = 1,
+                shift = util.by_pixel(0, -4),
+                apply_runtime_tint = true,
+                hr_version = {
+                    filename = "__base__/graphics/entity/gun-turret/hr-gun-turret-base-mask.png",
+                    flags = {"mask", "low-object"},
+                    line_length = 1,
+                    width = 122,
+                    height = 102,
+                    axially_symmetrical = false,
+                    direction_count = 1,
+                    frame_count = 1,
+                    shift = util.by_pixel(0, -4.5),
+                    apply_runtime_tint = true,
+                    scale = 0.5
+                }
+            }
+        }
+    },
     folded_animation = {
         layers = {
             gun_turret_extension {frame_count = 1, line_length = 1},
@@ -358,5 +407,6 @@ Tirislib.Entity.create {
         rotate = false,
         orientation_to_variation = false
     },
+    base_picture_render_layer = "higher-object-under",
     gun_animation_render_layer = "higher-object-under"
 }

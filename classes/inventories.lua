@@ -712,11 +712,7 @@ local function consume_water(distributers, amount)
     local to_consume = amount
     local quality = 0
 
-    local i = 1
-    local distributer_count = #distributers
-
-    while to_consume > 0.000001 and i <= distributer_count do
-        local distributer = distributers[i]
+    for _, distributer in pairs(distributers) do
         local water_name = distributer[EK.water_name]
 
         -- check if the distributer has water
@@ -729,6 +725,10 @@ local function consume_water(distributers, amount)
         log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[EK.water_quality]
         to_consume = to_consume - consumed
+
+        if to_consume < 0.0001 then
+            break
+        end
     end
 
     return (amount - to_consume) / amount, quality / amount
