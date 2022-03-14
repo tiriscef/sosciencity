@@ -1,5 +1,3 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "orchid-plant-care-station",
@@ -14,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "orchid-plant-care-station",
-    themes = {{"building", 10}},
+    themes = {{"building", 1}},
     ingredients = {
         {type = "item", name = "silo", amount = 2},
         {type = "item", name = "architectural-concept", amount = 1}
