@@ -737,21 +737,27 @@ end
 Entity.get_upbringing_expectations = get_upbringing_expectations
 
 local function finish_class(entry, class, mode)
-    local probabilities = get_upbringing_expectations(mode)
-    local caste = Utils.weighted_random(probabilities, 1)
     local genders = class[2]
     local count = Table.array_sum(genders)
+    local probabilities = get_upbringing_expectations(mode)
+    local castes = Utils.dice_rolls(probabilities, count)
+    local birth_defect_probability = Inhabitants.get_birth_defect_probability()
 
-    local diseases = DiseaseGroup.new(count)
-    local sick_count = Utils.coin_flips(Inhabitants.get_birth_defect_probability(), count)
-    if sick_count > 0 then
-        DiseaseGroup.make_sick_randomly(diseases, DiseaseCategory.birth_defect, sick_count)
+    for caste, caste_count in pairs(castes) do
+        if caste_count > 0 then
+            local caste_genders = GenderGroup.take(genders, caste_count)
+            local caste_diseases = DiseaseGroup.new(caste_count)
+            local sick_count = Utils.coin_flips(birth_defect_probability, caste_count)
+            if sick_count > 0 then
+                DiseaseGroup.make_sick_randomly(caste_diseases, DiseaseCategory.birth_defect, sick_count)
+            end
+
+            local graduates = InhabitantGroup.new(caste, caste_count, nil, nil, nil, caste_diseases, caste_genders)
+            Inhabitants.add_to_city(graduates)
+        end
     end
 
-    local graduates = InhabitantGroup.new(caste, count, nil, nil, nil, diseases, genders)
     Communication.report_immigration(count, ImmigrationCause.birth)
-    Inhabitants.add_to_city(graduates)
-
     entry[EK.graduates] = entry[EK.graduates] + count
 end
 
