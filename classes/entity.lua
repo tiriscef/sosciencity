@@ -716,20 +716,45 @@ Register.set_entity_copy_handler(Type.improvised_hospital, copy_hospital)
 -- [1]: tick of creation
 -- [2]: GenderGroup
 
-local function get_upbringing_expectations(mode)
-    local targeted_portion = (mode == Type.null) and 0 or 0.5
+local caste_is_researched = Inhabitants.caste_is_researched
+local get_caste_effectivity = Inhabitants.get_caste_effectivity
 
+local function get_researched_castes()
     local ret = {}
-    local researched_count = 0
+
     for _, caste_id in pairs(TypeGroup.breedable_castes) do
-        if Inhabitants.caste_is_researched(caste_id) then
-            ret[caste_id] = (caste_id == mode) and targeted_portion or 0
-            researched_count = researched_count + 1
+        if caste_is_researched(caste_id) then
+            ret[#ret+1] = caste_id
         end
     end
 
-    for caste_id, probability in pairs(ret) do
-        ret[caste_id] = probability + (1 - targeted_portion) / researched_count
+    return ret
+end
+
+local function get_upbringing_expectations(mode)
+    local researched_castes = get_researched_castes()
+    local number_of_unresearched_castes = #researched_castes
+
+    local targeted_chance = 0
+    if mode ~= Type.null then
+        targeted_chance = 1 - 0.4 / (0.125 * get_caste_effectivity(mode) + 1)
+        number_of_unresearched_castes = number_of_unresearched_castes - 1
+
+        if number_of_unresearched_castes == 0 then
+            targeted_chance = 1
+        end
+    end
+
+    local untargeted_chance = (1 - targeted_chance) / number_of_unresearched_castes
+
+    local ret = {}
+
+    for _, caste_id in pairs(researched_castes) do
+        if caste_id == mode then
+            ret[caste_id] = targeted_chance
+        else
+            ret[caste_id] = untargeted_chance
+        end
     end
 
     return ret
