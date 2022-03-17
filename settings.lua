@@ -22,6 +22,13 @@ data:extend {
     },
     {
         type = "bool-setting",
+        name = "sosciencity-lumber-in-vanilla-recipes",
+        order = "aad",
+        setting_type = "startup",
+        default_value = true
+    },
+    {
+        type = "bool-setting",
         name = "sosciencity-penalty-module",
         order = "aaa",
         setting_type = "runtime-global",
