@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "water-tower",
-    themes = {{"tank", 1}, {"piping", 15}, {"framework", 10}},
+    themes = {{"tank", 1}, {"piping", 15}, {"framework", 10}, {"plating", 10}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }

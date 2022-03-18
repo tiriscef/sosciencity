@@ -302,7 +302,7 @@ local housing_prototype_details = {
             path = "__sosciencity-graphics__/graphics/entity/barrack/barrack",
             width = 9,
             height = 10,
-            scale = 3/4,
+            scale = 3 / 4,
             shift = {1.1, 0.0},
             shadowmap = true,
             glow = true
@@ -385,19 +385,13 @@ end
 
 local quality_effect_on_recipe = {
     sheltered = function(details, house, tech_level)
-        table.insert(
-            details.themes,
-            {"housing_sheltered", house.room_count, math.ceil(house.room_count * 1.2), tech_level}
-        )
+        table.insert(details.themes, {"housing_sheltered", house.room_count, house.room_count * 1.2, tech_level})
     end,
     green = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_green", house.room_count, math.ceil(house.room_count * 1.2), tech_level})
+        table.insert(details.themes, {"housing_green", house.room_count, house.room_count * 1.2, tech_level})
     end,
     technical = function(details, house, tech_level)
-        table.insert(
-            details.themes,
-            {"housing_technical", house.room_count, math.ceil(house.room_count * 1.2), tech_level}
-        )
+        table.insert(details.themes, {"housing_technical", house.room_count, house.room_count * 1.2, tech_level})
     end,
     spacey = function(details, house, tech_level)
         -- increase the "building" theme amount
@@ -410,10 +404,7 @@ local quality_effect_on_recipe = {
         details.themes[1][2] = details.themes[1][3] * 0.8
     end,
     decorated = function(details, house, tech_level)
-        table.insert(
-            details.themes,
-            {"furnishing_decorated", house.room_count, math.ceil(house.room_count * 1.2), tech_level}
-        )
+        table.insert(details.themes, {"furnishing_decorated", house.room_count, house.room_count * 1.2, tech_level})
     end,
     simple = function(details, house, tech_level)
         -- change the normal "furnishing" theme to the simple one

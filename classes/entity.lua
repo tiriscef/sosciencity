@@ -724,7 +724,7 @@ local function get_researched_castes()
 
     for _, caste_id in pairs(TypeGroup.breedable_castes) do
         if caste_is_researched(caste_id) then
-            ret[#ret+1] = caste_id
+            ret[#ret + 1] = caste_id
         end
     end
 
@@ -1063,7 +1063,7 @@ end
 Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
 
 local function update_waterwell(entry)
-    local performance = get_waterwell_competition_performance(entry) * min(1, get_maintenance_performance())
+    local performance = min(get_waterwell_competition_performance(entry), get_maintenance_performance())
     set_crafting_machine_performance(entry, performance)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
