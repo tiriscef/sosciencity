@@ -998,11 +998,15 @@ function Tirislib.RecipeData.replace_ingredient(
     ingredient_name,
     ingredient_type,
     replacement_name,
-    replacement_type)
+    replacement_type,
+    amount_fn)
     for _, ingredient in pairs(recipe_data.ingredients) do
         if Entries.get_name(ingredient) == ingredient_name and Entries.get_type(ingredient) == ingredient_type then
             Entries.set_name(ingredient, replacement_name)
             Entries.set_type(ingredient, replacement_type)
+            if amount_fn then
+                Entries.transform_amount(ingredient, amount_fn)
+            end
         end
     end
 end
@@ -1012,8 +1016,14 @@ end
 --- @param replacement_name string
 --- @param ingredient_type string
 --- @param replacement_type string
+--- @param amount_fn function
 --- @return RecipePrototype itself
-function Tirislib.Recipe:replace_ingredient(ingredient_name, replacement_name, ingredient_type, replacement_type)
+function Tirislib.Recipe:replace_ingredient(
+    ingredient_name,
+    replacement_name,
+    ingredient_type,
+    replacement_type,
+    amount_fn)
     ingredient_type = ingredient_type or "item"
     replacement_name = replacement_name or "item"
 
@@ -1023,7 +1033,57 @@ function Tirislib.Recipe:replace_ingredient(ingredient_name, replacement_name, i
         ingredient_name,
         ingredient_type,
         replacement_name,
-        replacement_type
+        replacement_type,
+        amount_fn
+    )
+
+    return self
+end
+
+function Tirislib.RecipeData.replace_result(
+    recipe_data,
+    result_name,
+    result_type,
+    replacement_name,
+    replacement_type,
+    amount_fn)
+    Tirislib.RecipeData.convert_to_results_table(recipe_data)
+
+    for _, result in pairs(recipe_data.results) do
+        if Entries.get_name(result) == result_name and Entries.get_type(result) == result_type then
+            Entries.set_name(result, replacement_name)
+            Entries.set_type(result, replacement_type)
+            if amount_fn then
+                Entries.transform_amount(result, amount_fn)
+            end
+        end
+    end
+end
+
+--- Replaces the specified ingredient.
+--- @param result_name string
+--- @param replacement_name string
+--- @param result_type string
+--- @param replacement_type string
+--- @param amount_fn function
+--- @return RecipePrototype itself
+function Tirislib.Recipe:replace_result(
+    result_name,
+    replacement_name,
+    result_type,
+    replacement_type,
+    amount_fn)
+    result_type = result_type or "item"
+    replacement_name = replacement_name or "item"
+
+    Tirislib.Recipe.call_on_recipe_data(
+        self,
+        Tirislib.RecipeData.replace_result,
+        result_name,
+        result_type,
+        replacement_name,
+        replacement_type,
+        amount_fn
     )
 
     return self

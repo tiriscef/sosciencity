@@ -713,10 +713,17 @@ local get_power_usage = InhabitantGroup.get_power_usage
 
 --- Checks if the given caste has been researched by the player.
 --- @param caste_id Type
+--- @return boolean
 function Inhabitants.caste_is_researched(caste_id)
     return technologies[castes[caste_id].tech_name]
 end
 local is_researched = Inhabitants.caste_is_researched
+
+--- Returns the level of the efficiency technology for the given caste.
+--- @param caste_id Type
+function Inhabitants.get_caste_effectivity(caste_id)
+    return technologies[castes[caste_id].effectivity_tech]
+end
 
 --- Returns the total number of inhabitants.
 function Inhabitants.get_population_count()

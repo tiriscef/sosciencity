@@ -22,7 +22,8 @@ local default_values = {
     building_stacksize = 50,
     add_glass = true,
     glass_compatibility_mode = false,
-    agriculture_pollutes = settings.startup["sosciencity-agriculture-pollution"].value
+    agriculture_pollutes = settings.startup["sosciencity-agriculture-pollution"].value,
+    lumber_in_vanilla_recipes = settings.startup["sosciencity-lumber-in-vanilla-recipes"].value
 }
 
 function default_values.add_eei(entity_name)
