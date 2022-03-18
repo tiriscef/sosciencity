@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.10
+Date: 2022.03.18
+  Changes:
+    - The speed malus of Groundwater Pumps is now set to the bigger one of competition_malus and maintenance_malus, rather than both maluses combined. This avoids having the pump stop entirely if you screw up in early game.
+    - Reworked the way new citizens get their castes if an upbringing class finishes. Now the chance is rolled per student instead of once for the whole class.
+    - Reworked the probabilities which caste a student will choose. Now the targeted caste's chance depends on its Effectivity technology and the counter-probability is split up evenly on the other castes. This avoids that the chance to get the targeted caste sinks with every additional unlocked caste.
+    - I changed some recipes for buildings. It's a bit hard to summarize all changes, because I'm kinda generating recipes automatically if they use items that don't belong to Sosciencity. I tried to adress the cases where the generated recipes were weird (like greenhouses needing engines).
+
+  Features:
+    - Added a startup-option to exchange Wood for Lumber in the ingredients of all recipes that don't belong to Sosciencity. This allows to automate e.g. Small Electric Poles. The setting gets disabled automatically if there is another mod present that balances wood - at the moment pyanodons, IR2, Angel's Bio Processing and Krastorio 2. Please tell me if there are more.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.9
 Date: 2022.03.14
   Changes:
