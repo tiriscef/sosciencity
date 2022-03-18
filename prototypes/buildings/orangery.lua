@@ -12,9 +12,9 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "orangery",
-    themes = {{"building", 5}, {"machine", 3}, {"piping", 10}, {"lamp", 40}},
+    themes = {{"plating", 50}, {"gear_wheel", 50}, {"piping", 10}, {"lamp", 40}, {"soil", 100}},
     ingredients = {
-        {type = "item", name = "window", amount = 20}
+        {type = "item", name = "window", amount = 50}
     },
     default_theme_level = 4,
     unlock = "controlled-environment-farming"

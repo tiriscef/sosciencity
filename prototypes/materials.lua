@@ -580,7 +580,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "trap-cage",
     themes = {
-        {"framework", 1},
+        {"plating", 2},
         {"grating", 10}
     },
     energy_required = 0.8,

@@ -4,7 +4,7 @@ Tirislib.Item.create {
     icon = "__sosciencity-graphics__/graphics/icon/plant-care-station.png",
     icon_size = 64,
     subgroup = "sosciencity-flora-buildings",
-    order = "gaa",
+    order = "haa",
     place_result = "orchid-plant-care-station",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
