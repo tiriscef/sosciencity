@@ -50,6 +50,9 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "fluid", name = "water", amount = 10}
         }
     },
+    brick = {
+        [0] = {{type = "item", name = "stone-brick", amount = 1}}
+    },
     can = {
         [0] = {{type = "item", name = "iron-plate", amount = 1}}
     },
@@ -80,13 +83,13 @@ Tirislib.RecipeGenerator.add_themes {
     },
     framework = {
         [0] = {
-            {type = "item", name = "iron-plate", amount = 1},
-            {type = "item", name = "iron-stick", amount = 1}
-        },
-        [2] = {
-            {type = "item", name = "steel-plate", amount = 1},
             {type = "item", name = "iron-stick", amount = 1}
         }
+    },
+    furnace = {
+        [0] = {{type = "item", name = "stone-furnace", amount = 1}},
+        [2] = {{type = "item", name = "steel-furnace", amount = 1}},
+        [4] = {{type = "item", name = "electric-furnace", amount = 1}}
     },
     gear_wheel = {
         [0] = {
@@ -118,6 +121,9 @@ Tirislib.RecipeGenerator.add_themes {
     },
     gravel = {
         [0] = {{type = "item", name = "stone", amount = 1}}
+    },
+    gun_turret = {
+        [0] = {{type = "item", name = "gun-turret", amount = 1}}
     },
     handle = {
         [0] = {{type = "item", name = "iron-stick", amount = 1}}
@@ -257,22 +263,22 @@ Tirislib.RecipeGenerator.add_themes {
     --- everything that is built to accommodate huwans
     building = {
         [0] = {
-            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "lumber", amount = 10},
             {type = "item", name = "iron-plate", amount = 15},
             {type = "item", name = "window", amount = 2}
         },
         [1] = {
-            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "lumber", amount = 10},
             {type = "item", name = "stone-brick", amount = 15},
             {type = "item", name = "window", amount = 2}
         },
         [2] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "stone-wall", amount = 5},
+            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "stone-wall", amount = 4},
             {type = "item", name = "window", amount = 2}
         },
         [3] = {
-            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "lumber", amount = 10},
             {type = "item", name = "stone-wall", amount = 5},
             {type = "item", name = "mineral-wool", amount = 2},
             {type = "item", name = "window", amount = 2}
@@ -304,22 +310,22 @@ Tirislib.RecipeGenerator.add_themes {
     },
     cheap_building = {
         [0] = {
-            {type = "item", name = "lumber", amount = 1},
+            {type = "item", name = "lumber", amount = 8},
             {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "window", amount = 1}
         },
         [1] = {
-            {type = "item", name = "lumber", amount = 1},
-            {type = "item", name = "stone-brick", amount = 10},
+            {type = "item", name = "lumber", amount = 8},
+            {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "window", amount = 1}
         },
         [2] = {
-            {type = "item", name = "lumber", amount = 1},
+            {type = "item", name = "lumber", amount = 8},
             {type = "item", name = "stone-wall", amount = 3},
             {type = "item", name = "window", amount = 1}
         },
         [3] = {
-            {type = "item", name = "lumber", amount = 2},
+            {type = "item", name = "lumber", amount = 15},
             {type = "item", name = "stone-wall", amount = 3},
             {type = "item", name = "mineral-wool", amount = 1},
             {type = "item", name = "window", amount = 1}
@@ -351,53 +357,53 @@ Tirislib.RecipeGenerator.add_themes {
     },
     pompous_building = {
         [0] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "iron-plate", amount = 2},
+            {type = "item", name = "lumber", amount = 15},
+            {type = "item", name = "iron-plate", amount = 20},
             {type = "item", name = "stone-brick", amount = 10},
             {type = "item", name = "window", amount = 5}
         },
         [1] = {
-            {type = "item", name = "lumber", amount = 2},
-            {type = "item", name = "iron-plate", amount = 2},
+            {type = "item", name = "lumber", amount = 15},
+            {type = "item", name = "iron-plate", amount = 20},
             {type = "item", name = "stone-brick", amount = 10},
             {type = "item", name = "window", amount = 5}
         },
         [2] = {
-            {type = "item", name = "lumber", amount = 5},
-            {type = "item", name = "steel-plate", amount = 2},
+            {type = "item", name = "lumber", amount = 15},
+            {type = "item", name = "steel-plate", amount = 5},
             {type = "item", name = "stone-wall", amount = 10},
             {type = "item", name = "window", amount = 5}
         },
         [3] = {
-            {type = "item", name = "lumber", amount = 5},
-            {type = "item", name = "steel-plate", amount = 2},
+            {type = "item", name = "lumber", amount = 15},
+            {type = "item", name = "steel-plate", amount = 5},
             {type = "item", name = "stone-wall", amount = 10},
             {type = "item", name = "mineral-wool", amount = 4},
             {type = "item", name = "window", amount = 5}
         },
         [4] = {
-            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "lumber", amount = 20},
             {type = "item", name = "steel-plate", amount = 6},
             {type = "item", name = "concrete", amount = 10},
             {type = "item", name = "mineral-wool", amount = 4},
             {type = "item", name = "window", amount = 5}
         },
         [5] = {
-            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "lumber", amount = 20},
             {type = "item", name = "steel-plate", amount = 6},
             {type = "item", name = "concrete", amount = 10},
             {type = "item", name = "mineral-wool", amount = 4},
             {type = "item", name = "window", amount = 5}
         },
         [6] = {
-            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "lumber", amount = 25},
             {type = "item", name = "steel-plate", amount = 8},
             {type = "item", name = "refined-concrete", amount = 10},
             {type = "item", name = "mineral-wool", amount = 5},
             {type = "item", name = "window", amount = 5}
         },
         [7] = {
-            {type = "item", name = "lumber", amount = 10},
+            {type = "item", name = "lumber", amount = 25},
             {type = "item", name = "steel-plate", amount = 8},
             {type = "item", name = "refined-concrete", amount = 10},
             {type = "item", name = "mineral-wool", amount = 5},

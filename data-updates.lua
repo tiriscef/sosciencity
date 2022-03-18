@@ -11,6 +11,7 @@ require("datastage-scripts.handcrafting")
 require("datastage-scripts.trees")
 require("datastage-scripts.furniture-unlocks")
 require("datastage-scripts.placement-range-highlights")
+require("datastage-scripts.lumber")
 
 require("integrations-updates")
 

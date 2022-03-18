@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "silo",
-    themes = {{"plating", 20}, {"framework", 1}},
+    themes = {{"plating", 20}, {"framework", 20}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }
