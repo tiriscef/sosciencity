@@ -1647,6 +1647,9 @@ local function update_general_building_details(container, entry)
     local active = entry[EK.active]
     if active ~= nil then
         set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
+        set_kv_pair_visibility(building_data, "active", true)
+    else
+        set_kv_pair_visibility(building_data, "active", false)
     end
 
     local worker_specification = get_building_details(entry).workforce
@@ -1706,10 +1709,7 @@ local function create_general_building_details(container, entry)
 
     add_kv_pair(building_data, "building-type", {"sosciencity.type"}, type_details.localised_name)
     add_kv_pair(building_data, "description", "", type_details.localised_description)
-
-    if entry[EK.active] ~= nil then
-        add_kv_pair(building_data, "active", {"sosciencity.active"})
-    end
+    add_kv_pair(building_data, "active", {"sosciencity.active"})
 
     if building_details.range then
         local range = building_details.range
