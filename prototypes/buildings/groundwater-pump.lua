@@ -88,8 +88,7 @@ Tirislib.Entity.create {
             pipe_connections = {{position = {0, -2}}},
             production_type = "output"
         }
-    },
-    fixed_recipe = "clean-water-from-ground"
+    }
 }:set_size(3, 3):copy_localisation_from_item()
 
 Tirislib.Entity.create {

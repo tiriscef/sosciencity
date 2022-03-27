@@ -40,6 +40,7 @@ end
 --- **subscriptions:** types that this type subscribes to by default\
 --- **is_civil:** is this type is part of the soscietal infrastructure\
 --- **is_inhabited:** do people live in this entity\
+--- **has_subscriptions:** does this type have notifications and thus the "notify me"-checkbox in its gui\
 --- **affected_by_clockwork:** is this machine affected by the clockwork-maintenance-mechanic\
 --- **signature_color:** color for this entity, for displaying purposes\
 --- **localised_name:** localised name for this type\
@@ -195,7 +196,8 @@ Types.definitions = {
     [Type.upbringing_station] = {
         localised_name = {"sosciencity.upbringing-station"},
         localised_description = {"sosciencity.explain-upbringing-station"},
-        is_civil = true
+        is_civil = true,
+        has_subscriptions = true
     },
     [Type.pharmacy] = {
         localised_name = {"sosciencity.pharmacy"},

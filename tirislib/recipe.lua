@@ -1378,6 +1378,44 @@ function Tirislib.Recipe:transform_result_entries(fn)
     return self
 end
 
+function Tirislib.RecipeData.index_fluid_ingredients(recipe_data)
+    local index = 1
+    for _, entry in pairs(recipe_data.ingredients) do
+        if Entries.get_type(entry) == "fluid" then
+            entry.fluidbox_index = index
+            index = index + 1
+        end
+    end
+end
+
+--- Sets the fluidbox index for every fluid ingredient consecutively.
+--- @return RecipePrototype itself
+function Tirislib.Recipe:index_fluid_ingredients()
+    Tirislib.Recipe.call_on_recipe_data(self, Tirislib.RecipeData.index_fluid_ingredients)
+
+    return self
+end
+
+function Tirislib.RecipeData.index_fluid_results(recipe_data)
+    Tirislib.RecipeData.convert_to_results_table(recipe_data)
+
+    local index = 1
+    for _, entry in pairs(recipe_data.results) do
+        if Entries.get_type(entry) == "fluid" then
+            entry.fluidbox_index = index
+            index = index + 1
+        end
+    end
+end
+
+--- Sets the fluidbox index for every fluid result consecutively.
+--- @return RecipePrototype itself
+function Tirislib.Recipe:index_fluid_results()
+    Tirislib.Recipe.call_on_recipe_data(self, Tirislib.RecipeData.index_fluid_results)
+
+    return self
+end
+
 --- Adds the recipe to all productivity module's whitelist.
 --- @return RecipePrototype
 function Tirislib.Recipe:allow_productivity_modules()
