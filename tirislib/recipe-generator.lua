@@ -246,7 +246,9 @@ end
 --- **icon:** path to icon\
 --- **icons:** array of SpritePrototypes\
 --- **icon_size:** integer\
---- **subgroup:** name of the subgroup (defaults to the product's subgroup)
+--- **subgroup:** name of the subgroup (defaults to the product's subgroup)\
+--- **index_fluid_ingredients:** bool (defaults to false)\
+--- **index_fluid_results:** bool (defaults to false)\
 function Tirislib.RecipeGenerator.create(details)
     local product = get_product_prototype(details)
     local main_product = get_main_product_entry(product, details)
@@ -305,6 +307,14 @@ function Tirislib.RecipeGenerator.create(details)
 
     if details.allow_productivity then
         recipe:allow_productivity_modules()
+    end
+
+    if details.index_fluid_ingredients then
+        recipe:index_fluid_ingredients()
+    end
+
+    if details.index_fluid_results then
+        recipe:index_fluid_results()
     end
 
     return recipe

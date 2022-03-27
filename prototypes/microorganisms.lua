@@ -65,7 +65,9 @@ local function create_enrichment_recipe(details)
                     shift = {-8, -8}
                 }
             },
-            icon_size = 64
+            icon_size = 64,
+            index_fluid_ingredients = true,
+            index_fluid_results = true
         }
     )
 
@@ -93,7 +95,9 @@ local function create_pure_culture_recipe(details)
             icon_size = 64,
             ingredients = {
                 {type = "fluid", name = product.name, amount = 10}
-            }
+            },
+            index_fluid_ingredients = true,
+            index_fluid_results = true
         }
     )
 
