@@ -19,6 +19,9 @@ Tirislib.RecipeGenerator.create {
     unlock = "basic-biotechnology"
 }
 
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
+
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "microalgae-farm",
@@ -59,5 +62,35 @@ Tirislib.Entity.create {
         usage_priority = "secondary-input",
         emissions_per_minute = -2,
         drain = "5kW"
+    },
+    fluid_boxes = {
+        {
+            base_level = -1,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {-1.0, 3.0}}},
+            production_type = "input"
+        },
+        {
+            base_level = -1,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {1.0, 3.0}}},
+            production_type = "input"
+        },
+        {
+            base_level = 1,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {-1.0, -3.0}}},
+            production_type = "output"
+        },
+        {
+            base_level = 1,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
+            pipe_connections = {{position = {1.0, -3.0}}},
+            production_type = "output"
+        }
     }
 }:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
