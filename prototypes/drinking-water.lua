@@ -28,6 +28,18 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
+    name = "water-from-ground",
+    product = "water",
+    product_type = "fluid",
+    product_min = 250,
+    product_max = 350,
+    category = "sosciencity-groundwater-pump",
+    subgroup = "sosciencity-drinking-water",
+    energy_required = 1,
+    unlock = "infrastructure-1"
+}
+
+Tirislib.RecipeGenerator.create {
     product = "mechanically-cleaned-water",
     product_type = "fluid",
     product_amount = 600,
