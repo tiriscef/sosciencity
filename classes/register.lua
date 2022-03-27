@@ -41,6 +41,7 @@ local get_building_details = Buildings.get
 
 local establish_new_neighbor
 local unsubscribe_neighborhood
+local remove_notifications
 
 local update_workforce
 
@@ -63,6 +64,7 @@ local function set_locals()
 
     establish_new_neighbor = Neighborhood.establish_new_neighbor
     unsubscribe_neighborhood = Neighborhood.unsubscribe_all
+    remove_notifications = Communication.remove_notifications
 
     update_workforce = Inhabitants.update_workforce
 end
@@ -347,6 +349,7 @@ function Register.remove_entry(entry, cause)
     on_destruction(_type, entry, cause)
     remove_subentities(entry)
     unsubscribe_neighborhood(entry)
+    remove_notifications(entry)
 
     remove_entry_from_register(entry)
 end

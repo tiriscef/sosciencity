@@ -782,8 +782,16 @@ local function finish_class(entry, class, mode)
         end
     end
 
-    Communication.report_immigration(count, ImmigrationCause.birth)
     entry[EK.graduates] = entry[EK.graduates] + count
+    Communication.report_immigration(count, ImmigrationCause.birth)
+    Communication.send_notification(
+        entry,
+        {
+            "sosciencity.finished-class",
+            count,
+            Tirislib.Locales.create_enumeration_with_numbers(castes, Locale.caste_short, nil, {"sosciencity.and"}, true)
+        }
+    )
 end
 
 Entity.upbringing_time = Time.minute
