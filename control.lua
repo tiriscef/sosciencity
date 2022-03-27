@@ -67,6 +67,7 @@ local Types = require("constants.types")
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
 
+require("classes.locale")
 require("classes.scheduler")
 require("classes.weather")
 require("classes.replacer")

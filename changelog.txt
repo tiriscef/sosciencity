@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.12
+Date: 2022.03.27
+  Changes:
+    - The Groundwater Pump now is able to pump normal Water instead of Clean Water. Ready for agriculture.
+
+  Features:
+    - Added the Notification System. The player can subscribe to buildings and get notified if important things happen there.
+    - Notification System: Upbringing Stations can now inform the player if a class finishes.
+
+  Factory-Breaking Changes:
+    - Gave the Microalgae Farm pipe connections, enabling it to do its recipes. Seems like the connections got lost for some copy-paste-and-forget reason.
+    - Gave the Fermentation Tank another set of pipe connections, which enables it to do the Pure Culture: Pemtenn recipe. I thought I already did this, but apparently that was in another universe.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.11
 Date: 2022.03.23
   Bugfixes:

@@ -36,6 +36,9 @@ Communication = {}
 
     global.warnings: table
         [WarningType]: table
+
+    global.notifications: table
+        [unit_number]: table of subscribed players
 ]]
 -- local often used globals for smallish performance gains
 
@@ -55,6 +58,8 @@ local report_ticks
 local reported_event_counts
 
 local warnings
+
+local notifications
 
 local castes = Castes.values
 
@@ -102,6 +107,8 @@ local function set_locals()
 
     warnings = global.warnings
 
+    notifications = global.notifications
+
     generate_speakers_list()
 end
 
@@ -144,6 +151,8 @@ function Communication.init()
             last_warning_tick = 0
         }
     end
+
+    global.notifications = {}
 
     set_locals()
 end
@@ -534,12 +543,7 @@ function Communication.warning(warning_type, ...)
     end
 end
 
-local function get_entry_localisation(entry)
-    local entity = entry[EK.entity]
-    local position = entity.position
-
-    return {"sosciencity.display-entry", entity.localised_name, position.x, position.y, entity.surface.name}
-end
+local get_entry_localisation = Locale.entry
 
 local warn_fns = {
     [WarningType.no_food] = function(entry)
@@ -599,6 +603,52 @@ local function look_for_warning()
     end
 
     return false
+end
+
+---------------------------------------------------------------------------------------------------
+-- << notifications >>
+
+--- Removes all subscriptions to notifications about the given entry. Must be called if the entry gets removed.
+--- @param entry Entry
+function Communication.remove_notifications(entry)
+    local unit_number = entry[EK.unit_number]
+    notifications[unit_number] = nil
+end
+
+--- Subscribes or unsubscribes the given player for notifications of the given entry.
+--- @param entry Entry
+--- @param player_id integer
+--- @param enabled boolean
+function Communication.set_subscription(entry, player_id, enabled)
+    local unit_number = entry[EK.unit_number]
+    local subscriptions = get_subtbl(notifications, unit_number)
+
+    if enabled then
+        subscriptions[player_id] = true
+    else
+        subscriptions[player_id] = nil
+    end
+end
+
+function Communication.check_subscription(entry, player_id)
+    local unit_number = entry[EK.unit_number]
+    local subscriptions = notifications[unit_number]
+
+    if subscriptions then
+        return subscriptions[player_id] ~= nil
+    else
+        return false
+    end
+end
+
+function Communication.send_notification(entry, message)
+    local subscriptions = notifications[entry[EK.unit_number]]
+
+    if subscriptions then
+        for player_id in pairs(subscriptions) do
+            game.players[player_id].print(message)
+        end
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
