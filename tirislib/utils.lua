@@ -1230,6 +1230,30 @@ function Tirislib.Locales.create_enumeration(elements, separator, last_separator
 end
 local create_enumeration = Tirislib.Locales.create_enumeration
 
+--- Creates a localised enumeration of the given elements.
+--- - Needs Sosciencity's locales
+--- @param elements table (element, number)-pairs
+--- @param fn function|nil function that returns a locale for the element
+--- @param separator string|locale
+--- @param last_separator string|locale|nil
+--- @param pruning boolean if 0 elements are to be ignored
+--- @return locale
+function Tirislib.Locales.create_enumeration_with_numbers(elements, fn, separator, last_separator, pruning)
+    local finished_elements = {}
+
+    for element, number in pairs(elements) do
+        if not pruning or number ~= 0 then
+            finished_elements[#finished_elements + 1] = {
+                "sosciencity.value-with-unit",
+                number,
+                fn and fn(element) or element
+            }
+        end
+    end
+
+    return create_enumeration(finished_elements, separator, last_separator)
+end
+
 --- Creates a localisation for the real world time for the given ticks.
 --- - Needs Sosciencity's locales
 --- @param ticks integer

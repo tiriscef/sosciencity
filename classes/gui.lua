@@ -143,14 +143,6 @@ local function display_comfort(comfort)
     return {"", comfort, "  -  ", {"comfort-scale." .. comfort}}
 end
 
-local function display_caste(caste_id, short)
-    if short then
-        return castes[caste_id].localised_name_short
-    else
-        return castes[caste_id].localised_name
-    end
-end
-
 local function get_migration_string(number)
     return format("%+.1f", number)
 end
@@ -264,7 +256,7 @@ local function look_for_event_handler(event, lookup)
         local player_id = event.player_index
         local entry = Register.try_get(global.details_view[player_id])
 
-        handler[1](entry, gui_element, unpack(handler[2]))
+        handler[1](entry, gui_element, player_id, unpack(handler[2]))
     end
 end
 
@@ -278,14 +270,14 @@ function Gui.on_gui_checked_state_changed(event)
     look_for_event_handler(event, checkbox_click_lookup)
 end
 
-local function generic_radiobutton_handler(entry, element, mode, key, updater)
+local function generic_radiobutton_handler(entry, element, _, mode, key, updater)
     if mode then
         entry[key] = mode
         updater(entry, element.parent)
     end
 end
 
-local function generic_checkbox_handler(entry, element, ...)
+local function generic_checkbox_handler(entry, element, _, ...)
     local keys = {...}
     local subtable = entry
 
@@ -300,7 +292,7 @@ function Gui.on_gui_value_changed(event)
     look_for_event_handler(event, value_changed_lookup)
 end
 
-local function generic_slider_handler(entry, element, key)
+local function generic_slider_handler(entry, element, _, key)
     entry[key] = element.slider_value
 end
 
@@ -368,6 +360,7 @@ end
 
 local function add_kv_checkbox(data_list, key, checkbox_name, key_caption, checkbox_caption, key_font, checkbox_font)
     local flow = add_kv_flow(data_list, key, key_caption, key_font, "horizontal")
+    flow.style.vertical_align = "center"
 
     local checkbox =
         flow.add {
@@ -1087,7 +1080,7 @@ local function add_caste_chooser_tab(tabbed_pane, details)
 end
 
 -- Event handler function for clicks on the caste assign buttons.
-local function caste_assignment_button_handler(entry, element, caste_id)
+local function caste_assignment_button_handler(entry, _, _, caste_id)
     Inhabitants.try_allow_for_caste(entry, caste_id, true)
 end
 
@@ -1321,7 +1314,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     flow.style.horizontal_align = "right"
 
     local general_list = create_data_list(flow, "general-infos")
-    add_kv_pair(general_list, "caste", {"sosciencity.caste"}, display_caste(entry[EK.type]))
+    add_kv_pair(general_list, "caste", {"sosciencity.caste"}, Locale.caste(entry[EK.type]))
 
     add_kv_pair(general_list, "inhabitants", {"sosciencity.inhabitants"})
     add_kv_pair(general_list, "happiness", {"sosciencity.happiness"})
@@ -1601,7 +1594,7 @@ local function update_housing_details(container, entry)
 end
 
 local function create_housing_details(container, entry)
-    local title = {"", entry[EK.entity].localised_name, "  -  ", display_caste(entry[EK.type])}
+    local title = {"", entry[EK.entity].localised_name, "  -  ", Locale.caste(entry[EK.type])}
     set_details_view_title(container, title)
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
@@ -1636,7 +1629,7 @@ local function update_worker_list(list, entry)
     end
 end
 
-local function update_general_building_details(container, entry)
+local function update_general_building_details(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local tab = get_tab_contents(tabbed_pane, "general")
     local building_data = tab.building
@@ -1695,7 +1688,7 @@ local function update_general_building_details(container, entry)
     end
 end
 
-local function create_general_building_details(container, entry)
+local function create_general_building_details(container, entry, player_id)
     local entity = entry[EK.entity]
     set_details_view_title(container, entity.localised_name)
 
@@ -1704,6 +1697,33 @@ local function create_general_building_details(container, entry)
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = create_tab(tabbed_pane, "general", {"sosciencity.general"})
+
+    if type_details.has_subscriptions then
+        local flow =
+            tab.add {
+            type = "flow",
+            name = "notification-flow",
+            direction = "horizontal"
+        }
+        local style = flow.style
+        style.horizontal_align = "right"
+        style.horizontally_stretchable = true
+        style.vertical_align = "center"
+
+        flow.add {
+            type = "label",
+            name = "notification-label",
+            caption = {"sosciencity.notify-me"},
+            tooltip = {"sosciencity.explain-notify-me"}
+        }
+
+        flow.add {
+            type = "checkbox",
+            name = format(unique_prefix_builder, "general", "notification"),
+            state = Communication.check_subscription(entry, player_id),
+            tooltip = {"sosciencity.explain-notify-me"}
+        }
+    end
 
     local building_data = create_data_list(tab, "building")
 
@@ -1752,7 +1772,7 @@ local function create_general_building_details(container, entry)
         add_kv_pair(building_data, "staff-performance")
 
         local castes_needed =
-            Luaq_from(worker_specification.castes):select_element(display_caste, true):call(
+            Luaq_from(worker_specification.castes):select_element(Locale.caste, true):call(
             display_enumeration,
             nil,
             {"sosciencity.or"}
@@ -1767,7 +1787,7 @@ local function create_general_building_details(container, entry)
         add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
     end
 
-    update_general_building_details(container, entry)
+    update_general_building_details(container, entry, player_id)
 
     return tabbed_pane
 end
@@ -1776,6 +1796,13 @@ set_value_changed_handler(
     format(unique_prefix_builder, "general", "staff-target"),
     generic_slider_handler,
     EK.target_worker_count
+)
+
+set_checked_state_handler(
+    format(unique_prefix_builder, "general", "notification"),
+    function(entry, element, player_id)
+        Communication.set_subscription(entry, player_id, element.state)
+    end
 )
 
 ---------------------------------------------------------------------------------------------------
@@ -1800,8 +1827,8 @@ local function create_composting_catalogue(container)
     end
 end
 
-local function update_composter_details(container, entry)
-    update_general_building_details(container, entry)
+local function update_composter_details(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -1826,8 +1853,8 @@ local function update_composter_details(container, entry)
     )
 end
 
-local function create_composter_details(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_composter_details(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -1848,8 +1875,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << water well >>
 
-local function update_waterwell_details(container, entry)
-    update_general_building_details(container, entry)
+local function update_waterwell_details(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -1863,8 +1890,8 @@ local function update_waterwell_details(container, entry)
     )
 end
 
-local function create_waterwell_details(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_waterwell_details(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -1877,8 +1904,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << farm >>
 
-local function update_farm(container, entry)
-    update_general_building_details(container, entry)
+local function update_farm(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2000,8 +2027,8 @@ local function update_farm(container, entry)
     end
 end
 
-local function create_farm(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_farm(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2062,8 +2089,8 @@ set_checked_state_handler(
 ---------------------------------------------------------------------------------------------------
 -- << fishing hut >>
 
-local function update_fishery_details(container, entry)
-    update_general_building_details(container, entry)
+local function update_fishery_details(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2087,8 +2114,8 @@ local function update_fishery_details(container, entry)
     )
 end
 
-local function create_fishery_details(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_fishery_details(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2102,8 +2129,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << hunting hut >>
 
-local function update_hunting_hut_details(container, entry)
-    update_general_building_details(container, entry)
+local function update_hunting_hut_details(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2123,8 +2150,8 @@ local function update_hunting_hut_details(container, entry)
     )
 end
 
-local function create_hunting_hut_details(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_hunting_hut_details(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2138,8 +2165,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << immigration port >>
 
-local function update_immigration_port_details(container, entry)
-    update_general_building_details(container, entry)
+local function update_immigration_port_details(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local general = get_tab_contents(tabbed_pane, "general")
@@ -2164,8 +2191,8 @@ local function update_immigration_port_details(container, entry)
     end
 end
 
-local function create_immigration_port_details(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_immigration_port_details(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2218,13 +2245,15 @@ local function create_disease_catalogue(container)
     data_list.style.column_alignments[2] = "right"
 
     -- build the header
-    local head = data_list.add {
+    local head =
+        data_list.add {
         type = "label",
         name = "head",
         caption = {"sosciencity.diseases"}
     }
     head.style.font = "default-bold"
-    local head_count = data_list.add {
+    local head_count =
+        data_list.add {
         type = "label",
         name = "head-count"
     }
@@ -2254,7 +2283,7 @@ local function create_disease_catalogue(container)
             type = "checkbox",
             name = format(unique_prefix_builder, "treatment-permission", tostring(id)),
             state = true,
-            tooltip = {"sosciencity.permission"}
+            tooltip = {"sosciencity.treatment-permission"}
         }
     end
 end
@@ -2268,8 +2297,8 @@ for id in pairs(Diseases.values) do
     )
 end
 
-local function update_hospital_details(container, entry)
-    update_general_building_details(container, entry)
+local function update_hospital_details(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2302,8 +2331,8 @@ local function update_hospital_details(container, entry)
     update_disease_catalogue(container, entry)
 end
 
-local function create_hospital_details(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_hospital_details(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2362,8 +2391,8 @@ local function update_classes_flow(entry, classes_flow)
     end
 end
 
-local function update_upbringing_station(container, entry)
-    update_general_building_details(container, entry)
+local function update_upbringing_station(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2399,8 +2428,8 @@ local function update_upbringing_station(container, entry)
     set_kv_pair_value(building_data, "graduates", entry[EK.graduates])
 end
 
-local function create_upbringing_station(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_upbringing_station(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2475,8 +2504,8 @@ local function update_waste_dump_mode_radiobuttons(entry, mode_flow)
     end
 end
 
-local function update_waste_dump(container, entry)
-    update_general_building_details(container, entry)
+local function update_waste_dump(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2505,8 +2534,8 @@ local function update_waste_dump(container, entry)
     checkbox.state = entry[EK.press_mode]
 end
 
-local function create_waste_dump(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_waste_dump(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2571,8 +2600,8 @@ local function analyse_dependants(entry, consumption_key)
     return inhabitant_count, consumption
 end
 
-local function update_market(container, entry)
-    update_general_building_details(container, entry)
+local function update_market(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2603,8 +2632,8 @@ local function update_market(container, entry)
     end
 end
 
-local function create_market(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_market(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2645,8 +2674,8 @@ local function create_water_catalogue(container)
     end
 end
 
-local function update_water_distributer(container, entry)
-    update_general_building_details(container, entry)
+local function update_water_distributer(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2684,8 +2713,8 @@ local function update_water_distributer(container, entry)
     end
 end
 
-local function create_water_distributer(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_water_distributer(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2724,8 +2753,8 @@ local function analyse_garbage_output(entry)
     return inhabitant_count, garbage, calorific_demand / average_calories
 end
 
-local function update_dumpster(container, entry)
-    update_general_building_details(container, entry)
+local function update_dumpster(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2760,8 +2789,8 @@ local function update_dumpster(container, entry)
     )
 end
 
-local function create_dumpster(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_dumpster(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2776,8 +2805,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << plant care station >>
 
-local function update_plant_care_station(container, entry)
-    update_general_building_details(container, entry)
+local function update_plant_care_station(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
@@ -2792,8 +2821,8 @@ local function update_plant_care_station(container, entry)
     pruning_checkbox.state = entry[EK.pruning_mode]
 end
 
-local function create_plant_care_station(container, entry)
-    local tabbed_pane = create_general_building_details(container, entry)
+local function create_plant_care_station(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = get_tab_contents(tabbed_pane, "general")
     local building_data = general.building
@@ -2867,7 +2896,7 @@ local function create_details_view_for_player(player)
     frame.style.horizontally_stretchable = true
     make_squashable(frame)
     set_padding(frame, 4)
-    frame.location = {x = 10, y = 100}
+    frame.location = {x = 10, y = 120}
 
     frame.add {
         type = "frame",
@@ -3023,7 +3052,7 @@ function Gui.update_details_view()
             local updater = gui_spec and gui_spec.updater
 
             if updater and (entry[EK.last_update] == current_tick or gui_spec.always_update) then
-                updater(get_nested_details_view(player), entry)
+                updater(get_nested_details_view(player), entry, player_id)
             end
         end
     end
@@ -3045,12 +3074,13 @@ function Gui.open_details_view_for_player(player, unit_number)
     end
 
     local details_view = get_details_view(player)
+    local player_id = player.index
     local nested = details_view.nested
 
     nested.clear()
-    creater(nested, entry)
+    creater(nested, entry, player_id)
     details_view.visible = true
-    global.details_view[player.index] = unit_number
+    global.details_view[player_id] = unit_number
 end
 
 --- Closes the details view for the given player.
