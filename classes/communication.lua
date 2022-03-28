@@ -630,6 +630,10 @@ function Communication.set_subscription(entry, player_id, enabled)
     end
 end
 
+--- Checks if the given player is subscribed to the given entry.
+--- @param entry Entry
+--- @param player_id integer
+--- @return boolean
 function Communication.check_subscription(entry, player_id)
     local unit_number = entry[EK.unit_number]
     local subscriptions = notifications[unit_number]
@@ -641,6 +645,9 @@ function Communication.check_subscription(entry, player_id)
     end
 end
 
+--- Sends a notification about the given entry to all subscribed players.
+--- @param entry Entry
+--- @param message locale
 function Communication.send_notification(entry, message)
     local subscriptions = notifications[entry[EK.unit_number]]
 
