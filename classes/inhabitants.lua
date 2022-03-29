@@ -1150,9 +1150,10 @@ local function create_improvised_huts()
             local bounding_box = Utils.get_range_bounding_box(position, range)
 
             while group[EK.inhabitants] > 0 do
-                -- we look for positions of market-hall, because it is a 5x5 entity, so there will be a
+                -- improvised huts are 4x4 entities
+                -- we look for positions of composting-silo, because it is a 6x6 entity, so there will be a
                 -- 1 tile margin for a random offset
-                local pos = surface.find_non_colliding_position_in_box("market-hall", bounding_box, 1, true)
+                local pos = surface.find_non_colliding_position_in_box("composting-silo", bounding_box, 1, true)
                 if not pos then
                     break
                 end
