@@ -1,5 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.12
+Date: 2022.03.29
+  Bugfixes:
+    - Added a missing migration script so old maps don't crash because the Notification System wasn't initialised for them.
+    - Fixed a bug in the Improvised Hut placement.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.0.12
 Date: 2022.03.27
   Changes:
     - The Groundwater Pump now is able to pump normal Water instead of Clean Water. Ready for agriculture.
