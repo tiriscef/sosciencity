@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.14
+Date: 2022.03.29
+  Changes:
+    - Tello Fruit and Weird Berry can now be obtained at all... I mean by Gathering.
+    - Lumber from Wood recipe is now enabled without research.
+    - Sesame can now be processed into Fatty Oil
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.13
 Date: 2022.03.29
   Bugfixes:
