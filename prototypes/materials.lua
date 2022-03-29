@@ -297,8 +297,7 @@ Tirislib.RecipeGenerator.create {
     byproducts = {
         {type = "item", name = "sawdust", amount = 1}
     },
-    allow_productivity = true,
-    unlock = "infrastructure-1"
+    allow_productivity = true
 }
 
 Tirislib.RecipeGenerator.create_per_theme_level {
@@ -822,6 +821,18 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     unlock = Unlocks.get_tech_name("olive")
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "fatty-oil",
+    product_type = "fluid",
+    product_amount = 30,
+    energy_required = 1.6,
+    ingredients = {
+        {type = "item", name = "sesame", amount = 5}
+    },
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    unlock = Unlocks.get_tech_name("sesame")
 }
 
 Tirislib.RecipeGenerator.create {

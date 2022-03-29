@@ -36,7 +36,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "manok", amount = 2, probability = 0.35},
         {type = "item", name = "ortrot", amount = 5, probability = 0.1},
         {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
+        {type = "item", name = "tello-fruit", amount = 2, probability = 0.1},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.1},
+        {type = "item", name = "weird-berry", amount = 2, probability = 0.1},
         {type = "item", name = "zetorn", amount = 5, probability = 0.1}
     }
 }
