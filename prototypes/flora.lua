@@ -144,7 +144,7 @@ local function create_perennial_recipe(details)
                 Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
             },
             category = "sosciencity-farming-perennial",
-            subgroup = "sosciencity-flora",
+            subgroup = "sosciencity-flora-perennial",
             icons = {
                 {icon = product.icon},
                 {
@@ -188,13 +188,13 @@ local function create_annual_bloomhouse_recipe(details)
                 {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
                 {type = "item", name = "pot", amount_min = 19, amount_max = 20}
             },
-            localised_name = {"recipe-name.annual", product:get_localised_name()},
+            localised_name = {"recipe-name.annual-bloomhouse", product:get_localised_name()},
             localised_description = {
                 "recipe-description.annual-bloomhouse",
                 product:get_localised_name()
             },
             category = "sosciencity-bloomhouse-annual",
-            subgroup = "sosciencity-flora",
+            subgroup = "sosciencity-flora-bloomhouse",
             icons = {
                 {icon = product.icon},
                 {

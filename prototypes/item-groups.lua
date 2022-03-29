@@ -149,9 +149,21 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-saplings",
+        name = "sosciencity-flora-perennial",
         group = "sosciencity-production",
         order = "adb"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-saplings",
+        group = "sosciencity-production",
+        order = "adba"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-flora-bloomhouse",
+        group = "sosciencity-production",
+        order = "adc"
     },
     {
         type = "item-subgroup",
