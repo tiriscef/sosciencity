@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.0.12
+Version: 0.0.13
 Date: 2022.03.29
   Bugfixes:
     - Added a missing migration script so old maps don't crash because the Notification System wasn't initialised for them.
