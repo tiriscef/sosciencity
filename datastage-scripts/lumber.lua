@@ -7,7 +7,7 @@ local function double(n)
 end
 
 for _, recipe in Tirislib.Recipe.iterate() do
-    if not recipe.owner then
+    if recipe.owner ~= "sosciencity" then
         recipe:replace_ingredient("wood", "lumber", nil, nil, double)
     end
 end

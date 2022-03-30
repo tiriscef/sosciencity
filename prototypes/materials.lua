@@ -25,8 +25,6 @@ local material_items = {
     },
     {name = "rope"},
     {name = "pot"},
-    {name = "glass-mixture"},
-    {name = "glass"},
     {name = "mineral-mixture"},
     {name = "mineral-wool"},
     {
@@ -244,6 +242,13 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-microorganism-products"}
     }
 }
+
+if Sosciencity_Config.add_glass then
+    material_items[#material_items + 1] = {name = "glass"}
+end
+if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode then
+    material_items[#material_items + 1] = {name = "glass-mixture"}
+end
 
 Tirislib.Item.batch_create(
     material_items,
@@ -596,7 +601,6 @@ Tirislib.RecipeGenerator.create {
     energy_required = 0.8,
     unlock = "clockwork-caste"
 }]]
-
 Tirislib.RecipeGenerator.create {
     product = "simple-fishtrap",
     ingredients = {
