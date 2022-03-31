@@ -629,8 +629,7 @@ local function update_population_flow(container)
     machine_count_label.caption = machine_count
     machine_count_label.tooltip = {
         "sosciencity.tooltip-machines",
-        global.starting_clockwork_points,
-        max(0, machine_count - global.starting_clockwork_points)
+        machine_count
     }
 
     datalist.turret_count.caption = Register.get_type_count(Type.turret)
@@ -713,15 +712,16 @@ local tooltip_fns = {
         local housing_improvised = housing[true]
         local points = round_to_step(caste_points[Type.clockwork], 0.1)
         local machines = Register.get_machine_count()
-        local maintenance_cost = max(0, machines - global.starting_clockwork_points)
+        local maintenance_cost = machines
 
         local points_locale = points
         if global.maintenance_enabled and maintenance_cost > 0 then
-            local remaining_points = max(0, points - maintenance_cost)
+            local remaining_points = points - max(0, maintenance_cost - global.starting_clockwork_points)
             points_locale = {
                 "sosciencity.tooltip-maintenance-calc",
                 remaining_points,
                 points,
+                global.starting_clockwork_points,
                 maintenance_cost
             }
             points = remaining_points
@@ -738,7 +738,7 @@ local tooltip_fns = {
             }
         }
 
-        if points >= maintenance_cost then
+        if points >= 0 then
             ret[#ret + 1] = {
                 "sosciencity.tooltip-clockwork-bonus",
                 machines,
