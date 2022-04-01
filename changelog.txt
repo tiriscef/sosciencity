@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.0.15
+Date: 2022.04.01
+  Changes:
+    - Added Bob's Greenhouse, Bio Industries and Omniwood to the list of mods that disable the lumber setting.
+    - Compatibility with Krastorio2: Adding Sosciencity's idea items to Krastorio's science pack recipes works now.
+    - Sosciencity's wood types now have a fuel_value of 2 MJ... so the same as the vanilla one.
+
+  Bugfixes:
+    - Fixed that the Groundwater Pump stopped working at -80% Speed because of a floating point rounding error.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.14
 Date: 2022.03.29
   Changes:
