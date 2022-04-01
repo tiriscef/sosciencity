@@ -1673,7 +1673,7 @@ local function update_general_building_details(container, entry, player_id)
         set_kv_pair_value(
             building_data,
             "general-performance",
-            performance >= 0.2 and {"sosciencity.percentage", ceil(performance * 100)} or {"sosciencity.not-working"}
+            performance > 0.19999 and {"sosciencity.percentage", ceil(performance * 100)} or {"sosciencity.not-working"}
         )
     end
 
