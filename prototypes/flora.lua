@@ -18,7 +18,6 @@ local flora_items = {
         sprite_variations = {name = "hardcorn-punk-pile", count = 3},
     },
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
-    {name = "phytofall-blossom"},
     {name = "tiriscefing-willow-wood", wood = true, unlock = "open-environment-farming"},
     {name = "cherry-wood", wood = true, unlock = Unlocks.get_tech_name("cherry")},
     {name = "olive-wood", wood = true, unlock = Unlocks.get_tech_name("olive")},
@@ -27,14 +26,15 @@ local flora_items = {
     {name = "zetorn-wood", wood = true, unlock = Unlocks.get_tech_name("zetorn")},
     {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
     {name = "gingil-hemp", sprite_variations = {name = "gingil-hemp-pile", count = 3}},
-    {name = "necrofall"}
+    {name = "necrofall"},
+    {name = "phytofall-blossom"}
 }
 
 for _, item in pairs(flora_items) do
     local distinctions = Tirislib.Tables.get_subtbl(item, "distinctions")
 
     if item.wood then
-        distinctions.fuel_value = "1MJ"
+        distinctions.fuel_value = "2MJ"
         distinctions.fuel_category = "chemical"
     end
 end
