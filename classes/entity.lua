@@ -86,7 +86,7 @@ local function set_crafting_machine_performance(entry, performance, productivity
 
     local entity = entry[EK.entity]
 
-    local is_active = performance >= 0.2
+    local is_active = performance > 0.19999
 
     entry[EK.active] = is_active
     entity.active = is_active
