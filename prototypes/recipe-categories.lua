@@ -138,5 +138,9 @@ Tirislib.Prototype.batch_create {
     {
         type = "recipe-category",
         name = "sosciencity-water-animal-farming"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-wood-processing"
     }
 }
