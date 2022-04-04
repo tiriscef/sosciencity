@@ -98,7 +98,7 @@ end
 
 local function set_eei_power_usage(eei, usage)
     eei.power_usage = usage
-    eei.electric_buffer_size = max(1, usage * 600) -- 10 seconds
+    eei.electric_buffer_size = max(1, usage * 60) -- 1 second
 end
 
 --- Checks if the entity is supplied with power. Doesn't assume that the entry has an eei.
