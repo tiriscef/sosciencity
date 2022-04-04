@@ -2750,7 +2750,7 @@ local function analyse_garbage_output(entry)
         calorific_demand = calorific_demand + caste_inhabitants * caste.calorific_demand
     end
 
-    return inhabitant_count, garbage, calorific_demand / average_calories
+    return inhabitant_count, garbage, Food.food_leftovers_chance * calorific_demand / average_calories
 end
 
 local function update_dumpster(container, entry, player_id)
