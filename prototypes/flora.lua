@@ -514,23 +514,14 @@ for _, item in pairs(flora_items) do
     if item.wood then
         Tirislib.RecipeGenerator.create {
             product = "lumber",
-            product_amount = 2,
+            product_amount = 3,
             ingredients = {
                 {name = item.name, amount = 1}
             },
             byproducts = {
-                {name = "sawdust", amount = 2}
+                {name = "sawdust", amount = 1}
             },
             allow_productivity = true,
-            unlock = item.unlock
-        }
-
-        Tirislib.RecipeGenerator.create {
-            product = "sawdust",
-            product_amount = 10,
-            ingredients = {
-                {name = item.name, amount = 1}
-            },
             unlock = item.unlock
         }
     end

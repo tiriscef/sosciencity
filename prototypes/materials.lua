@@ -296,11 +296,22 @@ Tirislib.Fluid.batch_create(
 Tirislib.RecipeGenerator.create {
     product = "lumber",
     product_amount = 3,
+    category = "sosciencity-wood-processing",
     ingredients = {
         {type = "item", name = "wood", amount = 1}
     },
     byproducts = {
         {type = "item", name = "sawdust", amount = 1}
+    },
+    allow_productivity = true
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "sawdust",
+    product_amount = 4,
+    category = "sosciencity-wood-processing",
+    ingredients = {
+        {name = "lumber", amount = 1}
     },
     allow_productivity = true
 }
