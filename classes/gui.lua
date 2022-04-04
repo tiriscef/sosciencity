@@ -1867,6 +1867,7 @@ local function create_composter_details(container, entry, player_id)
         {"sosciencity.show-compost-capacity", get_building_details(entry).capacity}
     )
     add_kv_pair(building_data, "composting-speed", {"sosciencity.composting-speed"})
+    add_kv_pair(building_data, "explain-composting-speed", nil, {"sosciencity.explain-composting-speed"})
 
     update_composter_details(container, entry)
     create_composting_catalogue(container)

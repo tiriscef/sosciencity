@@ -287,6 +287,18 @@ Biology.flora = {
     }
 }
 
+Biology.composting_climate_factors = {
+    [Climate.hot] = 1.25,
+    [Climate.temperate] = 1,
+    [Climate.temperate] = 0.80
+}
+
+Biology.composting_humidity_factors = {
+    [Humidity.humid] = 1.5,
+    [Humidity.moderate] = 1,
+    [Humidity.dry] = 2 / 3
+}
+
 Biology.egg_calories = 10000
 Biology.egg_fertile = "huwan-egg"
 
