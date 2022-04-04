@@ -548,8 +548,13 @@ local function consume_specific_food(entry, inventories, amount, item_name)
             end
 
             if items_consumed > 0 then
-                produce_garbage(entry, "food-leftovers", items_consumed)
                 log_item(item_name, -items_consumed)
+
+                local food_leftovers = Utils.coin_flips(Food.food_leftovers_chance, items_consumed, 5)
+
+                if food_leftovers > 0 then
+                    produce_garbage(entry, "food-leftovers", food_leftovers)
+                end
             end
 
             if to_consume < 0.001 then
