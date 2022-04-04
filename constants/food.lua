@@ -477,6 +477,7 @@ Food.taste_names = {
 }
 
 Food.emergency_ration_calories = 2000
+Food.food_leftovers_chance = 0.125
 
 local energy_density_fat = 9 -- kcal per g
 local energy_density_carbohydrates = 4
