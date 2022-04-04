@@ -59,7 +59,7 @@ local range_border_highlight_colors = {}
 for _type, definition in pairs(types) do
     local color = definition.signature_color or Color.grey
     range_highlight_colors[_type] = premultiply_with_alpha(color, 0.15)
-    range_border_highlight_colors[_type] = premultiply_with_alpha(color, 0.5)
+    range_border_highlight_colors[_type] = premultiply_with_alpha(color, 0.35)
 end
 
 local function highlight_range(player_id, entry, building_details, created_highlights)
@@ -92,15 +92,44 @@ local function highlight_range(player_id, entry, building_details, created_highl
         color = range_border_highlight_colors[entry[EK.type]],
         width = 8,
         filled = false,
-        left_top = {x - range + 0.375, y - range + 0.375},
-        right_bottom = {x + range - 0.375, y + range - 0.375},
+        left_top = {x - range + 0.25, y - range + 0.25},
+        right_bottom = {x + range - 0.25, y + range - 0.25},
         surface = surface,
         players = {player_id}
     }
 end
 
+local function highlight_workforce(player_id, entry, _, created_highlights)
+    local workers = entry[EK.workers]
+
+    if not workers then
+        return
+    end
+
+    for unit_number, worker_count in pairs(workers) do
+        local worker_home = try_get(unit_number)
+
+        if worker_home then
+            local home_entity = worker_home[EK.entity]
+
+            created_highlights[#created_highlights + 1] =
+                rendering.draw_text {
+                text = {"sosciencity.show-employed-count", worker_count},
+                target = home_entity,
+                surface = home_entity.surface,
+                players = {player_id},
+                alignment = "center",
+                color = Color.white,
+                only_in_alt_mode = true,
+                scale = 2
+            }
+        end
+    end
+end
+
 local building_details_visualization_lookup = {
-    range = highlight_range
+    range = highlight_range,
+    workforce = highlight_workforce
 }
 
 local function visualize_building_details(player_id, entry, created_highlights)
