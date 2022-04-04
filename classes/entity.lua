@@ -156,6 +156,9 @@ local necrofall_coefficient = 1 / (10 * Time.minute)
 local necrofall_radius = 10 -- tiles
 
 --- Analyzes the given inventory and returns the composting progress per tick and an array of the compostable items.
+--- @param content Inventory
+--- @return number composting_progress per tick
+--- @return array compostable_items
 local function analyze_composter_inventory(content)
     local item_count = 0
     local item_type_count = 0
@@ -169,7 +172,9 @@ local function analyze_composter_inventory(content)
         end
     end
 
-    return item_count * item_type_count * composting_coefficient, compostable_items
+    return item_count * item_type_count * composting_coefficient *
+        Biology.composting_climate_factors[global.current_climate] *
+        Biology.composting_humidity_factors[global.current_humidity], compostable_items
 end
 Entity.analyze_composter_inventory = analyze_composter_inventory
 
