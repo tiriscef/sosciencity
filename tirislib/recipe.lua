@@ -699,7 +699,7 @@ end
 --- (A single result can be defined in a different way. But it's way easier to work with a results table.)
 --- @param recipe_data table
 function Tirislib.RecipeData.convert_to_results_table(recipe_data)
-    if recipe_data.result and not recipe_data.results then
+    if not recipe_data.results then
         recipe_data.results = {
             {type = "item", name = recipe_data.result, amount = recipe_data.result_count or 1}
         }
@@ -1067,12 +1067,7 @@ end
 --- @param replacement_type string
 --- @param amount_fn function
 --- @return RecipePrototype itself
-function Tirislib.Recipe:replace_result(
-    result_name,
-    replacement_name,
-    result_type,
-    replacement_type,
-    amount_fn)
+function Tirislib.Recipe:replace_result(result_name, replacement_name, result_type, replacement_type, amount_fn)
     result_type = result_type or "item"
     replacement_name = replacement_name or "item"
 
@@ -1664,7 +1659,9 @@ function Tirislib.Recipe:pair_ingredient_with_result(
 end
 
 -- << meta stuff >>
-local meta = {}
+local meta = {
+    __index = Tirislib.BasePrototype
+}
 
 function meta:__call(name)
     return Tirislib.Recipe.get(name)

@@ -154,7 +154,9 @@ function Tirislib.Technology:remove_prerequisite(tech_name)
     return self
 end
 
-local meta = {}
+local meta = {
+    __index = Tirislib.BasePrototype
+}
 
 function meta:__call(name)
     return Tirislib.Technology.get(name)

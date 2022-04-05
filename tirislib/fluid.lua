@@ -120,7 +120,9 @@ function Tirislib.Fluid:get_localised_description()
     return self.localised_description or {"fluid-description." .. self.name}
 end
 
-local meta = {}
+local meta = {
+    __index = Tirislib.BasePrototype
+}
 
 function meta:__call(name)
     return Tirislib.Fluid.get(name)
