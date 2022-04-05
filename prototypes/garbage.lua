@@ -50,7 +50,44 @@ Tirislib.Recipe.create {
     energy_required = 1.6,
     category = "smelting",
     ingredients = {
-        {type = "item", name = "garbage", amount = 1}
+        {type = "item", name = "garbage", amount = 2}
     },
     subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-1"):copy_icon_from_item("garbage")
+}:add_unlock("infrastructure-1"):copy_icon_from_item("garbage"):add_icon_layer(
+    "__sosciencity-graphics__/graphics/utility/flame.png",
+    "topleft",
+    0.25,
+    {a = 0.7, r = 1, g = 1, b = 1}
+)
+
+Tirislib.Recipe.create {
+    name = "burn-food-leftovers",
+    emissions_multiplier = 1.5,
+    energy_required = 3.2,
+    category = "smelting",
+    ingredients = {
+        {type = "item", name = "food-leftovers", amount = 2}
+    },
+    subgroup = "sosciencity-garbage"
+}:add_unlock("infrastructure-1"):copy_icon_from_item("food-leftovers"):add_icon_layer(
+    "__sosciencity-graphics__/graphics/utility/flame.png",
+    "topleft",
+    0.25,
+    {a = 0.7, r = 1, g = 1, b = 1}
+)
+
+Tirislib.Recipe.create {
+    name = "burn-slaughter-waste",
+    emissions_multiplier = 1.5,
+    energy_required = 3.2,
+    category = "smelting",
+    ingredients = {
+        {type = "item", name = "slaughter-waste", amount = 2}
+    },
+    subgroup = "sosciencity-garbage"
+}:add_unlock("infrastructure-1"):copy_icon_from_item("slaughter-waste"):add_icon_layer(
+    "__sosciencity-graphics__/graphics/utility/flame.png",
+    "topleft",
+    0.25,
+    {a = 0.7, r = 1, g = 1, b = 1}
+)
