@@ -29,7 +29,8 @@ local named_icon_shifts = {
 --- @param path string
 --- @param shift table|string|nil
 --- @param scale number|nil
-function Tirislib.BasePrototype:add_icon_layer(path, shift, scale)
+--- @param tint table|nil
+function Tirislib.BasePrototype:add_icon_layer(path, shift, scale, tint)
     Tirislib.BasePrototype.convert_to_icons_table(self)
 
     if type(shift) == "string" then
@@ -39,7 +40,8 @@ function Tirislib.BasePrototype:add_icon_layer(path, shift, scale)
     self.icons[#self.icons+1] = {
         icon = path,
         shift = shift,
-        scale = scale or 0.3
+        scale = scale or 0.3,
+        tint = tint
     }
 
     return self
