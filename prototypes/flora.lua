@@ -582,10 +582,9 @@ for _, sapling in pairs(saplings) do
                 {
                     icon = flora_item.icon,
                     scale = 0.3,
-                    shift = {8, 8}
+                    shift = {-8, 8}
                 }
             }
-            distinctions.icon = 64
         end
     end
 
