@@ -582,7 +582,9 @@ function Tirislib.Entity:copy_icon_from_item(item_name)
     return self
 end
 
-local meta = {}
+local meta = {
+    __index = Tirislib.BasePrototype
+}
 
 function meta:__call(name)
     return Tirislib.Entity.get(name)

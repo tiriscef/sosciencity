@@ -101,7 +101,9 @@ function Tirislib.RecipeCategory:pair_with(category)
     return self
 end
 
-local meta = {}
+local meta = {
+    __index = Tirislib.BasePrototype
+}
 
 function meta:__call(name)
     return Tirislib.RecipeCategory.get(name)

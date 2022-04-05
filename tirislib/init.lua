@@ -31,7 +31,7 @@
 ---@class BoundingBox
 ---@class array
 
-local tirislib_internal_version = 4
+local tirislib_internal_version = 5
 
 if Tirislib then
     if tirislib_internal_version <= (Tirislib.internal_version or 0) then
@@ -48,6 +48,7 @@ require("utils")
 
 if Tirislib.Utils.is_data_stage() then
     require("prototype")
+    require("base-prototype")
     require("recipe")
     require("item")
     require("entity")
