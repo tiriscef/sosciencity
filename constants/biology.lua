@@ -82,9 +82,18 @@ Biology.flora = {
         growth_coefficient = 2,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.8,
-        preferred_humidity = Humidity.humid,
+        preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-eggplant"}
+    },
+    ["fawoxylas"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-mushroom-fawoxylas"}
     },
     ["gingil-hemp"] = {
         persistent = false,
