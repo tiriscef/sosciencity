@@ -128,8 +128,8 @@ local function create_perennial_recipe(details)
         details,
         {
             name = "farming-perennial-" .. product.name,
-            product_min = 1,
-            product_max = 5,
+            product_min = 5,
+            product_max = 10,
             energy_required = 15,
             expensive_energy_required = 17.5,
             themes = {{"water", water_required, water_required * 2}},
@@ -249,6 +249,54 @@ local function create_neogenesis_recipe(details)
     return Tirislib.RecipeGenerator.create(details)
 end
 
+local function create_mushroom_recipe(details)
+    local product = Tirislib.Item.get_by_name(details.product)
+    local plant_details = Biology.flora[product.name]
+
+    local energy_required = 30 / plant_details.growth_coefficient
+    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
+
+    Tirislib.RecipeGenerator.merge_details(
+        details,
+        {
+            name = "farming-mushroom-" .. product.name,
+            product_min = 20,
+            product_max = 40,
+            energy_required = energy_required,
+            expensive_energy_required = energy_required * 1.2,
+            themes = {{"water", water_required, water_required * 2}},
+            byproducts = {
+                {type = "item", name = product.name, amount_min = 0, amount_max = 20, probability = details.product_probability}
+            },
+            localised_name = {"recipe-name.farm-mushroom", product:get_localised_name()},
+            localised_description = {
+                "recipe-description.annual",
+                product:get_localised_name(),
+                WeatherLocales.climate[plant_details.preferred_climate],
+                WeatherLocales.humidity[plant_details.preferred_humidity],
+                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
+                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+            },
+            category = "sosciencity-mushroom-farm",
+            subgroup = "sosciencity-mushrooms",
+            icons = {
+                {icon = product.icon},
+                {
+                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                    scale = 0.3,
+                    shift = {-8, -8}
+                }
+            },
+            icon_size = 64,
+            unlock = "open-environment-farming"
+        }
+    )
+
+    add_general_growing_attributes(details, plant_details)
+
+    return Tirislib.RecipeGenerator.create(details)
+end
+
 -- apple
 create_perennial_recipe {
     product = "apple",
@@ -326,6 +374,12 @@ create_annual_recipe {
 create_neogenesis_recipe {
     product = "eggplant",
     unlock = "nightshades"
+}
+
+-- fawoxylas
+create_mushroom_recipe {
+    product = "fawoxylas",
+    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 20}}
 }
 
 -- gingil hemp
