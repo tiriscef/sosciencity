@@ -7,6 +7,13 @@ local DeconstructionCause = require("enums.deconstruction-cause")
 require("tirislib.init")
 
 ---------------------------------------------------------------------------------------------------
+-- << balancing stuff >>
+
+if script.active_mods["sosciencity-balancing"] then
+    require("balancing")
+end
+
+---------------------------------------------------------------------------------------------------
 -- << debug stuff >>
 
 if script.active_mods["sosciencity-debug"] then
@@ -98,7 +105,6 @@ require("classes.gui")
 ---@class DiseaseCategory
 ---@class AgeGroup
 ---@class GenderGroup
-
 
 --[[
     Data this script stores in global
