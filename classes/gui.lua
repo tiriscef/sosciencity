@@ -1911,6 +1911,8 @@ local function update_farm(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local building_data = get_tab_contents(tabbed_pane, "general").building
 
+    local building_details = get_building_details(entry)
+
     set_kv_pair_value(
         building_data,
         "orchid-bonus",
@@ -1932,7 +1934,7 @@ local function update_farm(container, entry, player_id)
         set_kv_pair_visibility(building_data, "climate", true)
         set_kv_pair_visibility(building_data, "humidity", true)
 
-        if get_building_details(entry).open_environment then
+        if building_details.open_environment then
             set_kv_pair_value(
                 building_data,
                 "climate",
@@ -2005,26 +2007,28 @@ local function update_farm(container, entry, player_id)
         set_kv_pair_visibility(building_data, "module", false)
     end
 
-    local humus_checkbox = get_checkbox(building_data, "humus-mode")
-    humus_checkbox.state = entry[EK.humus_mode]
-    set_kv_pair_visibility(building_data, "humus-bonus", entry[EK.humus_mode])
-    if entry[EK.humus_bonus] then
-        set_kv_pair_value(
-            building_data,
-            "humus-bonus",
-            {"sosciencity.percentage-bonus", ceil(entry[EK.humus_bonus]), {"sosciencity.speed"}}
-        )
-    end
+    if building_details.accepts_plant_care then
+        local humus_checkbox = get_checkbox(building_data, "humus-mode")
+        humus_checkbox.state = entry[EK.humus_mode]
+        set_kv_pair_visibility(building_data, "humus-bonus", entry[EK.humus_mode])
+        if entry[EK.humus_bonus] then
+            set_kv_pair_value(
+                building_data,
+                "humus-bonus",
+                {"sosciencity.percentage-bonus", ceil(entry[EK.humus_bonus]), {"sosciencity.speed"}}
+            )
+        end
 
-    local pruning_checkbox = get_checkbox(building_data, "pruning-mode")
-    pruning_checkbox.state = entry[EK.pruning_mode]
-    set_kv_pair_visibility(building_data, "prune-bonus", entry[EK.humus_mode])
-    if entry[EK.prune_bonus] then
-        set_kv_pair_value(
-            building_data,
-            "prune-bonus",
-            {"sosciencity.percentage-bonus", ceil(entry[EK.prune_bonus]), {"sosciencity.productivity"}}
-        )
+        local pruning_checkbox = get_checkbox(building_data, "pruning-mode")
+        pruning_checkbox.state = entry[EK.pruning_mode]
+        set_kv_pair_visibility(building_data, "prune-bonus", entry[EK.humus_mode])
+        if entry[EK.prune_bonus] then
+            set_kv_pair_value(
+                building_data,
+                "prune-bonus",
+                {"sosciencity.percentage-bonus", ceil(entry[EK.prune_bonus]), {"sosciencity.productivity"}}
+            )
+        end
     end
 end
 
@@ -2039,40 +2043,42 @@ local function create_farm(container, entry, player_id)
     add_kv_pair(building_data, "climate", {"sosciencity.climate"})
     add_kv_pair(building_data, "humidity", {"sosciencity.humidity"})
 
-    add_kv_checkbox(
-        building_data,
-        "humus-mode",
-        format(unique_prefix_builder, "humus-mode", "farm"),
-        {"sosciencity.humus-fertilization"},
-        {"sosciencity.active"}
-    )
-    add_kv_pair(
-        building_data,
-        "explain-humus",
-        "",
-        {
-            "sosciencity.explain-humus-fertilization",
-            Entity.humus_fertilization_workhours * Time.minute,
-            Entity.humus_fertilitation_consumption * Time.minute,
-            Entity.humus_fertilization_speed
-        }
-    )
-    add_kv_pair(building_data, "humus-bonus")
+    if get_building_details(entry).accepts_plant_care then
+        add_kv_checkbox(
+            building_data,
+            "humus-mode",
+            format(unique_prefix_builder, "humus-mode", "farm"),
+            {"sosciencity.humus-fertilization"},
+            {"sosciencity.active"}
+        )
+        add_kv_pair(
+            building_data,
+            "explain-humus",
+            "",
+            {
+                "sosciencity.explain-humus-fertilization",
+                Entity.humus_fertilization_workhours * Time.minute,
+                Entity.humus_fertilitation_consumption * Time.minute,
+                Entity.humus_fertilization_speed
+            }
+        )
+        add_kv_pair(building_data, "humus-bonus")
 
-    add_kv_checkbox(
-        building_data,
-        "pruning-mode",
-        format(unique_prefix_builder, "pruning-mode", "farm"),
-        {"sosciencity.pruning"},
-        {"sosciencity.active"}
-    )
-    add_kv_pair(
-        building_data,
-        "explain-pruning",
-        "",
-        {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
-    )
-    add_kv_pair(building_data, "prune-bonus")
+        add_kv_checkbox(
+            building_data,
+            "pruning-mode",
+            format(unique_prefix_builder, "pruning-mode", "farm"),
+            {"sosciencity.pruning"},
+            {"sosciencity.active"}
+        )
+        add_kv_pair(
+            building_data,
+            "explain-pruning",
+            "",
+            {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
+        )
+        add_kv_pair(building_data, "prune-bonus")
+    end
 
     add_kv_pair(building_data, "module")
 
