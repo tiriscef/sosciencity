@@ -22,23 +22,6 @@ for building_name, details in pairs(Buildings.values) do
     local entity = Tirislib.Entity.get_by_name(item.place_result)
 
     if found then
-        if details.range then
-            item.localised_description = item:get_localised_description()
-
-            Tirislib.Locales.append(
-                item.localised_description,
-                "\n\n",
-                {
-                    "sosciencity-util.official-looking-point",
-                    {"sosciencity.range"},
-                    details.range == "global" and {"sosciencity.global-range"} or
-                        {"sosciencity.show-range", details.range * 2}
-                }
-            )
-
-            entity:copy_localisation_from_item()
-        end
-
         if details.power_usage then
             item.localised_description = item:get_localised_description()
 
@@ -68,6 +51,23 @@ for building_name, details in pairs(Buildings.values) do
                     "sosciencity-util.workforce",
                     details.workforce.count,
                     castes
+                }
+            )
+
+            entity:copy_localisation_from_item()
+        end
+
+        if details.range then
+            item.localised_description = item:get_localised_description()
+
+            Tirislib.Locales.append(
+                item.localised_description,
+                "\n\n",
+                {
+                    "sosciencity-util.official-looking-point",
+                    {"sosciencity.range"},
+                    details.range == "global" and {"sosciencity.global-range"} or
+                        {"sosciencity.show-range", details.range * 2}
                 }
             )
 
