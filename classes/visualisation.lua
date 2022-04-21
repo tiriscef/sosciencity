@@ -86,14 +86,16 @@ local function highlight_range(player_id, entry, building_details, created_highl
         players = {player_id},
         draw_on_ground = true
     }
+
+    local width = range > 30 and 16 or 8
     -- border
     created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle {
         color = range_border_highlight_colors[entry[EK.type]],
-        width = 8,
+        width = width,
         filled = false,
-        left_top = {x - range + 0.25, y - range + 0.25},
-        right_bottom = {x + range - 0.25, y + range - 0.25},
+        left_top = {x - range + width / 64, y - range + width / 64},
+        right_bottom = {x + range - width / 64, y + range - width / 64},
         surface = surface,
         players = {player_id}
     }
