@@ -316,6 +316,7 @@ Entity.humus_fertilitation_consumption = 10 / Time.minute
 
 local function update_farm(entry, delta_ticks)
     local entity = entry[EK.entity]
+    local building_details = get_building_details(entry)
     local recipe = entity.get_recipe()
     local species_name = get_species(recipe)
 
@@ -327,7 +328,9 @@ local function update_farm(entry, delta_ticks)
         entry[EK.biomass] = 0
     end
 
-    if recipe and entry[EK.humus_mode] then
+    local accepts_plant_care = building_details.accepts_plant_care
+
+    if accepts_plant_care and recipe and entry[EK.humus_mode] then
         local humus_needed = delta_ticks * Entity.humus_fertilitation_consumption
         local workhours_needed = delta_ticks * Entity.humus_fertilization_workhours
 
@@ -365,7 +368,7 @@ local function update_farm(entry, delta_ticks)
         entry[EK.humus_bonus] = nil
     end
 
-    if recipe and entry[EK.pruning_mode] then
+    if accepts_plant_care and recipe and entry[EK.pruning_mode] then
         local workhours_needed = delta_ticks * Entity.pruning_workhours
         local workhours_consumed = 0
 
@@ -397,7 +400,7 @@ local function update_farm(entry, delta_ticks)
                 performance * (Inventories.assembler_has_module(entity, flora_details.required_module) and 1 or 0)
         end
 
-        if get_building_details(entry).open_environment then
+        if building_details.open_environment then
             if flora_details.preferred_humidity ~= global.current_humidity then
                 performance = performance * flora_details.wrong_humidity_coefficient
             end
@@ -422,9 +425,12 @@ end
 Register.set_entity_updater(Type.farm, update_farm)
 
 local function create_farm(entry)
-    entry[EK.humus_mode] = true
-    entry[EK.pruning_mode] = true
     entry[EK.performance] = 1
+
+    if get_building_details(entry).accepts_plant_care then
+        entry[EK.humus_mode] = true
+        entry[EK.pruning_mode] = true
+    end
 end
 Register.set_entity_creation_handler(Type.farm, create_farm)
 
@@ -437,8 +443,10 @@ end
 Register.set_entity_copy_handler(Type.farm, copy_farm)
 
 local function paste_farm_settings(source, destination)
-    destination[EK.humus_mode] = source[EK.humus_mode]
-    destination[EK.pruning_mode] = source[EK.pruning_mode]
+    if get_building_details(destination).accepts_plant_care then
+        destination[EK.humus_mode] = source[EK.humus_mode]
+        destination[EK.pruning_mode] = source[EK.pruning_mode]
+    end
 end
 Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
 

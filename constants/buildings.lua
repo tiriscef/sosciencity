@@ -21,7 +21,8 @@ Building.values = {
     },
     ["arboretum"] = {
         type = Type.farm,
-        open_environment = true
+        open_environment = true,
+        accepts_plant_care = true
     },
     ["architectural-office"] = {
         type = Type.manufactory,
@@ -35,7 +36,8 @@ Building.values = {
         workforce = {
             count = 2,
             castes = {Type.orchid}
-        }
+        },
+        accepts_plant_care = true
     },
     ["clockwork-hq"] = {
         type = Type.manufactory,
@@ -68,7 +70,8 @@ Building.values = {
     },
     ["farm"] = {
         type = Type.farm,
-        open_environment = true
+        open_environment = true,
+        accepts_plant_care = true
     },
     ["fishing-hut"] = {
         type = Type.fishery,
@@ -98,7 +101,8 @@ Building.values = {
         }
     },
     ["greenhouse"] = {
-        type = Type.farm
+        type = Type.farm,
+        accepts_plant_care = true
     },
     ["groundwater-pump"] = {
         type = Type.waterwell,
@@ -159,7 +163,8 @@ Building.values = {
         power_usage = 100
     },
     ["orangery"] = {
-        type = Type.farm
+        type = Type.farm,
+        accepts_plant_care = true
     },
     ["orchid-food-factory"] = {
         type = Type.manufactory,
@@ -202,6 +207,10 @@ Building.values = {
             castes = {Type.clockwork, Type.plasma}
         },
         power_usage = 50
+    },
+    ["mushroom-farm"] = {
+        type = Type.farm,
+        accepts_plant_care = false
     },
     ["trash-site"] = {
         type = Type.dumpster

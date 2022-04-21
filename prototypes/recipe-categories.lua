@@ -101,6 +101,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-mushroom-farm"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-orchid-food-processing"
     },
     {
