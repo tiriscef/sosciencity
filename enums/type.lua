@@ -41,6 +41,7 @@ Type.hunting_hut = 1103
 Type.farm = 1104
 Type.animal_farm = 1106
 Type.waterwell = 1107
+Type.salt_pond = 1108
 
 -- misc container types
 Type.composter = 1200

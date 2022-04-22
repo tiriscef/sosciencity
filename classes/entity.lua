@@ -673,6 +673,22 @@ end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
 
 ---------------------------------------------------------------------------------------------------
+-- << salt pond >>
+
+local function update_salt_pond(entry)
+    local building_details = get_building_details(entry)
+    local water_tiles = get_water_tiles(entry, building_details)
+    local water_performance = map_range(water_tiles, 0, building_details.water_tiles, 0, 1)
+    set_crafting_machine_performance(entry, water_performance)
+end
+Register.set_entity_updater(Type.salt_pond, update_salt_pond)
+
+local function create_salt_pond(entry)
+    entry[EK.performance] = 1
+end
+Register.set_entity_creation_handler(Type.salt_pond, create_salt_pond)
+
+---------------------------------------------------------------------------------------------------
 -- << market >>
 
 Register.set_entity_creation_handler(Type.market, Inventories.cache_contents)

@@ -87,8 +87,8 @@ local function highlight_range(player_id, entry, building_details, created_highl
         draw_on_ground = true
     }
 
-    local width = range > 30 and 16 or 8
     -- border
+    local width = range > 30 and 16 or 8
     created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle {
         color = range_border_highlight_colors[entry[EK.type]],
