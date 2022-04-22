@@ -248,6 +248,11 @@ Types.definitions = {
         signature_color = Color.blue,
         is_civil = true
     },
+    [Type.salt_pond] = {
+        localised_name = {"item-name.salt-pond"},
+        localised_description = {"item-description.salt-pond"},
+        signature_color = Color.light_blue
+    },
     [Type.fishery] = {
         localised_name = {"sosciencity.fishery"},
         localised_description = {"sosciencity.explain-fishery"},

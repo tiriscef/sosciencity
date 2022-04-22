@@ -158,6 +158,20 @@ Building.values = {
         type = Type.market,
         range = range_by_foot
     },
+    ["medbay"] = {
+        type = Type.improvised_hospital,
+        range = 50,
+        speed = 0.4 / Time.second,
+        workforce = {
+            count = 5,
+            castes = {Type.clockwork, Type.plasma}
+        },
+        power_usage = 50
+    },
+    ["mushroom-farm"] = {
+        type = Type.farm,
+        accepts_plant_care = false
+    },
     ["nightclub"] = {
         type = Type.nightclub,
         power_usage = 100
@@ -198,19 +212,10 @@ Building.values = {
         type = Type.psych_ward,
         range = 7
     },
-    ["medbay"] = {
-        type = Type.improvised_hospital,
-        range = 50,
-        speed = 0.4 / Time.second,
-        workforce = {
-            count = 5,
-            castes = {Type.clockwork, Type.plasma}
-        },
-        power_usage = 50
-    },
-    ["mushroom-farm"] = {
-        type = Type.farm,
-        accepts_plant_care = false
+    ["salt-pond"] = {
+        type = Type.salt_pond,
+        range = 7.5,
+        water_tiles = 45
     },
     ["trash-site"] = {
         type = Type.dumpster

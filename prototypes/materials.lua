@@ -661,10 +661,8 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "salt",
+    name = "salty-water-evaporation",
     product_amount = 5,
-    ingredients = {
-        {type = "fluid", name = "water", amount = 200}
-    },
     energy_required = 4,
     category = "sosciencity-salt-pond",
     unlock = "food-processing"

@@ -2170,6 +2170,38 @@ local function create_hunting_hut_details(container, entry, player_id)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << salt pond >>
+
+local function update_salt_pond(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
+
+    local tabbed_pane = container.tabpane
+    local building_data = get_tab_contents(tabbed_pane, "general").building
+
+    local building_details = get_building_details(entry)
+    set_kv_pair_value(
+        building_data,
+        "water-tiles",
+        {
+            "sosciencity.value-with-unit",
+            {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles},
+            {"sosciencity.tiles"}
+        }
+    )
+end
+
+local function create_salt_pond(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
+
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
+
+    add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
+
+    update_salt_pond(container, entry)
+end
+
+---------------------------------------------------------------------------------------------------
 -- << immigration port >>
 
 local function update_immigration_port_details(container, entry, player_id)
@@ -3016,6 +3048,10 @@ local type_gui_specifications = {
     [Type.nightclub] = {
         creater = create_general_building_details,
         updater = update_general_building_details
+    },
+    [Type.salt_pond] = {
+        creater = create_salt_pond,
+        updater = update_salt_pond
     },
     [Type.upbringing_station] = {
         creater = create_upbringing_station,

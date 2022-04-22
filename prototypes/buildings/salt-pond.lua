@@ -19,9 +19,6 @@ Tirislib.RecipeGenerator.create {
     unlock = "food-processing"
 }
 
-local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
-
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "salt-pond",
@@ -51,20 +48,5 @@ Tirislib.Entity.create {
         type = "void",
         emissions_per_minute = 0.25
     },
-    fluid_boxes = {
-        {
-            base_level = -1,
-            pipe_covers = pipe_covers,
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0, -2}}},
-            production_type = "input"
-        },
-        {
-            base_level = -1,
-            pipe_covers = pipe_covers,
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0, 2}}},
-            production_type = "input"
-        }
-    }
+    fixed_recipe = "salty-water-evaporation"
 }:set_size(3, 3):copy_localisation_from_item()
