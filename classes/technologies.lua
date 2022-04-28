@@ -22,14 +22,14 @@ for _, caste in pairs(Castes.values) do
 end
 
 local tracked_multi_level_techs = {
-    ["clockwork-caste-effectivity"] = {},
-    ["orchid-caste-effectivity"] = {},
-    ["gunfire-caste-effectivity"] = {},
-    ["ember-caste-effectivity"] = {},
-    ["foundry-caste-effectivity"] = {},
-    ["gleam-caste-effectivity"] = {},
-    ["aurora-caste-effectivity"] = {},
-    ["plasma-caste-effectivity"] = {},
+    ["clockwork-caste-efficiency"] = {},
+    ["orchid-caste-efficiency"] = {},
+    ["gunfire-caste-efficiency"] = {},
+    ["ember-caste-efficiency"] = {},
+    ["foundry-caste-efficiency"] = {},
+    ["gleam-caste-efficiency"] = {},
+    ["aurora-caste-efficiency"] = {},
+    ["plasma-caste-efficiency"] = {},
     ["improved-reproductive-healthcare"] = {}
 }
 

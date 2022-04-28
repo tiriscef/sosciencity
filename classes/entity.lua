@@ -746,7 +746,7 @@ Register.set_entity_copy_handler(Type.improvised_hospital, copy_hospital)
 -- [2]: GenderGroup
 
 local caste_is_researched = Inhabitants.caste_is_researched
-local get_caste_effectivity = Inhabitants.get_caste_effectivity
+local get_caste_efficiency = Inhabitants.get_caste_efficiency
 
 local function get_researched_castes()
     local ret = {}
@@ -766,7 +766,7 @@ local function get_upbringing_expectations(mode)
 
     local targeted_chance = 0
     if mode ~= Type.null then
-        targeted_chance = 1 - 0.4 / (0.125 * get_caste_effectivity(mode) + 1)
+        targeted_chance = 1 - 0.4 / (0.125 * get_caste_efficiency(mode) + 1)
         number_of_unresearched_castes = number_of_unresearched_castes - 1
 
         if number_of_unresearched_castes == 0 then

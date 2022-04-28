@@ -25,7 +25,7 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
-    name = "clockwork-caste-effectivity",
+    name = "clockwork-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
@@ -42,7 +42,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.clockwork"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.clockwork"}}
         }
     },
     unit = {
@@ -53,7 +53,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.clockwork"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.clockwork"}}
 }
 
 Tirislib.Technology.create {
@@ -79,7 +79,7 @@ Tirislib.Technology.create {
 Tirislib.Technology("logistic-science-pack"):add_prerequisite("orchid-caste")
 
 Tirislib.Technology.create {
-    name = "orchid-caste-effectivity",
+    name = "orchid-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/orchid-caste.png",
@@ -96,7 +96,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.orchid"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.orchid"}}
         }
     },
     unit = {
@@ -108,7 +108,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.orchid"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.orchid"}}
 }
 
 Tirislib.Technology.create {
@@ -135,7 +135,7 @@ Tirislib.Technology.create {
 Tirislib.Technology("military-science-pack"):add_prerequisite("gunfire-caste")
 
 Tirislib.Technology.create {
-    name = "gunfire-caste-effectivity",
+    name = "gunfire-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/gunfire-caste.png",
@@ -152,7 +152,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.gunfire"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.gunfire"}}
         }
     },
     unit = {
@@ -165,7 +165,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.gunfire"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.gunfire"}}
 }
 
 Tirislib.Technology.create {
@@ -190,7 +190,7 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
-    name = "plasma-caste-effectivity",
+    name = "plasma-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/plasma-caste.png",
@@ -207,7 +207,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.plasma"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.plasma"}}
         }
     },
     unit = {
@@ -219,7 +219,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.plasma"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.plasma"}}
 }
 
 Tirislib.Technology.create {
@@ -246,7 +246,7 @@ Tirislib.Technology.create {
 Tirislib.Technology("chemical-science-pack"):add_prerequisite("ember-caste")
 
 Tirislib.Technology.create {
-    name = "ember-caste-effectivity",
+    name = "ember-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/ember-caste.png",
@@ -263,7 +263,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.ember"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.ember"}}
         }
     },
     unit = {
@@ -276,7 +276,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.ember"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.ember"}}
 }
 
 Tirislib.Technology.create {
@@ -304,7 +304,7 @@ Tirislib.Technology.create {
 Tirislib.Technology("production-science-pack"):add_prerequisite("foundry-caste")
 
 Tirislib.Technology.create {
-    name = "foundry-caste-effectivity",
+    name = "foundry-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/foundry-caste.png",
@@ -321,7 +321,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.foundry"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.foundry"}}
         }
     },
     unit = {
@@ -335,7 +335,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.foundry"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.foundry"}}
 }
 
 Tirislib.Technology.create {
@@ -363,7 +363,7 @@ Tirislib.Technology.create {
 Tirislib.Technology("utility-science-pack"):add_prerequisite("gleam-caste")
 
 Tirislib.Technology.create {
-    name = "gleam-caste-effectivity",
+    name = "gleam-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/gleam-caste.png",
@@ -380,7 +380,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.gleam"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.gleam"}}
         }
     },
     unit = {
@@ -394,7 +394,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.gleam"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.gleam"}}
 }
 
 Tirislib.Technology.create {
@@ -424,7 +424,7 @@ Tirislib.Technology.create {
 Tirislib.Technology("space-science-pack"):add_prerequisite("aurora-caste")
 
 Tirislib.Technology.create {
-    name = "aurora-caste-effectivity",
+    name = "aurora-caste-efficiency",
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/aurora-caste.png",
@@ -441,7 +441,7 @@ Tirislib.Technology.create {
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-effectivity", {"caste-short.aurora"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.aurora"}}
         }
     },
     unit = {
@@ -457,7 +457,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-effectivity", {"caste-short.aurora"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.aurora"}}
 }
 
 ---------------------------------------------------------------------------------------------------

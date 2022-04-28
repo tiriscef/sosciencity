@@ -1281,7 +1281,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
             "sosciencity.show-bonus",
             unemployed,
             get_reasonable_number(entry[EK.caste_points]),
-            global.technologies[caste.effectivity_tech]
+            global.technologies[caste.efficiency_tech]
         }
     )
     local employed = entry[EK.employed]

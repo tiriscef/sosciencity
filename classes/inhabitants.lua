@@ -303,8 +303,8 @@ end
 --- @param group DiseaseGroup
 --- @param disease_category DiseaseCategory
 --- @param count integer
---- @param actual_count integer
---- @param suppress_logging boolean
+--- @param actual_count integer|nil
+--- @param suppress_logging boolean|nil
 function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_count, suppress_logging)
     actual_count = min(count, actual_count or 20)
 
@@ -721,8 +721,8 @@ local is_researched = Inhabitants.caste_is_researched
 
 --- Returns the level of the efficiency technology for the given caste.
 --- @param caste_id Type
-function Inhabitants.get_caste_effectivity(caste_id)
-    return technologies[castes[caste_id].effectivity_tech]
+function Inhabitants.get_caste_efficiency(caste_id)
+    return technologies[castes[caste_id].efficiency_tech]
 end
 
 --- Returns the total number of inhabitants.
@@ -1738,8 +1738,8 @@ local function update_housing_census(entry, caste_id)
     end
 
     -- caste bonus points
-    local effectivity = 1 + 0.1 * global.technologies[castes[caste_id].effectivity_tech]
-    local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness]) * effectivity
+    local efficiency = 1 + 0.1 * global.technologies[castes[caste_id].efficiency_tech]
+    local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness]) * efficiency
     caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points] + points
     entry[EK.caste_points] = points
 end
