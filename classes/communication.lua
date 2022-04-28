@@ -1,6 +1,7 @@
 local DeathCause = require("enums.death-cause")
 local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
+local InformationType = require("enums.information-type")
 local WarningType = require("enums.warning-type")
 
 local Castes = require("constants.castes")
@@ -34,8 +35,17 @@ Communication = {}
     global.report_ticks: table
         [name]: tick of creation
 
-    global.warnings: table
-        [WarningType]: table
+    global.information_params: table
+        [InformationType]: table of params
+
+    global.information_ticks: table
+        [InformationType]: tick
+
+    global.warning_params: table
+        [WarningType]: table of params
+
+    global.warning_ticks: table
+        [WarningType]: tick
 
     global.notifications: table
         [unit_number]: table of subscribed players
@@ -57,7 +67,10 @@ local current_reports
 local report_ticks
 local reported_event_counts
 
-local warnings
+local information_params
+local information_ticks
+local warning_params
+local warning_ticks
 
 local notifications
 
@@ -105,7 +118,10 @@ local function set_locals()
     report_ticks = global.report_ticks
     reported_event_counts = global.reported_event_counts
 
-    warnings = global.warnings
+    information_ticks = global.information_ticks
+    information_params = global.information_params
+    warning_ticks = global.warning_ticks
+    warning_params = global.warning_params
 
     notifications = global.notifications
 
@@ -145,12 +161,17 @@ function Communication.init()
     global.past_banter = {}
     global.past_banter_index = 1
 
-    global.warnings = {}
-    for _, warning_type in pairs(WarningType) do
-        global.warnings[warning_type] = {
-            last_warning_tick = 0
-        }
+    global.information_ticks = {}
+    for _, information_type in pairs(InformationType) do
+        global.information_ticks[information_type] = -Time.nauvis_month
     end
+    global.information_params = {}
+
+    global.warning_ticks = {}
+    for _, warning_type in pairs(WarningType) do
+        global.warning_ticks[warning_type] = -Time.nauvis_month
+    end
+    global.warning_params = {}
 
     global.notifications = {}
 
@@ -536,10 +557,8 @@ end
 -- << warnings >>
 
 function Communication.warning(warning_type, ...)
-    local warning_details = warnings[warning_type]
-    if game.tick - warning_details.last_warning_tick >= 2 * Time.minute then
-        warning_details.do_warn = true
-        warning_details.params = {...}
+    if game.tick - warning_ticks[warning_type] >= 2 * Time.minute then
+        warning_params[warning_type] = {...}
     end
 end
 
@@ -585,19 +604,59 @@ local warn_fns = {
     end
 }
 
-local function warn(warning_type)
-    local warn_table = warnings[warning_type]
-    warn_fns[warning_type](unpack(warn_table.params))
+local function send_warning(warning_type)
+    warn_fns[warning_type](unpack(warning_params[warning_type]))
 
-    warn_table.do_warn = false
-    warn_table.params = nil
-    warn_table.last_warning_tick = game.tick
+    warning_params[warning_type] = nil
+    warning_ticks[warning_type] = game.tick
 end
 
 local function look_for_warning()
-    for warning_type, details in pairs(warnings) do
-        if details.do_warn then
-            warn(warning_type)
+    for warning_type in pairs(warning_params) do
+        send_warning(warning_type)
+        return true
+    end
+
+    return false
+end
+
+---------------------------------------------------------------------------------------------------
+-- << informations >>
+
+local information_prepare_fns = {
+    [InformationType.acquisition_unlock] = function(tech_name)
+        local params = get_subtbl(information_params, InformationType.acquisition_unlock)
+        params[#params + 1] = tech_name
+    end
+}
+
+function Communication.inform(information_type, ...)
+    information_prepare_fns[information_type](...)
+end
+
+local information_fns = {
+    [InformationType.acquisition_unlock] = function(...)
+        local enumeration = Tirislib.Locales.create_enumeration({...}, nil, {"sosciencity.and"})
+
+        say_random_variant("acquisition-unlock", nil, enumeration)
+    end
+}
+
+local function send_information(information_type)
+    information_fns[information_type](unpack(information_params[information_type]))
+
+    information_params[information_type] = nil
+    information_ticks[information_type] = game.tick
+end
+
+local information_times = {
+    [InformationType.acquisition_unlock] = 1 * Time.minute
+}
+
+local function look_for_information()
+    for information_type in pairs(information_params) do
+        if game.tick - information_ticks[information_type] >= information_times[information_type] then
+            send_information(information_type)
             return true
         end
     end
@@ -676,9 +735,13 @@ function Communication.update(current_tick)
             said_something = look_for_report(current_tick)
         end
 
-        -- a warning will be searched every 15 seconds if there was no report or random banter
+        -- a warning or information will be searched every 15 seconds if there was no report or random banter
         if not said_something and current_tick % (15 * Time.second) == 0 then
-            look_for_warning()
+            said_something = look_for_warning()
+
+            if not said_something then
+                look_for_information()
+            end
         end
     end
 end
