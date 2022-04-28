@@ -1,3 +1,5 @@
+local InformationType = require("enums.information-type")
+
 local Castes = require("constants.castes")
 local Unlocks = require("constants.unlocks")
 
@@ -94,7 +96,7 @@ local function unlock(technology_name)
     local tech = game.forces.player.technologies[technology_name]
     tech.researched = true
     unlocked[technology_name] = true
-    Communication.say_random_variant("acquisition-unlock", nil, tech.localised_name)
+    Communication.inform(InformationType.acquisition_unlock, tech.localised_name)
 end
 
 function Technologies.update()
