@@ -264,7 +264,7 @@ local pipepictures = {
 }
 
 --- Creates the standart pipe pictures for the given directions.
---- @param directions table
+--- @param directions table|nil
 --- @return PicturePrototype pipe_picture
 function Tirislib.Entity.get_standard_pipe_pictures(directions)
     return copy_directions(pipepictures, directions)
@@ -282,7 +282,7 @@ for _, direction in pairs(pipecovers) do
 end
 
 --- Creates the standart pipe cover pictures for the given directions.
---- @param directions table
+--- @param directions table|nil
 --- @return PicturePrototype cover_picture
 function Tirislib.Entity.get_standard_pipe_cover(directions)
     return copy_directions(pipecovers, directions)
