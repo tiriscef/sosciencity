@@ -26,6 +26,7 @@
         "tostring"
     ],
     "Lua.diagnostics.disable": [
-        "undefined-field"
+        "undefined-field",
+        "need-check-nil"
     ]
 }

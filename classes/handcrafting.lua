@@ -51,7 +51,7 @@ local function get_recent_donation_count(player_id)
     return count
 end
 
-local function blood_donation(player_id)
+local function blood_donation(player_id, _)
     local count = get_recent_donation_count(player_id)
     local player = game.players[player_id]
     local character = player.character

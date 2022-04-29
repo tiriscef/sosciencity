@@ -309,7 +309,7 @@ end
 
 --- Adds the given entity to the register. Optionally the type can be specified.
 --- @param entity Entity
---- @param _type Type
+--- @param _type Type|nil
 function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
     if _type == Type.null then

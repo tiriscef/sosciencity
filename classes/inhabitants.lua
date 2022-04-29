@@ -361,7 +361,7 @@ AgeGroup = {}
 
 --- Returns a new AgeGroup table with fixed ages.
 --- @param count integer
---- @param age integer
+--- @param age integer|nil
 function AgeGroup.new(count, age)
     local ret = {}
 
@@ -526,6 +526,15 @@ local DEFAULT_HEALTH = 10
 local DEFAULT_SANITY = 10
 
 --- Constructs a new InhabitantGroup object.
+--- @param caste Type
+--- @param count integer|nil
+--- @param happiness number|nil
+--- @param health number|nil
+--- @param sanity number|nil
+--- @param diseases DiseaseGroup|nil
+--- @param genders GenderGroup|nil
+--- @param ages AgeGroup|nil
+--- @return InhabitantGroup
 function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, genders, ages)
     count = count or 0
 
@@ -591,7 +600,7 @@ local groups_can_merge = InhabitantGroup.can_be_merged
 --- Merges the inhabitants of the right InhabitantGroup into the left one.
 --- @param lh InhabitantGroup
 --- @param rh InhabitantGroup
---- @param keep_rh boolean
+--- @param keep_rh boolean|nil
 function InhabitantGroup.merge(lh, rh, keep_rh)
     if not groups_can_merge(lh, rh) then
         error("Sosciencity tried to merge two incompatible InhabitantGroup objects.")
@@ -1362,7 +1371,7 @@ end
 
 -- XXX: this part has magic numbers - but at the moment I don't know how to avoid them without overcomplicating stuff
 local special_sideeffect_fns = {
-    [4001] = function(entry, count)
+    [4001] = function(entry, count, _)
         local gender_group = entry[EK.genders]
 
         for _ = 1, count do

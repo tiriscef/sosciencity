@@ -238,7 +238,7 @@ end
 --- Chooses a random index of the given weights array.
 --- - The sum of all weights can be given to avoid calculating it multiple times.
 --- @param weights array
---- @param sum number
+--- @param sum number|nil
 --- @return integer
 function Tirislib.Utils.weighted_random(weights, sum)
     if sum == nil then
@@ -1200,7 +1200,7 @@ Tirislib.Locales.shorten_enumeration = shorten_enumeration
 
 --- Creates a localised enumeration of the given elements.
 --- @param elements array
---- @param separator string|locale
+--- @param separator string|locale|nil
 --- @param last_separator string|locale|nil
 --- @return locale
 function Tirislib.Locales.create_enumeration(elements, separator, last_separator)
@@ -1234,7 +1234,7 @@ local create_enumeration = Tirislib.Locales.create_enumeration
 --- - Needs Sosciencity's locales
 --- @param elements table (element, number)-pairs
 --- @param fn function|nil function that returns a locale for the element
---- @param separator string|locale
+--- @param separator string|locale|nil
 --- @param last_separator string|locale|nil
 --- @param pruning boolean if 0 elements are to be ignored
 --- @return locale

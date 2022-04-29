@@ -110,7 +110,7 @@ end
 --- @param inventory Inventory
 --- @param item string
 --- @param amount number
---- @param suppress_logging boolean
+--- @param suppress_logging boolean|nil
 --- @return integer
 function Inventories.try_insert(inventory, item, amount, suppress_logging)
     if amount <= 0 then
@@ -136,7 +136,7 @@ local try_insert = Inventories.try_insert
 --- @param inventory Inventory
 --- @param item string
 --- @param amount integer
---- @param suppress_logging boolean
+--- @param suppress_logging boolean|nil
 --- @return integer
 function Inventories.try_remove(inventory, item, amount, suppress_logging)
     if amount <= 0 then
@@ -161,7 +161,7 @@ local try_remove = Inventories.try_remove
 --- @param entry Entry
 --- @param item string
 --- @param amount integer
---- @param suppress_logging boolean
+--- @param suppress_logging boolean|nil
 function Inventories.spill_items(entry, item, amount, suppress_logging)
     if amount <= 0 then
         return
@@ -201,9 +201,9 @@ end
 --- Returns true if it removed the items.
 --- @param entry Entry
 --- @param items table
---- @param silent boolean
+--- @param suppress_logging boolean|nil
 --- @return boolean
-function Inventories.try_remove_item_range(entry, items, silent)
+function Inventories.try_remove_item_range(entry, items, suppress_logging)
     local inventory = get_chest_inventory(entry)
     local contents = inventory.get_contents()
 
@@ -217,7 +217,7 @@ function Inventories.try_remove_item_range(entry, items, silent)
     for name, desired_amount in pairs(items) do
         inventory.remove {name = name, count = desired_amount}
     end
-    if not silent then
+    if not suppress_logging then
         log_items(items)
     end
 
