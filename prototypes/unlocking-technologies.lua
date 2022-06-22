@@ -31,7 +31,7 @@ for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
         enabled = false,
         visible_when_disabled = true,
         localised_name = localised_name,
-        localised_description = {"technology-description.acquisition", localised_name},
+        localised_description = {"", {"sosciencity-util.unlock-condition"}, "\n [img=tooltip-category-debug] ", {"sosciencity-util.acquisition", localised_name}},
         is_hack = true
     }
 end

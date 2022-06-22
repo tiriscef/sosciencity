@@ -110,7 +110,7 @@ create_enrichment_recipe {
     ingredients = {
         {type = "fluid", name = "water", amount = 10}
     },
-    category = "sosciencity-microalgae-farm",
+    category = "sosciencity-algae-farm",
     unlock = "basic-biotechnology"
 }
 
@@ -120,7 +120,7 @@ create_pure_culture_recipe {
     ingredients = {
         {type = "fluid", name = "water", amount = 90}
     },
-    category = "sosciencity-microalgae-farm",
+    category = "sosciencity-algae-farm",
     unlock = "basic-biotechnology"
 }
 
@@ -131,7 +131,7 @@ create_enrichment_recipe {
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10}
     },
-    category = "sosciencity-microalgae-farm",
+    category = "sosciencity-algae-farm",
     unlock = "basic-biotechnology"
 }
 
@@ -141,7 +141,7 @@ create_pure_culture_recipe {
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 90}
     },
-    category = "sosciencity-microalgae-farm",
+    category = "sosciencity-algae-farm",
     unlock = "basic-biotechnology"
 }
 

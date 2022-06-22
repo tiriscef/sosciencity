@@ -1,3 +1,6 @@
+local Condition = require("enums.condition")
+local Type = require("enums.type")
+
 --- Returns an array with (technology_name, item_name)-pairs.
 --- The technologies are hidden and get enabled when the player aquired the given item.
 local Unlocks = {}
@@ -50,8 +53,20 @@ Unlocks.by_item_aquisition = {
     [get_tech_name("zetorn")] = "zetorn"
 }
 
+Unlocks.gated_technologies = {
+    ["explore-alien-flora-1"] = {
+        {
+            type = Condition.caste_points,
+            count = 100,
+            caste = Type.orchid
+        }
+    }
+}
+
 --- Name getter function for the data stage. Checks if the name is registered for the control stage.
 --- (Registering it automatically doesn't work, as the Lua state will reset before entering the control stage.)
+--- @param item_name string
+--- @return string
 function Unlocks.get_tech_name(item_name)
     local name = get_tech_name(item_name)
 

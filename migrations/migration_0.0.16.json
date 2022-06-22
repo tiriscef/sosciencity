@@ -1,4 +1,10 @@
 {
+    "entity": [
+        [
+            "microalgae-farm",
+            "algae-farm"
+        ]
+    ],
     "technology": [
         [
             "clockwork-caste-effectivity",
