@@ -15,6 +15,10 @@ local range_by_foot = 50
 --- **power_usage:** number (kW)\
 --- **speed:** number (1/tick)
 Building.values = {
+    ["algae-farm"] = {
+        type = Type.farm,
+        accepts_plant_care = false
+    },
     ["aquafarm"] = {
         type = Type.animal_farm,
         range = 50

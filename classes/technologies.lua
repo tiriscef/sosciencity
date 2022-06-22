@@ -1,3 +1,4 @@
+local Condition = require("enums.condition")
 local InformationType = require("enums.information-type")
 
 local Castes = require("constants.castes")
@@ -11,6 +12,12 @@ Technologies = {}
     --------------------------------
     global.technologies: table
         [tech_name]: bool (researched) or int (level)
+
+    global.unlocked: table
+        [tech_name]: bool (is it unlocked)
+
+    global.gated_technologies: table
+        [tech_name]: bool (is it enabled)
 ]]
 -- local often used globals for humongous performance gains
 
@@ -33,6 +40,7 @@ local tracked_multi_level_techs = {
     ["improved-reproductive-healthcare"] = {}
 }
 
+local gated_technologies
 local unlocks = Unlocks.by_item_aquisition
 local unlocked
 
@@ -99,15 +107,43 @@ local function unlock(technology_name)
     Communication.inform(InformationType.acquisition_unlock, tech.localised_name)
 end
 
+local function enable(technology_name)
+    local tech = game.forces.player.technologies[technology_name]
+    tech.enabled = true
+    gated_technologies[technology_name] = true
+    Communication.inform(InformationType.unlocked_gated_technology, tech.localised_name)
+end
+
+local condition_fns = {
+    [Condition.caste_points] = function(details)
+        return global.caste_points[details.caste] >= details.count
+    end
+}
+
 function Technologies.update()
     local production
 
     -- check if the required item was acquired by crafting (shows in the production statistic)
     for technology_name, already_unlocked in pairs(unlocked) do
         if not already_unlocked then
-            production = game.forces.player.item_production_statistics
+            production = production or game.forces.player.item_production_statistics
             if production.get_input_count(unlocks[technology_name]) > 0 then
                 unlock(technology_name)
+            end
+        end
+    end
+
+    -- check the gated technologies
+    for technology_name, already_enabled in pairs(gated_technologies) do
+        if not already_enabled then
+            local met = true
+
+            for _, condition in pairs(Unlocks.gated_technologies[technology_name]) do
+                met = met and condition_fns[condition.type](condition)
+            end
+
+            if met then
+                enable(technology_name)
             end
         end
     end
@@ -140,6 +176,7 @@ end
 
 local function set_locals()
     unlocked = global.unlocked
+    gated_technologies = global.gated_technologies
 end
 
 --- Initialize the technology related contents of global.
@@ -162,6 +199,13 @@ function Technologies.init()
 
     for tech_name in pairs(unlocks) do
         global.unlocked[tech_name] = techs[tech_name].researched
+    end
+
+    -- gated technologies
+    global.gated_technologies = {}
+
+    for tech_name in pairs(Unlocks.gated_technologies) do
+        global.gated_technologies[tech_name] = false
     end
 
     set_locals()

@@ -1,19 +1,17 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
-    name = "microalgae-farm",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    name = "algae-farm",
+    icon = "__sosciencity-graphics__/graphics/icon/algae-farm.png",
     icon_size = 64,
     subgroup = "sosciencity-microorganism-buildings",
     order = "daa",
-    place_result = "microalgae-farm",
+    place_result = "algae-farm",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "microalgae-farm",
+    product = "algae-farm",
     themes = {{"piping", 30}, {"machine", 2}, {"glass", 30}},
     default_theme_level = 1,
     unlock = "basic-biotechnology"
@@ -24,9 +22,9 @@ local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib.Entity.create {
     type = "assembling-machine",
-    name = "microalgae-farm",
-    flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "microalgae-farm"},
+    name = "algae-farm",
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
+    minable = {mining_time = 0.5, result = "algae-farm"},
     max_health = 200,
     corpse = "small-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
@@ -34,33 +32,22 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 5/7,
-                frame_count = 1
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/solfaen.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1,
-                frame_count = 1
-            }
-        }
+    animation = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/algae-farm/algae-farm",
+        shift = {1.0, -0.45},
+        width = 8,
+        height = 5,
+        shadowmap = true,
+        glow = true,
+        lightmap = true
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-microalgae-farm"},
-    energy_usage = "70kW",
+    crafting_categories = {"sosciencity-algae-farm"},
+    energy_usage = "20kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = -2,
+        emissions_per_minute = -10,
         drain = "5kW"
     },
     fluid_boxes = {
@@ -68,29 +55,41 @@ Tirislib.Entity.create {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.0, 3.0}}},
+            pipe_connections = {{position = {1.5, -1.5}}},
             production_type = "input"
         },
         {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.0, 3.0}}},
+            pipe_connections = {{position = {2.5, -1.5}}},
             production_type = "input"
         },
         {
             base_level = 1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.0, -3.0}}},
-            production_type = "output"
-        },
-        {
-            base_level = 1,
-            pipe_covers = pipe_covers,
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.0, -3.0}}},
+            pipe_connections = {{position = {-1.5, -1.5}}},
             production_type = "output"
         }
+    },
+    working_sound = {
+        sound = {
+            {
+                filename = "__base__/sound/chemical-plant-1.ogg",
+                volume = 0.5
+            },
+            {
+                filename = "__base__/sound/chemical-plant-2.ogg",
+                volume = 0.5
+            },
+            {
+                filename = "__base__/sound/chemical-plant-3.ogg",
+                volume = 0.5
+            }
+        },
+        apparent_volume = 1.5,
+        fade_in_ticks = 4,
+        fade_out_ticks = 20
     }
-}:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(6, 2):copy_localisation_from_item():copy_icon_from_item()

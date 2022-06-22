@@ -1,6 +1,8 @@
 local InformationType = require("enums.information-type")
 local WarningType = require("enums.warning-type")
 local Time = require("constants.time")
+local EK = require("enums.entry-key")
+local Unlocks = require("constants.unlocks")
 
 global.information_ticks = {}
 for _, information_type in pairs(InformationType) do
@@ -28,6 +30,19 @@ local tech_renames = {
 }
 
 for old_name, new_name in pairs(tech_renames) do
-    global.technologies[new_name] = old_name
+    global.technologies[new_name] = global.technologies[old_name]
     global.technologies[old_name] = nil
+end
+
+for _, entry in pairs(global.register) do
+    if entry[EK.name] == "microalgae-farm" then
+        entry[EK.name] = "algae-farm"
+    end
+end
+
+if not global.gated_technologies then
+    global.gated_technologies = {}
+    for tech_name in pairs(Unlocks.gated_technologies) do
+        global.gated_technologies[tech_name] = false
+    end
 end

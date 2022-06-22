@@ -627,6 +627,10 @@ local information_prepare_fns = {
     [InformationType.acquisition_unlock] = function(tech_name)
         local params = get_subtbl(information_params, InformationType.acquisition_unlock)
         params[#params + 1] = tech_name
+    end,
+    [InformationType.unlocked_gated_technology] = function(tech_name)
+        local params = get_subtbl(information_params, InformationType.unlocked_gated_technology)
+        params[#params + 1] = tech_name
     end
 }
 
@@ -639,6 +643,11 @@ local information_fns = {
         local enumeration = Tirislib.Locales.create_enumeration({...}, nil, {"sosciencity.and"})
 
         say_random_variant("acquisition-unlock", nil, enumeration)
+    end,
+    [InformationType.unlocked_gated_technology] = function(...)
+        local enumeration = Tirislib.Locales.create_enumeration({...}, nil, {"sosciencity.and"})
+
+        say_random_variant("unlocked-gated-technology", nil, enumeration)
     end
 }
 
@@ -650,7 +659,8 @@ local function send_information(information_type)
 end
 
 local information_times = {
-    [InformationType.acquisition_unlock] = 1 * Time.minute
+    [InformationType.acquisition_unlock] = 1 * Time.minute,
+    [InformationType.unlocked_gated_technology] = 1 * Time.minute
 }
 
 local function look_for_information()

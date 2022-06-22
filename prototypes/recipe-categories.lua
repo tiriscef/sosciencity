@@ -1,6 +1,10 @@
 Tirislib.Prototype.batch_create {
     {
         type = "recipe-category",
+        name = "sosciencity-algae-farm"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-animal-farming"
     },
     {
@@ -94,10 +98,6 @@ Tirislib.Prototype.batch_create {
     {
         type = "recipe-category",
         name = "sosciencity-hunting"
-    },
-    {
-        type = "recipe-category",
-        name = "sosciencity-microalgae-farm"
     },
     {
         type = "recipe-category",
