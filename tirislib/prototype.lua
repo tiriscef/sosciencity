@@ -48,7 +48,7 @@ end
 --- checking if they exist.
 --- @param prototype_type string|table
 --- @param name string
---- @param mt table
+--- @param mt table|nil
 --- @return Prototype Prototype prototype or dummy
 --- @return boolean found
 function Tirislib.Prototype.get(prototype_type, name, mt)
@@ -80,7 +80,8 @@ function Tirislib.Prototype.create(prototype)
 
     data:extend {prototype}
 
-    return Tirislib.Prototype.get(prototype.type, prototype.name)
+    local ret = Tirislib.Prototype.get(prototype.type, prototype.name)
+    return ret
 end
 
 --- Creates the prototypes in the given array and add them to data.raw.

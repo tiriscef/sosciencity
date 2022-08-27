@@ -105,7 +105,8 @@ function Tirislib.Item.create(prototype)
 
     Tirislib.Prototype.create(prototype)
 
-    return Tirislib.Item.get_by_name(prototype.name)
+    local ret = Tirislib.Item.get_by_name(prototype.name)
+    return ret
 end
 
 --- Creates a bunch of item prototypes.\

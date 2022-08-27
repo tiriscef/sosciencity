@@ -236,7 +236,7 @@ end
 --- @param product string
 --- @param amount number
 --- @param _type string|nil defaults to 'item'
---- @return RecipeEntryPrototype
+--- @return RecipeEntryPrototype|nil
 function Entries.create_result_prototype(product, amount, _type)
     if amount > 0 then
         local ret = {type = _type or "item", name = product}
@@ -578,8 +578,9 @@ end
 --- - The difficulty mode can be specified for fields that belong to recipe data.
 --- - If the difficulty mode isn't specified and the field is recipe data, both values will be returned.
 --- @param field string
---- @param mode string
---- @return any
+--- @param mode string|nil
+--- @return any normal
+--- @return any expensive
 function Tirislib.Recipe:get_field(field, mode)
     if mode then
         return self[mode][field] or default_values[field]
@@ -764,8 +765,8 @@ end
 
 --- Adds the given result to the recipe.
 --- - A different result for the expensive difficulty can be specified. Otherwise the normal one will be used.
---- @param result RecipeEntryPrototype
---- @param expensive_result RecipeEntryPrototype
+--- @param result RecipeEntryPrototype|nil
+--- @param expensive_result RecipeEntryPrototype|nil
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_result(result, expensive_result, suppress_merge)
     if not Tirislib.Recipe.has_difficulties(self) and result then
@@ -876,8 +877,8 @@ end
 
 --- Adds the given ingredient to the recipe.
 --- - A different ingredient for the expensive difficulty can be specified. Otherwise the normal one will be used.
---- @param ingredient RecipeEntryPrototype
---- @param expensive_ingredient RecipeEntryPrototype
+--- @param ingredient RecipeEntryPrototype|nil
+--- @param expensive_ingredient RecipeEntryPrototype|nil
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_ingredient(ingredient, expensive_ingredient)
     expensive_ingredient = expensive_ingredient or ingredient
@@ -893,8 +894,8 @@ end
 
 --- Adds the given results to the recipe.
 --- - Different results for the expensive difficulty can be specified. Otherwise the normal ones will be used.
---- @param ingredients table of RecipeEntryPrototypes
---- @param expensive_ingredients table of RecipeEntryPrototypes
+--- @param ingredients table|nil of RecipeEntryPrototypes
+--- @param expensive_ingredients table|nil of RecipeEntryPrototypes
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_ingredient_range(ingredients, expensive_ingredients)
     if ingredients == nil and expensive_ingredients == nil then
