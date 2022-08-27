@@ -27,6 +27,8 @@
     ],
     "Lua.diagnostics.disable": [
         "undefined-field",
-        "need-check-nil"
+        "need-check-nil",
+        "return-type-mismatch",
+        "assign-type-mismatch"
     ]
 }

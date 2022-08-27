@@ -1057,6 +1057,8 @@ function Tirislib.Tables.pick_random_subtable_weighted_by_key(tbl, key, weight_s
             return index, subtable
         end
     end
+
+    error("pick_random_subtable_weighted_by_key failed to pick a subtable, most likely due to a wrong weight_sum")
 end
 
 --- Returns an array with the given number sequence.
