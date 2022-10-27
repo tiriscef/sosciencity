@@ -201,27 +201,29 @@ Tirislib.Prototype.batch_create {
     {
         type = "sticker",
         name = "blood-donation-2",
-        duration_in_ticks = 60 * 90,
-        target_movement_modifier_from = 0.5,
+        duration_in_ticks = 60 * 10,
+        target_movement_modifier_from = 0.05,
         target_movement_modifier_to = 1
     },
     {
         type = "sticker",
         name = "blood-donation-3",
-        duration_in_ticks = 60 * 7,
-        target_movement_modifier = 0.05
+        duration_in_ticks = 60 * 150,
+        target_movement_modifier_from = 0.5,
+        target_movement_modifier_to = 1
     },
     {
         type = "sticker",
         name = "blood-donation-4",
-        duration_in_ticks = 60 * 80,
+        duration_in_ticks = 60 * 20,
         target_movement_modifier = -1
     },
     {
         type = "sticker",
         name = "blood-donation-5",
-        duration_in_ticks = 60 * 45,
-        target_movement_modifier = 0.05
+        duration_in_ticks = 60 * 30,
+        target_movement_modifier_from = 0.05,
+        target_movement_modifier_to = 1
     }
 }
 
