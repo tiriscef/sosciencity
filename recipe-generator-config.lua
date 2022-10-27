@@ -50,6 +50,28 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "fluid", name = "water", amount = 10}
         }
     },
+    breed_water_carnivores = {
+        [0] = {
+            {type = "item", name = "carnivore-food", amount = 2. / 3},
+            {type = "item", name = "fish-food", amount = 1. / 3},
+            {type = "fluid", name = "water", amount = 50}
+        }
+    },
+    breed_water_herbivores = {
+        [0] = {
+            {type = "item", name = "herbivore-food", amount = 2. / 3},
+            {type = "item", name = "fish-food", amount = 1. / 3},
+            {type = "fluid", name = "water", amount = 50}
+        }
+    },
+    breed_water_omnivores = {
+        [0] = {
+            {type = "item", name = "herbivore-food", amount = 1. / 3},
+            {type = "item", name = "carnivore-food", amount = 1. / 3},
+            {type = "item", name = "fish-food", amount = 1. / 3},
+            {type = "fluid", name = "water", amount = 50}
+        }
+    },
     brick = {
         [0] = {{type = "item", name = "stone-brick", amount = 1}}
     },
@@ -61,6 +83,11 @@ Tirislib.RecipeGenerator.add_themes {
     },
     ceramic = {
         [0] = {{type = "item", name = "stone-brick", amount = 1}}
+    },
+    chest = {
+        [0] = {{type = "item", name = "wooden-chest", amount = 1}},
+        [1] = {{type = "item", name = "iron-chest", amount = 1}},
+        [2] = {{type = "item", name = "steel-chest", amount = 1}}
     },
     cooling_fluid = {
         [0] = {{type = "fluid", name = "petroleum-gas", amount = 1}}
