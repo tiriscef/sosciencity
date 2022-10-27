@@ -5,6 +5,7 @@ Tirislib.Prototype.modname = "sosciencity"
 
 require("datastage-scripts.crafting-categories")
 require("datastage-scripts.item-descriptions")
+require("datastage-scripts.technology-descriptions")
 require("datastage-scripts.handcrafting")
 require("datastage-scripts.furniture-unlocks")
 require("datastage-scripts.placement-range-highlights")

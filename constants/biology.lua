@@ -354,6 +354,9 @@ for _, family in pairs({"flora"}) do
     end
 end
 
+--- Returns the species table for the given recipe.
+--- @param recipe string|nil
+--- @return table|nil
 function Biology.get_species(recipe)
     return recipe and species_lookup[recipe.name] or nil
 end
