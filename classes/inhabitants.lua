@@ -164,6 +164,7 @@ end
 function Inhabitants.init()
     global = _ENV.global
 
+    global.active_animal_farms = 0
     global.fear = 0
     global.population = new_caste_table()
     global.housing_capacity = {}
@@ -1449,6 +1450,10 @@ function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
         castes[entry[EK.type]].sanity_disease_resilience
 end
 
+function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks * global.active_animal_farms / 1000000
+end
+
 Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.accident] = Inhabitants.get_accident_disease_progress,
     [DiseaseCategory.health] = Inhabitants.get_health_disease_progress,
@@ -1668,7 +1673,12 @@ local function evaluate_neighborhood(entry, happiness_summands, health_summands)
     end
     happiness_summands[HappinessSummand.nightclub] = nightclub_bonus
 
-    local animal_farm_count = Neighborhood.get_neighbor_count(entry, Type.animal_farm)
+    local animal_farm_count = 0
+    for _, animal_farm in Neighborhood.all_of_type(entry, Type.animal_farm) do
+        if animal_farm[EK.houses_animals] then
+            animal_farm_count = animal_farm_count + 1
+        end
+    end
     happiness_summands[HappinessSummand.gross_industry] = -1 * animal_farm_count ^ 0.5
     health_summands[HealthSummand.gross_industry] = -2 * animal_farm_count ^ 0.7
 end

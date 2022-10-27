@@ -195,4 +195,9 @@ EK.store_progress = 1203
 --- progress toward the next item that will be turned into garbage
 EK.garbagify_progress = 1204
 
+-- animal farm
+
+--- is this animal farm housing animals?
+EK.houses_animals = 1300
+
 return EK

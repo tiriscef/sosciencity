@@ -17,7 +17,7 @@ Entity = {}
 --[[
     Data this class stores in global
     --------------------------------
-    nothing
+    global.active_animal_farms: integer
 ]]
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
 
@@ -138,6 +138,37 @@ local function update_rocket_silo(entry)
     set_beacon_effects(entry, clockwork_bonus, caste_bonuses[Type.aurora], use_penalty_module)
 end
 Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
+
+---------------------------------------------------------------------------------------------------
+-- << animal farms >>
+
+local function create_animal_farm(entry)
+    entry[EK.houses_animals] = false
+end
+Register.set_entity_creation_handler(Type.animal_farm, create_animal_farm)
+
+local function update_animal_farm(entry)
+    local entity = entry[EK.entity]
+    local recipe = entity.get_recipe()
+    local houses_animals = recipe and entity.is_crafting() and Tirislib.String.begins_with(recipe, "sos-husbandry-")
+    local housed_in_the_past = entry[EK.houses_animals]
+
+    if houses_animals and not housed_in_the_past then
+        global.active_animal_farms = global.active_animal_farms + 1
+    elseif not houses_animals and housed_in_the_past then
+        global.active_animal_farms = global.active_animal_farms - 1
+    end
+
+    entry[EK.houses_animals] = houses_animals
+end
+Register.set_entity_updater(Type.animal_farm, update_animal_farm)
+
+local function remove_animal_farm(entry)
+    if entry[EK.houses_animals] then
+        global.active_animal_farms = global.active_animal_farms - 1
+    end
+end
+Register.set_entity_destruction_handler(Type.animal_farm, remove_animal_farm)
 
 ---------------------------------------------------------------------------------------------------
 -- << composting >>
