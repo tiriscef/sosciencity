@@ -703,7 +703,6 @@ Tirislib.Technology.create {
         time = 30
     }
 }]]
-
 Tirislib.Technology.create {
     name = "psychiatry",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
@@ -916,6 +915,43 @@ Tirislib.Technology.create {
 }
 
 ---------------------------------------------------------------------------------------------------
+-- << botany >>
+
+Tirislib.Technology.create {
+    name = "explore-alien-flora-1",
+    icon = "__sosciencity-graphics__/graphics/technology/explore-alien-flora-1.png",
+    icon_size = 128,
+    prerequisites = {"orchid-caste"},
+    unit = {
+        count = 23,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    },
+    enabled = false,
+    visible_when_disabled = true
+}
+
+Tirislib.Technology.create {
+    name = "explore-alien-flora-2",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"orchid-caste"},
+    unit = {
+        count = 121,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1}
+        },
+        time = 20
+    },
+    enabled = false,
+    visible_when_disabled = true
+}
+
+---------------------------------------------------------------------------------------------------
 -- << processing >>
 
 Tirislib.Technology.create {
@@ -1029,13 +1065,12 @@ Tirislib.Technology.create {
     name = "animal-husbandry",
     icon = "__sosciencity-graphics__/graphics/technology/animal-husbandry.png",
     icon_size = 128,
-    prerequisites = {"architecture-3"},
+    prerequisites = {"architecture-2"},
     unit = {
         count = 151,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1},
-            {"chemical-science-pack", 1}
+            {"logistic-science-pack", 1}
         },
         time = 30
     }
