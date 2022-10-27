@@ -32,8 +32,8 @@ Tirislib.Entity.create {
     allowed_effects = {"productivity", "speed"},
     animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/ember-hq/ember-hq",
-        shift = {4.0, -1.5},
-        width = 21,
+        shift = {3.5, -1.6},
+        width = 22,
         height = 17,
         shadowmap = true,
         glow = true,

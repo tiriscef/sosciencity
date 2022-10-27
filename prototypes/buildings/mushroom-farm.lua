@@ -1,7 +1,7 @@
 Tirislib.Item.create {
     type = "item",
     name = "mushroom-farm",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/mushroom-farm.png",
     icon_size = 64,
     subgroup = "sosciencity-microorganism-buildings",
     order = "daa",
