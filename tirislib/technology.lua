@@ -110,7 +110,7 @@ function Tirislib.Technology:get_unlocked_recipes()
             local recipe, found = Tirislib.Recipe.get_by_name(effect.recipe)
 
             if found then
-                ret[#ret+1] = recipe
+                ret[#ret + 1] = recipe
             end
         end
     end
@@ -152,6 +152,35 @@ function Tirislib.Technology:remove_prerequisite(tech_name)
     end
 
     return self
+end
+
+--- Returns the technology's name without the '-number' if it has a level.
+--- @param self TechnologyPrototype
+--- @return string
+local function get_true_name(self)
+    -- thanks to Erythion
+    local ret = string.gsub(self.name, "%-%d+$", "")
+    return ret
+end
+
+--- Returns the localised name of the technology.
+--- @return locale
+function Tirislib.Technology:get_localised_name()
+    if not self.localised_name then
+        self.localised_name = {"technology-name." .. get_true_name(self)}
+    end
+
+    return self.localised_name
+end
+
+--- Returns the localised description of the technology.
+--- @return locale
+function Tirislib.Technology:get_localised_description()
+    if not self.localised_description then
+        self.localised_description = {"technology-description." .. get_true_name(self)}
+    end
+
+    return self.localised_description
 end
 
 local meta = {
