@@ -198,6 +198,17 @@ function Entries.get_average_yield(entry)
     return amount * probability
 end
 
+--- Returns the average yield of the given RecipeEntryPrototype, assuming it's a ResultPrototype.
+--- @param entry RecipeEntryPrototype
+--- @return number yield
+function Entries.get_max_yield(entry)
+    if entry.amount_max then
+        return entry.amount_max
+    else
+        return entry.amount or entry[2] or 1
+    end
+end
+
 --- Returns the probability of the given RecipeEntryPrototype, assuming it's a ResultPrototype.
 --- @param entry RecipeEntryPrototype
 --- @return number

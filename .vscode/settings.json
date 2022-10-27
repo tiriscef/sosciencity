@@ -29,6 +29,8 @@
         "undefined-field",
         "need-check-nil",
         "return-type-mismatch",
-        "assign-type-mismatch"
+        "assign-type-mismatch",
+        "param-type-mismatch",
+        "cast-local-type"
     ]
 }

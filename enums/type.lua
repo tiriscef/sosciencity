@@ -2,6 +2,7 @@
 local Type = {}
 
 -- housing types
+
 Type.empty_house = 0
 Type.clockwork = 1
 Type.orchid = 2
@@ -13,6 +14,7 @@ Type.aurora = 7
 Type.plasma = 8
 
 -- civil types
+
 Type.market = 101
 Type.water_distributer = 102
 Type.dumpster = 104
@@ -30,11 +32,14 @@ Type.gene_clinic = 203
 Type.improvised_hospital = 230
 
 -- crafting machines
+
 Type.assembling_machine = 1001
 Type.furnace = 1002
 Type.rocket_silo = 1003
 Type.mining_drill = 1004
+
 -- ..with custom behaviour
+
 Type.manufactory = 1101
 Type.fishery = 1102
 Type.hunting_hut = 1103
@@ -44,6 +49,7 @@ Type.waterwell = 1107
 Type.salt_pond = 1108
 
 -- misc container types
+
 Type.composter = 1200
 Type.composter_output = 1201
 Type.plant_care_station = 1202

@@ -1,6 +1,6 @@
 local Food = require("constants.food")
 
-local animal_calorie_values
+local animal_calorie_values = {}
 
 local function get_amount(entry)
     local probability = (entry.probability or 1)
@@ -28,8 +28,6 @@ local function get_calories(recipe, key)
 end
 
 local function write_files()
-    animal_calorie_values = {}
-
     -- find and write the animal-calorific-equivalents
     animal_calorie_values =
         Tirislib.Luaq.from(game.recipe_prototypes):where(
@@ -53,6 +51,37 @@ local function write_files()
             Tirislib.Luaq.from(animal_calorie_values):select(
                 function(animal, calories)
                     return string.format("%s;%d", animal, calories)
+                end
+            )
+        )
+    )
+
+    local animal_foods = Tirislib.Tables.array_to_lookup {
+        "bird-food", "fish-food", "carnivore-food", "herbivore-food"
+    }
+
+    local animal_food_recipes =
+        Tirislib.Luaq.from(game.recipe_prototypes):where(
+        function(_, recipe)
+            return animal_foods[recipe.products[1] and recipe.products[1].name or ""] ~= nil
+        end
+    ):select(
+        function(_, recipe)
+            local animal_food = recipe.products[1].name
+            local calories = get_calories(recipe, "ingredients")
+
+            return {food = animal_food, calories = calories, recipe = recipe.name}
+        end
+    ):to_array()
+
+    game.write_file(
+        "animal-foods.csv",
+        Tirislib.String.join(
+            "\n",
+            "recipe;animal-food;kcal",
+            Tirislib.Luaq.from(animal_food_recipes):select(
+                function(_, tbl)
+                    return string.format("%s;%s;%d", tbl.recipe, tbl.food, tbl.calories)
                 end
             )
         )
@@ -102,6 +131,8 @@ local function write_files()
             ):to_array()
         )
     )
+
+    game.print("Wrote balancing data")
 end
 
 commands.add_command("sosciencity-balancing", "", write_files)
