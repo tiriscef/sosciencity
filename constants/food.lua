@@ -96,20 +96,32 @@ Food.values = {
         proteins = 12.8,
         healthiness = 5,
         food_category = "egg",
-        taste_category = Taste.umami,
+        taste_category = Taste.sulfuric,
         taste_quality = 6,
         luxury = 5,
         portion_size = 10,
         group = "egg"
     },
     ["primal-egg"] = {
-        fat = 13.8,
-        carbohydrates = 2,
-        proteins = 12.8,
+        fat = 14.8,
+        carbohydrates = 0.9,
+        proteins = 13.0,
         healthiness = 6,
         food_category = "egg",
-        taste_category = Taste.salty,
+        taste_category = Taste.sulfuric,
         taste_quality = 4,
+        luxury = 3,
+        portion_size = 10,
+        group = "egg"
+    },
+    ["bone-egg"] = {
+        fat = 10.4,
+        carbohydrates = 3,
+        proteins = 13.5,
+        healthiness = 5,
+        food_category = "egg",
+        taste_category = Taste.sulfuric,
+        taste_quality = 5,
         luxury = 3,
         portion_size = 10,
         group = "egg"
@@ -461,6 +473,42 @@ Food.values = {
         luxury = 5,
         portion_size = 10,
         group = "bread"
+    },
+    ["queen-algae"] = {
+        fat = 0.7,
+        carbohydrates = 7.8,
+        proteins = 3.1,
+        healthiness = 7,
+        food_category = "alien-algae",
+        taste_category = Taste.fruity,
+        taste_quality = 5,
+        luxury = 1,
+        portion_size = 25,
+        group = "algae"
+    },
+    ["endower-flower"] = {
+        fat = 4.2,
+        carbohydrates = 5.5,
+        proteins = 3.4,
+        healthiness = 6,
+        food_category = "unterwater-plant",
+        taste_category = Taste.acidic,
+        taste_quality = 3,
+        luxury = 3,
+        portion_size = 25,
+        group = "endower-flower"
+    },
+    ["pyrifera"] = {
+        fat = 1.4,
+        carbohydrates = 4.5,
+        proteins = 1.9,
+        healthiness = 6,
+        food_category = "alien-algae",
+        taste_category = Taste.neutral,
+        taste_quality = 3,
+        luxury = 2,
+        portion_size = 25,
+        group = "algae"
     }
 }
 
@@ -473,7 +521,8 @@ Food.taste_names = {
     [Taste.spicy] = {"taste-category.spicy"},
     [Taste.fruity] = {"taste-category.fruity"},
     [Taste.umami] = {"taste-category.umami"},
-    [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"}
+    [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"},
+    [Taste.sulfuric] = {"taste-category.sulfuric"}
 }
 
 Food.emergency_ration_calories = 2000

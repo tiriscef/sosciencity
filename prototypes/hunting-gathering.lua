@@ -16,51 +16,86 @@ local function create_hunting_gathering_recipe(details)
 end
 
 create_hunting_gathering_recipe {
-    name = "sosciencity-gathering",
+    name = "gathering-materials",
     category = "sosciencity-hunting",
-    energy_required = 8,
+    energy_required = 6,
     icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/gathering.png"}
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-materials.png"}
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "blue-grapes", amount = 3, probability = 0.2},
-        {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.1},
         {type = "item", name = "leafage", amount = 2},
-        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
-        {type = "item", name = "fawoxylas", amount = 1, probability = 0.1},
-        {type = "item", name = "gingil-hemp", amount = 3, probability = 0.5},
-        {type = "item", name = "hardcorn-punk", amount = 3, probability = 0.5},
-        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.3},
-        {type = "item", name = "plemnemm-cotton", amount = 3, probability = 0.5},
-        {type = "item", name = "manok", amount = 2, probability = 0.35},
-        {type = "item", name = "ortrot", amount = 5, probability = 0.1},
-        {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
-        {type = "item", name = "tello-fruit", amount = 2, probability = 0.1},
-        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.1},
-        {type = "item", name = "weird-berry", amount = 2, probability = 0.1},
-        {type = "item", name = "zetorn", amount = 5, probability = 0.1}
+        {type = "item", name = "tiriscefing-willow-wood", amount = 3},
+        {type = "item", name = "plemnemm-cotton", amount = 5},
+        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5},
+        {type = "item", name = "hardcorn-punk", amount = 5, probability = 0.5},
+        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.32}
     }
 }
 
-local gather_for_food =
-    Tirislib.Recipe.copy("sosciencity-gathering", "sosciencity-gathering-for-food"):add_unlock("clockwork-caste")
-for _, recipe_data in pairs(gather_for_food:get_recipe_datas()) do
-    recipe_data.results =
-        Tirislib.Luaq.from(Tirislib.Tables.recursive_copy(recipe_data.results)):where(
-        function(_, result)
-            return Food.values[result.name]
-        end
-    ):foreach(
-        function(_, result)
-            result.probability =
-                (result.probability * 1.1 < 1) and Tirislib.Utils.round_to_step(result.probability * 1.1, 0.01) or nil
-        end
-    ):to_array()
-end
+create_hunting_gathering_recipe {
+    name = "gathering-food",
+    category = "sosciencity-hunting",
+    energy_required = 8,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-food-1.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "leafage", amount = 1},
+        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
+        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
+        {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
+        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5}
+    }
+}
 
 create_hunting_gathering_recipe {
-    name = "sosciencity-hunting-with-trap",
+    name = "gathering-food-2",
+    category = "sosciencity-hunting",
+    energy_required = 8,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-food-2.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "leafage", amount = 2},
+        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
+        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
+        {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
+        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
+        {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
+        {type = "item", name = "manok", amount = 2, probability = 0.35},
+        {type = "item", name = "weird-berry", amount = 2, probability = 0.4}
+    }
+}:add_unlock("explore-alien-flora-1")
+
+create_hunting_gathering_recipe {
+    name = "gathering-food-3",
+    category = "sosciencity-hunting",
+    energy_required = 8,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-food-3.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "leafage", amount = 4},
+        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
+        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
+        {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
+        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
+        {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
+        {type = "item", name = "manok", amount = 2, probability = 0.35},
+        {type = "item", name = "weird-berry", amount = 2, probability = 0.4},
+        {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.3},
+        {type = "item", name = "ortrot", amount = 5, probability = 0.3},
+        {type = "item", name = "tello-fruit", amount = 2, probability = 0.3},
+        {type = "item", name = "zetorn", amount = 5, probability = 0.3}
+    }
+}:add_unlock("explore-alien-flora-2")
+
+create_hunting_gathering_recipe {
+    name = "hunting-with-trap",
     category = "sosciencity-hunting",
     energy_required = 20,
     icons = {
@@ -83,7 +118,7 @@ create_hunting_gathering_recipe {
 }:add_catalyst("trap", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
-    name = "sosciencity-hunting-with-trap-cage",
+    name = "hunting-with-trap-cage",
     category = "sosciencity-hunting",
     energy_required = 20,
     icons = {
@@ -98,12 +133,10 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "primal-quackling", amount = 2, probability = 0.5},
+        {type = "item", name = "primal-quackling", amount = 3, probability = 0.5},
         {type = "item", name = "primal-quacker", amount = 2, probability = 0.5},
-        {type = "item", name = "primal-quackpa", amount = 1, probability = 0.2},
         {type = "item", name = "nan-swanling", amount = 5, probability = 0.1},
         {type = "item", name = "nan-swan", amount = 1, probability = 0.4},
-        {type = "item", name = "elder-nan", amount = 1, probability = 0.15},
         {type = "item", name = "smol-bonesnake", amount = 4, probability = 0.1},
         {type = "item", name = "cabar", amount = 4, probability = 0.5},
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
@@ -111,7 +144,22 @@ create_hunting_gathering_recipe {
 }:add_catalyst("trap-cage", "item", 2, 0.85, 3, 0.7):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
-    name = "sosciencity-fishing-with-simple-fishtrap",
+    name = "gathering-algae",
+    category = "sosciencity-fishery",
+    energy_required = 8,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-algae.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "queen-algae", amount = 3, probability = 0.5},
+        {type = "item", name = "pyrifera", amount = 2},
+        {type = "item", name = "endower-flower", amount = 2, probability = 0.2}
+    }
+}
+
+create_hunting_gathering_recipe {
+    name = "fishing-with-simple-fishtrap",
     category = "sosciencity-fishery",
     energy_required = 13.5,
     icons = {
@@ -132,7 +180,7 @@ create_hunting_gathering_recipe {
 }:add_catalyst("simple-fishtrap", "item", 1, 0.9, 1, 0.8):add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
-    name = "sosciencity-fishing-with-fishing-net",
+    name = "fishing-with-fishing-net",
     category = "sosciencity-fishery",
     energy_required = 30,
     icons = {
@@ -157,7 +205,7 @@ create_hunting_gathering_recipe {
 }:add_catalyst("fishing-net", "item", 1, 0.95, 1, 0.9):add_unlock("advanced-fishing")
 
 create_hunting_gathering_recipe {
-    name = "sosciencity-fishing-with-harpoon",
+    name = "fishing-with-harpoon",
     category = "sosciencity-fishery",
     energy_required = 40,
     icons = {
