@@ -661,8 +661,8 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "medbay",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/medbay.png",
+    icon_size = 256,
     prerequisites = {"clockwork-caste"},
     unit = {
         count = 29,
