@@ -336,6 +336,10 @@ function Tirislib.Entity.create_standard_picture_old(path, width, height, shift)
     }
 end
 
+local function center_coordinates_to_shift(center, height, width)
+    return {width / 2 - center[1], height / 2 - center[2]}
+end
+
 --- Creates the standard picture prototype framework from a details table.\
 --- **path**: string\
 --- **width**: number\
@@ -350,7 +354,7 @@ function Tirislib.Entity.create_standard_picture(details)
     local path = details.path
     local width = details.width
     local height = details.height
-    local shift = details.shift
+    local shift = details.shift or center_coordinates_to_shift(details.center, height, width)
     local scale = details.scale or 1
 
     local layers = {
@@ -541,8 +545,8 @@ end
 function Tirislib.Entity:copy_localisation_from_item(item_name)
     if not item_name then
         if self.minable then
-            item_name = self.minable.result
             -- TODO: annoying case of results-table instead of single result
+            item_name = self.minable.result
         else
             item_name = self.name
         end
@@ -564,8 +568,8 @@ end
 function Tirislib.Entity:copy_icon_from_item(item_name)
     if not item_name then
         if self.minable then
-            item_name = self.minable.result
             -- TODO: annoying case of results-table instead of single result
+            item_name = self.minable.result
         else
             item_name = self.name
         end

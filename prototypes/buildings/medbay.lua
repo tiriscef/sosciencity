@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "medbay",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/medbay.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "eaa",
@@ -36,19 +34,16 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 5/7
-            }
-        }
+    picture = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/medbay/medbay",
+        center = {3.0, 3.0},
+        width = 9,
+        height = 7,
+        shadowmap = true,
+        glow = true
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(6, 6):copy_localisation_from_item():copy_icon_from_item()
 Sosciencity_Config.add_eei("medbay")
