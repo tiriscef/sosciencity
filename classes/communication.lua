@@ -556,47 +556,39 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << warnings >>
 
-function Communication.warning(warning_type, ...)
-    if game.tick - warning_ticks[warning_type] >= 2 * Time.minute then
-        warning_params[warning_type] = {...}
+local speaker_warnings = {
+    [WarningType.insufficient_maintenance] = true,
+    [WarningType.homelessness] = true
+}
+
+local function alert(entry, signal, message)
+    local entity = entry[EK.entity]
+    for _, player in pairs(game.connected_players) do
+        player.add_custom_alert(entity, signal, message, true)
     end
 end
 
-local get_entry_localisation = Locale.entry
-
 local warn_fns = {
     [WarningType.no_food] = function(entry)
-        if entry[EK.entity].valid then
-            say_random_variant("warning-no-food", nil, get_entry_localisation(entry))
-        end
+        alert(entry, {type = "virtual", name = "alert-no-food"}, {"alert.no-food"})
     end,
     [WarningType.no_water] = function(entry)
-        if entry[EK.entity].valid then
-            say_random_variant("warning-no-water", nil, get_entry_localisation(entry))
-        end
+        alert(entry, {type = "virtual", name = "alert-no-water"}, {"alert.no-water"})
     end,
     [WarningType.garbage] = function(entry)
-        if entry[EK.entity].valid then
-            say_random_variant("warning-garbage", nil, get_entry_localisation(entry))
-        end
+        alert(entry, {type = "virtual", name = "alert-garbage"}, {"alert.garbage"})
     end,
     [WarningType.insufficient_maintenance] = function()
         say_random_variant("warning-insufficient-maintenance")
     end,
     [WarningType.emigration] = function(entry)
-        if entry[EK.entity].valid then
-            say_random_variant("warning-emigration", nil, get_entry_localisation(entry))
-        end
+        alert(entry, {type = "virtual", name = "alert-emigration"}, {"alert.emigration"})
     end,
     [WarningType.insufficient_food_variety] = function(entry)
-        if entry[EK.entity].valid then
-            say_random_variant("warning-food-variety", nil, get_entry_localisation(entry))
-        end
+        alert(entry, {type = "virtual", name = "alert-not-enough-foods"}, {"alert.not-enough-foods"})
     end,
     [WarningType.insufficient_workers] = function(entry)
-        if entry[EK.entity].valid then
-            say_random_variant("warning-workers", nil, get_entry_localisation(entry))
-        end
+        alert(entry, {type = "virtual", name = "alert-not-enough-workers"}, {"alert.not-enough-workers"})
     end,
     [WarningType.homelessness] = function(caste_id)
         local caste = castes[caste_id]
@@ -604,7 +596,18 @@ local warn_fns = {
     end
 }
 
-local function send_warning(warning_type)
+function Communication.warning(warning_type, ...)
+    if speaker_warnings[warning_type] then
+        if game.tick - warning_ticks[warning_type] >= 2 * Time.minute then
+            warning_params[warning_type] = {...}
+        end
+    else
+        -- vanilla alert type warning
+        warn_fns[warning_type](...)
+    end
+end
+
+local function send_speaker_warning(warning_type)
     warn_fns[warning_type](unpack(warning_params[warning_type]))
 
     warning_params[warning_type] = nil
@@ -613,7 +616,7 @@ end
 
 local function look_for_warning()
     for warning_type in pairs(warning_params) do
-        send_warning(warning_type)
+        send_speaker_warning(warning_type)
         return true
     end
 
