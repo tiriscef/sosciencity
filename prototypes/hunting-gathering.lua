@@ -156,7 +156,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "pyrifera", amount = 2},
         {type = "item", name = "endower-flower", amount = 2, probability = 0.2}
     }
-}
+}:add_unlock("clockwork-caste")
 
 create_hunting_gathering_recipe {
     name = "fishing-with-simple-fishtrap",
