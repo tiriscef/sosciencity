@@ -13,7 +13,7 @@ local items = {
         }
     },
     {
-        name = "huwan-neutral-egg",
+        name = "huwan-agender-egg",
         sprite_variations = {name = "huwan-neutral-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
@@ -55,7 +55,7 @@ Tirislib.Recipe.create {
     energy_required = 1,
     ingredients = {},
     results = {
-        {type = "item", name = "huwan-neutral-egg", amount_min = 1, amount_max = 3}
+        {type = "item", name = "huwan-agender-egg", amount_min = 1, amount_max = 3}
     },
     icon = "__sosciencity-graphics__/graphics/icon/huwan-neutral-egg.png",
     icon_size = 64,
