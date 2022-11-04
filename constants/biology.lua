@@ -313,31 +313,31 @@ Biology.egg_fertile = "huwan-egg"
 
 Biology.egg_values = {
     ["huwan-egg"] = {
-        [Gender.neutral] = 0.3,
+        [Gender.agender] = 0.3,
         [Gender.fale] = 0.2,
         [Gender.pachin] = 0.2,
         [Gender.ga] = 0.3
     },
-    ["huwan-neutral-egg"] = {
-        [Gender.neutral] = 1,
+    ["huwan-agender-egg"] = {
+        [Gender.agender] = 1,
         [Gender.fale] = 0,
         [Gender.pachin] = 0,
         [Gender.ga] = 0
     },
     ["huwan-fale-egg"] = {
-        [Gender.neutral] = 0,
+        [Gender.agender] = 0,
         [Gender.fale] = 1,
         [Gender.pachin] = 0,
         [Gender.ga] = 0
     },
     ["huwan-pachin-egg"] = {
-        [Gender.neutral] = 0,
+        [Gender.agender] = 0,
         [Gender.fale] = 0,
         [Gender.pachin] = 1,
         [Gender.ga] = 0
     },
     ["huwan-ga-egg"] = {
-        [Gender.neutral] = 0,
+        [Gender.agender] = 0,
         [Gender.fale] = 0,
         [Gender.pachin] = 0,
         [Gender.ga] = 1

@@ -462,8 +462,8 @@ end
 
 GenderGroup = {}
 
-function GenderGroup.new(neutral, fale, pachin, ga)
-    return {neutral or 0, fale or 0, pachin or 0, ga or 0}
+function GenderGroup.new(agender, fale, pachin, ga)
+    return {agender or 0, fale or 0, pachin or 0, ga or 0}
 end
 
 function GenderGroup.new_immigrants(count, caste)
