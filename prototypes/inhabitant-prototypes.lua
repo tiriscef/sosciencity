@@ -14,7 +14,7 @@ local items = {
     },
     {
         name = "huwan-agender-egg",
-        sprite_variations = {name = "huwan-neutral-egg", count = 4, include_icon = true},
+        sprite_variations = {name = "huwan-agender-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
             localised_description = {"item-description.huwan-egg", {"sosciencity.gender-1"}}
@@ -57,7 +57,7 @@ Tirislib.Recipe.create {
     results = {
         {type = "item", name = "huwan-agender-egg", amount_min = 1, amount_max = 3}
     },
-    icon = "__sosciencity-graphics__/graphics/icon/huwan-neutral-egg.png",
+    icon = "__sosciencity-graphics__/graphics/icon/huwan-agender-egg.png",
     icon_size = 64,
     subgroup = "sosciencity-inhabitants",
     main_product = "",
