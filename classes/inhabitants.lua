@@ -1130,12 +1130,11 @@ local function distribute(group, to_improvised)
     return count_before - to_distribute
 end
 
---- Tries to distribute the specified inhabitants to houses with free capacity.
---- Official houses get prioritised over improvised ones.
+--- Tries to distribute the specified inhabitants to official houses with free capacity.
 --- Returns the number of inhabitants that were distributed.
 --- @param group InhabitantGroup
 local function distribute_inhabitants(group)
-    return distribute(group, false) + distribute(group, true)
+    return distribute(group, false)
 end
 
 ---------------------------------------------------------------------------------------------------
