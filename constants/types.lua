@@ -36,7 +36,7 @@ for _, _type in pairs(TypeGroup.hospital_complements) do
 end
 
 --- Type definitions\
---- **altmode_sprite:** name of the sprite that should be shown in altmode\
+--- **alt_mode_sprite:** name of the sprite that should be shown in altmode\
 --- **subscriptions:** types that this type subscribes to by default\
 --- **is_civil:** is this type is part of the soscietal infrastructure\
 --- **is_inhabited:** do people live in this entity\
@@ -47,60 +47,60 @@ end
 --- **localised_description:** localised description for this type
 Types.definitions = {
     [Type.empty_house] = {
-        altmode_sprite = "empty-caste",
+        alt_mode_sprite = "empty-caste",
         is_civil = true
     },
     [Type.clockwork] = {
-        altmode_sprite = "clockwork-caste",
+        alt_mode_sprite = "clockwork-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.clockwork"}
     },
     [Type.orchid] = {
-        altmode_sprite = "orchid-caste",
+        alt_mode_sprite = "orchid-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.orchid"}
     },
     [Type.gunfire] = {
-        altmode_sprite = "gunfire-caste",
+        alt_mode_sprite = "gunfire-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.gunfire"}
     },
     [Type.ember] = {
-        altmode_sprite = "ember-caste",
+        alt_mode_sprite = "ember-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.ember"}
     },
     [Type.foundry] = {
-        altmode_sprite = "foundry-caste",
+        alt_mode_sprite = "foundry-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.foundry"}
     },
     [Type.gleam] = {
-        altmode_sprite = "gleam-caste",
+        alt_mode_sprite = "gleam-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.gleam"}
     },
     [Type.aurora] = {
-        altmode_sprite = "aurora-caste",
+        alt_mode_sprite = "aurora-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,
         localised_name = {"caste-name.aurora"}
     },
     [Type.plasma] = {
-        altmode_sprite = "plasma-caste",
+        alt_mode_sprite = "plasma-caste",
         subscriptions = inhabitant_subscriptions,
         is_civil = true,
         is_inhabited = true,

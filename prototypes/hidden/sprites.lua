@@ -109,3 +109,24 @@ Tirislib.Prototype.create {
     filename = "__sosciencity-graphics__/graphics/utility/people.png",
     size = 64
 }
+
+Tirislib.Prototype.create {
+    type = "sprite",
+    name = "sosciencity-happiness",
+    filename = "__sosciencity-graphics__/graphics/utility/happiness.png",
+    size = 64
+}
+
+Tirislib.Prototype.create {
+    type = "sprite",
+    name = "sosciencity-health",
+    filename = "__sosciencity-graphics__/graphics/utility/health.png",
+    size = 64
+}
+
+Tirislib.Prototype.create {
+    type = "sprite",
+    name = "sosciencity-sanity",
+    filename = "__sosciencity-graphics__/graphics/utility/sanity.png",
+    size = 64
+}
