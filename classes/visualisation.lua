@@ -21,6 +21,7 @@ local get_building_details = require("constants.buildings").get
 
 local max = math.max
 local get_box_size = Tirislib.Utils.get_box_size
+local round_to_step = Tirislib.Utils.round_to_step
 
 local highlights
 
@@ -213,15 +214,99 @@ local function show_inhabitants(player_id, entry, created_highlights)
     local inhabitants = entry[EK.inhabitants]
     local capacity = Housing.get_capacity(entry)
     local entity = entry[EK.entity]
+    local players = {player_id}
 
+    local scale = 0.375
+
+    -- inhabitant count
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "sosciencity-people",
+        target = entity,
+        target_offset = {-1.75, -1},
+        x_scale = scale,
+        y_scale = scale,
+        surface = entity.surface,
+        only_in_alt_mode = true
+    }
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
         text = {"sosciencity.fraction", inhabitants, capacity},
         target = entity,
+        target_offset = {-1.25, -1},
         surface = entity.surface,
-        players = {player_id},
-        alignment = "center",
+        players = players,
         color = Color.white,
+        vertical_alignment = "middle",
+        only_in_alt_mode = true
+    }
+
+    -- happiness
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "sosciencity-happiness",
+        target = entity,
+        target_offset = {0.75, -1},
+        x_scale = scale,
+        y_scale = scale,
+        surface = entity.surface,
+        only_in_alt_mode = true
+    }
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_text {
+        text = inhabitants > 0 and round_to_step(entry[EK.happiness], 0.1) or "/",
+        target = entity,
+        target_offset = {1.25, -1},
+        surface = entity.surface,
+        players = players,
+        color = Color.white,
+        vertical_alignment = "middle",
+        only_in_alt_mode = true
+    }
+
+    -- health
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "sosciencity-health",
+        target = entity,
+        surface = entity.surface,
+        target_offset = {-1.75, 1},
+        x_scale = scale,
+        y_scale = scale,
+        only_in_alt_mode = true
+    }
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_text {
+        text = inhabitants > 0 and round_to_step(entry[EK.health], 0.1) or "/",
+        target = entity,
+        target_offset = {-1.25, 1},
+        surface = entity.surface,
+        players = players,
+        color = Color.white,
+        vertical_alignment = "middle",
+        only_in_alt_mode = true
+    }
+
+    -- sanity
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_sprite {
+        sprite = "sosciencity-sanity",
+        target = entity,
+        surface = entity.surface,
+        target_offset = {0.75, 1},
+        x_scale = scale,
+        y_scale = scale,
+        only_in_alt_mode = true
+    }
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_text {
+        text = inhabitants > 0 and round_to_step(entry[EK.sanity], 0.1) or "/",
+        target = entity,
+        target_offset = {1.25, 1},
+        surface = entity.surface,
+        players = players,
+        color = Color.white,
+        vertical_alignment = "middle",
         only_in_alt_mode = true
     }
 end

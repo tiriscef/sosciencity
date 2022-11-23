@@ -18,7 +18,7 @@ EK.tick_of_creation = 6
 --- table with (subentity_type, subentity)-pairs
 EK.subentities = 7
 --- id of this entry's altmode sprite
-EK.altmode_sprite = 8
+EK.alt_mode_sprite = 8
 
 -- inventory stuff
 

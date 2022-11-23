@@ -179,7 +179,7 @@ end
 
 local function add_alt_mode_sprite(entry, name)
     local entity = entry[EK.entity]
-    entry[EK.altmode_sprite] =
+    entry[EK.alt_mode_sprite] =
         rendering.draw_sprite(
         {
             sprite = name,
@@ -208,8 +208,8 @@ function Subentities.add_all_for(entry)
     end
 
     local type_definition = get_type(entry)
-    if type_definition.altmode_sprite then
-        add_alt_mode_sprite(entry, type_definition.altmode_sprite)
+    if type_definition.alt_mode_sprite then
+        add_alt_mode_sprite(entry, type_definition.alt_mode_sprite)
     end
 end
 
@@ -230,7 +230,7 @@ function Subentities.remove_all_for(entry)
 end
 
 function Subentities.remove_sprites(entry)
-    local sprite_id = entry[EK.altmode_sprite]
+    local sprite_id = entry[EK.alt_mode_sprite]
 
     if sprite_id then
         rendering.destroy(sprite_id)
