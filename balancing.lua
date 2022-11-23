@@ -1,4 +1,7 @@
+local EK = require("enums.entry-key")
 local Food = require("constants.food")
+local Housing = require("constants.housing")
+local Castes = require("constants.castes")
 
 local animal_calorie_values = {}
 
@@ -56,8 +59,12 @@ local function write_files()
         )
     )
 
-    local animal_foods = Tirislib.Tables.array_to_lookup {
-        "bird-food", "fish-food", "carnivore-food", "herbivore-food"
+    local animal_foods =
+        Tirislib.Tables.array_to_lookup {
+        "bird-food",
+        "fish-food",
+        "carnivore-food",
+        "herbivore-food"
     }
 
     local animal_food_recipes =
@@ -131,6 +138,42 @@ local function write_files()
             ):to_array()
         )
     )
+
+    -- housing
+    local housing_data = {}
+    for name, housing in pairs(Housing.values) do
+        local prototype = game.entity_prototypes[name]
+        if prototype ~= nil then
+            local size = prototype.tile_height * prototype.tile_width
+
+            local res = name .. ";" .. size .. ";" .. housing.room_count .. ";" .. housing.room_count / size .. ";"
+
+            for caste_id, caste in pairs(Castes.values) do
+                if housing.is_improvised or Housing.allowes_caste(housing, caste_id) then
+                    local quality_assessment = 0
+                    local preferences = caste.housing_preferences
+                    for _, quality in pairs(housing.qualities) do
+                        quality_assessment = quality_assessment + (preferences[quality] or 0)
+                    end
+
+                    local capacity = Housing.get_capacity {[EK.type] = caste_id, [EK.name] = name}
+
+                    res = res .. quality_assessment .. ";" .. capacity .. ";"
+                else
+                    res = res .. "n/a;n/a;"
+                end
+            end
+
+            housing_data[#housing_data + 1] = res
+        end
+    end
+
+    local header = "name;size;rooms;rooms per tile;"
+    for _, caste in pairs(Castes.values) do
+        header = header .. caste.name .. " happiness;" .. caste.name .. "s/house;"
+    end
+
+    game.write_file("housing.csv", Tirislib.String.join("\n", header, housing_data))
 
     game.print("Wrote balancing data")
 end
