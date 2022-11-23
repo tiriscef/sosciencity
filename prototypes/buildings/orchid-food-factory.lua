@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "orchid-food-factory",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/orchid-food-factory.png",
     icon_size = 64,
     subgroup = "sosciencity-food-buildings",
     order = "daa",
@@ -14,8 +12,12 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "orchid-food-factory",
-    themes = {{"machine", 2}, {"piping", 25}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    themes = {{"building", 10}, {"machine", 20}, {"piping", 150}},
+    ingredients = {
+        {type = "item", name = "groundwater-pump", amount = 1},
+        {type = "item", name = "silo", amount = 2},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 2,
     unlock = "food-processing"
 }
@@ -26,9 +28,7 @@ local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "orchid-food-factory",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
-    flags = {"placeable-neutral", "player-creation"},
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
     minable = {mining_time = 0.5, result = "orchid-food-factory"},
     max_health = 200,
     corpse = "small-remnants",
@@ -37,25 +37,14 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 1,
-                frame_count = 1
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/hummus.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1,
-                frame_count = 1
-            }
-        }
+    animation = Tirislib.Entity.create_standard_picture{
+        path = "__sosciencity-graphics__/graphics/entity/orchid-food-factory/orchid-food-factory",
+        center = {16.0, 11.0},
+        width = 34,
+        height = 18,
+        shadowmap = true,
+        lightmap = true,
+        glow = true
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-orchid-food-processing"},
@@ -71,30 +60,9 @@ Tirislib.Entity.create {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {4.0, -1.0}}},
+            pipe_connections = {{position = {2.5, 3.5}}},
             production_type = "input"
-        },
-        {
-            base_level = -1,
-            pipe_covers = pipe_covers,
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {4.0, 1.0}}},
-            production_type = "input"
-        },
-        {
-            base_level = -1,
-            pipe_covers = pipe_covers,
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-4.0, -1.0}}},
-            production_type = "output"
-        },
-        {
-            base_level = -1,
-            pipe_covers = pipe_covers,
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-4.0, 1.0}}},
-            production_type = "output"
         },
         off_when_no_fluid_recipe = true
     }
-}:set_size(7, 7):copy_localisation_from_item()
+}:set_size(24, 6):copy_localisation_from_item():copy_icon_from_item()

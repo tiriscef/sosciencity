@@ -871,7 +871,7 @@ Tirislib.RecipeGenerator.create {
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
+--[[Tirislib.RecipeGenerator.create {
     product = "soy-milk",
     product_amount = 10,
     ingredients = {
@@ -880,7 +880,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
-}
+}]]
 
 Tirislib.RecipeGenerator.create {
     product = "glass-instruments",

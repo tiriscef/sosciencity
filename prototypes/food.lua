@@ -113,10 +113,11 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "hummus",
-    product_amount = 2,
+    product_amount = 20,
+    energy_required = 3,
     ingredients = {
-        {name = "chickpea", amount = 2},
-        {name = "sesame", amount = 1}
+        {name = "chickpea", amount = 20},
+        {name = "sesame", amount = 10}
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "hummus"
@@ -133,10 +134,11 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "tofu",
-    product_amount = 3,
-    byproducts = {{name = "yuba", amount = 1}},
+    product_amount = 30,
+    energy_required = 5,
+    byproducts = {{name = "yuba", amount = 10}},
     ingredients = {
-        {type = "fluid", name = "soy-milk", amount = 20}
+        {type = "item", name = "razha-bean", amount = 20}
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"
@@ -144,13 +146,12 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "bread",
-    product_min = 5,
-    product_max = 10,
-    energy_required = 1.5,
+    product_min = 10,
+    product_max = 20,
+    energy_required = 2,
     ingredients = {
-        {type = "item", name = "flour", amount = 5},
-        {type = "fluid", name = "pemtenn", amount = 5},
-        {type = "fluid", name = "clean-water", amount = 20}
+        {type = "item", name = "flour", amount = 10},
+        {type = "fluid", name = "pemtenn", amount = 10}
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "food-processing"
