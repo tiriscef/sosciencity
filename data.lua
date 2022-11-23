@@ -40,4 +40,4 @@ require("prototypes.hidden.electric-energy-interface")
 require("prototypes.hidden.gunfire-turret")
 require("prototypes.hidden.sprites")
 
-Tirislib.Prototype:finish()
+Tirislib.Prototype.finish()
