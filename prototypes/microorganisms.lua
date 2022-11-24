@@ -150,8 +150,7 @@ create_enrichment_recipe {
     product_type = "fluid",
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10},
-        {type = "item", name = "blue-grapes", amount = 2},
-        {type = "item", name = "mold", amount = 2}
+        {type = "item", name = "blue-grapes", amount = 2}
     },
     category = "sosciencity-fermentation-tank",
     unlock = "fermentation"
@@ -197,7 +196,8 @@ create_enrichment_recipe {
     ingredients = {
         {type = "fluid", name = "sugar-medium", amount = 10},
         {type = "fluid", name = "steam", amount = 50},
-        {type = "item", name = "pemtenn-extract", amount = 1}
+        {type = "item", name = "pemtenn-extract", amount = 1},
+        {type = "item", name = "mold", amount = 2}
     },
     category = "sosciencity-bioreactor",
     unlock = "genetic-neogenesis"

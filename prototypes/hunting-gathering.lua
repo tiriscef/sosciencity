@@ -46,7 +46,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "liontooth", amount = 2, probability = 0.5},
         {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
         {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
-        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5}
+        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
+        {type = "item", name = "blue-grapes", amount = 2, probability = 0.1}
     }
 }
 

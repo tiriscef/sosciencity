@@ -7,6 +7,8 @@ local Types = require("constants.types")
 --- A disease is a particular abnormal condition that negatively affects the structure or function of all or part of an organism
 local Diseases = {}
 
+Diseases.not_curable = 1000000000
+
 --- Disease definitions\
 --- **name:** prototype name of the disease\
 --- **localised_name:** localised name for this disease\
@@ -22,7 +24,9 @@ local Diseases = {}
 --- **escalation_probability:** the probability that the disease escalates\
 --- **complication:** the disease that this disease can transform to, even if it gets cured\
 --- **complication_probability:** the probability of a complication\
---- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured
+--- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured\
+--- \
+--- *XXX lazy implementation: not-curable diseases hace a curing_workload of 1 billion.*
 Diseases.values = {
     -- 1+: primarily accidents
     [1] = {
@@ -152,7 +156,7 @@ Diseases.values = {
         },
         curing_workload = 1,
         lethality = 0.01,
-        natural_recovery = 5 * Time.nauvis_day,
+        natural_recovery = 3 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",
         escalation_probability = 0.1
@@ -174,6 +178,16 @@ Diseases.values = {
         curing_workload = 1,
         natural_recovery = 2 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100}
+    },
+    [2005] = {
+        name = "exhaustion",
+        curing_workload = Diseases.not_curable,
+        natural_recovery = 2 * Time.nauvis_day,
+        categories = {
+            [DiseaseCategory.health] = 200,
+            [DiseaseCategory.sanity] = 200,
+            [DiseaseCategory.accident] = 200
+        }
     },
     -- 3000+: primarily escalation diseases
     [3000] = {
@@ -232,6 +246,16 @@ Diseases.values = {
         --curing_facility = Type.gene_clinic,
         categories = {[DiseaseCategory.birth_defect] = 50}
     },
+    [4002] = {
+        name = "lack-of-purple-blood-cells",
+        cure_items = {
+            ["blood-bag"] = 1
+        },
+        curing_workload = 1,
+        categories = {
+            [DiseaseCategory.birth_defect] = 300
+        }
+    },
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
@@ -241,10 +265,10 @@ Diseases.values = {
         curing_workload = 1,
         lethality = 0.03,
         contagiousness = 0.15,
-        natural_recovery = 5 * Time.nauvis_day,
+        natural_recovery = 6 * Time.nauvis_day,
         categories = {[DiseaseCategory.zoonosis] = 100},
         escalation = "lung-infection",
-        escalation_probability = 0.1
+        escalation_probability = 0.2
     },
 }
 
@@ -265,6 +289,10 @@ do
     end
 
     local function get_localised_cure(disease)
+        if disease.curing_workload == Diseases.not_curable then
+            return {"sosciencity.not-curable"}
+        end
+
         local points = {{"sosciencity.cure-workload", disease.curing_workload}}
 
         if disease.cure_items then

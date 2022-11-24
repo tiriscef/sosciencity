@@ -328,7 +328,7 @@ Tirislib.RecipeGenerator.create_per_theme_level {
     unlock = "infrastructure-1"
 }
 
-Tirislib.RecipeGenerator.create {
+--[[Tirislib.RecipeGenerator.create {
     product = "tiriscefing-willow-barrel",
     energy_required = 1,
     ingredients = {
@@ -337,7 +337,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "screw-set", amount = 1}
     },
     unlock = "fermentation"
-}
+}]]
 
 Tirislib.RecipeGenerator.create {
     product = "yarn",
@@ -871,16 +871,17 @@ Tirislib.RecipeGenerator.create {
     unlock = "basic-biotechnology"
 }
 
---[[Tirislib.RecipeGenerator.create {
+Tirislib.RecipeGenerator.create {
     product = "soy-milk",
-    product_amount = 10,
+    product_amount = 50,
+    energy_required = 2,
     ingredients = {
-        {type = "item", name = "razha-bean", amount = 1},
-        {type = "fluid", name = "clean-water", amount = 10}
+        {type = "item", name = "razha-bean", amount = 5},
+        {type = "fluid", name = "clean-water", amount = 50}
     },
-    category = Tirislib.RecipeGenerator.category_alias.food_processing,
+    category = Tirislib.RecipeGenerator.category_alias.fluid_mixing,
     unlock = "soy-products"
-}]]
+}
 
 Tirislib.RecipeGenerator.create {
     product = "glass-instruments",
