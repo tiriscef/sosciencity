@@ -44,13 +44,14 @@ Tirislib.Entity.create {
                 width = width,
                 height = height,
                 shift = shift,
+                scale = 1.25,
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-hr.png",
                     priority = "high",
                     width = width * 2,
                     height = height * 2,
                     shift = shift,
-                    scale = 0.5
+                    scale = 0.625
                 }
             },
             {
@@ -59,6 +60,7 @@ Tirislib.Entity.create {
                 width = width,
                 height = height,
                 shift = shift,
+                scale = 1.25,
                 draw_as_shadow = true,
                 hr_version = {
                     filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-shadowmap-hr.png",
@@ -66,7 +68,7 @@ Tirislib.Entity.create {
                     width = width * 2,
                     height = height * 2,
                     shift = shift,
-                    scale = 0.5,
+                    scale = 0.625,
                     draw_as_shadow = true
                 }
             }
@@ -81,4 +83,4 @@ Tirislib.Entity.create {
         emissions_per_minute = 0.25,
         drain = "10kW"
     }
-}:set_size(4, 4):copy_localisation_from_item()
+}:set_size(5, 5):copy_localisation_from_item()
