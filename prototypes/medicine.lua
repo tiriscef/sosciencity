@@ -56,7 +56,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 1,
     energy_required = 3,
     allow_productivity = true,
-    unlock = "hospital"
+    unlock = "medbay"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -83,7 +83,7 @@ Tirislib.RecipeGenerator.create {
     category = "crafting-with-fluid",
     energy_required = 5,
     allow_productivity = true,
-    unlock = "hospital"
+    unlock = "medbay"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -94,7 +94,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.dissolving,
     energy_required = 1.6,
-    unlock = "hospital"
+    unlock = "medbay"
 }
 
 Tirislib.RecipeGenerator.create {

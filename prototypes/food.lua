@@ -138,7 +138,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 5,
     byproducts = {{name = "yuba", amount = 10}},
     ingredients = {
-        {type = "item", name = "razha-bean", amount = 20}
+        {type = "fluid", name = "soy-milk", amount = 200}
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products"

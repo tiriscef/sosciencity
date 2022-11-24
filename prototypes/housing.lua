@@ -302,13 +302,12 @@ local housing_prototype_details = {
             path = "__sosciencity-graphics__/graphics/entity/barrack/barrack",
             width = 9,
             height = 10,
-            scale = 3 / 4,
-            shift = {1.1, 0.0},
+            center = {3.0, 5.5},
             shadowmap = true,
             glow = true
         },
-        width = 3,
-        height = 6,
+        width = 4,
+        height = 7,
         tech_level = 2
     }
 }
