@@ -146,7 +146,7 @@ create_hunting_gathering_recipe {
 
 create_hunting_gathering_recipe {
     name = "gathering-algae",
-    category = "sosciencity-fishery",
+    category = "sosciencity-fishery-hand",
     energy_required = 8,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-algae.png"}
@@ -157,7 +157,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "pyrifera", amount = 2},
         {type = "item", name = "endower-flower", amount = 2, probability = 0.2}
     }
-}:add_unlock("clockwork-caste")
+}
 
 create_hunting_gathering_recipe {
     name = "fishing-with-simple-fishtrap",

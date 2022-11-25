@@ -89,6 +89,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-fishery-hand"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-groundwater-pump"
     },
     {
