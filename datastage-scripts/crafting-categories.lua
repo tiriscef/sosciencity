@@ -1,5 +1,6 @@
 Tirislib.RecipeCategory("sosciencity-handcrafting"):make_hand_craftable()
 Tirislib.RecipeCategory("sosciencity-architecture"):make_hand_craftable()
+Tirislib.RecipeCategory("sosciencity-fishery-hand"):make_hand_craftable()
 Tirislib.RecipeCategory("sosciencity-hunting"):make_hand_craftable()
 Tirislib.RecipeCategory("sosciencity-pharma"):pair_with("chemistry")
 Tirislib.RecipeCategory("sosciencity-plant-upbringing"):make_hand_craftable()

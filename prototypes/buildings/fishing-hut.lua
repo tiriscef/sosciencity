@@ -75,7 +75,7 @@ Tirislib.Entity.create {
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-fishery"},
+    crafting_categories = {"sosciencity-fishery", "sosciencity-fishery-hand"},
     energy_usage = "65kW",
     energy_source = {
         type = "electric",
