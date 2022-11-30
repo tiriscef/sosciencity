@@ -1364,15 +1364,19 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
 
     create_separator_line(flow)
 
-    local kickout_button =
-        flow.add {
-        type = "button",
-        name = format(unique_prefix_builder, "kickout", ""),
-        caption = {"sosciencity.kickout"},
-        tooltip = {"sosciencity.with-resettlement"},
-        mouse_button_filter = {"left"}
-    }
-    kickout_button.style.right_margin = 4
+    -- the kickout_button only gets added if the house is built by the player
+    -- this also avoids that the player can repurpose the hut
+    if not housing_details.is_improvised then
+        local kickout_button =
+            flow.add {
+            type = "button",
+            name = format(unique_prefix_builder, "kickout", ""),
+            caption = {"sosciencity.kickout"},
+            tooltip = {"sosciencity.with-resettlement"},
+            mouse_button_filter = {"left"}
+        }
+        kickout_button.style.right_margin = 4
+    end
 
     -- call the update function to set the values
     update_housing_general_info_tab(tabbed_pane, entry)
@@ -1515,16 +1519,12 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     update_housing_detailed_info_tab(tabbed_pane, entry)
 end
 
-local function add_caste_info_tab(tabbed_pane, caste_id)
+local function add_caste_infos(container, caste_id)
     local caste = castes[caste_id]
 
-    local flow = create_tab(tabbed_pane, "caste", {"caste-short." .. caste.name})
-    flow.style.vertical_spacing = 6
-    flow.style.horizontal_align = "center"
+    create_caste_sprite(container, caste_id, 128)
 
-    create_caste_sprite(flow, caste_id, 128)
-
-    local caste_data = create_data_list(flow, "caste-infos")
+    local caste_data = create_data_list(container, "caste-infos")
     add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, caste.localised_name)
     add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
     add_kv_pair(
@@ -1585,6 +1585,14 @@ local function add_caste_info_tab(tabbed_pane, caste_id)
             tooltip = {"housing-quality-description." .. quality}
         }
     end
+end
+
+local function add_caste_info_tab(tabbed_pane, caste_id)
+    local flow = create_tab(tabbed_pane, "caste", {"caste-short." .. castes[caste_id].name})
+    flow.style.vertical_spacing = 6
+    flow.style.horizontal_align = "center"
+
+    add_caste_infos(flow, caste_id)
 end
 
 local function update_housing_details(container, entry)
@@ -3001,6 +3009,10 @@ local type_gui_specifications = {
         creater = create_empty_housing_details
     },
     [Type.farm] = {
+        creater = create_farm,
+        updater = update_farm
+    },
+    [Type.automatic_farm] = {
         creater = create_farm,
         updater = update_farm
     },

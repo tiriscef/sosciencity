@@ -18,7 +18,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south", "north"}
 
 Tirislib.Entity.create {
     type = "assembling-machine",
@@ -34,9 +34,10 @@ Tirislib.Entity.create {
     allowed_effects = {"productivity", "speed"},
     animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/algae-farm/algae-farm",
-        shift = {1.0, -0.45},
+        center = {2.5, 3.0},
         width = 8,
         height = 5,
+        scale = 1.5,
         shadowmap = true,
         glow = true,
         lightmap = true
@@ -55,21 +56,21 @@ Tirislib.Entity.create {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.5, -1.5}}},
+            pipe_connections = {{position = {-3.0, -2.0}}},
             production_type = "input"
         },
         {
             base_level = -1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {2.5, -1.5}}},
+            pipe_connections = {{position = {2.0, -2.0}}},
             production_type = "input"
         },
         {
             base_level = 1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.5, -1.5}}},
+            pipe_connections = {{position = {3.0, -2.0}}},
             production_type = "output"
         }
     },
@@ -92,4 +93,4 @@ Tirislib.Entity.create {
         fade_in_ticks = 4,
         fade_out_ticks = 20
     }
-}:set_size(6, 2):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(9, 3):copy_localisation_from_item():copy_icon_from_item()

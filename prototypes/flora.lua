@@ -249,54 +249,6 @@ local function create_neogenesis_recipe(details)
     return Tirislib.RecipeGenerator.create(details)
 end
 
-local function create_mushroom_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
-    local plant_details = Biology.flora[product.name]
-
-    local energy_required = 30 / plant_details.growth_coefficient
-    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
-
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = "farming-mushroom-" .. product.name,
-            product_min = 20,
-            product_max = 40,
-            energy_required = energy_required,
-            expensive_energy_required = energy_required * 1.2,
-            themes = {{"water", water_required, water_required * 2}},
-            byproducts = {
-                {type = "item", name = product.name, amount_min = 0, amount_max = 20, probability = details.product_probability}
-            },
-            localised_name = {"recipe-name.farm-mushroom", product:get_localised_name()},
-            localised_description = {
-                "recipe-description.annual",
-                product:get_localised_name(),
-                WeatherLocales.climate[plant_details.preferred_climate],
-                WeatherLocales.humidity[plant_details.preferred_humidity],
-                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
-                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
-            },
-            category = "sosciencity-mushroom-farm",
-            subgroup = "sosciencity-mushrooms",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            unlock = "open-environment-farming"
-        }
-    )
-
-    add_general_growing_attributes(details, plant_details)
-
-    return Tirislib.RecipeGenerator.create(details)
-end
-
 -- apple
 create_perennial_recipe {
     product = "apple",
@@ -374,12 +326,6 @@ create_annual_recipe {
 create_neogenesis_recipe {
     product = "eggplant",
     unlock = "nightshades"
-}
-
--- fawoxylas
-create_mushroom_recipe {
-    product = "fawoxylas",
-    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 20}}
 }
 
 -- gingil hemp
@@ -559,6 +505,130 @@ create_perennial_recipe {
     product = "zetorn",
     byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("zetorn")
+}
+
+---------------------------------------------------------------------------------------------------
+-- << mushroom >>
+
+local function create_mushroom_recipe(details)
+    local product = Tirislib.Item.get_by_name(details.product)
+    local plant_details = Biology.flora[product.name]
+
+    local energy_required = 30 / plant_details.growth_coefficient
+    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
+
+    Tirislib.RecipeGenerator.merge_details(
+        details,
+        {
+            name = "farming-mushroom-" .. product.name,
+            product_min = 10,
+            product_max = 30,
+            product_probability = details.product_probability,
+            energy_required = energy_required,
+            expensive_energy_required = energy_required * 1.2,
+            themes = {{"water", water_required, water_required * 2}},
+            byproducts = {
+                {type = "item", name = product.name, amount_min = 10, amount_max = 30, probability = details.product_probability}
+            },
+            localised_name = {"recipe-name.farm-mushroom", product:get_localised_name()},
+            localised_description = {
+                "recipe-description.annual",
+                product:get_localised_name(),
+                WeatherLocales.climate[plant_details.preferred_climate],
+                WeatherLocales.humidity[plant_details.preferred_humidity],
+                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
+                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+            },
+            category = "sosciencity-mushroom-farm",
+            subgroup = "sosciencity-mushrooms",
+            icons = {
+                {icon = product.icon},
+                {
+                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                    scale = 0.3,
+                    shift = {-8, -8}
+                }
+            },
+            icon_size = 64,
+            unlock = "open-environment-farming"
+        }
+    )
+
+    add_general_growing_attributes(details, plant_details)
+
+    return Tirislib.RecipeGenerator.create(details)
+end
+
+-- fawoxylas
+create_mushroom_recipe {
+    product = "fawoxylas",
+    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 20}}
+}
+
+---------------------------------------------------------------------------------------------------
+-- << algae >>
+
+local function create_algae_recipe(details)
+    local product = Tirislib.Item.get_by_name(details.product)
+    local plant_details = Biology.flora[product.name]
+
+    local energy_required = 120 / plant_details.growth_coefficient
+    local water_required = energy_required * 10
+
+    Tirislib.RecipeGenerator.merge_details(
+        details,
+        {
+            name = "farming-algae-" .. product.name,
+            product_min = 10,
+            product_max = 30,
+            energy_required = energy_required,
+            expensive_energy_required = energy_required * 1.2,
+            themes = {{"water", water_required, water_required * 2}},
+            byproducts = {
+                {type = "item", name = product.name, amount_min = 10, amount_max = 30, probability = details.product_probability}
+            },
+            localised_name = {"recipe-name.farm-algae", product:get_localised_name()},
+            localised_description = {
+                "recipe-description.farm-algae",
+                product:get_localised_name(),
+                WeatherLocales.climate[plant_details.preferred_climate],
+                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1)
+            },
+            category = "sosciencity-algae-farm",
+            subgroup = "sosciencity-algae",
+            icons = {
+                {icon = product.icon},
+                {
+                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                    scale = 0.3,
+                    shift = {-8, -8}
+                }
+            },
+            icon_size = 64,
+            index_fluid_ingredients = true,
+            index_fluid_results = true,
+            unlock = "basic-biotechnology"
+        }
+    )
+
+    add_general_growing_attributes(details, plant_details)
+
+    return Tirislib.RecipeGenerator.create(details)
+end
+
+-- endower flower
+create_algae_recipe {
+    product = "endower-flower"
+}
+
+-- pyrifera
+create_algae_recipe {
+    product = "pyrifera"
+}
+
+-- queen algae
+create_algae_recipe {
+    product = "queen-algae"
 }
 
 ---------------------------------------------------------------------------------------------------

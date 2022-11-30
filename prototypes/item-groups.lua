@@ -167,6 +167,12 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-algae",
+        group = "sosciencity-production",
+        order = "adca"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-mushrooms",
         group = "sosciencity-production",
         order = "add"

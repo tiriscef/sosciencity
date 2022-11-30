@@ -44,6 +44,7 @@ Type.manufactory = 1101
 Type.fishery = 1102
 Type.hunting_hut = 1103
 Type.farm = 1104
+Type.automatic_farm = 1105
 Type.animal_farm = 1106
 Type.waterwell = 1107
 Type.salt_pond = 1108

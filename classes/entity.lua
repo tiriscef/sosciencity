@@ -454,6 +454,7 @@ local function update_farm(entry, delta_ticks)
     set_crafting_machine_performance(entry, performance, productivity)
 end
 Register.set_entity_updater(Type.farm, update_farm)
+Register.set_entity_updater(Type.automatic_farm, update_farm)
 
 local function create_farm(entry)
     entry[EK.performance] = 1
@@ -464,6 +465,7 @@ local function create_farm(entry)
     end
 end
 Register.set_entity_creation_handler(Type.farm, create_farm)
+Register.set_entity_creation_handler(Type.automatic_farm, create_farm)
 
 local function copy_farm(source, destination)
     destination[EK.biomass] = source[EK.biomass]
@@ -472,6 +474,7 @@ local function copy_farm(source, destination)
     destination[EK.pruning_mode] = source[EK.pruning_mode]
 end
 Register.set_entity_copy_handler(Type.farm, copy_farm)
+Register.set_entity_copy_handler(Type.automatic_farm, copy_farm)
 
 local function paste_farm_settings(source, destination)
     if get_building_details(destination).accepts_plant_care then
@@ -480,6 +483,7 @@ local function paste_farm_settings(source, destination)
     end
 end
 Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
+-- at the moment: no paste handler for automatic_farms because these cannot have humus/pruning modes and that's all the handler does
 
 ---------------------------------------------------------------------------------------------------
 -- << plant care station >>
