@@ -86,6 +86,15 @@ Biology.flora = {
         wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-eggplant"}
     },
+    ["endower-flower"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 1,
+        recipes = {"farming-algae-endower-flower"}
+    },
     ["fawoxylas"] = {
         persistent = false,
         growth_coefficient = 1,
@@ -202,6 +211,24 @@ Biology.flora = {
         preferred_humidity = Humidity.moderate,
         wrong_humidity_coefficient = 0.9,
         recipes = {"farming-annual-potato"}
+    },
+    ["pyrifera"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 1,
+        recipes = {"farming-algae-pyrifera"}
+    },
+    ["queen-algae"] = {
+        persistent = false,
+        growth_coefficient = 1.5,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.6,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 1,
+        recipes = {"farming-algae-queen-algae"}
     },
     ["razha-bean"] = {
         persistent = false,
