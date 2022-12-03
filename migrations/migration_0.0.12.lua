@@ -1,1 +1,0 @@
-global.notifications = global.notifications or {}
