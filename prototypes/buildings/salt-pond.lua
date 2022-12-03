@@ -37,6 +37,7 @@ Tirislib.Entity.create {
         center = {4.0, 5.0},
         width = 9,
         height = 9,
+        scale = 1.5,
         shadowmap = true
     },
     working_visualisations = {
@@ -49,6 +50,7 @@ Tirislib.Entity.create {
                 priority = "high",
                 width = sprite_width * 32,
                 height = sprite_height * 32,
+                scale = 1.5,
                 shift = {0.5, -0.5},
                 line_length = 7,
                 animation_speed = 20 / 60,
@@ -58,7 +60,7 @@ Tirislib.Entity.create {
                     priority = "high",
                     width = sprite_width * 64,
                     height = sprite_height * 64,
-                    scale = 0.5,
+                    scale = 0.75,
                     shift = {0.5, -0.5},
                     line_length = 7,
                     animation_speed = 20 / 60
@@ -74,4 +76,4 @@ Tirislib.Entity.create {
         emissions_per_minute = 0.25
     },
     fixed_recipe = "salty-water-evaporation"
-}:set_size(8, 8):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(12, 12):copy_localisation_from_item():copy_icon_from_item()
