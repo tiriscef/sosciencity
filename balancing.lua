@@ -30,6 +30,20 @@ local function get_calories(recipe, key)
     return calories
 end
 
+local function get_housing_level(house)
+    for i = 1, 7 do
+        local tech = game.technology_prototypes["architecture-" .. i]
+
+        for _, effect in pairs(tech.effects) do
+            if effect.recipe == house then
+                return i
+            end
+        end
+    end
+
+    return 0
+end
+
 local function write_files()
     -- find and write the animal-calorific-equivalents
     animal_calorie_values =
@@ -146,7 +160,7 @@ local function write_files()
         if prototype ~= nil then
             local size = prototype.tile_height * prototype.tile_width
 
-            local res = name .. ";" .. size .. ";" .. housing.room_count .. ";" .. housing.room_count / size .. ";"
+            local res = name .. ";" .. size .. ";" .. housing.room_count .. ";" .. housing.room_count / size .. ";" .. housing.comfort .. ";" .. get_housing_level(name) .. ";"
 
             for caste_id, caste in pairs(Castes.values) do
                 if housing.is_improvised or Housing.allowes_caste(housing, caste_id) then
@@ -158,7 +172,7 @@ local function write_files()
 
                     local capacity = Housing.get_capacity {[EK.type] = caste_id, [EK.name] = name}
 
-                    res = res .. quality_assessment .. ";" .. capacity .. ";"
+                    res = res .. (quality_assessment + housing.comfort) .. ";" .. capacity .. ";"
                 else
                     res = res .. "n/a;n/a;"
                 end
@@ -168,7 +182,7 @@ local function write_files()
         end
     end
 
-    local header = "name;size;rooms;rooms per tile;"
+    local header = "name;size;rooms;rooms per tile;comfort;level;"
     for _, caste in pairs(Castes.values) do
         header = header .. caste.name .. " happiness;" .. caste.name .. "s/house;"
     end

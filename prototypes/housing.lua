@@ -29,7 +29,7 @@ local housing_prototype_details = {
         icon = "improvised-hut",
         main_entity = "improvised-hut"
     },
-    ["boring-brick-house"] = {
+    --[[["boring-brick-house"] = {
         picture = {
             layers = {
                 {
@@ -70,7 +70,7 @@ local housing_prototype_details = {
         height = 6,
         tech_level = 3,
         main_entity = "boring-brick-house"
-    },
+    },]]
     ["khrushchyovka"] = {
         picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka",
@@ -308,7 +308,7 @@ local housing_prototype_details = {
         },
         width = 4,
         height = 7,
-        tech_level = 2
+        tech_level = 3
     }
 }
 
