@@ -261,8 +261,7 @@ function Tirislib.RecipeGenerator.create(details)
         results = {main_product},
         subgroup = details.subgroup or product.subgroup,
         order = product.order,
-        always_show_products = true,
-        always_show_made_in = (details.category ~= "crafting" and details.category ~= "crafting-with-fluid")
+        always_show_products = (product.place_result == nil)
     }
 
     if details.localised_name or details.localised_description or details.icon or details.icons then
@@ -302,6 +301,9 @@ function Tirislib.RecipeGenerator.create(details)
 
     recipe:add_unlock(details.unlock)
     recipe:set_field("category", details.category or get_standard_category(recipe))
+
+    local category = recipe:get_field("category")
+    recipe:set_field("always_show_made_in", category ~= "crafting")
 
     recipe:set_fields(details.additional_fields)
 

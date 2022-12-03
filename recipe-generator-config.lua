@@ -581,7 +581,8 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "item", name = "cupboard", amount = 1},
             {type = "item", name = "air-conditioner", amount = 1 / 3},
             {type = "item", name = "stove", amount = 1 / 4},
-            {type = "item", name = "refrigerator", amount = 1 / 4}
+            {type = "item", name = "refrigerator", amount = 1 / 4},
+            {type = "item", name = "sofa", amount = 1 / 4}
         },
         [10] = {
             {type = "item", name = "bed", amount = 1},
@@ -590,7 +591,8 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "item", name = "cupboard", amount = 1.5},
             {type = "item", name = "air-conditioner", amount = 1 / 2},
             {type = "item", name = "stove", amount = 1 / 4},
-            {type = "item", name = "refrigerator", amount = 1 / 4}
+            {type = "item", name = "refrigerator", amount = 1 / 4},
+            {type = "item", name = "sofa", amount = 1 / 4}
         }
     },
     furnishing_decorated = {
