@@ -639,6 +639,7 @@ for _, item in pairs(flora_items) do
         Tirislib.RecipeGenerator.create {
             product = "lumber",
             product_amount = 3,
+            category = "sosciencity-wood-processing",
             ingredients = {
                 {name = item.name, amount = 1}
             },

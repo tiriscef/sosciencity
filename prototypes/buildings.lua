@@ -42,6 +42,7 @@ require("buildings.upbringing-station")
 require("buildings.waste-dump")
 require("buildings.waste-incineration-plant")
 require("buildings.water-tower")
+require("buildings.wood-processer")
 require("buildings.zeppelin-port")
 
 require("buildings.clockwork-hq")
