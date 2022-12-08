@@ -1,5 +1,3 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "clockwork-hq",
