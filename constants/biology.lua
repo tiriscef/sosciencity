@@ -203,6 +203,15 @@ Biology.flora = {
             "farming-annual-bloomhouse-phytofall-blossom"
         }
     },
+    ["pocelial"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.temperate,
+        wrong_climate_coefficient = 0.8,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-mushroom-pocelial"}
+    },
     ["potato"] = {
         persistent = false,
         growth_coefficient = 1.5,

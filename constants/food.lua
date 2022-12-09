@@ -509,6 +509,18 @@ Food.values = {
         luxury = 2,
         portion_size = 25,
         group = "algae"
+    },
+    ["pocelial"] = {
+        fat = 0.6,
+        carbohydrates = 1.5,
+        proteins = 3.7,
+        healthiness = 8,
+        food_category = "alien-fungus",
+        taste_category = Taste.umami,
+        taste_quality = 6,
+        luxury = 7,
+        portion_size = 10,
+        group = "pocelial"
     }
 }
 

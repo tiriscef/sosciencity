@@ -565,6 +565,12 @@ create_mushroom_recipe {
     ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 20}}
 }
 
+-- pocelial
+create_mushroom_recipe {
+    product = "pocelial",
+    ingredients = {{type = "item", name = "humus", amount = 20}}
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << algae >>
 

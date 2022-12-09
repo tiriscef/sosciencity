@@ -64,7 +64,7 @@ Tirislib.Recipe.create {
     localised_description = {"recipe-description.lay-egg", Biology.egg_calories}
 }:add_unlock("clockwork-caste")
 
-for index, egg in pairs({"huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
+for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
     Tirislib.RecipeGenerator.create {
         product = egg,
         energy_required = 120,

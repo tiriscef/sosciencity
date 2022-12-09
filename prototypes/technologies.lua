@@ -938,7 +938,7 @@ Tirislib.Technology.create {
     name = "explore-alien-flora-2",
     icon = "__sosciencity-graphics__/graphics/technology/explore-alien-flora-2.png",
     icon_size = 128,
-    prerequisites = {"orchid-caste"},
+    prerequisites = {"explore-alien-flora-1"},
     unit = {
         count = 121,
         ingredients = {
