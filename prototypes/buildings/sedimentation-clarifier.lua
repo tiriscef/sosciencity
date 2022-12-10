@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "sedimentation-clarifier",
-    themes = {{"piping", 30}, {"tank", 3}, {"machine", 1}},
+    themes = {{"piping", 30}, {"tank", 3}, {"machine", 1}, {"pump", 5}},
     default_theme_level = 4,
     unlock = "drinking-water-treatment"
 }
