@@ -300,9 +300,9 @@ function Tirislib.RecipeGenerator.create(details)
     recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)
-    recipe:set_field("category", details.category or get_standard_category(recipe))
 
-    local category = recipe:get_field("category")
+    local category = details.category or get_standard_category(recipe)
+    recipe:set_field("category", category)
     recipe:set_field("always_show_made_in", category ~= "crafting")
 
     recipe:set_fields(details.additional_fields)

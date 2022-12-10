@@ -571,6 +571,12 @@ create_mushroom_recipe {
     ingredients = {{type = "item", name = "humus", amount = 20}}
 }
 
+-- red hatty
+create_mushroom_recipe {
+    product = "red-hatty",
+    ingredients = {{type = "item", name = "humus", amount = 20}}
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << algae >>
 

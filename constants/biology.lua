@@ -293,6 +293,15 @@ Biology.flora = {
         wrong_humidity_coefficient = 0.8,
         recipes = {"farming-annual-plemnemm-cotton"}
     },
+    ["red-hatty"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.85,
+        preferred_humidity = Humidity.moderate,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-mushroom-red-hatty"}
+    },
     ["tiriscefing-willow-wood"] = {
         persistent = true,
         growth_coefficient = 1,

@@ -481,8 +481,8 @@ function Tirislib.Recipe:get_recipe_datas()
         return {[Tirislib.RecipeDifficulty.undefined] = self}
     else
         return {
-            [Tirislib.RecipeDifficulty.normal] = self.normal and self.normal,
-            [Tirislib.RecipeDifficulty.expensive] = self.expensive and self.expensive
+            [Tirislib.RecipeDifficulty.normal] = self.normal and self.normal or nil,
+            [Tirislib.RecipeDifficulty.expensive] = self.expensive and self.expensive or nil
         }
     end
 end
@@ -594,15 +594,15 @@ end
 --- @return any expensive
 function Tirislib.Recipe:get_field(field, mode)
     if mode then
-        return self[mode][field] or default_values[field]
+        return self[mode][field] ~= nil and self[mode][field] or default_values[field]
     else
         if Tirislib.Recipe.has_difficulties(self) then
-            local normal = self["normal"][field] or default_values[field]
-            local expensive = self["expensive"][field] or default_values[field]
+            local normal = self["normal"][field] ~= nil and self["normal"][field] or default_values[field]
+            local expensive = self["expensive"][field] ~= nil and self["expensive"][field] or default_values[field]
 
             return normal, expensive
         else
-            return self[field] or default_values[field]
+            return self[field] ~= nil and self[field] or default_values[field]
         end
     end
 end

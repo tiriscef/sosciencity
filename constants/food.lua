@@ -521,6 +521,18 @@ Food.values = {
         luxury = 7,
         portion_size = 10,
         group = "pocelial"
+    },
+    ["red-hatty"] = {
+        fat = 0.7,
+        carbohydrates = 2.7,
+        proteins = 2.7,
+        healthiness = 4,
+        food_category = "alien-fungus",
+        taste_category = Taste.spicy,
+        taste_quality = 6,
+        luxury = 4,
+        portion_size = 10,
+        group = "red-hatty"
     }
 }
 
