@@ -168,42 +168,14 @@ Tirislib.RecipeGenerator.add_themes {
     },
     machine = {
         [0] = {
-            {type = "item", name = "copper-plate", amount = 5},
             {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "iron-gear-wheel", amount = 3}
         },
         [1] = {
-            {type = "item", name = "copper-plate", amount = 10},
             {type = "item", name = "iron-plate", amount = 10},
             {type = "item", name = "iron-gear-wheel", amount = 5}
         },
         [2] = {
-            {type = "item", name = "copper-plate", amount = 10},
-            {type = "item", name = "steel-plate", amount = 10},
-            {type = "item", name = "iron-gear-wheel", amount = 10}
-        },
-        [3] = {
-            {type = "item", name = "engine-unit", amount = 3},
-            {type = "item", name = "steel-plate", amount = 10},
-            {type = "item", name = "iron-gear-wheel", amount = 10}
-        },
-        [4] = {
-            {type = "item", name = "engine-unit", amount = 5},
-            {type = "item", name = "steel-plate", amount = 10},
-            {type = "item", name = "iron-gear-wheel", amount = 10}
-        },
-        [5] = {
-            {type = "item", name = "electric-engine-unit", amount = 5},
-            {type = "item", name = "steel-plate", amount = 10},
-            {type = "item", name = "iron-gear-wheel", amount = 10}
-        },
-        [6] = {
-            {type = "item", name = "electric-engine-unit", amount = 5},
-            {type = "item", name = "steel-plate", amount = 10},
-            {type = "item", name = "iron-gear-wheel", amount = 10}
-        },
-        [7] = {
-            {type = "item", name = "electric-engine-unit", amount = 5},
             {type = "item", name = "steel-plate", amount = 10},
             {type = "item", name = "iron-gear-wheel", amount = 10}
         }
@@ -243,6 +215,11 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "item", name = "steel-plate", amount = 1}
         }
     },
+    pump = {
+        [2] = {
+            {type = "item", name = "pump", amount = 1}
+        }
+    },
     screw_material = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 2}
@@ -257,6 +234,11 @@ Tirislib.RecipeGenerator.add_themes {
     soil = {
         [0] = {
             {type = "item", name = "humus", amount = 1}
+        }
+    },
+    stone = {
+        [0] = {
+            {type = "item", name = "stone", amount = 1}
         }
     },
     tank = {
@@ -631,7 +613,8 @@ Tirislib.RecipeGenerator.add_result_themes {
         [0] = {
             {type = "item", name = "leafage", amount = 1, probability = 0.2},
             {type = "item", name = "stone", amount = 1, probability = 0.3},
-            {type = "item", name = "wood", amount = 1, probability = 0.2}
+            {type = "item", name = "wood", amount = 1, probability = 0.2},
+            {type = "item", name = "queen-algae", amount = 1, probability = 0.2}
         }
     }
 }
