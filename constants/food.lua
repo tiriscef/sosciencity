@@ -514,11 +514,11 @@ Food.values = {
         fat = 0.6,
         carbohydrates = 1.5,
         proteins = 3.7,
-        healthiness = 8,
+        healthiness = 6,
         food_category = "alien-fungus",
         taste_category = Taste.umami,
         taste_quality = 6,
-        luxury = 7,
+        luxury = 5,
         portion_size = 10,
         group = "pocelial"
     },
@@ -533,6 +533,18 @@ Food.values = {
         luxury = 4,
         portion_size = 10,
         group = "red-hatty"
+    },
+    ["birdsnake"] = {
+        fat = 1.0,
+        carbohydrates = 2.4,
+        proteins = 3.2,
+        healthiness = 8,
+        food_category = "alien-fungus",
+        taste_category = Taste.salty,
+        taste_quality = 4,
+        luxury = 7,
+        portion_size = 10,
+        group = "birdsnake"
     }
 }
 

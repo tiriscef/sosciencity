@@ -49,6 +49,15 @@ Biology.flora = {
         wrong_humidity_coefficient = 0.75,
         recipes = {"farming-annual-blue-grapes"}
     },
+    ["birdsnake"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.hot,
+        wrong_climate_coefficient = 0.9,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.9,
+        recipes = {"farming-mushroom-birdsnake"}
+    },
     ["brutal-pumpkin"] = {
         persistent = false,
         growth_coefficient = 0.5,

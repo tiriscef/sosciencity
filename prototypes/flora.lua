@@ -577,6 +577,13 @@ create_mushroom_recipe {
     ingredients = {{type = "item", name = "humus", amount = 20}}
 }
 
+-- birdsnake
+create_mushroom_recipe {
+    product = "birdsnake",
+    ingredients = {{type = "item", name = "humus", amount = 10}},
+    themes = {{"stone", 10}}
+}
+
 ---------------------------------------------------------------------------------------------------
 -- << algae >>
 
