@@ -8,6 +8,7 @@ require("datastage-scripts.biters")
 require("datastage-scripts.science-pack-ingredients")
 require("datastage-scripts.gunfire-techs")
 require("datastage-scripts.trees")
+require("datastage-scripts.rocks")
 require("datastage-scripts.lumber")
 
 require("integrations-updates")
