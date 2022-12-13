@@ -5,11 +5,9 @@ local Humidity = require("enums.humidity")
 --- Values regarding carbon-based life-forms
 local Biology = {}
 
---[[
-    growth coefficient: 
-        persistent: biomass growth per tick
-        non-persistent: divider for the 'energy_required'-field, coincidentally also the number of items yielded per second
-]]
+-- growth coefficient:\
+--  persistent: biomass growth per tick\
+--  non-persistent: divider for the 'energy_required'-field, coincidentally also the number of items yielded per second
 Biology.flora = {
     ["apple"] = {
         persistent = true,
@@ -97,7 +95,7 @@ Biology.flora = {
     },
     ["endower-flower"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 0.5,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.8,
         preferred_humidity = Humidity.moderate,
@@ -353,7 +351,7 @@ Biology.flora = {
 Biology.composting_climate_factors = {
     [Climate.hot] = 1.25,
     [Climate.temperate] = 1,
-    [Climate.temperate] = 0.80
+    [Climate.cold] = 0.80
 }
 
 Biology.composting_humidity_factors = {
