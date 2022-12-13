@@ -14,7 +14,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "gene-clinic",
-    themes = {{"building", 2}, {"machine", 2}},
+    themes = {{"building", 2}, {"machine", 2}}, -- TODO actual themes
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 4,
     unlock = "in-situ-gene-editing"

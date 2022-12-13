@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "computing-center",
-    themes = {{"building", 2}, {"machine", 2}, {"electronics", 100}, {"casing", 10}},
+    themes = {{"building", 2}, {"electronics", 100}, {"casing", 20}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 2,
     unlock = "sosciencity-computing"

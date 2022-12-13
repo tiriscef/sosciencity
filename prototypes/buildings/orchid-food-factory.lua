@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "orchid-food-factory",
-    themes = {{"building", 10}, {"machine", 20}, {"piping", 150}},
+    themes = {{"building", 10}, {"machine", 20}, {"piping", 50}},
     ingredients = {
         {type = "item", name = "groundwater-pump", amount = 1},
         {type = "item", name = "silo", amount = 2},

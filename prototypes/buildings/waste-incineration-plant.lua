@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "waste-incineration-plant",
-    themes = {{"machine", 2}},
+    themes = {{"machine", 10}},
     default_theme_level = 4,
     unlock = "infrastructure-4"
 }
