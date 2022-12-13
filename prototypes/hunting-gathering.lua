@@ -43,7 +43,6 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "leafage", amount = 1},
         {type = "item", name = "liontooth", amount = 2, probability = 0.5},
-        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
         {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
         {type = "item", name = "blue-grapes", amount = 2, probability = 0.1}
@@ -62,7 +61,6 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "leafage", amount = 2},
         {type = "item", name = "liontooth", amount = 2, probability = 0.5},
-        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
         {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
         {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
@@ -83,7 +81,6 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "leafage", amount = 4},
         {type = "item", name = "liontooth", amount = 2, probability = 0.5},
-        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
         {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
         {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
@@ -98,6 +95,23 @@ create_hunting_gathering_recipe {
 }:add_unlock("explore-alien-flora-2")
 
 create_hunting_gathering_recipe {
+    name = "gathering-mushrooms",
+    category = "sosciencity-hunting",
+    energy_required = 8,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-mushrooms.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
+        {type = "item", name = "pocelial", amount = 5, probability = 0.5},
+        {type = "item", name = "red-hatty", amount = 5, probability = 0.5},
+        {type = "item", name = "birdsnake", amount = 5, probability = 0.5}
+    },
+    order = "000575"
+}
+
+create_hunting_gathering_recipe {
     name = "gathering-algae",
     category = "sosciencity-fishery-hand",
     energy_required = 8,
@@ -106,11 +120,11 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "queen-algae", amount = 3, probability = 0.5},
-        {type = "item", name = "pyrifera", amount = 2},
-        {type = "item", name = "endower-flower", amount = 2, probability = 0.2}
+        {type = "item", name = "queen-algae", amount = 3},
+        {type = "item", name = "pyrifera", amount = 2, probability = 0.5},
+        {type = "item", name = "endower-flower", amount = 2, probability = 0.5}
     },
-    order = "000575"
+    order = "000585"
 }
 
 create_hunting_gathering_recipe {

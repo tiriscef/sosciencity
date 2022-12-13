@@ -15,7 +15,7 @@ local flora_items = {
     },
     {
         name = "hardcorn-punk",
-        sprite_variations = {name = "hardcorn-punk-pile", count = 3},
+        sprite_variations = {name = "hardcorn-punk-pile", count = 3}
     },
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
     {name = "tiriscefing-willow-wood", wood = true, unlock = "open-environment-farming"},
@@ -80,13 +80,21 @@ local function create_annual_recipe(details)
         {
             name = "farming-annual-" .. product.name,
             product_min = 0,
-            product_max = 200,
+            product_max = 100 * (details.output_multiplier or 1),
             energy_required = energy_required,
             expensive_energy_required = energy_required * 1.2,
             themes = {{"water", water_required, water_required * 2}},
-            ingredients = {{type = "item", name = product.name, amount = 10}},
+            ingredients = {
+                {type = "item", name = product.name, amount = 10 * (details.output_multiplier or 1)}
+            },
             byproducts = {
-                {type = "item", name = product.name, amount_min = 0, amount_max = 200, probability = details.product_probability},
+                {
+                    type = "item",
+                    name = product.name,
+                    amount_min = 0,
+                    amount_max = 100 * (details.output_multiplier or 1),
+                    probability = details.product_probability
+                },
                 {type = "item", name = "leafage", amount_min = 1, amount_max = 40}
             },
             localised_name = {"recipe-name.annual", product:get_localised_name()},
@@ -128,9 +136,9 @@ local function create_perennial_recipe(details)
         details,
         {
             name = "farming-perennial-" .. product.name,
-            product_min = 5,
-            product_max = 10,
-            energy_required = 15,
+            product_min = 5 * (details.output_multiplier or 1),
+            product_max = 10 * (details.output_multiplier or 1),
+            energy_required = 25,
             expensive_energy_required = 17.5,
             themes = {{"water", water_required, water_required * 2}},
             byproducts = {{type = "item", name = "leafage", amount = 1}},
@@ -174,8 +182,8 @@ local function create_annual_bloomhouse_recipe(details)
         details,
         {
             name = "farming-annual-bloomhouse-" .. product.name,
-            product_min = 75,
-            product_max = 125,
+            product_min = 50 * (details.output_multiplier or 1),
+            product_max = 100 * (details.output_multiplier or 1),
             energy_required = energy_required,
             expensive_energy_required = energy_required * 1.2,
             themes = {{"water", water_required, water_required * 2}},
@@ -184,7 +192,13 @@ local function create_annual_bloomhouse_recipe(details)
                 {type = "item", name = "pot", amount = 20}
             },
             byproducts = {
-                {type = "item", name = product.name, amount_min = 75, amount_max = 125, probability = details.product_probability},
+                {
+                    type = "item",
+                    name = product.name,
+                    amount_min = 50 * (details.output_multiplier or 1),
+                    amount_max = 100 * (details.output_multiplier or 1),
+                    probability = details.product_probability
+                },
                 {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
                 {type = "item", name = "pot", amount_min = 19, amount_max = 20}
             },
@@ -252,6 +266,7 @@ end
 -- apple
 create_perennial_recipe {
     product = "apple",
+    output_multiplier = 1.4,
     byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("apple")
 }
@@ -264,6 +279,7 @@ create_neogenesis_recipe {
 -- avocado
 create_perennial_recipe {
     product = "avocado",
+    output_multiplier = 0.8,
     byproducts = {{type = "item", name = "avocado-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("avocado")
 }
@@ -275,6 +291,7 @@ create_neogenesis_recipe {
 -- bell pepper
 create_annual_recipe {
     product = "bell-pepper",
+    output_multiplier = 1.5,
     unlock = Unlocks.get_tech_name("bell-pepper")
 }
 
@@ -298,6 +315,7 @@ create_annual_recipe {
 -- cherry
 create_perennial_recipe {
     product = "cherry",
+    output_multiplier = 1.6,
     byproducts = {{type = "item", name = "cherry-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("cherry")
 }
@@ -320,6 +338,7 @@ create_neogenesis_recipe {
 -- eggplant
 create_annual_recipe {
     product = "eggplant",
+    output_multiplier = 1.5,
     unlock = Unlocks.get_tech_name("eggplant")
 }
 
@@ -330,7 +349,8 @@ create_neogenesis_recipe {
 
 -- gingil hemp
 create_annual_recipe {
-    product = "gingil-hemp"
+    product = "gingil-hemp",
+    output_multiplier = 1.5
 }
 
 -- hardcorn punk
@@ -342,6 +362,7 @@ create_annual_recipe {
 -- lemon
 create_perennial_recipe {
     product = "lemon",
+    output_multiplier = 1.6,
     byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("lemon")
 }
@@ -354,6 +375,7 @@ create_neogenesis_recipe {
 -- liontooth
 create_annual_recipe {
     product = "liontooth",
+    output_multiplier = 1.5,
     unlock = Unlocks.get_tech_name("liontooth")
 }
 
@@ -367,6 +389,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "necrofall",
     product_probability = 0.25,
+    output_multiplier = 2,
     unlock = Unlocks.get_tech_name("necrofall")
 }
 
@@ -409,6 +432,7 @@ create_perennial_recipe {
 create_annual_recipe {
     product = "phytofall-blossom",
     product_probability = 0.25,
+    output_multiplier = 2,
     unlock = Unlocks.get_tech_name("phytofall-blossom")
 }
 
@@ -468,6 +492,7 @@ create_neogenesis_recipe {
 -- tomato
 create_annual_recipe {
     product = "tomato",
+    output_multiplier = 1.5,
     unlock = Unlocks.get_tech_name("tomato")
 }
 
@@ -478,14 +503,14 @@ create_neogenesis_recipe {
 
 -- plemnemm cotton
 create_annual_recipe {
-    product = "plemnemm-cotton"
+    product = "plemnemm-cotton",
+    output_multiplier = 2
 }
 
 -- tiriscefing willow
 create_perennial_recipe {
     product = "tiriscefing-willow-wood",
-    energy_required = 30,
-    byproducts = {{type = "item", name = "fawoxylas", amount = 2, probability = 0.5}}
+    byproducts = {{type = "item", name = "fawoxylas", amount = 5, probability = 0.5}}
 }
 
 -- unnamed fruit
@@ -521,14 +546,20 @@ local function create_mushroom_recipe(details)
         details,
         {
             name = "farming-mushroom-" .. product.name,
-            product_min = 10,
-            product_max = 30,
+            product_min = 40 * (details.output_multiplier or 1),
+            product_max = 60 * (details.output_multiplier or 1),
             product_probability = details.product_probability,
             energy_required = energy_required,
             expensive_energy_required = energy_required * 1.2,
             themes = {{"water", water_required, water_required * 2}},
             byproducts = {
-                {type = "item", name = product.name, amount_min = 10, amount_max = 30, probability = details.product_probability}
+                {
+                    type = "item",
+                    name = product.name,
+                    amount_min = 40 * (details.output_multiplier or 1),
+                    amount_max = 60 * (details.output_multiplier or 1),
+                    probability = details.product_probability
+                }
             },
             localised_name = {"recipe-name.farm-mushroom", product:get_localised_name()},
             localised_description = {
@@ -562,7 +593,7 @@ end
 -- fawoxylas
 create_mushroom_recipe {
     product = "fawoxylas",
-    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 20}}
+    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 30}}
 }
 
 -- pocelial
@@ -598,13 +629,19 @@ local function create_algae_recipe(details)
         details,
         {
             name = "farming-algae-" .. product.name,
-            product_min = 10,
-            product_max = 30,
+            product_min = 20 * (details.output_multiplier or 1),
+            product_max = 40 * (details.output_multiplier or 1),
             energy_required = energy_required,
             expensive_energy_required = energy_required * 1.2,
             themes = {{"water", water_required, water_required * 2}},
             byproducts = {
-                {type = "item", name = product.name, amount_min = 10, amount_max = 30, probability = details.product_probability}
+                {
+                    type = "item",
+                    name = product.name,
+                    amount_min = 20 * (details.output_multiplier or 1),
+                    amount_max = 40 * (details.output_multiplier or 1),
+                    probability = details.product_probability
+                }
             },
             localised_name = {"recipe-name.farm-algae", product:get_localised_name()},
             localised_description = {
@@ -642,7 +679,8 @@ create_algae_recipe {
 
 -- pyrifera
 create_algae_recipe {
-    product = "pyrifera"
+    product = "pyrifera",
+    output_multiplier = 2
 }
 
 -- queen algae
