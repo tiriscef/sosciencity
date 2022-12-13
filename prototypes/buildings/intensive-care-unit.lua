@@ -14,9 +14,12 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "intensive-care-unit",
-    themes = {{"building", 2}, {"machine", 2}}, -- TODO actual themes
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
-    default_theme_level = 2,
+    themes = {{"building", 20}, {"piping", 100}, {"electronics", 50}},
+    ingredients = {
+        {type = "item", name = "bed", amount = 120},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
+    default_theme_level = 3,
     unlock = "intensive-care"
 }
 

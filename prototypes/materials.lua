@@ -351,7 +351,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
-    unlock = "infrastructure-1"
+    unlock = "architecture-1"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -361,7 +361,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "yarn", amount = 5}
     },
     allow_productivity = true,
-    unlock = "infrastructure-1"
+    unlock = "architecture-1"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -376,7 +376,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
-    unlock = "infrastructure-1"
+    unlock = "clockwork-caste"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -662,10 +662,12 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "simple-fishtrap",
     ingredients = {
-        {name = "gingil-hemp", amount = 2}
+        {name = "gingil-hemp", amount = 5},
+        {name = "rope", amount = 1}
     },
     expensive_ingredients = {
-        {name = "gingil-hemp", amount = 3}
+        {name = "gingil-hemp", amount = 8},
+        {name = "rope", amount = 1}
     },
     energy_required = 1.5,
     allow_productivity = true,
@@ -727,7 +729,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 4,
     category = "sosciencity-salt-pond",
     unlock = "food-processing"
-}
+}:add_unlock("medbay")
 
 Tirislib.RecipeGenerator.create {
     product = "amylum",

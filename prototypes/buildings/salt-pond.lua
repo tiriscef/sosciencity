@@ -15,7 +15,7 @@ Tirislib.RecipeGenerator.create {
     themes = {{"piping", 5}, {"machine", 1}},
     default_theme_level = 1,
     unlock = "food-processing"
-}
+}:add_unlock("medbay")
 
 local sprite_width = 9
 local sprite_height = 9

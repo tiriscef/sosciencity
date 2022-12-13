@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "aquafarm",
-    themes = {{"tank", 2}, {"piping", 50}, {"building", 3}, {"machine", 5}, {"lamp", 20}},
+    themes = {{"tank", 2}, {"piping", 50}, {"building", 3}, {"lamp", 20}},
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }

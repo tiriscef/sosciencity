@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "reproductive-gene-lab",
-    themes = {{"building", 2}, {"machine", 10}, {"piping", 20}},
+    themes = {{"machine", 10}, {"piping", 200}, {"glass", 100}},
     default_theme_level = 3,
     unlock = "huwan-genetic-neogenesis"
 }
