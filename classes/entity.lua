@@ -171,6 +171,29 @@ end
 Register.set_entity_destruction_handler(Type.animal_farm, remove_animal_farm)
 
 ---------------------------------------------------------------------------------------------------
+-- << city combinator >>
+
+local signals = {
+    [Type.clockwork] = {type = "virtual", name = "signal-clockwork"},
+    [Type.orchid] = {type = "virtual", name = "signal-orchid"},
+    [Type.gunfire] = {type = "virtual", name = "signal-gunfire"},
+    [Type.ember] = {type = "virtual", name = "signal-ember"},
+    [Type.foundry] = {type = "virtual", name = "signal-foundry"},
+    [Type.gleam] = {type = "virtual", name = "signal-gleam"},
+    [Type.aurora] = {type = "virtual", name = "signal-aurora"},
+    [Type.plasma] = {type = "virtual", name = "signal-plasma"}
+}
+
+local function update_city_combinator(entry)
+    local control_behavior = entry[EK.entity].get_control_behavior()
+
+    for type, signal in pairs(signals) do
+        control_behavior.set_signal(type, {signal = signal, count = global.population[type]})
+    end
+end
+Register.set_entity_updater(Type.city_combinator, update_city_combinator)
+
+---------------------------------------------------------------------------------------------------
 -- << composting >>
 
 local function create_composter(entry)
