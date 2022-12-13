@@ -728,7 +728,7 @@ Tirislib.RecipeGenerator.create {
     product_amount = 5,
     energy_required = 4,
     category = "sosciencity-salt-pond",
-    unlock = "food-processing"
+    unlock = "basic-biotechnology"
 }:add_unlock("medbay")
 
 Tirislib.RecipeGenerator.create {
