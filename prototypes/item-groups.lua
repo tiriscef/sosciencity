@@ -249,5 +249,18 @@ Tirislib.Prototype.batch_create {
         name = "sosciencity-ideas-per-hand",
         group = "intermediate-products",
         order = "hb"
+    },
+    -- virtual signals in the vanilla signals tab
+    {
+        type = "item-subgroup",
+        name = "sosciencity-population",
+        group = "signals",
+        order = "aaa"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-alerts",
+        group = "signals",
+        order = "aba"
     }
 }
