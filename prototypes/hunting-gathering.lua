@@ -16,7 +16,7 @@ end
 create_hunting_gathering_recipe {
     name = "gathering-materials",
     category = "sosciencity-hunting",
-    energy_required = 6,
+    energy_required = 3,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-materials.png"}
     },
@@ -35,17 +35,17 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "gathering-food",
     category = "sosciencity-hunting",
-    energy_required = 8,
+    energy_required = 4,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-food-1.png"}
     },
     icon_size = 64,
     results = {
         {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
+        {type = "item", name = "liontooth", amount = 5, probability = 0.7},
         {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
-        {type = "item", name = "blue-grapes", amount = 2, probability = 0.1}
+        {type = "item", name = "blue-grapes", amount = 3, probability = 0.3}
     },
     order = "000565"
 }
@@ -53,17 +53,17 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "gathering-food-2",
     category = "sosciencity-hunting",
-    energy_required = 8,
+    energy_required = 4,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-food-2.png"}
     },
     icon_size = 64,
     results = {
         {type = "item", name = "leafage", amount = 2},
-        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
+        {type = "item", name = "liontooth", amount = 5, probability = 0.7},
         {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
-        {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
+        {type = "item", name = "blue-grapes", amount = 5, probability = 0.3},
         {type = "item", name = "manok", amount = 2, probability = 0.35},
         {type = "item", name = "weird-berry", amount = 2, probability = 0.4}
     },
@@ -73,17 +73,17 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "gathering-food-3",
     category = "sosciencity-hunting",
-    energy_required = 8,
+    energy_required = 4,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-food-3.png"}
     },
     icon_size = 64,
     results = {
         {type = "item", name = "leafage", amount = 4},
-        {type = "item", name = "liontooth", amount = 2, probability = 0.5},
-        {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
+        {type = "item", name = "liontooth", amount = 5, probability = 0.7},
+        {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
-        {type = "item", name = "blue-grapes", amount = 5, probability = 0.2},
+        {type = "item", name = "blue-grapes", amount = 5, probability = 0.3},
         {type = "item", name = "manok", amount = 2, probability = 0.35},
         {type = "item", name = "weird-berry", amount = 2, probability = 0.4},
         {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.3},
@@ -97,7 +97,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "gathering-mushrooms",
     category = "sosciencity-hunting",
-    energy_required = 8,
+    energy_required = 4,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-mushrooms.png"}
     },
@@ -114,7 +114,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "gathering-algae",
     category = "sosciencity-fishery-hand",
-    energy_required = 8,
+    energy_required = 4,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-algae.png"}
     },
@@ -130,7 +130,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "hunting-with-trap",
     category = "sosciencity-hunting",
-    energy_required = 20,
+    energy_required = 10,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
@@ -154,7 +154,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "hunting-with-trap-cage",
     category = "sosciencity-hunting",
-    energy_required = 20,
+    energy_required = 10,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
@@ -181,7 +181,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "fishing-with-simple-fishtrap",
     category = "sosciencity-fishery",
-    energy_required = 13.5,
+    energy_required = 6.5,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
@@ -203,7 +203,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "fishing-with-fishing-net",
     category = "sosciencity-fishery",
-    energy_required = 30,
+    energy_required = 15,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
@@ -229,7 +229,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "fishing-with-harpoon",
     category = "sosciencity-fishery",
-    energy_required = 40,
+    energy_required = 20,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"

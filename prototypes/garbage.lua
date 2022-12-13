@@ -53,7 +53,7 @@ Tirislib.Recipe.create {
         {type = "item", name = "garbage", amount = 2}
     },
     subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-1"):copy_icon_from_item("garbage"):add_icon_layer(
+}:add_unlock("infrastructure-2"):copy_icon_from_item("garbage"):add_icon_layer(
     "__sosciencity-graphics__/graphics/utility/flame.png",
     "topleft",
     0.25,
@@ -69,7 +69,7 @@ Tirislib.Recipe.create {
         {type = "item", name = "food-leftovers", amount = 2}
     },
     subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-1"):copy_icon_from_item("food-leftovers"):add_icon_layer(
+}:add_unlock("infrastructure-2"):copy_icon_from_item("food-leftovers"):add_icon_layer(
     "__sosciencity-graphics__/graphics/utility/flame.png",
     "topleft",
     0.25,
@@ -85,7 +85,7 @@ Tirislib.Recipe.create {
         {type = "item", name = "slaughter-waste", amount = 2}
     },
     subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-1"):copy_icon_from_item("slaughter-waste"):add_icon_layer(
+}:add_unlock("infrastructure-2"):copy_icon_from_item("slaughter-waste"):add_icon_layer(
     "__sosciencity-graphics__/graphics/utility/flame.png",
     "topleft",
     0.25,

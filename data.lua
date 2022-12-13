@@ -13,7 +13,7 @@ require("prototypes.technologies")
 
 require("prototypes.inhabitant-prototypes")
 require("prototypes.animal-food")
-require("prototypes.beverages")
+--require("prototypes.beverages")
 require("prototypes.garbage")
 require("prototypes.growth-media")
 require("prototypes.materials")
