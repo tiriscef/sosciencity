@@ -116,17 +116,18 @@ local function write_files()
 
         if calories_in ~= 0 or calories_out ~= 0 then
             local diff = calories_out - calories_in
-            local diff_per_sec = diff / recipe.energy
             results[#results + 1] =
                 string.format(
-                "%s;%s;%d;%d;%d;%d;%d",
+                "%s;%s;%d;%d;%d;%d;%d;%d;%d",
                 recipe.name,
                 recipe.category,
-                diff,
-                diff / recipe.energy,
                 calories_in,
                 calories_out,
-                diff_per_sec / (8 * 9.6)
+                calories_out / recipe.energy,
+                calories_out / recipe.energy / (8 * 9.6),
+                diff,
+                diff / recipe.energy,
+                diff / recipe.energy / (8 * 9.6)
             )
         end
     end
@@ -135,7 +136,7 @@ local function write_files()
         "food-recipes.csv",
         Tirislib.String.join(
             "\n",
-            "name;category;calorific difference;per second;calories in;calories out;clockworkers feeded",
+            "name;category;calories in;calories out;out/s,out clockworkers;diff; diff/s;diff clockworkers",
             results
         )
     )
