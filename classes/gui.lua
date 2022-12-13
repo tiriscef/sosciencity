@@ -1717,13 +1717,15 @@ local function create_general_building_details(container, entry, player_id)
         style.horizontal_align = "right"
         style.horizontally_stretchable = true
         style.vertical_align = "center"
+        style.right_padding = 10
 
-        flow.add {
+        local notify_button = flow.add {
             type = "label",
             name = "notification-label",
             caption = {"sosciencity.notify-me"},
             tooltip = {"sosciencity.explain-notify-me"}
         }
+        notify_button.style.font = "default-bold"
 
         flow.add {
             type = "checkbox",

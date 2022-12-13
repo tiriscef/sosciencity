@@ -12,9 +12,9 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "waste-dump",
-    themes = {{"plating", 10}, {"brick", 25}},
+    themes = {{"machine", 1}, {"plating", 10}, {"brick", 20}},
     default_theme_level = 2,
-    unlock = "infrastructure-2"
+    unlock = "infrastructure-1"
 }
 
 Tirislib.Entity.create {

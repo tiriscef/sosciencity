@@ -858,7 +858,7 @@ local function finish_class(entry, class, mode)
     )
 end
 
-Entity.upbringing_time = Time.minute
+Entity.upbringing_time = 2 * Time.minute
 local upbringing_time = Entity.upbringing_time
 
 local function update_upbringing_station(entry)
