@@ -106,6 +106,22 @@ local function is_active(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << circuit stuff >>
+
+local circuit_wires = {defines.wire_type.red, defines.wire_type.green}
+
+local caste_signals = {
+    [Type.clockwork] = {type = "virtual", name = "signal-clockwork"},
+    [Type.orchid] = {type = "virtual", name = "signal-orchid"},
+    [Type.gunfire] = {type = "virtual", name = "signal-gunfire"},
+    [Type.ember] = {type = "virtual", name = "signal-ember"},
+    [Type.foundry] = {type = "virtual", name = "signal-foundry"},
+    [Type.gleam] = {type = "virtual", name = "signal-gleam"},
+    [Type.aurora] = {type = "virtual", name = "signal-aurora"},
+    [Type.plasma] = {type = "virtual", name = "signal-plasma"}
+}
+
+---------------------------------------------------------------------------------------------------
 -- << interface for other classes >>
 
 function Entity.is_active(entry)
@@ -173,22 +189,13 @@ Register.set_entity_destruction_handler(Type.animal_farm, remove_animal_farm)
 ---------------------------------------------------------------------------------------------------
 -- << city combinator >>
 
-local signals = {
-    [Type.clockwork] = {type = "virtual", name = "signal-clockwork"},
-    [Type.orchid] = {type = "virtual", name = "signal-orchid"},
-    [Type.gunfire] = {type = "virtual", name = "signal-gunfire"},
-    [Type.ember] = {type = "virtual", name = "signal-ember"},
-    [Type.foundry] = {type = "virtual", name = "signal-foundry"},
-    [Type.gleam] = {type = "virtual", name = "signal-gleam"},
-    [Type.aurora] = {type = "virtual", name = "signal-aurora"},
-    [Type.plasma] = {type = "virtual", name = "signal-plasma"}
-}
-
 local function update_city_combinator(entry)
     local control_behavior = entry[EK.entity].get_control_behavior()
 
-    for type, signal in pairs(signals) do
-        control_behavior.set_signal(type, {signal = signal, count = global.population[type]})
+    for type, signal in pairs(caste_signals) do
+        if Inhabitants.caste_is_researched(type) then
+            control_behavior.set_signal(type, {signal = signal, count = global.population[type]})
+        end
     end
 end
 Register.set_entity_updater(Type.city_combinator, update_city_combinator)
@@ -881,6 +888,24 @@ local function finish_class(entry, class, mode)
     )
 end
 
+local function check_circuit_upbringing_station(entry)
+    local entity = entry[EK.entity]
+
+    for _, wire in pairs(circuit_wires) do
+        local circuit_network = entity.get_circuit_network(wire)
+        if circuit_network then
+            for type, signal in pairs(caste_signals) do
+                local value = circuit_network.get_signal(signal)
+
+                if value > 0 then
+                    entry[EK.education_mode] = type
+                    return
+                end
+            end
+        end
+    end
+end
+
 Entity.upbringing_time = 2 * Time.minute
 local upbringing_time = Entity.upbringing_time
 
@@ -896,6 +921,8 @@ local function update_upbringing_station(entry)
     if not is_active(entry) then
         return
     end
+
+    check_circuit_upbringing_station(entry)
 
     if mode ~= Type.null and not Inhabitants.caste_is_researched(mode) then
         -- the player somehow managed to set the mode to a not researched caste
