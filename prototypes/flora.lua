@@ -593,26 +593,30 @@ end
 -- fawoxylas
 create_mushroom_recipe {
     product = "fawoxylas",
-    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 30}}
+    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 30}},
+    unlock = Unlocks.get_tech_name("fawoxylas")
 }
 
 -- pocelial
 create_mushroom_recipe {
     product = "pocelial",
-    ingredients = {{type = "item", name = "humus", amount = 20}}
+    ingredients = {{type = "item", name = "humus", amount = 20}},
+    unlock = Unlocks.get_tech_name("pocelial")
 }
 
 -- red hatty
 create_mushroom_recipe {
     product = "red-hatty",
-    ingredients = {{type = "item", name = "humus", amount = 20}}
+    ingredients = {{type = "item", name = "humus", amount = 20}},
+    unlock = Unlocks.get_tech_name("red-hatty")
 }
 
 -- birdsnake
 create_mushroom_recipe {
     product = "birdsnake",
     ingredients = {{type = "item", name = "humus", amount = 10}},
-    themes = {{"stone", 10}}
+    themes = {{"stone", 10}},
+    unlock = Unlocks.get_tech_name("birdsnake")
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -674,18 +678,21 @@ end
 
 -- endower flower
 create_algae_recipe {
-    product = "endower-flower"
+    product = "endower-flower",
+    unlock = Unlocks.get_tech_name("endower-flower")
 }
 
 -- pyrifera
 create_algae_recipe {
     product = "pyrifera",
-    output_multiplier = 2
+    output_multiplier = 2,
+    unlock = Unlocks.get_tech_name("pyrifera")
 }
 
 -- queen algae
 create_algae_recipe {
-    product = "queen-algae"
+    product = "queen-algae",
+    unlock = Unlocks.get_tech_name("queen-algae")
 }
 
 ---------------------------------------------------------------------------------------------------
