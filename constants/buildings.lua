@@ -43,6 +43,9 @@ Building.values = {
         },
         accepts_plant_care = true
     },
+    ["city-combinator"] = {
+        type = Type.city_combinator
+    },
     ["clockwork-hq"] = {
         type = Type.manufactory,
         workforce = {

@@ -60,6 +60,8 @@ Type.waste_dump = 1204
 Type.turret = 2000
 Type.lab = 2001
 
+Type.city_combinator = 3000
+
 Type.null = 9999
 
 return Type

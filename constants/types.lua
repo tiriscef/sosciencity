@@ -327,7 +327,8 @@ Types.definitions = {
     [Type.waste_dump] = {
         localised_name = {"sosciencity.waste-dump"},
         localised_description = {"sosciencity.explain-waste-dump"}
-    }
+    },
+    [Type.city_combinator] = {}
 }
 local definitions = Types.definitions
 
