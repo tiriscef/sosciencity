@@ -949,7 +949,7 @@ local function unemploy_workers(manufactory, count)
 
             -- housing side
             local employments = house[EK.employments]
-            employments[manufactory_number] = (fired == worker_count) and nil or (worker_count - fired)
+            employments[manufactory_number] = (fired ~= worker_count) and (worker_count - fired) or nil
             house[EK.employed] = house[EK.employed] - fired
         else
             -- the house got lost without unemploying the inhabitants
@@ -958,7 +958,7 @@ local function unemploy_workers(manufactory, count)
 
         -- manufactory side
         to_fire = to_fire - fired
-        workers[unit_number] = (fired == worker_count) and nil or (worker_count - fired)
+        workers[unit_number] = (fired ~= worker_count) and (worker_count - fired) or nil
     end
 
     local actually_fired = count - to_fire
