@@ -5,7 +5,7 @@ Tirislib.Item.create {
     icon_mipmaps = 4,
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
-    order = "baa",
+    order = "yyaa",
     place_result = "city-combinator",
     stack_size = 50
 }
