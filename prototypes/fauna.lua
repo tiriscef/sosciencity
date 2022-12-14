@@ -333,7 +333,7 @@ local function get_calories_needed(recipe_data)
     return ret
 end
 
-local CALORIES_PER_FOOD_ITEM = 30000
+local CALORIES_PER_FOOD_ITEM = 3000
 
 local function add_food(recipe, animal)
     local calories = {}

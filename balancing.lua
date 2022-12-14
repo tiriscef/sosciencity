@@ -124,10 +124,10 @@ local function write_files()
                 calories_in,
                 calories_out,
                 calories_out / recipe.energy,
-                calories_out / recipe.energy / (8 * 9.6),
+                calories_out / recipe.energy / (Castes.values[1].calorific_demand * 60),
                 diff,
                 diff / recipe.energy,
-                diff / recipe.energy / (8 * 9.6)
+                diff / recipe.energy / (Castes.values[1].calorific_demand * 60)
             )
         end
     end

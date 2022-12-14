@@ -69,6 +69,7 @@ ItemConstants.compost_values = {
     ["tomato"] = 1,
     ["unnamed-fruit"] = 1,
     ["weird-berry"] = 1,
+    ["wood"] = wood_compost_value,
     ["yuba"] = 0.1,
     ["zetorn"] = 1,
     ["zetorn-wood"] = wood_compost_value,
