@@ -57,5 +57,9 @@ Tirislib.Entity.create {
             pipe_connections = {{position = {0.0, 3.0}}},
             production_type = "input"
         }
+    },
+    working_sound = {
+        sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
+        apparent_volume = 1.5
     }
 }:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
