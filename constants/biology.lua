@@ -360,7 +360,7 @@ Biology.composting_humidity_factors = {
     [Humidity.dry] = 2 / 3
 }
 
-Biology.egg_calories = 10000
+Biology.egg_calories = 2000
 Biology.egg_fertile = "huwan-egg"
 
 Biology.egg_values = {
