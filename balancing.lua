@@ -2,6 +2,8 @@ local EK = require("enums.entry-key")
 local Food = require("constants.food")
 local Housing = require("constants.housing")
 local Castes = require("constants.castes")
+local Diseases = require("constants.diseases")
+local DiseaseCategory = require("enums.disease-category")
 
 local animal_calorie_values = {}
 
@@ -189,6 +191,28 @@ local function write_files()
     end
 
     game.write_file("housing.csv", Tirislib.String.join("\n", header, housing_data))
+
+    -- diseases
+    local disease_data = {}
+    for _, disease in pairs(Diseases.values) do
+        local res = disease.name .. ";"
+
+        for _, category in pairs(DiseaseCategory) do
+            if disease.categories[category] then
+                res = res .. (100 * disease.categories[category] / Diseases.frequency_sums[category])
+            end
+            res = res .. ";"
+        end
+
+        disease_data[#disease_data + 1] = res
+    end
+
+    header = "disease;"
+    for category in pairs(DiseaseCategory) do
+        header = header .. category .. ";"
+    end
+
+    game.write_file("diseases.csv", Tirislib.String.join("\n", header, disease_data))
 
     game.print("Wrote balancing data")
 end

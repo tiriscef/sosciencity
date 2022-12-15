@@ -736,13 +736,14 @@ Tirislib.RecipeGenerator.create {
     product_min = 2,
     product_max = 6,
     ingredients = {
-        {type = "item", name = "manok", amount = 5},
+        {type = "item", name = "flour", amount = 5},
         {type = "fluid", name = "clean-water", amount = 80}
     },
-    category = "crafting-with-fluid",
+    index_fluid_ingredients = true,
+    category = "sosciencity-pharma",
     energy_required = 4,
     allow_productivity = true,
-    unlock = "hospital"
+    unlock = "medbay"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -965,7 +966,6 @@ Tirislib.RecipeGenerator.create {
     product = "semipermeable-membrane",
     themes = {{"plastic", 5, 7}, {"framework", 1}},
     default_theme_level = 2,
-    category = "chemistry",
     unlock = "genetic-neogenesis"
 }
 

@@ -221,6 +221,12 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-consumable-medicine",
+        group = "sosciencity-production",
+        order = "agb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-drinking-water",
         group = "sosciencity-production",
         order = "aha"
