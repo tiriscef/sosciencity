@@ -148,7 +148,7 @@ Food.values = {
         taste_quality = 5,
         luxury = 1,
         portion_size = 1,
-        group = "unnamed-fruit"
+        group = "weird-berry"
     },
     ["brutal-pumpkin"] = {
         fat = 0.6,
@@ -267,7 +267,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 7,
         luxury = 4,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "bell-pepper"
     },
     ["potato"] = {
@@ -303,7 +303,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "tomato"
     },
     ["eggplant"] = {
@@ -315,7 +315,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "eggplant"
     },
     ["fawoxylas"] = {
@@ -327,7 +327,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 6,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "fawoxylas"
     },
     ["avocado"] = {
@@ -519,7 +519,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 5,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "pocelial"
     },
     ["red-hatty"] = {
@@ -531,7 +531,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "red-hatty"
     },
     ["birdsnake"] = {
@@ -543,7 +543,7 @@ Food.values = {
         taste_category = Taste.salty,
         taste_quality = 4,
         luxury = 7,
-        portion_size = 1,
+        portion_size = 2.5,
         group = "birdsnake"
     }
 }
