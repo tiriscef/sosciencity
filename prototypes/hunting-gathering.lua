@@ -103,10 +103,10 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "fawoxylas", amount = 5, probability = 0.5},
-        {type = "item", name = "pocelial", amount = 5, probability = 0.5},
-        {type = "item", name = "red-hatty", amount = 5, probability = 0.5},
-        {type = "item", name = "birdsnake", amount = 5, probability = 0.5}
+        {type = "item", name = "fawoxylas", amount = 4, probability = 0.4},
+        {type = "item", name = "pocelial", amount = 4, probability = 0.4},
+        {type = "item", name = "red-hatty", amount = 4, probability = 0.4},
+        {type = "item", name = "birdsnake", amount = 4, probability = 0.4}
     },
     order = "000575"
 }
@@ -120,9 +120,9 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "queen-algae", amount = 3},
-        {type = "item", name = "pyrifera", amount = 2, probability = 0.5},
-        {type = "item", name = "endower-flower", amount = 2, probability = 0.5}
+        {type = "item", name = "queen-algae", amount = 2},
+        {type = "item", name = "pyrifera", amount = 2, probability = 0.4},
+        {type = "item", name = "endower-flower", amount = 2, probability = 0.4}
     },
     order = "000585"
 }
@@ -203,7 +203,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "fishing-with-fishing-net",
     category = "sosciencity-fishery",
-    energy_required = 15,
+    energy_required = 30,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
@@ -216,9 +216,9 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "shellscript", amount = 3, probability = 0.5},
-        {type = "item", name = "boofish", amount = 20, probability = 0.8},
-        {type = "item", name = "fupper", amount = 10, probability = 0.8},
+        {type = "item", name = "shellscript", amount_min = 1, amount_max = 2},
+        {type = "item", name = "boofish", amount_min = 10, amount_max = 16},
+        {type = "item", name = "fupper", amount_min = 5, amount_max = 10},
         {type = "item", name = "dodkopus", amount = 1, probability = 0.1},
         {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.08}
@@ -229,7 +229,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "fishing-with-harpoon",
     category = "sosciencity-fishery",
-    energy_required = 20,
+    energy_required = 40,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
@@ -242,8 +242,8 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "petunial", amount = 1, probability = 0.07},
-        {type = "item", name = "hellfin", amount = 1, probability = 0.5},
+        {type = "item", name = "petunial", amount = 1, probability = 0.06},
+        {type = "item", name = "hellfin", amount = 1, probability = 0.3},
         {type = "item", name = "warnal", amount = 1, probability = 0.1},
         {type = "item", name = "ultra-squibbel", amount_min = 1, amount_max = 3},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.4}
