@@ -82,6 +82,20 @@ Diseases.values = {
         escalation = "necrosis",
         escalation_probability = 0.25
     },
+    [6] = {
+        name = "dislocated-limp",
+        curing_workload = 1,
+        natural_recovery = 1 * Time.nauvis_day,
+        categories = {[DiseaseCategory.accident] = 400},
+        escalation = "limp-loss",
+        escalation_probability = 0.1
+    },
+    [7] = {
+        name = "hematoma",
+        curing_workload = Diseases.not_curable,
+        natural_recovery = 2 * Time.nauvis_day,
+        categories = {[DiseaseCategory.accident] = 400}
+    },
     -- 1000+: primarily mental health related
     [1000] = {
         name = "depression",
@@ -184,9 +198,17 @@ Diseases.values = {
         curing_workload = Diseases.not_curable,
         natural_recovery = 2 * Time.nauvis_day,
         categories = {
-            [DiseaseCategory.health] = 200,
+            [DiseaseCategory.health] = 500,
             [DiseaseCategory.sanity] = 200,
             [DiseaseCategory.accident] = 200
+        }
+    },
+    [2006] = {
+        name = "kidney-stone",
+        curing_workload = 3,
+        natural_recovery = 1 * Time.nauvis_week,
+        categories = {
+            [DiseaseCategory.health] = 300
         }
     },
     -- 3000+: primarily escalation diseases
@@ -256,13 +278,26 @@ Diseases.values = {
             [DiseaseCategory.birth_defect] = 300
         }
     },
+    [4003] = {
+        name = "huntingtons",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
+        },
+        curing_workload = 4,
+        categories = {[DiseaseCategory.birth_defect] = 100},
+        natural_recovery = 3 * Time.nauvis_month,
+        lethality = 1
+    },
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
         cure_items = {
             --["antibiotics"] = 1
         },
-        curing_workload = 1,
+        curing_workload = 2,
         lethality = 0.03,
         contagiousness = 0.15,
         natural_recovery = 6 * Time.nauvis_day,
