@@ -83,7 +83,7 @@ Diseases.values = {
         escalation_probability = 0.25
     },
     [6] = {
-        name = "dislocated-limp",
+        name = "joint-dislocation",
         curing_workload = 1,
         natural_recovery = 1 * Time.nauvis_day,
         categories = {[DiseaseCategory.accident] = 400},
@@ -294,9 +294,9 @@ Diseases.values = {
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
-        cure_items = {
+        --cure_items = {
             --["antibiotics"] = 1
-        },
+        --},
         curing_workload = 2,
         lethality = 0.03,
         contagiousness = 0.15,

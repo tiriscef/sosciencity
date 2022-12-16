@@ -1,5 +1,12 @@
 local all_recipes = Tirislib.Recipe.all()
 
+for index, recipe in pairs(all_recipes) do
+    -- filter out recipes created by transport drones
+    if recipe.is_hack or Tirislib.String.begins_with(recipe.name, "request-") then
+        all_recipes[index] = nil
+    end
+end
+
 local function identity(n)
     return n
 end

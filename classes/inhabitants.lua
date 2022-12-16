@@ -1436,27 +1436,28 @@ function Inhabitants.get_birth_defect_probability()
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.employed] * delta_ticks / 400000 * castes[entry[EK.type]].accident_disease_resilience
+    return entry[EK.employed] * delta_ticks / 200000 * castes[entry[EK.type]].accident_disease_resilience
 end
 
 function Inhabitants.get_health_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 200000 / (entry[EK.health] + 1) *
+    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + 1) *
         castes[entry[EK.type]].health_disease_resilience
 end
 
 function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 200000 / (entry[EK.sanity] + 1) *
+    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.sanity] + 1) *
         castes[entry[EK.type]].sanity_disease_resilience
 end
 
 function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks * global.active_animal_farms / 1000000
+    return entry[EK.inhabitants] * delta_ticks * (global.active_animal_farms ^ 0.5) / 5000000
 end
 
 Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.accident] = Inhabitants.get_accident_disease_progress,
     [DiseaseCategory.health] = Inhabitants.get_health_disease_progress,
-    [DiseaseCategory.sanity] = Inhabitants.get_sanity_disease_progress
+    [DiseaseCategory.sanity] = Inhabitants.get_sanity_disease_progress,
+    [DiseaseCategory.zoonosis] = Inhabitants.get_zoonosis_disease_progress
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 
@@ -1938,7 +1939,7 @@ function Inhabitants.create_house(entry)
 
     local progresses = {}
     for disease_category in pairs(disease_progress_updaters) do
-        progresses[disease_category] = 0.5 * random()
+        progresses[disease_category] = 0.9 * random()
     end
     entry[EK.disease_progress] = progresses
 
