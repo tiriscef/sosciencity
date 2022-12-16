@@ -20,6 +20,7 @@ Tirislib.RecipeGenerator.create {
 local sprite_height = 14
 local sprite_width = 12
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover {"south"}
 
 Tirislib.Entity.create {
     type = "assembling-machine",
@@ -110,28 +111,28 @@ Tirislib.Entity.create {
     fluid_boxes = {
         {
             base_level = -1,
-            pipe_covers = pipecoverspictures(),
+            pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {1.5, 5.5}}},
             production_type = "input"
         },
         {
             base_level = -1,
-            pipe_covers = pipecoverspictures(),
+            pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {3.5, 5.5}}},
             production_type = "input"
         },
         {
             base_level = 1,
-            pipe_covers = pipecoverspictures(),
+            pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {1.5, -5.5}}},
             production_type = "output"
         },
         {
             base_level = 1,
-            pipe_covers = pipecoverspictures(),
+            pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {3.5, -5.5}}},
             production_type = "output"

@@ -128,8 +128,10 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "dried-solfaen",
+    product_amount = 5,
+    energy_required = 5,
     ingredients = {
-        {type = "fluid", name = "solfaen", amount = 10}
+        {type = "fluid", name = "solfaen", amount = 100}
     },
     category = Tirislib.RecipeGenerator.category_alias.drying,
     unlock = "basic-biotechnology"
