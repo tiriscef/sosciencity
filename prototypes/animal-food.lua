@@ -34,7 +34,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "fish-food",
     product_amount = 2,
-    ingredients = {{type = "item", name = "dried-solfaen", amount = 6}},
+    ingredients = {{type = "item", name = "dried-solfaen", amount = 4}},
     allow_productivity = true,
     unlock = "animal-husbandry"
 }

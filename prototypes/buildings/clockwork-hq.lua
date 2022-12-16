@@ -40,7 +40,7 @@ Tirislib.Entity.create {
         lightmap = true
     },
     crafting_speed = 2,
-    crafting_categories = {"sosciencity-caste-clockwork", "crafting", "smelting"},
+    crafting_categories = {"sosciencity-caste-clockwork"},
     energy_usage = "250kW",
     energy_source = {
         type = "burner",

@@ -11,7 +11,7 @@ local flora_items = {
     {
         name = "leafage",
         sprite_variations = {name = "leafage", count = 3, include_icon = true},
-        distinctions = {fuel_value = "200kJ", fuel_category = "chemical"}
+        distinctions = {fuel_value = "500kJ", fuel_category = "chemical"}
     },
     {
         name = "hardcorn-punk",

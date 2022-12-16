@@ -411,10 +411,9 @@ Tirislib.RecipeGenerator.add_themes {
     furnishing = {
         [0] = {},
         [1] = {
-            {type = "item", name = "bed", amount = 1}
+            {type = "item", name = "table", amount = 0.5}
         },
         [2] = {
-            {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1},
             {type = "item", name = "table", amount = 0.5}
         },
@@ -496,23 +495,22 @@ Tirislib.RecipeGenerator.add_themes {
     simple_furnishing = {
         [0] = {},
         [1] = {
-            {type = "item", name = "bed", amount = 1}
+            {type = "item", name = "table", amount = 1 / 2}
         },
         [2] = {
-            {type = "item", name = "bed", amount = 1},
+            {type = "item", name = "table", amount = 1 / 2},
             {type = "item", name = "chair", amount = 1 / 2}
         },
         [3] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 3 / 4},
-            {type = "item", name = "table", amount = 1 / 2},
-            {type = "item", name = "cupboard", amount = 1 / 3}
+            {type = "item", name = "table", amount = 1 / 2}
         },
         [4] = {
             {type = "item", name = "bed", amount = 1},
             {type = "item", name = "chair", amount = 1},
             {type = "item", name = "table", amount = 3 / 4},
-            {type = "item", name = "cupboard", amount = 2 / 3}
+            {type = "item", name = "cupboard", amount = 1 / 3}
         },
         [5] = {
             {type = "item", name = "bed", amount = 1},
@@ -592,7 +590,7 @@ Tirislib.RecipeGenerator.add_themes {
     },
     tall_building_structure = {
         [0] = {
-            {type = "item", name = "iron-stick", amount = 1}
+            --{type = "item", name = "iron-stick", amount = 1}
         }
     }
 }

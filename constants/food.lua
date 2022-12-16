@@ -375,7 +375,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 2,
         luxury = 1,
-        portion_size = 1,
+        portion_size = 2,
         group = "algae"
     },
     ["razha-bean"] = {

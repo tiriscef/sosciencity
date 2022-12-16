@@ -12,7 +12,7 @@ end
 
 -- Balancing heavy area
 local function get_meat_amounts(unit)
-    return 1, math.ceil(0.25 * unit.max_health ^ 0.4)
+    return 1, math.ceil(unit.max_health ^ 0.4)
 end
 
 local PROBABILITY = 0.5

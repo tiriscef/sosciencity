@@ -215,7 +215,7 @@ Types.definitions = {
     },
     [Type.improvised_hospital] = {
         localised_name = {"sosciencity.hospital"},
-        localised_description = {"sosciencity.explain-hospital"},
+        localised_description = {"", {"sosciencity.explain-hospital"}, "\n", {"sosciencity.no-facilities"}},
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
