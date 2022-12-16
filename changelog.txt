@@ -1,10 +1,68 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2022.16.01
+  Features:
+    - Added the City Combinator, a Combinator that outputs caste population counts.
+    - The Upbringing Station's education mode can be set via circuit network. (At the moment it sets it to the first Caste signal > 0 that it finds.)
+    - Added graphics for the Algae Farm, Medbay, Salt Pond, Orchid Food Factory, Drying Unit.
+    - Added a system that allowes me to gate technologies behind non-technology-conditions like (for now) Caste Points.
+    - Split up the Gathering recipe into one for materials and several for food.
+    - Added 2 gated technologies that unlock the higher Gathering recipes.
+    - Added some Tips and Tricks for the early game.
+    - Added the Mushroom Farm where you can farm Fawoxylas and 3 newly added mushroom items.
+    - Added 3 algae items to farm in the Algae Farm.
+    - Added 2 gathering recipes, one for mushrooms in the hunting hut and one for algae in the fishing hut.
+    - Added the Wood Processor, a furnace-type machine that can turn wood to lumber and lumber to sawdust. This allowes you to have one machine for all types of wood.
+    - Added the Medical Assembler, a machine that crafts medicine.
+    - Added a recipe for the neogenesis of agender eggs, similar to the gendered eggs. I don't know if that ever becomes useful, but I thought like why not.
+    - Added expensive settings for a lot of material recipes.
+    - Added some new diseases, of which most are pretty easy to treat.
+    - Added a new disease cause: zoonoses.
+    - On mouseover over entities which need workers: The houses where the workers are living in are now marked.
+    - On mouseover over houses: The count, happiness, health and sanity of the inhabitants are displayed.
+
+  Bugfixes:
+    - Fixed that the GUI of manufactories sometimes displayed that they have 0 workers from a house.
+    - Fixed that the electric mining drill wouldn't accept modules and that the burner mining drill wasn't affected by the maintenance mechanic.
+
+  Changes:
+    - Sanity-checked a lot of building recipes.
+    - Reduced the energy_buffer_size of entities which need energy and use a hidden electric energy interface to simulate that (most notably: houses). This aims to eliminate the huge energy spikes that are caused by the buffer filling after you place them.
+    - Removed the "any wood to sawdust" recipes. Instead you can now turn lumber into sawdust.
+    - Removed the Boring Brick House because it looked awful and served no purpose. It'll sure return later after I redesigned it and got a better idea what place it might fill.
+    - Inhabitants won't move into pre-existing Improvised Huts anymore. (They will only move into them upon creation.)
+    - Removed the 'kickout'-button in Improvised Huts, so the player cannot repurpose them.
+    - Yarn and Rope only need lumber in expensive anymore, because that is pretty annoying and stupid.
+    - Waste Dump is now available with Infrastructure 1.
+    - Burning Garbage is now available with Infrastructure 2. So you now have a time period where the trash just accumulates until you research a way to get rid of it. Pretty evil, but I like the idea.
+    - Reduced the calorific demand of all inhabitants by a factor of 10. Reduced the calories of most food items by a factor of 10. This keeps the balance the same. It's mainly because I didn't like that the kcal values were very inflated.
+    - Reduced the calories needed for emergency rations and asexual reproduction by a factor of 5. This makes them more expensive food-item-wise than before.
+    - Increased the internal portion-size of some food-items, because they were the opposite of energy dense.
+    - Moved the Neogenesis technologies to blue science.
+
+  Balancing:
+    - Eaten-up food items now produce Food Leftovers with a 12.5% chance instead of always.
+    - Rebalanced some of the houses.
+    - Nerfed the farming recipes (annual a bit more than perennial) a lot.
+    - Halved the time for the hunting and gathering recipes and also halved the crafting speed of the Hunting Hut and Fishing Hut. This keeps the output of the huts the same, but makes handcrafting these recipes faster.
+    - Nerfed the inventory size of the Trash Site to 10 slots.
+    - Increased the probability for the farming of Phytofall Blossom and Necrofall to 50% because that was kinda harsh.
+    - Beds are now delayed to houses with a comfort of 3 or higher to smoothen the difficulty curve in the early game.
+    - Increased the rate at which diseases occur.
+    - Reduced the minimum required comfort of the Orchid Caste to 1.
+    - Drying Unit recipes scaled up to last 5 seconds.
+
+  Factory-Breaking Changes:
+    - Older maps won't load with this version. I saved the headaches of writing migration scripts for this version, because there was some time since the last update. 
+
+---------------------------------------------------------------------------------------------------
 Version: 0.0.15
 Date: 2022.04.01
   Changes:
     - Added Bob's Greenhouse, Bio Industries and Omniwood to the list of mods that disable the lumber setting.
     - Compatibility with Krastorio2: Adding Sosciencity's idea items to Krastorio's science pack recipes works now.
     - Sosciencity's wood types now have a fuel_value of 2 MJ... so the same as the vanilla one.
+    - Renamed the 'Cost Reduction' setting to 'Startup Clockwork Points' to better express how all that works. Together with small changes to the maintenance-related tooltips that aim to make the mechanic clearer.
 
   Bugfixes:
     - Fixed that the Groundwater Pump stopped working at -80% Speed because of a floating point rounding error.
