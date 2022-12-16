@@ -74,7 +74,7 @@ for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-eg
         },
         themes = {{"genetic_neogenesis", 1}},
         category = "sosciencity-reproductive-gene-lab",
-        localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index + 1)}},
+        localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index)}},
         unlock = "huwan-genetic-neogenesis"
     }
 end
