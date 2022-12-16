@@ -1,6 +1,5 @@
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
-local Unlocks = require("constants.unlocks")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -160,9 +159,9 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "antibiotics",
     ingredients = {
-        {type = "fluid", name = "flinnum", amount = 10},
+        {type = "item", name = "amylum", amount = 1},
         {type = "item", name = "sugar", amount = 3},
-        {type = "item", name = "amylum", amount = 1}
+        {type = "fluid", name = "flinnum", amount = 10}
     },
     index_fluid_ingredients = true,
     category = "sosciencity-pharma",

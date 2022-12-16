@@ -741,12 +741,13 @@ Tirislib.Technology.create {
     name = "sosciencity-computing",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"logistic-science-pack"},
+    prerequisites = {"chemical-science-pack"},
     unit = {
         count = 97,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 20
     }
@@ -803,10 +804,11 @@ Tirislib.Technology.create {
     icon_size = 128,
     prerequisites = {"sosciencity-computing", "basic-biotechnology"},
     unit = {
-        count = 107,
+        count = 167,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 20
     }
@@ -821,7 +823,8 @@ Tirislib.Technology.create {
         count = 35,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 20
     }
@@ -893,7 +896,8 @@ Tirislib.Technology.create {
         count = 73,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 30
     }
@@ -908,7 +912,8 @@ Tirislib.Technology.create {
         count = 68,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 30
     }
@@ -978,7 +983,8 @@ Tirislib.Technology.create {
         count = 233,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 20
     }

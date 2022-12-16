@@ -823,7 +823,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-computing-center",
     energy_required = 10,
     expensive_energy_required = 15,
-    unlock = "huwan-genetic-neogenesis"
+    unlock = "sosciencity-computing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -834,7 +834,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-computing-center",
     energy_required = 20,
     expensive_energy_required = 30,
-    unlock = "huwan-genetic-neogenesis"
+    unlock = "sosciencity-computing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -845,7 +845,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-computing-center",
     energy_required = 30,
     expensive_energy_required = 45,
-    unlock = "huwan-genetic-neogenesis"
+    unlock = "sosciencity-computing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -1061,8 +1061,10 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "pemtenn-extract",
+    product_amount = 10,
+    energy_required = 5,
     ingredients = {
-        {type = "fluid", name = "pemtenn", amount = 10}
+        {type = "fluid", name = "pemtenn", amount = 100}
     },
     category = Tirislib.RecipeGenerator.category_alias.drying,
     unlock = "fermentation"
