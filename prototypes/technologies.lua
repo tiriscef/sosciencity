@@ -739,8 +739,8 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "sosciencity-computing",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/computing.png",
+    icon_size = 256,
     prerequisites = {"chemical-science-pack"},
     unit = {
         count = 97,
