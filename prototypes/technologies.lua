@@ -43,6 +43,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.clockwork"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.clockwork"}}
         }
     },
     unit = {
@@ -97,6 +101,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.orchid"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.orchid"}}
         }
     },
     unit = {
@@ -153,6 +161,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.gunfire"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.gunfire"}}
         }
     },
     unit = {
@@ -208,6 +220,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.plasma"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.plasma"}}
         }
     },
     unit = {
@@ -264,6 +280,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.ember"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.ember"}}
         }
     },
     unit = {
@@ -322,6 +342,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.foundry"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.foundry"}}
         }
     },
     unit = {
@@ -381,6 +405,10 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.caste-efficiency", {"caste-short.gleam"}}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.gleam"}}
         }
     },
     unit = {
