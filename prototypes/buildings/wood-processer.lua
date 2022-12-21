@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "wood-processer",
-    themes = {{"machine", 4}, {"gear_wheel", 10}},
+    themes = {{"machine", 4}, {"gear_wheel", 8}},
     default_theme_level = 0,
     unlock = "clockwork-caste"
 }
