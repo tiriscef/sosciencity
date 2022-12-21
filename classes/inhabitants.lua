@@ -1112,6 +1112,8 @@ local function try_add_to_house(entry, group)
     InhabitantGroup.merge_partially(entry, group, count_moving_in)
     update_free_space_status(entry)
 
+    Communication.create_flying_text(entry, {"sosciencity.inhabitants-moved-in", count_moving_in})
+
     return count_moving_in
 end
 
@@ -1721,6 +1723,7 @@ local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks
             trend = trend - emigrating
             local emigrants = take_inhabitants(entry, emigrating)
             Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
+            Communication.create_flying_text(entry, {"sosciencity.inhabitants-emigrated", emigrating})
         end
     end
 
