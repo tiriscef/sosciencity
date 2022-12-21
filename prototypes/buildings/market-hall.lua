@@ -17,7 +17,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "window", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    default_theme_level = 1,
+    default_theme_level = 0,
     unlock = "infrastructure-1"
 }
 
