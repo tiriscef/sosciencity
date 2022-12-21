@@ -524,7 +524,7 @@ local function healthcare_report()
     say_random_variant("healthcare", speaker, diseases, sum(get_subtbl(reports, "disease-death")))
     say_random_variant("healthcare-recovery", speaker, natural_recovered, treated, recoveries)
 
-    local infections = get_subtbl(reports, "disease-cause")[DiseasedCause.infection]
+    local infections = get_subtbl(reports, "disease-cause")[DiseasedCause.infection] or 0
     if diseases > 10 and infections >= 0.5 * diseases then
         say_random_variant("healthcare-infection-warning", speaker)
     end
