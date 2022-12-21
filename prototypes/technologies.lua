@@ -123,7 +123,7 @@ Tirislib.Technology.create {
     name = "gunfire-caste",
     icon = "__sosciencity-graphics__/graphics/gunfire-caste.png",
     icon_size = 256,
-    prerequisites = {"orchid-caste", "logistic-science-pack"},
+    prerequisites = {"open-environment-farming", "logistic-science-pack"},
     effects = {
         {
             type = "nothing",

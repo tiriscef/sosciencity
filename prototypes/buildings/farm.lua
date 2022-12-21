@@ -13,7 +13,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create {
     product = "farm",
     themes = {{"soil", 50}, {"tank", 1}, {"piping", 10}, {"plating", 20}, {"brick", 20}},
-    default_theme_level = 0,
+    default_theme_level = 1,
     unlock = "open-environment-farming"
 }
 

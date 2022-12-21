@@ -12,8 +12,8 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "fermentation-tank",
-    themes = {{"piping", 10}, {"tank", 1}, {"plating", 10}},
-    default_theme_level = 2,
+    themes = {{"piping", 10}, {"tank", 1}},
+    default_theme_level = 1,
     unlock = "fermentation"
 }
 

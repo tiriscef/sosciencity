@@ -243,8 +243,8 @@ Tirislib.RecipeGenerator.add_themes {
     },
     tank = {
         [0] = {
-            {type = "item", name = "iron-plate", amount = 5},
-            {type = "item", name = "pipe", amount = 10}
+            {type = "item", name = "iron-plate", amount = 10},
+            {type = "item", name = "pipe", amount = 5}
         },
         [2] = {
             {type = "item", name = "storage-tank", amount = 1}
@@ -263,7 +263,7 @@ Tirislib.RecipeGenerator.add_themes {
         [0] = {
             {type = "item", name = "lumber", amount = 10},
             {type = "item", name = "iron-plate", amount = 15},
-            {type = "item", name = "window", amount = 2}
+            {type = "item", name = "glass", amount = 2}
         },
         [1] = {
             {type = "item", name = "lumber", amount = 10},
@@ -310,7 +310,7 @@ Tirislib.RecipeGenerator.add_themes {
         [0] = {
             {type = "item", name = "lumber", amount = 8},
             {type = "item", name = "iron-plate", amount = 10},
-            {type = "item", name = "window", amount = 1}
+            {type = "item", name = "glass", amount = 1}
         },
         [1] = {
             {type = "item", name = "lumber", amount = 8},
@@ -358,7 +358,7 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "item", name = "lumber", amount = 15},
             {type = "item", name = "iron-plate", amount = 20},
             {type = "item", name = "stone-brick", amount = 10},
-            {type = "item", name = "window", amount = 5}
+            {type = "item", name = "glass", amount = 5}
         },
         [1] = {
             {type = "item", name = "lumber", amount = 15},
