@@ -107,8 +107,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 5,
     ingredients = {
         {type = "item", name = "biter-meat", amount = 10},
-        {type = "item", name = "salt", amount = 2},
-        {type = "fluid", name = "pemtenn", amount = 10}
+        {type = "item", name = "salt", amount = 2}
     },
     category = "sosciencity-fermentation-tank",
     unlock = "fermentation"
