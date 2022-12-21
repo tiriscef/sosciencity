@@ -978,7 +978,7 @@ local function unemploy_inhabitants(house, count)
         to_fire = to_fire - fired
 
         -- set to nil if all employees got fired to delete the link
-        local new_employment_count = (fired == employed_count) and nil or (employed_count - fired)
+        local new_employment_count = (fired ~= employed_count) and (employed_count - fired) or nil
 
         -- housing side
         employments[unit_number] = new_employment_count
