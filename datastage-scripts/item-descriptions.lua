@@ -13,7 +13,7 @@ for item_name, humus in pairs(ItemConstants.compost_values) do
         item.localised_description = item:get_localised_description()
         Tirislib.Locales.append(item.localised_description, "\n\n", {"sosciencity-util.compostables", Tirislib.Locales.display_item_stack_datastage("humus", humus)})
         if ItemConstants.mold_producers[item_name] then
-            Tirislib.Locales.append(item.localised_description, ", ", Tirislib.Locales.display_item_stack_datastage("mold", humus))
+            Tirislib.Locales.append(item.localised_description, ", ", Tirislib.Locales.display_item_stack_datastage("mold", 1))
         end
     end
 end

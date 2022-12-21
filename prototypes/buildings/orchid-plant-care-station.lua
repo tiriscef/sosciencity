@@ -17,7 +17,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "silo", amount = 2},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    default_theme_level = 2,
+    default_theme_level = 0,
     unlock = "orchid-caste"
 }
 

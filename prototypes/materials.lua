@@ -389,7 +389,6 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
     Tirislib.RecipeGenerator.create {
         product = "glass-mixture",
         energy_required = 1.6,
-        expensive_energy_required = 3.2,
         themes = {{"glass_educt", 2, 3}},
         category = Tirislib.RecipeGenerator.category_alias[
             Sosciencity_Config.glass_compatibility_mode and "handcrafting" or "mixing"
@@ -415,8 +414,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "lumber", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    unlock = "infrastructure-1"
+    }
 }
 
 Tirislib.RecipeGenerator.create {

@@ -12,9 +12,8 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "market-hall",
-    themes = {{"building", 2}},
+    themes = {{"building", 2}, {"glass", 20}},
     ingredients = {
-        {type = "item", name = "window", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 0,
