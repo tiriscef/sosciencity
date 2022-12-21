@@ -114,7 +114,6 @@ local floor = math.floor
 local floor_to_step = Utils.floor_to_step
 local ceil = math.ceil
 local round = Utils.round
-local sqrt = math.sqrt
 local max = math.max
 local min = math.min
 local map_range = Utils.map_range
@@ -760,7 +759,7 @@ end
 
 --- Gets the current Orchid caste bonus.
 local function get_orchid_bonus()
-    return floor(sqrt(caste_points[Type.orchid]))
+    return floor((caste_points[Type.orchid]) ^ 0.5)
 end
 
 --- Gets the current Gunfire caste bonus.
@@ -781,17 +780,17 @@ end
 
 --- Gets the current Foundry caste bonus.
 local function get_foundry_bonus()
-    return floor(sqrt(caste_points[Type.foundry] * 5))
+    return floor((caste_points[Type.foundry] * 5) ^ 0.5)
 end
 
 --- Gets the current Gleam caste bonus.
 local function get_gleam_bonus()
-    return floor(sqrt(caste_points[Type.gleam]))
+    return floor((caste_points[Type.gleam]) ^ 0.5)
 end
 
 --- Gets the current Aurora caste bonus.
 local function get_aurora_bonus()
-    return floor(sqrt(caste_points[Type.aurora]))
+    return floor((caste_points[Type.aurora]) ^ 0.5)
 end
 
 local function get_plasma_bonus()
