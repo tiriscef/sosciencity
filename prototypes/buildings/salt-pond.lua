@@ -14,7 +14,7 @@ Tirislib.RecipeGenerator.create {
     product = "salt-pond",
     themes = {{"piping", 5}, {"machine", 1}},
     default_theme_level = 1,
-    unlock = "basic-biotechnology"
+    unlock = "fermentation"
 }:add_unlock("medbay")
 
 local sprite_width = 9
