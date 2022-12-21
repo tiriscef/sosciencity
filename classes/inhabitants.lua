@@ -1700,8 +1700,8 @@ function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
 end
 local get_emigration_trend = Inhabitants.get_emigration_trend
 
-local function update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
-    local emigration_trend = get_emigration_trend(nominal_happiness, castes[caste_id], delta_ticks)
+local function update_emigration(entry, happiness, caste_id, delta_ticks)
+    local emigration_trend = get_emigration_trend(happiness, castes[caste_id], delta_ticks)
 
     -- reset the trend value if the people are happy or if the house is empty
     if emigration_trend == 0 or entry[EK.inhabitants] == 0 then
@@ -1819,7 +1819,7 @@ local function update_house(entry, delta_ticks)
     update_happiness(entry, nominal_happiness, delta_ticks)
 
     update_ages(entry)
-    update_emigration(entry, nominal_happiness, caste_id, delta_ticks)
+    update_emigration(entry, entry[EK.happiness], caste_id, delta_ticks)
     update_housing_census(entry, caste_id)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)
