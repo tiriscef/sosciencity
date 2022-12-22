@@ -1,4 +1,29 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2022.16.01
+  Features:
+    - There are now flying texts when people move into a house or emigrate from a house.
+
+  Bugfixes:
+    - Fixed a bug that disabled the recipe for agarose.
+    - (Probably) fixed a (potential) crash when the caste points are negative because of floating point errors.
+    - Fixed a bug that made inhabitants start to emigrate when their happiness trended to a value < 5 instead of when their actual happiness is < 5.
+    - Fixed a crash related to a missing check for nil in the infections warning in Healthcare Reports.
+    - Fixed another bug that made the GUI of manufactories sometimes display that they have 0 workers from a house.
+
+  Changes:
+    - The tier 0 buildings (like the living container or the market hall) now need Glass instead of Windows to make the earlygame a bit smoother.
+    - Added an effect description to the caste efficiency technologies that points to their higher upbringing chance.
+    - Orchid Caste now has Open Environment Farming as prerequisite (instead of Clockwork caste).
+    - Sosciencity will no longer add Productivity as an allowed effect to all crafting machines, because it didn't use that before.
+    - Fermenting Biter Meat no longer needs Pemtenn. 
+    - Salt Pond gets unlocked with Fermentation instead of Basic Biotechnology.
+
+  Factory-Breaking Changes:
+    - Some recipes changed and need other ingredients: Fermented Biter Meat, Market Hall, Fermentation Tank, Living Container, Upbringing Station, Hunting Hut, Fishing Hut, Clockwork HQ, Orchid Plant Care Station
+    - Some recipes changed and need different amounts of ingredients: Farm, Water Tower
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2022.16.01
   Features:
