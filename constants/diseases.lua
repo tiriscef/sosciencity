@@ -157,7 +157,6 @@ Diseases.values = {
             ["antimycotics"] = 1
         },
         curing_workload = 2,
-        contagiousness = 0.1,
         natural_recovery = 3 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",

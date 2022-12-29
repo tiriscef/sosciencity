@@ -159,7 +159,7 @@ Biology.flora = {
     },
     ["necrofall"] = {
         persistent = false,
-        growth_coefficient = 0.5,
+        growth_coefficient = 1,
         preferred_climate = Climate.cold,
         wrong_climate_coefficient = 0.7,
         preferred_humidity = Humidity.humid,
@@ -200,7 +200,7 @@ Biology.flora = {
     },
     ["phytofall-blossom"] = {
         persistent = false,
-        growth_coefficient = 1,
+        growth_coefficient = 2,
         preferred_climate = Climate.temperate,
         wrong_climate_coefficient = 0.7,
         preferred_humidity = Humidity.moderate,

@@ -903,8 +903,8 @@ function Tirislib.Recipe:add_ingredient(ingredient, expensive_ingredient)
     return self
 end
 
---- Adds the given results to the recipe.
---- - Different results for the expensive difficulty can be specified. Otherwise the normal ones will be used.
+--- Adds the given ingredients to the recipe.
+--- - Different ingredients for the expensive difficulty can be specified. Otherwise the normal ones will be used.
 --- @param ingredients table|nil of RecipeEntryPrototypes
 --- @param expensive_ingredients table|nil of RecipeEntryPrototypes
 --- @return RecipePrototype itself
