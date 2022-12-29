@@ -389,7 +389,6 @@ create_annual_recipe {
 create_annual_recipe {
     product = "necrofall",
     product_probability = 0.5,
-    output_multiplier = 2,
     unlock = Unlocks.get_tech_name("necrofall")
 }
 
@@ -432,7 +431,6 @@ create_perennial_recipe {
 create_annual_recipe {
     product = "phytofall-blossom",
     product_probability = 0.5,
-    output_multiplier = 2,
     unlock = Unlocks.get_tech_name("phytofall-blossom")
 }
 
