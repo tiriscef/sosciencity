@@ -16,7 +16,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "window", amount = 50}
     },
-    default_theme_level = 4,
+    default_theme_level = 3,
     unlock = "controlled-environment-farming"
 }
 
