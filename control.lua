@@ -408,7 +408,7 @@ end
 
 local function on_tile_update()
     -- just notes the tick of the last tile-change
-    -- this allowes me to expensively update tile information only when it's necessary
+    -- this allows me to expensively update tile information only when it's necessary
     global.last_tile_update = game.tick
 end
 
