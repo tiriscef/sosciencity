@@ -33,18 +33,6 @@ local garbage_items = {
 Tirislib.Item.batch_create(garbage_items, {subgroup = "sosciencity-garbage", stack_size = 200})
 
 Tirislib.Recipe.create {
-    name = "garbage-to-landfill",
-    energy_required = 1,
-    category = "crafting",
-    ingredients = {
-        {type = "item", name = "garbage", amount = 20}
-    },
-    results = {
-        {type = "item", name = "landfill", amount = 1}
-    }
-}:add_unlock("landfill")
-
-Tirislib.Recipe.create {
     name = "burn-garbage",
     emissions_multiplier = 2.5,
     energy_required = 0.8,
