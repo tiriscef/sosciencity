@@ -104,10 +104,10 @@ local housing_prototype_details = {
     ["small-prefabricated-house"] = {
         picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/small-prefabricated-house/small-prefabricated-house",
-            width = 21,
-            height = 17,
-            shift = {3.5, -2.0},
-            scale = 0.625,
+            width = 14,
+            height = 10,
+            center = {3.5, 6.5},
+            --scale = 0.625,
             shadowmap = true,
             glow = true
         },
@@ -187,27 +187,27 @@ local housing_prototype_details = {
     ["house1"] = {
         picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/house1/house1",
-            width = 20,
-            height = 15,
-            shift = {4.0, -3.2},
+            width = 13,
+            height = 10,
+            center = {4.0, 6.0},
             shadowmap = true,
             glow = true
         },
-        width = 10,
+        width = 6,
         height = 6,
         tech_level = 1
     },
     ["big-living-container"] = {
         picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/big-living-container/big-living-container",
-            width = 17,
-            height = 10,
-            shift = {2.0, -1.0},
+            width = 14,
+            height = 8,
+            center = {5.0, 4.0},
             shadowmap = true,
             lightmap = true,
             glow = true
         },
-        width = 11,
+        width = 8,
         height = 6,
         tech_level = 1
     },
