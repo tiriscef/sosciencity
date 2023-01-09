@@ -63,14 +63,14 @@ Unlocks.gated_technologies = {
     ["explore-alien-flora-1"] = {
         {
             type = Condition.caste_points,
-            count = 100,
+            count = 30,
             caste = Type.orchid
         }
     },
     ["explore-alien-flora-2"] = {
         {
             type = Condition.caste_points,
-            count = 500,
+            count = 150,
             caste = Type.orchid
         }
     }

@@ -65,6 +65,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
         {type = "item", name = "blue-grapes", amount = 5, probability = 0.3},
         {type = "item", name = "manok", amount = 2, probability = 0.35},
+        {type = "item", name = "tello-fruit", amount = 2, probability = 0.3},
+        {type = "item", name = "zetorn", amount = 5, probability = 0.3},
         {type = "item", name = "weird-berry", amount = 2, probability = 0.4}
     },
     order = "000566"
@@ -85,11 +87,11 @@ create_hunting_gathering_recipe {
         {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
         {type = "item", name = "blue-grapes", amount = 5, probability = 0.3},
         {type = "item", name = "manok", amount = 2, probability = 0.35},
-        {type = "item", name = "weird-berry", amount = 2, probability = 0.4},
-        {type = "item", name = "brutal-pumpkin", amount = 1, probability = 0.3},
-        {type = "item", name = "ortrot", amount = 5, probability = 0.3},
         {type = "item", name = "tello-fruit", amount = 2, probability = 0.3},
-        {type = "item", name = "zetorn", amount = 5, probability = 0.3}
+        {type = "item", name = "zetorn", amount = 5, probability = 0.3},
+        {type = "item", name = "weird-berry", amount = 2, probability = 0.4},
+        {type = "item", name = "brutal-pumpkin", amount = 2, probability = 0.3},
+        {type = "item", name = "ortrot", amount = 5, probability = 0.3}
     },
     order = "000567"
 }:add_unlock("explore-alien-flora-2")
