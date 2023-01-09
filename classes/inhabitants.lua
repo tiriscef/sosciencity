@@ -15,6 +15,7 @@ local HealthFactor = require("enums.health-factor")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
 
+local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
@@ -125,6 +126,7 @@ local occurence_probability = Utils.occurence_probability
 local shuffle = Table.shuffle
 local weighted_average = Utils.weighted_average
 local random = math.random
+local update_progress = Utils.update_progress
 
 local table_copy = Table.copy
 local table_multiply = Table.multiply
@@ -1613,6 +1615,45 @@ local function update_diseases(entry, delta_ticks)
     end
 end
 
+local function get_blood_donation_progress(entry, delta_ticks)
+    return entry[EK.diseases][HEALTHY] * (entry[EK.health] ^ 0.5) * delta_ticks / 1000000
+end
+Inhabitants.get_blood_donation_progress = get_blood_donation_progress
+
+local function update_blood_donations(entry, delta_ticks)
+    if not technologies["transfusion-medicine"] then
+        return
+    end
+
+    local donations =
+        update_progress(entry, EK.blood_donation_progress, get_blood_donation_progress(entry, delta_ticks))
+
+    if donations > 0 then
+        local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
+        Table.merge_arrays(hospitals, Neighborhood.get_by_type(entry, Type.improvised_hospital))
+
+        for _, hospital in pairs(hospitals) do
+            if hospital[EK.workhours] >= hospital[EK.blood_donation_threshold] then
+                local max_donations = min(donations, hospital[EK.workhours] / Biology.blood_donation_workload)
+                donations = donations - max_donations
+
+                local actual_donations =
+                    Inventories.try_insert(
+                    Inventories.get_chest_inventory(hospital),
+                    Biology.blood_donation_item,
+                    max_donations
+                )
+                hospital[EK.blood_donations] = hospital[EK.blood_donations] + actual_donations
+                hospital[EK.workhours] = hospital[EK.workhours] - actual_donations * Biology.blood_donation_workload
+
+                if donations < 1 then
+                    return
+                end
+            end
+        end
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << housing update >>
 -- it's so complex, it got its own section
@@ -1735,13 +1776,10 @@ end
 local get_garbage_progress = Inhabitants.get_garbage_progress
 
 local function update_garbage_output(entry, delta_ticks)
-    local garbage = entry[EK.garbage_progress] + get_garbage_progress(entry, delta_ticks)
-    if garbage >= 1 then
-        local produced_garbage = floor(garbage)
-        produce_garbage(entry, "garbage", produced_garbage)
-        garbage = garbage - produced_garbage
+    local garbage = update_progress(entry, EK.garbage_progress, get_garbage_progress(entry, delta_ticks))
+    if garbage > 0 then
+        produce_garbage(entry, "garbage", garbage)
     end
-    entry[EK.garbage_progress] = garbage
 end
 
 local function update_housing_census(entry, caste_id)
@@ -1823,6 +1861,7 @@ local function update_house(entry, delta_ticks)
     update_housing_census(entry, caste_id)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)
+    update_blood_donations(entry, delta_ticks)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1945,13 +1984,13 @@ function Inhabitants.create_house(entry)
     end
     entry[EK.disease_progress] = progresses
 
-    entry[EK.recovery_progress] = 0
-
     entry[EK.employed] = 0
     entry[EK.employments] = {}
 
     entry[EK.social_progress] = 0
     entry[EK.ga_conceptions] = 0
+
+    entry[EK.blood_donation_progress] = 0.4 * random()
 
     update_free_space_status(entry)
 
@@ -1967,7 +2006,6 @@ function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Table.copy(source[EK.disease_progress])
-    destination[EK.recovery_progress] = source[EK.recovery_progress]
 end
 
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.

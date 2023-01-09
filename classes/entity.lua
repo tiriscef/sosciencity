@@ -791,6 +791,8 @@ local function create_hospital(entry)
     entry[EK.workhours] = 0
     entry[EK.treated] = {}
     entry[EK.treatment_permissions] = {}
+    entry[EK.blood_donation_threshold] = 100
+    entry[EK.blood_donations] = 0
 end
 Register.set_entity_creation_handler(Type.hospital, create_hospital)
 Register.set_entity_creation_handler(Type.improvised_hospital, create_hospital)
@@ -799,9 +801,19 @@ local function copy_hospital(source, destination)
     destination[EK.workhours] = source[EK.workhours]
     destination[EK.treated] = Table.copy(source[EK.treated])
     destination[EK.treatment_permissions] = Table.copy(source[EK.treatment_permissions])
+    destination[EK.blood_donation_threshold] = source[EK.blood_donation_threshold]
+    destination[EK.blood_donations] = source[EK.blood_donations]
 end
 Register.set_entity_copy_handler(Type.hospital, copy_hospital)
 Register.set_entity_copy_handler(Type.improvised_hospital, copy_hospital)
+
+local function paste_hospital_settings(source, destination)
+    destination[EK.blood_donation_threshold] = source[EK.blood_donation_threshold]
+end
+Register.set_settings_paste_handler(Type.hospital, Type.hospital, paste_hospital_settings)
+Register.set_settings_paste_handler(Type.hospital, Type.improvised_hospital, paste_hospital_settings)
+Register.set_settings_paste_handler(Type.improvised_hospital, Type.hospital, paste_hospital_settings)
+Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_hospital, paste_hospital_settings)
 
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
