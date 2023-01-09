@@ -21,7 +21,9 @@ Technologies = {}
 ]]
 -- local often used globals for humongous performance gains
 
-local tracked_techs = {}
+local tracked_techs = {
+    ["transfusion-medicine"] = true
+}
 
 -- add caste techs
 for _, caste in pairs(Castes.values) do

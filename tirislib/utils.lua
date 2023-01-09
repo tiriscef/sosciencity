@@ -459,6 +459,18 @@ function Tirislib.Utils.add_random_float_offset(position, offset)
     position.y = position.y + random() * 2 * offset - offset
 end
 
+--- Updates a progress value inside the given table and returns the number of full progresses.
+--- @param tbl table
+--- @param key any
+--- @param delta_progress number
+--- @return integer full_progresses
+function Tirislib.Utils.update_progress(tbl, key, delta_progress)
+    local progress = tbl[key] + delta_progress
+    local full_progress = floor(progress)
+    tbl[key] = progress - full_progress
+    return full_progress
+end
+
 --- Returns true if the game is currently in the data stage.
 function Tirislib.Utils.is_data_stage()
     return (data ~= nil)

@@ -235,9 +235,22 @@ end
 
 local value_changed_lookup = {}
 
+--- Sets the 'on_gui_value_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
+--- @param name string
+--- @param fn function
 local function set_value_changed_handler(name, fn, ...)
     Tirislib.Utils.desync_protection()
     value_changed_lookup[name] = {fn, {...}}
+end
+
+local gui_confirmed_lookup = {}
+
+--- Sets the 'on_gui_confirmed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
+--- @param name string
+--- @param fn function
+local function set_gui_confirmed_handler(name, fn, ...)
+    Tirislib.Utils.desync_protection()
+    gui_confirmed_lookup[name] = {fn, {...}}
 end
 
 --- This should be added to every gui element which needs an event handler,
@@ -270,6 +283,16 @@ function Gui.on_gui_checked_state_changed(event)
     look_for_event_handler(event, checkbox_click_lookup)
 end
 
+--- Event handler for slider change events
+function Gui.on_gui_value_changed(event)
+    look_for_event_handler(event, value_changed_lookup)
+end
+
+--- Event handler for confirmed guis
+function Gui.on_gui_confirmed(event)
+    look_for_event_handler(event, gui_confirmed_lookup)
+end
+
 local function generic_radiobutton_handler(entry, element, _, mode, key, updater)
     if mode then
         entry[key] = mode
@@ -287,13 +310,13 @@ local function generic_checkbox_handler(entry, element, _, ...)
     subtable[keys[#keys]] = element.state
 end
 
---- Event handler for slider change events
-function Gui.on_gui_value_changed(event)
-    look_for_event_handler(event, value_changed_lookup)
-end
-
 local function generic_slider_handler(entry, element, _, key)
     entry[key] = element.slider_value
+end
+
+local function generic_numeric_textfield_handler(entry, element, _, key)
+    entry[key] = tonumber(element.text)
+    game.print(element.text)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -384,6 +407,21 @@ local function add_kv_checkbox(data_list, key, checkbox_name, key_caption, check
     end
 
     return checkbox, label
+end
+
+local function add_kv_textfield(data_list, key, textfield_name, params, key_caption, key_font)
+    add_key_label(data_list, key, key_caption, key_font)
+
+    local textfield_params = {
+        type = "textfield",
+        name = textfield_name
+    }
+    Tirislib.Tables.merge(textfield_params, params or {})
+
+    local textfield = data_list.add(textfield_params)
+    textfield.style.width = 150
+
+    return textfield
 end
 
 local function get_checkbox(data_list, key)
@@ -1719,7 +1757,8 @@ local function create_general_building_details(container, entry, player_id)
         style.vertical_align = "center"
         style.right_padding = 10
 
-        local notify_button = flow.add {
+        local notify_button =
+            flow.add {
             type = "label",
             name = "notification-label",
             caption = {"sosciencity.notify-me"},
@@ -2377,6 +2416,8 @@ local function update_hospital_details(container, entry, player_id)
         end
     end
 
+    set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
+
     update_disease_catalogue(container, entry)
 end
 
@@ -2388,11 +2429,36 @@ local function create_hospital_details(container, entry, player_id)
 
     add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
     add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
+    if (entry[EK.type] == Type.improvised_hospital) then
+        set_kv_pair_visibility(building_data, "facilities", false)
+    end
+
+    add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
+    set_kv_pair_visibility(building_data, "blood_donations", global.technologies["transfusion-medicine"])
+
+    local textfield =
+        add_kv_textfield(
+        building_data,
+        "blood-donation-threshold",
+        format(unique_prefix_builder, "blood-donation-threshold", "hospital"),
+        {numeric = true},
+        {"sosciencity.threshold"}
+    )
+    textfield.text = tostring(entry[EK.blood_donation_threshold])
+    textfield.tooltip = {"sosciencity.blood-donation-threshold"}
+    building_data["key-blood-donation-threshold"].visible = global.technologies["transfusion-medicine"]
+    textfield.visible = global.technologies["transfusion-medicine"]
 
     create_disease_catalogue(container)
 
     update_hospital_details(container, entry)
 end
+
+set_gui_confirmed_handler(
+    format(unique_prefix_builder, "blood-donation-threshold", "hospital"),
+    generic_numeric_textfield_handler,
+    EK.blood_donation_threshold
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
