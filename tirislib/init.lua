@@ -31,7 +31,7 @@
 ---@class BoundingBox
 ---@class array
 
-local tirislib_internal_version = 5
+local tirislib_internal_version = 6
 
 if Tirislib then
     if tirislib_internal_version <= (Tirislib.internal_version or 0) then

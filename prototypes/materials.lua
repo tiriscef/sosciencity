@@ -400,12 +400,10 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
         name = "sosciencity-glass",
         energy_required = 3.2,
         ingredients = {{name = "glass-mixture", amount = 1}},
-        results = {},
+        results = {{type = "item", name = Tirislib.RecipeGenerator.item_alias.glass, amount = 2}},
         category = "smelting",
         main_result = Tirislib.RecipeGenerator.item_alias.glass
-    }:create_difficulties():multiply_expensive_ingredients(2):add_unlock("infrastructure-1"):add_result(
-        {type = "item", name = Tirislib.RecipeGenerator.item_alias.glass, amount = 2}
-    )
+    }:create_difficulties():multiply_expensive_ingredients(2):add_unlock("infrastructure-1")
 end
 
 Tirislib.RecipeGenerator.create {
