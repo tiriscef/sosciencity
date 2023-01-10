@@ -6,7 +6,7 @@ local Speakers = {}
 
 Speakers["tiriscef."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 108,
+    ["b"] = 115,
     ["roadkill"] = 8,
     ["report-begin"] = 2,
     ["report-end"] = 2,
@@ -72,7 +72,8 @@ Speakers["tiriscef."] = {
         ["b81fff"] = 8 * Time.second,
         ["b85"] = 10 * Time.second,
         ["b87"] = 5 * Time.second,
-        ["b104"] = standard_delay
+        ["b104"] = standard_delay,
+        ["b110"] = standard_delay
     },
     index = 0
 }

@@ -725,31 +725,31 @@ Tirislib.Prototype.create {
 local saplings = {
     {
         name = "apple-sapling",
-        distinctions = {limitation = {"farming-perennial-apple"}}
+        distinctions = {limitation = {"farming-perennial-apple"}, effect = {}}
     },
     {
         name = "avocado-sapling",
-        distinctions = {limitation = {"farming-perennial-avocado"}}
+        distinctions = {limitation = {"farming-perennial-avocado"}, effect = {}}
     },
     {
         name = "cherry-sapling",
-        distinctions = {limitation = {"farming-perennial-cherry"}}
+        distinctions = {limitation = {"farming-perennial-cherry"}, effect = {}}
     },
     {
         name = "lemon-sapling",
-        distinctions = {limitation = {"farming-perennial-lemon"}}
+        distinctions = {limitation = {"farming-perennial-lemon"}, effect = {}}
     },
     {
         name = "orange-sapling",
-        distinctions = {limitation = {"farming-perennial-orange"}}
+        distinctions = {limitation = {"farming-perennial-orange"}, effect = {}}
     },
     {
         name = "ortrot-sapling",
-        distinctions = {limitation = {"farming-perennial-ortrot"}}
+        distinctions = {limitation = {"farming-perennial-ortrot"}, effect = {}}
     },
     {
         name = "zetorn-sapling",
-        distinctions = {limitation = {"farming-perennial-zetorn"}}
+        distinctions = {limitation = {"farming-perennial-zetorn"}, effect = {}}
     }
 }
 

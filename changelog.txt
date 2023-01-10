@@ -1,6 +1,28 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2023.01.10
+  Features:
+    - Inhabitants can now donate blood.
+
+  Changes:
+    - Controlled environment farming no longer needs Production Science and can now be researched with just Chemical Science.
+    - The "Garbage to Landfill"-recipe now needs stone. This way it's not a free Garbage-sink anymore. (This is dynamic, so if another mod changes the landfill recipe, the Garbage-using recipe will need those ingredients.)
+    - Yeast Infection is no longer infectious.
+    - Reduced the size of phytofall circles and made them grow less dense.
+    - Explore Alien Fauna 1 and 2 need less Orchid points to unlock. (30/150 instead of 100/500)
+    - Zetorn and Tello are available with Explore Alien Fauna 1.
+    - Gave the standard 100x100-range to the Trash Site, Nightclub and Manufactories. This changes nothing gameplay-wise, as houses have the same range, but it makes placing and understanding them a bit easier.
+    - Added a description of what the 'Range' does to most buildings that have one.
+    - Compatibility: Sosciencity no longer sets main_product's in recipes of other mods. This should resolve problems with Angel's mods and Power Overload.
+    - Creating huwan eggs in the Reproductive Gene Lab now needs Blood Bags.
+    - Increased the chance for Birth Defects (was 10%, is 25% now).
+
+  Balancing:
+    - Halved the time of the Farming recipes for Phytofall Blossoms and Necrofall.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
-Date: 2022.16.01
+Date: 2022.12.22
   Features:
     - There are now flying texts when people move into a house or emigrate from a house.
 
@@ -25,7 +47,7 @@ Date: 2022.16.01
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
-Date: 2022.16.01
+Date: 2022.12.16
   Features:
     - Added the City Combinator, a Combinator that outputs caste population counts.
     - The Upbringing Station's education mode can be set via circuit network. (At the moment it sets it to the first Caste signal > 0 that it finds.)
