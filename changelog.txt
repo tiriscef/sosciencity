@@ -16,9 +16,16 @@ Date: 2023.01.10
     - Compatibility: Sosciencity no longer sets main_product's in recipes of other mods. This should resolve problems with Angel's mods and Power Overload.
     - Creating huwan eggs in the Reproductive Gene Lab now needs Blood Bags.
     - Increased the chance for Birth Defects (was 10%, is 25% now).
+    - Renamed House 1 to Cubic Construct.
+    - Added graphics to Foundry HQ.
+    - Updated graphics for Big Living Container, Cubic Construct and Small Prefabricated House.
 
   Balancing:
     - Halved the time of the Farming recipes for Phytofall Blossoms and Necrofall.
+
+  Factory-Breaking Changes:
+    - The size of Foundry HQ, Big Living Container, Cubic Construct and Small Prefabricated House changed to accomodate their new graphics. You might need to redesign your layouts.
+    - The recipe for huwan eggs changed.
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
