@@ -396,7 +396,7 @@ Biology.egg_values = {
     }
 }
 
-Biology.blood_donation_workload = 1
+Biology.blood_donation_workload = 10
 Biology.blood_donation_item = "blood-bag"
 
 -- create the lookup table

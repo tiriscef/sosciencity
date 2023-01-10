@@ -1435,7 +1435,7 @@ local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
 end
 
 function Inhabitants.get_birth_defect_probability()
-    return 0.1 * 0.8 ^ technologies["improved-reproductive-healthcare"]
+    return 0.25 * 0.8 ^ technologies["improved-reproductive-healthcare"]
 end
 
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)

@@ -274,7 +274,7 @@ Diseases.values = {
         },
         curing_workload = 1,
         categories = {
-            [DiseaseCategory.birth_defect] = 300
+            [DiseaseCategory.birth_defect] = 600
         }
     },
     [4003] = {

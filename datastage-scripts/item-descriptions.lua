@@ -44,7 +44,8 @@ local range_descriptions = {
     [Type.hospital] = {"range-description.hospital"},
     [Type.improvised_hospital] = {"range-description.hospital"},
     [Type.composter_output] = {"range-description.composter-output"},
-    [Type.pharmacy] = {"range-description.pharmacy"}
+    [Type.pharmacy] = {"range-description.pharmacy"},
+    [Type.egg_collector] = {"range-description.egg-collector"}
 }
 
 for building_name, details in pairs(Buildings.values) do
