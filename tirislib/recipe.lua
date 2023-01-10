@@ -290,11 +290,10 @@ Tirislib.RecipeArray.__index = Tirislib.PrototypeArray.__index
 
 -- << getter functions >>
 
---- Enforces invariants for the prototype to make manipulating them less error prone.
---- - Makes sure the recipe's main_product is set explicitly, because the implicit way is pain.
-function Tirislib.Recipe:enforce_invariants()
-    if not self.icon and not self.icons then
-        for _, recipe_data in pairs(Tirislib.Recipe.get_recipe_datas(self)) do
+--- Makes sure the recipe's main_product is set explicitly.
+local function explicitify_main_product(recipe)
+    if not recipe.icon and not recipe.icons then
+        for _, recipe_data in pairs(Tirislib.Recipe.get_recipe_datas(recipe)) do
             recipe_data.main_product = recipe_data.main_product or Tirislib.RecipeData.get_first_result(recipe_data)
         end
     end
@@ -306,7 +305,6 @@ end
 --- @return boolean found
 function Tirislib.Recipe.get_by_name(name)
     local ret, found = Tirislib.Prototype.get("recipe", name, Tirislib.Recipe)
-    ret:enforce_invariants()
     return ret, found
 end
 
@@ -315,7 +313,6 @@ end
 --- @return RecipePrototype
 function Tirislib.Recipe.get_from_prototype(prototype)
     setmetatable(prototype, Tirislib.Recipe)
-    prototype:enforce_invariants()
     return prototype
 end
 
@@ -343,7 +340,6 @@ function Tirislib.Recipe.iterate()
 
         if index then
             setmetatable(value, Tirislib.Recipe)
-            value:enforce_invariants()
             return index, value
         end
     end
