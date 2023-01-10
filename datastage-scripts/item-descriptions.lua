@@ -2,6 +2,7 @@ local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
+local Type = require("enums.type")
 
 -- Compostable items
 
@@ -11,14 +12,40 @@ for item_name, humus in pairs(ItemConstants.compost_values) do
     if found then
         -- XXX: Make sure the description isn't implicit. Not the most beautiful code..
         item.localised_description = item:get_localised_description()
-        Tirislib.Locales.append(item.localised_description, "\n\n", {"sosciencity-util.compostables", Tirislib.Locales.display_item_stack_datastage("humus", humus)})
+        Tirislib.Locales.append(
+            item.localised_description,
+            "\n\n",
+            {"sosciencity-util.compostables", Tirislib.Locales.display_item_stack_datastage("humus", humus)}
+        )
         if ItemConstants.mold_producers[item_name] then
-            Tirislib.Locales.append(item.localised_description, ", ", Tirislib.Locales.display_item_stack_datastage("mold", 1))
+            Tirislib.Locales.append(
+                item.localised_description,
+                ", ",
+                Tirislib.Locales.display_item_stack_datastage("mold", 1)
+            )
         end
     end
 end
 
 -- Custom Building Behaviour
+
+local range_descriptions = {
+    [Type.manufactory] = {"range-description.manufactory"},
+    [Type.animal_farm] = {"range-description.animal-farm"},
+    [Type.hunting_hut] = {"range-description.hunting-hut"},
+    [Type.fishery] = {"range-description.fishery"},
+    [Type.dumpster] = {"range-description.dumpster"},
+    [Type.market] = {"range-description.market"},
+    [Type.water_distributer] = {"range-description.water-distributer"},
+    [Type.nightclub] = {"range-description.nightclub"},
+    [Type.waterwell] = {"range-description.waterwell"},
+    [Type.plant_care_station] = {"range-description.plant-care-station"},
+    [Type.salt_pond] = {"range-description.fishery"},
+    [Type.hospital] = {"range-description.hospital"},
+    [Type.improvised_hospital] = {"range-description.hospital"},
+    [Type.composter_output] = {"range-description.composter-output"},
+    [Type.pharmacy] = {"range-description.pharmacy"}
+}
 
 for building_name, details in pairs(Buildings.values) do
     local item, found = Tirislib.Item.get_by_name(building_name)
@@ -73,6 +100,10 @@ for building_name, details in pairs(Buildings.values) do
                         {"sosciencity.show-range", details.range * 2}
                 }
             )
+
+            if range_descriptions[details.type] then
+                Tirislib.Locales.append(item.localised_description, "\n", {"sosciencity.grey", range_descriptions[details.type]})
+            end
 
             entity:copy_localisation_from_item()
         end

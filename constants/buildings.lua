@@ -30,6 +30,7 @@ Building.values = {
     },
     ["architectural-office"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 8,
             castes = {Type.clockwork, Type.gleam, Type.foundry}
@@ -48,6 +49,7 @@ Building.values = {
     },
     ["clockwork-hq"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 5,
             castes = {Type.clockwork}
@@ -70,6 +72,7 @@ Building.values = {
     },
     ["ember-hq"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 20,
             castes = {Type.ember}
@@ -91,6 +94,7 @@ Building.values = {
     },
     ["foundry-hq"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 20,
             castes = {Type.foundry}
@@ -102,6 +106,7 @@ Building.values = {
     },
     ["gleam-hq"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 20,
             castes = {Type.gleam}
@@ -117,6 +122,7 @@ Building.values = {
     },
     ["gunfire-hq"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 10,
             castes = {Type.gunfire}
@@ -181,6 +187,7 @@ Building.values = {
     },
     ["nightclub"] = {
         type = Type.nightclub,
+        range = range_by_foot,
         power_usage = 100
     },
     ["orangery"] = {
@@ -189,6 +196,7 @@ Building.values = {
     },
     ["orchid-food-factory"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 10,
             castes = {Type.orchid}
@@ -196,6 +204,7 @@ Building.values = {
     },
     ["orchid-hq"] = {
         type = Type.manufactory,
+        range = range_by_foot,
         workforce = {
             count = 10,
             castes = {Type.orchid}
@@ -225,7 +234,8 @@ Building.values = {
         water_tiles = 45
     },
     ["trash-site"] = {
-        type = Type.dumpster
+        type = Type.dumpster,
+        range = range_by_foot
     },
     ["upbringing-station"] = {
         type = Type.upbringing_station,
