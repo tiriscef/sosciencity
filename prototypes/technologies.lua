@@ -691,7 +691,7 @@ Tirislib.Technology.create {
     name = "medbay",
     icon = "__sosciencity-graphics__/graphics/technology/medbay.png",
     icon_size = 256,
-    prerequisites = {"clockwork-caste"},
+    prerequisites = {"architecture-1"},
     unit = {
         count = 29,
         ingredients = {
@@ -792,7 +792,7 @@ Tirislib.Technology.create {
     name = "fermentation",
     icon = "__sosciencity-graphics__/graphics/technology/fermentation.png",
     icon_size = 256,
-    prerequisite = {"clockwork-caste"},
+    prerequisite = {"open-environment-farming"},
     unit = {
         count = 32,
         ingredients = {
@@ -1060,7 +1060,7 @@ Tirislib.Technology.create {
     name = "open-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/open-environment-farming.png",
     icon_size = 128,
-    prerequisites = {},
+    prerequisites = {"clockwork-caste"},
     unit = {
         count = 56,
         ingredients = {

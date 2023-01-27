@@ -736,7 +736,7 @@ end
 function Communication.update(current_tick)
     flush_logs()
 
-    if current_tick % (15 * Time.minute) == (2 * Time.minute) then -- every 15 minutes, first time after 2 minutes
+    if current_tick % (20 * Time.minute) == (5 * Time.minute) then -- every 20 minutes, first time after 5 minutes
         useless_banter()
         return
     end
