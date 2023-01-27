@@ -21,7 +21,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "foundry-hq",
-    flags = {"placeable-neutral", "player-creation"},
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
     minable = {mining_time = 0.5, result = "foundry-hq"},
     max_health = 200,
     corpse = "small-remnants",
