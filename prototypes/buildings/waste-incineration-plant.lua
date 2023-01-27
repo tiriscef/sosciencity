@@ -20,7 +20,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.Entity.create {
     type = "burner-generator",
     name = "waste-incineration-plant",
-    flags = {"placeable-neutral", "player-creation"},
+    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
     minable = {mining_time = 0.5, result = "waste-incineration-plant"},
     max_health = 200,
     corpse = "small-remnants",
