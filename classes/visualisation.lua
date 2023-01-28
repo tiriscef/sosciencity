@@ -227,6 +227,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
         x_scale = scale,
         y_scale = scale,
         surface = entity.surface,
+        players = players,
         only_in_alt_mode = true
     }
     created_highlights[#created_highlights + 1] =
@@ -250,6 +251,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
         x_scale = scale,
         y_scale = scale,
         surface = entity.surface,
+        players = players,
         only_in_alt_mode = true
     }
     created_highlights[#created_highlights + 1] =
@@ -270,6 +272,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
         sprite = "sosciencity-health",
         target = entity,
         surface = entity.surface,
+        players = players,
         target_offset = {-1.75, 1},
         x_scale = scale,
         y_scale = scale,
@@ -293,6 +296,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
         sprite = "sosciencity-sanity",
         target = entity,
         surface = entity.surface,
+        players = players,
         target_offset = {0.75, 1},
         x_scale = scale,
         y_scale = scale,
