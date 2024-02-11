@@ -31,6 +31,7 @@
         "return-type-mismatch",
         "assign-type-mismatch",
         "param-type-mismatch",
-        "cast-local-type"
+        "cast-local-type",
+        "inject-field"
     ]
 }

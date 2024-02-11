@@ -230,7 +230,7 @@ Building.values = {
     },
     ["salt-pond"] = {
         type = Type.salt_pond,
-        range = 9.5,
+        range = 10.5,
         water_tiles = 45
     },
     ["trash-site"] = {
