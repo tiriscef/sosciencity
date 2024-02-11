@@ -1,12 +1,12 @@
 local Time = require("constants.time")
 
-local standard_delay = 2 * Time.second
+local standard_delay = 3 * Time.second
 
 local Speakers = {}
 
 Speakers["tiriscef."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 115,
+    ["b"] = 130,
     ["roadkill"] = 8,
     ["report-begin"] = 2,
     ["report-end"] = 2,
@@ -73,14 +73,15 @@ Speakers["tiriscef."] = {
         ["b85"] = 10 * Time.second,
         ["b87"] = 5 * Time.second,
         ["b104"] = standard_delay,
-        ["b110"] = standard_delay
+        ["b110"] = standard_delay,
+        ["b123"] = 7 * Time.second
     },
     index = 0
 }
 
 Speakers["profanity."] = {
     ["acquisition-unlock"] = 1,
-    ["b"] = 28,
+    ["b"] = 29,
     ["roadkill"] = 5,
     ["report-begin"] = 3,
     ["report-end"] = 3,
