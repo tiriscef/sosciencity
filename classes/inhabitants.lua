@@ -767,7 +767,7 @@ end
 --- Gets the current Gunfire caste bonus.
 local function get_gunfire_bonus()
     -- 1 point per turret increases damage by 10%
-    return floor(10 * caste_points[Type.gunfire] / max(Register.get_type_count(Type.turret), 1))
+    return floor(10 * max(0, caste_points[Type.gunfire]) / max(Register.get_type_count(Type.turret), 1))
 end
 
 --- Gets the current Ember caste bonus.
@@ -782,12 +782,12 @@ end
 
 --- Gets the current Foundry caste bonus.
 local function get_foundry_bonus()
-    return floor((caste_points[Type.foundry] * 5) ^ 0.5)
+    return floor(max(0, caste_points[Type.foundry] * 5) ^ 0.5)
 end
 
 --- Gets the current Gleam caste bonus.
 local function get_gleam_bonus()
-    return floor((caste_points[Type.gleam]) ^ 0.5)
+    return floor(max(0, caste_points[Type.gleam]) ^ 0.5)
 end
 
 --- Gets the current Aurora caste bonus.
@@ -802,24 +802,6 @@ local function get_plasma_bonus()
     else
         return 0
     end
-end
-
--- Assumes value is an integer
-local function set_gunfire_bonus(value)
-    set_binary_techs(value, "-gunfire-caste")
-    caste_bonuses[Type.gunfire] = value
-end
-
--- Assumes value is an integer
-local function set_foundry_bonus(value)
-    set_binary_techs(value, "-foundry-caste")
-    caste_bonuses[Type.foundry] = value
-end
-
--- Assumes value is an integer
-local function set_gleam_bonus(value)
-    set_binary_techs(value, "-gleam-caste")
-    caste_bonuses[Type.gleam] = value
 end
 
 --- Updates all the caste bonuses and sets the ones that are applied global instead of per-entity. At the moment these are Gunfire, Gleam and Foundry.
@@ -841,17 +823,20 @@ local function update_caste_bonuses()
     -- We check if the bonuses have actually changed to avoid unnecessary api calls
     local current_gunfire_bonus = get_gunfire_bonus()
     if caste_bonuses[Type.gunfire] ~= current_gunfire_bonus then
-        set_gunfire_bonus(current_gunfire_bonus)
+        set_binary_techs(current_gunfire_bonus, "-gunfire-caste")
+        caste_bonuses[Type.gunfire] = current_gunfire_bonus
     end
 
     local current_foundry_bonus = get_foundry_bonus()
     if caste_bonuses[Type.foundry] ~= current_foundry_bonus then
-        set_foundry_bonus(current_foundry_bonus)
+        set_binary_techs(current_foundry_bonus, "-foundry-caste")
+        caste_bonuses[Type.foundry] = current_foundry_bonus
     end
 
     local current_gleam_bonus = get_gleam_bonus()
     if caste_bonuses[Type.gleam] ~= current_gleam_bonus then
-        set_gleam_bonus(current_gleam_bonus)
+        set_binary_techs(current_gleam_bonus, "-gleam-caste")
+        caste_bonuses[Type.gleam] = current_gleam_bonus
     end
 end
 
