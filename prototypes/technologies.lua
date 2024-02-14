@@ -12,6 +12,14 @@ Tirislib.Technology.create {
         {
             type = "nothing",
             effect_description = {"description.clockwork-caste"}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.orchid-caste"}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.ember-caste"}
         }
     },
     unit = {
@@ -65,12 +73,6 @@ Tirislib.Technology.create {
     icon = "__sosciencity-graphics__/graphics/orchid-caste.png",
     icon_size = 256,
     prerequisites = {"clockwork-caste", "open-environment-farming"},
-    effects = {
-        {
-            type = "nothing",
-            effect_description = {"description.orchid-caste"}
-        }
-    },
     unit = {
         count = 51,
         ingredients = {
@@ -243,12 +245,6 @@ Tirislib.Technology.create {
     icon = "__sosciencity-graphics__/graphics/ember-caste.png",
     icon_size = 256,
     prerequisites = {"orchid-caste", "logistic-science-pack"},
-    effects = {
-        {
-            type = "nothing",
-            effect_description = {"description.ember-caste"}
-        }
-    },
     unit = {
         count = 133,
         ingredients = {
