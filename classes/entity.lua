@@ -166,7 +166,8 @@ Register.set_entity_creation_handler(Type.animal_farm, create_animal_farm)
 local function update_animal_farm(entry)
     local entity = entry[EK.entity]
     local recipe = entity.get_recipe()
-    local houses_animals = recipe and entity.is_crafting() and Tirislib.String.begins_with(recipe.name, "sos-husbandry-")
+    local houses_animals =
+        recipe and entity.is_crafting() and Tirislib.String.begins_with(recipe.name, "sos-husbandry-")
     local housed_in_the_past = entry[EK.houses_animals]
 
     if houses_animals and not housed_in_the_past then
@@ -1218,3 +1219,23 @@ local function create_waterwell(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
+
+---------------------------------------------------------------------------------------------------
+-- << fishwhirl >>
+
+Events.set_on_init_handler(
+    function()
+        for _, surface in pairs(game.surfaces) do
+            for _, entity in pairs(surface.find_entities_filtered {name = "fishwhirl"}) do
+                entity.active = false
+            end
+        end
+    end
+)
+
+Events.set_script_trigger_handler(
+    "sosciencity-fishwhirl-creation",
+    function(event)
+        event.source_entity.active = false
+    end
+)
