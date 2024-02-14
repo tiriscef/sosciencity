@@ -613,8 +613,8 @@ if settings.startup["sosciencity-modify-environment"].value then
     Tirislib.Entity.create {
         type = "fish",
         name = "fishwhirl",
-        icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl.png",
-        icon_size = 64,
+        icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl-1.png",
+        icon_size = 128,
         flags = {"placeable-neutral", "not-on-map"},
         minable = {
             mining_time = 0.4,
