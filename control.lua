@@ -228,7 +228,7 @@ local function on_entity_built(event)
 
     local entity = event.created_entity
 
-    if not entity or not entity.valid or entity.force.name ~= "player" then
+    if not entity or not entity.valid then
         return
     end
 
@@ -241,7 +241,7 @@ local function on_clone_built(event)
 
     local destination = event.destination
 
-    if not destination or not destination.valid or destination.force.name ~= "player" then
+    if not destination or not destination.valid then
         return
     end
 
@@ -266,7 +266,7 @@ local function on_script_built(event)
 
     local entity = event.entity
 
-    if not entity or not entity.valid or entity.force.name ~= "player" then
+    if not entity or not entity.valid then
         return
     end
 
