@@ -318,6 +318,10 @@ end
 Register.set_entity_updater(Type.composter, update_composter)
 
 local function remove_composter(entry)
+    if not entry[EK.entity].valid then
+        return
+    end
+
     local humus = floor(entry[EK.humus])
 
     if humus > 0 then
@@ -549,6 +553,10 @@ end
 Register.set_entity_creation_handler(Type.plant_care_station, create_plant_care_station)
 
 local function destroy_plant_care_station(entry)
+    if not entry[EK.entity].valid then
+        return
+    end
+
     local humus = floor(entry[EK.humus_stored])
 
     if humus > 0 then
@@ -1150,6 +1158,10 @@ end
 Register.set_settings_paste_handler(Type.waste_dump, Type.waste_dump, paste_waste_dump_settings)
 
 local function remove_waste_dump(entry)
+    if not entry[EK.entity].valid then
+        return
+    end
+
     Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
 end
 Register.set_entity_destruction_handler(Type.waste_dump, remove_waste_dump)
