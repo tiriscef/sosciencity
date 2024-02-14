@@ -612,72 +612,6 @@ if settings.startup["sosciencity-modify-environment"].value then
     -- it seems like the factorio engine treats the order-string of the autoplace definition as some kind of ID, so I'm giving them a distinct one to be sure
     Tirislib.Entity.create {
         type = "fish",
-        name = "primal-quacker",
-        icon = "__sosciencity-graphics__/graphics/icon/primal-quacker.png",
-        icon_size = 64,
-        flags = {"placeable-neutral", "not-on-map"},
-        minable = {
-            mining_time = 0.4,
-            results = {
-                {name = "primal-quacker", amount = 1},
-                {name = "primal-quackling", amount_min = 0, amount_max = 10}
-            }
-        },
-        max_health = 20,
-        subgroup = "creatures",
-        order = "a",
-        collision_box = {{-0.75, -0.75}, {0.75, 0.75}},
-        selection_box = {{-0.5, -0.3}, {0.5, 0.3}},
-        pictures = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/primal-quacker/primal-quacker.png",
-                width = 64,
-                height = 128,
-                scale = 1. / 4.
-            }
-        },
-        autoplace = {
-            order = "sosciencity-a",
-            influence = 0.001
-        },
-        localised_name = {"item-name.primal-quacker"}
-    }
-
-    Tirislib.Entity.create {
-        type = "fish",
-        name = "nan-swan",
-        icon = "__sosciencity-graphics__/graphics/icon/nan-swan.png",
-        icon_size = 64,
-        flags = {"placeable-neutral", "not-on-map"},
-        minable = {
-            mining_time = 0.4,
-            results = {
-                {name = "nan-swan", amount = 1},
-                {name = "nan-swanling", amount_min = 0, amount_max = 7}
-            }
-        },
-        max_health = 40,
-        subgroup = "creatures",
-        order = "b",
-        collision_box = {{-1, -1}, {1, 1}},
-        selection_box = {{-0.666, -0.4}, {0.666, 0.4}},
-        pictures = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/nan-swan/nan-swan.png",
-                width = 64,
-                height = 128,
-                scale = 1. / 3.
-            }
-        },
-        autoplace = {
-            order = "sosciencity-b",
-            influence = 0.001
-        },
-        localised_name = {"item-name.nan-swan"}
-    }
-
-    Tirislib.Entity.create {
-        type = "fish",
         name = "fishwhirl",
         icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl.png",
         icon_size = 64,
@@ -697,18 +631,36 @@ if settings.startup["sosciencity-modify-environment"].value then
         subgroup = "creatures",
         order = "b",
         collision_box = {{-1, -1}, {1, 1}},
-        selection_box = {{-0.666, -0.4}, {0.666, 0.4}},
+        selection_box = {{-0.666, -0.666}, {0.666, 0.666}},
         pictures = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl.png",
+                filename = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl-1.png",
                 width = 128,
                 height = 128,
-                scale = 1. / 3.
+                scale = 1. / 3.,
+                tint = {r = 1, g = 1, b = 1, a = 0.25}
+            },
+            {
+                filename = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl-2.png",
+                width = 128,
+                height = 128,
+                scale = 1. / 3.,
+                tint = {r = 1, g = 1, b = 1, a = 0.25}
             }
         },
         autoplace = {
             order = "sosciencity-c",
-            influence = 0.007
+            influence = 0.003
+        },
+        created_effect = {
+            type = "direct",
+            action_delivery = {
+                type = "instant",
+                source_effects = {
+                    type = "script",
+                    effect_id = "sosciencity-fishwhirl-creation"
+                }
+            }
         }
     }
 end

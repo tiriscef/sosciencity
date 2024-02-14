@@ -67,6 +67,31 @@ if script.active_mods["sosciencity-debug"] then
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << Events >>
+
+--- Static class for registering event handlers.
+Events = {}
+
+local on_init_handlers = {}
+
+--- Adds a function to be called during the init-Phase.
+--- @param fn function
+function Events.set_on_init_handler(fn)
+    Tirislib.Utils.desync_protection()
+    on_init_handlers[#on_init_handlers+1] = fn
+end
+
+local on_script_trigger_handlers = {}
+
+--- Adds a function to be called when a 
+--- @param id string
+--- @param fn function
+function Events.set_script_trigger_handler(id, fn)
+    Tirislib.Utils.desync_protection()
+    on_script_trigger_handlers[id] = fn
+end
+
+---------------------------------------------------------------------------------------------------
 -- << constants >>
 
 local Types = require("constants.types")
@@ -221,6 +246,10 @@ local function init()
     global.last_update = game.tick
 
     on_load()
+
+    for _, fn in pairs(on_init_handlers) do
+        fn()
+    end
 end
 
 local function on_entity_built(event)
@@ -457,6 +486,14 @@ local function on_cheat_mode_disabled()
     Technologies.on_cheat_mode_disabled()
 end
 
+local function on_script_trigger(event)
+    local fn = on_script_trigger_handlers[event.effect_id]
+
+    if fn then
+        fn(event)
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
 
@@ -527,3 +564,6 @@ script.on_event(defines.events.on_pre_player_crafted_item, on_player_queued_craf
 -- cheat mode
 script.on_event(defines.events.on_player_cheat_mode_enabled, on_cheat_mode_enabled)
 script.on_event(defines.events.on_player_cheat_mode_disabled, on_cheat_mode_disabled)
+
+-- trigger events
+script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
