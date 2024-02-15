@@ -1074,7 +1074,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << empty houses >>
 
-local function add_caste_chooser_tab(tabbed_pane, details)
+local function add_caste_chooser_tab(tabbed_pane, house_details)
     local flow = create_tab(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
 
     flow.style.horizontal_align = "center"
@@ -1091,19 +1091,18 @@ local function add_caste_chooser_tab(tabbed_pane, details)
                 type = "button",
                 name = format(unique_prefix_builder, "assign-caste", caste_name),
                 caption = {"caste-name." .. caste_name},
-                tooltip = {"sosciencity.move-in", caste_name},
                 mouse_button_filter = {"left"}
             }
             button.style.width = 150
 
-            if Housing.allowes_caste(details, caste_id) then
-                button.tooltip = {"sosciencity.move-in", caste_name}
-            elseif castes[caste_id].required_room_count > details.room_count then
+            if Housing.allowes_caste(house_details, caste_id) then
+                button.tooltip = {"sosciencity.move-in", display_integer_summand(Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort)}
+            elseif castes[caste_id].required_room_count > house_details.room_count then
                 button.tooltip = {"sosciencity.not-enough-room"}
             else
                 button.tooltip = {"sosciencity.not-enough-comfort"}
             end
-            button.enabled = Housing.allowes_caste(details, caste_id)
+            button.enabled = Housing.allowes_caste(house_details, caste_id)
             at_least_one = true
         end
     end
