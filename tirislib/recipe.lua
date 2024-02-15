@@ -291,10 +291,10 @@ Tirislib.RecipeArray.__index = Tirislib.PrototypeArray.__index
 -- << getter functions >>
 
 --- Makes sure the recipe's main_product is set explicitly.
-local function explicitify_main_product(recipe)
+local function try_fix_main_product_pains(recipe, product)
     if not recipe.icon and not recipe.icons then
         for _, recipe_data in pairs(Tirislib.Recipe.get_recipe_datas(recipe)) do
-            recipe_data.main_product = recipe_data.main_product or Tirislib.RecipeData.get_first_result(recipe_data)
+            recipe_data.main_product = recipe_data.main_product or product or Tirislib.RecipeData.get_first_result(recipe_data)
         end
     end
 end
@@ -1577,7 +1577,7 @@ function Tirislib.RecipeData.pair_result_with_result(
     amount_fn)
     local result_amount = Tirislib.RecipeData.get_result_amount(recipe_data, result, result_type)
     if result_amount == 0 then
-        return
+        return false
     end
 
     local amount = amount_fn and amount_fn(result_amount) or result_amount
@@ -1589,6 +1589,8 @@ function Tirislib.RecipeData.pair_result_with_result(
             amount = math.ceil(amount)
         }
     )
+
+    return true
 end
 
 --- Adds the given result to the recipe, if it contains the given result.
@@ -1599,7 +1601,7 @@ end
 --- @param amount_fn function
 --- @return RecipePrototype itself
 function Tirislib.Recipe:pair_result_with_result(result, result_type, result_to_add, result_to_add_type, amount_fn)
-    Tirislib.Recipe.call_on_recipe_data(
+    local normal, expensive = Tirislib.Recipe.call_on_recipe_data(
         self,
         Tirislib.RecipeData.pair_result_with_result,
         result,
@@ -1608,6 +1610,10 @@ function Tirislib.Recipe:pair_result_with_result(result, result_type, result_to_
         result_to_add_type,
         amount_fn
     )
+
+    if normal or expensive then
+        try_fix_main_product_pains(self, result)
+    end
 
     return self
 end
@@ -1622,7 +1628,7 @@ function Tirislib.RecipeData.pair_ingredient_with_result(
     probability)
     local ingredient_amount = Tirislib.RecipeData.get_ingredient_amount(recipe_data, result, result_type)
     if ingredient_amount == 0 then
-        return
+        return false
     end
 
     local amount = amount_fn and amount_fn(ingredient_amount) or ingredient_amount
@@ -1635,6 +1641,8 @@ function Tirislib.RecipeData.pair_ingredient_with_result(
             probability = probability
         }
     )
+
+    return true
 end
 
 --- Adds the given result to the recipe, if it contains the given ingredient.
@@ -1652,7 +1660,7 @@ function Tirislib.Recipe:pair_ingredient_with_result(
     result_type,
     amount_fn,
     probability)
-    Tirislib.Recipe.call_on_recipe_data(
+    local normal, expensive = Tirislib.Recipe.call_on_recipe_data(
         self,
         Tirislib.RecipeData.pair_ingredient_with_result,
         ingredient,
@@ -1662,6 +1670,10 @@ function Tirislib.Recipe:pair_ingredient_with_result(
         amount_fn,
         probability
     )
+
+    if normal or expensive then
+        try_fix_main_product_pains(self, result)
+    end
 
     return self
 end
