@@ -60,6 +60,11 @@ EK.active = 151
 EK.workhours = 152
 
 -- type specific stuff
+-- empty housing
+
+--- is this house liveable, meaning does it have food and water?
+EK.is_liveable = 190
+
 -- housing
 
 --- inhabitants this house has during the last update

@@ -7,6 +7,7 @@ local WasteDumpOperationMode = require("enums.waste-dump-operation-mode")
 local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local DrinkingWater = require("constants.drinking-water")
+local Food = require("constants.food")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 local TypeGroup = require("constants.type-groups")
@@ -764,6 +765,14 @@ Register.set_entity_creation_handler(Type.salt_pond, create_salt_pond)
 
 ---------------------------------------------------------------------------------------------------
 -- << market >>
+
+function Entity.market_has_food(entry)
+    for item in pairs(entry[EK.inventory_contents]) do
+        if Food.values[item] then
+            return true
+        end
+    end
+end
 
 Register.set_entity_creation_handler(Type.market, Inventories.cache_contents)
 Register.set_entity_updater(Type.market, Inventories.cache_contents)

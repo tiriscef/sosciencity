@@ -107,6 +107,7 @@ Housing.values = {
     }
 }
 local houses = Housing.values
+local castes = Castes.values
 
 Housing.next = {}
 
@@ -122,7 +123,7 @@ function Housing.get_capacity(entry)
     if housing_details.one_room_per_inhabitant then
         return room_count
     else
-        return math.floor(room_count / Castes.values[entry[EK.type]].required_room_count)
+        return math.floor(room_count / castes[entry[EK.type]].required_room_count)
     end
 end
 local get_capacity = Housing.get_capacity
@@ -131,7 +132,6 @@ function Housing.get_free_capacity(entry)
     return get_capacity(entry) - entry[EK.inhabitants]
 end
 
-local castes = Castes.values
 function Housing.allowes_caste(house, caste_id)
     local caste = castes[caste_id]
     return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)

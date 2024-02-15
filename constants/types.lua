@@ -48,6 +48,7 @@ end
 Types.definitions = {
     [Type.empty_house] = {
         alt_mode_sprite = "empty-caste",
+        subscriptions = inhabitant_subscriptions,
         is_civil = true
     },
     [Type.clockwork] = {

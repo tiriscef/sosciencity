@@ -1128,7 +1128,44 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << homeless inhabitants >>
 
-local ROOMS_PER_HUT = Housing.values["improvised-hut"].room_count
+local function try_house_homeless()
+    for _, group in pairs(homeless) do
+        distribute_inhabitants(group)
+    end
+end
+
+local function try_occupy_empty_housing()
+    for caste_id, group in pairs(homeless) do
+        if group[EK.inhabitants] == 0 then
+            goto continue
+        end
+
+        -- find the empty houses
+        local empty_houses = {}
+
+        for _, empty_house in Register.all_of_type(Type.empty_house) do
+            if empty_house[EK.is_liveable] then
+                empty_houses[#empty_houses + 1] = empty_house
+            end
+        end
+
+        -- try to distribute the inhabitants
+        for _, current_house in pairs(empty_houses) do
+            if Inhabitants.try_allow_for_caste(current_house, caste_id, false) then
+                -- Inhabitants.try_allow_for_caste registeres the house with a new entry
+                -- so we need to try_get the new one
+                try_add_to_house(try_get(current_house[EK.unit_number]), group)
+            end
+
+            if group[EK.inhabitants] == 0 then
+                break
+            end
+        end
+
+        ::continue::
+    end
+end
+
 local HUTS = {}
 for name, house in pairs(Housing.values) do
     if house.is_improvised then
@@ -1139,6 +1176,10 @@ end
 local function create_improvised_huts()
     for caste_id, group in pairs(homeless) do
         for _, market in Register.all_of_type(Type.market) do
+            if not Entity.market_has_food(market) then
+                goto continue
+            end
+
             local entity = market[EK.entity]
             local position = entity.position
             local surface = entity.surface
@@ -1165,16 +1206,11 @@ local function create_improvised_huts()
                 }
                 local entry = Register.add(new_hut, caste_id)
 
-                local count_moving_in = min(group[EK.inhabitants], ROOMS_PER_HUT)
-                InhabitantGroup.merge_partially(entry, group, count_moving_in)
+                try_add_to_house(entry, group)
             end
-        end
-    end
-end
 
-local function try_house_homeless()
-    for _, group in pairs(homeless) do
-        distribute_inhabitants(group)
+            ::continue::
+        end
     end
 end
 
@@ -1188,6 +1224,7 @@ end
 local function update_homelessness()
     -- try to house the homeless people
     try_house_homeless()
+    try_occupy_empty_housing()
     create_improvised_huts()
 
     -- apply effects to the remaining guys
@@ -2038,5 +2075,35 @@ for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
     Register.set_settings_paste_handler(caste, Type.empty_house, on_settings_paste)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << empty housing event handlers >>
+
+local function update_empty_house(entry)
+    local has_water = false
+    for _, water_distributer in Neighborhood.all_of_type(entry, Type.water_distributer) do
+        if water_distributer[EK.water_name] then
+            has_water = true
+            break
+        end
+    end
+
+    if not has_water then
+        entry[EK.is_liveable] = false
+        return
+    end
+
+    local has_food = false
+    for _, market in Neighborhood.all_of_type(entry, Type.market) do
+        if Entity.market_has_food(market) then
+            has_food = true
+            break
+        end
+    end
+
+    entry[EK.is_liveable] = has_food
+end
+
+Register.set_entity_updater(Type.empty_house, update_empty_house)
 
 return Inhabitants

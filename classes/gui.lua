@@ -1423,7 +1423,6 @@ set_click_handler(
     function(entry, button)
         if is_confirmed(button) then
             Register.change_type(entry, Type.empty_house)
-            Gui.rebuild_details_view_for_entry(entry)
             return
         end
     end
