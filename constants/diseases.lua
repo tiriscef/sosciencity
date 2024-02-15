@@ -25,8 +25,9 @@ Diseases.not_curable = 1000000000
 --- **complication:** the disease that this disease can transform to, even if it gets cured\
 --- **complication_probability:** the probability of a complication\
 --- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured\
+--- **work_effectivity:** The percentage of the normal points the inhabitants provide\
 --- \
---- *XXX lazy implementation: not-curable diseases hace a curing_workload of 1 billion.*
+--- *XXX lazy implementation: not-curable diseases have a curing_workload of 1 billion.*
 Diseases.values = {
     -- 1+: primarily accidents
     [1] = {
@@ -38,7 +39,8 @@ Diseases.values = {
         categories = {
             [DiseaseCategory.accident] = 100,
             [DiseaseCategory.birth_defect] = 100
-        }
+        },
+        work_effectivity = 0.5
     },
     [2] = {
         name = "broken-bone",
@@ -48,7 +50,8 @@ Diseases.values = {
         },
         curing_workload = 3,
         natural_recovery = 3 * Time.nauvis_week,
-        categories = {[DiseaseCategory.accident] = 150}
+        categories = {[DiseaseCategory.accident] = 150},
+        work_effectivity = 0
     },
     [3] = {
         name = "burnt-skin",
@@ -57,7 +60,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 1 * Time.nauvis_week,
-        categories = {[DiseaseCategory.accident] = 300}
+        categories = {[DiseaseCategory.accident] = 300},
+        work_effectivity = 0
     },
     [4] = {
         name = "deep-cuts",
@@ -67,7 +71,8 @@ Diseases.values = {
         curing_workload = 1,
         lethality = 0.15,
         natural_recovery = 1 * Time.nauvis_week,
-        categories = {[DiseaseCategory.accident] = 300}
+        categories = {[DiseaseCategory.accident] = 300},
+        work_effectivity = 0
     },
     [5] = {
         name = "biter-bite",
@@ -80,7 +85,8 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.accident] = 50},
         escalation = "necrosis",
-        escalation_probability = 0.25
+        escalation_probability = 0.25,
+        work_effectivity = 0
     },
     [6] = {
         name = "joint-dislocation",
@@ -88,13 +94,15 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_day,
         categories = {[DiseaseCategory.accident] = 400},
         escalation = "limp-loss",
-        escalation_probability = 0.1
+        escalation_probability = 0.1,
+        work_effectivity = 0
     },
     [7] = {
         name = "hematoma",
         curing_workload = Diseases.not_curable,
         natural_recovery = 2 * Time.nauvis_day,
-        categories = {[DiseaseCategory.accident] = 400}
+        categories = {[DiseaseCategory.accident] = 400},
+        work_effectivity = 0.5
     },
     -- 1000+: primarily mental health related
     [1000] = {
@@ -105,7 +113,8 @@ Diseases.values = {
         curing_workload = 15,
         curing_facility = Type.psych_ward,
         lethality = 0.1,
-        categories = {[DiseaseCategory.sanity] = 50}
+        categories = {[DiseaseCategory.sanity] = 50},
+        work_effectivity = 0.5
     },
     [1001] = {
         name = "schizophrenia",
@@ -115,7 +124,8 @@ Diseases.values = {
         curing_workload = 15,
         curing_facility = Type.psych_ward,
         lethality = 0.2,
-        categories = {[DiseaseCategory.sanity] = 50}
+        categories = {[DiseaseCategory.sanity] = 50},
+        work_effectivity = 0.3
     },
     [1002] = {
         name = "reality-loss",
@@ -125,21 +135,24 @@ Diseases.values = {
         curing_workload = 10,
         curing_facility = Type.psych_ward,
         natural_recovery = 1 * Time.nauvis_week,
-        categories = {[DiseaseCategory.sanity] = 100}
+        categories = {[DiseaseCategory.sanity] = 100},
+        work_effectivity = 0.3
     },
     [1003] = {
         name = "factorio-addiction",
         curing_workload = 5,
         curing_facility = Type.psych_ward,
         natural_recovery = 2 * Time.nauvis_week,
-        categories = {[DiseaseCategory.sanity] = 100}
+        categories = {[DiseaseCategory.sanity] = 100},
+        work_effectivity = 0.5
     },
     [1004] = {
         name = "burnout",
         curing_workload = 5,
         curing_facility = Type.psych_ward,
         natural_recovery = 3 * Time.nauvis_week,
-        categories = {[DiseaseCategory.sanity] = 100}
+        categories = {[DiseaseCategory.sanity] = 100},
+        work_effectivity = 0.25
     },
     -- 2000+: primarily health related
     [2000] = {
@@ -149,7 +162,8 @@ Diseases.values = {
         natural_recovery = 2 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",
-        escalation_probability = 0.1
+        escalation_probability = 0.1,
+        work_effectivity = 0.25
     },
     [2001] = {
         name = "yeast-infection",
@@ -160,7 +174,8 @@ Diseases.values = {
         natural_recovery = 3 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",
-        escalation_probability = 0.1
+        escalation_probability = 0.1,
+        work_effectivity = 0.5
     },
     [2002] = {
         name = "riverhorse-like-flu",
@@ -172,7 +187,8 @@ Diseases.values = {
         natural_recovery = 3 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         escalation = "lung-infection",
-        escalation_probability = 0.1
+        escalation_probability = 0.1,
+        work_effectivity = 0.5
     },
     [2003] = {
         name = "headaches",
@@ -181,7 +197,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 1 * Time.nauvis_day,
-        categories = {[DiseaseCategory.health] = 100}
+        categories = {[DiseaseCategory.health] = 100},
+        work_effectivity = 0.5
     },
     [2004] = {
         name = "diarrhea",
@@ -190,7 +207,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 2 * Time.nauvis_day,
-        categories = {[DiseaseCategory.health] = 100}
+        categories = {[DiseaseCategory.health] = 100},
+        work_effectivity = 0
     },
     [2005] = {
         name = "exhaustion",
@@ -200,7 +218,8 @@ Diseases.values = {
             [DiseaseCategory.health] = 500,
             [DiseaseCategory.sanity] = 200,
             [DiseaseCategory.accident] = 200
-        }
+        },
+        work_effectivity = 0
     },
     [2006] = {
         name = "kidney-stone",
@@ -208,7 +227,8 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {
             [DiseaseCategory.health] = 300
-        }
+        },
+        work_effectivity = 0.2
     },
     -- 3000+: primarily escalation diseases
     [3000] = {
@@ -220,7 +240,8 @@ Diseases.values = {
         curing_workload = 5,
         lethality = 0.1,
         natural_recovery = 2 * Time.nauvis_week,
-        categories = {[DiseaseCategory.health] = 10}
+        categories = {[DiseaseCategory.health] = 10},
+        work_effectivity = 0
     },
     [3001] = {
         name = "necrosis",
@@ -232,7 +253,8 @@ Diseases.values = {
         curing_workload = 10,
         lethality = 0.35,
         natural_recovery = 2 * Time.nauvis_week,
-        categories = {[DiseaseCategory.health] = 10}
+        categories = {[DiseaseCategory.health] = 10},
+        work_effectivity = 0
     },
     -- 4000+: primarily birth defects
     [4000] = {
@@ -253,7 +275,8 @@ Diseases.values = {
         categories = {
             [DiseaseCategory.health] = 5,
             [DiseaseCategory.birth_defect] = 100
-        }
+        },
+        work_effectivity = 0.4
     },
     [4001] = {
         name = "gender-dysphoria",
@@ -265,7 +288,8 @@ Diseases.values = {
         },
         curing_workload = 10,
         --curing_facility = Type.gene_clinic,
-        categories = {[DiseaseCategory.birth_defect] = 50}
+        categories = {[DiseaseCategory.birth_defect] = 50},
+        work_effectivity = 0.7
     },
     [4002] = {
         name = "lack-of-purple-blood-cells",
@@ -275,7 +299,8 @@ Diseases.values = {
         curing_workload = 1,
         categories = {
             [DiseaseCategory.birth_defect] = 600
-        }
+        },
+        work_effectivity = 0.3
     },
     [4003] = {
         name = "huntingtons",
@@ -288,13 +313,14 @@ Diseases.values = {
         curing_workload = 4,
         categories = {[DiseaseCategory.birth_defect] = 100},
         natural_recovery = 3 * Time.nauvis_month,
-        lethality = 1
+        lethality = 1,
+        work_effectivity = 0.6
     },
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
         --cure_items = {
-            --["antibiotics"] = 1
+        --["antibiotics"] = 1
         --},
         curing_workload = 2,
         lethality = 0.03,
@@ -302,8 +328,9 @@ Diseases.values = {
         natural_recovery = 6 * Time.nauvis_day,
         categories = {[DiseaseCategory.zoonosis] = 100},
         escalation = "lung-infection",
-        escalation_probability = 0.2
-    },
+        escalation_probability = 0.2,
+        work_effectivity = 0
+    }
 }
 
 --- table with (disease category, table of diseases)-pairs
@@ -409,6 +436,7 @@ do
                 {"sosciencity.bold", disease.localised_name},
                 {"sosciencity.grey", {"disease-description." .. disease.name}},
                 get_localised_properties(disease),
+                {"sosciencity.work-effectivity", disease.work_effectivity * 100},
                 get_localised_cure(disease)
             },
             "\n",

@@ -1783,7 +1783,14 @@ local function update_housing_census(entry, caste_id)
 
     -- caste bonus points
     local efficiency = 1 + 0.1 * global.technologies[castes[caste_id].efficiency_tech]
-    local points = get_employable_count(entry) * get_caste_bonus_multiplier(entry[EK.happiness]) * efficiency
+    local manpower = get_employable_count(entry) -- the number of healthy inhabitants that are not busy working at a manufactory
+    for disease, count in pairs(entry[EK.diseases]) do
+        if disease ~= HEALTHY then
+            manpower = manpower + count * disease_values[disease].work_effectivity
+        end
+    end
+
+    local points = manpower * get_caste_bonus_multiplier(entry[EK.happiness]) * efficiency
     caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points] + points
     entry[EK.caste_points] = points
 end
