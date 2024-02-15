@@ -1140,14 +1140,29 @@ local function try_occupy_empty_housing()
             goto continue
         end
 
-        -- find the empty houses
+        -- find and sort the empty houses
         local empty_houses = {}
 
         for _, empty_house in Register.all_of_type(Type.empty_house) do
-            if empty_house[EK.is_liveable] then
+            if empty_house[EK.is_liveable] and Housing.allowes_caste(get_housing_details(empty_house), caste_id) then
                 empty_houses[#empty_houses + 1] = empty_house
             end
         end
+
+        if #empty_houses == 0 then
+            goto continue
+        end
+
+        table.sort(
+            empty_houses,
+            function(house1, house2)
+                local housing_details1 = get_housing_details(house1)
+                local housing_details2 = get_housing_details(house2)
+
+                return Inhabitants.evaluate_housing_qualities(housing_details1, castes[caste_id]) + housing_details1.comfort >
+                    Inhabitants.evaluate_housing_qualities(housing_details2, castes[caste_id]) + housing_details2.comfort
+            end
+        )
 
         -- try to distribute the inhabitants
         for _, current_house in pairs(empty_houses) do
