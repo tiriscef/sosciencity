@@ -1,4 +1,25 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2024.02.15
+  Gist:
+    - Some small bug fixes and the first changes to the mechanics, but nothing that should break your save files.
+
+  Features:
+    - Homeless inhabitants will now try to claim unassigned houses for their caste before building improvised huts. They only choose houses which have access to food and water, beginning with the ones that provide the best happiness bonus for their caste.
+
+  Bugfixes:
+    - Fixed some possible crashes related to missing checks for entity validity in their destruction handler: https://github.com/tiriscef/sosciencity/issues/3
+    - Fixed compatibility with pyanodons mods. (I'm surprised people actually try this): https://github.com/tiriscef/sosciencity/issues/4
+    - True Riverhorse Flu had the wrong name localisation for some copy-paste-and-forget reason.
+
+  Changes:
+    - The Orchid Caste and the Ember Caste unlock with the Clockwork Caste technology now.
+    - The Nan-Swans and Quackers swimming in the water bodies were removed because they were ugly... Sorry.
+    - Fishwhirls got new graphics, don't move around anymore (thanks to _codegreen) and are generated less often.
+    - Sick inhabitants now provide reduced caste points (depending on the disease) instead of being completely useless.
+    - Empty Houses: The tooltip of the Caste-Buttons now display the happiness influence which the house would have.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 2024.02.11
   Gist:
