@@ -1,9 +1,7 @@
--- TODO: actual graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "phyto-gene-lab",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/phyto-gene-lab.png",
     icon_size = 64,
     subgroup = "sosciencity-production-buildings",
     order = "daa",
@@ -33,25 +31,13 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 5/7,
-                frame_count = 1
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/icon/chloroplasts.png",
-                priority = "high",
-                width = 64,
-                height = 64,
-                scale = 1,
-                frame_count = 1
-            }
-        }
+    animation = Tirislib.Entity.create_standard_picture {
+        path = "__sosciencity-graphics__/graphics/entity/phyto-gene-lab/phyto-gene-lab",
+        center = {3.5, 4.5},
+        width = 10,
+        height = 8,
+        shadowmap = true,
+        glow = true
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-phyto-gene-lab"},
@@ -62,4 +48,4 @@ Tirislib.Entity.create {
         emissions_per_minute = 0.25,
         drain = "10kW"
     }
-}:set_size(5, 5):copy_localisation_from_item()
+}:set_size(7, 7):copy_localisation_from_item()
