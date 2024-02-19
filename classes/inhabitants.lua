@@ -756,12 +756,12 @@ local function get_clockwork_bonus()
         points = points - max(0, machine_count - global.starting_clockwork_points)
     end
 
-    return floor(5 * (points / max(1, machine_count)) ^ 0.8)
+    return floor(5 * (max(0, points) / max(1, machine_count)) ^ 0.8)
 end
 
 --- Gets the current Orchid caste bonus.
 local function get_orchid_bonus()
-    return floor((caste_points[Type.orchid]) ^ 0.5)
+    return floor(max(0, caste_points[Type.orchid]) ^ 0.5)
 end
 
 --- Gets the current Gunfire caste bonus.
@@ -792,13 +792,13 @@ end
 
 --- Gets the current Aurora caste bonus.
 local function get_aurora_bonus()
-    return floor((caste_points[Type.aurora]) ^ 0.5)
+    return floor(max(0, caste_points[Type.aurora]) ^ 0.5)
 end
 
 local function get_plasma_bonus()
     local non_plasma_population = array_sum(population) - population[Type.plasma]
     if non_plasma_population > 0 then
-        return floor_to_step((caste_points[Type.plasma] / non_plasma_population) ^ 0.5, 0.1)
+        return floor_to_step((max(0, caste_points[Type.plasma]) / non_plasma_population) ^ 0.5, 0.1)
     else
         return 0
     end
