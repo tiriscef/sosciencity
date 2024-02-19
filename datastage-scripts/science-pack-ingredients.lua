@@ -21,7 +21,7 @@ local sp_ingredients = {
     },
     [Sosciencity_Config.orchid_pack] = {
         result_type = "item",
-        ingredient = "essay",
+        ingredient = "botanical-study",
         ingredient_type = "item",
         amount_fn = identity
     },
