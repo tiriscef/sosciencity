@@ -2,7 +2,10 @@
 -- << items >>
 local idea_items = {
     {name = "note"},
-    {name = "essay"},
+    {
+        name = "botanical-study",
+        sprite_variations = {name = "botanical-study", count = 4}
+    },
     {name = "strategic-considerations"},
     {name = "sketchbook"},
     {name = "complex-scientific-data"},
@@ -34,15 +37,15 @@ Tirislib.Recipe.create {
 
 Tirislib.Recipe.create {
     type = "recipe",
-    name = "write-essay",
+    name = "botanical-study-handcraft",
     category = "sosciencity-handcrafting",
     enabled = false,
     energy_required = 10,
     ingredients = {},
     results = {
-        {type = "item", name = "essay", amount = 1}
+        {type = "item", name = "botanical-study", amount = 1}
     },
-    icon = "__sosciencity-graphics__/graphics/icon/essay.png",
+    icon = "__sosciencity-graphics__/graphics/icon/botanical-study.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas-per-hand",
     order = "00001",
@@ -59,7 +62,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "essay",
+    product = "botanical-study",
     product_amount = 4,
     category = "sosciencity-caste-orchid",
     energy_required = 2,
@@ -71,7 +74,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "essay",
+    product = "botanical-study",
     product_amount = 4,
     category = "sosciencity-caste-orchid",
     energy_required = 2,
