@@ -327,7 +327,7 @@ local function remove_composter(entry, cause)
 
     local humus = floor(entry[EK.humus])
 
-    if cause ~= DeconstructionCause.type_change and humus > 0 then
+    if cause ~= DeconstructionCause.mod_update and humus > 0 then
         Inventories.spill_items(entry, "humus", humus)
     end
 end
@@ -562,7 +562,7 @@ local function destroy_plant_care_station(entry, cause)
 
     local humus = floor(entry[EK.humus_stored])
 
-    if cause ~= DeconstructionCause.type_change and humus > 0 then
+    if cause ~= DeconstructionCause.mod_update and humus > 0 then
         Inventories.spill_items(entry, "humus", humus, true)
     end
 end
@@ -1173,7 +1173,7 @@ local function remove_waste_dump(entry, cause)
         return
     end
 
-    if cause ~= DeconstructionCause.type_change then
+    if cause ~= DeconstructionCause.mod_update then
         Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
     end
 end
