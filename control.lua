@@ -401,7 +401,7 @@ local function on_configuration_change()
         local old_register = Tirislib.Tables.copy(global.register)
 
         for _, entry in pairs(old_register) do
-            Register.remove_entry(entry)
+            Register.remove_entry(entry, DeconstructionCause.mod_update)
             Register.clone(entry, entry[EK.entity])
         end
     end
