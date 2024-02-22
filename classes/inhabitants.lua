@@ -813,6 +813,9 @@ local function update_caste_bonuses()
     if old_clockwork_bonus >= 0 and new_clockwork_bonus < 0 then
         Communication.warning(WarningType.insufficient_maintenance)
     end
+    if new_clockwork_bonus <= -40 then
+        Communication.warning(WarningType.badly_insufficient_maintenance)
+    end
 
     caste_bonuses[Type.orchid] = get_orchid_bonus()
     caste_bonuses[Type.ember] = get_ember_bonus()

@@ -559,7 +559,8 @@ end
 
 local speaker_warnings = {
     [WarningType.insufficient_maintenance] = true,
-    [WarningType.homelessness] = true
+    [WarningType.homelessness] = true,
+    [WarningType.badly_insufficient_maintenance] = true
 }
 
 local function alert(entry, signal, message)
@@ -594,6 +595,9 @@ local warn_fns = {
     [WarningType.homelessness] = function(caste_id)
         local caste = castes[caste_id]
         say_random_variant("warning-homelessness", nil, caste.localised_name_short, caste.localised_name)
+    end,
+    [WarningType.badly_insufficient_maintenance] = function()
+        say_random_variant("warning-badly-insufficient-maintenance")
     end
 }
 
