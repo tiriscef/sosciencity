@@ -15,7 +15,7 @@ end
 local sp_ingredients = {
     [Sosciencity_Config.clockwork_pack] = {
         result_type = "item",
-        ingredient = "note",
+        ingredient = "invention",
         ingredient_type = "item",
         amount_fn = identity
     },

@@ -1,7 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local idea_items = {
-    {name = "note"},
+    {
+        name = "invention",
+        sprite_variations = {name = "invention", count = 4}
+    },
     {
         name = "botanical-study",
         sprite_variations = {name = "botanical-study", count = 4}
@@ -26,9 +29,9 @@ Tirislib.Recipe.create {
     energy_required = 5,
     ingredients = {},
     results = {
-        {type = "item", name = "note", amount_min = 2, amount_max = 4}
+        {type = "item", name = "invention", amount_min = 2, amount_max = 4}
     },
-    icon = "__sosciencity-graphics__/graphics/icon/note.png",
+    icon = "__sosciencity-graphics__/graphics/icon/invention.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas-per-hand",
     order = "00000",
@@ -53,7 +56,7 @@ Tirislib.Recipe.create {
 }:add_unlock("orchid-caste")
 
 Tirislib.RecipeGenerator.create {
-    product = "note",
+    product = "invention",
     product_amount = 4,
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
