@@ -1,8 +1,10 @@
 {
     "item": [
+        ["note", "invention"],
         ["essay", "botanical-study"]
     ],
     "recipe": [
+        ["note", "invention"],
         ["essay", "botanical-study"],
         ["essay1", "botanical-study1"]
     ]
