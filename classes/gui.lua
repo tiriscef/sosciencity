@@ -1096,7 +1096,12 @@ local function add_caste_chooser_tab(tabbed_pane, house_details)
             button.style.width = 150
 
             if Housing.allowes_caste(house_details, caste_id) then
-                button.tooltip = {"sosciencity.move-in", display_integer_summand(Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort)}
+                button.tooltip = {
+                    "sosciencity.move-in",
+                    display_integer_summand(
+                        Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort
+                    )
+                }
             elseif castes[caste_id].required_room_count > house_details.room_count then
                 button.tooltip = {"sosciencity.not-enough-room"}
             else
@@ -1360,6 +1365,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
     add_kv_pair(general_list, "garbage", {"sosciencity.garbage"})
     add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
+    set_datalist_value_tooltip(general_list, "bonus", {"sosciencity.tooltip-bonus"})
     add_kv_pair(general_list, "employed-count", {"sosciencity.employed-count"})
     add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
 
@@ -1591,19 +1597,39 @@ local function add_caste_infos(container, caste_id)
     )
     add_kv_pair(
         caste_data,
-        "comfort",
-        {"sosciencity.comfort"},
-        {"sosciencity.show-comfort-needs", caste.minimum_comfort}
-    )
-    add_kv_pair(
-        caste_data,
         "power-demand",
         {"sosciencity.power-demand"},
         {"sosciencity.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
     )
+    add_kv_pair(
+        caste_data,
+        "water-demand",
+        {"sosciencity.water"},
+        {"sosciencity.show-water-demand", caste.water_demand * Time.minute}
+    )
 
-    local prefered_flow = add_kv_flow(caste_data, "prefered-qualities", {"sosciencity.prefered-qualities"})
-    local disliked_flow = add_kv_flow(caste_data, "disliked-qualities", {"sosciencity.disliked-qualities"})
+    local housing_flow = add_kv_flow(caste_data, "housing-qualities", {"sosciencity.housing"})
+    housing_flow.add {
+            type = "label",
+            name = "comfort",
+            caption = {"sosciencity.show-comfort-needs", caste.minimum_comfort}
+        }.style.single_line = false
+
+    local prefered_flow =
+        housing_flow.add {
+        type = "flow",
+        name = "prefered-qualities",
+        direction = "vertical"
+    }
+    add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-qualities"})
+    local disliked_flow =
+        housing_flow.add {
+        type = "flow",
+        name = "disliked-qualities",
+        direction = "vertical"
+    }
+    add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-qualities"})
+
     for quality, assessment in pairs(caste.housing_preferences) do
         local quality_flow
         if assessment > 0 then
