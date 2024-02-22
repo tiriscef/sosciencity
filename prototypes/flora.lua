@@ -883,6 +883,7 @@ Tirislib.Entity.create {
     name = "necrofall-circle",
     type = "simple-entity",
     flags = {"placeable-neutral", "placeable-off-grid"},
+    collision_mask = {"item-layer", "object-layer", "water-tile"},
     count_as_rock_for_filtered_deconstruction = true,
     subgroup = "grass",
     minable = {
