@@ -301,6 +301,7 @@ local function say(speaker, line, ...)
     end
 end
 Scheduler.set_event("say", say)
+Communication.say = say
 
 --- Says a random variant of the given line by the given speaker. If no speaker is given, a random one will be picked.
 --- @param line string Name of the line to say

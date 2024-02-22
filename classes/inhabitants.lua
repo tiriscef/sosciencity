@@ -1088,7 +1088,8 @@ end
 --- Returns the number of inhabitants that were added.
 --- @param entry Entry
 --- @param group InhabitantGroup
-local function try_add_to_house(entry, group)
+--- @param silent boolean|nil
+local function try_add_to_house(entry, group, silent)
     local count_moving_in = min(group[EK.inhabitants], get_free_capacity(entry))
 
     if count_moving_in == 0 then
@@ -1098,7 +1099,9 @@ local function try_add_to_house(entry, group)
     InhabitantGroup.merge_partially(entry, group, count_moving_in)
     update_free_space_status(entry)
 
-    Communication.create_flying_text(entry, {"sosciencity.inhabitants-moved-in", count_moving_in})
+    if not silent then
+        Communication.create_flying_text(entry, {"sosciencity.inhabitants-moved-in", count_moving_in})
+    end
 
     return count_moving_in
 end
@@ -2052,7 +2055,7 @@ function Inhabitants.create_house(entry)
 end
 
 function Inhabitants.copy_house(source, destination)
-    try_add_to_house(destination, source)
+    try_add_to_house(destination, source, true)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Table.copy(source[EK.disease_progress])
 end
@@ -2071,7 +2074,7 @@ function Inhabitants.remove_house(entry, cause)
 
     if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
-    else
+    elseif cause == DeconstructionCause.mined then
         add_to_homeless_pool(entry)
     end
 

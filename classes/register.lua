@@ -337,7 +337,7 @@ function Register.clone(source, destination)
     local destination_entry = add_entity(destination, _type)
     destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
 
-    on_copy(_type, source, destination)
+    on_copy(_type, source, destination_entry)
 end
 
 --- Removes the given entry from the register.
