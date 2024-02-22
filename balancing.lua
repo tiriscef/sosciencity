@@ -4,6 +4,7 @@ local Housing = require("constants.housing")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local DiseaseCategory = require("enums.disease-category")
+local DrinkingWater = require("constants.drinking-water")
 
 local animal_calorie_values = {}
 
@@ -213,6 +214,40 @@ local function write_files()
     end
 
     game.write_file("diseases.csv", Tirislib.String.join("\n", header, disease_data))
+
+    -- drinking water
+    header = "recipe;units/s;units/min;"
+    for _, caste in pairs(Castes.values) do
+        header = header .. caste.name .. "s/crafting machine;"
+    end
+
+    local water_values = Tirislib.Luaq.from(game.recipe_prototypes):where(
+        function(_, recipe)
+            for _, product in pairs(recipe.products) do
+                if DrinkingWater.values[product.name] then
+                    return true
+                end
+            end
+            return false
+        end
+    ):select(
+        function(_, recipe)
+            for _, product in pairs(recipe.products) do
+                if DrinkingWater.values[product.name] then
+                    local amount = get_amount(product) / recipe.energy
+                    local ret = recipe.name .. ";" .. amount .. ";" .. (amount * 60) .. ";"
+
+                    for _, caste in pairs(Castes.values) do
+                        ret = ret .. math.floor(amount / (caste.water_demand * 60)) .. ";"
+                    end
+
+                    return ret
+                end
+            end
+        end
+    ):to_array()
+
+    game.write_file("drinking_water.csv", Tirislib.String.join("\n", header, water_values))
 
     game.print("Wrote balancing data")
 end

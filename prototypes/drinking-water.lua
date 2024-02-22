@@ -1,4 +1,5 @@
 local fluids = {
+    {name = "drinkable-water"},
     {name = "clean-water"},
     {name = "mechanically-cleaned-water"},
     {name = "biologically-cleaned-water"},
@@ -17,13 +18,22 @@ Tirislib.Fluid.batch_create(
 )
 
 Tirislib.RecipeGenerator.create {
+    name = "drinkable-water-from-ground",
+    product = "drinkable-water",
+    product_type = "fluid",
+    product_amount = 100,
+    category = "sosciencity-groundwater-pump",
+    energy_required = 8,
+    unlock = "infrastructure-1"
+}
+
+Tirislib.RecipeGenerator.create {
     name = "clean-water-from-ground",
     product = "clean-water",
     product_type = "fluid",
-    product_min = 80,
-    product_max = 160,
+    product_amount = 80,
     category = "sosciencity-groundwater-pump",
-    energy_required = 1,
+    energy_required = 8,
     unlock = "infrastructure-1"
 }
 
@@ -48,7 +58,7 @@ Tirislib.RecipeGenerator.create {
     },
     result_themes = {{"sediment", 1, 1, 0}},
     category = "sosciencity-sedimentation-clarifier",
-    energy_required = 1,
+    energy_required = 10,
     unlock = "drinking-water-treatment"
 }
 
@@ -63,7 +73,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sewage-sludge", amount = 1}
     },
     category = "sosciencity-biological-clarifier",
-    energy_required = 1,
+    energy_required = 10,
     unlock = "drinking-water-treatment"
 }
 
@@ -76,7 +86,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "ferrous-sulfate", amount = 1}
     },
     category = "sosciencity-chemical-clarifier",
-    energy_required = 4,
+    energy_required = 20,
     unlock = "drinking-water-treatment"
 }
 
