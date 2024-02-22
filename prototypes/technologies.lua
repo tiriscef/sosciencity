@@ -125,7 +125,7 @@ Tirislib.Technology.create {
     name = "gunfire-caste",
     icon = "__sosciencity-graphics__/graphics/gunfire-caste.png",
     icon_size = 256,
-    prerequisites = {"open-environment-farming", "logistic-science-pack"},
+    prerequisites = {"logistic-science-pack"},
     effects = {
         {
             type = "nothing",
@@ -788,7 +788,7 @@ Tirislib.Technology.create {
     name = "fermentation",
     icon = "__sosciencity-graphics__/graphics/technology/fermentation.png",
     icon_size = 256,
-    prerequisite = {"open-environment-farming"},
+    prerequisites = {"open-environment-farming"},
     unit = {
         count = 32,
         ingredients = {
