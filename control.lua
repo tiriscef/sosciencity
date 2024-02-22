@@ -380,6 +380,9 @@ local function on_configuration_change()
     if game.active_mods["sosciencity"] ~= global.version then
         global.version = game.active_mods["sosciencity"]
 
+        Communication.say("tiriscef.", "migration1")
+        Communication.say("tiriscef.", "migration2")
+
         -- Reset recipes and techs in case I changed something.
         -- I do that a lot and don't want to forget a migration file.
         for _, force in pairs(game.forces) do
@@ -392,6 +395,14 @@ local function on_configuration_change()
         -- This avoids the unnecessary migration of those guis.
         for _, player in pairs(game.players) do
             Gui.close_details_view_for_player(player)
+        end
+
+        -- Rebuild entries
+        local old_register = Tirislib.Tables.copy(global.register)
+
+        for _, entry in pairs(old_register) do
+            Register.remove_entry(entry)
+            Register.clone(entry, entry[EK.entity])
         end
     end
 end
