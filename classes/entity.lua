@@ -1,3 +1,4 @@
+local DeconstructionCause = require("enums.deconstruction-cause")
 local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local ImmigrationCause = require("enums.immigration-cause")
@@ -319,14 +320,14 @@ local function update_composter(entry, delta_ticks)
 end
 Register.set_entity_updater(Type.composter, update_composter)
 
-local function remove_composter(entry)
+local function remove_composter(entry, cause)
     if not entry[EK.entity].valid then
         return
     end
 
     local humus = floor(entry[EK.humus])
 
-    if humus > 0 then
+    if cause ~= DeconstructionCause.type_change and humus > 0 then
         Inventories.spill_items(entry, "humus", humus)
     end
 end
@@ -554,14 +555,14 @@ local function create_plant_care_station(entry)
 end
 Register.set_entity_creation_handler(Type.plant_care_station, create_plant_care_station)
 
-local function destroy_plant_care_station(entry)
+local function destroy_plant_care_station(entry, cause)
     if not entry[EK.entity].valid then
         return
     end
 
     local humus = floor(entry[EK.humus_stored])
 
-    if humus > 0 then
+    if cause ~= DeconstructionCause.type_change and humus > 0 then
         Inventories.spill_items(entry, "humus", humus, true)
     end
 end
@@ -1167,12 +1168,14 @@ local function paste_waste_dump_settings(source, destination)
 end
 Register.set_settings_paste_handler(Type.waste_dump, Type.waste_dump, paste_waste_dump_settings)
 
-local function remove_waste_dump(entry)
+local function remove_waste_dump(entry, cause)
     if not entry[EK.entity].valid then
         return
     end
 
-    Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
+    if cause ~= DeconstructionCause.type_change then
+        Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
+    end
 end
 Register.set_entity_destruction_handler(Type.waste_dump, remove_waste_dump)
 
