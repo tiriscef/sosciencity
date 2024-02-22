@@ -929,21 +929,21 @@ Tirislib.Entity.create {
             width = 256,
             height = 256,
             shift = {0.0, 0.0},
-            scale = 0.25 / 1.8 * 1.4
+            scale = 0.25
         },
         {
             filename = "__sosciencity-graphics__/graphics/entity/necrofall-circle/necrofall-circle-2.png",
             width = 256,
             height = 256,
             shift = {0.0, 0.0},
-            scale = 0.25 / 1.8 * 1.4
+            scale = 0.25
         },
         {
             filename = "__sosciencity-graphics__/graphics/entity/necrofall-circle/necrofall-circle-3.png",
             width = 256,
             height = 256,
             shift = {0.0, 0.0},
-            scale = 0.25 / 1.8 * 1.4
+            scale = 0.25
         }
     }
-}:set_size(1.4, 1.4):copy_icon_from_item("necrofall")
+}:set_size(1.8, 1.8):copy_icon_from_item("necrofall")

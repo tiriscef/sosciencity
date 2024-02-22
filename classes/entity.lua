@@ -269,7 +269,7 @@ local function spawn_necrofall(entry, count)
     local surface = entity.surface
 
     while count > 0 do
-        local pos = surface.find_non_colliding_position("water-tower", position, necrofall_radius, 1.5, false)
+        local pos = surface.find_non_colliding_position("trash-site", position, necrofall_radius, 1, false)
         if not pos then
             break
         end
