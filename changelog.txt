@@ -1,4 +1,42 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.5
+Date: 2024.02.15
+  Gist:
+    - This is a first attempt at improving the balance of the water-needs of your inhabitants. Be prepared that drinking water production will now be much much slower, because it was ridiculously overpowered before.
+    - Before this update one Groundwater Pump could provide water for more than 6000 Clockworkers, now for 150.
+
+  Features:
+    - New Items: Activated Carbon, Filter, Water Filter
+    - New Drinking Water: Drinkable Water (gosh that reads weird)
+    - New Technology: Active Carbon Filtering
+    - Added a warning for very bad maintenance when it hits less than -40%. This will trigger every 2 minutes and not just once like the existing one.
+
+  Bugfixes:
+    - Fixed that having 0 caste points sometimes caused the caste bonuses to become NaN because of floating point precision.
+    - Fixed a typo that made the Fermentation tech not have a prerequisite.
+
+  Changes:
+    - Added graphics for Phyto Gene Lab.
+    - Essays were renamed to Botanical Study and Notes were renamed to Inventions, along with new graphics.
+    - Hunting Hut, Fishing Hut and Medbay need Orchids instead of Clockworks.
+    - Renamed Hunting Hut to Gathering Hut because let's be honest that's what it's mainly used for.
+    - Players can walk over Phytofalls (aka "tiriscef found out you can define collision masks").
+    - Phytofalls are a tad bigger, to make them look nicer.
+    - Air Conditioner need Filters.
+    - Some small improvements on the Housing GUIs.
+    - Changed the default value of the 'Startup Clockwork Points' setting to 50.
+    - Hopefully you won't ever notice this: entities are rebuild when Sosciencity updates to make migrating existing safes easier. This might result in some unexpected bugs.
+
+  Balancing:
+    - The maximum Maintenance malus is now -60% instead of -80%.
+    - Clarifier recipes are 10 times slower, Groundwater Pump recipes are 8 times slower.
+    - Increased the water demand of all castes. (Also they are defined per minute now instead of per ingame day. So that should result in overall nicer numbers.)
+
+  Factory-Breaking Changes:
+    - The size of Phyto Gene Lab changed to accomodate the new graphics.
+    - The Groundwater Pump and Clarifiers generate drinking water much slower. The clean-water-from-ground recipe now needs Water Filters. Instead you can pump Drinkable Water without ingredients.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2024.02.15
   Gist:
