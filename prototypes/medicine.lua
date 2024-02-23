@@ -5,6 +5,7 @@ local Food = require("constants.food")
 -- << items >>
 
 local medicine_items = {
+    {name = "activated-carbon", sprite_variations = {name = "activated-carbon", count = 3, include_icon = true}},
     {name = "artificial-limp"},
     {name = "artificial-heart"},
     {name = "bandage", sprite_variations = {name = "bandage-pile", count = 3}},
@@ -45,6 +46,37 @@ Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", s
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+
+Tirislib.RecipeGenerator.create {
+    name = "activated-carbon-from-sawdust",
+    product = "activated-carbon",
+    ingredients = {
+        {type = "item", name = "sawdust", amount = 10},
+        {type = "item", name = "salt", amount = 10},
+        {type = "fluid", name = "steam", amount = 300}
+    },
+    index_fluid_ingredients = true,
+    category = "sosciencity-pharma",
+    energy_required = 5,
+    allow_productivity = true,
+    unlock = "activated-carbon-filtering"
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "activated-carbon-from-sugar",
+    product = "activated-carbon",
+    product_amount = 2,
+    ingredients = {
+        {type = "item", name = "sugar", amount = 10},
+        {type = "item", name = "salt", amount = 10},
+        {type = "fluid", name = "steam", amount = 300}
+    },
+    index_fluid_ingredients = true,
+    category = "sosciencity-pharma",
+    energy_required = 5,
+    allow_productivity = true,
+    unlock = "food-processing"
+}
 
 Tirislib.RecipeGenerator.create {
     product = "artificial-limp",

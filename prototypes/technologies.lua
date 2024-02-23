@@ -698,6 +698,20 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "activated-carbon-filtering",
+    icon = "__sosciencity-graphics__/graphics/technology/activated-carbon-filtering.png",
+    icon_size = 256,
+    prerequisites = {"medbay"},
+    unit = {
+        count = 41,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 20
+    }
+}
+
+Tirislib.Technology.create {
     name = "hospital",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,

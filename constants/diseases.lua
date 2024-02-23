@@ -203,7 +203,8 @@ Diseases.values = {
     [2004] = {
         name = "diarrhea",
         cure_items = {
-            ["isotonic-saline-solution"] = 1
+            ["isotonic-saline-solution"] = 1,
+            ["activated-carbon"] = 1
         },
         curing_workload = 1,
         natural_recovery = 2 * Time.nauvis_day,

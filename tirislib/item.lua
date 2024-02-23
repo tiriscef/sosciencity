@@ -126,8 +126,7 @@ function Tirislib.Item.batch_create(item_detail_array, batch_details)
 
     local created_items = {}
     for index, details in pairs(item_detail_array) do
-        local item =
-            Tirislib.Item.create {
+        local prototype = {
             type = prototype_type,
             name = details.name,
             icon = path .. details.name .. ".png",
@@ -136,6 +135,10 @@ function Tirislib.Item.batch_create(item_detail_array, batch_details)
             order = string.format("%03d", index),
             stack_size = stack_size
         }
+        Tirislib.Tables.set_fields_passively(prototype, batch_details)
+        Tirislib.Tables.set_fields(prototype, details.distinctions)
+
+        local item = Tirislib.Item.create(prototype)
 
         local variations = details.sprite_variations
         if variations then
@@ -145,9 +148,6 @@ function Tirislib.Item.batch_create(item_detail_array, batch_details)
                 item:add_icon_to_sprite_variations()
             end
         end
-
-        Tirislib.Tables.set_fields_passively(item, batch_details)
-        Tirislib.Tables.set_fields(item, details.distinctions)
 
         created_items[#created_items + 1] = item
     end

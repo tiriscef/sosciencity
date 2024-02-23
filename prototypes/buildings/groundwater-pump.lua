@@ -32,6 +32,9 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
+    module_specification = {
+        module_slots = 1
+    },
     allowed_effects = {"productivity", "speed"}, -- try to disallow player craftable modules
     animation = {
         north = {

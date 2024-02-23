@@ -35,6 +35,18 @@ local material_items = {
             pictures = Sosciencity_Config.blueprint_on_belt
         }
     },
+    {name = "filter"},
+    {
+        name = "water-filter",
+        distinctions = {
+            type = "module",
+            effect = {},
+            category = "sosciencity-water-filter",
+            tier = 1,
+            subgroup = "sosciencity-drinking-water",
+            order = "z"
+        }
+    },
     {
         name = "window",
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100}
@@ -291,6 +303,14 @@ Tirislib.Fluid.batch_create(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << module categories >>
+
+Tirislib.Prototype.create {
+    name = "sosciencity-water-filter",
+    type = "module-category"
+}
+
+---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
 Tirislib.RecipeGenerator.create {
@@ -338,7 +358,6 @@ Tirislib.RecipeGenerator.create_per_theme_level {
     },
     unlock = "fermentation"
 }]]
-
 Tirislib.RecipeGenerator.create {
     product = "yarn",
     product_amount = 10,
@@ -447,7 +466,8 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "air-conditioner",
     ingredients = {
-        {type = "item", name = "screw-set", amount = 1}
+        {type = "item", name = "screw-set", amount = 1},
+        {type = "item", name = "filter", amount = 2}
     },
     themes = {
         {"electronics", 1},
@@ -654,7 +674,6 @@ Tirislib.RecipeGenerator.create {
     energy_required = 0.8,
     unlock = "clockwork-caste"
 }]]
-
 Tirislib.RecipeGenerator.create {
     product = "simple-fishtrap",
     ingredients = {
@@ -985,7 +1004,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "phospholipids",
     energy_required = 3.2,
-    theme = {{"phosphorous_source", 1, 2}},
+    themes = {{"phosphorous_source", 1, 2}},
     ingredients = {
         {type = "item", name = "solid-fat", amount = 1},
         {type = "item", name = "glass-instruments", amount = 1},
@@ -1075,4 +1094,23 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-fermentation-tank",
     unlock = "fermentation"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "filter",
+    ingredients = {
+        {type = "item", name = "cloth", amount = 10},
+        {type = "item", name = "glass", amount = 5}
+    },
+    themes = {{"plating", 5}},
+    unlock = "activated-carbon-filtering"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "water-filter",
+    ingredients = {
+        {type = "item", name = "activated-carbon", amount = 15},
+        {type = "item", name = "filter", amount = 1}
+    },
+    unlock = "activated-carbon-filtering"
 }
