@@ -1830,7 +1830,8 @@ local function update_garbage_output(entry, delta_ticks)
     end
 end
 
-local function update_housing_census(entry, caste_id)
+local function update_housing_census(entry)
+    local caste_id = entry[EK.type]
     local inhabitants = entry[EK.inhabitants]
     local official_inhabitants = entry[EK.official_inhabitants]
 
@@ -1913,7 +1914,7 @@ local function update_house(entry, delta_ticks)
 
     update_ages(entry)
     update_emigration(entry, entry[EK.happiness], caste_id, delta_ticks)
-    update_housing_census(entry, caste_id)
+    update_housing_census(entry)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)
     update_blood_donations(entry, delta_ticks)
@@ -2061,6 +2062,7 @@ function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source, true)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Table.copy(source[EK.disease_progress])
+    update_housing_census(destination)
 end
 
 --- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
