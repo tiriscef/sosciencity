@@ -383,6 +383,10 @@ local function on_configuration_change()
         Communication.say("tiriscef.", "migration1")
         Communication.say("tiriscef.", "migration2")
 
+        if game.active_mods["sosciencity"] == "0.1.5" then
+            game.print("Version 0.1.5 Info: This update nerved drinking water generation very drasticly.")
+        end
+
         -- Reset recipes and techs in case I changed something.
         -- I do that a lot and don't want to forget a migration file.
         for _, force in pairs(game.forces) do

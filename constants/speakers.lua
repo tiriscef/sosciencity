@@ -20,6 +20,7 @@ Speakers["tiriscef."] = {
     ["warning-badly-insufficient-maintenance"] = 3,
     ["warning-homelessness"] = 3,
     lines_with_followup = {
+        ["welcome"] = 15 * Time.second,
         ["b2"] = 10 * Time.second,
         ["b3"] = 14 * Time.second,
         ["b4"] = Time.second,
