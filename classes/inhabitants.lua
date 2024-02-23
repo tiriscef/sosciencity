@@ -750,7 +750,7 @@ local function get_clockwork_bonus()
         local maintenance_points = points + global.starting_clockwork_points
 
         if machine_count > maintenance_points then
-            return floor(map_range(machine_count, maintenance_points, max(1, 2 * maintenance_points), 0, -80))
+            return floor(map_range(machine_count, maintenance_points, max(1, 2 * maintenance_points), 0, -60))
         end
 
         points = points - max(0, machine_count - global.starting_clockwork_points)
