@@ -1222,6 +1222,13 @@ end
 Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
 
 local function update_waterwell(entry)
+    local entity = entry[EK.entity]
+    local recipe = entity.get_recipe()
+    if recipe and recipe.name == "clean-water-from-ground" and not Inventories.assembler_has_module(entity, "water-filter") then
+        set_crafting_machine_performance(entry, 0)
+        return
+    end
+
     local performance = min(get_waterwell_competition_performance(entry), get_maintenance_performance())
     set_crafting_machine_performance(entry, performance)
 end

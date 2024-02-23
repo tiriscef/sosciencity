@@ -1960,6 +1960,8 @@ local function update_waterwell_details(container, entry, player_id)
         "competition",
         {"sosciencity.show-waterwell-competition", near_count, display_percentage(competition_performance)}
     )
+
+    set_kv_pair_visibility(building_data, "module", not entry[EK.active])
 end
 
 local function create_waterwell_details(container, entry, player_id)
@@ -1969,6 +1971,7 @@ local function create_waterwell_details(container, entry, player_id)
     local building_data = general.building
 
     add_kv_pair(building_data, "competition", {"sosciencity.competition"})
+    add_kv_pair(building_data, "module", nil, {"sosciencity.module-missing", display_item_stack("water-filter", 1)})
 
     update_waterwell_details(container, entry)
 end

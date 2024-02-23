@@ -21,7 +21,7 @@ Tirislib.RecipeGenerator.create {
     name = "drinkable-water-from-ground",
     product = "drinkable-water",
     product_type = "fluid",
-    product_amount = 100,
+    product_amount = 80,
     category = "sosciencity-groundwater-pump",
     energy_required = 8,
     unlock = "infrastructure-1"
@@ -34,7 +34,8 @@ Tirislib.RecipeGenerator.create {
     product_amount = 80,
     category = "sosciencity-groundwater-pump",
     energy_required = 8,
-    unlock = "infrastructure-1"
+    unlock = "activated-carbon-filtering",
+    localised_description = {"sosciencity.module-required", {"item-name.water-filter"}}
 }
 
 Tirislib.RecipeGenerator.create {
