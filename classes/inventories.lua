@@ -459,9 +459,9 @@ local protein_ratio_healthiness_lookup = {
 --- Returns a numerical healthiness value in the range 0 to 6 for the given protein ratio.
 local function get_protein_healthiness(ratio)
     local index = math.floor(ratio * 40)
-    local percentage_lower_value = (ratio - 0.025 * index) * 40
-    return percentage_lower_value * protein_ratio_healthiness_lookup[index] +
-        (1 - percentage_lower_value) * protein_ratio_healthiness_lookup[index + 1]
+    local percentage_higher_value = (ratio - 0.025 * index) * 40
+    return (1 - percentage_higher_value) * protein_ratio_healthiness_lookup[index] +
+        percentage_higher_value * protein_ratio_healthiness_lookup[index + 1]
 end
 
 --- Table with a healthiness value every 2.5%. Values between that will be interpolated linearly.
@@ -511,9 +511,9 @@ local fat_ratio_healthiness_lookup = {
 --- Returns a numerical healthiness value in the range 0 to 4 for the given fat ratio.
 local function get_fat_ratio_healthiness(ratio)
     local index = math.floor(ratio * 40)
-    local percentage_lower_value = (ratio - 0.025 * index) * 40
-    return percentage_lower_value * fat_ratio_healthiness_lookup[index] +
-        (1 - percentage_lower_value) * fat_ratio_healthiness_lookup[index + 1]
+    local percentage_higher_value = (ratio - 0.025 * index) * 40
+    return (1 - percentage_higher_value) * fat_ratio_healthiness_lookup[index] +
+        percentage_higher_value * fat_ratio_healthiness_lookup[index + 1]
 end
 
 --- Returns a numerical healthiness value in the range 0 to 10 for the given nutrient combination.
