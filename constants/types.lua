@@ -34,6 +34,9 @@ local hospital_subscriptions = {}
 for _, _type in pairs(TypeGroup.hospital_complements) do
     hospital_subscriptions[_type] = ConnectionType.from_neighbor
 end
+for _, _type in pairs(TypeGroup.all_castes) do
+    hospital_subscriptions[_type] = ConnectionType.bidirectional
+end
 
 --- Type definitions\
 --- **alt_mode_sprite:** name of the sprite that should be shown in altmode\
@@ -220,6 +223,16 @@ Types.definitions = {
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.bidirectional,
+            [Type.orchid] = ConnectionType.bidirectional,
+            [Type.gunfire] = ConnectionType.bidirectional,
+            [Type.ember] = ConnectionType.bidirectional,
+            [Type.foundry] = ConnectionType.bidirectional,
+            [Type.gleam] = ConnectionType.bidirectional,
+            [Type.aurora] = ConnectionType.bidirectional,
+            [Type.plasma] = ConnectionType.bidirectional
+        },
         is_civil = true
     },
     [Type.psych_ward] = {
