@@ -482,6 +482,14 @@ local function create_entity(house_name, house, details)
     if details.main_entity ~= "improvised-hut" then
         entity:add_mining_result({name = details.main_entity, amount = 1})
         entity:copy_localisation_from_item(details.main_entity)
+    else
+        entity:add_mining_result(
+            {
+                name = "lumber",
+                amount_min = 2,
+                amount_max = 5
+            }
+        )
     end
 end
 
@@ -503,3 +511,28 @@ end
 if Sosciencity_Config.DEBUG then
     Tirislib.Recipe.get_by_name["test-house"]:clear_ingredients()
 end
+
+-- I don't understand why, but the mere existence of these items make the improvised huts deconstructable by bots
+Tirislib.Item.create {
+    type = "item",
+    name = "improvised-placer",
+    icon = "__sosciencity-graphics__/graphics/icon/improvised-hut.png",
+    icon_size = 64,
+    subgroup = "sosciencity-infrastructure",
+    order = "zzy",
+    place_result = "improvised-hut",
+    stack_size = Sosciencity_Config.building_stacksize,
+    localised_name = {"entity-name.improvised-hut"}
+}
+
+Tirislib.Item.create {
+    type = "item",
+    name = "improvised-placer-2",
+    icon = "__sosciencity-graphics__/graphics/icon/improvised-hut.png",
+    icon_size = 64,
+    subgroup = "sosciencity-infrastructure",
+    order = "zzz",
+    place_result = "improvised-hut-2",
+    stack_size = Sosciencity_Config.building_stacksize,
+    localised_name = {"entity-name.improvised-hut"}
+}

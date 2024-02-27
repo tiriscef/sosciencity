@@ -20,7 +20,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "phyto-gene-lab",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/phyto-gene-lab.png",
     icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "phyto-gene-lab"},
