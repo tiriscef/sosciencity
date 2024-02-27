@@ -1,6 +1,25 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.6
+Date: 2024.02.27
+  Gist:
+    - Just some bugfixes and small changes.
+
+  Bugfixes:
+    - Fixed Endower Flowers not having a description
+    - Fixed a bug in the calorific health calculation
+    - Fixed that Improvised Huts weren't deconstructable by bots
+    - Fixed that the alt mode sprite of houses sometimes didn't get destroyed when their caste changed
+
+  Changes:
+    - The Gui of Hospitals now have a patients list with all  
+    - Small changes to the GUIs of Markets and Water Distributers
+    - Increased the range of Water Towers from 50 to 70
+    - Decreased the frequency of reports to every 20 minutes
+    - Mining Improvised Huts gives a small amount of Lumber. Thought that was funny.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
-Date: 2024.02.15
+Date: 2024.02.23
   Gist:
     - This is a first attempt at improving the balance of the water-needs of your inhabitants. Be prepared that drinking water production will now be much much slower, because it was ridiculously overpowered before.
     - Before this update one Groundwater Pump could provide water for more than 6000 Clockworkers, now for 150.
