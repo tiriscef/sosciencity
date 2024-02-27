@@ -2748,7 +2748,7 @@ local function update_market(container, entry, player_id)
 
     local amount = Inventories.count_calories(Inventories.get_chest_inventory(entry))
 
-    set_kv_pair_value(building_data, "content", {"sosciencity.value-with-unit", amount, {"sosciencity.kcal"}})
+    set_kv_pair_value(building_data, "content", {"sosciencity.value-with-unit", round(amount), {"sosciencity.kcal"}})
 
     local inhabitants, consumption = analyse_dependants(entry, "calorific_demand")
     set_kv_pair_value(
@@ -2756,9 +2756,13 @@ local function update_market(container, entry, player_id)
         "dependants",
         {
             "sosciencity.display-dependants",
-            inhabitants,
-            {"sosciencity.show-calorific-demand", round_to_step(consumption * Time.minute, 0.1)}
+            inhabitants
         }
+    )
+    set_kv_pair_value(
+        building_data,
+        "dependants-demand",
+        {"sosciencity.show-calorific-demand", round(consumption * Time.minute)}
     )
 
     if consumption > 0 then
@@ -2780,6 +2784,7 @@ local function create_market(container, entry, player_id)
 
     add_kv_pair(building_data, "content", {"sosciencity.content"})
     add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    add_kv_pair(building_data, "dependants-demand")
     add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_market(container, entry)
@@ -2837,9 +2842,13 @@ local function update_water_distributer(container, entry, player_id)
         "dependants",
         {
             "sosciencity.display-dependants",
-            inhabitants,
-            {"sosciencity.show-water-demand", round_to_step(consumption * Time.minute, 0.1)}
+            inhabitants
         }
+    )
+    set_kv_pair_value(
+        building_data,
+        "dependants-demand",
+        {"sosciencity.show-water-demand", round_to_step(consumption * Time.minute, 0.1)}
     )
 
     if consumption > 0 then
@@ -2861,6 +2870,7 @@ local function create_water_distributer(container, entry, player_id)
 
     add_kv_pair(building_data, "content", {"sosciencity.content"})
     add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    add_kv_pair(building_data, "dependants-demand")
     add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_water_distributer(container, entry)
