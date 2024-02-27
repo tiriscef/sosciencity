@@ -1223,7 +1223,8 @@ local function create_improvised_huts()
                     surface.create_entity {
                     name = hut_to_create,
                     position = pos,
-                    force = "player"
+                    force = "player",
+                    create_build_effect_smoke = false
                 }
                 local entry = Register.add(new_hut, caste_id)
 
