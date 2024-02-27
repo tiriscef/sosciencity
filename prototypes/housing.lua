@@ -358,6 +358,35 @@ local function get_localised_qualities(house)
     return ret
 end
 
+local function get_localised_description(house_name, house)
+    local ret = {""}
+
+    if Tirislib.String.begins_with(house_name, "improvised-hut") then
+        ret[#ret + 1] = {"entity-description.improvised-hut"}
+    end
+
+    Tirislib.Locales.append(
+        ret,
+        {
+            "sosciencity-util.housing",
+            house.room_count,
+            {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
+            {"description.sos-details", house.comfort},
+            get_localised_qualities(house)
+        },
+        "\n\n",
+        {
+            "sosciencity-util.official-looking-point",
+            {"sosciencity.range"},
+            {"sosciencity.show-range", 100} -- 2 times the "by foot"-range (50)
+        },
+        "\n",
+        {"sosciencity.grey", {"range-description.housing"}}
+    )
+
+    return ret
+end
+
 local function create_item(house_name, house, details)
     local item_prototype =
         Tirislib.Item.create {
@@ -370,13 +399,7 @@ local function create_item(house_name, house, details)
         stack_size = details.stack_size or Sosciencity_Config.building_stacksize,
         place_result = house_name,
         pictures = Sosciencity_Config.blueprint_on_belt,
-        localised_description = {
-            "sosciencity-util.housing",
-            house.room_count,
-            {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
-            {"description.sos-details", house.comfort},
-            get_localised_qualities(house)
-        }
+        localised_description = get_localised_description(house_name, house)
     }
 
     Tirislib.Tables.set_fields(item_prototype, details.distinctions)
@@ -476,7 +499,7 @@ local function create_entity(house_name, house, details)
         circuit_wire_max_distance = 13,
         enable_inventory_bar = false,
         localised_name = {"entity-name." .. details.main_entity},
-        localised_description = {"entity-description." .. details.main_entity}
+        localised_description = get_localised_description(house_name, house)
     }:set_size(details.width, details.height)
 
     if details.main_entity ~= "improvised-hut" then
