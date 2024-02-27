@@ -2410,11 +2410,24 @@ for id in pairs(Diseases.values) do
     )
 end
 
+local function find_all_neighborhood_diseases(entry)
+    local ret = {}
+
+    for _, caste_id in pairs(TypeGroup.all_castes) do
+        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+            Table.add(ret, house[EK.diseases])
+        end
+    end
+
+    return ret
+end
+
 local function update_hospital_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = get_tab_contents(tabbed_pane, "general").building
+    local general = get_tab_contents(tabbed_pane, "general")
+    local building_data = general.building
 
     set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.workhours])})
 
@@ -2442,6 +2455,19 @@ local function update_hospital_details(container, entry, player_id)
     end
 
     set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
+
+    local patients = general.patients
+    patients.clear()
+
+    local patient_diseases = find_all_neighborhood_diseases(entry)
+    for disease_id, count in pairs(patient_diseases) do
+        if disease_id ~= DiseaseGroup.HEALTHY then
+            local disease = diseases[disease_id]
+            local key = format("disease-%d", disease_id)
+            add_operand_entry(patients, key, disease.localised_name, count)
+            set_kv_pair_tooltip(patients, key, disease.localised_description)
+        end
+    end
 
     update_disease_catalogue(container, entry)
 end
@@ -2473,6 +2499,9 @@ local function create_hospital_details(container, entry, player_id)
     textfield.tooltip = {"sosciencity.blood-donation-threshold"}
     building_data["key-blood-donation-threshold"].visible = global.technologies["transfusion-medicine"]
     textfield.visible = global.technologies["transfusion-medicine"]
+
+    add_header_label(general, "header-patients", {"sosciencity.patients"})
+    create_data_list(general, "patients")
 
     create_disease_catalogue(container)
 
