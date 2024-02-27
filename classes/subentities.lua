@@ -226,7 +226,11 @@ function Subentities.remove_all_for(entry)
             subentity.destroy()
         end
     end
-    -- we don't need to destroy sprites when their target entity gets destroyed
+
+    local alt_mode_sprite = entry[EK.alt_mode_sprite]
+    if alt_mode_sprite and rendering.is_valid(alt_mode_sprite) then
+        rendering.destroy(alt_mode_sprite)
+    end
 end
 
 function Subentities.remove_sprites(entry)
