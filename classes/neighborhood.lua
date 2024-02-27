@@ -206,7 +206,9 @@ function Neighborhood.establish_new_neighbor(entry)
     local workforce = building_details.workforce
     if workforce then
         for _, caste in pairs(workforce.castes) do
-            subscribe_to(entry, caste, ConnectionType.from_neighbor)
+            if not type_subscriptions or not type_subscriptions[caste] then
+                subscribe_to(entry, caste, ConnectionType.from_neighbor)
+            end
         end
     end
 
