@@ -13,7 +13,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create {
     product = "clockwork-hq",
     themes = {{"building", 10}, {"gear_wheel", 10}, {"furnace", 10}},
-    default_theme_level = 0,
+    default_theme_level = 2,
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "clockwork-caste"
 }

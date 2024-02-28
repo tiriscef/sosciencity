@@ -14,7 +14,7 @@ Tirislib.RecipeGenerator.create {
     product = "composting-silo-output",
     themes = {{"plating", 10, 15}, {"framework", 5, 7}},
     default_theme_level = 1,
-    unlock = "open-environment-farming"
+    unlock = "composting-silo"
 }
 
 Tirislib.Entity.create {

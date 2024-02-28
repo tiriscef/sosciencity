@@ -4,24 +4,11 @@ local Unlocks = require("constants.unlocks")
 -- << caste technologies >>
 
 Tirislib.Technology.create {
-    name = "clockwork-caste",
-    icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
+    name = "ember-caste",
+    icon = "__sosciencity-graphics__/graphics/ember-caste.png",
     icon_size = 256,
-    prerequisites = {"infrastructure-1"},
-    effects = {
-        {
-            type = "nothing",
-            effect_description = {"description.clockwork-caste"}
-        },
-        {
-            type = "nothing",
-            effect_description = {"description.orchid-caste"}
-        },
-        {
-            type = "nothing",
-            effect_description = {"description.ember-caste"}
-        }
-    },
+    prerequisites = {"upbringing"},
+    effects = {},
     unit = {
         count = 11,
         ingredients = {
@@ -72,7 +59,7 @@ Tirislib.Technology.create {
     name = "orchid-caste",
     icon = "__sosciencity-graphics__/graphics/orchid-caste.png",
     icon_size = 256,
-    prerequisites = {"clockwork-caste", "open-environment-farming"},
+    prerequisites = {"ember-caste", "open-environment-farming"},
     unit = {
         count = 51,
         ingredients = {
@@ -241,8 +228,8 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
-    name = "ember-caste",
-    icon = "__sosciencity-graphics__/graphics/ember-caste.png",
+    name = "clockwork-caste",
+    icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
     icon_size = 256,
     prerequisites = {"orchid-caste", "logistic-science-pack"},
     unit = {
@@ -255,7 +242,7 @@ Tirislib.Technology.create {
     }
 }
 
-Tirislib.Technology("chemical-science-pack"):add_prerequisite("ember-caste")
+Tirislib.Technology("chemical-science-pack"):add_prerequisite("clockwork-caste")
 
 Tirislib.Technology.create {
     name = "ember-caste-efficiency",
@@ -299,7 +286,7 @@ Tirislib.Technology.create {
     name = "foundry-caste",
     icon = "__sosciencity-graphics__/graphics/foundry-caste.png",
     icon_size = 256,
-    prerequisites = {"ember-caste", "chemical-science-pack"},
+    prerequisites = {"clockwork-caste", "chemical-science-pack"},
     effects = {
         {
             type = "nothing",
@@ -362,7 +349,7 @@ Tirislib.Technology.create {
     name = "gleam-caste",
     icon = "__sosciencity-graphics__/graphics/gleam-caste.png",
     icon_size = 256,
-    prerequisites = {"ember-caste", "chemical-science-pack"},
+    prerequisites = {"clockwork-caste", "chemical-science-pack"},
     effects = {
         {
             type = "nothing",
@@ -504,6 +491,36 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "upbringing",
+    icon = "__sosciencity-graphics__/graphics/technology/upbringing.png",
+    icon_size = 128,
+    upgrade = true,
+    prerequisites = {"infrastructure-1"},
+    effects = {
+        {
+            type = "nothing",
+            effect_description = {"description.clockwork-caste"}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.orchid-caste"}
+        },
+        {
+            type = "nothing",
+            effect_description = {"description.ember-caste"}
+        }
+    },
+    unit = {
+        count = 13,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 10
+    },
+    ignore_tech_cost_multiplier = true
+}
+
+Tirislib.Technology.create {
     name = "infrastructure-2",
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
@@ -562,7 +579,7 @@ Tirislib.Technology.create {
     icon = "__sosciencity-graphics__/graphics/technology/architecture.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {"clockwork-caste"},
+    prerequisites = {"ember-caste"},
     unit = {
         count = 18,
         ingredients = {
@@ -728,8 +745,8 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "transfusion-medicine",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/icon/blood-bag.png",
+    icon_size = 64,
     prerequisites = {"chemical-science-pack", "hospital"},
     effects = {
         {
@@ -828,10 +845,24 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
-    name = "advanced-fishing",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    name = "hunting-fishing",
+    icon = "__sosciencity-graphics__/graphics/technology/hunting-fishing.png",
     icon_size = 128,
-    prerequisites = {"chemical-science-pack"},
+    prerequisites = {"ember-caste"},
+    unit = {
+        count = 67,
+        ingredients = {
+            {"automation-science-pack", 1},
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
+    name = "advanced-fishing",
+    icon = "__sosciencity-graphics__/graphics/technology/advanced-fishing.png",
+    icon_size = 128,
+    prerequisites = {"chemical-science-pack", "hunting-fishing"},
     unit = {
         count = 87,
         ingredients = {
@@ -845,7 +876,7 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "genetic-neogenesis",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon = "__sosciencity-graphics__/graphics/technology/genetic-neogenesis.png",
     icon_size = 128,
     prerequisites = {"sosciencity-computing", "basic-biotechnology"},
     unit = {
@@ -893,7 +924,7 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "in-situ-gene-editing",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon = "__sosciencity-graphics__/graphics/technology/in-situ-gene-editing.png",
     icon_size = 128,
     prerequisites = {"huwan-genetic-neogenesis", "foundry-caste"},
     unit = {
@@ -1006,7 +1037,7 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "food-processing",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon = "__sosciencity-graphics__/graphics/technology/food-processing.png",
     icon_size = 128,
     prerequisites = {"orchid-caste", "logistic-science-pack"},
     unit = {
@@ -1067,10 +1098,25 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "composting-silo",
+    icon = "__sosciencity-graphics__/graphics/technology/composting-silo.png",
+    icon_size = 128,
+    prerequisites = {"ember-caste"},
+    unit = {
+        count = 56,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    },
+    localised_name = {"item-name.composting-silo"}
+}
+
+Tirislib.Technology.create {
     name = "open-environment-farming",
     icon = "__sosciencity-graphics__/graphics/technology/open-environment-farming.png",
     icon_size = 128,
-    prerequisites = {"clockwork-caste"},
+    prerequisites = {"composting-silo"},
     unit = {
         count = 56,
         ingredients = {

@@ -16,8 +16,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    default_theme_level = 3,
-    unlock = "ember-caste"
+    default_theme_level = 2,
+    unlock = "infrastructure-2"
 }
 
 local size_x = 20

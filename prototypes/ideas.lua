@@ -29,9 +29,9 @@ Tirislib.Recipe.create {
     energy_required = 5,
     ingredients = {},
     results = {
-        {type = "item", name = "invention", amount_min = 2, amount_max = 4}
+        {type = "item", name = "sketchbook", amount_min = 2, amount_max = 4}
     },
-    icon = "__sosciencity-graphics__/graphics/icon/invention.png",
+    icon = "__sosciencity-graphics__/graphics/icon/sketchbook.png",
     icon_size = 64,
     subgroup = "sosciencity-ideas-per-hand",
     order = "00000",
@@ -61,6 +61,12 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
     expensive_energy_required = 6,
+    ingredients = {
+        {type = "item", name = "writing-paper", amount = 4},
+        {type = "item", name = "ink", amount = 1},
+        {type = "item", name = "lumber", amount = 20},
+        {type = "item", name = "screw-set", amount = 20}
+    },
     unlock = "clockwork-caste"
 }
 
@@ -71,19 +77,9 @@ Tirislib.RecipeGenerator.create {
     energy_required = 2,
     expensive_energy_required = 3,
     ingredients = {
-        {type = "item", name = "phytofall-blossom", amount = 1}
-    },
-    unlock = "orchid-caste"
-}
-
-Tirislib.RecipeGenerator.create {
-    product = "botanical-study",
-    product_amount = 4,
-    category = "sosciencity-caste-orchid",
-    energy_required = 2,
-    expensive_energy_required = 3,
-    ingredients = {
-        {type = "item", name = "necrofall", amount = 2}
+        {type = "item", name = "writing-paper", amount = 4},
+        {type = "item", name = "phytofall-blossom", amount = 1},
+        {type = "item", name = "necrofall", amount = 1}
     },
     unlock = "orchid-caste"
 }
@@ -95,7 +91,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 2,
     expensive_energy_required = 3,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 1}
+        {type = "item", name = "writing-paper", amount = 4}
     },
     unlock = "gunfire-caste"
 }
@@ -107,8 +103,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 2,
     expensive_energy_required = 3,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 1},
-        {type = "item", name = "ink", amount = 1}
+        {type = "item", name = "writing-paper", amount = 1}
     },
     unlock = "ember-caste"
 }

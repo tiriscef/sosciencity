@@ -15,7 +15,7 @@ Tirislib.RecipeGenerator.create {
     themes = {{"building", 2}, {"machine", 2}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 0,
-    unlock = "clockwork-caste"
+    unlock = "upbringing"
 }
 
 Tirislib.Entity.create {
