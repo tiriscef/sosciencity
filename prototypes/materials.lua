@@ -619,10 +619,10 @@ Tirislib.RecipeGenerator.create {
     product_amount = 1,
     energy_required = 5,
     ingredients = {
-        {name = "tiriscefing-willow-wood", amount = 2}
+        {name = "lumber", amount = 2}
     },
     expensive_ingredients = {
-        {name = "tiriscefing-willow-wood", amount = 3}
+        {name = "lumber", amount = 3}
     },
     allow_productivity = true
 }
