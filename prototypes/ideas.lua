@@ -27,7 +27,7 @@ Tirislib.Recipe.create {
     category = "sosciencity-handcrafting",
     enabled = true,
     energy_required = 5,
-    ingredients = {},
+    ingredients = {{type = "item", name = "writing-paper", amount = 2}},
     results = {
         {type = "item", name = "sketchbook", amount_min = 2, amount_max = 4}
     },
@@ -43,8 +43,11 @@ Tirislib.Recipe.create {
     name = "botanical-study-handcraft",
     category = "sosciencity-handcrafting",
     enabled = false,
-    energy_required = 10,
-    ingredients = {},
+    energy_required = 5,
+    ingredients = {
+        {type = "item", name = "writing-paper", amount = 1},
+        {type = "item", name = "phytofall-blossom", amount = 1}
+    },
     results = {
         {type = "item", name = "botanical-study", amount = 1}
     },
