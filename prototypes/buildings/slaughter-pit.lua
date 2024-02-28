@@ -14,7 +14,7 @@ Tirislib.RecipeGenerator.create {
     product = "slaughter-pit",
     themes = {{"machine", 2}},
     default_theme_level = 1,
-    unlock = "clockwork-caste"
+    unlock = "hunting-fishing"
 }
 
 Tirislib.Entity.create {

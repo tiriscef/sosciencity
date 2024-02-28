@@ -15,7 +15,7 @@ Tirislib.RecipeGenerator.create {
     themes = {{"building", 3}},
     default_theme_level = 0,
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
-    unlock = "clockwork-caste"
+    unlock = "infrastructure-1"
 }
 
 local shift = {0.35, -0.5}

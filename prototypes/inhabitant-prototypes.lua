@@ -62,7 +62,7 @@ Tirislib.Recipe.create {
     subgroup = "sosciencity-inhabitants",
     main_product = "",
     localised_description = {"recipe-description.lay-egg", Biology.egg_calories}
-}:add_unlock("clockwork-caste")
+}:add_unlock("upbringing")
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
     Tirislib.RecipeGenerator.create {

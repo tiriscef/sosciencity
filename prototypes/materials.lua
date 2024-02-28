@@ -345,7 +345,7 @@ Tirislib.RecipeGenerator.create_per_theme_level {
         end
     },
     allow_productivity = true,
-    unlock = "infrastructure-1"
+    unlock = "architecture-1"
 }
 
 --[[Tirislib.RecipeGenerator.create {
@@ -395,13 +395,13 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true,
-    unlock = "clockwork-caste"
+    unlock = "hunting-fishing"
 }
 
 Tirislib.RecipeGenerator.create {
     product = "pot",
     themes = {{"ceramic", 2, 3}},
-    unlock = "open-environment-farming"
+    unlock = "indoor-growing"
 }
 
 if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode then
@@ -611,22 +611,21 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "necrofall", amount = 2}
     },
     category = "chemistry",
-    unlock = "ember-caste"
+    unlock = "clockwork-caste"
 }
 
 Tirislib.RecipeGenerator.create {
     product = "writing-paper",
-    product_amount = 2,
+    product_amount = 1,
     energy_required = 5,
     ingredients = {
-        {name = "tiriscefing-willow-wood", amount = 5}
+        {name = "tiriscefing-willow-wood", amount = 2}
     },
     expensive_ingredients = {
-        {name = "tiriscefing-willow-wood", amount = 8}
+        {name = "tiriscefing-willow-wood", amount = 3}
     },
-    allow_productivity = true,
-    unlock = "ember-caste"
-}:add_unlock("gunfire-caste")
+    allow_productivity = true
+}
 
 Tirislib.RecipeGenerator.create {
     product = "writing-paper",
@@ -641,7 +640,7 @@ Tirislib.RecipeGenerator.create {
     },
     themes = {{"paper_production", 1, 1.5}},
     allow_productivity = true,
-    unlock = "ember-caste"
+    unlock = "clockwork-caste"
 }:add_unlock("gunfire-caste")
 
 Tirislib.RecipeGenerator.create {
@@ -651,7 +650,7 @@ Tirislib.RecipeGenerator.create {
     },
     energy_required = 0.8,
     allow_productivity = true,
-    unlock = "clockwork-caste"
+    unlock = "hunting-fishing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -662,7 +661,7 @@ Tirislib.RecipeGenerator.create {
     },
     energy_required = 0.8,
     allow_productivity = true,
-    unlock = "clockwork-caste"
+    unlock = "hunting-fishing"
 }
 
 --[[Tirislib.RecipeGenerator.create {
@@ -686,7 +685,7 @@ Tirislib.RecipeGenerator.create {
     },
     energy_required = 1.5,
     allow_productivity = true,
-    unlock = "clockwork-caste"
+    unlock = "hunting-fishing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -734,7 +733,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1,
     allow_productivity = true,
-    unlock = "ember-caste"
+    unlock = "clockwork-caste"
 }
 
 Tirislib.RecipeGenerator.create {
