@@ -944,11 +944,6 @@ local function update_upbringing_station(entry)
     local mode = entry[EK.education_mode]
     local details = get_building_details(entry)
 
-    -- return if no caste is researched (clockwork has to be researched before all the other castes)
-    if not Inhabitants.caste_is_researched(Type.clockwork) then
-        return
-    end
-
     if not is_active(entry) then
         return
     end
