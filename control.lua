@@ -78,12 +78,12 @@ local on_init_handlers = {}
 --- @param fn function
 function Events.set_on_init_handler(fn)
     Tirislib.Utils.desync_protection()
-    on_init_handlers[#on_init_handlers+1] = fn
+    on_init_handlers[#on_init_handlers + 1] = fn
 end
 
 local on_script_trigger_handlers = {}
 
---- Adds a function to be called when a 
+--- Adds a function to be called when a
 --- @param id string
 --- @param fn function
 function Events.set_script_trigger_handler(id, fn)
@@ -406,7 +406,9 @@ local function on_configuration_change()
 
         for _, entry in pairs(old_register) do
             Register.remove_entry(entry, DeconstructionCause.mod_update)
-            Register.clone(entry, entry[EK.entity])
+            if entry[EK.entity].valid then
+                Register.clone(entry, entry[EK.entity])
+            end
         end
     end
 end

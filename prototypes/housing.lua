@@ -532,7 +532,7 @@ for house_name, details in pairs(housing_prototype_details) do
 end
 
 if Sosciencity_Config.DEBUG then
-    Tirislib.Recipe.get_by_name["test-house"]:clear_ingredients()
+    Tirislib.Recipe.get_by_name("test-house"):clear_ingredients()
 end
 
 -- I don't understand why, but the mere existence of these items make the improvised huts deconstructable by bots
