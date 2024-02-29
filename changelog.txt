@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.7
+Date: 2024.02.29
+  Gist:
+    - Just a Bugfix.
+
+  Bugfixes:
+    - Fixed a possible freeze connected to the game sometimes splitting Inhabitant Groups incorrectly
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.6
 Date: 2024.02.27
   Gist:
