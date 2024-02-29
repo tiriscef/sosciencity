@@ -245,7 +245,7 @@ function DiseaseGroup.take(group, to_take, total_count)
     while to_take > 0 do
         for disease, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
-            local current_take = min(current_count, ceil(percentage_to_take * current_count))
+            local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
 
             total_count = total_count - current_take
             to_take = to_take - current_take
@@ -420,7 +420,7 @@ function AgeGroup.take(group, to_take, total_count)
     while to_take > 0 do
         for age, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
-            local current_take = min(current_count, ceil(percentage_to_take * current_count))
+            local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
 
             total_count = total_count - current_take
             to_take = to_take - current_take
@@ -491,7 +491,7 @@ function GenderGroup.take(group, to_take, total_count)
         for gender = 1, #group do
             local current_count = group[gender]
             local percentage_to_take = to_take / total_count
-            local current_take = min(current_count, ceil(percentage_to_take * current_count))
+            local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
 
             ret[gender] = ret[gender] + current_take
             group[gender] = group[gender] - current_take
