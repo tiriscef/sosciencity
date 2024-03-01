@@ -15,7 +15,7 @@ end
 local sp_ingredients = {
     [Sosciencity_Config.clockwork_pack] = {
         result_type = "item",
-        ingredient = "invention",
+        ingredient = "sketchbook",
         ingredient_type = "item",
         amount_fn = identity
     },
@@ -33,7 +33,7 @@ local sp_ingredients = {
     },
     [Sosciencity_Config.ember_pack] = {
         result_type = "item",
-        ingredient = "sketchbook",
+        ingredient = "invention",
         ingredient_type = "item",
         amount_fn = identity
     },
@@ -102,4 +102,4 @@ for result_name, details in pairs(launchable_item_ingredients) do
     )
 end
 
-all_recipes:pair_result_with_result(Sosciencity_Config.foundry_pack, "item", "empty-hard-drive", "item", identity)
+all_recipes:pair_ingredient_with_result("complex-scientific-data", "item", "empty-hard-drive", "item", identity)
