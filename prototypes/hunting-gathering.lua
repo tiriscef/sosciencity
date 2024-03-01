@@ -14,63 +14,21 @@ local function create_hunting_gathering_recipe(details)
 end
 
 create_hunting_gathering_recipe {
-    name = "gathering-materials",
-    category = "sosciencity-hunting",
-    energy_required = 3,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/gather-materials.png"}
-    },
-    icon_size = 64,
-    results = {
-        {type = "item", name = "leafage", amount = 2},
-        {type = "item", name = "tiriscefing-willow-wood", amount = 3},
-        {type = "item", name = "plemnemm-cotton", amount = 5},
-        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5},
-        {type = "item", name = "hardcorn-punk", amount = 5, probability = 0.5},
-        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.32}
-    },
-    order = "000555"
-}
-
-create_hunting_gathering_recipe {
     name = "gathering-food",
     category = "sosciencity-hunting",
-    energy_required = 4,
+    energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-food-1.png"}
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "liontooth", amount = 5, probability = 0.7},
-        {type = "item", name = "razha-bean", amount = 3, probability = 0.2},
-        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
-        {type = "item", name = "blue-grapes", amount = 3, probability = 0.3}
+        {type = "item", name = "wild-edible-plants", amount = 4},
+        {type = "item", name = "leafage", amount = 1}
     },
     order = "000565"
 }
 
-create_hunting_gathering_recipe {
-    name = "gathering-food-2",
-    category = "sosciencity-hunting",
-    energy_required = 4,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/gather-food-2.png"}
-    },
-    icon_size = 64,
-    results = {
-        {type = "item", name = "leafage", amount = 2},
-        {type = "item", name = "liontooth", amount = 5, probability = 0.7},
-        {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
-        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
-        {type = "item", name = "blue-grapes", amount = 5, probability = 0.3},
-        {type = "item", name = "manok", amount = 2, probability = 0.35},
-        {type = "item", name = "tello-fruit", amount = 2, probability = 0.3},
-        {type = "item", name = "zetorn", amount = 5, probability = 0.3},
-        {type = "item", name = "weird-berry", amount = 2, probability = 0.4}
-    },
-    order = "000566"
-}:add_unlock("explore-alien-flora-1")
+--[[
 
 create_hunting_gathering_recipe {
     name = "gathering-food-3",
@@ -94,21 +52,17 @@ create_hunting_gathering_recipe {
         {type = "item", name = "ortrot", amount = 5, probability = 0.3}
     },
     order = "000567"
-}:add_unlock("explore-alien-flora-2")
-
+}:add_unlock("explore-alien-flora-2")]]
 create_hunting_gathering_recipe {
     name = "gathering-mushrooms",
     category = "sosciencity-hunting",
-    energy_required = 4,
+    energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-mushrooms.png"}
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "fawoxylas", amount = 4, probability = 0.4},
-        {type = "item", name = "pocelial", amount = 4, probability = 0.4},
-        {type = "item", name = "red-hatty", amount = 4, probability = 0.4},
-        {type = "item", name = "birdsnake", amount = 4, probability = 0.4}
+        {type = "item", name = "wild-fungi", amount = 4}
     },
     order = "000575"
 }
@@ -116,23 +70,91 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "gathering-algae",
     category = "sosciencity-fishery-hand",
-    energy_required = 4,
+    energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-algae.png"}
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "queen-algae", amount = 2},
-        {type = "item", name = "pyrifera", amount = 2, probability = 0.4},
-        {type = "item", name = "endower-flower", amount = 2, probability = 0.4}
+        {type = "item", name = "wild-algae", amount = 4}
     },
     order = "000585"
 }
 
 create_hunting_gathering_recipe {
+    name = "gathering-materials",
+    category = "sosciencity-hunting",
+    energy_required = 3,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/gather-materials.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "leafage", amount = 2},
+        {type = "item", name = "tiriscefing-willow-wood", amount = 3},
+        {type = "item", name = "plemnemm-cotton", amount = 5},
+        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5},
+        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.32}
+    },
+    order = "000590"
+}
+
+create_hunting_gathering_recipe {
+    name = "gathering-wood",
+    category = "sosciencity-hunting",
+    energy_required = 3,
+    icon = "__sosciencity-graphics__/graphics/icon/tiriscefing-willow-wood.png",
+    icon_size = 64,
+    results = {
+        {type = "item", name = "tiriscefing-willow-wood", amount = 3},
+        {type = "item", name = "leafage", amount = 1}
+    },
+    order = "000592"
+}
+
+create_hunting_gathering_recipe {
+    name = "gathering-cotton",
+    category = "sosciencity-hunting",
+    energy_required = 3,
+    icon = "__sosciencity-graphics__/graphics/icon/plemnemm-cotton.png",
+    icon_size = 64,
+    results = {
+        {type = "item", name = "plemnemm-cotton", amount = 5},
+        {type = "item", name = "leafage", amount = 1}
+    },
+    order = "000593"
+}
+
+create_hunting_gathering_recipe {
+    name = "gathering-hemp",
+    category = "sosciencity-hunting",
+    energy_required = 3,
+    icon = "__sosciencity-graphics__/graphics/icon/gingil-hemp.png",
+    icon_size = 64,
+    results = {
+        {type = "item", name = "gingil-hemp", amount = 5},
+        {type = "item", name = "leafage", amount = 1}
+    },
+    order = "000594"
+}
+
+create_hunting_gathering_recipe {
+    name = "gathering-flowers",
+    category = "sosciencity-hunting",
+    energy_required = 3,
+    icon = "__sosciencity-graphics__/graphics/icon/phytofall-blossom.png",
+    icon_size = 64,
+    results = {
+        {type = "item", name = "phytofall-blossom", amount = 2},
+        {type = "item", name = "leafage", amount = 1}
+    },
+    order = "000595"
+}
+
+create_hunting_gathering_recipe {
     name = "hunting-with-trap",
     category = "sosciencity-hunting",
-    energy_required = 10,
+    energy_required = 20,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
@@ -156,7 +178,7 @@ create_hunting_gathering_recipe {
 create_hunting_gathering_recipe {
     name = "hunting-with-trap-cage",
     category = "sosciencity-hunting",
-    energy_required = 10,
+    energy_required = 20,
     icons = {
         {
             icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
@@ -173,7 +195,6 @@ create_hunting_gathering_recipe {
         {type = "item", name = "primal-quacker", amount = 2, probability = 0.5},
         {type = "item", name = "nan-swanling", amount = 5, probability = 0.1},
         {type = "item", name = "nan-swan", amount = 1, probability = 0.4},
-        {type = "item", name = "smol-bonesnake", amount = 4, probability = 0.1},
         {type = "item", name = "cabar", amount = 4, probability = 0.5},
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
     },

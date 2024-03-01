@@ -74,7 +74,7 @@ Tirislib.Entity.create {
             }
         }
     },
-    crafting_speed = 0.5,
+    crafting_speed = 1,
     crafting_categories = {"sosciencity-hunting"},
     energy_usage = "65kW",
     energy_source = {
