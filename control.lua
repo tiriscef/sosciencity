@@ -83,7 +83,7 @@ end
 
 local on_script_trigger_handlers = {}
 
---- Adds a function to be called when a
+--- Adds a function to be called when a script trigger with a specified id is being... triggered.
 --- @param id string
 --- @param fn function
 function Events.set_script_trigger_handler(id, fn)
@@ -378,13 +378,21 @@ end
 local function on_configuration_change()
     -- Compare the stored version number with the loaded version to detect a mod update
     if game.active_mods["sosciencity"] ~= global.version then
+        local old_version = global.version
         global.version = game.active_mods["sosciencity"]
 
         Communication.say("tiriscef.", "migration1")
         Communication.say("tiriscef.", "migration2")
 
-        if game.active_mods["sosciencity"] == "0.1.5" then
-            game.print("Version 0.1.5 Info: This update nerved drinking water generation very drasticly.")
+        local version_notes = {
+            ["0.1.5"] = "This update nerved drinking water generation very drasticly.",
+            ["0.1.8"] = "Gathering was reworked. Clockwork and Ember were exchanged progression-wise. Have fun fixing your factory."
+        }
+
+        for version, note in pairs(version_notes) do
+            if Tirislib.Utils.version_is_smaller_than(old_version, version) then
+                game.print(string.format("Version %s Info: %s", version, note))
+            end
         end
 
         -- Reset recipes and techs in case I changed something.

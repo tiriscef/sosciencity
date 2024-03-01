@@ -486,6 +486,28 @@ function Tirislib.Utils.desync_protection()
     end
 end
 
+--- Returns true, if the left hand version string represents a smaller version than the right hand one.
+--- @param lh string
+--- @param rh string
+--- @return boolean
+function Tirislib.Utils.version_is_smaller_than(lh, rh)
+    local lh_splited = Tirislib.String.split(lh, ".")
+    local rh_splited = Tirislib.String.split(rh, ".")
+
+    for i = 1, #lh_splited do
+        local lh_number = tonumber(lh_splited[i])
+        local rh_number = tonumber(rh_splited[i])
+        if lh_number < rh_number then
+            return true
+        elseif lh_number > rh_number then
+            return false
+        end
+        -- continue when equal
+    end
+
+    return false
+end
+
 ---------------------------------------------------------------------------------------------------
 --- Just some string helper functions
 Tirislib.String = {}
