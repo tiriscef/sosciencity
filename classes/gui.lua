@@ -995,7 +995,6 @@ local function create_caste_flow(container, caste_id, caste_tooltips)
     flow.add {
         type = "label",
         name = "caste-bonus"
-        --tooltip = {"caste-bonus." .. caste_name}
     }
 
     update_caste_flow(container, caste_id, caste_tooltips or {})
