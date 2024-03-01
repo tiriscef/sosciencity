@@ -11,5 +11,6 @@ Taste.umami = 7
 Taste.soily = 8
 Taste.weirdly_chemical = 9
 Taste.sulfuric = 10
+Taste.varying = 11
 
 return Taste

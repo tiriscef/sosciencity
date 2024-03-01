@@ -126,6 +126,42 @@ Food.values = {
         portion_size = 1,
         group = "egg"
     },
+    ["wild-edible-plants"] = {
+        fat = 1.1,
+        carbohydrates = 8,
+        proteins = 2.6,
+        healthiness = 4,
+        food_category = "alien-fruit",
+        taste_category = Taste.varying,
+        taste_quality = 3,
+        luxury = 1,
+        portion_size = 2.2,
+        group = "plant-mix"
+    },
+    ["wild-fungi"] = {
+        fat = 0.7,
+        carbohydrates = 2.4,
+        proteins = 2.6,
+        healthiness = 4,
+        food_category = "alien-fungus",
+        taste_category = Taste.varying,
+        taste_quality = 5,
+        luxury = 1,
+        portion_size = 3.8,
+        group = "fungi-mix"
+    },
+    ["wild-algae"] = {
+        fat = 1.9,
+        carbohydrates = 5.8,
+        proteins = 2.1,
+        healthiness = 6,
+        food_category = "alien-algae",
+        taste_category = Taste.varying,
+        taste_quality = 4,
+        luxury = 1,
+        portion_size = 2,
+        group = "algae-mix"
+    },
     ["unnamed-fruit"] = {
         fat = 1,
         carbohydrates = 10,
@@ -558,7 +594,8 @@ Food.taste_names = {
     [Taste.fruity] = {"taste-category.fruity"},
     [Taste.umami] = {"taste-category.umami"},
     [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"},
-    [Taste.sulfuric] = {"taste-category.sulfuric"}
+    [Taste.sulfuric] = {"taste-category.sulfuric"},
+    [Taste.varying] = {"taste-category.varying"}
 }
 
 Food.emergency_ration_calories = 1000
