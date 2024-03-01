@@ -1674,11 +1674,11 @@ local function update_blood_donations(entry, delta_ticks)
 
     if donations > 0 then
         local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
-        Table.merge_arrays(hospitals, Neighborhood.get_by_type(entry, Type.improvised_hospital))
+        Table.merge_arrays(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
 
         for _, hospital in pairs(hospitals) do
             if hospital[EK.workhours] >= hospital[EK.blood_donation_threshold] then
-                local max_donations = min(donations, hospital[EK.workhours] / Biology.blood_donation_workload)
+                local max_donations = min(donations, floor(hospital[EK.workhours] / Biology.blood_donation_workload))
                 donations = donations - max_donations
 
                 local actual_donations =
