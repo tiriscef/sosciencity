@@ -592,7 +592,7 @@ end
 create_mushroom_recipe {
     product = "fawoxylas",
     ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 30}},
-    unlock = Unlocks.get_tech_name("fawoxylas")
+    unlock = "mushroom-farming"
 }
 
 -- pocelial
@@ -691,6 +691,95 @@ create_algae_recipe {
 create_algae_recipe {
     product = "queen-algae",
     unlock = Unlocks.get_tech_name("queen-algae")
+}
+
+---------------------------------------------------------------------------------------------------
+-- << mix sorting recipes >>
+
+Tirislib.Recipe.create {
+    name = "sort-edible-plants",
+    energy_required = 2,
+    ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 4}
+    },
+    results = {
+        {type = "item", name = "leafage", amount = 1},
+        {type = "item", name = "liontooth", amount = 5},
+        {type = "item", name = "razha-bean", amount = 2},
+        {type = "item", name = "unnamed-fruit", amount = 3},
+        {type = "item", name = "blue-grapes", amount = 2}
+    },
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/wild-edible-plants.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
+            scale = 0.3,
+            shift = {-8, -8}
+        }
+    },
+    icon_size = 64,
+    subgroup = "sosciencity-neogenesis-recipes",
+    main_product = "",
+    order = "00001",
+    localised_name = {"recipe-name.flora-sorting", {"item-name.wild-edible-plants"}},
+    localised_description = {"recipe-description.flora-sorting"}
+}
+
+Tirislib.Recipe.create {
+    name = "sort-fungi",
+    energy_required = 2,
+    ingredients = {
+        {type = "item", name = "wild-fungi", amount = 4}
+    },
+    results = {
+        {type = "item", name = "leafage", amount = 1},
+        {type = "item", name = "fawoxylas", amount = 2},
+        {type = "item", name = "pocelial", amount = 2},
+        {type = "item", name = "red-hatty", amount = 2},
+        {type = "item", name = "birdsnake", amount = 2}
+    },
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/wild-fungi.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
+            scale = 0.3,
+            shift = {-8, -8}
+        }
+    },
+    icon_size = 64,
+    subgroup = "sosciencity-neogenesis-recipes",
+    main_product = "",
+    order = "00002",
+    localised_name = {"recipe-name.flora-sorting", {"item-name.wild-fungi"}},
+    localised_description = {"recipe-description.flora-sorting"}
+}
+
+Tirislib.Recipe.create {
+    name = "sort-algae",
+    energy_required = 2,
+    ingredients = {
+        {type = "item", name = "wild-algae", amount = 4}
+    },
+    results = {
+        {type = "item", name = "leafage", amount = 1},
+        {type = "item", name = "queen-algae", amount = 2},
+        {type = "item", name = "pyrifera", amount = 2},
+        {type = "item", name = "endower-flower", amount_min = 1, amount_max = 2}
+    },
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/wild-algae.png"},
+        {
+            icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
+            scale = 0.3,
+            shift = {-8, -8}
+        }
+    },
+    icon_size = 64,
+    subgroup = "sosciencity-neogenesis-recipes",
+    main_product = "",
+    order = "00003",
+    localised_name = {"recipe-name.flora-sorting", {"item-name.wild-algae"}},
+    localised_description = {"recipe-description.flora-sorting"}
 }
 
 ---------------------------------------------------------------------------------------------------

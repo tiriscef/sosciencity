@@ -833,7 +833,7 @@ Tirislib.Technology.create {
     name = "basic-biotechnology",
     icon = "__sosciencity-graphics__/graphics/technology/basic-biotechnology.png",
     icon_size = 256,
-    prerequisites = {"fermentation", "logistic-science-pack"},
+    prerequisites = {"fermentation", "logistic-science-pack", "algae-farming"},
     unit = {
         count = 48,
         ingredients = {
@@ -1119,6 +1119,34 @@ Tirislib.Technology.create {
     prerequisites = {"composting-silo"},
     unit = {
         count = 56,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
+    name = "mushroom-farming",
+    icon = "__sosciencity-graphics__/graphics/technology/mushroom-farming.png",
+    icon_size = 128,
+    prerequisites = {"open-environment-farming"},
+    unit = {
+        count = 79,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
+    name = "algae-farming",
+    icon = "__sosciencity-graphics__/graphics/technology/algae-farming.png",
+    icon_size = 128,
+    prerequisites = {"open-environment-farming"},
+    unit = {
+        count = 74,
         ingredients = {
             {"automation-science-pack", 1}
         },

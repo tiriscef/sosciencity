@@ -14,7 +14,7 @@ Tirislib.RecipeGenerator.create {
     product = "mushroom-farm",
     themes = {{"piping", 30}, {"machine", 2}, {"soil", 30}},
     default_theme_level = 1,
-    unlock = "basic-biotechnology"
+    unlock = "mushroom-farming"
 }
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
