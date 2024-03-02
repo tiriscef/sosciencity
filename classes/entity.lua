@@ -948,6 +948,10 @@ local function update_upbringing_station(entry)
         return
     end
 
+    if not global.technologies["upbringing"] then
+        return
+    end
+
     check_circuit_upbringing_station(entry)
 
     if mode ~= Type.null and not Inhabitants.caste_is_researched(mode) then
