@@ -774,7 +774,7 @@ end
 local function get_ember_bonus()
     local non_ember_population = array_sum(population) - population[Type.ember]
     if non_ember_population > 0 then
-        return floor_to_step(caste_points[Type.ember] / non_ember_population, 0.1)
+        return floor_to_step(max(0, caste_points[Type.ember]) / non_ember_population, 0.1)
     else
         return 0
     end

@@ -694,7 +694,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     sanity[SanitySummand.favorite_taste] = (dominant_taste == favorite_taste) and 4 or 0
     sanity[SanitySummand.disliked_taste] = (dominant_taste == least_favored_taste) and -4 or 0
     sanity[SanitySummand.single_food] = (count == 1) and -3 or 0
-    sanity[SanitySummand.no_variety] = (taste_counts[dominant_taste] == count) and -3 or 0
+    sanity[SanitySummand.no_variety] = (taste_counts[dominant_taste] == count and dominant_taste ~= Taste.varying) and -3 or 0
     sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == count) and -3 or 0
 end
 
