@@ -386,7 +386,7 @@ local function on_configuration_change()
 
         local version_notes = {
             ["0.1.5"] = "This update nerved drinking water generation very drasticly.",
-            ["0.1.8"] = "Gathering was reworked. Clockwork and Ember were exchanged progression-wise. Have fun fixing your factory."
+            ["0.1.8"] = "Gathering was reworked. Clockwork and Ember were exchanged progression-wise. The recipes for Inventions have changed. Have fun!"
         }
 
         for version, note in pairs(version_notes) do
@@ -418,6 +418,8 @@ local function on_configuration_change()
                 Register.clone(entry, entry[EK.entity])
             end
         end
+
+        Technologies.init()
     end
 end
 

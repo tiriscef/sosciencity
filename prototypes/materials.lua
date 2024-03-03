@@ -620,10 +620,12 @@ Tirislib.RecipeGenerator.create {
     product_amount = 1,
     energy_required = 5,
     ingredients = {
-        {name = "lumber", amount = 2}
+        {type = "item", name = "lumber", amount = 2},
+        {type = "item", name = "gingil-hemp", amount = 2}
     },
     expensive_ingredients = {
-        {name = "lumber", amount = 3}
+        {type = "item", name = "lumber", amount = 4},
+        {type = "item", name = "gingil-hemp", amount = 4}
     },
     allow_productivity = true
 }
@@ -634,10 +636,12 @@ Tirislib.RecipeGenerator.create {
     energy_required = 5,
     category = "chemistry",
     ingredients = {
-        {name = "sawdust", amount = 5}
+        {type = "item", name = "sawdust", amount = 5},
+        {type = "item", name = "gingil-hemp", amount = 5}
     },
     expensive_ingredients = {
-        {name = "sawdust", amount = 10}
+        {type = "item", name = "sawdust", amount = 10},
+        {type = "item", name = "gingil-hemp", amount = 10}
     },
     themes = {{"paper_production", 1, 1.5}},
     allow_productivity = true,
@@ -769,7 +773,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.milling,
     energy_required = 1,
-    unlock = Unlocks.get_tech_name("hardcorn-punk")
+    unlock = "food-processing"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -893,7 +897,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "weird-berry", amount = 5}
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
-    unlock = Unlocks.get_tech_name("weird-berry")
+    unlock = "explore-alien-flora-1"
 }
 
 Tirislib.RecipeGenerator.create {

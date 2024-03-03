@@ -704,7 +704,7 @@ Tirislib.Technology.create {
     name = "medbay",
     icon = "__sosciencity-graphics__/graphics/technology/medbay.png",
     icon_size = 256,
-    prerequisites = {"architecture-1"},
+    prerequisites = {"orchid-caste"},
     unit = {
         count = 29,
         ingredients = {
@@ -967,7 +967,7 @@ Tirislib.Technology.create {
     name = "zetorn-variations",
     icon = "__sosciencity-graphics__/graphics/technology/zetorn-variations.png",
     icon_size = 256,
-    prerequisites = {Unlocks.get_tech_name("zetorn"), "genetic-neogenesis"},
+    prerequisites = {"explore-alien-flora-1", "genetic-neogenesis"},
     unit = {
         count = 73,
         ingredients = {
@@ -983,7 +983,7 @@ Tirislib.Technology.create {
     name = "ortrot-variations",
     icon = "__sosciencity-graphics__/graphics/technology/ortrot-variations.png",
     icon_size = 256,
-    prerequisites = {Unlocks.get_tech_name("ortrot"), "genetic-neogenesis"},
+    prerequisites = {"explore-alien-flora-2", "genetic-neogenesis"},
     unit = {
         count = 68,
         ingredients = {
@@ -1070,7 +1070,7 @@ Tirislib.Technology.create {
     name = "soy-products",
     icon = "__sosciencity-graphics__/graphics/technology/soy-products.png",
     icon_size = 256,
-    prerequisites = {"food-processing", Unlocks.get_tech_name("razha-bean")},
+    prerequisites = {"food-processing"},
     unit = {
         count = 188,
         ingredients = {

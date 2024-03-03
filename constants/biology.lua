@@ -282,6 +282,15 @@ Biology.flora = {
         wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-sugar-cane"}
     },
+    ["tello-fruit"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        preferred_climate = Climate.cold,
+        wrong_climate_coefficient = 0.7,
+        preferred_humidity = Humidity.humid,
+        wrong_humidity_coefficient = 0.8,
+        recipes = {"farming-annual-tello-fruit"}
+    },
     ["tomato"] = {
         persistent = false,
         growth_coefficient = 2,

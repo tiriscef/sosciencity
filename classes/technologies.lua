@@ -207,7 +207,7 @@ function Technologies.init()
     global.gated_technologies = {}
 
     for tech_name in pairs(Unlocks.gated_technologies) do
-        global.gated_technologies[tech_name] = false
+        global.gated_technologies[tech_name] = techs[tech_name].enabled
     end
 
     set_locals()

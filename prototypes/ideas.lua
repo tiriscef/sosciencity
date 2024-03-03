@@ -1,16 +1,16 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local idea_items = {
-    {
-        name = "invention",
-        sprite_variations = {name = "invention", count = 4}
-    },
+    {name = "sketchbook"},
     {
         name = "botanical-study",
         sprite_variations = {name = "botanical-study", count = 4}
     },
     {name = "strategic-considerations"},
-    {name = "sketchbook"},
+    {
+        name = "invention",
+        sprite_variations = {name = "invention", count = 4}
+    },
     {name = "complex-scientific-data"},
     {name = "published-paper"},
     {name = "well-funded-scientific-thesis"}
@@ -59,18 +59,16 @@ Tirislib.Recipe.create {
 }:add_unlock("orchid-caste")
 
 Tirislib.RecipeGenerator.create {
-    product = "invention",
+    product = "sketchbook",
     product_amount = 4,
-    category = "sosciencity-caste-clockwork",
-    energy_required = 4,
-    expensive_energy_required = 6,
+    category = "sosciencity-caste-ember",
+    energy_required = 2,
+    expensive_energy_required = 3,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 4},
-        {type = "item", name = "ink", amount = 1},
-        {type = "item", name = "lumber", amount = 20},
-        {type = "item", name = "screw-set", amount = 20}
+        {type = "item", name = "writing-paper", amount = 1},
+        {type = "item", name = "gingil-hemp", amount = 2}
     },
-    unlock = "clockwork-caste"
+    unlock = "ember-caste"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -100,15 +98,18 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "sketchbook",
+    product = "invention",
     product_amount = 4,
-    category = "sosciencity-caste-ember",
-    energy_required = 2,
-    expensive_energy_required = 3,
+    category = "sosciencity-caste-clockwork",
+    energy_required = 4,
+    expensive_energy_required = 6,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 1}
+        {type = "item", name = "writing-paper", amount = 4},
+        {type = "item", name = "ink", amount = 1},
+        {type = "item", name = "lumber", amount = 20},
+        {type = "item", name = "screw-set", amount = 20}
     },
-    unlock = "ember-caste"
+    unlock = "clockwork-caste"
 }
 
 Tirislib.RecipeGenerator.create {

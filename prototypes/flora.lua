@@ -227,6 +227,33 @@ local function create_annual_bloomhouse_recipe(details)
     return Tirislib.RecipeGenerator.create(details)
 end
 
+local function create_identification_recipe(details)
+    local product = Tirislib.Item.get_by_name(details.product)
+
+    Tirislib.RecipeGenerator.merge_details(
+        details,
+        {
+            product_amount = 1,
+            energy_required = 8,
+            localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
+            localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
+            category = "sosciencity-caste-ember",
+            subgroup = "sosciencity-neogenesis-recipes",
+            icons = {
+                {icon = product.icon},
+                {
+                    icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
+                    scale = 0.3,
+                    shift = {-8, -8}
+                }
+            },
+            icon_size = 64
+        }
+    )
+
+    return Tirislib.RecipeGenerator.create(details)
+end
+
 local function create_neogenesis_recipe(details)
     local product = Tirislib.Item.get_by_name(details.product)
 
@@ -303,13 +330,22 @@ create_neogenesis_recipe {
 -- blue grapes
 create_annual_recipe {
     product = "blue-grapes",
-    unlock = Unlocks.get_tech_name("blue-grapes")
+    unlock = "open-environment-farming"
 }
 
 -- brutal pumpkin
 create_annual_recipe {
     product = "brutal-pumpkin",
-    unlock = Unlocks.get_tech_name("brutal-pumpkin")
+    unlock = "explore-alien-fauna-2"
+}
+
+create_identification_recipe {
+    product = "brutal-pumpkin",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 20},
+        {type = "item", name = "hummus", amount = 40}
+    },
+    unlock = "explore-alien-fauna-2"
 }
 
 -- cherry
@@ -356,7 +392,16 @@ create_annual_recipe {
 -- hardcorn punk
 create_annual_recipe {
     product = "hardcorn-punk",
-    unlock = Unlocks.get_tech_name("hardcorn-punk")
+    unlock = "food-processing"
+}
+
+create_identification_recipe {
+    product = "manok",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "leafage", amount = 200}
+    },
+    unlock = "food-processing"
 }
 
 -- lemon
@@ -376,13 +421,22 @@ create_neogenesis_recipe {
 create_annual_recipe {
     product = "liontooth",
     output_multiplier = 1.5,
-    unlock = Unlocks.get_tech_name("liontooth")
+    unlock = "open-environment-farming"
 }
 
 -- manok
 create_annual_recipe {
     product = "manok",
-    unlock = Unlocks.get_tech_name("manok")
+    unlock = "explore-alien-fauna-1"
+}
+
+create_identification_recipe {
+    product = "manok",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "hummus", amount = 40}
+    },
+    unlock = "explore-alien-fauna-1"
 }
 
 -- necrofall
@@ -424,19 +478,28 @@ create_neogenesis_recipe {
 create_perennial_recipe {
     product = "ortrot",
     byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
-    unlock = Unlocks.get_tech_name("ortrot")
+    unlock = "explore-alien-fauna-2"
+}
+
+create_identification_recipe {
+    product = "ortrot",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 20},
+        {type = "item", name = "hummus", amount = 40}
+    },
+    unlock = "explore-alien-fauna-2"
 }
 
 -- phytofall blossom
 create_annual_recipe {
     product = "phytofall-blossom",
     product_probability = 0.5,
-    unlock = Unlocks.get_tech_name("phytofall-blossom")
+    unlock = "orchid-caste"
 }
 
 create_annual_bloomhouse_recipe {
     product = "phytofall-blossom",
-    unlock = Unlocks.get_tech_name("phytofall-blossom")
+    unlock = "orchid-caste"
 }
 
 -- potato
@@ -453,7 +516,7 @@ create_neogenesis_recipe {
 -- razha bean
 create_annual_recipe {
     product = "razha-bean",
-    unlock = Unlocks.get_tech_name("razha-bean")
+    unlock = "open-environment-farming"
 }
 
 -- sesame
@@ -487,6 +550,21 @@ create_neogenesis_recipe {
     product = "sugar-cane"
 }
 
+-- tello
+create_annual_recipe {
+    product = "tello-fruit",
+    unlock = "explore-alien-fauna-1"
+}
+
+create_identification_recipe {
+    product = "tello-fruit",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "hummus", amount = 40}
+    },
+    unlock = "explore-alien-fauna-1"
+}
+
 -- tomato
 create_annual_recipe {
     product = "tomato",
@@ -514,20 +592,38 @@ create_perennial_recipe {
 -- unnamed fruit
 create_annual_recipe {
     product = "unnamed-fruit",
-    unlock = Unlocks.get_tech_name("unnamed-fruit")
+    unlock = "open-environment-farming"
 }
 
 -- weird berry
 create_annual_recipe {
     product = "weird-berry",
-    unlock = Unlocks.get_tech_name("weird-berry")
+    unlock = "explore-alien-fauna-1"
+}
+
+create_identification_recipe {
+    product = "weird-berry",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "hummus", amount = 40}
+    },
+    unlock = "explore-alien-fauna-1"
 }
 
 -- zetorn
 create_perennial_recipe {
     product = "zetorn",
     byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
-    unlock = Unlocks.get_tech_name("zetorn")
+    unlock = "explore-alien-fauna-1"
+}
+
+create_identification_recipe {
+    product = "zetorn",
+    ingredients = {
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "hummus", amount = 40}
+    },
+    unlock = "explore-alien-fauna-1"
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -599,14 +695,14 @@ create_mushroom_recipe {
 create_mushroom_recipe {
     product = "pocelial",
     ingredients = {{type = "item", name = "humus", amount = 20}},
-    unlock = Unlocks.get_tech_name("pocelial")
+    unlock = "mushroom-farming"
 }
 
 -- red hatty
 create_mushroom_recipe {
     product = "red-hatty",
     ingredients = {{type = "item", name = "humus", amount = 20}},
-    unlock = Unlocks.get_tech_name("red-hatty")
+    unlock = "mushroom-farming"
 }
 
 -- birdsnake
@@ -614,7 +710,7 @@ create_mushroom_recipe {
     product = "birdsnake",
     ingredients = {{type = "item", name = "humus", amount = 10}},
     themes = {{"stone", 10}},
-    unlock = Unlocks.get_tech_name("birdsnake")
+    unlock = "mushroom-farming"
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -677,20 +773,20 @@ end
 -- endower flower
 create_algae_recipe {
     product = "endower-flower",
-    unlock = Unlocks.get_tech_name("endower-flower")
+    unlock = "algae-farming"
 }
 
 -- pyrifera
 create_algae_recipe {
     product = "pyrifera",
     output_multiplier = 2,
-    unlock = Unlocks.get_tech_name("pyrifera")
+    unlock = "algae-farming"
 }
 
 -- queen algae
 create_algae_recipe {
     product = "queen-algae",
-    unlock = Unlocks.get_tech_name("queen-algae")
+    unlock = "algae-farming"
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -723,7 +819,7 @@ Tirislib.Recipe.create {
     order = "00001",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-edible-plants"}},
     localised_description = {"recipe-description.flora-sorting"}
-}
+}:add_unlock("open-environment-farming")
 
 Tirislib.Recipe.create {
     name = "sort-fungi",
@@ -752,7 +848,7 @@ Tirislib.Recipe.create {
     order = "00002",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-fungi"}},
     localised_description = {"recipe-description.flora-sorting"}
-}
+}:add_unlock("mushroom-farming")
 
 Tirislib.Recipe.create {
     name = "sort-algae",
@@ -780,7 +876,7 @@ Tirislib.Recipe.create {
     order = "00003",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-algae"}},
     localised_description = {"recipe-description.flora-sorting"}
-}
+}:add_unlock("algae-farming")
 
 ---------------------------------------------------------------------------------------------------
 -- << processing recipes >>

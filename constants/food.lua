@@ -459,7 +459,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 4,
         luxury = 1,
-        portion_size = 1,
+        portion_size = 2,
         group = "liontooth"
     },
     ["manok"] = {
