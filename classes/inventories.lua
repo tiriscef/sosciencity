@@ -240,6 +240,23 @@ function Inventories.remove_item_range_from_inventory_range(inventories, items)
     end
 end
 
+--- Tries to move the specified amount of items from the source inventory to the destination inventory. Assumes this amount of items actually exists in the source inventory.can_insert
+--- @param item string
+--- @param count integer
+--- @param source_inventory Inventory
+--- @param destination_inventory Inventory
+--- @return integer
+function Inventories.try_move(item, count, source_inventory, destination_inventory)
+    local inserted = destination_inventory.insert {name = item, count = count}
+
+    if inserted > 0 then
+        source_inventory.remove {name = item, count = inserted}
+    end
+
+    return inserted
+end
+local try_move = Inventories.try_move
+
 ---------------------------------------------------------------------------------------------------
 -- << Sosciencity specific concepts >>
 ---------------------------------------------------------------------------------------------------
@@ -272,14 +289,36 @@ function Inventories.produce_garbage(entry, item, amount)
 end
 local produce_garbage = Inventories.produce_garbage
 
+local function try_dispose_garbage(entry, inventory, item, count)
+    local disposed = 0
+
+    for _, dumpster in all_neighbors_of_type(entry, Type.dumpster) do
+        local dumpster_inventory = get_chest_inventory(dumpster)
+
+        disposed = disposed + try_move(item, count - disposed, inventory, dumpster_inventory)
+
+        if disposed == count then
+            break
+        end
+    end
+
+    return disposed
+end
+
+--- Evaluates how much garbage there is in a populated house.
+--- Also tries to move the garbage items to a dumpster entity.
+--- @param entry Entry
+--- @return integer
 function Inventories.get_garbage_value(entry)
     local value = 0
-    local items = get_chest_inventory(entry).get_contents()
+    local inventory = get_chest_inventory(entry)
+    local items = inventory.get_contents()
 
     for name, count in pairs(items) do
         local garbage_multiplier = garbage_values[name]
 
         if garbage_multiplier then
+            count = count - try_dispose_garbage(entry, inventory, name, count)
             value = value + garbage_multiplier * count
         end
     end
@@ -694,7 +733,8 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     sanity[SanitySummand.favorite_taste] = (dominant_taste == favorite_taste) and 4 or 0
     sanity[SanitySummand.disliked_taste] = (dominant_taste == least_favored_taste) and -4 or 0
     sanity[SanitySummand.single_food] = (count == 1) and -3 or 0
-    sanity[SanitySummand.no_variety] = (taste_counts[dominant_taste] == count and dominant_taste ~= Taste.varying) and -3 or 0
+    sanity[SanitySummand.no_variety] =
+        (taste_counts[dominant_taste] == count and dominant_taste ~= Taste.varying) and -3 or 0
     sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == count) and -3 or 0
 end
 
