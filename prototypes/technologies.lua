@@ -20,10 +20,10 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
-    name = "clockwork-caste-efficiency",
+    name = "ember-caste-efficiency",
     icons = {
         {
-            icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
+            icon = "__sosciencity-graphics__/graphics/ember-caste.png",
             icon_size = 256
         },
         {
@@ -33,15 +33,15 @@ Tirislib.Technology.create {
         }
     },
     upgrade = true,
-    prerequisites = {"clockwork-caste"},
+    prerequisites = {"ember-caste"},
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-efficiency", {"caste-short.clockwork"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.ember"}}
         },
         {
             type = "nothing",
-            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.clockwork"}}
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.ember"}}
         }
     },
     unit = {
@@ -52,7 +52,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-efficiency", {"caste-short.clockwork"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.ember"}}
 }
 
 Tirislib.Technology.create {
@@ -245,10 +245,10 @@ Tirislib.Technology.create {
 Tirislib.Technology("chemical-science-pack"):add_prerequisite("clockwork-caste")
 
 Tirislib.Technology.create {
-    name = "ember-caste-efficiency",
+    name = "clockwork-caste-efficiency",
     icons = {
         {
-            icon = "__sosciencity-graphics__/graphics/ember-caste.png",
+            icon = "__sosciencity-graphics__/graphics/clockwork-caste.png",
             icon_size = 256
         },
         {
@@ -258,15 +258,15 @@ Tirislib.Technology.create {
         }
     },
     upgrade = true,
-    prerequisites = {"ember-caste"},
+    prerequisites = {"clockwork-caste"},
     effects = {
         {
             type = "nothing",
-            effect_description = {"description.caste-efficiency", {"caste-short.ember"}}
+            effect_description = {"description.caste-efficiency", {"caste-short.clockwork"}}
         },
         {
             type = "nothing",
-            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.ember"}}
+            effect_description = {"description.caste-upbringing-efficiency", {"caste-name.clockwork"}}
         }
     },
     unit = {
@@ -279,7 +279,7 @@ Tirislib.Technology.create {
         time = 60
     },
     max_level = "infinite",
-    localised_name = {"technology-name.caste-efficiency", {"caste-short.ember"}}
+    localised_name = {"technology-name.caste-efficiency", {"caste-short.clockwork"}}
 }
 
 Tirislib.Technology.create {
