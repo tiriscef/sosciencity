@@ -93,8 +93,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "leafage", amount = 2},
         {type = "item", name = "tiriscefing-willow-wood", amount = 3},
         {type = "item", name = "plemnemm-cotton", amount = 5},
-        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5},
-        {type = "item", name = "phytofall-blossom", amount = 2, probability = 0.32}
+        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5}
     },
     order = "000590"
 }
@@ -149,7 +148,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000595"
-}
+}:add_unlock("orchid-caste")
 
 create_hunting_gathering_recipe {
     name = "hunting-with-trap",
