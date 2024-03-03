@@ -235,8 +235,8 @@ local function create_identification_recipe(details)
         {
             product_amount = 1,
             energy_required = 8,
-            localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
-            localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
+            localised_name = {"recipe-name.flora-identification", product:get_localised_name()},
+            localised_description = {"recipe-description.flora-identification", product:get_localised_name()},
             category = "sosciencity-caste-ember",
             subgroup = "sosciencity-neogenesis-recipes",
             icons = {
@@ -336,16 +336,17 @@ create_annual_recipe {
 -- brutal pumpkin
 create_annual_recipe {
     product = "brutal-pumpkin",
-    unlock = "explore-alien-fauna-2"
+    unlock = "explore-alien-flora-2"
 }
 
 create_identification_recipe {
     product = "brutal-pumpkin",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 20},
         {type = "item", name = "hummus", amount = 40}
     },
-    unlock = "explore-alien-fauna-2"
+    unlock = "explore-alien-flora-2"
 }
 
 -- cherry
@@ -398,6 +399,7 @@ create_annual_recipe {
 create_identification_recipe {
     product = "manok",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
         {type = "item", name = "leafage", amount = 200}
     },
@@ -427,16 +429,17 @@ create_annual_recipe {
 -- manok
 create_annual_recipe {
     product = "manok",
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 create_identification_recipe {
     product = "manok",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
         {type = "item", name = "hummus", amount = 40}
     },
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 -- necrofall
@@ -478,16 +481,17 @@ create_neogenesis_recipe {
 create_perennial_recipe {
     product = "ortrot",
     byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
-    unlock = "explore-alien-fauna-2"
+    unlock = "explore-alien-flora-2"
 }
 
 create_identification_recipe {
     product = "ortrot",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 20},
         {type = "item", name = "hummus", amount = 40}
     },
-    unlock = "explore-alien-fauna-2"
+    unlock = "explore-alien-flora-2"
 }
 
 -- phytofall blossom
@@ -553,16 +557,17 @@ create_neogenesis_recipe {
 -- tello
 create_annual_recipe {
     product = "tello-fruit",
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 create_identification_recipe {
     product = "tello-fruit",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
         {type = "item", name = "hummus", amount = 40}
     },
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 -- tomato
@@ -598,32 +603,34 @@ create_annual_recipe {
 -- weird berry
 create_annual_recipe {
     product = "weird-berry",
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 create_identification_recipe {
     product = "weird-berry",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
         {type = "item", name = "hummus", amount = 40}
     },
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 -- zetorn
 create_perennial_recipe {
     product = "zetorn",
     byproducts = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 create_identification_recipe {
     product = "zetorn",
     ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
         {type = "item", name = "hummus", amount = 40}
     },
-    unlock = "explore-alien-fauna-1"
+    unlock = "explore-alien-flora-1"
 }
 
 ---------------------------------------------------------------------------------------------------
