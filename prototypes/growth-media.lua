@@ -25,8 +25,8 @@ Tirislib.RecipeGenerator.create {
     product_amount = 100,
     energy_required = 3.2,
     ingredients = {
-        {type = "item", name = "hardcorn-punk", amount = 20},
-        {type = "fluid", name = "clean-water", amount = 100}
+        {type = "item", name = "blue-grapes", amount = 10},
+        {type = "fluid", name = "drinkable-water", amount = 100}
     },
     category = Tirislib.RecipeGenerator.category_alias.dissolving,
     unlock = "fermentation"

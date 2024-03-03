@@ -788,7 +788,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
-    unlock = "food-processing"
+    unlock = "basic-biotechnology"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -1092,12 +1092,25 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "ethanol",
     product_amount = 50,
+    energy_required = 5,
+    ingredients = {
+        {type = "item", name = "blue-grapes", amount = 10},
+        {type = "fluid", name = "pemtenn", amount = 10}
+    },
+    category = "sosciencity-fermentation-tank",
+    unlock = "fermentation"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "ethanol",
+    product_amount = 50,
+    energy_required = 5,
     ingredients = {
         {type = "item", name = "sugar", amount = 2},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     category = "sosciencity-fermentation-tank",
-    unlock = "fermentation"
+    unlock = "basic-biotechnology"
 }
 
 Tirislib.RecipeGenerator.create {
