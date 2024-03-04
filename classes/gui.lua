@@ -1251,7 +1251,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     set_datalist_value_tooltip(
         general_list,
         "inhabitants",
-        (entry[EK.emigration_trend] > 0) and {"sosciencity.positive-trend"} or {"sosciencity.negative-trend"}
+        (entry[EK.emigration_trend] > 0) and {"sosciencity.negative-trend"} or ""
     )
 
     -- the annoying edge case of no inhabitants inside the house
