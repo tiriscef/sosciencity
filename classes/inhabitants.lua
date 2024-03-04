@@ -774,7 +774,7 @@ end
 local function get_ember_bonus()
     local non_ember_population = array_sum(population) - population[Type.ember]
     if non_ember_population > 0 then
-        return floor_to_step(max(0, caste_points[Type.ember]) / non_ember_population, 0.1)
+        return floor_to_step((3 * max(0, caste_points[Type.ember]) / non_ember_population) ^ 0.6, 0.1)
     else
         return 0
     end
@@ -1799,9 +1799,10 @@ local function update_emigration(entry, happiness, caste_id, delta_ticks)
         return
     end
 
-    if emigration_trend > 0 then
+    -- Testing disabling this WarningType for now. I have the feeling it's not as useful as the ones that directly point toward problems.
+    --[[if emigration_trend > 0 then
         Communication.warning(WarningType.emigration, entry)
-    end
+    end]]
 
     local trend = entry[EK.emigration_trend] + emigration_trend
 

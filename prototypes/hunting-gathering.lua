@@ -22,37 +22,12 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "wild-edible-plants", amount = 4},
+        {type = "item", name = "wild-edible-plants", amount_min = 0, amount_max = 6},
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000565"
 }
 
---[[
-
-create_hunting_gathering_recipe {
-    name = "gathering-food-3",
-    category = "sosciencity-hunting",
-    energy_required = 4,
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/gather-food-3.png"}
-    },
-    icon_size = 64,
-    results = {
-        {type = "item", name = "leafage", amount = 4},
-        {type = "item", name = "liontooth", amount = 5, probability = 0.7},
-        {type = "item", name = "razha-bean", amount = 5, probability = 0.2},
-        {type = "item", name = "unnamed-fruit", amount = 3, probability = 0.5},
-        {type = "item", name = "blue-grapes", amount = 5, probability = 0.3},
-        {type = "item", name = "manok", amount = 2, probability = 0.35},
-        {type = "item", name = "tello-fruit", amount = 2, probability = 0.3},
-        {type = "item", name = "zetorn", amount = 5, probability = 0.3},
-        {type = "item", name = "weird-berry", amount = 2, probability = 0.4},
-        {type = "item", name = "brutal-pumpkin", amount = 2, probability = 0.3},
-        {type = "item", name = "ortrot", amount = 5, probability = 0.3}
-    },
-    order = "000567"
-}:add_unlock("explore-alien-flora-2")]]
 create_hunting_gathering_recipe {
     name = "gathering-mushrooms",
     category = "sosciencity-hunting",
@@ -62,7 +37,7 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "wild-fungi", amount = 4}
+        {type = "item", name = "wild-fungi", amount_min = 0, amount_max = 6}
     },
     order = "000575"
 }
@@ -76,7 +51,7 @@ create_hunting_gathering_recipe {
     },
     icon_size = 64,
     results = {
-        {type = "item", name = "wild-algae", amount = 4}
+        {type = "item", name = "wild-algae", amount_min = 0, amount_max = 6}
     },
     order = "000585"
 }

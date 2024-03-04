@@ -801,16 +801,16 @@ create_algae_recipe {
 
 Tirislib.Recipe.create {
     name = "sort-edible-plants",
-    energy_required = 2,
+    energy_required = 4,
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 4}
     },
     results = {
         {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "liontooth", amount = 5},
-        {type = "item", name = "razha-bean", amount = 2},
-        {type = "item", name = "unnamed-fruit", amount = 3},
-        {type = "item", name = "blue-grapes", amount = 2}
+        {type = "item", name = "liontooth", amount_min = 0, amount_max = 5},
+        {type = "item", name = "razha-bean", amount_min = 0, amount_max = 4},
+        {type = "item", name = "unnamed-fruit", amount_min = 0, amount_max = 5},
+        {type = "item", name = "blue-grapes", amount_min = 0, amount_max = 4}
     },
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/wild-edible-plants.png"},
@@ -830,16 +830,16 @@ Tirislib.Recipe.create {
 
 Tirislib.Recipe.create {
     name = "sort-fungi",
-    energy_required = 2,
+    energy_required = 4,
     ingredients = {
         {type = "item", name = "wild-fungi", amount = 4}
     },
     results = {
         {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "fawoxylas", amount = 2},
-        {type = "item", name = "pocelial", amount = 2},
-        {type = "item", name = "red-hatty", amount = 2},
-        {type = "item", name = "birdsnake", amount = 2}
+        {type = "item", name = "fawoxylas", amount_min = 0, amount_max = 4},
+        {type = "item", name = "pocelial", amount_min = 0, amount_max = 4},
+        {type = "item", name = "red-hatty", amount_min = 0, amount_max = 4},
+        {type = "item", name = "birdsnake", amount_min = 0, amount_max = 4}
     },
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/wild-fungi.png"},
@@ -859,15 +859,15 @@ Tirislib.Recipe.create {
 
 Tirislib.Recipe.create {
     name = "sort-algae",
-    energy_required = 2,
+    energy_required = 4,
     ingredients = {
         {type = "item", name = "wild-algae", amount = 4}
     },
     results = {
         {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "queen-algae", amount = 2},
-        {type = "item", name = "pyrifera", amount = 2},
-        {type = "item", name = "endower-flower", amount_min = 1, amount_max = 2}
+        {type = "item", name = "queen-algae", amount_min = 0, amount_max = 4},
+        {type = "item", name = "pyrifera", amount_min = 0, amount_max = 4},
+        {type = "item", name = "endower-flower", amount_min = 0, amount_max = 2}
     },
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/wild-algae.png"},
