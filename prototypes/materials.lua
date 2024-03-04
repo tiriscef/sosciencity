@@ -397,7 +397,7 @@ Tirislib.RecipeGenerator.create {
     },
     allow_productivity = true,
     unlock = "hunting-fishing"
-}
+}:add_unlock("clockwork-caste")
 
 Tirislib.RecipeGenerator.create {
     product = "pot",
@@ -458,8 +458,10 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "architectural-concept",
-    energy_required = 4,
-    ingredients = {},
+    energy_required = 2,
+    ingredients = {
+        {type = "item", name = "writing-paper", amount = 2}
+    },
     category = "sosciencity-architecture",
     unlock = "infrastructure-1"
 }

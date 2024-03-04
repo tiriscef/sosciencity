@@ -105,7 +105,7 @@ Tirislib.RecipeGenerator.create {
     expensive_energy_required = 6,
     ingredients = {
         {type = "item", name = "writing-paper", amount = 4},
-        {type = "item", name = "ink", amount = 1},
+        {type = "item", name = "rope", amount = 5},
         {type = "item", name = "lumber", amount = 20},
         {type = "item", name = "screw-set", amount = 20}
     },
