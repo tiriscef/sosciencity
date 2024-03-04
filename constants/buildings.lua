@@ -51,7 +51,7 @@ Building.values = {
         type = Type.manufactory,
         range = range_by_foot,
         workforce = {
-            count = 5,
+            count = 20,
             castes = {Type.clockwork}
         }
     },
@@ -206,7 +206,7 @@ Building.values = {
         type = Type.manufactory,
         range = range_by_foot,
         workforce = {
-            count = 10,
+            count = 20,
             castes = {Type.orchid}
         }
     },

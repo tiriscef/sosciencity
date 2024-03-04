@@ -673,7 +673,7 @@ end
 
 local function get_fishing_competition(entry)
     local count = Neighborhood.get_neighbor_count(entry, Type.fishery)
-    return 1 / (count + 1), count
+    return (count + 1) ^ (-0.35), count
 end
 Entity.get_fishing_competition = get_fishing_competition
 
@@ -720,7 +720,7 @@ end
 
 local function get_hunting_competition(entry)
     local count = Neighborhood.get_neighbor_count(entry, Type.hunting_hut)
-    return 1 / (count + 1), count
+    return (count + 1) ^ (-0.35), count
 end
 Entity.get_hunting_competition = get_hunting_competition
 
@@ -1215,7 +1215,7 @@ Register.set_entity_creation_handler(Type.water_distributer, create_water_distri
 local function get_waterwell_competition_performance(entry)
     -- +1 so it counts itself too
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    return near_count ^ (-0.65)
+    return near_count ^ (-0.45)
 end
 
 Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
