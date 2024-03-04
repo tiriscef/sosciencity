@@ -1,4 +1,5 @@
 local DiseaseCategory = require("enums.disease-category")
+local DiseasedCause = require("enums.diseased-cause")
 local Type = require("enums.type")
 
 local Time = require("constants.time")
@@ -338,6 +339,15 @@ Diseases.values = {
 Diseases.by_category = {}
 --- table with (disease category, sum of frequencies)-pairs for efficient random choosing
 Diseases.frequency_sums = {}
+
+--- table with (disease category, diseased cause)-pairs
+Diseases.disease_causes = {
+    [DiseaseCategory.health] = DiseasedCause.health,
+    [DiseaseCategory.sanity] = DiseasedCause.sanity,
+    [DiseaseCategory.accident] = DiseasedCause.accident,
+    [DiseaseCategory.birth_defect] = DiseasedCause.birth,
+    [DiseaseCategory.zoonosis] = DiseasedCause.zoonosis
+}
 
 for _, category in pairs(DiseaseCategory) do
     Diseases.by_category[category] = {}

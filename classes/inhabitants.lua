@@ -327,7 +327,7 @@ function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_
         local sickened = make_sick(group, disease_id, count_per_pick + (i <= modulo and 1 or 0))
 
         if not suppress_logging and sickened > 0 then
-            Communication.report_diseased(disease_id, sickened, disease_category)
+            Communication.report_diseased(disease_id, sickened, Diseases.disease_causes[disease_category])
         end
     end
 end
