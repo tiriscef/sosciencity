@@ -1,4 +1,42 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+Date: 2024.03.04
+  Gist:
+    - Exchanged Clockwork and Ember Caste progression-wise. Meaning you will need the Ember HQ and Sketchbooks for Automation Science, and the Clockwork HQ and Inventions for Chemical Science instead of the other way round.
+    - Reworked the early game Gathering-Recipes. Now you get mixes of wild flora stuff instead of specific plants. I hope this reduces the overburdening amount of new items in the beginning.
+    - This update mixes around quite a bit about the early game.
+
+  Features:
+    - New Food Items: Wild Edible Plants, Wild Fungi, Wild Algae (graphics by _traum)
+    - New Technologies: Upbringing, Composting Silo, Hunting & Gathering, Mushroom Farming, Algae Farming
+    - Added recipes to gather specific materials with the Gathering Hut instead of all at once.
+    - Inhabitants will try to dispose Garbage from their House to nearby Trash Sites when their house is messy.
+
+  Bugfixes:
+    - Fixed that inhabitants would only donate blood to medbays and not to hospitals.
+    - Fixed a crash when blood donations were limited by hospital workhours instead of by the inhabitants.
+    - Fixed that the Ember Bonus sometimes displayed -0.1 when it should be 0.
+    - Fixed that Tello Fruits didn't have a farming recipe lol
+    - Fixed that Birth Defects were reported as Infections in Healthcare Reports, triggering the infections warning.
+    - Fixed that the inhabitants entry in Housing Guis always had this "overall people are leaving" tooltip.
+    - Spending Complex Scientific Data for Published Papers gives back the Hard Drives.
+
+  Changes:
+    - I'm testing disabling the "people are leaving"-Warning, as it's less useful than the other warnings that directly tell the player what's wrong, while also blocking those because of how the engine handles multiple warnings.
+    - Added a Range description for houses
+    - Compatibility with K2 Water Processing: both mods load together now
+
+  Balancing:
+    - Clockwork, Orchid and Ember need just 1 type of food and emigrate slower
+    - Made the Plasma caste a bit less demanding. Lowered the Plasma caste's emigration_threshold to 7 (from 10), their required food count to 4 (from 5) and their minimum comfort to 3 (from 5)
+    - Doubled the calories of Liontooth items
+    - Buffed the Ember Caste Bonus
+    - Nerved the competition malus of multiple Gathering or Fishing Huts. Before the sum of all Huts per forest/water body would always be 1. Now you can get more productivity by placing multiple.
+
+  Factory-Breaking Changes:
+    - Lot's of recipes changed. Sorry.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2024.02.29
   Gist:
