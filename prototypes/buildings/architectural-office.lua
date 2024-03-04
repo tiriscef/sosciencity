@@ -68,7 +68,7 @@ Tirislib.Entity.create {
             }
         }
     },
-    crafting_speed = 0.5,
+    crafting_speed = 0.25,
     crafting_categories = {"sosciencity-architecture"},
     energy_usage = "95kW",
     energy_source = {
