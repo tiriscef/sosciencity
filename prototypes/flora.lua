@@ -1051,7 +1051,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 0,
-    unlock = Unlocks.get_tech_name("ortrot")
+    unlock = "explore-alien-flora-2"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -1063,7 +1063,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 0,
-    unlock = Unlocks.get_tech_name("zetorn")
+    unlock = "explore-alien-flora-1"
 }
 
 ---------------------------------------------------------------------------------------------------
