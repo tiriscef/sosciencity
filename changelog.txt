@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.10
+Date: 2024.03.06
+  Bugfixes:
+    - Fixed a typo that made the identification recipes require Hummus instead of Humus. I officially trolled myself with the humus-hummus joke.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.9
 Date: 2024.03.05
   Bugfixes:

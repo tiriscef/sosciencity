@@ -344,7 +344,7 @@ create_identification_recipe {
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 20},
-        {type = "item", name = "hummus", amount = 40}
+        {type = "item", name = "humus", amount = 40}
     },
     unlock = "explore-alien-flora-2"
 }
@@ -369,7 +369,7 @@ create_annual_recipe {
 
 create_neogenesis_recipe {
     product = "chickpea",
-    unlock = "hummus"
+    unlock = "humus"
 }
 
 -- eggplant
@@ -437,7 +437,7 @@ create_identification_recipe {
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "hummus", amount = 40}
+        {type = "item", name = "humus", amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -489,7 +489,7 @@ create_identification_recipe {
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 20},
-        {type = "item", name = "hummus", amount = 40}
+        {type = "item", name = "humus", amount = 40}
     },
     unlock = "explore-alien-flora-2"
 }
@@ -531,7 +531,7 @@ create_annual_recipe {
 
 create_neogenesis_recipe {
     product = "sesame",
-    unlock = "hummus"
+    unlock = "humus"
 }
 
 -- sugar beet
@@ -565,7 +565,7 @@ create_identification_recipe {
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "hummus", amount = 40}
+        {type = "item", name = "humus", amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -611,7 +611,7 @@ create_identification_recipe {
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "hummus", amount = 40}
+        {type = "item", name = "humus", amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -628,7 +628,7 @@ create_identification_recipe {
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "hummus", amount = 40}
+        {type = "item", name = "humus", amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
