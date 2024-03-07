@@ -3198,7 +3198,8 @@ local type_gui_specifications = {
     },
     [Type.upbringing_station] = {
         creater = create_upbringing_station,
-        updater = update_upbringing_station
+        updater = update_upbringing_station,
+        always_update = true
     },
     [Type.waste_dump] = {
         creater = create_waste_dump,

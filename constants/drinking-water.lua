@@ -3,7 +3,7 @@ local DrinkingWater = {}
 
 DrinkingWater.values = {
     ["clean-water"] = 2,
-    ["drinkable-water"] = 0,
+    ["drinkable-water"] = 0.5,
     ["water"] = -5,
     ["mechanically-cleaned-water"] = -3,
     ["biologically-cleaned-water"] = -1,

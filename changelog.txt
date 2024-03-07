@@ -1,4 +1,24 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.11
+Date: 2024.03.07
+  Gist:
+    - Bugfixes. Also we made a machine that sorts your wild gathering produce.
+
+  Features:
+    - New Building: Sorting Machine (graphics bei _traum)
+
+  Bugfixes:
+    - Fixed that Hardcorn Punk didn't have an identification recipe for some copy-paste-and-forget reason. 
+    - Fixed that empty water towers sometimes prevented inhabitants to consume water from other water towers with a water quality of <= 0.
+
+  Changes:
+    - Made the Guis of Upbringing Stations update every Sosciencity update cycle to make it look more responsive when the mode is changed.
+
+  Balancing:
+    - Lowered the Competition Area of Groundwater Pumps a bit.
+    - Drinkable Water has a quality of 0.5 instead of 0.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.10
 Date: 2024.03.06
   Bugfixes:
