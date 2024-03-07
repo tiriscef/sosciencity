@@ -760,12 +760,6 @@ local function consume_water(distributers, amount)
     for _, distributer in pairs(distributers) do
         local water_name = distributer[EK.water_name]
 
-        -- check if the distributer has water
-        if not water_name then
-            -- the distributers are sorted, so all the coming distributers won't have any water either
-            break
-        end
-
         local consumed = distributer[EK.entity].remove_fluid {name = water_name, amount = to_consume}
         log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[EK.water_quality]
@@ -780,7 +774,15 @@ local function consume_water(distributers, amount)
 end
 
 function Inventories.evaluate_water(entry, delta_ticks, happiness_factors, health_factors, health_summands)
-    local distributers = get_neighbors_of_type(entry, Type.water_distributer)
+    local distributers = {}
+
+    -- find the available water distributers, filter out the empty ones
+    for _, distributer in all_neighbors_of_type(entry, Type.water_distributer) do
+        if distributer[EK.water_name] ~= nil then
+            distributers[#distributers+1] = distributer
+        end
+    end
+
     sort_by_key(distributers, EK.water_quality)
 
     local water_to_consume = castes[entry[EK.type]].water_demand * entry[EK.inhabitants] * delta_ticks
