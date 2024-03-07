@@ -137,6 +137,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-sorting-machine"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-plant-upbringing"
     },
     {

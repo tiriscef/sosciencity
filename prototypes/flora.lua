@@ -397,7 +397,7 @@ create_annual_recipe {
 }
 
 create_identification_recipe {
-    product = "manok",
+    product = "hardcorn-punk",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
         {type = "item", name = "botanical-study", amount = 10},
@@ -802,6 +802,7 @@ create_algae_recipe {
 Tirislib.Recipe.create {
     name = "sort-edible-plants",
     energy_required = 4,
+    category = "sosciencity-sorting-machine",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 4}
     },
@@ -831,6 +832,7 @@ Tirislib.Recipe.create {
 Tirislib.Recipe.create {
     name = "sort-fungi",
     energy_required = 4,
+    category = "sosciencity-sorting-machine",
     ingredients = {
         {type = "item", name = "wild-fungi", amount = 4}
     },
@@ -860,6 +862,7 @@ Tirislib.Recipe.create {
 Tirislib.Recipe.create {
     name = "sort-algae",
     energy_required = 4,
+    category = "sosciencity-sorting-machine",
     ingredients = {
         {type = "item", name = "wild-algae", amount = 4}
     },
