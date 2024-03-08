@@ -185,6 +185,7 @@ local function add_alt_mode_sprite(entry, name)
             sprite = name,
             target = entity,
             surface = entity.surface,
+            render_layer = "137", -- this should be lower than "entity-info-icon", meaning the blinking "no energy"-warning will be drawn above 
             only_in_alt_mode = true
         }
     )
