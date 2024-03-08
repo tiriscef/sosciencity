@@ -32,9 +32,9 @@ Diseases.not_curable = 1000000000
 Diseases.values = {
     -- 1+: primarily accidents
     [1] = {
-        name = "limp-loss",
+        name = "limb-loss",
         cure_items = {
-            ["artificial-limp"] = 1
+            ["artificial-limb"] = 1
         },
         curing_workload = 4,
         categories = {
@@ -94,7 +94,7 @@ Diseases.values = {
         curing_workload = 1,
         natural_recovery = 1 * Time.nauvis_day,
         categories = {[DiseaseCategory.accident] = 400},
-        escalation = "limp-loss",
+        escalation = "limb-loss",
         escalation_probability = 0.1,
         work_effectivity = 0
     },

@@ -6,7 +6,7 @@ local Food = require("constants.food")
 
 local medicine_items = {
     {name = "activated-carbon", sprite_variations = {name = "activated-carbon", count = 3, include_icon = true}},
-    {name = "artificial-limp"},
+    {name = "artificial-limb"},
     {name = "artificial-heart"},
     {name = "bandage", sprite_variations = {name = "bandage-pile", count = 3}},
     {name = "isotonic-saline-solution"},
@@ -79,7 +79,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "artificial-limp",
+    product = "artificial-limb",
     themes = {
         {"framework", 2},
         {"wiring", 1},
