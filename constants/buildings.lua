@@ -330,7 +330,8 @@ end
 
 local houses = Housing.values
 local housing_details = {
-    range = range_by_foot -- range 'by foot'
+    range = range_by_foot, -- range 'by foot'
+    power_usage = 1 -- Will be set dynamically, depending on the number of inhabitants. This dummy value will assure the eei is spawned upon placement.
 }
 
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.

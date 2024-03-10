@@ -18,7 +18,7 @@ local flora_items = {
         sprite_variations = {name = "hardcorn-punk-pile", count = 3}
     },
     {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
-    {name = "tiriscefing-willow-wood", wood = true, unlock = "open-environment-farming"},
+    {name = "tiriscefing-willow-wood", wood = true},
     {name = "cherry-wood", wood = true, unlock = Unlocks.get_tech_name("cherry")},
     {name = "olive-wood", wood = true, unlock = Unlocks.get_tech_name("olive")},
     {name = "ortrot-wood", wood = true, unlock = Unlocks.get_tech_name("ortrot")},
