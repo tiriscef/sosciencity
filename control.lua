@@ -130,6 +130,7 @@ require("classes.gui")
 ---@class DiseaseCategory
 ---@class AgeGroup
 ---@class GenderGroup
+---@class RenderingType
 
 --[[
     Data this script stores in global

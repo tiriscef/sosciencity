@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local RenderingType = require("enums.rendering-type")
 local Taste = require("enums.taste")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
@@ -748,6 +749,10 @@ function Inventories.evaluate_diet(entry, delta_ticks)
     if food_count > 0 then
         local to_consume = caste.calorific_demand * delta_ticks * entry[EK.inhabitants]
         hunger_satisfaction = consume_food(entry, inventories, to_consume, diet, food_count)
+
+        Subentities.remove_common_sprite(entry, RenderingType.food_warning)
+    else
+        Subentities.add_common_sprite(entry, RenderingType.food_warning)
     end
 
     add_diet_effects(entry, diet, caste, food_count, hunger_satisfaction)
@@ -792,7 +797,10 @@ function Inventories.evaluate_water(entry, delta_ticks, happiness_factors, healt
         satisfaction, quality = consume_water(distributers, water_to_consume)
 
         if satisfaction < 0.1 then
+            Subentities.add_common_sprite(entry, RenderingType.water_warning)
             Communication.warning(WarningType.no_water, entry)
+        else
+            Subentities.remove_common_sprite(entry, RenderingType.water_warning)
         end
     else
         -- annoying edge case of no inhabitants
@@ -801,9 +809,13 @@ function Inventories.evaluate_water(entry, delta_ticks, happiness_factors, healt
         if probe and probe[EK.water_name] then
             satisfaction = 1
             quality = probe[EK.water_quality]
+
+            Subentities.remove_common_sprite(entry, RenderingType.water_warning)
         else
             satisfaction = 0
             quality = 0
+
+            Subentities.add_common_sprite(entry, RenderingType.water_warning)
         end
     end
 

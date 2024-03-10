@@ -17,8 +17,8 @@ EK.last_update = 5
 EK.tick_of_creation = 6
 --- table with (subentity_type, subentity)-pairs
 EK.subentities = 7
---- id of this entry's altmode sprite
-EK.alt_mode_sprite = 8
+--- table with (rendering_type, id)-pairs
+EK.attached_renderings = 9
 
 -- inventory stuff
 
