@@ -37,7 +37,7 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture{
+    animation = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/orchid-food-factory/orchid-food-factory",
         center = {16.0, 11.0},
         width = 34,
@@ -58,9 +58,10 @@ Tirislib.Entity.create {
     fluid_boxes = {
         {
             base_level = -1,
+            height = 2,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {2.5, 3.5}}},
+            pipe_connections = {{position = {2.5, 3.5}, type = "input"}},
             production_type = "input"
         },
         off_when_no_fluid_recipe = true

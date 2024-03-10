@@ -28,7 +28,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "farm"},
     max_health = 200,
     corpse = "farm-remnants",
-    dying_explosion = "assembling-machine-1-explosion";
+    dying_explosion = "assembling-machine-1-explosion",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
@@ -211,16 +211,18 @@ Tirislib.Entity.create {
     fluid_boxes = {
         {
             base_level = -1,
+            height = 2,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {6.0, 4.0}}},
+            pipe_connections = {{position = {6.0, 4.0}, type = "input"}},
             production_type = "input"
         },
         {
             base_level = -1,
+            height = 2,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {8.0, 2.0}}},
+            pipe_connections = {{position = {8.0, 2.0}, type = "input"}},
             production_type = "input"
         }
     }

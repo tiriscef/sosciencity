@@ -88,7 +88,7 @@ Tirislib.Entity.create {
             base_level = 1,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0, -2}}},
+            pipe_connections = {{position = {0, -2}, type = "output"}},
             production_type = "output"
         }
     }

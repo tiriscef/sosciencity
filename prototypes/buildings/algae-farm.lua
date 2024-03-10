@@ -54,23 +54,25 @@ Tirislib.Entity.create {
     fluid_boxes = {
         {
             base_level = -1,
+            height = 2,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-3.0, -2.0}}},
+            pipe_connections = {{position = {-3.0, -2.0}, type = "input"}},
             production_type = "input"
         },
         {
             base_level = -1,
+            height = 2,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {2.0, -2.0}}},
+            pipe_connections = {{position = {2.0, -2.0}, type = "input"}},
             production_type = "input"
         },
         {
             base_level = 1,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {3.0, -2.0}}},
+            pipe_connections = {{position = {3.0, -2.0}, type = "output"}},
             production_type = "output"
         }
     },
