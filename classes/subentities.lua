@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local RenderingType = require("enums.rendering-type")
 local SubentityType = require("enums.subentity-type")
 
 --- Static class that handles hidden entities that hack additional behaviours.
@@ -37,7 +38,10 @@ local PENALTY_MODULE_NAME = "sosciencity-penalty"
 
 local MAX_MODULE_STRENGTH = 14
 
--- assumes that value is an integer
+--- Inserts modules with the given name until their combined bonus sum to the given value.
+--- @param beacon_inventory Inventory
+--- @param module_name string
+--- @param value integer
 local function set_binary_modules(beacon_inventory, module_name, value)
     local new_value = value
     local strength = 0
@@ -59,8 +63,8 @@ end
 
 --- Sets the transmitted effects of the hidden beacon. Speed and productivity need to be positive.
 --- @param entry Entry
---- @param speed number
---- @param productivity number
+--- @param speed integer
+--- @param productivity integer
 --- @param add_penalty boolean
 function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
     local beacon, new = get_or_create_subentity(entry, SubentityType.beacon)
@@ -137,6 +141,71 @@ end
 local set_power_usage = Subentities.set_power_usage
 
 ---------------------------------------------------------------------------------------------------
+-- << sprites >>
+
+local function add_alt_mode_sprite(entry, name)
+    local entity = entry[EK.entity]
+    local renderings = get_subtbl(entry, EK.attached_renderings)
+
+    renderings[RenderingType.altmode_sprite] =
+        rendering.draw_sprite(
+        {
+            sprite = name,
+            target = entity,
+            surface = entity.surface,
+            render_layer = "137", -- this should be lower than "entity-info-icon", meaning the blinking "no energy"-warning will be drawn above
+            only_in_alt_mode = true
+        }
+    )
+end
+
+local common_sprites = {
+    [RenderingType.food_warning] = "virtual-signal/alert-no-food",
+    [RenderingType.water_warning] = "virtual-signal/alert-no-water",
+    [RenderingType.no_workers] = "virtual-signal/alert-not-enough-workers"
+}
+local common_sprite_offsets = {
+    [RenderingType.food_warning] = {x = 1.25, y = 0},
+    [RenderingType.water_warning] = {x = -1.25, y = 0},
+    [RenderingType.no_workers] = {x = 1.25, y = 0}
+}
+
+--- Adds a common sprite to this entity.
+--- @param entry Entry
+--- @param render_type RenderingType
+function Subentities.add_common_sprite(entry, render_type)
+    local attached_renders = get_subtbl(entry, EK.attached_renderings)
+
+    -- do nothing if the common sprite already exists, such that this function can be called without checking the state of the common sprite
+    if attached_renders[render_type] then
+        return
+    end
+
+    local entity = entry[EK.entity]
+
+    attached_renders[render_type] =
+        rendering.draw_sprite(
+        {
+            sprite = common_sprites[render_type],
+            target = entity,
+            target_offset = common_sprite_offsets[render_type],
+            surface = entity.surface,
+            render_layer = "189" -- lower than the default "arrow", so mouseover renderings should be drawn over this
+        }
+    )
+end
+
+function Subentities.remove_common_sprite(entry, render_type)
+    local attached_renders = get_subtbl(entry, EK.attached_renderings)
+    local id = attached_renders[render_type]
+
+    if id and rendering.is_valid(id) then
+        rendering.destroy(id)
+        attached_renders[render_type] = nil
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << creation >>
 
 local function get_subentity_name(entry, _type)
@@ -177,20 +246,6 @@ local function add(entry, _type)
     return subentity
 end
 
-local function add_alt_mode_sprite(entry, name)
-    local entity = entry[EK.entity]
-    entry[EK.alt_mode_sprite] =
-        rendering.draw_sprite(
-        {
-            sprite = name,
-            target = entity,
-            surface = entity.surface,
-            render_layer = "137", -- this should be lower than "entity-info-icon", meaning the blinking "no energy"-warning will be drawn above 
-            only_in_alt_mode = true
-        }
-    )
-end
-
 --- Adds all the hidden entities this entry needs to work.
 --- @param entry Entry
 function Subentities.add_all_for(entry)
@@ -214,32 +269,33 @@ function Subentities.add_all_for(entry)
     end
 end
 
+--- Removes all the renderings attached to this entity.
+--- @param entry any
+function Subentities.remove_sprites(entry)
+    local attached_renders = entry[EK.attached_renderings]
+    if attached_renders then
+        for _, id in pairs(attached_renders) do
+            if rendering.is_valid(id) then
+                rendering.destroy(id)
+            end
+        end
+    end
+end
+local remove_sprites = Subentities.remove_sprites
+
 --- Removes all the hidden entities.
 --- @param entry Entry
 function Subentities.remove_all_for(entry)
     local subentities = entry[EK.subentities]
-    if not subentities then
-        return
-    end
-
-    for _, subentity in pairs(subentities) do
-        if subentity.valid then
-            subentity.destroy()
+    if subentities then
+        for _, subentity in pairs(subentities) do
+            if subentity.valid then
+                subentity.destroy()
+            end
         end
     end
 
-    local alt_mode_sprite = entry[EK.alt_mode_sprite]
-    if alt_mode_sprite and rendering.is_valid(alt_mode_sprite) then
-        rendering.destroy(alt_mode_sprite)
-    end
-end
-
-function Subentities.remove_sprites(entry)
-    local sprite_id = entry[EK.alt_mode_sprite]
-
-    if sprite_id then
-        rendering.destroy(sprite_id)
-    end
+    remove_sprites(entry)
 end
 
 --- Gets the hidden entity of the given type and if it had to be recreated.\

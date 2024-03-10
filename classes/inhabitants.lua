@@ -5,6 +5,7 @@ local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
 local EmigrationCause = require("enums.emigration-cause")
 local Gender = require("enums.gender")
+local RenderingType = require("enums.rendering-type")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
@@ -105,6 +106,8 @@ local get_capacity = Housing.get_capacity
 
 local set_power_usage = Subentities.set_power_usage
 local has_power = Subentities.has_power
+local add_common_sprite = Subentities.add_common_sprite
+local remove_common_sprite = Subentities.remove_common_sprite
 
 local set_binary_techs = Technologies.set_binary_techs
 
@@ -1008,6 +1011,9 @@ function Inhabitants.update_workforce(manufactory, workforce)
     current_workers = manufactory[EK.worker_count]
     if nominal_count > current_workers and current_workers / workforce.count < 0.2 then
         Communication.warning(WarningType.insufficient_workers, manufactory)
+        add_common_sprite(manufactory, RenderingType.no_workers)
+    else
+        remove_common_sprite(manufactory, RenderingType.no_workers)
     end
 end
 
@@ -2113,9 +2119,10 @@ local function update_empty_house(entry)
         end
     end
 
-    if not has_water then
-        entry[EK.is_liveable] = false
-        return
+    if has_water then
+        remove_common_sprite(entry, RenderingType.water_warning)
+    else
+        add_common_sprite(entry, RenderingType.water_warning)
     end
 
     local has_food = false
@@ -2126,7 +2133,13 @@ local function update_empty_house(entry)
         end
     end
 
-    entry[EK.is_liveable] = has_food
+    if has_food then
+        remove_common_sprite(entry, RenderingType.food_warning)
+    else
+        add_common_sprite(entry, RenderingType.food_warning)
+    end
+
+    entry[EK.is_liveable] = has_water and has_food
 end
 
 Register.set_entity_updater(Type.empty_house, update_empty_house)
