@@ -37,7 +37,7 @@ Tirislib.Prototype.batch_create {
         order = "d",
         trigger = {
             type = "research",
-            technology = "clockwork-caste"
+            technology = "upbringing"
         }
     },
     {
