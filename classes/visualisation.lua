@@ -108,7 +108,7 @@ local function highlight_workforce(player_id, entry, building_details, created_h
         rendering.draw_sprite {
         sprite = "sosciencity-people",
         target = entity,
-        target_offset = {-0.25, 0},
+        target_offset = {-0.75, 0},
         x_scale = 0.375,
         y_scale = 0.375,
         surface = entity.surface,
@@ -119,12 +119,13 @@ local function highlight_workforce(player_id, entry, building_details, created_h
         rendering.draw_text {
         text = {"sosciencity.fraction", entry[EK.worker_count], building_details.workforce.count},
         target = entity,
-        target_offset = {0.25, 0},
+        target_offset = {-0.25, 0},
         surface = entity.surface,
         players = {player_id},
         color = Color.white,
         vertical_alignment = "middle",
-        only_in_alt_mode = true
+        only_in_alt_mode = true,
+        scale = 2
     }
 
     local workers = entry[EK.workers]
@@ -263,7 +264,8 @@ local function show_inhabitants(player_id, entry, created_highlights)
         players = players,
         color = Color.white,
         vertical_alignment = "middle",
-        only_in_alt_mode = true
+        only_in_alt_mode = true,
+        scale = 1.5
     }
 
     -- happiness
@@ -287,7 +289,8 @@ local function show_inhabitants(player_id, entry, created_highlights)
         players = players,
         color = Color.white,
         vertical_alignment = "middle",
-        only_in_alt_mode = true
+        only_in_alt_mode = true,
+        scale = 1.5
     }
 
     -- health
@@ -311,7 +314,8 @@ local function show_inhabitants(player_id, entry, created_highlights)
         players = players,
         color = Color.white,
         vertical_alignment = "middle",
-        only_in_alt_mode = true
+        only_in_alt_mode = true,
+        scale = 1.5
     }
 
     -- sanity
@@ -335,7 +339,8 @@ local function show_inhabitants(player_id, entry, created_highlights)
         players = players,
         color = Color.white,
         vertical_alignment = "middle",
-        only_in_alt_mode = true
+        only_in_alt_mode = true,
+        scale = 1.5
     }
 end
 
