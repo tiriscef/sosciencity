@@ -29,6 +29,7 @@ Tirislib.Entity.create {
         center = {2.5, 3.5},
         shadowmap = true
     },
+    render_layer = "transport-belt",
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13

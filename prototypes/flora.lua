@@ -1140,5 +1140,6 @@ Tirislib.Entity.create {
             shift = {0.0, 0.0},
             scale = 0.25
         }
-    }
+    },
+    render_layer = "transport-belt"
 }:set_size(1.8, 1.8):copy_icon_from_item("necrofall")
