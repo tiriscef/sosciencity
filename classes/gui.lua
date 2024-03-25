@@ -209,50 +209,6 @@ end
 -- << handlers >>
 ---------------------------------------------------------------------------------------------------
 
---- Lookup for click event handlers.
---- [element name]: table
----     [1]: function
----     [2]: array of arguments
-local click_lookup = {}
-
---- Sets the 'on_gui_click' event handler for a gui element with the given name. Additional arguments for the call can be specified.
---- @param name string
---- @param fn function
-local function set_click_handler(name, fn, ...)
-    Tirislib.Utils.desync_protection()
-    click_lookup[name] = {fn, {...}}
-end
-
-local checkbox_click_lookup = {}
-
---- Sets the 'on_gui_checked_state_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
---- @param name string
---- @param fn function
-local function set_checked_state_handler(name, fn, ...)
-    Tirislib.Utils.desync_protection()
-    checkbox_click_lookup[name] = {fn, {...}}
-end
-
-local value_changed_lookup = {}
-
---- Sets the 'on_gui_value_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
---- @param name string
---- @param fn function
-local function set_value_changed_handler(name, fn, ...)
-    Tirislib.Utils.desync_protection()
-    value_changed_lookup[name] = {fn, {...}}
-end
-
-local gui_confirmed_lookup = {}
-
---- Sets the 'on_gui_confirmed' event handler for a gui element with the given name. Additional arguments for the call can be specified.
---- @param name string
---- @param fn function
-local function set_gui_confirmed_handler(name, fn, ...)
-    Tirislib.Utils.desync_protection()
-    gui_confirmed_lookup[name] = {fn, {...}}
-end
-
 --- This should be added to every gui element which needs an event handler,
 --- because the gui event handlers get fired for every gui in existance.
 --- So I need to ensure that I'm not reacting to another mods gui.
@@ -273,9 +229,39 @@ local function look_for_event_handler(event, lookup)
     end
 end
 
+--- Lookup for click event handlers.
+--- [element name]: table
+---     [1]: function
+---     [2]: array of arguments
+local click_lookup = {}
+
+--- Sets the 'on_gui_click' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
+--- Params for the event handler function: (entry, gui_element, player_id, [additional params])
+--- @param name string
+--- @param fn function
+local function set_click_handler(name, fn, ...)
+    Tirislib.Utils.desync_protection()
+    click_lookup[name] = {fn, {...}}
+end
+
 --- Event handler for Gui click events
 function Gui.on_gui_click(event)
     look_for_event_handler(event, click_lookup)
+end
+
+--- Lookup for checkbox click event handlers.
+--- [element name]: table
+---     [1]: function
+---     [2]: array of arguments
+local checkbox_click_lookup = {}
+
+--- Sets the 'on_gui_checked_state_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
+--- Params for the event handler function: (entry, gui_element, player_id, [additional params])
+--- @param name string
+--- @param fn function
+local function set_checked_state_handler(name, fn, ...)
+    Tirislib.Utils.desync_protection()
+    checkbox_click_lookup[name] = {fn, {...}}
 end
 
 --- Event handler for checkbox/radiobuttom click events
@@ -283,9 +269,39 @@ function Gui.on_gui_checked_state_changed(event)
     look_for_event_handler(event, checkbox_click_lookup)
 end
 
+--- Lookup for slider event handlers.
+--- [element name]: table
+---     [1]: function
+---     [2]: array of arguments
+local value_changed_lookup = {}
+
+--- Sets the 'on_gui_value_changed' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
+--- Params for the event handler function: (entry, gui_element, player_id, [additional params])
+--- @param name string
+--- @param fn function
+local function set_value_changed_handler(name, fn, ...)
+    Tirislib.Utils.desync_protection()
+    value_changed_lookup[name] = {fn, {...}}
+end
+
 --- Event handler for slider change events
 function Gui.on_gui_value_changed(event)
     look_for_event_handler(event, value_changed_lookup)
+end
+
+--- Lookup for gui confirmed event handlers.
+--- [element name]: table
+---     [1]: function
+---     [2]: array of arguments
+local gui_confirmed_lookup = {}
+
+--- Sets the 'on_gui_confirmed' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
+--- Params for the event handler function: (entry, gui_element, player_id, [additional params])
+--- @param name string
+--- @param fn function
+local function set_gui_confirmed_handler(name, fn, ...)
+    Tirislib.Utils.desync_protection()
+    gui_confirmed_lookup[name] = {fn, {...}}
 end
 
 --- Event handler for confirmed guis
@@ -724,6 +740,14 @@ local function create_population_flow(container)
         name = "flow",
         direction = "vertical"
     }
+
+    local button =
+        flow.add {
+        type = "button",
+        name = "sosciencity-open-city-view",
+        caption = {"sosciencity.city"}
+    }
+    button.style.height = 24
 
     local datalist =
         flow.add {
@@ -3300,5 +3324,103 @@ function Gui.create_guis_for_player(player)
     create_city_info_for_player(player)
     create_details_view_for_player(player)
 end
+
+---------------------------------------------------------------------------------------------------
+-- << city view / wiki >>
+---------------------------------------------------------------------------------------------------
+
+local CITY_VIEW_NAME = "sosciencity-city-view"
+
+local function create_city_view(player)
+    local city_view_frame =
+        player.gui.screen.add {
+        type = "frame",
+        name = CITY_VIEW_NAME,
+        direction = "vertical"
+    }
+
+    local header =
+        city_view_frame.add {
+        type = "flow",
+        name = "header",
+        direction = "horizontal"
+    }
+    header.drag_target = city_view_frame
+
+    header.add {
+        type = "label",
+        ignored_by_interaction = true,
+        caption = {"sosciencity.city"}
+    }
+    header.add {
+        type = "empty-widget",
+        ignored_by_interaction = true,
+        style = "sosciencity_header_drag"
+    }
+    header.add {
+        type = "sprite-button",
+        name = "sosciencity-close-city-view",
+        sprite = "utility/close_white",
+        hovered_sprite = "utility/close_black",
+        clicked_sprite = "utility/close_black",
+        style = "close_button"
+    }
+
+    local content_flow = city_view_frame.add {
+        type = "flow",
+        name = "content-flow",
+        direction = "horizontal",
+    }
+
+    local pages_frame = content_flow.add {
+        type = "frame",
+        name = "pages-frame",
+        direction = "vertical",
+        style = "inside_deep_frame"
+    }
+    local pages_scroll_pane = pages_frame.add {
+        type = "scroll-pane",
+        name = "pages-scroll-pane",
+        direction = "vertical",
+        vertical_scroll_policy = "auto",
+        style = "sosciencity_pages_scroll_pane"
+    }
+    -- populate it with pages here
+
+    local content_frame = content_flow.add {
+        type = "frame",
+        name = "content-frame",
+        direction = "vertical",
+        style = "inside_shallow_frame"
+    }
+    local content_scroll_pane = content_frame.add {
+        type = "scroll-pane",
+        name = "content-scroll-pane",
+        style = "naked_scroll_pane"
+    }
+
+    city_view_frame.force_auto_center()
+end
+
+local function toggle_city_view_opened(player)
+    local gui = player.gui.screen[CITY_VIEW_NAME]
+    if gui then
+        gui.destroy()
+    else
+        create_city_view(player)
+    end
+end
+
+local function get_city_view(player)
+    return player.gui.screen[CITY_VIEW_NAME]
+end
+
+local function handle_toggle_events(_, _, player_id)
+    toggle_city_view_opened(game.players[player_id])
+end
+
+-- events that should open or close the city view
+set_click_handler("sosciencity-open-city-view", handle_toggle_events)
+set_click_handler("sosciencity-close-city-view", handle_toggle_events)
 
 return Gui
