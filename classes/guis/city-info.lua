@@ -6,7 +6,9 @@ local Castes = require("constants.castes")
 local Color = require("constants.color")
 local WeatherLocales = require("constants.weather-locales")
 
+-- local often used globals for microscopic performance gains
 local castes = Castes.values
+local Gui = Gui
 local Register = Register
 local Inhabitants = Inhabitants
 local max = math.max
