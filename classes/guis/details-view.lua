@@ -100,7 +100,6 @@ end
 
 local function generic_numeric_textfield_handler(entry, element, _, key)
     entry[key] = tonumber(element.text)
-    game.print(element.text)
 end
 
 ---------------------------------------------------------------------------------------------------
