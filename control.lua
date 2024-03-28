@@ -433,20 +433,6 @@ local function on_player_created(event)
     Communication.say_welcome(player)
 end
 
-local function on_gui_opened(event)
-    if event.gui_type == defines.gui_type.entity then
-        local player = game.get_player(event.player_index)
-        Gui.open_details_view_for_player(player, event.entity.unit_number)
-    end
-end
-
-local function on_gui_closed(event)
-    if event.gui_type == defines.gui_type.entity then
-        local player = game.get_player(event.player_index)
-        Gui.close_details_view_for_player(player)
-    end
-end
-
 local function on_research_finished(event)
     on_technology_finished(event.research.name)
 end
@@ -534,13 +520,10 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 script.on_nth_tick(10, update_cycle)
 
 -- placement
--- filter out ghosts because my mod has nothing to do with them
-local filter = {{filter = "ghost", invert = true}, {filter = "force", force = "player", mode = "and"}}
+-- filter out ghosts because Sosciencity has nothing to do with them
+local filter = {{filter = "ghost", invert = true}}
 script.on_event(defines.events.on_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
-
--- the other events can't be filtered by force
-filter = {{filter = "ghost", invert = true}}
 script.on_event(defines.events.on_entity_cloned, on_clone_built, filter)
 script.on_event(defines.events.script_raised_built, on_script_built, filter)
 script.on_event(defines.events.script_raised_revive, on_script_built, filter)
@@ -565,12 +548,12 @@ script.on_event(defines.events.on_entity_settings_pasted, on_entity_settings_pas
 -- mod update
 script.on_configuration_changed(on_configuration_change)
 
--- gui creation
+-- player creation
 script.on_event(defines.events.on_player_created, on_player_created)
-script.on_event(defines.events.on_gui_opened, on_gui_opened)
-script.on_event(defines.events.on_gui_closed, on_gui_closed)
 
 -- gui events
+script.on_event(defines.events.on_gui_opened, Gui.on_gui_opened)
+script.on_event(defines.events.on_gui_closed, Gui.on_gui_closed)
 script.on_event(defines.events.on_gui_click, Gui.on_gui_click)
 script.on_event(defines.events.on_gui_checked_state_changed, Gui.on_gui_checked_state_changed)
 script.on_event(defines.events.on_gui_value_changed, Gui.on_gui_value_changed)
