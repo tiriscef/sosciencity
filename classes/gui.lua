@@ -250,6 +250,44 @@ function Gui.on_gui_confirmed(event)
     look_for_event_handler(event, gui_confirmed_lookup)
 end
 
+--- Array of functions to be called on the on_gui_closed-event.
+local gui_closed_handlers = {}
+
+--- Adds a 'on_gui_closed' event handler. Additional arguments for the call can be specified.
+--- @param fn function
+function Gui.add_gui_closed_handler(fn)
+    Tirislib.Utils.desync_protection()
+    gui_closed_handlers[#gui_closed_handlers + 1] = fn
+end
+
+--- Event handler for closed guis.
+function Gui.on_gui_closed(event)
+    local player = game.players[event.player_index]
+
+    for _, fn in pairs(gui_closed_handlers) do
+        fn(player, event)
+    end
+end
+
+--- Array of functions to be called on the on_gui_opened-event.
+local gui_opened_handlers = {}
+
+--- Adds a 'on_gui_closed' event handler. Additional arguments for the call can be specified.
+--- @param fn function
+function Gui.add_gui_opened_handler(fn)
+    Tirislib.Utils.desync_protection()
+    gui_opened_handlers[#gui_opened_handlers + 1] = fn
+end
+
+--- Event handler for closed guis.
+function Gui.on_gui_opened(event)
+    local player = game.players[event.player_index]
+
+    for _, fn in pairs(gui_opened_handlers) do
+        fn(player, event)
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << gui elements >>
 ---------------------------------------------------------------------------------------------------

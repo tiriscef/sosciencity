@@ -2355,3 +2355,19 @@ function Gui.rebuild_details_view_for_entry(entry)
         end
     end
 end
+
+Gui.add_gui_opened_handler(
+    function(player, event)
+        if event.gui_type == defines.gui_type.entity then
+            Gui.open_details_view_for_player(player, event.entity.unit_number)
+        end
+    end
+)
+
+Gui.add_gui_closed_handler(
+    function(player, event)
+        if event.gui_type == defines.gui_type.entity then
+            Gui.close_details_view_for_player(player)
+        end
+    end
+)

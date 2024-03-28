@@ -8,6 +8,12 @@ local function create_city_view(player)
         direction = "vertical"
     }
 
+    -- This triggers the on_gui_opened event upon which other mods might delete the city view, so we check if it's still there
+    player.opened = city_view_frame
+    if not city_view_frame.valid then
+        return
+    end
+
     local header =
         city_view_frame.add {
         type = "flow",
@@ -35,19 +41,22 @@ local function create_city_view(player)
         style = "close_button"
     }
 
-    local content_flow = city_view_frame.add {
+    local content_flow =
+        city_view_frame.add {
         type = "flow",
         name = "content-flow",
-        direction = "horizontal",
+        direction = "horizontal"
     }
 
-    local pages_frame = content_flow.add {
+    local pages_frame =
+        content_flow.add {
         type = "frame",
         name = "pages-frame",
         direction = "vertical",
         style = "inside_deep_frame"
     }
-    local pages_scroll_pane = pages_frame.add {
+    local pages_scroll_pane =
+        pages_frame.add {
         type = "scroll-pane",
         name = "pages-scroll-pane",
         direction = "vertical",
@@ -56,13 +65,15 @@ local function create_city_view(player)
     }
     -- populate it with pages here
 
-    local content_frame = content_flow.add {
+    local content_frame =
+        content_flow.add {
         type = "frame",
         name = "content-frame",
         direction = "vertical",
         style = "inside_shallow_frame"
     }
-    local content_scroll_pane = content_frame.add {
+    local content_scroll_pane =
+        content_frame.add {
         type = "scroll-pane",
         name = "content-scroll-pane",
         style = "naked_scroll_pane"
@@ -80,10 +91,6 @@ local function toggle_city_view_opened(player)
     end
 end
 
-local function get_city_view(player)
-    return player.gui.screen[CITY_VIEW_NAME]
-end
-
 local function handle_toggle_events(_, _, player_id)
     toggle_city_view_opened(game.players[player_id])
 end
@@ -91,3 +98,11 @@ end
 -- events that should open or close the city view
 Gui.set_click_handler("sosciencity-open-city-view", handle_toggle_events)
 Gui.set_click_handler("sosciencity-close-city-view", handle_toggle_events)
+Gui.add_gui_closed_handler(
+    function(_, event)
+        local element = event.element
+        if element and element.name == CITY_VIEW_NAME then
+            element.destroy()
+        end
+    end
+)
