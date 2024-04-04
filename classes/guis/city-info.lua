@@ -95,7 +95,8 @@ local function create_population_flow(container)
         flow.add {
         type = "button",
         name = "sosciencity-open-city-view",
-        caption = {"sosciencity.city"}
+        caption = {"sosciencity.city"},
+        tags = {sosciencity_gui_event = "toggle-city-view-opened"}
     }
     button.style.height = 24
 

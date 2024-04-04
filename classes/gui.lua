@@ -167,6 +167,22 @@ local function look_for_event_handler(event, lookup)
         local entry = Register.try_get(global.details_view[player_id])
 
         handler[1](entry, gui_element, player_id, unpack(handler[2]))
+        return true
+    end
+
+    return false
+end
+
+local function look_for_event_handler_by_tag(event, lookup)
+    local tag = event.element.tags.sosciencity_gui_event
+
+    if tag == nil then
+        return
+    end
+
+    local handler = lookup[tag]
+    if handler then
+        handler(event)
     end
 end
 
@@ -174,7 +190,7 @@ end
 --- [element name]: table
 ---     [1]: function
 ---     [2]: array of arguments
-local click_lookup = {}
+local click_lookup_name = {}
 
 --- Sets the 'on_gui_click' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
 --- Params for the event handler function: (entry, gui_element, player_id, [additional params])
@@ -182,12 +198,24 @@ local click_lookup = {}
 --- @param fn function
 function Gui.set_click_handler(name, fn, ...)
     Tirislib.Utils.desync_protection()
-    click_lookup[name] = {fn, {...}}
+    click_lookup_name[name] = {fn, {...}}
+end
+
+--- Lookup for click event handlers by tag.
+--- [tag]: function
+local click_lookup_tag = {}
+
+--- Sets the 'on_gui_click' event handler for gui elements with the given 'sosciencity_gui_event'-tag.
+--- @param tag string
+--- @param fn function
+function Gui.set_click_handler_tag(tag, fn)
+    Tirislib.Utils.desync_protection()
+    click_lookup_tag[tag] = fn
 end
 
 --- Event handler for Gui click events
 function Gui.on_gui_click(event)
-    look_for_event_handler(event, click_lookup)
+    return (look_for_event_handler(event, click_lookup_name) or look_for_event_handler_by_tag(event, click_lookup_tag))
 end
 
 --- Lookup for checkbox click event handlers.
@@ -253,7 +281,7 @@ end
 --- Array of functions to be called on the on_gui_closed-event.
 local gui_closed_handlers = {}
 
---- Adds a 'on_gui_closed' event handler. Additional arguments for the call can be specified.
+--- Adds a 'on_gui_closed' event handler.
 --- @param fn function
 function Gui.add_gui_closed_handler(fn)
     Tirislib.Utils.desync_protection()
@@ -272,7 +300,7 @@ end
 --- Array of functions to be called on the on_gui_opened-event.
 local gui_opened_handlers = {}
 
---- Adds a 'on_gui_closed' event handler. Additional arguments for the call can be specified.
+--- Adds a 'on_gui_closed' event handler.
 --- @param fn function
 function Gui.add_gui_opened_handler(fn)
     Tirislib.Utils.desync_protection()
