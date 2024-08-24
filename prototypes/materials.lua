@@ -935,7 +935,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sesame", amount = 5}
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
-    unlock = Unlocks.get_tech_name("sesame")
+    unlock = "hummus"
 }
 
 Tirislib.RecipeGenerator.create {

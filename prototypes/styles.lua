@@ -88,7 +88,7 @@ style.sosciencity_city_view_page_button = {
 
 style.sosciencity_city_view_page_button_selected = {
     type = "button_style",
-    parent = "informatron_menu_button",
+    parent = "sosciencity_city_view_page_button",
     default_font_color = {0, 0, 0},
     hovered_font_color = {0, 0, 0},
     selected_clicked_font_color = {0, 0, 0},
