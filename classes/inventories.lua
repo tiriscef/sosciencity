@@ -99,6 +99,7 @@ function Inventories.get_combined_contents(inventories)
 
     return ret
 end
+local get_combined_contents = Inventories.get_combined_contents
 
 --- Saves the contents of this entry's entity.
 --- @param entry Entry
@@ -436,20 +437,15 @@ end
 --- Returns a table with every available food item type as keys.
 local function get_diet(inventories)
     local diet = {}
-    local count = 0
+    local available_items = get_combined_contents(inventories)
 
-    for i = 1, #inventories do
-        local content = inventories[i].get_contents()
-
-        for item_name, _ in pairs(content) do
-            if food_values[item_name] then
-                diet[item_name] = item_name
-                count = count + 1
-            end
+    for item_name in pairs(available_items) do
+        if food_values[item_name] then
+            diet[#diet+1] = item_name
         end
     end
 
-    return diet, count
+    return diet
 end
 
 --- Table with a healthiness value every 2.5%. Values between that will be interpolated linearly.
@@ -609,12 +605,12 @@ local function consume_specific_food(entry, inventories, amount, item_name)
 end
 
 --- Tries to consume the given amount of calories. Returns the percentage of the amount that was consumed.
-local function consume_food(entry, inventories, amount, diet, count)
-    local items = Table.get_keyset(diet)
+local function consume_food(entry, inventories, amount, diet)
+    local items = Table.copy(diet)
     local to_consume = amount
     Table.shuffle(items)
 
-    for i = 1, count do
+    for i = 1, #items do
         to_consume = to_consume - consume_specific_food(entry, inventories, to_consume, items[i])
         if to_consume < 0.001 then
             return 1 -- 100% was consumed
@@ -626,7 +622,7 @@ end
 
 local taste_category_count = Table.count(Taste)
 
-local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
+local function add_diet_effects(entry, diet, caste, hunger_satisfaction)
     local happiness = entry[EK.happiness_summands]
     local happiness_factors = entry[EK.happiness_factors]
     local health = entry[EK.health_summands]
@@ -642,7 +638,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     end
 
     -- handle the annoying edge case of no food at all
-    if count == 0 then
+    if #diet == 0 then
         happiness[HappinessSummand.taste] = 0.
         happiness[HappinessSummand.food_luxury] = 0.
         happiness[HappinessSummand.food_variety] = 0.
@@ -677,7 +673,7 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     local least_favored_taste = caste.least_favored_taste
     local groups = {}
 
-    for item_name, _ in pairs(diet) do
+    for _, item_name in pairs(diet) do
         local food = food_values[item_name]
         local taste = food.taste_category
 
@@ -703,9 +699,9 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     end
 
     -- calculate means
-    intrinsic_healthiness = intrinsic_healthiness / count
-    taste_quality = taste_quality / count
-    luxury = luxury / count
+    intrinsic_healthiness = intrinsic_healthiness / #diet
+    taste_quality = taste_quality / #diet
+    luxury = luxury / #diet
 
     -- determine dominant taste
     local dominant_taste = 1
@@ -733,29 +729,29 @@ local function add_diet_effects(entry, diet, caste, count, hunger_satisfaction)
     sanity[SanitySummand.taste] = taste_quality * hunger_satisfaction * 0.5
     sanity[SanitySummand.favorite_taste] = (dominant_taste == favorite_taste) and 4 or 0
     sanity[SanitySummand.disliked_taste] = (dominant_taste == least_favored_taste) and -4 or 0
-    sanity[SanitySummand.single_food] = (count == 1) and -3 or 0
+    sanity[SanitySummand.single_food] = (#diet == 1) and -3 or 0
     sanity[SanitySummand.no_variety] =
-        (taste_counts[dominant_taste] == count and dominant_taste ~= Taste.varying) and -3 or 0
-    sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == count) and -3 or 0
+        (taste_counts[dominant_taste] == #diet and dominant_taste ~= Taste.varying) and -3 or 0
+    sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == #diet) and -3 or 0
 end
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.
 function Inventories.evaluate_diet(entry, delta_ticks)
     local caste = castes[entry[EK.type]]
     local inventories = get_food_providers(entry)
-    local diet, food_count = get_diet(inventories)
+    local diet = get_diet(inventories)
 
     local hunger_satisfaction = 0
-    if food_count > 0 then
+    if #diet > 0 then
         local to_consume = caste.calorific_demand * delta_ticks * entry[EK.inhabitants]
-        hunger_satisfaction = consume_food(entry, inventories, to_consume, diet, food_count)
+        hunger_satisfaction = consume_food(entry, inventories, to_consume, diet)
 
         Subentities.remove_common_sprite(entry, RenderingType.food_warning)
     else
         Subentities.add_common_sprite(entry, RenderingType.food_warning)
     end
 
-    add_diet_effects(entry, diet, caste, food_count, hunger_satisfaction)
+    add_diet_effects(entry, diet, caste, hunger_satisfaction)
 end
 
 local function consume_water(distributers, amount)
