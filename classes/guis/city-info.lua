@@ -273,7 +273,7 @@ local tooltip_fns = {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.clockwork],
+                global.population[Type.aurora],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
