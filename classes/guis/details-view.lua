@@ -344,7 +344,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "garbage",
         {
             "sosciencity.fraction",
-            Gui.display_item_stack("garbage", Inhabitants.get_garbage_progress(entry, Time.minute)),
+            display_item_stack("garbage", Inhabitants.get_garbage_progress(entry, Time.minute)),
             {"sosciencity.minute"}
         }
     )
