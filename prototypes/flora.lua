@@ -364,7 +364,7 @@ create_neogenesis_recipe {
 -- chickpea
 create_annual_recipe {
     product = "chickpea",
-    unlock = Unlocks.get_tech_name("chickpea")
+    unlock = "hummus"
 }
 
 create_neogenesis_recipe {
@@ -526,7 +526,7 @@ create_annual_recipe {
 -- sesame
 create_annual_recipe {
     product = "sesame",
-    unlock = Unlocks.get_tech_name("sesame")
+    unlock = "hummus"
 }
 
 create_neogenesis_recipe {
