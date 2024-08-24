@@ -369,7 +369,7 @@ create_annual_recipe {
 
 create_neogenesis_recipe {
     product = "chickpea",
-    unlock = "humus"
+    unlock = "hummus"
 }
 
 -- eggplant
@@ -531,7 +531,7 @@ create_annual_recipe {
 
 create_neogenesis_recipe {
     product = "sesame",
-    unlock = "humus"
+    unlock = "hummus"
 }
 
 -- sugar beet
@@ -1026,7 +1026,7 @@ Tirislib.RecipeGenerator.create {
     themes = {{"soil", 10, 25}},
     ingredients = {
         {type = "item", name = "zetorn-sapling", amount = 1},
-        {type = "item", name = "apple", amount = 10}
+        {type = "item", name = "lemon", amount = 10}
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
