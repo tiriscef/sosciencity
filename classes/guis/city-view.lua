@@ -108,14 +108,14 @@ end
 --- Adds a page definition to the given category.\
 --- Page:\
 ---   [name]: string\
+---   [category]: string (name of the category)\
 ---   [localised_name]: locale\
 ---   [creator]: function (takes the gui container as argument)
---- @param category_name string
 --- @param page table
-function Gui.CityView.add_page(category_name, page)
+function Gui.CityView.add_page(page)
     Tirislib.Utils.desync_protection()
 
-    local category = get_category_definition(category_name)
+    local category = get_category_definition(page.category)
     category.pages[#category.pages + 1] = page
 end
 

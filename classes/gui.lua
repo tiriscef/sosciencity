@@ -660,6 +660,7 @@ function Gui.create_guis_for_player(player)
     Gui.create_details_view_for_player(player)
 end
 
+require("classes.guis.elements")
 require("classes.guis.city-info")
 require("classes.guis.city-view")
 require("classes.guis.details-view")

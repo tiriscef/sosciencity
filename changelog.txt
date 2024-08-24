@@ -1,15 +1,30 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.12
+Date: 2024.
+  Gist:
+    - Some new features.
+
+  Features:
+    - Houses without access to water / food show a warning icon, similar to the vanilla no-power one.
+    - Changed the render layer of the caste sprite houses show in alt mode, such that it doesn't overlap the no-power-icon.
+    - Buildings with workforce show how many workers they have/need on mouseover.
+    - Sanity-checked the fluid boxes of all the buildings. Some of them no longer show the in/out-double arrow, e.g. the fermentation tank and the bioreactor. Some of them no allow fluid to flow through them, e.g. the arboretum or greenhouse.
+
+  Bugfixes:
+    - Fixed that the flying text when a house is assigned to Ember/Orchid/Clockwork Caste showed the wrong icon.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.11
 Date: 2024.03.07
   Gist:
     - Bugfixes. Also we made a machine that sorts your wild gathering produce.
 
   Features:
-    - New Building: Sorting Machine (graphics bei _traum)
+    - New Building: Sorting Machine (graphics by _traum)
 
   Bugfixes:
     - Fixed that Hardcorn Punk didn't have an identification recipe for some copy-paste-and-forget reason. 
-    - Fixed that empty water towers sometimes prevented inhabitants to consume water from other water towers with a water quality of <= 0.
+    - Fixed that empty Water Towers sometimes prevented inhabitants from consuming water from other Water Towers with a water quality of <= 0.
 
   Changes:
     - Made the Guis of Upbringing Stations update every Sosciencity update cycle to make it look more responsive when the mode is changed.
