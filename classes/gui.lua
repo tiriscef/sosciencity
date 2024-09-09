@@ -14,7 +14,6 @@ Gui = {}
 
 local global
 local Register = Register
-local format = string.format
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -35,88 +34,6 @@ end
 
 function Gui.load()
     set_locals()
-end
-
----------------------------------------------------------------------------------------------------
--- << formatting functions >>
----------------------------------------------------------------------------------------------------
-
-function Gui.get_reasonable_number(number)
-    return format("%.1f", number) -- TODO maybe make this a round_to_step
-end
-
-function Gui.display_integer_summand(number)
-    if number > 0 then
-        return format("[color=0,1,0]%+d[/color]", number)
-    elseif number < 0 then
-        return format("[color=1,0,0]%+d[/color]", number)
-    else -- number equals 0
-        return "[color=0.8,0.8,0.8]0[/color]"
-    end
-end
-
-function Gui.display_summand(number)
-    if number > 0 then
-        return format("[color=0,1,0]%+.1f[/color]", number)
-    elseif number < 0 then
-        return format("[color=1,0,0]%+.1f[/color]", number)
-    else -- number equals 0
-        return "[color=0.8,0.8,0.8]0.0[/color]"
-    end
-end
-
-function Gui.display_factor(number)
-    if number > 1 then
-        return format("[color=0,1,0]×%.1f[/color]", number)
-    elseif number < 1 then
-        return format("[color=1,0,0]×%.1f[/color]", number)
-    else -- number equals 1
-        return "[color=0.8,0.8,0.8]1.0[/color]"
-    end
-end
-
-function Gui.display_comfort(comfort)
-    return {"", comfort, "  -  ", {"comfort-scale." .. comfort}}
-end
-
-function Gui.display_migration(number)
-    return format("%+.1f", number)
-end
-
-function Gui.get_entry_representation(entry)
-    local entity = entry[EK.entity]
-    local position = entity.position
-    return {"sosciencity.entry-representation", entity.localised_name, position.x, position.y}
-end
-
-function Gui.display_convergence(current, target)
-    return {"sosciencity.convergenting-value", Gui.get_reasonable_number(current), Gui.get_reasonable_number(target)}
-end
-
-local mult = " × "
-function Gui.display_materials(materials)
-    local ret = {""}
-    local first = true
-    local item_prototypes = game.item_prototypes
-
-    for material, count in pairs(materials) do
-        local entry = {""}
-
-        if not first then
-            entry[#entry + 1] = "\n"
-        end
-        first = false
-
-        entry[#entry + 1] = count
-        entry[#entry + 1] = mult
-
-        entry[#entry + 1] = format("[item=%s] ", material)
-        entry[#entry + 1] = item_prototypes[material].localised_name
-
-        ret[#ret + 1] = entry
-    end
-
-    return ret
 end
 
 ---------------------------------------------------------------------------------------------------

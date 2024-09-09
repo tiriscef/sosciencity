@@ -252,13 +252,13 @@ function Gui.Elements.Datalist.create_operand_entries(
 end
 
 function Gui.Elements.Datalist.update_operand_entries(data_list, final_value, summands, summand_enums, factors, factor_enums)
-    data_list["sum"].caption = Gui.display_summand(final_value)
+    data_list["sum"].caption = Locale.summand(final_value)
 
     for name, id in pairs(summand_enums) do
         local value = summands[id]
 
         if value ~= 0 then
-            set_kv_pair_value(data_list, name, Gui.display_summand(value))
+            set_kv_pair_value(data_list, name, Locale.summand(value))
             set_kv_pair_visibility(data_list, name, true)
         else
             set_kv_pair_visibility(data_list, name, false)
@@ -269,7 +269,7 @@ function Gui.Elements.Datalist.update_operand_entries(data_list, final_value, su
         local value = factors[id]
 
         if value ~= 1. then
-            set_kv_pair_value(data_list, name, Gui.display_factor(value))
+            set_kv_pair_value(data_list, name, Locale.factor(value))
             set_kv_pair_visibility(data_list, name, true)
         else
             set_kv_pair_visibility(data_list, name, false)

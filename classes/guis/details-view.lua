@@ -34,6 +34,7 @@ local castes = Castes.values
 local diseases = Diseases.values
 local Entity = Entity
 local Gui = Gui
+local Locale = Locale
 local Register = Register
 local Inhabitants = Inhabitants
 local get_building_details = Buildings.get
@@ -131,7 +132,7 @@ local function add_caste_chooser_tab(tabbed_pane, house_details)
             if Housing.allowes_caste(house_details, caste_id) then
                 button.tooltip = {
                     "sosciencity.move-in",
-                    Gui.display_integer_summand(
+                    Locale.integer_summand(
                         Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort
                     )
                 }
@@ -172,7 +173,7 @@ local function add_empty_house_info_tab(tabbed_pane, house_details)
 
     local data_list = Datalist.create(flow, "house-infos")
     Datalist.add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
-    Datalist.add_kv_pair(data_list, "comfort", {"sosciencity.comfort"}, Gui.display_comfort(house_details.comfort))
+    Datalist.add_kv_pair(data_list, "comfort", {"sosciencity.comfort"}, Locale.comfort(house_details.comfort))
 
     local qualities_flow = Datalist.add_kv_flow(data_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(house_details.qualities) do
@@ -218,7 +219,7 @@ local function update_occupations_list(flow, entry)
             Datalist.add_operand_entry(
                 occupations_list,
                 building_number,
-                {"sosciencity.employed", Gui.get_entry_representation(building)},
+                {"sosciencity.employed", Locale.entry(building)},
                 count
             )
         end
@@ -283,7 +284,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         {
             "",
             {"sosciencity.show-inhabitants", inhabitants, capacity},
-            display_emigration and {"sosciencity.migration", Gui.display_migration(-emigration)} or ""
+            display_emigration and {"sosciencity.migration", Locale.migration(-emigration)} or ""
         }
     )
     Datalist.set_datalist_value_tooltip(
@@ -311,17 +312,17 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     Datalist.set_kv_pair_value(
         general_list,
         "happiness",
-        Gui.display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry))
+        Locale.convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry))
     )
     Datalist.set_kv_pair_value(
         general_list,
         "health",
-        Gui.display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry))
+        Locale.convergence(entry[EK.health], Inhabitants.get_nominal_health(entry))
     )
     Datalist.set_kv_pair_value(
         general_list,
         "sanity",
-        Gui.display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry))
+        Locale.convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry))
     )
     Datalist.set_kv_pair_value(
         general_list,
@@ -358,7 +359,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "bonus",
         {
             "sosciencity.show-bonus",
-            Gui.get_reasonable_number(entry[EK.caste_points])
+            round_to_step(entry[EK.caste_points], 0.1)
         }
     )
     local employed = entry[EK.employed]
@@ -723,7 +724,7 @@ local function update_worker_list(list, entry)
     for unit_number, count in pairs(workers) do
         local house = Register.try_get(unit_number)
         if house then
-            Datalist.add_operand_entry(list, unit_number, Gui.get_entry_representation(house), count)
+            Datalist.add_operand_entry(list, unit_number, Locale.entry(house), count)
 
             at_least_one = true
         end
@@ -852,7 +853,7 @@ local function create_general_building_details(container, entry, player_id)
 
     if building_details.power_usage then
         -- convert to kW
-        local power = Gui.get_reasonable_number(building_details.power_usage * Time.second / 1000)
+        local power = round_to_step(building_details.power_usage * Time.second / 1000, 0.1)
         Datalist.add_kv_pair(
             building_data,
             "power",
@@ -968,7 +969,7 @@ local function update_composter_details(container, entry, player_id)
         "composting-speed",
         {
             "sosciencity.fraction",
-            Gui.get_reasonable_number(Time.minute * progress_factor),
+            round_to_step(Time.minute * progress_factor, 0.1),
             {"sosciencity.minute"}
         }
     )
@@ -1351,7 +1352,7 @@ local function update_immigration_port_details(container, entry, player_id)
             {
                 "",
                 floor(immigrants),
-                {"sosciencity.migration", Gui.display_migration(castes[caste].emigration_coefficient * Time.minute)}
+                {"sosciencity.migration", Locale.migration(castes[caste].emigration_coefficient * Time.minute)}
             }
         )
         Datalist.set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
@@ -1370,7 +1371,7 @@ local function create_immigration_port_details(container, entry, player_id)
         building_data,
         "materials",
         {"sosciencity.materials"},
-        Gui.display_materials(building_details.materials)
+        Locale.materials(building_details.materials)
     )
     Datalist.add_kv_pair(
         building_data,
@@ -1907,7 +1908,7 @@ local function create_water_catalogue(container)
 
     for water, effect in pairs(DrinkingWater.values) do
         local water_representation = {"", format("[fluid=%s]  ", water), fluid_prototypes[water].localised_name}
-        Datalist.add_operand_entry(data_list, water, water_representation, Gui.display_integer_summand(effect))
+        Datalist.add_operand_entry(data_list, water, water_representation, Locale.integer_summand(effect))
     end
 end
 
