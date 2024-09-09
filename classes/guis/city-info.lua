@@ -359,7 +359,7 @@ local function create_caste_flow(container, caste_id, caste_tooltips)
     flow.style.vertical_spacing = 0
     flow.style.horizontal_align = "center"
 
-    local sprite = Gui.create_caste_sprite(flow, caste_id, CITY_INFO_SPRITE_SIZE)
+    local sprite = Gui.Elements.Sprites.create_caste_sprite(flow, caste_id, CITY_INFO_SPRITE_SIZE)
     sprite.style.horizontal_align = "center"
 
     flow.add {

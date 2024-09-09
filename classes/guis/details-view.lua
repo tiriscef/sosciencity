@@ -59,6 +59,8 @@ local Table = Tirislib.Tables
 local climate_locales = WeatherLocales.climate
 local humidity_locales = WeatherLocales.humidity
 
+local Datalist = Gui.Elements.Datalist
+
 local DETAILS_VIEW_NAME = "sosciencity-details"
 
 local function set_details_view_title(container, caption)
@@ -106,7 +108,7 @@ end
 -- << empty houses >>
 
 local function add_caste_chooser_tab(tabbed_pane, house_details)
-    local flow = Gui.create_tab(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
 
     flow.style.horizontal_align = "center"
     flow.style.vertical_align = "center"
@@ -166,13 +168,13 @@ for id, caste in pairs(castes) do
 end
 
 local function add_empty_house_info_tab(tabbed_pane, house_details)
-    local flow = Gui.create_tab(tabbed_pane, "house-info", {"sosciencity.building-info"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"})
 
-    local data_list = Gui.create_data_list(flow, "house-infos")
-    Gui.add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
-    Gui.add_kv_pair(data_list, "comfort", {"sosciencity.comfort"}, Gui.display_comfort(house_details.comfort))
+    local data_list = Datalist.create(flow, "house-infos")
+    Datalist.add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
+    Datalist.add_kv_pair(data_list, "comfort", {"sosciencity.comfort"}, Gui.display_comfort(house_details.comfort))
 
-    local qualities_flow = Gui.add_kv_flow(data_list, "qualities", {"sosciencity.qualities"})
+    local qualities_flow = Datalist.add_kv_flow(data_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(house_details.qualities) do
         qualities_flow.add {
             type = "label",
@@ -201,19 +203,19 @@ local function update_occupations_list(flow, entry)
 
     occupations_list.clear()
 
-    Gui.add_operand_entry(
+    Datalist.add_operand_entry(
         occupations_list,
         "unoccupied",
         {"sosciencity.unemployed"},
         Inhabitants.get_employable_count(entry)
     )
-    Gui.set_kv_pair_tooltip(occupations_list, "unoccupied", {"sosciencity.explain-unemployed"})
+    Datalist.set_kv_pair_tooltip(occupations_list, "unoccupied", {"sosciencity.explain-unemployed"})
 
     local employments = entry[EK.employments]
     for building_number, count in pairs(employments) do
         local building = Register.try_get(building_number)
         if building then
-            Gui.add_operand_entry(
+            Datalist.add_operand_entry(
                 occupations_list,
                 building_number,
                 {"sosciencity.employed", Gui.get_entry_representation(building)},
@@ -227,8 +229,8 @@ local function update_occupations_list(flow, entry)
         if disease_id ~= DiseaseGroup.HEALTHY then
             local disease = diseases[disease_id]
             local key = format("disease-%d", disease_id)
-            Gui.add_operand_entry(occupations_list, key, {"sosciencity.ill", disease.localised_name}, count)
-            Gui.set_kv_pair_tooltip(occupations_list, key, disease.localised_description)
+            Datalist.add_operand_entry(occupations_list, key, {"sosciencity.ill", disease.localised_name}, count)
+            Datalist.set_kv_pair_tooltip(occupations_list, key, disease.localised_description)
         end
     end
 
@@ -242,7 +244,7 @@ local function update_ages_list(flow, entry)
 
     ages_list.clear()
     for age, count in pairs(entry[EK.ages]) do
-        Gui.add_operand_entry(ages_list, age, {"sosciencity.show-age", age}, count)
+        Datalist.add_operand_entry(ages_list, age, {"sosciencity.show-age", age}, count)
     end
 
     local visible = (entry[EK.inhabitants] > 0)
@@ -255,7 +257,7 @@ local function update_genders_list(flow, entry)
 
     genders_list.clear()
     for gender, count in pairs(entry[EK.genders]) do
-        Gui.add_operand_entry(genders_list, gender, {"sosciencity.gender-" .. gender}, count)
+        Datalist.add_operand_entry(genders_list, gender, {"sosciencity.gender-" .. gender}, count)
     end
 
     local visible = (entry[EK.inhabitants] > 0)
@@ -264,7 +266,7 @@ local function update_genders_list(flow, entry)
 end
 
 local function update_housing_general_info_tab(tabbed_pane, entry)
-    local flow = Gui.get_tab_contents(tabbed_pane, "general")
+    local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local general_list = flow["general-infos"]
 
     local caste = castes[entry[EK.type]]
@@ -275,7 +277,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local emigration = Inhabitants.get_emigration_trend(nominal_happiness, caste, Time.minute)
     local display_emigration = inhabitants > 0 and emigration > 0
 
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "inhabitants",
         {
@@ -284,7 +286,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
             display_emigration and {"sosciencity.migration", Gui.display_migration(-emigration)} or ""
         }
     )
-    Gui.set_datalist_value_tooltip(
+    Datalist.set_datalist_value_tooltip(
         general_list,
         "inhabitants",
         (entry[EK.emigration_trend] > 0) and {"sosciencity.negative-trend"} or ""
@@ -292,36 +294,36 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
 
     -- the annoying edge case of no inhabitants inside the house
     if inhabitants == 0 then
-        Gui.set_kv_pair_value(general_list, "happiness", "-")
-        Gui.set_kv_pair_value(general_list, "health", "-")
-        Gui.set_kv_pair_value(general_list, "sanity", "-")
-        Gui.set_kv_pair_value(general_list, "calorific-demand", "-")
-        Gui.set_kv_pair_value(general_list, "water-demand", "-")
-        Gui.set_kv_pair_value(general_list, "power-demand", "-")
-        Gui.set_kv_pair_value(general_list, "garbage", "-")
-        Gui.set_kv_pair_value(general_list, "bonus", "-")
-        Gui.set_kv_pair_value(general_list, "employed-count", "-")
-        Gui.set_kv_pair_value(general_list, "diseased-count", "-")
-        Gui.set_kv_pair_visibility(general_list, "disease-rate", false)
+        Datalist.set_kv_pair_value(general_list, "happiness", "-")
+        Datalist.set_kv_pair_value(general_list, "health", "-")
+        Datalist.set_kv_pair_value(general_list, "sanity", "-")
+        Datalist.set_kv_pair_value(general_list, "calorific-demand", "-")
+        Datalist.set_kv_pair_value(general_list, "water-demand", "-")
+        Datalist.set_kv_pair_value(general_list, "power-demand", "-")
+        Datalist.set_kv_pair_value(general_list, "garbage", "-")
+        Datalist.set_kv_pair_value(general_list, "bonus", "-")
+        Datalist.set_kv_pair_value(general_list, "employed-count", "-")
+        Datalist.set_kv_pair_value(general_list, "diseased-count", "-")
+        Datalist.set_kv_pair_visibility(general_list, "disease-rate", false)
         return
     end
 
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "happiness",
         Gui.display_convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry))
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "health",
         Gui.display_convergence(entry[EK.health], Inhabitants.get_nominal_health(entry))
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "sanity",
         Gui.display_convergence(entry[EK.sanity], Inhabitants.get_nominal_sanity(entry))
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "calorific-demand",
         {
@@ -329,17 +331,17 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
             floor(caste.calorific_demand * Time.minute * inhabitants)
         }
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "water-demand",
         {"sosciencity.show-water-demand", floor(caste.water_demand * Time.minute * inhabitants)}
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "power-demand",
         {"sosciencity.current-power-demand", floor(caste.power_demand / 1000 * Time.second * inhabitants)}
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "garbage",
         {
@@ -351,7 +353,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
 
     -- occupations
     local unemployed = Inhabitants.get_employable_count(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         general_list,
         "bonus",
         {
@@ -361,11 +363,11 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     )
     local employed = entry[EK.employed]
     local diseased = inhabitants - unemployed - employed
-    Gui.set_kv_pair_value(general_list, "employed-count", {"sosciencity.show-employed-count", employed})
-    Gui.set_kv_pair_value(general_list, "diseased-count", {"sosciencity.show-diseased-count", diseased})
+    Datalist.set_kv_pair_value(general_list, "employed-count", {"sosciencity.show-employed-count", employed})
+    Datalist.set_kv_pair_value(general_list, "diseased-count", {"sosciencity.show-diseased-count", diseased})
 
-    Gui.set_kv_pair_visibility(general_list, "disease-rate", true)
-    local disease_progress_flow = Gui.get_kv_value_element(general_list, "disease-rate")
+    Datalist.set_kv_pair_visibility(general_list, "disease-rate", true)
+    local disease_progress_flow = Datalist.get_kv_value_element(general_list, "disease-rate")
     for category_name, category_id in pairs(DiseaseCategory) do
         local updater = Inhabitants.disease_progress_updaters[category_id]
         if updater then
@@ -383,28 +385,28 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
 end
 
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
-    local flow = Gui.create_tab(tabbed_pane, "general", {"sosciencity.general"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"})
 
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
 
-    local general_list = Gui.create_data_list(flow, "general-infos")
-    Gui.add_kv_pair(general_list, "caste", {"sosciencity.caste"}, Locale.caste(entry[EK.type]))
+    local general_list = Datalist.create(flow, "general-infos")
+    Datalist.add_kv_pair(general_list, "caste", {"sosciencity.caste"}, Locale.caste(entry[EK.type]))
 
-    Gui.add_kv_pair(general_list, "inhabitants", {"sosciencity.inhabitants"})
-    Gui.add_kv_pair(general_list, "happiness", {"sosciencity.happiness"})
-    Gui.add_kv_pair(general_list, "health", {"sosciencity.health"})
-    Gui.add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
-    Gui.add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
-    Gui.add_kv_pair(general_list, "water-demand", {"sosciencity.water"})
-    Gui.add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
-    Gui.add_kv_pair(general_list, "garbage", {"sosciencity.garbage"})
-    Gui.add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
-    Gui.set_datalist_value_tooltip(general_list, "bonus", {"sosciencity.tooltip-bonus"})
-    Gui.add_kv_pair(general_list, "employed-count", {"sosciencity.employed-count"})
-    Gui.add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
+    Datalist.add_kv_pair(general_list, "inhabitants", {"sosciencity.inhabitants"})
+    Datalist.add_kv_pair(general_list, "happiness", {"sosciencity.happiness"})
+    Datalist.add_kv_pair(general_list, "health", {"sosciencity.health"})
+    Datalist.add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
+    Datalist.add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
+    Datalist.add_kv_pair(general_list, "water-demand", {"sosciencity.water"})
+    Datalist.add_kv_pair(general_list, "power-demand", {"sosciencity.power-demand"})
+    Datalist.add_kv_pair(general_list, "garbage", {"sosciencity.garbage"})
+    Datalist.add_kv_pair(general_list, "bonus", {"sosciencity.bonus"})
+    Datalist.set_datalist_value_tooltip(general_list, "bonus", {"sosciencity.tooltip-bonus"})
+    Datalist.add_kv_pair(general_list, "employed-count", {"sosciencity.employed-count"})
+    Datalist.add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
 
-    local disease_progress_flow = Gui.add_kv_flow(general_list, "disease-rate")
+    local disease_progress_flow = Datalist.add_kv_flow(general_list, "disease-rate")
     for category in pairs(Inhabitants.disease_progress_updaters) do
         local label =
             disease_progress_flow.add {
@@ -417,7 +419,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     local caste = castes[caste_id]
     local housing_details = Housing.get(entry)
 
-    local qualities_flow = Gui.add_kv_flow(general_list, "qualities", {"sosciencity.qualities"})
+    local qualities_flow = Datalist.add_kv_flow(general_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(housing_details.qualities) do
         local assessment = caste.housing_preferences[quality]
 
@@ -438,7 +440,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
         end
     end
 
-    Gui.create_separator_line(flow)
+    Gui.Elements.Utils.create_separator_line(flow)
 
     -- the kickout_button only gets added if the house is built by the player
     -- this also avoids that the player can repurpose the hut
@@ -462,7 +464,7 @@ end
 Gui.set_click_handler(
     format(Gui.unique_prefix_builder, "kickout", ""),
     function(entry, button)
-        if Gui.is_confirmed(button) then
+        if Gui.Elements.Utils.is_confirmed(button) then
             Register.change_type(entry, Type.empty_house)
             return
         end
@@ -470,10 +472,10 @@ Gui.set_click_handler(
 )
 
 local function update_housing_detailed_info_tab(tabbed_pane, entry)
-    local flow = Gui.get_tab_contents(tabbed_pane, "details")
+    local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "details")
 
     local happiness_list = flow["happiness"]
-    Gui.update_operand_entries(
+    Datalist.update_operand_entries(
         happiness_list,
         Inhabitants.get_nominal_happiness(entry),
         entry[EK.happiness_summands],
@@ -483,7 +485,7 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
     )
 
     local health_list = flow["health"]
-    Gui.update_operand_entries(
+    Datalist.update_operand_entries(
         health_list,
         Inhabitants.get_nominal_health(entry),
         entry[EK.health_summands],
@@ -493,7 +495,7 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
     )
 
     local sanity_list = flow["sanity"]
-    Gui.update_operand_entries(
+    Datalist.update_operand_entries(
         sanity_list,
         Inhabitants.get_nominal_sanity(entry),
         entry[EK.sanity_summands],
@@ -533,10 +535,10 @@ local localised_sanity_factor_descriptions = build_localised(SanityFactor, "sani
 build_localised = nil
 
 local function add_housing_detailed_info_tab(tabbed_pane, entry)
-    local flow = Gui.create_tab(tabbed_pane, "details", {"sosciencity.details"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "details", {"sosciencity.details"})
 
-    local happiness_list = Gui.create_data_list(flow, "happiness")
-    Gui.create_operand_entries(
+    local happiness_list = Datalist.create(flow, "happiness")
+    Datalist.create_operand_entries(
         happiness_list,
         {"sosciencity.happiness"},
         HappinessSummand,
@@ -547,10 +549,10 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         localised_happiness_factor_descriptions
     )
 
-    Gui.create_separator_line(flow)
+    Gui.Elements.Utils.create_separator_line(flow)
 
-    local health_list = Gui.create_data_list(flow, "health")
-    Gui.create_operand_entries(
+    local health_list = Datalist.create(flow, "health")
+    Datalist.create_operand_entries(
         health_list,
         {"sosciencity.health"},
         HealthSummand,
@@ -561,10 +563,10 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         localised_health_factor_descriptions
     )
 
-    Gui.create_separator_line(flow, "line2")
+    Gui.Elements.Utils.create_separator_line(flow, "line2")
 
-    local sanity_list = Gui.create_data_list(flow, "sanity")
-    Gui.create_operand_entries(
+    local sanity_list = Datalist.create(flow, "sanity")
+    Datalist.create_operand_entries(
         sanity_list,
         {"sosciencity.sanity"},
         SanitySummand,
@@ -575,20 +577,20 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         localised_sanity_factor_descriptions
     )
 
-    Gui.create_separator_line(flow)
+    Gui.Elements.Utils.create_separator_line(flow)
 
-    Gui.add_header_label(flow, "header-occupations", {"sosciencity.occupations"})
-    Gui.create_data_list(flow, "occupations")
+    Gui.Elements.Labels.header_label(flow, "header-occupations", {"sosciencity.occupations"})
+    Datalist.create(flow, "occupations")
 
-    Gui.create_separator_line(flow)
+    Gui.Elements.Utils.create_separator_line(flow)
 
-    Gui.add_header_label(flow, "header-ages", {"sosciencity.ages"})
-    Gui.create_data_list(flow, "ages")
+    Gui.Elements.Labels.header_label(flow, "header-ages", {"sosciencity.ages"})
+    Datalist.create(flow, "ages")
 
-    Gui.create_separator_line(flow)
+    Gui.Elements.Utils.create_separator_line(flow)
 
-    Gui.add_header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
-    Gui.create_data_list(flow, "genders")
+    Gui.Elements.Labels.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
+    Datalist.create(flow, "genders")
 
     -- call the update function to set the values
     update_housing_detailed_info_tab(tabbed_pane, entry)
@@ -597,12 +599,12 @@ end
 local function add_caste_infos(container, caste_id)
     local caste = castes[caste_id]
 
-    Gui.create_caste_sprite(container, caste_id, 128)
+    Gui.Elements.Sprites.create_caste_sprite(container, caste_id, 128)
 
-    local caste_data = Gui.create_data_list(container, "caste-infos")
-    Gui.add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, caste.localised_name)
-    Gui.add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
-    Gui.add_kv_pair(
+    local caste_data = Datalist.create(container, "caste-infos")
+    Datalist.add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, caste.localised_name)
+    Datalist.add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
+    Datalist.add_kv_pair(
         caste_data,
         "taste",
         {"sosciencity.taste"},
@@ -612,38 +614,38 @@ local function add_caste_infos(container, caste_id)
             Food.taste_names[caste.least_favored_taste]
         }
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         caste_data,
         "food-count",
         {"sosciencity.food-count"},
         {"sosciencity.show-food-count", caste.minimum_food_count}
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         caste_data,
         "luxury",
         {"sosciencity.luxury"},
         {"sosciencity.show-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         caste_data,
         "room-count",
         {"sosciencity.room-needs"},
         {"sosciencity.show-room-needs", caste.required_room_count}
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         caste_data,
         "power-demand",
         {"sosciencity.power-demand"},
         {"sosciencity.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         caste_data,
         "water-demand",
         {"sosciencity.water"},
         {"sosciencity.show-water-demand", caste.water_demand * Time.minute}
     )
 
-    local housing_flow = Gui.add_kv_flow(caste_data, "housing-qualities", {"sosciencity.housing"})
+    local housing_flow = Datalist.add_kv_flow(caste_data, "housing-qualities", {"sosciencity.housing"})
     housing_flow.add {
             type = "label",
             name = "comfort",
@@ -656,14 +658,14 @@ local function add_caste_infos(container, caste_id)
         name = "prefered-qualities",
         direction = "vertical"
     }
-    Gui.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-qualities"})
+    Datalist.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-qualities"})
     local disliked_flow =
         housing_flow.add {
         type = "flow",
         name = "disliked-qualities",
         direction = "vertical"
     }
-    Gui.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-qualities"})
+    Datalist.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-qualities"})
 
     for quality, assessment in pairs(caste.housing_preferences) do
         local quality_flow
@@ -683,7 +685,7 @@ local function add_caste_infos(container, caste_id)
 end
 
 local function add_caste_info_tab(tabbed_pane, caste_id)
-    local flow = Gui.create_tab(tabbed_pane, "caste", {"caste-short." .. castes[caste_id].name})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste", {"caste-short." .. castes[caste_id].name})
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "center"
 
@@ -721,20 +723,20 @@ local function update_worker_list(list, entry)
     for unit_number, count in pairs(workers) do
         local house = Register.try_get(unit_number)
         if house then
-            Gui.add_operand_entry(list, unit_number, Gui.get_entry_representation(house), count)
+            Datalist.add_operand_entry(list, unit_number, Gui.get_entry_representation(house), count)
 
             at_least_one = true
         end
     end
 
     if not at_least_one then
-        Gui.add_operand_entry(list, "no-one", {"sosciencity.no-employees"}, "-")
+        Datalist.add_operand_entry(list, "no-one", {"sosciencity.no-employees"}, "-")
     end
 end
 
 local function update_general_building_details(container, entry, player_id)
     local tabbed_pane = container.tabpane
-    local tab = Gui.get_tab_contents(tabbed_pane, "general")
+    local tab = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = tab.building
 
     local building_details = get_building_details(entry)
@@ -742,21 +744,21 @@ local function update_general_building_details(container, entry, player_id)
 
     local active = entry[EK.active]
     if active ~= nil then
-        Gui.set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
-        Gui.set_kv_pair_visibility(building_data, "active", true)
+        Datalist.set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
+        Datalist.set_kv_pair_visibility(building_data, "active", true)
     else
-        Gui.set_kv_pair_visibility(building_data, "active", false)
+        Datalist.set_kv_pair_visibility(building_data, "active", false)
     end
 
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
         local target_count = entry[EK.target_worker_count]
-        Gui.set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], target_count})
+        Datalist.set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], target_count})
 
         building_data[format(Gui.unique_prefix_builder, "general", "staff-target")].slider_value = target_count
 
         local staff_performance = Inhabitants.evaluate_workforce(entry)
-        Gui.set_kv_pair_value(
+        Datalist.set_kv_pair_value(
             building_data,
             "staff-performance",
             staff_performance >= 0.2 and {"sosciencity.staff-performance", ceil(staff_performance * 100)} or
@@ -771,9 +773,9 @@ local function update_general_building_details(container, entry, player_id)
     if building_details.speed then
         -- convert to x / minute
         local speed = round(building_details.speed * Time.minute * (entry[EK.performance] or 1))
-        Gui.set_kv_pair_value(building_data, "speed", {type_details.localised_speed_key, speed})
+        Datalist.set_kv_pair_value(building_data, "speed", {type_details.localised_speed_key, speed})
     elseif performance then
-        Gui.set_kv_pair_value(
+        Datalist.set_kv_pair_value(
             building_data,
             "general-performance",
             performance > 0.19999 and {"sosciencity.percentage", ceil(performance * 100)} or {"sosciencity.not-working"}
@@ -782,7 +784,7 @@ local function update_general_building_details(container, entry, player_id)
 
     if type_details.affected_by_clockwork then
         local clockwork_value = global.caste_bonuses[Type.clockwork]
-        Gui.set_kv_pair_value(
+        Datalist.set_kv_pair_value(
             building_data,
             "maintenance",
             clockwork_value >= 0 and {"sosciencity.display-good-maintenance", clockwork_value} or
@@ -799,7 +801,7 @@ local function create_general_building_details(container, entry, player_id)
     local type_details = type_definitions[entry[EK.type]]
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = Gui.create_tab(tabbed_pane, "general", {"sosciencity.general"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"})
 
     if type_details.has_subscriptions then
         local flow =
@@ -831,15 +833,15 @@ local function create_general_building_details(container, entry, player_id)
         }
     end
 
-    local building_data = Gui.create_data_list(tab, "building")
+    local building_data = Datalist.create(tab, "building")
 
-    Gui.add_kv_pair(building_data, "building-type", {"sosciencity.type"}, type_details.localised_name)
-    Gui.add_kv_pair(building_data, "description", "", type_details.localised_description)
-    Gui.add_kv_pair(building_data, "active", {"sosciencity.active"})
+    Datalist.add_kv_pair(building_data, "building-type", {"sosciencity.type"}, type_details.localised_name)
+    Datalist.add_kv_pair(building_data, "description", "", type_details.localised_description)
+    Datalist.add_kv_pair(building_data, "active", {"sosciencity.active"})
 
     if building_details.range then
         local range = building_details.range
-        Gui.add_kv_pair(
+        Datalist.add_kv_pair(
             building_data,
             "range",
             {"sosciencity.range"},
@@ -851,7 +853,7 @@ local function create_general_building_details(container, entry, player_id)
     if building_details.power_usage then
         -- convert to kW
         local power = Gui.get_reasonable_number(building_details.power_usage * Time.second / 1000)
-        Gui.add_kv_pair(
+        Datalist.add_kv_pair(
             building_data,
             "power",
             {"sosciencity.power-demand"},
@@ -861,17 +863,17 @@ local function create_general_building_details(container, entry, player_id)
 
     -- display for the main performance metric
     if building_details.speed then
-        Gui.add_kv_pair(building_data, "speed", type_details.localised_speed_name)
+        Datalist.add_kv_pair(building_data, "speed", type_details.localised_speed_name)
     elseif entry[EK.performance] then
-        Gui.add_kv_pair(building_data, "general-performance", {"sosciencity.general-performance"})
+        Datalist.add_kv_pair(building_data, "general-performance", {"sosciencity.general-performance"})
     end
 
     local worker_specification = building_details.workforce
     if worker_specification then
-        Gui.add_kv_pair(building_data, "staff", {"sosciencity.staff"})
+        Datalist.add_kv_pair(building_data, "staff", {"sosciencity.staff"})
 
         -- TODO: extract this as a function
-        Gui.add_key_label(building_data, "staff-target", "")
+        Datalist.add_key_label(building_data, "staff-target", "")
         building_data.add {
             type = "slider",
             name = format(Gui.unique_prefix_builder, "general", "staff-target"),
@@ -881,7 +883,7 @@ local function create_general_building_details(container, entry, player_id)
             value_step = 1
         }
 
-        Gui.add_kv_pair(building_data, "staff-performance")
+        Datalist.add_kv_pair(building_data, "staff-performance")
 
         local castes_needed =
             Luaq_from(worker_specification.castes):select_element(Locale.caste, true):call(
@@ -889,14 +891,14 @@ local function create_general_building_details(container, entry, player_id)
             nil,
             {"sosciencity.or"}
         )
-        Gui.add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
+        Datalist.add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
 
-        Gui.add_header_label(tab, "worker-header", {"sosciencity.staff"})
-        Gui.create_data_list(tab, "workers")
+        Gui.Elements.Labels.header_label(tab, "worker-header", {"sosciencity.staff"})
+        Datalist.create(tab, "workers")
     end
 
     if type_details.affected_by_clockwork then
-        Gui.add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
+        Datalist.add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
     end
 
     update_general_building_details(container, entry, player_id)
@@ -922,13 +924,13 @@ Gui.set_checked_state_handler(
 
 local function create_composting_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = Gui.create_tab(tabbed_pane, "compostables", {"sosciencity.compostables"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "compostables", {"sosciencity.compostables"})
 
-    local composting_list = Gui.create_data_list(tab, "compostables")
+    local composting_list = Datalist.create(tab, "compostables")
     composting_list.style.column_alignments[2] = "right"
 
     -- header
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         composting_list,
         "head",
         {"sosciencity.item"},
@@ -942,7 +944,7 @@ local function create_composting_catalogue(container)
 
     for item, value in pairs(ItemConstants.compost_values) do
         local item_representation = {"", format("[item=%s]  ", item), item_prototypes[item].localised_name}
-        Gui.add_operand_entry(composting_list, item, item_representation, tostring(value))
+        Datalist.add_operand_entry(composting_list, item, item_representation, tostring(value))
     end
 end
 
@@ -950,10 +952,10 @@ local function update_composter_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local humus = entry[EK.humus]
-    Gui.set_kv_pair_value(building_data, "humus", {"sosciencity.humus-count", round(humus / 100)})
+    Datalist.set_kv_pair_value(building_data, "humus", {"sosciencity.humus-count", round(humus / 100)})
 
     local inventory = Inventories.get_chest_inventory(entry)
     local progress_factor = Entity.analyze_composter_inventory(inventory.get_contents())
@@ -961,7 +963,7 @@ local function update_composter_details(container, entry, player_id)
     if humus >= get_building_details(entry).capacity then
         progress_factor = 0
     end
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "composting-speed",
         {
@@ -975,18 +977,18 @@ end
 local function create_composter_details(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "humus", {"sosciencity.humus"})
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(building_data, "humus", {"sosciencity.humus"})
+    Datalist.add_kv_pair(
         building_data,
         "capacity",
         {"sosciencity.capacity"},
         {"sosciencity.show-compost-capacity", get_building_details(entry).capacity}
     )
-    Gui.add_kv_pair(building_data, "composting-speed", {"sosciencity.composting-speed"})
-    Gui.add_kv_pair(building_data, "explain-composting-speed", nil, {"sosciencity.explain-composting-speed"})
+    Datalist.add_kv_pair(building_data, "composting-speed", {"sosciencity.composting-speed"})
+    Datalist.add_kv_pair(building_data, "explain-composting-speed", nil, {"sosciencity.explain-composting-speed"})
 
     update_composter_details(container, entry)
     create_composting_catalogue(container)
@@ -999,27 +1001,27 @@ local function update_waterwell_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
     local competition_performance = Entity.get_waterwell_competition_performance(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "competition",
         {"sosciencity.show-waterwell-competition", near_count, display_percentage(competition_performance)}
     )
 
-    Gui.set_kv_pair_visibility(building_data, "module", not entry[EK.active])
+    Datalist.set_kv_pair_visibility(building_data, "module", not entry[EK.active])
 end
 
 local function create_waterwell_details(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
-    Gui.add_kv_pair(building_data, "module", nil, {"sosciencity.module-missing", display_item_stack("water-filter", 1)})
+    Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
+    Datalist.add_kv_pair(building_data, "module", nil, {"sosciencity.module-missing", display_item_stack("water-filter", 1)})
 
     update_waterwell_details(container, entry)
 end
@@ -1031,11 +1033,11 @@ local function update_farm(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local building_details = get_building_details(entry)
 
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "orchid-bonus",
         {"sosciencity.percentage-bonus", global.caste_bonuses[Type.orchid], {"sosciencity.productivity"}}
@@ -1043,21 +1045,21 @@ local function update_farm(container, entry, player_id)
 
     local flora_details = Biology.flora[entry[EK.species]]
     if flora_details then
-        Gui.set_kv_pair_visibility(building_data, "biomass", flora_details.persistent)
+        Datalist.set_kv_pair_visibility(building_data, "biomass", flora_details.persistent)
         local biomass = entry[EK.biomass]
         if biomass ~= nil then
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "biomass",
                 {"sosciencity.display-biomass", floor(biomass), Entity.biomass_to_productivity(biomass)}
             )
         end
 
-        Gui.set_kv_pair_visibility(building_data, "climate", true)
-        Gui.set_kv_pair_visibility(building_data, "humidity", true)
+        Datalist.set_kv_pair_visibility(building_data, "climate", true)
+        Datalist.set_kv_pair_visibility(building_data, "humidity", true)
 
         if building_details.open_environment then
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "climate",
                 flora_details.preferred_climate == global.current_climate and
@@ -1076,7 +1078,7 @@ local function update_farm(container, entry, player_id)
                         }
                     }
             )
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "humidity",
                 flora_details.preferred_humidity == global.current_humidity and
@@ -1096,12 +1098,12 @@ local function update_farm(container, entry, player_id)
                     }
             )
         else
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "climate",
                 {"sosciencity.closed-climate", climate_locales[flora_details.preferred_climate]}
             )
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "humidity",
                 {"sosciencity.closed-humidity", humidity_locales[flora_details.preferred_humidity]}
@@ -1112,40 +1114,40 @@ local function update_farm(container, entry, player_id)
             flora_details.required_module and
                 not Inventories.assembler_has_module(entry[EK.entity], flora_details.required_module)
          then
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "module",
                 {"sosciencity.module-missing", display_item_stack(flora_details.required_module, 1)}
             )
-            Gui.set_kv_pair_visibility(building_data, "module", true)
+            Datalist.set_kv_pair_visibility(building_data, "module", true)
         else
-            Gui.set_kv_pair_visibility(building_data, "module", false)
+            Datalist.set_kv_pair_visibility(building_data, "module", false)
         end
     else
         -- no recipe set
-        Gui.set_kv_pair_visibility(building_data, "biomass", false)
-        Gui.set_kv_pair_visibility(building_data, "climate", false)
-        Gui.set_kv_pair_visibility(building_data, "humidity", false)
-        Gui.set_kv_pair_visibility(building_data, "module", false)
+        Datalist.set_kv_pair_visibility(building_data, "biomass", false)
+        Datalist.set_kv_pair_visibility(building_data, "climate", false)
+        Datalist.set_kv_pair_visibility(building_data, "humidity", false)
+        Datalist.set_kv_pair_visibility(building_data, "module", false)
     end
 
     if building_details.accepts_plant_care then
-        local humus_checkbox = Gui.get_checkbox(building_data, "humus-mode")
+        local humus_checkbox = Datalist.get_checkbox(building_data, "humus-mode")
         humus_checkbox.state = entry[EK.humus_mode]
-        Gui.set_kv_pair_visibility(building_data, "humus-bonus", entry[EK.humus_mode])
+        Datalist.set_kv_pair_visibility(building_data, "humus-bonus", entry[EK.humus_mode])
         if entry[EK.humus_bonus] then
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "humus-bonus",
                 {"sosciencity.percentage-bonus", ceil(entry[EK.humus_bonus]), {"sosciencity.speed"}}
             )
         end
 
-        local pruning_checkbox = Gui.get_checkbox(building_data, "pruning-mode")
+        local pruning_checkbox = Datalist.get_checkbox(building_data, "pruning-mode")
         pruning_checkbox.state = entry[EK.pruning_mode]
-        Gui.set_kv_pair_visibility(building_data, "prune-bonus", entry[EK.humus_mode])
+        Datalist.set_kv_pair_visibility(building_data, "prune-bonus", entry[EK.humus_mode])
         if entry[EK.prune_bonus] then
-            Gui.set_kv_pair_value(
+            Datalist.set_kv_pair_value(
                 building_data,
                 "prune-bonus",
                 {"sosciencity.percentage-bonus", ceil(entry[EK.prune_bonus]), {"sosciencity.productivity"}}
@@ -1157,23 +1159,23 @@ end
 local function create_farm(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "orchid-bonus", {"caste-short.orchid"})
-    Gui.add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
-    Gui.add_kv_pair(building_data, "climate", {"sosciencity.climate"})
-    Gui.add_kv_pair(building_data, "humidity", {"sosciencity.humidity"})
+    Datalist.add_kv_pair(building_data, "orchid-bonus", {"caste-short.orchid"})
+    Datalist.add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
+    Datalist.add_kv_pair(building_data, "climate", {"sosciencity.climate"})
+    Datalist.add_kv_pair(building_data, "humidity", {"sosciencity.humidity"})
 
     if get_building_details(entry).accepts_plant_care then
-        Gui.add_kv_checkbox(
+        Datalist.add_kv_checkbox(
             building_data,
             "humus-mode",
             format(Gui.unique_prefix_builder, "humus-mode", "farm"),
             {"sosciencity.humus-fertilization"},
             {"sosciencity.active"}
         )
-        Gui.add_kv_pair(
+        Datalist.add_kv_pair(
             building_data,
             "explain-humus",
             "",
@@ -1184,25 +1186,25 @@ local function create_farm(container, entry, player_id)
                 Entity.humus_fertilization_speed
             }
         )
-        Gui.add_kv_pair(building_data, "humus-bonus")
+        Datalist.add_kv_pair(building_data, "humus-bonus")
 
-        Gui.add_kv_checkbox(
+        Datalist.add_kv_checkbox(
             building_data,
             "pruning-mode",
             format(Gui.unique_prefix_builder, "pruning-mode", "farm"),
             {"sosciencity.pruning"},
             {"sosciencity.active"}
         )
-        Gui.add_kv_pair(
+        Datalist.add_kv_pair(
             building_data,
             "explain-pruning",
             "",
             {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
         )
-        Gui.add_kv_pair(building_data, "prune-bonus")
+        Datalist.add_kv_pair(building_data, "prune-bonus")
     end
 
-    Gui.add_kv_pair(building_data, "module")
+    Datalist.add_kv_pair(building_data, "module")
 
     update_farm(container, entry)
 end
@@ -1226,10 +1228,10 @@ local function update_fishery_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local building_details = get_building_details(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "water-tiles",
         {
@@ -1240,7 +1242,7 @@ local function update_fishery_details(container, entry, player_id)
     )
 
     local competition_performance, near_count = Entity.get_fishing_competition(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "competition",
         {"sosciencity.show-fishing-competition", near_count, display_percentage(competition_performance)}
@@ -1250,11 +1252,11 @@ end
 local function create_fishery_details(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
-    Gui.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
+    Datalist.add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
+    Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_fishery_details(container, entry)
 end
@@ -1266,17 +1268,17 @@ local function update_hunting_hut_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local building_details = get_building_details(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "tree-count",
         {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count}
     )
 
     local competition_performance, near_count = Entity.get_hunting_competition(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "competition",
         {"sosciencity.show-hunting-competition", near_count, display_percentage(competition_performance)}
@@ -1286,11 +1288,11 @@ end
 local function create_hunting_hut_details(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "tree-count", {"sosciencity.tree-count"})
-    Gui.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
+    Datalist.add_kv_pair(building_data, "tree-count", {"sosciencity.tree-count"})
+    Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
 
     update_hunting_hut_details(container, entry)
 end
@@ -1302,10 +1304,10 @@ local function update_salt_pond(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local building_details = get_building_details(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "water-tiles",
         {
@@ -1319,10 +1321,10 @@ end
 local function create_salt_pond(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
+    Datalist.add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
 
     update_salt_pond(container, entry)
 end
@@ -1334,16 +1336,16 @@ local function update_immigration_port_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     local ticks_to_next_wave = entry[EK.next_wave] - game.tick
-    Gui.set_kv_pair_value(building_data, "next-wave", display_time(ticks_to_next_wave))
+    Datalist.set_kv_pair_value(building_data, "next-wave", display_time(ticks_to_next_wave))
 
     local immigrants_list = general.immigration
     for caste, immigrants in pairs(global.immigration) do
         local key = tostring(caste)
-        Gui.set_kv_pair_value(
+        Datalist.set_kv_pair_value(
             immigrants_list,
             key,
             {
@@ -1352,38 +1354,38 @@ local function update_immigration_port_details(container, entry, player_id)
                 {"sosciencity.migration", Gui.display_migration(castes[caste].emigration_coefficient * Time.minute)}
             }
         )
-        Gui.set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
+        Datalist.set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
     end
 end
 
 local function create_immigration_port_details(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
     local building_details = get_building_details(entry)
 
-    Gui.add_kv_pair(building_data, "next-wave", {"sosciencity.next-wave"})
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(building_data, "next-wave", {"sosciencity.next-wave"})
+    Datalist.add_kv_pair(
         building_data,
         "materials",
         {"sosciencity.materials"},
         Gui.display_materials(building_details.materials)
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         building_data,
         "capacity",
         {"sosciencity.capacity"},
         {"sosciencity.show-port-capacity", building_details.capacity}
     )
 
-    Gui.create_separator_line(general)
+    Gui.Elements.Utils.create_separator_line(general)
 
-    Gui.add_header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
-    local immigrants_list = Gui.create_data_list(general, "immigration")
+    Gui.Elements.Labels.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
+    local immigrants_list = Datalist.create(general, "immigration")
 
     for caste in pairs(global.immigration) do
-        Gui.add_kv_pair(immigrants_list, tostring(caste), type_definitions[caste].localised_name)
+        Datalist.add_kv_pair(immigrants_list, tostring(caste), type_definitions[caste].localised_name)
     end
 
     update_immigration_port_details(container, entry)
@@ -1394,7 +1396,7 @@ end
 
 local function update_disease_catalogue(container, entry)
     local tabbed_pane = container.tabpane
-    local data_list = Gui.get_tab_contents(tabbed_pane, "diseases").diseases
+    local data_list = Gui.Elements.Tabs.get_content(tabbed_pane, "diseases").diseases
 
     local statistics = entry[EK.treated]
     local permissions = entry[EK.treatment_permissions]
@@ -1409,9 +1411,9 @@ end
 
 local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = Gui.create_tab(tabbed_pane, "diseases", {"sosciencity.diseases"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "diseases", {"sosciencity.diseases"})
 
-    local data_list = Gui.create_data_list(tab, "diseases", 3)
+    local data_list = Datalist.create(tab, "diseases", 3)
     data_list.style.column_alignments[2] = "right"
 
     -- build the header
@@ -1483,12 +1485,12 @@ local function update_hospital_details(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.workhours])})
+    Datalist.set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.workhours])})
 
-    local facility_flow = Gui.get_kv_value_element(building_data, "facilities")
+    local facility_flow = Datalist.get_kv_value_element(building_data, "facilities")
     facility_flow.clear()
     for _, _type in pairs(TypeGroup.hospital_complements) do
         local has_one = false
@@ -1511,7 +1513,7 @@ local function update_hospital_details(container, entry, player_id)
         end
     end
 
-    Gui.set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
+    Datalist.set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
 
     local patients = general.patients
     patients.clear()
@@ -1521,8 +1523,8 @@ local function update_hospital_details(container, entry, player_id)
         if disease_id ~= DiseaseGroup.HEALTHY then
             local disease = diseases[disease_id]
             local key = format("disease-%d", disease_id)
-            Gui.add_operand_entry(patients, key, disease.localised_name, count)
-            Gui.set_kv_pair_tooltip(patients, key, disease.localised_description)
+            Datalist.add_operand_entry(patients, key, disease.localised_name, count)
+            Datalist.set_kv_pair_tooltip(patients, key, disease.localised_description)
         end
     end
 
@@ -1532,20 +1534,20 @@ end
 local function create_hospital_details(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
-    Gui.add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
+    Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
+    Datalist.add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
     if (entry[EK.type] == Type.improvised_hospital) then
-        Gui.set_kv_pair_visibility(building_data, "facilities", false)
+        Datalist.set_kv_pair_visibility(building_data, "facilities", false)
     end
 
-    Gui.add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
-    Gui.set_kv_pair_visibility(building_data, "blood_donations", global.technologies["transfusion-medicine"])
+    Datalist.add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
+    Datalist.set_kv_pair_visibility(building_data, "blood_donations", global.technologies["transfusion-medicine"])
 
     local textfield =
-        Gui.add_kv_textfield(
+        Datalist.add_kv_textfield(
         building_data,
         "blood-donation-threshold",
         format(Gui.unique_prefix_builder, "blood-donation-threshold", "hospital"),
@@ -1557,8 +1559,8 @@ local function create_hospital_details(container, entry, player_id)
     building_data["key-blood-donation-threshold"].visible = global.technologies["transfusion-medicine"]
     textfield.visible = global.technologies["transfusion-medicine"]
 
-    Gui.add_header_label(general, "header-patients", {"sosciencity.patients"})
-    Gui.create_data_list(general, "patients")
+    Gui.Elements.Labels.header_label(general, "header-patients", {"sosciencity.patients"})
+    Datalist.create(general, "patients")
 
     create_disease_catalogue(container)
 
@@ -1621,12 +1623,12 @@ local function update_upbringing_station(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    local mode_flow = Gui.get_kv_value_element(building_data, "mode")
+    local mode_flow = Datalist.get_kv_value_element(building_data, "mode")
     update_upbringing_mode_radiobuttons(entry, mode_flow)
 
-    local probability_flow = Gui.get_kv_value_element(building_data, "probabilities")
+    local probability_flow = Datalist.get_kv_value_element(building_data, "probabilities")
     local probabilities = Entity.get_upbringing_expectations(entry[EK.education_mode])
     local at_least_one = false
 
@@ -1649,18 +1651,18 @@ local function update_upbringing_station(container, entry, player_id)
 
     probability_flow.no_castes.visible = not at_least_one
 
-    update_classes_flow(entry, Gui.get_kv_value_element(building_data, "classes"))
+    update_classes_flow(entry, Datalist.get_kv_value_element(building_data, "classes"))
 
-    Gui.set_kv_pair_value(building_data, "graduates", entry[EK.graduates])
+    Datalist.set_kv_pair_value(building_data, "graduates", entry[EK.graduates])
 end
 
 local function create_upbringing_station(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         building_data,
         "capacity",
         {"sosciencity.capacity"},
@@ -1668,7 +1670,7 @@ local function create_upbringing_station(container, entry, player_id)
     )
 
     -- Mode flow
-    local mode_flow = Gui.add_kv_flow(building_data, "mode", {"sosciencity.mode"})
+    local mode_flow = Datalist.add_kv_flow(building_data, "mode", {"sosciencity.mode"})
 
     for _, caste_id in pairs(TypeGroup.breedable_castes) do
         mode_flow.add {
@@ -1687,7 +1689,7 @@ local function create_upbringing_station(container, entry, player_id)
     }
 
     -- expected castes flow
-    local probabilities_flow = Gui.add_kv_flow(building_data, "probabilities", {"sosciencity.expected"})
+    local probabilities_flow = Datalist.add_kv_flow(building_data, "probabilities", {"sosciencity.expected"})
 
     probabilities_flow.add {
         name = "no_castes",
@@ -1703,8 +1705,8 @@ local function create_upbringing_station(container, entry, player_id)
         }
     end
 
-    Gui.add_kv_flow(building_data, "classes", {"sosciencity.classes"})
-    Gui.add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
+    Datalist.add_kv_flow(building_data, "classes", {"sosciencity.classes"})
+    Datalist.add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
 
     update_upbringing_station(container, entry)
 end
@@ -1734,11 +1736,11 @@ local function update_waste_dump(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local stored_garbage = entry[EK.stored_garbage]
     local capacity = get_building_details(entry).capacity
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "capacity",
         {
@@ -1748,28 +1750,28 @@ local function update_waste_dump(container, entry, player_id)
         }
     )
 
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "stored_garbage",
         Luaq_from(stored_garbage):select(display_item_stack):call(display_enumeration, "\n")
     )
 
-    update_waste_dump_mode_radiobuttons(entry, Gui.get_kv_value_element(building_data, "mode"))
+    update_waste_dump_mode_radiobuttons(entry, Datalist.get_kv_value_element(building_data, "mode"))
 
-    local checkbox = Gui.get_checkbox(building_data, "press")
+    local checkbox = Datalist.get_checkbox(building_data, "press")
     checkbox.state = entry[EK.press_mode]
 end
 
 local function create_waste_dump(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
-    Gui.add_kv_pair(building_data, "stored_garbage", {"sosciencity.content"})
+    Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
+    Datalist.add_kv_pair(building_data, "stored_garbage", {"sosciencity.content"})
 
-    local mode_flow = Gui.add_kv_flow(building_data, "mode", {"sosciencity.mode"})
+    local mode_flow = Datalist.add_kv_flow(building_data, "mode", {"sosciencity.mode"})
     for mode_name in pairs(WasteDumpOperationMode) do
         mode_flow.add {
             name = format(Gui.unique_prefix_builder, "waste-dump-mode", mode_name),
@@ -1779,7 +1781,7 @@ local function create_waste_dump(container, entry, player_id)
         }
     end
 
-    Gui.add_kv_checkbox(
+    Datalist.add_kv_checkbox(
         building_data,
         "press",
         format(Gui.unique_prefix_builder, "waste-dump-press", ""),
@@ -1830,18 +1832,18 @@ local function update_market(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local amount = Inventories.count_calories(Inventories.get_chest_inventory(entry))
 
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "content",
         {"sosciencity.value-with-unit", round(amount), {"sosciencity.kcal"}}
     )
 
     local inhabitants, consumption = analyse_dependants(entry, "calorific_demand")
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "dependants",
         {
@@ -1849,33 +1851,33 @@ local function update_market(container, entry, player_id)
             inhabitants
         }
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "dependants-demand",
         {"sosciencity.show-calorific-demand", round(consumption * Time.minute)}
     )
 
     if consumption > 0 then
-        Gui.set_kv_pair_value(
+        Datalist.set_kv_pair_value(
             building_data,
             "supply",
             {"sosciencity.display-supply", display_time(floor(amount / consumption))}
         )
     else
-        Gui.set_kv_pair_value(building_data, "supply", "-")
+        Datalist.set_kv_pair_value(building_data, "supply", "-")
     end
 end
 
 local function create_market(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "content", {"sosciencity.content"})
-    Gui.add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
-    Gui.add_kv_pair(building_data, "dependants-demand")
-    Gui.add_kv_pair(building_data, "supply", {"sosciencity.supply"})
+    Datalist.add_kv_pair(building_data, "content", {"sosciencity.content"})
+    Datalist.add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    Datalist.add_kv_pair(building_data, "dependants-demand")
+    Datalist.add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_market(container, entry)
 end
@@ -1885,13 +1887,13 @@ end
 
 local function create_water_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = Gui.create_tab(tabbed_pane, "waters", {"sosciencity.drinking-water"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "waters", {"sosciencity.drinking-water"})
 
-    local data_list = Gui.create_data_list(tab, "waters", 2)
+    local data_list = Datalist.create(tab, "waters", 2)
     data_list.style.column_alignments[2] = "right"
 
     -- header
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         data_list,
         "head",
         {"sosciencity.drinking-water"},
@@ -1905,7 +1907,7 @@ local function create_water_catalogue(container)
 
     for water, effect in pairs(DrinkingWater.values) do
         local water_representation = {"", format("[fluid=%s]  ", water), fluid_prototypes[water].localised_name}
-        Gui.add_operand_entry(data_list, water, water_representation, Gui.display_integer_summand(effect))
+        Datalist.add_operand_entry(data_list, water, water_representation, Gui.display_integer_summand(effect))
     end
 end
 
@@ -1913,21 +1915,21 @@ local function update_water_distributer(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local water = entry[EK.water_name]
     local amount
 
     if water then
         amount = entry[EK.entity].get_fluid_count(water)
-        Gui.set_kv_pair_value(building_data, "content", display_fluid_stack(water, floor(amount)))
+        Datalist.set_kv_pair_value(building_data, "content", display_fluid_stack(water, floor(amount)))
     else
         amount = 0
-        Gui.set_kv_pair_value(building_data, "content", "-")
+        Datalist.set_kv_pair_value(building_data, "content", "-")
     end
 
     local inhabitants, consumption = analyse_dependants(entry, "water_demand")
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "dependants",
         {
@@ -1935,33 +1937,33 @@ local function update_water_distributer(container, entry, player_id)
             inhabitants
         }
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "dependants-demand",
         {"sosciencity.show-water-demand", round_to_step(consumption * Time.minute, 0.1)}
     )
 
     if consumption > 0 then
-        Gui.set_kv_pair_value(
+        Datalist.set_kv_pair_value(
             building_data,
             "supply",
             {"sosciencity.display-supply", display_time(floor(amount / consumption))}
         )
     else
-        Gui.set_kv_pair_value(building_data, "supply", "-")
+        Datalist.set_kv_pair_value(building_data, "supply", "-")
     end
 end
 
 local function create_water_distributer(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "content", {"sosciencity.content"})
-    Gui.add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
-    Gui.add_kv_pair(building_data, "dependants-demand")
-    Gui.add_kv_pair(building_data, "supply", {"sosciencity.supply"})
+    Datalist.add_kv_pair(building_data, "content", {"sosciencity.content"})
+    Datalist.add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    Datalist.add_kv_pair(building_data, "dependants-demand")
+    Datalist.add_kv_pair(building_data, "supply", {"sosciencity.supply"})
 
     update_water_distributer(container, entry)
 
@@ -1997,10 +1999,10 @@ local function update_dumpster(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local inhabitants, garbage, food_leftovers = analyse_garbage_output(entry)
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "dependants",
         {
@@ -2009,7 +2011,7 @@ local function update_dumpster(container, entry, player_id)
             {"sosciencity.inhabitants"}
         }
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "garbage",
         {
@@ -2018,7 +2020,7 @@ local function update_dumpster(container, entry, player_id)
             {"sosciencity.minute"}
         }
     )
-    Gui.set_kv_pair_value(
+    Datalist.set_kv_pair_value(
         building_data,
         "food_leftovers",
         {
@@ -2032,12 +2034,12 @@ end
 local function create_dumpster(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
-    Gui.add_kv_pair(building_data, "garbage", {"item-name.garbage"})
-    Gui.add_kv_pair(building_data, "food_leftovers")
+    Datalist.add_kv_pair(building_data, "dependants", {"sosciencity.dependants"})
+    Datalist.add_kv_pair(building_data, "garbage", {"item-name.garbage"})
+    Datalist.add_kv_pair(building_data, "food_leftovers")
 
     update_dumpster(container, entry)
 end
@@ -2049,35 +2051,35 @@ local function update_plant_care_station(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.get_tab_contents(tabbed_pane, "general").building
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    Gui.set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
-    Gui.set_kv_pair_value(building_data, "humus-stored", display_item_stack("humus", floor(entry[EK.humus_stored])))
+    Datalist.set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
+    Datalist.set_kv_pair_value(building_data, "humus-stored", display_item_stack("humus", floor(entry[EK.humus_stored])))
 
-    local humus_checkbox = Gui.get_checkbox(building_data, "humus-mode")
+    local humus_checkbox = Datalist.get_checkbox(building_data, "humus-mode")
     humus_checkbox.state = entry[EK.humus_mode]
 
-    local pruning_checkbox = Gui.get_checkbox(building_data, "pruning-mode")
+    local pruning_checkbox = Datalist.get_checkbox(building_data, "pruning-mode")
     pruning_checkbox.state = entry[EK.pruning_mode]
 end
 
 local function create_plant_care_station(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
-    local general = Gui.get_tab_contents(tabbed_pane, "general")
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Gui.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
-    Gui.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
+    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
+    Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
 
-    Gui.add_kv_checkbox(
+    Datalist.add_kv_checkbox(
         building_data,
         "humus-mode",
         format(Gui.unique_prefix_builder, "humus-mode", "plant-care"),
         {"sosciencity.humus-fertilization"},
         {"sosciencity.active"}
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         building_data,
         "explain-humus",
         "",
@@ -2089,14 +2091,14 @@ local function create_plant_care_station(container, entry, player_id)
         }
     )
 
-    Gui.add_kv_checkbox(
+    Datalist.add_kv_checkbox(
         building_data,
         "pruning-mode",
         format(Gui.unique_prefix_builder, "pruning-mode", "plant-care"),
         {"sosciencity.pruning"},
         {"sosciencity.active"}
     )
-    Gui.add_kv_pair(
+    Datalist.add_kv_pair(
         building_data,
         "explain-pruning",
         "",

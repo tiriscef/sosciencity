@@ -131,3 +131,23 @@ style.sosciencity_city_view_footer_label = {
     type = "label_style",
     font = "default-small-semibold"
 }
+
+style.sosciencity_datalist = {
+    type = "table_style",
+    parent = "bordered_table",
+    horizontally_stretchable = "on",
+    right_cell_padding = 6,
+    left_cell_padding = 6
+}
+
+style.sosciencity_datalist_value = {
+    type = "label_style",
+    horizontally_stretchable = "on",
+    single_line = false
+}
+
+style.sosciencity_standard_tab_flow = {
+    type = "vertical_flow_style",
+    horizontally_stretchable = "on",
+    vertically_stretchable = "on"
+}
