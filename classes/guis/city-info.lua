@@ -387,7 +387,6 @@ local function create_city_info_for_player(player, caste_tooltips)
         name = CITY_INFO_NAME,
         direction = "horizontal"
     }
-    Gui.make_stretchable(frame)
 
     create_population_flow(frame)
 

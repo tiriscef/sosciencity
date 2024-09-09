@@ -151,3 +151,10 @@ style.sosciencity_standard_tab_flow = {
     horizontally_stretchable = "on",
     vertically_stretchable = "on"
 }
+
+style.sosciencity_details_view_frame = {
+    type = "frame_style",
+    width = 350,
+    height = 600,
+    padding = 4
+}
