@@ -37,29 +37,6 @@ function Gui.load()
 end
 
 ---------------------------------------------------------------------------------------------------
--- << style functions >>
----------------------------------------------------------------------------------------------------
-
-function Gui.set_padding(element, padding)
-    local style = element.style
-    style.left_padding = padding
-    style.right_padding = padding
-    style.top_padding = padding
-    style.bottom_padding = padding
-end
-
-local function make_stretchable(element)
-    element.style.horizontally_stretchable = true
-    element.style.vertically_stretchable = true
-end
-Gui.make_stretchable = make_stretchable
-
-function Gui.make_squashable(element)
-    element.style.horizontally_squashable = true
-    element.style.vertically_squashable = true
-end
-
----------------------------------------------------------------------------------------------------
 -- << handlers >>
 ---------------------------------------------------------------------------------------------------
 

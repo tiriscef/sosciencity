@@ -704,7 +704,6 @@ local function create_housing_details(container, entry)
     set_details_view_title(container, title)
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    Gui.make_stretchable(tabbed_pane)
 
     local caste_id = entry[EK.type]
     add_housing_general_info_tab(tabbed_pane, entry, caste_id)
@@ -2132,13 +2131,9 @@ function Gui.create_details_view_for_player(player)
         player.gui.screen.add {
         type = "frame",
         name = DETAILS_VIEW_NAME,
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "sosciencity_details_view_frame"
     }
-    frame.style.width = 350
-    frame.style.height = 600
-    frame.style.horizontally_stretchable = true
-    Gui.make_squashable(frame)
-    Gui.set_padding(frame, 4)
     frame.location = {x = 10, y = 120}
 
     frame.add {
