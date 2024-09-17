@@ -197,16 +197,42 @@ function Tirislib.Utils.round(number)
 end
 local round = Tirislib.Utils.round
 
+--- Rounds the given value to the closest multiple of 'step'.
+--- @param number number
+--- @param step number
+--- @return number
 function Tirislib.Utils.round_to_step(number, step)
     return step * floor(number / step + 0.5)
 end
 
+--- Floors the given value to the closest lower multiple of 'step'.
+--- @param number number
+--- @param step number
+--- @return number
 function Tirislib.Utils.floor_to_step(number, step)
     return step * floor(number / step)
 end
 
+--- Ceils the given value to the closest higher multiple of 'step'.
+--- @param number number
+--- @param step number
+--- @return number
 function Tirislib.Utils.ceil_to_step(number, step)
     return step * ceil(number / step)
+end
+
+--- Famous smoothstep function.
+--- @param x number
+--- @return number
+function Tirislib.Utils.smoothstep(x)
+    return x * x * (3 - 2 * x)
+end
+
+--- Famous variant of the smoothstep function.
+--- @param x number
+--- @return number
+function Tirislib.Utils.smootherstep(x)
+    return x * x * x * (x * (6 * x - 15) + 10)
 end
 
 --- Returns the average between a and b with the given weights.
