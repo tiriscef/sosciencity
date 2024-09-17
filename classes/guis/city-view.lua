@@ -1,3 +1,4 @@
+--- The gui called "The City Builder's Manual" that should provide a lot of information to the player.
 Gui.CityView = {}
 
 local get_subtbl = Tirislib.Tables.get_subtbl
@@ -35,7 +36,7 @@ local footer_variant_count = 4
 local content = {
     {
         name = "statistics",
-        localised_name = {"sosciencity.statistics"},
+        localised_name = {"city-view.statistics"},
         pages = {
             {
                 name = "healthcare_report",
@@ -65,7 +66,7 @@ local content = {
     },
     {
         name = "data",
-        localised_name = {"sosciencity.data"},
+        localised_name = {"city-view.data"},
         pages = {
             {
                 name = "healthcare_report",
@@ -81,7 +82,7 @@ local content = {
     },
     {
         name = "how-tos",
-        localised_name = {"sosciencity.how-tos"},
+        localised_name = {"city-view.how-tos"},
         pages = {
             {
                 name = "healthcare_report",
@@ -110,7 +111,8 @@ end
 ---   [name]: string\
 ---   [category]: string (name of the category)\
 ---   [localised_name]: locale\
----   [creator]: function (takes the gui container as argument)
+---   [creator]: function (takes the gui container as argument)\
+---   [enabler]: function (returns a truthy/falsy value if the page should show up), optional
 --- @param page table
 function Gui.CityView.add_page(page)
     Tirislib.Utils.desync_protection()
@@ -129,18 +131,20 @@ end
 
 local function fill_menu(container, category_index, selected_page)
     for _, page in pairs(content[category_index].pages) do
-        container.add {
-            type = "button",
-            name = page.name,
-            caption = page.localised_name,
-            tags = {
-                category = category_index,
-                page = page.name,
-                sosciencity_gui_event = "open_page"
-            },
-            style = page.name == selected_page and "sosciencity_city_view_page_button_selected" or
-                "sosciencity_city_view_page_button"
-        }
+        if not page.enabler or page.enabler() then
+            container.add {
+                type = "button",
+                name = page.name,
+                caption = page.localised_name,
+                tags = {
+                    category = category_index,
+                    page = page.name,
+                    sosciencity_gui_event = "open_page"
+                },
+                style = page.name == selected_page and "sosciencity_city_view_page_button_selected" or
+                    "sosciencity_city_view_page_button"
+            }
+        end
     end
 end
 
@@ -215,7 +219,7 @@ local function create_city_view(player)
     header.add {
         type = "label",
         ignored_by_interaction = true,
-        caption = {"sosciencity.the-city-builders-manual"},
+        caption = {"city-view.the-city-builders-manual"},
         style = "frame_title"
     }
     header.add {
@@ -320,14 +324,14 @@ local function create_city_view(player)
     footer.add {
         type = "label",
         ignored_by_interaction = true,
-        caption = {"sosciencity.footer" .. math.random(footer_variant_count)},
+        caption = {"city-view.footer" .. math.random(footer_variant_count)},
         style = "sosciencity_city_view_footer_label"
     }
 
     city_view_frame.force_auto_center()
 end
 
-local function close_city_view(player)
+function Gui.CityView.close(player)
     local gui = player.gui.screen[CITY_VIEW_NAME]
     if gui then
         local last_opened_tab = get_subtbl(global, "last_opened_tab")
@@ -336,6 +340,7 @@ local function close_city_view(player)
         gui.destroy()
     end
 end
+local close_city_view = Gui.CityView.close
 
 local function toggle_city_view_opened(player)
     local gui = player.gui.screen[CITY_VIEW_NAME]

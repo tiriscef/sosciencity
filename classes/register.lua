@@ -378,7 +378,7 @@ function Register.change_type(entry, new_type)
     local new_entry = add_entity(entry[EK.entity], new_type)
     new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
 
-    Gui.rebuild_details_view_for_entry(entry)
+    Gui.DetailsView.rebuild_for_entry(entry)
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.

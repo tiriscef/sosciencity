@@ -47,7 +47,7 @@ end
 -- << Datalist >>
 ---------------------------------------------------------------------------------------------------
 
---- Class for standardized lists
+--- Class for generic lists
 Gui.Elements.Datalist = {}
 
 function Gui.Elements.Datalist.create(container, name, columns)
@@ -281,9 +281,9 @@ end
 -- << Sprites >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Sprites = {}
+Gui.Elements.Sprite = {}
 
-function Gui.Elements.Sprites.create_caste_sprite(container, caste_id, size)
+function Gui.Elements.Sprite.create_caste_sprite(container, caste_id, size)
     local caste = Castes.values[caste_id]
 
     local sprite =
@@ -323,7 +323,7 @@ function Gui.Elements.Tabs.create(tabbed_pane, name, caption)
         type = "flow",
         name = "flow",
         direction = "vertical",
-        style = "sosciencity_standard_tab_flow"
+        style = "sosciencity_generic_tab_flow"
     }
 
     tabbed_pane.add_tab(tab, scrollpane)
@@ -339,10 +339,10 @@ end
 -- << Labels >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Labels = {}
+Gui.Elements.Label = {}
 
 -- XXX: I guess there is a better way to do this with just one label
-function Gui.Elements.Labels.header_label(container, name, caption)
+function Gui.Elements.Label.header_label(container, name, caption)
     local flow =
         container.add {
         type = "flow",
@@ -359,4 +359,113 @@ function Gui.Elements.Labels.header_label(container, name, caption)
         caption = caption
     }
     header.style.font = "default-bold"
+end
+
+--- Creates a generic 'heading_1' label.
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Label.heading_1(container, caption, name)
+    return container.add {
+        type = "label",
+        name = name,
+        caption = caption,
+        style = "sosciencity_heading_1"
+    }
+end
+
+--- Creates a generic 'heading_2' label.
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Label.heading_2(container, caption, name)
+    return container.add {
+        type = "label",
+        name = name,
+        caption = caption,
+        style = "sosciencity_heading_2"
+    }
+end
+
+--- Creates a generic 'heading_3' label.
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Label.heading_3(container, caption, name)
+    return container.add {
+        type = "label",
+        name = name,
+        caption = caption,
+        style = "sosciencity_heading_3"
+    }
+end
+
+--- Creates a generic multi-line 'paragraph' label.
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Label.paragraph(container, caption, name)
+    return container.add {
+        type = "label",
+        name = name,
+        caption = caption,
+        style = "sosciencity_paragraph"
+    }
+end
+
+--- Creates a flow stylised for a list.
+--- @param container LuaGuiElement
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Label.list_flow(container, name)
+    return container.add {
+        type = "flow",
+        name = name,
+        direction = "vertical",
+        style = "sosciencity_list_flow"
+    }
+end
+
+--- Creates a generic bullet point with a marker in front.
+--- @param container LuaGuiElement
+--- @param text_caption locale
+--- @param marker_caption locale|nil
+--- @param name string|nil
+--- @return LuaGuiElement flow the flow that contains marker and text
+function Gui.Elements.Label.bullet_point(container, text_caption, marker_caption, name)
+    local flow = container.add {
+        type = "flow",
+        name = name,
+        direction = "horizontal",
+        style = "sosciencity_list_point_flow"
+    }
+
+    flow.add {
+        type = "label",
+        caption = marker_caption or ">",
+        style = "sosciencity_list_marker"
+    }
+    Gui.Elements.Label.paragraph(flow, text_caption, name)
+
+    return flow
+end
+
+--- Creates a generic list with the given bullet points.
+--- @param container LuaGuiElement
+--- @param point_captions array of locales
+--- @param marker_caption locale|nil
+--- @param name string|nil
+--- @return LuaGuiElement flow the flow that contains the list
+function Gui.Elements.Label.list(container, point_captions, marker_caption, name)
+    local list_container = Gui.Elements.Label.list_flow(container, name)
+
+    for _, point in pairs(point_captions) do
+        Gui.Elements.Label.bullet_point(list_container, point, marker_caption)
+    end
+
+    return list_container
 end

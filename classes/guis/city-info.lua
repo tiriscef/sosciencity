@@ -1,3 +1,6 @@
+--- The gui that is always on the top left corner and provides quick information about populations and caste bonuses.
+Gui.CityInfo = {}
+
 -- enums
 local Type = require("enums.type")
 
@@ -21,7 +24,6 @@ local humidity_locales = WeatherLocales.humidity
 local weather_locales = WeatherLocales.weather
 
 local CITY_INFO_NAME = "sosciencity-city-info"
-local CITY_INFO_SPRITE_SIZE = 48
 
 local function update_population_flow(container)
     local datalist = container.general.flow.datalist
@@ -359,7 +361,7 @@ local function create_caste_flow(container, caste_id, caste_tooltips)
     flow.style.vertical_spacing = 0
     flow.style.horizontal_align = "center"
 
-    local sprite = Gui.Elements.Sprites.create_caste_sprite(flow, caste_id, CITY_INFO_SPRITE_SIZE)
+    local sprite = Gui.Elements.Sprite.create_caste_sprite(flow, caste_id, 48)
     sprite.style.horizontal_align = "center"
 
     flow.add {
@@ -375,7 +377,7 @@ local function create_caste_flow(container, caste_id, caste_tooltips)
     update_caste_flow(container, caste_id, caste_tooltips or {})
 end
 
-local function create_city_info_for_player(player, caste_tooltips)
+function Gui.CityInfo.create(player, caste_tooltips)
     local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
@@ -394,18 +396,9 @@ local function create_city_info_for_player(player, caste_tooltips)
         create_caste_flow(frame, id, caste_tooltips)
     end
 end
-Gui.create_city_info_for_player = create_city_info_for_player
-
-local function update_city_info(frame, caste_tooltips)
-    update_population_flow(frame)
-
-    for id in pairs(castes) do
-        update_caste_flow(frame, id, caste_tooltips)
-    end
-end
 
 --- Updates the city info gui for all existing players.
-function Gui.update_city_info()
+function Gui.CityInfo.update()
     local caste_tooltips = {}
     for id in pairs(castes) do
         caste_tooltips[id] = tooltip_fns[id]()
@@ -416,9 +409,23 @@ function Gui.update_city_info()
 
         -- we check if the gui still exists, as other mods can delete them
         if city_info_gui ~= nil and city_info_gui.valid then
-            update_city_info(city_info_gui, caste_tooltips)
+            update_population_flow(city_info_gui)
+
+            for id in pairs(castes) do
+                update_caste_flow(city_info_gui, id, caste_tooltips)
+            end
         else
-            create_city_info_for_player(player, caste_tooltips)
+            Gui.CityInfo.create(player, caste_tooltips)
         end
+    end
+end
+
+--- Destroys the city info gui.
+--- @param player Player
+function Gui.CityInfo.destroy(player)
+    local city_info_gui = player.gui.top[CITY_INFO_NAME]
+
+    if city_info_gui ~= nil and city_info_gui.valid then
+        city_info_gui.destroy()
     end
 end

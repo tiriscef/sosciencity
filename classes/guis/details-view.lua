@@ -1,3 +1,8 @@
+--- The gui that pops up when the player opens a entity.
+Gui.DetailsView = {}
+
+local DETAILS_VIEW_NAME = "sosciencity-details"
+
 -- enums
 
 local DiseaseCategory = require("enums.disease-category")
@@ -61,8 +66,6 @@ local climate_locales = WeatherLocales.climate
 local humidity_locales = WeatherLocales.humidity
 
 local Datalist = Gui.Elements.Datalist
-
-local DETAILS_VIEW_NAME = "sosciencity-details"
 
 local function set_details_view_title(container, caption)
     container.parent.caption = caption
@@ -580,17 +583,17 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
 
     Gui.Elements.Utils.create_separator_line(flow)
 
-    Gui.Elements.Labels.header_label(flow, "header-occupations", {"sosciencity.occupations"})
+    Gui.Elements.Label.header_label(flow, "header-occupations", {"sosciencity.occupations"})
     Datalist.create(flow, "occupations")
 
     Gui.Elements.Utils.create_separator_line(flow)
 
-    Gui.Elements.Labels.header_label(flow, "header-ages", {"sosciencity.ages"})
+    Gui.Elements.Label.header_label(flow, "header-ages", {"sosciencity.ages"})
     Datalist.create(flow, "ages")
 
     Gui.Elements.Utils.create_separator_line(flow)
 
-    Gui.Elements.Labels.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
+    Gui.Elements.Label.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
     Datalist.create(flow, "genders")
 
     -- call the update function to set the values
@@ -600,7 +603,7 @@ end
 local function add_caste_infos(container, caste_id)
     local caste = castes[caste_id]
 
-    Gui.Elements.Sprites.create_caste_sprite(container, caste_id, 128)
+    Gui.Elements.Sprite.create_caste_sprite(container, caste_id, 128)
 
     local caste_data = Datalist.create(container, "caste-infos")
     Datalist.add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, caste.localised_name)
@@ -893,7 +896,7 @@ local function create_general_building_details(container, entry, player_id)
         )
         Datalist.add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
 
-        Gui.Elements.Labels.header_label(tab, "worker-header", {"sosciencity.staff"})
+        Gui.Elements.Label.header_label(tab, "worker-header", {"sosciencity.staff"})
         Datalist.create(tab, "workers")
     end
 
@@ -1381,7 +1384,7 @@ local function create_immigration_port_details(container, entry, player_id)
 
     Gui.Elements.Utils.create_separator_line(general)
 
-    Gui.Elements.Labels.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
+    Gui.Elements.Label.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
     local immigrants_list = Datalist.create(general, "immigration")
 
     for caste in pairs(global.immigration) do
@@ -1559,7 +1562,7 @@ local function create_hospital_details(container, entry, player_id)
     building_data["key-blood-donation-threshold"].visible = global.technologies["transfusion-medicine"]
     textfield.visible = global.technologies["transfusion-medicine"]
 
-    Gui.Elements.Labels.header_label(general, "header-patients", {"sosciencity.patients"})
+    Gui.Elements.Label.header_label(general, "header-patients", {"sosciencity.patients"})
     Datalist.create(general, "patients")
 
     create_disease_catalogue(container)
@@ -2121,7 +2124,7 @@ Gui.set_checked_state_handler(
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
 
-function Gui.create_details_view_for_player(player)
+function Gui.DetailsView.create(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
     if frame and frame.valid then
         return
@@ -2149,12 +2152,12 @@ end
 local function get_details_view(player)
     local details_view = player.gui.screen[DETAILS_VIEW_NAME]
 
-    -- we check if the gui still exists, as other mods can delete them
+    -- we check if the gui still exists, as other mods can delete it
     if details_view ~= nil and details_view.valid then
         return details_view
     else
         -- recreate it otherwise
-        Gui.create_details_view_for_player(player)
+        Gui.DetailsView.create(player)
         return get_details_view(player)
     end
 end
@@ -2284,7 +2287,7 @@ for caste_id in pairs(castes) do
 end
 
 --- Updates the details guis for every player.
-function Gui.update_details_view()
+function Gui.DetailsView.update()
     local current_tick = game.tick
 
     for player_id, unit_number in pairs(global.details_view) do
@@ -2293,7 +2296,7 @@ function Gui.update_details_view()
 
         -- check if the entity hasn't been unregistered in the meantime
         if not entry then
-            Gui.close_details_view_for_player(player)
+            Gui.DetailsView.close(player)
         else
             local gui_spec = type_gui_specifications[entry[EK.type]]
             local updater = gui_spec and gui_spec.updater
@@ -2308,7 +2311,7 @@ end
 --- Builds a details gui for the given player and the given entity.
 --- @param player Player
 --- @param unit_number integer
-function Gui.open_details_view_for_player(player, unit_number)
+function Gui.DetailsView.open(player, unit_number)
     local entry = Register.try_get(unit_number)
     if not entry then
         return
@@ -2332,7 +2335,7 @@ end
 
 --- Closes the details view for the given player.
 --- @param player Player
-function Gui.close_details_view_for_player(player)
+function Gui.DetailsView.close(player)
     local details_view = get_details_view(player)
     details_view.visible = false
     global.details_view[player.index] = nil
@@ -2342,22 +2345,32 @@ end
 
 --- Closes and reopens all the Guis related to the given entry.
 --- @param entry Entry
-function Gui.rebuild_details_view_for_entry(entry)
+function Gui.DetailsView.rebuild_for_entry(entry)
     local unit_number = entry[EK.unit_number]
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then
             local player = game.players[player_index]
-            Gui.close_details_view_for_player(player)
-            Gui.open_details_view_for_player(player, unit_number)
+            Gui.DetailsView.close(player)
+            Gui.DetailsView.open(player, unit_number)
         end
+    end
+end
+
+--- Destroys the city info gui.
+--- @param player Player
+function Gui.DetailsView.destroy(player)
+    local details_view_gui = player.gui.screen[DETAILS_VIEW_NAME]
+
+    if details_view_gui ~= nil and details_view_gui.valid then
+        details_view_gui.destroy()
     end
 end
 
 Gui.add_gui_opened_handler(
     function(player, event)
         if event.gui_type == defines.gui_type.entity then
-            Gui.open_details_view_for_player(player, event.entity.unit_number)
+            Gui.DetailsView.open(player, event.entity.unit_number)
         end
     end
 )
@@ -2365,7 +2378,7 @@ Gui.add_gui_opened_handler(
 Gui.add_gui_closed_handler(
     function(player, event)
         if event.gui_type == defines.gui_type.entity then
-            Gui.close_details_view_for_player(player)
+            Gui.DetailsView.close(player)
         end
     end
 )
