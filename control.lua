@@ -131,6 +131,7 @@ require("classes.gui")
 ---@class AgeGroup
 ---@class GenderGroup
 ---@class RenderingType
+---@class LuaGuiElement
 
 --[[
     Data this script stores in global
@@ -160,8 +161,7 @@ local unlock_on_mined_entity = Technologies.on_mined_entity
 local on_technology_finished = Technologies.finished
 
 local update_inhabitants = Inhabitants.update
-local update_city_info = Gui.update_city_info
-local update_details_view = Gui.update_details_view
+local update_gui = Gui.update_guis
 local update_scheduler = Scheduler.update
 local update_communication = Communication.update
 local update_weather = Weather.update
@@ -183,8 +183,7 @@ local function update_cycle()
     update_entities(current_tick)
     update_technologies()
 
-    update_city_info()
-    update_details_view()
+    update_gui()
 
     update_communication(current_tick)
 
@@ -404,11 +403,7 @@ local function on_configuration_change()
             force.reset_technology_effects()
         end
 
-        -- Close the details view for every player.
-        -- This avoids the unnecessary migration of those guis.
-        for _, player in pairs(game.players) do
-            Gui.close_details_view_for_player(player)
-        end
+        Gui.reset_guis()
 
         -- Rebuild entries
         local old_register = Tirislib.Tables.copy(global.register)
@@ -428,7 +423,7 @@ local function on_player_created(event)
     local index = event.player_index
     local player = game.get_player(index)
 
-    Gui.create_guis_for_player(player)
+    Gui.create_guis(player)
 
     Communication.say_welcome(player)
 end

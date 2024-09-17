@@ -146,7 +146,7 @@ style.sosciencity_datalist_value = {
     single_line = false
 }
 
-style.sosciencity_standard_tab_flow = {
+style.sosciencity_generic_tab_flow = {
     type = "vertical_flow_style",
     horizontally_stretchable = "on",
     vertically_stretchable = "on"
@@ -157,4 +157,49 @@ style.sosciencity_details_view_frame = {
     width = 350,
     height = 600,
     padding = 4
+}
+
+style.sosciencity_heading_1 = {
+    type = "label_style",
+    parent = "heading_1_label",
+    left_margin = 30,
+    bottom_margin = 10
+}
+
+style.sosciencity_heading_2 = {
+    type = "label_style",
+    parent = "heading_2_label",
+    left_margin = 15,
+    top_margin = 20,
+    bottom_margin = 10
+}
+
+style.sosciencity_heading_3 = {
+    type = "label_style",
+    parent = "heading_3_label",
+    left_margin = 15,
+    top_margin = 10,
+    bottom_margin = 5
+}
+
+style.sosciencity_paragraph = {
+    type = "label_style",
+    single_line = false
+}
+
+style.sosciencity_list_flow = {
+    type = "vertical_flow_style",
+    top_margin = 15,
+    bottom_margin = 15
+}
+
+style.sosciencity_list_point_flow = {
+    type = "horizontal_flow_style",
+    vertical_align = "center"
+}
+
+style.sosciencity_list_marker = {
+    type = "label_style",
+    left_margin = 10,
+    right_margin = 10
 }

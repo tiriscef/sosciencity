@@ -1,6 +1,3 @@
--- enums
-local EK = require("enums.entry-key")
-
 --- Static class for all the gui stuff.
 Gui = {}
 
@@ -28,7 +25,7 @@ function Gui.init()
     global.details_view = {}
 
     for _, player in pairs(game.players) do
-        Gui.create_guis_for_player(player)
+        Gui.create_guis(player)
     end
 end
 
@@ -206,11 +203,28 @@ function Gui.on_gui_opened(event)
     end
 end
 
---- Initializes the guis for the given player. Gets called after a new player gets created.
+--- Initializes the guis for the given player. Has to be called after a new player gets created.
 --- @param player Player
-function Gui.create_guis_for_player(player)
-    Gui.create_city_info_for_player(player)
-    Gui.create_details_view_for_player(player)
+function Gui.create_guis(player)
+    Gui.CityInfo.create(player)
+    Gui.DetailsView.create(player)
+end
+
+--- Updates all the guis.
+function Gui.update_guis()
+    Gui.CityInfo.update()
+    Gui.DetailsView.update()
+end
+
+--- Resets all the guis for after an update.
+function Gui.reset_guis()
+    for _, player in pairs(game.players) do
+        -- we just destroy the persistent ones, because they get automatically recreated when lost anyway
+        Gui.CityInfo.destroy(player)
+        Gui.DetailsView.destroy(player)
+
+        Gui.CityView.close(player)
+    end
 end
 
 require("classes.guis.elements")
