@@ -854,6 +854,8 @@ end
 -- If they work at a manufactory, then the occupation is a (manufactory, count) pair.
 
 --- Returns the number of employable inhabitants living in the housing entry.
+--- @param entry Entry with inhabitants
+--- @return integer
 function Inhabitants.get_employable_count(entry)
     return entry[EK.diseases][HEALTHY] - entry[EK.employed]
 end
@@ -861,6 +863,10 @@ local get_employable_count = Inhabitants.get_employable_count
 
 --- Tries to employ the given number of people from the house for the manufactory and
 --- returns the number of actually employed workers.
+--- @param manufactory Entry with workforce
+--- @param house Entry with inhabitants
+--- @param count integer
+--- @return integer
 local function try_employ(manufactory, house, count)
     local employments = house[EK.employments]
     local unemployed_inhabitants = get_employable_count(house)
@@ -903,6 +909,7 @@ end
 
 --- Fires all the workers working in this building.
 --- Must be called if a building with workforce gets deconstructed.
+--- @param manufactory Entry with workforce
 function Inhabitants.unemploy_all_workers(manufactory)
     local workers = manufactory[EK.workers]
     local manufactory_number = manufactory[EK.unit_number]
@@ -921,7 +928,7 @@ function Inhabitants.unemploy_all_workers(manufactory)
 end
 
 --- Fires the given number of workers from the given manufactory. Returns the count of actually fired workers.
---- @param manufactory Entry
+--- @param manufactory Entry with workforce
 --- @param count integer
 --- @return integer
 local function unemploy_workers(manufactory, count)
@@ -960,6 +967,9 @@ end
 
 --- Tries to free the given number of inhabitants from their employment.
 --- Returns the number of fired inhabitants.
+--- @param house Entry with workforce
+--- @param count integer
+--- @return integer
 local function unemploy_inhabitants(house, count)
     count = min(count, house[EK.employed])
     local to_fire = count
@@ -993,11 +1003,15 @@ end
 
 --- Ends the employment of all employed inhabitants of this house.
 --- Must be called if a house gets deconstructed.
+--- @param house Entry with inhabitants
 local function unemploy_all_inhabitants(house)
     unemploy_inhabitants(house, house[EK.employed])
 end
 
---- Looks for employees if this entry needs then.
+--- Update function for entries with workforce.
+--- Looks for employees if this entry needs then. Or fires them if there are too many.
+--- @param manufactory Entry with workforce
+--- @param workforce table workforce specification
 function Inhabitants.update_workforce(manufactory, workforce)
     local nominal_count = manufactory[EK.target_worker_count] or workforce.count
     local current_workers = manufactory[EK.worker_count]
@@ -1017,7 +1031,20 @@ function Inhabitants.update_workforce(manufactory, workforce)
     end
 end
 
+--- Translates a happiness value to a working performance.
+--- @param happiness number
+--- @return number
+local function get_work_coefficient(happiness)
+    if happiness < 10 then
+        return Tirislib.Utils.smootherstep(0.1 * happiness)
+    else
+        return (0.1 * happiness) ^ 0.7
+    end
+end
+
 --- Returns a percentage on how satisfied the given buildings need for workers is.
+--- @param manufactory Entry
+--- @return number
 function Inhabitants.evaluate_workforce(manufactory)
     local workforce = get_building_details(manufactory).workforce
 
@@ -1025,10 +1052,17 @@ function Inhabitants.evaluate_workforce(manufactory)
         return 1
     end
 
-    local current_workers = manufactory[EK.worker_count]
+    local worker_equivalents = 0
 
-    -- TODO let happiness and or health affect performance
-    return current_workers / workforce.count
+    for unit_number, worker_count in pairs(manufactory[EK.workers]) do
+        local house = try_get(unit_number)
+
+        if house then
+            worker_equivalents = worker_equivalents + worker_count * get_work_coefficient(house[EK.happiness])
+        end
+    end
+
+    return worker_equivalents / workforce.count
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1051,7 +1085,7 @@ function Inhabitants.get_nominal_sanity(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << living space management >>
+-- << housing space management >>
 
 local function update_free_space_status(entry)
     local caste_id = entry[EK.type]
