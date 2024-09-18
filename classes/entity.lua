@@ -682,7 +682,7 @@ local function get_fishery_performance(entry)
 
     local building_details = get_building_details(entry)
     local water_tiles = get_water_tiles(entry, building_details)
-    local water_performance = map_range(water_tiles, 0, building_details.water_tiles, 0, 1)
+    local water_performance = water_tiles / building_details.water_tiles
 
     local neighborhood_performance = get_fishing_competition(entry)
 
@@ -730,7 +730,7 @@ local function get_hunting_hut_performance(entry)
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)
     entry[EK.tree_count] = tree_count
-    local forest_performance = map_range(tree_count, 0, building_details.tree_count, 0, 1)
+    local forest_performance = tree_count / building_details.tree_count
 
     local neighborhood_performance = get_hunting_competition(entry)
 
