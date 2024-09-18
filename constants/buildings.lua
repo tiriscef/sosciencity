@@ -118,7 +118,7 @@ Building.values = {
     },
     ["groundwater-pump"] = {
         type = Type.waterwell,
-        range = 50
+        range = 30
     },
     ["gunfire-hq"] = {
         type = Type.manufactory,
