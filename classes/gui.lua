@@ -40,6 +40,7 @@ end
 --- This should be added to every gui element which needs an event handler,
 --- because the gui event handlers get fired for every gui in existance.
 --- So I need to ensure that I'm not reacting to another mods gui.
+--- TODO make all gui elements that use this use the tag system
 Gui.unique_prefix_builder = "sosciencity-%s-%s"
 
 --- Generic handler that verifies that the gui element belongs to my mod, looks for an event handler function and calls it.

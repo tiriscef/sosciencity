@@ -126,8 +126,7 @@ local tooltip_fns = {
         local housing = global.housing_capacity[Type.clockwork]
         local housing_improvised = housing[true]
         local points = round_to_step(global.caste_points[Type.clockwork], 0.1)
-        local machines = Register.get_machine_count()
-        local maintenance_cost = machines
+        local maintenance_cost = global.active_machine_count
 
         local points_locale = points
         if global.maintenance_enabled and maintenance_cost > 0 then
@@ -156,8 +155,8 @@ local tooltip_fns = {
         if points >= 0 then
             ret[#ret + 1] = {
                 "sosciencity.tooltip-clockwork-bonus",
-                machines,
-                round_to_step(points / max(1, machines), 0.1),
+                maintenance_cost,
+                round_to_step(points / max(1, maintenance_cost), 0.1),
                 global.caste_bonuses[Type.clockwork]
             }
         else
