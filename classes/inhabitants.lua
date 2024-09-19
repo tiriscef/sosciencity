@@ -745,20 +745,20 @@ end
 
 --- Gets the current Clockwork caste bonus.
 local function get_clockwork_bonus()
-    local machine_count = Register.get_machine_count()
+    local maintenance_cost = global.active_machine_count
     local points = caste_points[Type.clockwork]
 
     if global.maintenance_enabled then
         local maintenance_points = points + global.starting_clockwork_points
 
-        if machine_count > maintenance_points then
-            return floor(map_range(machine_count, maintenance_points, max(1, 2 * maintenance_points), 0, -60))
+        if maintenance_cost > maintenance_points then
+            return floor(map_range(maintenance_cost, maintenance_points, max(1, 2 * maintenance_points), 0, -60))
         end
 
-        points = points - max(0, machine_count - global.starting_clockwork_points)
+        points = points - max(0, maintenance_cost - global.starting_clockwork_points)
     end
 
-    return floor(5 * (max(0, points) / max(1, machine_count)) ^ 0.8)
+    return floor(5 * (max(0, points) / max(1, maintenance_cost)) ^ 0.8)
 end
 
 --- Gets the current Orchid caste bonus.
