@@ -416,6 +416,10 @@ local function on_configuration_change()
         end
 
         Technologies.init()
+
+        -- don't know why, but the migration script doesn't activate for some saves
+        -- TODO: remove this after some updates maybe
+        global.active_machine_count = global.active_machine_count or 0
     end
 end
 

@@ -35,7 +35,7 @@ local function update_population_flow(container)
     machine_count_label.caption = machine_count
     machine_count_label.tooltip = {
         "sosciencity.tooltip-machines",
-        machine_count
+        global.active_machine_count
     }
 
     datalist.turret_count.caption = Register.get_type_count(Type.turret)

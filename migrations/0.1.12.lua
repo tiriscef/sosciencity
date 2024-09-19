@@ -7,3 +7,5 @@ for _, entry in pairs(global.register) do
         end
     end
 end
+
+global.active_machine_count = global.active_machine_count or 0
