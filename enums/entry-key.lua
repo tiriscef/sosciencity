@@ -7,9 +7,9 @@ local EK = {}
 EK.type = 1
 --- LuaEntity of this entry
 EK.entity = 2
---- unit_number of this entries entity
+--- unit_number of this entry's entity
 EK.unit_number = 3
---- name of this entries entity
+--- name of this entry's entity
 EK.name = 4
 --- tick of the last entry update
 EK.last_update = 5
@@ -41,13 +41,13 @@ EK.target_worker_count = 52
 
 -- subentity stuff
 
---- the current power usage of this entries eei
+--- the current power usage of this entry's eei
 EK.power_usage = 100
---- the current speed bonus of this entries beacon
+--- the current speed bonus of this entry's beacon
 EK.speed_bonus = 101
---- the current productivity bonus of this entries beacon
+--- the current productivity bonus of this entry's beacon
 EK.productivity_bonus = 102
---- if this entries beacon has a penalty module
+--- if this entry's beacon has a penalty module
 EK.has_penalty_module = 103
 
 -- general Custom Building related stuff
@@ -58,6 +58,10 @@ EK.performance = 150
 EK.active = 151
 --- available work
 EK.workhours = 152
+--- tick of the last time this building was active
+EK.last_time_active = 153
+--- is this maintenance relevant machine counted as currently active
+EK.active_machine_status = 154
 
 -- type specific stuff
 -- empty housing
@@ -73,19 +77,19 @@ EK.official_inhabitants = 204
 EK.caste_points = 205
 --- inhabitant count of this entry
 EK.inhabitants = 206
---- current happiness of this entries inhabitants
+--- current happiness of this entry's inhabitants
 EK.happiness = 207
 --- array with happiness influences
 EK.happiness_summands = 208
 --- array with multiplying happiness influences
 EK.happiness_factors = 209
---- current health of this entries inhabitants
+--- current health of this entry's inhabitants
 EK.health = 210
 --- array with health influences
 EK.health_summands = 211
 --- array with multiplying health influences
 EK.health_factors = 212
---- current sanity of this entries inhabitants
+--- current sanity of this entry's inhabitants
 EK.sanity = 213
 --- array with sanity influences
 EK.sanity_summands = 214

@@ -168,7 +168,6 @@ end
 function Inhabitants.init()
     global = _ENV.global
 
-    global.active_animal_farms = 0
     global.fear = 0
     global.population = new_caste_table()
     global.housing_capacity = {}

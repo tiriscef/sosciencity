@@ -20,6 +20,10 @@ Entity = {}
     Data this class stores in global
     --------------------------------
     global.active_animal_farms: integer
+        Count of the currently active animal farms that are relevant for the zoonosis mechanic
+
+    global.active_machine_count: integer
+        Count of the machines that were recently active and are relevant for the maintenance mechanic
 ]]
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
 
@@ -60,6 +64,8 @@ end
 
 function Entity.init()
     set_locals()
+    global.active_animal_farms = 0
+    global.active_machine_count = 0
 end
 
 function Entity.load()
@@ -131,7 +137,45 @@ function Entity.is_active(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << active machines logic >>
+
+local active_time_threshold = 2 * Time.minute
+
+local function create_active_machine_status(entry)
+    entry[EK.last_time_active] = -active_time_threshold
+end
+
+local function update_active_machine_status(entry)
+    local entity = entry[EK.entity]
+    if entity.status == defines.entity_status.working then
+        entry[EK.last_time_active] = game.tick
+    end
+
+    local was_active_before = entry[EK.active_machine_status]
+    local is_active_now = (game.tick - entry[EK.last_time_active]) < active_time_threshold
+
+    if not was_active_before and is_active_now then
+        global.active_machine_count = global.active_machine_count + 1
+    elseif was_active_before and not is_active_now then
+        global.active_machine_count = global.active_machine_count - 1
+    end
+
+    entry[EK.active_machine_status] = is_active_now
+end
+
+local function remove_active_machine_status(entry)
+    if entry[EK.active_machine_status] then
+        global.active_machine_count = global.active_machine_count - 1
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << beaconed machines >>
+
+Register.set_entity_creation_handler(Type.assembling_machine, create_active_machine_status)
+Register.set_entity_creation_handler(Type.furnace, create_active_machine_status)
+Register.set_entity_creation_handler(Type.mining_drill, create_active_machine_status)
+Register.set_entity_creation_handler(Type.rocket_silo, create_active_machine_status)
 
 local function update_machine(entry)
     local clockwork_bonus = caste_bonuses[Type.clockwork]
@@ -141,6 +185,7 @@ local function update_machine(entry)
     end
 
     set_beacon_effects(entry, clockwork_bonus, 0, penalty_module_needed)
+    update_active_machine_status(entry)
 end
 Register.set_entity_updater(Type.assembling_machine, update_machine)
 Register.set_entity_updater(Type.furnace, update_machine)
@@ -154,8 +199,14 @@ local function update_rocket_silo(entry)
     end
 
     set_beacon_effects(entry, clockwork_bonus, caste_bonuses[Type.aurora], use_penalty_module)
+    update_active_machine_status(entry)
 end
 Register.set_entity_updater(Type.rocket_silo, update_rocket_silo)
+
+Register.set_entity_destruction_handler(Type.assembling_machine, remove_active_machine_status)
+Register.set_entity_destruction_handler(Type.furnace, remove_active_machine_status)
+Register.set_entity_destruction_handler(Type.mining_drill, remove_active_machine_status)
+Register.set_entity_destruction_handler(Type.rocket_silo, remove_active_machine_status)
 
 ---------------------------------------------------------------------------------------------------
 -- << animal farms >>
@@ -169,7 +220,8 @@ local function update_animal_farm(entry)
     local entity = entry[EK.entity]
     local recipe = entity.get_recipe()
     local houses_animals =
-        recipe and entity.is_crafting() and Tirislib.String.begins_with(recipe.name, "sos-husbandry-")
+        recipe and entity.status == defines.entity_status.working and
+        Tirislib.String.begins_with(recipe.name, "sos-husbandry-")
     local housed_in_the_past = entry[EK.houses_animals]
 
     if houses_animals and not housed_in_the_past then
@@ -479,7 +531,7 @@ local function update_farm(entry, delta_ticks)
 
         if flora_details.persistent then
             local biomass = entry[EK.biomass]
-            if entity.is_crafting() then
+            if entity.status == defines.entity_status.working then
                 biomass = biomass + delta_ticks * flora_details.growth_coefficient * performance / Time.second
             end
             entry[EK.biomass] = biomass
@@ -1220,20 +1272,27 @@ Entity.get_waterwell_competition_performance = get_waterwell_competition_perform
 local function update_waterwell(entry)
     local entity = entry[EK.entity]
     local recipe = entity.get_recipe()
-    if recipe and recipe.name == "clean-water-from-ground" and not Inventories.assembler_has_module(entity, "water-filter") then
+    if
+        recipe and recipe.name == "clean-water-from-ground" and
+            not Inventories.assembler_has_module(entity, "water-filter")
+     then
         set_crafting_machine_performance(entry, 0)
         return
     end
 
     local performance = min(get_waterwell_competition_performance(entry), get_maintenance_performance())
     set_crafting_machine_performance(entry, performance)
+    update_active_machine_status(entry)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
 
 local function create_waterwell(entry)
     entry[EK.performance] = 1
+    create_active_machine_status(entry)
 end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
+
+Register.set_entity_destruction_handler(Type.waterwell, remove_active_machine_status)
 
 ---------------------------------------------------------------------------------------------------
 -- << fishwhirl >>
