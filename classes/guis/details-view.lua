@@ -2292,7 +2292,7 @@ function Gui.DetailsView.update()
 
     for player_id, unit_number in pairs(global.details_view) do
         local entry = Register.try_get(unit_number)
-        local player = game.players[player_id]
+        local player = game.get_player(player_id)
 
         -- check if the entity hasn't been unregistered in the meantime
         if not entry then
@@ -2350,7 +2350,7 @@ function Gui.DetailsView.rebuild_for_entry(entry)
 
     for player_index, viewed_unit_number in pairs(global.details_view) do
         if unit_number == viewed_unit_number then
-            local player = game.players[player_index]
+            local player = game.get_player(player_index)
             Gui.DetailsView.close(player)
             Gui.DetailsView.open(player, unit_number)
         end

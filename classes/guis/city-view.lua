@@ -129,7 +129,7 @@ end
 Gui.set_click_handler_tag(
     "open_page",
     function(event)
-        local player = game.players[event.player_index]
+        local player = game.get_player(event.player_index)
         local tags = event.element.tags
 
         open_page(player, tags.category, tags.page)
@@ -307,7 +307,7 @@ end
 Gui.set_click_handler_tag(
     "toggle-city-view-opened",
     function(event)
-        toggle_city_view_opened(game.players[event.player_index])
+        toggle_city_view_opened(game.get_player(event.player_index))
     end
 )
 Gui.add_gui_closed_handler(

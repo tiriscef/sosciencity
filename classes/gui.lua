@@ -178,7 +178,7 @@ end
 
 --- Event handler for closed guis.
 function Gui.on_gui_closed(event)
-    local player = game.players[event.player_index]
+    local player = game.get_player(event.player_index)
 
     for _, fn in pairs(gui_closed_handlers) do
         fn(player, event)
@@ -197,7 +197,7 @@ end
 
 --- Event handler for closed guis.
 function Gui.on_gui_opened(event)
-    local player = game.players[event.player_index]
+    local player = game.get_player(event.player_index)
 
     for _, fn in pairs(gui_opened_handlers) do
         fn(player, event)
