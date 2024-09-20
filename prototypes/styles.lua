@@ -179,7 +179,8 @@ style.sosciencity_heading_3 = {
     parent = "heading_3_label",
     left_margin = 15,
     top_margin = 10,
-    bottom_margin = 5
+    bottom_margin = 5,
+    font_color = {255, 230, 192}
 }
 
 style.sosciencity_paragraph = {
@@ -201,5 +202,7 @@ style.sosciencity_list_point_flow = {
 style.sosciencity_list_marker = {
     type = "label_style",
     left_margin = 10,
-    right_margin = 10
+    right_margin = 10,
+    font = "default-bold",
+    font_color = {255, 230, 192}
 }

@@ -37,64 +37,17 @@ local content = {
     {
         name = "statistics",
         localised_name = {"city-view.statistics"},
-        pages = {
-            {
-                name = "healthcare_report",
-                localised_name = "testpage",
-                creator = function(container)
-                    container.add {
-                        type = "label",
-                        caption = "this is a test"
-                    }
-                    container.add {
-                        type = "sprite",
-                        sprite = header_icons[math.random(#header_icons)]
-                    }
-                end
-            },
-            {
-                name = "testpage2",
-                localised_name = "testpage 2 u know",
-                creator = function(container)
-                    container.add {
-                        type = "label",
-                        caption = "this is a second test"
-                    }
-                end
-            }
-        }
+        pages = {}
     },
     {
         name = "data",
         localised_name = {"city-view.data"},
-        pages = {
-            {
-                name = "healthcare_report",
-                localised_name = {"sosciencity.health"},
-                creator = function(container)
-                    container.add {
-                        type = "label",
-                        caption = "this is a test"
-                    }
-                end
-            }
-        }
+        pages = {}
     },
     {
         name = "how-tos",
         localised_name = {"city-view.how-tos"},
-        pages = {
-            {
-                name = "healthcare_report",
-                localised_name = {"sosciencity.health"},
-                creator = function(container)
-                    container.add {
-                        type = "label",
-                        caption = "this is a test"
-                    }
-                end
-            }
-        }
+        pages = {}
     }
 }
 
