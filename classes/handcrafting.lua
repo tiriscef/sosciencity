@@ -53,7 +53,7 @@ end
 
 local function blood_donation(player_id, _)
     local count = get_recent_donation_count(player_id)
-    local player = game.players[player_id]
+    local player = game.get_player(player_id)
     local character = player.character
 
     -- give them stickers
@@ -88,7 +88,7 @@ end
 -- << handcrafting queued stuff >>
 
 local function consume_calories_per_craft(player_id, recipe_name, count, calories_per_craft, not_enough_calories_key)
-    local player = game.players[player_id]
+    local player = game.get_player(player_id)
     local inventory = player.get_main_inventory()
 
     local calories_available = Inventories.count_calories(inventory)

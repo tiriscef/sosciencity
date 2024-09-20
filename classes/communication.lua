@@ -730,7 +730,7 @@ function Communication.send_notification(entry, message)
 
     if subscriptions then
         for player_id in pairs(subscriptions) do
-            game.players[player_id].print(message)
+            game.get_player(player_id).print(message)
         end
     end
 end
