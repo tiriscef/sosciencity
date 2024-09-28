@@ -33,6 +33,7 @@ local header_icons = {
 
 local footer_variant_count = 4
 
+--- The content of the city view. Is an array of categories, which contain a number of pages.
 local content = {}
 
 --- Adds a new category tab to the city view.
@@ -49,7 +50,11 @@ function Gui.CityView.add_category(name, localised_name)
     }
 end
 
-local function get_category_definition(category_name)
+--- Returns the definition of the category with the given name. Or nil if there is no category
+--- with this name.
+--- @param category_name string
+--- @return table|nil
+function Gui.CityView.get_category_definition(category_name)
     for _, category in pairs(content) do
         if category.name == category_name then
             return category
@@ -68,11 +73,15 @@ end
 function Gui.CityView.add_page(page)
     Tirislib.Utils.desync_protection()
 
-    local category = get_category_definition(page.category)
+    local category = Gui.CityView.get_category_definition(page.category)
     category.pages[#category.pages + 1] = page
 end
 
-local function get_page_definition(category, page_name)
+--- Returns the page with the given name in the given categp
+--- @param category table (a category definition)
+--- @param page_name string
+--- @return table|nil
+function Gui.CityView.get_page_definition(category, page_name)
     for _, page in pairs(category.pages) do
         if page.name == page_name then
             return page
@@ -81,6 +90,8 @@ local function get_page_definition(category, page_name)
 end
 
 local function fill_menu(container, category_index, selected_page)
+    local category = content[category_index]
+
     for _, page in pairs(content[category_index].pages) do
         if not page.enabler or page.enabler() then
             container.add {
@@ -88,7 +99,7 @@ local function fill_menu(container, category_index, selected_page)
                 name = page.name,
                 caption = page.localised_name,
                 tags = {
-                    category = category_index,
+                    category = category.name,
                     page = page.name,
                     sosciencity_gui_event = "open_page"
                 },
@@ -101,7 +112,7 @@ end
 
 local function open_page(player, category_index, page_name)
     local category = content[category_index]
-    local page = get_page_definition(category, page_name)
+    local page = Gui.CityView.get_page_definition(category, page_name)
     if not page then
         return
     end
@@ -129,8 +140,9 @@ Gui.set_click_handler_tag(
     function(event)
         local player = game.get_player(event.player_index)
         local tags = event.element.tags
+        local category = Gui.CityView.get_category_definition(tags.category)
 
-        open_page(player, tags.category, tags.page)
+        open_page(player, category.index, tags.page)
     end
 )
 
