@@ -1,3 +1,5 @@
+Gui.CityView.add_category("statistics", {"city-view.statistics"})
+
 Gui.CityView.add_page {
     name = "overview",
     category = "statistics",

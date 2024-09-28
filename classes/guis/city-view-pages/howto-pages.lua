@@ -1,3 +1,5 @@
+Gui.CityView.add_category("how-tos", {"city-view.how-tos"})
+
 Gui.CityView.add_page {
     name = "introduction",
     category = "how-tos",
