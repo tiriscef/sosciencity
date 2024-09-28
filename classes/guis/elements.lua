@@ -306,25 +306,25 @@ Gui.Elements.SortableList.linked_categories = {}
 --- Create a sortable list.
 --- @param container LuaGuiElement
 --- @param link string key to linked data and categories
---- @return LuaGuiElement flow that contains the list
+--- @return LuaGuiElement table that contains the list
 function Gui.Elements.SortableList.create(container, link)
     local category_definitions = Gui.Elements.SortableList.linked_categories[link]
 
-    local flow =
+    local list =
         container.add {
         type = "table",
         column_count = #category_definitions,
         style = "sosciencity_sortable_list"
     }
 
-    local style = flow.style
+    local style = list.style
     for i = 1, #category_definitions do
         style.column_alignments[i] = category_definitions[i].alignment or (i == 1 and "left" or "right")
     end
 
-    Gui.Elements.SortableList.sort_and_rebuild(flow, link, nil--[[category_definitions[1].name]], "unsorted")
+    Gui.Elements.SortableList.sort_and_rebuild(list, link, nil, "unsorted")
 
-    return flow
+    return list
 end
 
 local function get_selected_category(category_definitions, name)
@@ -630,4 +630,33 @@ function Gui.Elements.Label.list(container, point_captions, marker_caption, name
     end
 
     return list_container
+end
+
+---------------------------------------------------------------------------------------------------
+-- << Buttons >>
+---------------------------------------------------------------------------------------------------
+
+Gui.Elements.Button = {}
+
+function Gui.Elements.Button.page_link(container, category_name, page_name)
+    local flow = container.add {
+        type = "flow",
+        direction = "horizontal",
+        style = "sosciencity_page_link_flow"
+    }
+
+    local category = Gui.CityView.get_category_definition(category_name)
+    local page = Gui.CityView.get_page_definition(category, page_name)
+
+    flow.add {
+        type = "button",
+        caption = {"", category.localised_name, " / ", page.localised_name},
+        tags = {
+            category = category_name,
+            page = page_name,
+            sosciencity_gui_event = "open_page"
+        }
+    }
+
+    return flow
 end

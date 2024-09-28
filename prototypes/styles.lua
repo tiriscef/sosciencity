@@ -228,3 +228,11 @@ style.sosciencity_sortable_list_row = {
     left_margin = 2,
     right_margin = 2
 }
+
+style.sosciencity_page_link_flow = {
+    type = "horizontal_flow_style",
+    horizontally_stretchable = "on",
+    horizontal_align = "center",
+    top_margin = 10,
+    bottom_margin = 10
+}

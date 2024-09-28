@@ -40,8 +40,9 @@ local content = {}
 --- @param name string
 --- @param localised_name locale
 function Gui.CityView.add_category(name, localised_name)
-    local index = #content + 1
+    Tirislib.Utils.desync_protection()
 
+    local index = #content + 1
     content[index] = {
         name = name,
         localised_name = localised_name,
@@ -110,7 +111,7 @@ local function fill_menu(container, category_index, selected_page)
     end
 end
 
-local function open_page(player, category_index, page_name)
+local function open_page(player, category_index, page_name, set_tab_index)
     local category = content[category_index]
     local page = Gui.CityView.get_page_definition(category, page_name)
     if not page then
@@ -133,6 +134,10 @@ local function open_page(player, category_index, page_name)
 
     local last_opened_pages = get_subtblr(global, "last_opened_pages", player.index)
     last_opened_pages[category_index] = page_name
+
+    if set_tab_index then
+        gui.content.tabpane.selected_tab_index = category_index
+    end
 end
 
 Gui.set_click_handler_tag(
@@ -142,7 +147,7 @@ Gui.set_click_handler_tag(
         local tags = event.element.tags
         local category = Gui.CityView.get_category_definition(tags.category)
 
-        open_page(player, category.index, tags.page)
+        open_page(player, category.index, tags.page, true)
     end
 )
 
