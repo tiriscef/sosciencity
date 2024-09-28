@@ -502,6 +502,11 @@ function Tirislib.Utils.is_data_stage()
     return (data ~= nil)
 end
 
+-- Returns true if the game is currently in the control stage.
+function Tirislib.Utils.is_control_stage()
+    return (data == nil)
+end
+
 --- Checks that it is not the control stage. Otherwise throws an error.\
 --- Used to secure that specific functions can only be called during the initialisation stage, as they would otherwise be a cause for desyncs.
 function Tirislib.Utils.desync_protection()

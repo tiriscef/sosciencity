@@ -206,3 +206,25 @@ style.sosciencity_list_marker = {
     font = "default-bold",
     font_color = {255, 230, 192}
 }
+
+style.sosciencity_sortable_list = {
+    type = "table_style",
+    parent = "bordered_table",
+    left_cell_padding = 2,
+    right_cell_padding = 2,
+    top_cell_padding = 1,
+    bottom_cell_padding = 1
+}
+
+style.sosciencity_sortable_list_head = {
+    type = "button_style",
+    horizontally_stretchable = "on",
+    minimal_width = 28,
+    tooltip = "sosciencity.sort-by-this-column"
+}
+
+style.sosciencity_sortable_list_row = {
+    type = "label_style",
+    left_margin = 2,
+    right_margin = 2
+}
