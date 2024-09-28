@@ -278,6 +278,167 @@ function Gui.Elements.Datalist.update_operand_entries(data_list, final_value, su
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << Sortable List >>
+---------------------------------------------------------------------------------------------------
+
+--- Class for lists that can be sorted by their columns.
+Gui.Elements.SortableList = {}
+
+-- We're stuffing the data and category definitions inside these tables during startup.
+-- Otherwise I don't know a way to implement this without stuffing all this in global,
+-- which I don't want because the data could get outdated and which I can't without dirty
+-- workarounds as the category definitions contain functions.
+
+--- Table with (key, data) pairs.
+Gui.Elements.SortableList.linked_data = {}
+--- Table with (key, category definition array) pairs.\
+--- **Category Definition**\
+--- name: anything but nil\
+--- localised_name: locale (for the header button)\
+--- content: function (gets the caption locale from a data entry)\
+--- order: function (creates a comparable value from a data entry)\
+--- tooltip: function, optional (gets the tooltip locale from a data entry)\
+--- styler: function, optional (gets the name of a style from a data entry)\
+--- style: string, optional (when there should always be the same style)\
+--- alignment: Alignment, optional (defaults to "left" for the first column and "right" for all others)
+Gui.Elements.SortableList.linked_categories = {}
+
+--- Create a sortable list.
+--- @param container LuaGuiElement
+--- @param link string key to linked data and categories
+--- @return LuaGuiElement flow that contains the list
+function Gui.Elements.SortableList.create(container, link)
+    local category_definitions = Gui.Elements.SortableList.linked_categories[link]
+
+    local flow =
+        container.add {
+        type = "table",
+        column_count = #category_definitions,
+        style = "sosciencity_sortable_list"
+    }
+
+    local style = flow.style
+    for i = 1, #category_definitions do
+        style.column_alignments[i] = category_definitions[i].alignment or (i == 1 and "left" or "right")
+    end
+
+    Gui.Elements.SortableList.sort_and_rebuild(flow, link, nil--[[category_definitions[1].name]], "unsorted")
+
+    return flow
+end
+
+local function get_selected_category(category_definitions, name)
+    for _, category in pairs(category_definitions) do
+        if category.name == name then
+            return category
+        end
+    end
+end
+
+function Gui.Elements.SortableList.comparator_ascending(a, b)
+    return a.order < b.order
+end
+
+function Gui.Elements.SortableList.comparator_descending(a, b)
+    return a.order > b.order
+end
+
+Gui.Elements.SortableList.next_sort_modes = {
+    unsorted = "ascending",
+    ascending = "descending",
+    descending = "ascending"
+}
+
+Gui.Elements.SortableList.sort_mode_symbols = {
+    ascending = "↑",
+    descending = "↓"
+}
+
+--- Rebuilds the SortableList with the given sorting mode and category.
+--- @param list LuaGuiElement
+--- @param link string  key to linked data and categories
+--- @param selected_category string
+--- @param sort_mode string
+function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_category, sort_mode)
+    list.clear()
+
+    local category_definitions = Gui.Elements.SortableList.linked_categories[link]
+    local selected_category_definition = get_selected_category(category_definitions, selected_category)
+
+    for _, category in pairs(category_definitions) do
+        local button =
+            list.add {
+            type = "button",
+            caption = {
+                "",
+                category.localised_name,
+                (category.name == selected_category and sort_mode ~= "unsorted") and
+                    Gui.Elements.SortableList.sort_mode_symbols[sort_mode] or
+                    nil
+            },
+            tags = {
+                category = category.name,
+                sort_mode = Gui.Elements.SortableList.next_sort_modes[
+                    (category.name == selected_category) and sort_mode or "unsorted"
+                ],
+                link = link,
+                sosciencity_gui_event = "sort_list"
+            },
+            style = "sosciencity_sortable_list_head"
+        }
+        if category.name == selected_category then
+            button.toggled = true
+        end
+    end
+
+    local sorted_data =
+        Tirislib.Luaq.from(Gui.Elements.SortableList.linked_data[link]):select_element(
+        function(entry)
+            return {
+                data = entry,
+                order = sort_mode ~= "unsorted" and selected_category_definition.order(entry) or nil
+            }
+        end
+    ):to_array()
+
+    if sort_mode ~= "unsorted" then
+        table.sort(
+            sorted_data,
+            sort_mode == "ascending" and Gui.Elements.SortableList.comparator_ascending or
+                Gui.Elements.SortableList.comparator_descending
+        )
+    end
+
+    for _, entry in pairs(sorted_data) do
+        for _, category in pairs(category_definitions) do
+            local row_entry =
+                list.add {
+                type = "label",
+                caption = category.content(entry.data),
+                tooltip = category.tooltip and category.tooltip(entry.data) or nil
+                --style = "sosciencity_sortable_list_row"
+            }
+
+            if category.font then
+                row_entry.style.font = category.font(entry)
+            end
+            if category.constant_font then
+                row_entry.style.font = category.constant_font
+            end
+        end
+    end
+end
+
+Gui.set_click_handler_tag(
+    "sort_list",
+    function(event)
+        local button = event.element
+        local tags = button.tags
+        Gui.Elements.SortableList.sort_and_rebuild(button.parent, tags.link, tags.category, tags.sort_mode)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
 -- << Sprites >>
 ---------------------------------------------------------------------------------------------------
 
@@ -437,7 +598,8 @@ end
 --- @param name string|nil
 --- @return LuaGuiElement flow the flow that contains marker and text
 function Gui.Elements.Label.bullet_point(container, text_caption, marker_caption, name)
-    local flow = container.add {
+    local flow =
+        container.add {
         type = "flow",
         name = name,
         direction = "horizontal",

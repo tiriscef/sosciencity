@@ -7,13 +7,6 @@ local DeconstructionCause = require("enums.deconstruction-cause")
 require("tirislib.init")
 
 ---------------------------------------------------------------------------------------------------
--- << balancing stuff >>
-
-if script.active_mods["sosciencity-balancing"] then
-    require("balancing")
-end
-
----------------------------------------------------------------------------------------------------
 -- << debug stuff >>
 
 if script.active_mods["sosciencity-debug"] then
@@ -131,7 +124,6 @@ require("classes.gui")
 ---@class AgeGroup
 ---@class GenderGroup
 ---@class RenderingType
----@class LuaGuiElement
 
 --[[
     Data this script stores in global
@@ -577,3 +569,10 @@ script.on_event(defines.events.on_player_cheat_mode_disabled, on_cheat_mode_disa
 
 -- trigger events
 script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
+
+---------------------------------------------------------------------------------------------------
+-- << balancing stuff >>
+
+if script.active_mods["sosciencity-balancing"] then
+    require("balancing")
+end

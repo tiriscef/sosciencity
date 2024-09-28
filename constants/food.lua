@@ -584,6 +584,24 @@ Food.values = {
     }
 }
 
+local energy_density_fat = 9 -- kcal per g
+local energy_density_carbohydrates = 4
+local energy_density_proteins = 3.7
+
+-- values postprocessing
+for name, food in pairs(Food.values) do
+    food.name = name
+
+    -- convert nutrients from g per 100g to kcal per 100g
+    food.fat = food.fat * energy_density_fat
+    food.carbohydrates = food.carbohydrates * energy_density_carbohydrates
+    food.proteins = food.proteins * energy_density_proteins
+
+    -- calories specifies the calorific value of one item
+    -- the magic 10 is just to get from 100g to 1kg
+    food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
+end
+
 Food.taste_names = {
     [Taste.bitter] = {"taste-category.bitter"},
     [Taste.neutral] = {"taste-category.neutral"},
@@ -600,21 +618,5 @@ Food.taste_names = {
 
 Food.emergency_ration_calories = 1000
 Food.food_leftovers_chance = 0.125
-
-local energy_density_fat = 9 -- kcal per g
-local energy_density_carbohydrates = 4
-local energy_density_proteins = 3.7
-
--- values postprocessing
-for _, food in pairs(Food.values) do
-    -- convert nutrients from g per 100g to kcal per 100g
-    food.fat = food.fat * energy_density_fat
-    food.carbohydrates = food.carbohydrates * energy_density_carbohydrates
-    food.proteins = food.proteins * energy_density_proteins
-
-    -- calories specifies the calorific value of one item
-    -- the magic 10 is just to get from 100g to 1kg
-    food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
-end
 
 return Food
