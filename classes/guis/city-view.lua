@@ -33,23 +33,21 @@ local header_icons = {
 
 local footer_variant_count = 4
 
-local content = {
-    {
-        name = "statistics",
-        localised_name = {"city-view.statistics"},
-        pages = {}
-    },
-    {
-        name = "data",
-        localised_name = {"city-view.data"},
-        pages = {}
-    },
-    {
-        name = "how-tos",
-        localised_name = {"city-view.how-tos"},
+local content = {}
+
+--- Adds a new category tab to the city view.
+--- @param name string
+--- @param localised_name locale
+function Gui.CityView.add_category(name, localised_name)
+    local index = #content + 1
+
+    content[index] = {
+        name = name,
+        localised_name = localised_name,
+        index = index,
         pages = {}
     }
-}
+end
 
 local function get_category_definition(category_name)
     for _, category in pairs(content) do

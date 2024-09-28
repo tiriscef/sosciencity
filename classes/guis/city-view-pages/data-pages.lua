@@ -1,3 +1,5 @@
+Gui.CityView.add_category("data", {"city-view.data"})
+
 local Food = require("constants.food")
 
 -- XXX: create the locales during on_load once 2.0 is out and makes that possible
