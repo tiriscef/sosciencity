@@ -289,26 +289,31 @@ Gui.Elements.SortableList = {}
 -- which I don't want because the data could get outdated and which I can't without dirty
 -- workarounds as the category definitions contain functions.
 
---- Table with (key, data) pairs.
-Gui.Elements.SortableList.linked_data = {}
---- Table with (key, category definition array) pairs.\
---- **Category Definition**\
---- name: anything but nil\
---- localised_name: locale (for the header button)\
---- content: function (gets the caption locale from a data entry)\
---- order: function (creates a comparable value from a data entry)\
---- tooltip: function, optional (gets the tooltip locale from a data entry)\
---- styler: function, optional (gets the name of a style from a data entry)\
---- style: string, optional (when there should always be the same style)\
---- alignment: Alignment, optional (defaults to "left" for the first column and "right" for all others)
-Gui.Elements.SortableList.linked_categories = {}
+--- Table with (key, list definition) pairs.\
+--- \
+--- **List defintion**\
+--- data: table\
+--- categories: array of category definitions\
+--- \
+--- **Category Definition**
+--- > name: anything but nil\
+--- > localised_name: locale (for the header button)\
+--- > content: function (gets the caption locale from a data entry)\
+--- > order: function (creates a comparable value from a data entry)\
+--- > tooltip: function, optional (gets the tooltip locale from a data entry)\
+--- > style: function, optional (gets the name of a style from a data entry)\
+--- > constant_style: string, optional (when there should always be the same style)\
+--- > font: function, optional (gets the name of a font from a data entry)\
+--- > constant_font: string, optional (when there should always be the same font)\
+--- > alignment: Alignment, optional (defaults to "left" for the first column and "right" for all others)
+Gui.Elements.SortableList.linked = {}
 
 --- Create a sortable list.
 --- @param container LuaGuiElement
 --- @param link string key to linked data and categories
 --- @return LuaGuiElement table that contains the list
 function Gui.Elements.SortableList.create(container, link)
-    local category_definitions = Gui.Elements.SortableList.linked_categories[link]
+    local category_definitions = Gui.Elements.SortableList.linked[link].categories
 
     local list =
         container.add {
@@ -362,7 +367,8 @@ Gui.Elements.SortableList.sort_mode_symbols = {
 function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_category, sort_mode)
     list.clear()
 
-    local category_definitions = Gui.Elements.SortableList.linked_categories[link]
+    local definition = Gui.Elements.SortableList.linked[link]
+    local category_definitions = definition.categories
     local selected_category_definition = get_selected_category(category_definitions, selected_category)
 
     for _, category in pairs(category_definitions) do
@@ -392,7 +398,7 @@ function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_categor
     end
 
     local sorted_data =
-        Tirislib.Luaq.from(Gui.Elements.SortableList.linked_data[link]):select_element(
+        Tirislib.Luaq.from(definition.data):select_element(
         function(entry)
             return {
                 data = entry,
@@ -409,14 +415,15 @@ function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_categor
         )
     end
 
-    for _, entry in pairs(sorted_data) do
+    for i = 1, #sorted_data do
+        local entry = sorted_data[i]
         for _, category in pairs(category_definitions) do
             local row_entry =
                 list.add {
                 type = "label",
                 caption = category.content(entry.data),
-                tooltip = category.tooltip and category.tooltip(entry.data) or nil
-                --style = "sosciencity_sortable_list_row"
+                tooltip = category.tooltip and category.tooltip(entry.data) or nil,
+                style = category.style and category.style(entry.data) or category.constant_style
             }
 
             if category.font then
