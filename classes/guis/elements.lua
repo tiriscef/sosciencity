@@ -650,7 +650,7 @@ function Gui.Elements.Button.page_link(container, category_name, page_name)
 
     flow.add {
         type = "button",
-        caption = {"", category.localised_name, " / ", page.localised_name},
+        caption = {"city-view.link", category.localised_name, page.localised_name},
         tags = {
             category = category_name,
             page = page_name,

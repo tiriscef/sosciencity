@@ -172,3 +172,34 @@ Gui.CityView.add_page {
         Gui.Elements.Label.paragraph(container, {"city-view.competition-text3"})
     end
 }
+
+Gui.CityView.add_page {
+    name = "composting",
+    category = "how-tos",
+    localised_name = {"city-view.composting-text1"},
+    creator = function(container)
+        Gui.Elements.Label.heading_1(container, {"city-view.composting-text1"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text2"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text3"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text4"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text5"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text6"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text7"})
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text8"})
+        Gui.Elements.Button.page_link(container, "data", "compost")
+        Gui.Elements.Label.paragraph(container, {"city-view.composting-text10"})
+    end
+}
+
+Gui.CityView.add_page {
+    name = "blood-donations",
+    category = "how-tos",
+    localised_name = {"city-view.blood-donations-text1"},
+    creator = function(container)
+        Gui.Elements.Label.heading_1(container, {"city-view.blood-donations-text1"})
+        Gui.Elements.Label.paragraph(container, {"city-view.blood-donations-text2"})
+        Gui.Elements.Label.paragraph(container, {"city-view.blood-donations-text3"})
+        Gui.Elements.Label.paragraph(container, {"city-view.blood-donations-text4"})
+        Gui.Elements.Label.paragraph(container, {"city-view.blood-donations-text5"})
+    end
+}
