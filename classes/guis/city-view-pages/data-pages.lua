@@ -128,3 +128,12 @@ Gui.CityView.add_page {
         Gui.Elements.SortableList.create(container, "food")
     end
 }
+
+Gui.CityView.add_page {
+    name = "compost",
+    category = "data",
+    localised_name = {"city-view.composting-text1"},
+    creator = function(container)
+        Gui.Elements.Label.heading_1(container, "TODO compostables page")
+    end
+}

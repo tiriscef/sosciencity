@@ -3,7 +3,7 @@
 
 To progress in Sosciencity you'll need to built a city with happy huwans living in there. The huwan society is split into 8 castes, all with their own lifestyle and needs. While you progress throughout the mod, you will integrate them all into your city one after another.
 
-In Sosciencity you'll need your huwans to help with your research. You might already have noticed that you need [item=sketchbook] to produce the first science pack. You can [recipe=brainstorm] a bit and come up with your own for now, but to automate them you'll need to unlock the [tech=ember-caste].
+In Sosciencity you'll need your huwans to help with your research. You might already have noticed that you need [item=sketchbook] to produce the first science pack. You can [recipe=brainstorm] a bit and come up with your own for now, but to automate them you'll need to unlock the [technology=ember-caste].
 
 
 ##Your First Settlement
