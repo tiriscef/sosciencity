@@ -60,7 +60,10 @@ Gui.Elements.SortableList.linked["food"] = {
             name = "carbohydrates",
             localised_name = {"sosciencity.carbohydrates"},
             content = function(entry)
-                return string.format("%.0f%%", 100 * entry.carbohydrates / (entry.fat + entry.carbohydrates + entry.proteins))
+                return string.format(
+                    "%.0f%%",
+                    100 * entry.carbohydrates / (entry.fat + entry.carbohydrates + entry.proteins)
+                )
             end,
             order = function(entry)
                 return entry.carbohydrates / (entry.fat + entry.carbohydrates + entry.proteins)
@@ -70,7 +73,10 @@ Gui.Elements.SortableList.linked["food"] = {
             name = "proteins",
             localised_name = {"sosciencity.proteins"},
             content = function(entry)
-                return string.format("%.0f%%", 100 * entry.proteins / (entry.fat + entry.carbohydrates + entry.proteins))
+                return string.format(
+                    "%.0f%%",
+                    100 * entry.proteins / (entry.fat + entry.carbohydrates + entry.proteins)
+                )
             end,
             order = function(entry)
                 return entry.proteins / (entry.fat + entry.carbohydrates + entry.proteins)
@@ -131,11 +137,64 @@ Gui.CityView.add_page {
     end
 }
 
+local ItemConstants = require("constants.item-constants")
+
+Gui.Elements.SortableList.linked["compostables"] = {
+    data = Tirislib.Luaq.from(ItemConstants.compost_values):select(
+        function(name, humus)
+            return {
+                name = name,
+                humus = humus,
+                mold = ItemConstants.mold_producers[name]
+            }
+        end
+    ):to_table(),
+    categories = {
+        {
+            name = "name",
+            localised_name = {"city-view.item"},
+            content = function(entry)
+                return {"", string.format("[item=%s] ", entry.name), game.item_prototypes[entry.name].localised_name}
+            end,
+            tooltip = function(entry)
+                return game.item_prototypes[entry.name].localised_description
+            end,
+            order = function(entry)
+                return entry.name
+            end,
+            constant_font = "default-bold"
+        },
+        {
+            name = "compost",
+            localised_name = {"item-name.humus"},
+            content = function(entry)
+                return entry.humus
+            end,
+            order = function(entry)
+                return entry.humus
+            end,
+            alignment = "center"
+        },
+        {
+            name = "mold",
+            localised_name = {"city-view.produces-mold"},
+            content = function(entry)
+                return entry.mold and "✔" or ""
+            end,
+            order = function(entry)
+                return entry.mold and 1 or 0
+            end,
+            alignment = "center"
+        }
+    }
+}
+
 Gui.CityView.add_page {
     name = "compost",
     category = "data",
     localised_name = {"city-view.composting-text1"},
     creator = function(container)
-        Gui.Elements.Label.heading_1(container, "TODO compostables page")
+        Gui.Elements.Label.heading_1(container, {"city-view.compostables-head"})
+        Gui.Elements.SortableList.create(container, "compostables")
     end
 }
