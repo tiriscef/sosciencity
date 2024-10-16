@@ -2048,9 +2048,9 @@ local function create_dumpster(container, entry, player_id)
 end
 
 ---------------------------------------------------------------------------------------------------
--- << plant care station >>
+-- << fertilization station >>
 
-local function update_plant_care_station(container, entry, player_id)
+local function update_fertilization_station(container, entry, player_id)
     update_general_building_details(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
@@ -2058,30 +2058,14 @@ local function update_plant_care_station(container, entry, player_id)
 
     Datalist.set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
     Datalist.set_kv_pair_value(building_data, "humus-stored", display_item_stack("humus", floor(entry[EK.humus_stored])))
-
-    local humus_checkbox = Datalist.get_checkbox(building_data, "humus-mode")
-    humus_checkbox.state = entry[EK.humus_mode]
-
-    local pruning_checkbox = Datalist.get_checkbox(building_data, "pruning-mode")
-    pruning_checkbox.state = entry[EK.pruning_mode]
 end
 
-local function create_plant_care_station(container, entry, player_id)
+local function create_fertilization_station(container, entry, player_id)
     local tabbed_pane = create_general_building_details(container, entry, player_id)
 
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
-    Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
-
-    Datalist.add_kv_checkbox(
-        building_data,
-        "humus-mode",
-        format(Gui.unique_prefix_builder, "humus-mode", "plant-care"),
-        {"sosciencity.humus-fertilization"},
-        {"sosciencity.active"}
-    )
     Datalist.add_kv_pair(
         building_data,
         "explain-humus",
@@ -2093,33 +2077,40 @@ local function create_plant_care_station(container, entry, player_id)
             Entity.humus_fertilization_speed
         }
     )
+    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
+    Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
 
-    Datalist.add_kv_checkbox(
-        building_data,
-        "pruning-mode",
-        format(Gui.unique_prefix_builder, "pruning-mode", "plant-care"),
-        {"sosciencity.pruning"},
-        {"sosciencity.active"}
-    )
+    update_fertilization_station(container, entry, player_id)
+end
+
+---------------------------------------------------------------------------------------------------
+-- << pruning station >>
+
+local function update_pruning_station(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
+
+    local tabbed_pane = container.tabpane
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+
+    Datalist.set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
+end
+
+local function create_pruning_station(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
+
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local building_data = general.building
+
     Datalist.add_kv_pair(
         building_data,
         "explain-pruning",
         "",
-        {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
+    {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
     )
+    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
+
+    update_pruning_station(container, entry, player_id)
 end
-
-Gui.set_checked_state_handler(
-    format(Gui.unique_prefix_builder, "humus-mode", "plant-care"),
-    generic_checkbox_handler,
-    EK.humus_mode
-)
-
-Gui.set_checked_state_handler(
-    format(Gui.unique_prefix_builder, "pruning-mode", "plant-care"),
-    generic_checkbox_handler,
-    EK.pruning_mode
-)
 
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
@@ -2226,9 +2217,13 @@ local type_gui_specifications = {
         creater = create_hospital_details,
         updater = update_hospital_details
     },
-    [Type.plant_care_station] = {
-        creater = create_plant_care_station,
-        updater = update_plant_care_station
+    [Type.fertilization_station] = {
+        creater = create_fertilization_station,
+        updater = update_fertilization_station
+    },
+    [Type.pruning_station] = {
+        creater = create_pruning_station,
+        updater = update_pruning_station
     },
     [Type.psych_ward] = {
         creater = create_general_building_details,

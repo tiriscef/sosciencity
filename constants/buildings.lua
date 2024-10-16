@@ -210,15 +210,11 @@ Building.values = {
             castes = {Type.orchid}
         }
     },
-    ["orchid-plant-care-station"] = {
-        type = Type.plant_care_station,
+    ["fertilization-station"] = {
+        type = Type.fertilization_station,
         range = 30,
         speed = 60 / Time.minute,
-        humus_capacity = 1000,
-        workforce = {
-            count = 2,
-            castes = {Type.orchid}
-        }
+        humus_capacity = 1000
     },
     ["pharmacy"] = {
         type = Type.pharmacy,

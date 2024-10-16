@@ -1,17 +1,17 @@
 Tirislib.Item.create {
     type = "item",
-    name = "orchid-plant-care-station",
+    name = "fertilization-station",
     icon = "__sosciencity-graphics__/graphics/icon/plant-care-station.png",
     icon_size = 64,
     subgroup = "sosciencity-flora-buildings",
     order = "haa",
-    place_result = "orchid-plant-care-station",
+    place_result = "fertilization-station",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "orchid-plant-care-station",
+    product = "fertilization-station",
     themes = {{"building", 1}},
     ingredients = {
         {type = "item", name = "silo", amount = 2},
@@ -23,9 +23,9 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.Entity.create {
     type = "container",
-    name = "orchid-plant-care-station",
+    name = "fertilization-station",
     flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "orchid-plant-care-station"},
+    minable = {mining_time = 0.5, result = "fertilization-station"},
     max_health = 200,
     inventory_size = 40,
     corpse = "small-remnants",
@@ -44,4 +44,4 @@ Tirislib.Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(6, 4):copy_localisation_from_item():copy_icon_from_item()
-Sosciencity_Config.add_eei("orchid-plant-care-station")
+Sosciencity_Config.add_eei("fertilization-station")

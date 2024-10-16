@@ -1,5 +1,12 @@
 {
     "item": [
-        ["artificial-limp", "artificial-limb"]
+        ["artificial-limp", "artificial-limb"],
+        ["orchid-plant-care-station", "fertilization-station"]
+    ],
+    "recipe": [
+        ["orchid-plant-care-station", "fertilization-station"]
+    ],
+    "entity": [
+        ["orchid-plant-care-station", "fertilization-station"]
     ]
 }

@@ -53,9 +53,10 @@ Type.salt_pond = 1108
 
 Type.composter = 1200
 Type.composter_output = 1201
-Type.plant_care_station = 1202
-Type.cooling_warehouse = 1203
+Type.fertilization_station = 1202
+Type.pruning_station = 1203
 Type.waste_dump = 1204
+Type.cooling_warehouse = 1205
 
 Type.turret = 2000
 Type.lab = 2001
