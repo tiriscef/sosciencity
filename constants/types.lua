@@ -308,7 +308,8 @@ Types.definitions = {
         localised_name = {"sosciencity.farm"},
         localised_description = {"sosciencity.explain-farm"},
         subscriptions = {
-            [Type.plant_care_station] = ConnectionType.from_neighbor
+            [Type.fertilization_station] = ConnectionType.from_neighbor,
+            [Type.pruning_station] = ConnectionType.from_neighbor,
         }
     },
     [Type.automatic_farm] = {
@@ -323,9 +324,20 @@ Types.definitions = {
         localised_name = {"sosciencity.lab"},
         localised_description = {"sosciencity.explain-lab"}
     },
-    [Type.plant_care_station] = {
-        localised_name = {"sosciencity.plant-care-station"},
-        localised_description = {"sosciencity.explain-plant-care-station"},
+    [Type.fertilization_station] = {
+        localised_name = {"sosciencity.fertilization-station"},
+        localised_description = {"sosciencity.explain-fertilization-station"},
+        localised_speed_name = {"sosciencity.work-rate"},
+        localised_speed_key = "sosciencity.display-work-rate",
+        is_civil = true,
+        subscriptions = {
+            [Type.farm] = ConnectionType.to_neighbor
+        },
+        signature_color = Color.yellowish_green
+    },
+    [Type.pruning_station] = {
+        localised_name = {"sosciencity.pruning-station"},
+        localised_description = {"sosciencity.explain-pruning-station"},
         localised_speed_name = {"sosciencity.work-rate"},
         localised_speed_key = "sosciencity.display-work-rate",
         is_civil = true,
