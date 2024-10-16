@@ -161,6 +161,14 @@ end
 --- Just some helper functions
 Tirislib.Utils = {}
 
+--- Just returns the arguments.\
+--- (Weird how often you need something like this.)
+--- @param ... any
+--- @return any same
+function Tirislib.Utils.identity(...)
+    return ...
+end
+
 --- Clamps the given value, so it falls in the given interval.
 --- @param val number
 --- @param value_min number
@@ -797,6 +805,13 @@ function Tirislib.Tables.contains_key(tbl, key)
     return tbl[key] ~= nil
 end
 
+--- Returns true if there is any field in the given table.
+--- @param tbl table
+--- @return boolean
+function Tirislib.Tables.any(tbl)
+    return next(tbl) ~= nil
+end
+
 --- Sets all fields of the given right hand table to the given left hand table.
 --- @param tbl table
 --- @param fields table
@@ -1199,6 +1214,15 @@ end
 function Tirislib.Tables.add(lh, rh)
     for key, value in pairs(rh) do
         lh[key] = (lh[key] or 0) + value
+    end
+end
+
+--- Subtracts the contents of the given right hand side table from the given left hand side table.
+--- @param lh table
+--- @param rh table
+function Tirislib.Tables.subtract(lh, rh)
+    for key, value in pairs(rh) do
+        lh[key] = (lh[key] or 0) - value
     end
 end
 

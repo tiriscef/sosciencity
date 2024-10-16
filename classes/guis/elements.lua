@@ -19,28 +19,75 @@ function Gui.Elements.Utils.is_confirmed(button)
     end
 end
 
-function Gui.Elements.Utils.get_unused_name(container, name)
-    if not container[name] then
-        return name
-    end
-
-    local i = 1
-    while true do
-        local possible_name = name .. i
-        if not container[possible_name] then
-            return possible_name
-        end
-        i = i + 1
-    end
-end
-local get_unused_name = Gui.Elements.Utils.get_unused_name
-
-function Gui.Elements.Utils.create_separator_line(container, name)
+function Gui.Elements.Utils.separator_line(container, name)
     return container.add {
         type = "line",
-        name = get_unused_name(name or "line"),
+        name = name,
         direction = "horizontal"
     }
+end
+
+---------------------------------------------------------------------------------------------------
+-- << Tables >>
+---------------------------------------------------------------------------------------------------
+
+--- A table with 2 rows. Left row has some locales, right row some numbers.\
+--- I have no better idea how to call these.
+Gui.Elements.CalculationTable = {}
+
+--- Creates a new CalculationTable.\
+--- container: LuaGuiElement (where it should be added)\
+--- groups: array of GroupSpecifications\
+--- left_head: locale, optional (of the left header)
+--- @param details table
+--- @return LuaGuiElement calctable
+function Gui.Elements.CalculationTable.create(details)
+    local calctable =
+        details.container.add {
+        type = "table",
+        name = details.name,
+        column_count = 2,
+        style = "sosciencity_calculation_table"
+    }
+
+    details.table = calctable
+    Gui.Elements.CalculationTable.rebuild(details)
+
+    return calctable
+end
+
+function Gui.Elements.CalculationTable.rebuild(details)
+    local calctable = details.table
+    calctable.clear()
+
+    if details.left_head then
+        calctable.add {
+            type = "label",
+            caption = details.left_head,
+            style = "sosciencity_calculation_table_left_head"
+        }
+        calctable.add {
+            type = "label",
+            caption = details.right_head,
+            style = "sosciencity_calculation_table_right_head"
+        }
+    end
+
+    for _, group in pairs(details.groups) do
+        for key, value in pairs(group.values) do
+            calctable.add {
+                type = "label",
+                caption = group.left_content and group.left_content(key) or group.left_lookup[key],
+                tooltip = group.left_tooltip and group.left_tooltip(key) or nil,
+                style = group.left_style or "sosciencity_calculation_table_left"
+            }
+            calctable.add {
+                type = "label",
+                caption = group.right_content and group.right_content(value) or group.right_lookup[value],
+                style = group.right_style or "sosciencity_calculation_table_right"
+            }
+        end
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -103,7 +150,14 @@ function Gui.Elements.Datalist.add_kv_flow(data_list, key, key_caption, key_font
 end
 local add_kv_flow = Gui.Elements.Datalist.add_kv_flow
 
-function Gui.Elements.Datalist.add_kv_checkbox(data_list, key, checkbox_name, key_caption, checkbox_caption, key_font, checkbox_font)
+function Gui.Elements.Datalist.add_kv_checkbox(
+    data_list,
+    key,
+    checkbox_name,
+    key_caption,
+    checkbox_caption,
+    key_font,
+    checkbox_font)
     local flow = add_kv_flow(data_list, key, key_caption, key_font, "horizontal")
     flow.style.vertical_align = "center"
 
@@ -251,7 +305,13 @@ function Gui.Elements.Datalist.create_operand_entries(
     add_entries(data_list, factor_enums, factor_localised, factor_descriptions)
 end
 
-function Gui.Elements.Datalist.update_operand_entries(data_list, final_value, summands, summand_enums, factors, factor_enums)
+function Gui.Elements.Datalist.update_operand_entries(
+    data_list,
+    final_value,
+    summands,
+    summand_enums,
+    factors,
+    factor_enums)
     data_list["sum"].caption = Locale.summand(final_value)
 
     for name, id in pairs(summand_enums) do
@@ -284,7 +344,7 @@ end
 --- Class for lists that can be sorted by their columns.
 Gui.Elements.SortableList = {}
 
--- We're stuffing the data and category definitions inside these tables during startup.
+-- We're stuffing the data and category definitions inside the 'linked' table during startup.
 -- Otherwise I don't know a way to implement this without stuffing all this in global,
 -- which I don't want because the data could get outdated and which I can't without dirty
 -- workarounds as the category definitions contain functions.
@@ -646,7 +706,8 @@ end
 Gui.Elements.Button = {}
 
 function Gui.Elements.Button.page_link(container, category_name, page_name)
-    local flow = container.add {
+    local flow =
+        container.add {
         type = "flow",
         direction = "horizontal",
         style = "sosciencity_page_link_flow"

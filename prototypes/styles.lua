@@ -236,3 +236,38 @@ style.sosciencity_page_link_flow = {
     top_margin = 10,
     bottom_margin = 10
 }
+
+style.sosciencity_calculation_table = {
+    type = "table_style",
+    parent = "bordered_table",
+    left_margin = 20,
+    right_margin = 20,
+    left_cell_padding = 2,
+    right_cell_padding = 2,
+    top_cell_padding = 1,
+    bottom_cell_padding = 1,
+    column_alignments = {{column = 1, alignment = "left"}, {column = 2, alignment = "right"}},
+    column_widths = {{column = 2, minimal_width = 100}}
+}
+
+style.sosciencity_calculation_table_left = {
+    type = "label_style",
+    horizontally_stretchable = "on"
+}
+
+style.sosciencity_calculation_table_right = {
+    type = "label_style",
+    --width = 50
+}
+
+style.sosciencity_calculation_table_left_head = {
+    type = "label_style",
+    parent = "sosciencity_calculation_table_left",
+    font = "default-bold"
+}
+
+style.sosciencity_calculation_table_right_head = {
+    type = "label_style",
+    parent = "sosciencity_calculation_table_right",
+    font = "default-bold"
+}

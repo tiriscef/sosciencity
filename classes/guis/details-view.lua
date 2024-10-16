@@ -444,7 +444,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
         end
     end
 
-    Gui.Elements.Utils.create_separator_line(flow)
+    Gui.Elements.Utils.separator_line(flow)
 
     -- the kickout_button only gets added if the house is built by the player
     -- this also avoids that the player can repurpose the hut
@@ -553,7 +553,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         localised_happiness_factor_descriptions
     )
 
-    Gui.Elements.Utils.create_separator_line(flow)
+    Gui.Elements.Utils.separator_line(flow)
 
     local health_list = Datalist.create(flow, "health")
     Datalist.create_operand_entries(
@@ -567,7 +567,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         localised_health_factor_descriptions
     )
 
-    Gui.Elements.Utils.create_separator_line(flow, "line2")
+    Gui.Elements.Utils.separator_line(flow)
 
     local sanity_list = Datalist.create(flow, "sanity")
     Datalist.create_operand_entries(
@@ -581,17 +581,17 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         localised_sanity_factor_descriptions
     )
 
-    Gui.Elements.Utils.create_separator_line(flow)
+    Gui.Elements.Utils.separator_line(flow)
 
     Gui.Elements.Label.header_label(flow, "header-occupations", {"sosciencity.occupations"})
     Datalist.create(flow, "occupations")
 
-    Gui.Elements.Utils.create_separator_line(flow)
+    Gui.Elements.Utils.separator_line(flow)
 
     Gui.Elements.Label.header_label(flow, "header-ages", {"sosciencity.ages"})
     Datalist.create(flow, "ages")
 
-    Gui.Elements.Utils.create_separator_line(flow)
+    Gui.Elements.Utils.separator_line(flow)
 
     Gui.Elements.Label.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
     Datalist.create(flow, "genders")
@@ -1382,7 +1382,7 @@ local function create_immigration_port_details(container, entry, player_id)
         {"sosciencity.show-port-capacity", building_details.capacity}
     )
 
-    Gui.Elements.Utils.create_separator_line(general)
+    Gui.Elements.Utils.separator_line(general)
 
     Gui.Elements.Label.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
     local immigrants_list = Datalist.create(general, "immigration")
