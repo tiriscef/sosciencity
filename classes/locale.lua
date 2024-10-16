@@ -109,10 +109,48 @@ function Locale.materials(materials)
         ret[#ret + 1] = entry
     end
 
-    -- otherwise this would could exceed the maximum of 20 entries
+    -- otherwise this could exceed the maximum of 20 entries
     Tirislib.Locales.shorten_enumeration(ret)
 
     return ret
+end
+
+local function build_locale_lookup(enum_table, locale_group)
+    local ret = {}
+
+    for name, id in pairs(enum_table) do
+        ret[id] = {format("%s.%s", locale_group, name)}
+    end
+
+    return ret
+end
+
+local ImmigrationCause = require("enums.immigration-cause")
+local immigration_cause_locales = build_locale_lookup(ImmigrationCause, "immigration-cause")
+
+function Locale.immigration_cause(cause)
+    return immigration_cause_locales[cause]
+end
+
+local EmigrationCause = require("enums.emigration-cause")
+local emigration_cause_locales = build_locale_lookup(EmigrationCause, "emigration-cause")
+
+function Locale.emigration_cause(cause)
+    return emigration_cause_locales[cause]
+end
+
+local DeathCause = require("enums.death-cause")
+local death_cause_locales = build_locale_lookup(DeathCause, "death-cause")
+
+function Locale.death_cause(cause)
+    return death_cause_locales[cause]
+end
+
+local DiseasedCause = require("enums.diseased-cause")
+local diseased_cause_locales = build_locale_lookup(DiseasedCause, "disease-cause")
+
+function Locale.disease_cause(cause)
+    return diseased_cause_locales[cause]
 end
 
 return Locale

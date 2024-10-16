@@ -543,7 +543,7 @@ local report_lookup = {
 --- Looks for a type of report that makes sense to publish at the moment.
 local function look_for_report(current_tick)
     for report_name, last_report_tick in pairs(report_ticks) do
-        if current_tick - last_report_tick >= (20 * Time.minute) and reported_event_counts[report_name] > 20 then
+        if current_tick - last_report_tick >= (30 * Time.minute) and reported_event_counts[report_name] > 50 then
             report_lookup[report_name]()
             report_ticks[report_name] = current_tick
             reported_event_counts[report_name] = 0
