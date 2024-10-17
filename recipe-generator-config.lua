@@ -220,6 +220,11 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "item", name = "pump", amount = 1}
         }
     },
+    robo_parts = {
+        [3] = {
+            {type = "item", name = "flying-robot-frame", amount = 1}
+        }
+    },
     screw_material = {
         [0] = {
             {type = "item", name = "iron-plate", amount = 2}

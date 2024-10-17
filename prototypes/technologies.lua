@@ -1186,6 +1186,22 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "robo-plant-care",
+    icon = "__sosciencity-graphics__/graphics/technology/robo-plant-care.png",
+    icon_size = 128,
+    prerequisites = {"robotics"},
+    unit = {
+        count = 154,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib.Technology.create {
     name = "animal-husbandry",
     icon = "__sosciencity-graphics__/graphics/technology/animal-husbandry.png",
     icon_size = 128,
