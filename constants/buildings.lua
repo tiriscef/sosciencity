@@ -83,6 +83,12 @@ Building.values = {
         open_environment = true,
         accepts_plant_care = true
     },
+    ["fertilization-station"] = {
+        type = Type.fertilization_station,
+        range = 30,
+        speed = 60 / Time.minute,
+        humus_capacity = 1000
+    },
     ["fishing-hut"] = {
         type = Type.fishery,
         range = 30,
@@ -210,12 +216,6 @@ Building.values = {
             castes = {Type.orchid}
         }
     },
-    ["fertilization-station"] = {
-        type = Type.fertilization_station,
-        range = 30,
-        speed = 60 / Time.minute,
-        humus_capacity = 1000
-    },
     ["pharmacy"] = {
         type = Type.pharmacy,
         range = "global"
@@ -223,6 +223,11 @@ Building.values = {
     ["psych-ward"] = {
         type = Type.psych_ward,
         range = 7
+    },
+    ["robo-pruning-station"] = {
+        type = Type.pruning_station,
+        speed = 120 / Time.minute,
+        power_usage = 150
     },
     ["salt-pond"] = {
         type = Type.salt_pond,

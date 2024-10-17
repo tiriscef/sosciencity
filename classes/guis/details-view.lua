@@ -747,7 +747,11 @@ local function update_general_building_details(container, entry, player_id)
 
     local active = entry[EK.active]
     if active ~= nil then
-        Datalist.set_kv_pair_value(building_data, "active", active and {"sosciencity.active"} or {"sosciencity.inactive"})
+        Datalist.set_kv_pair_value(
+            building_data,
+            "active",
+            active and {"sosciencity.active"} or {"sosciencity.inactive"}
+        )
         Datalist.set_kv_pair_visibility(building_data, "active", true)
     else
         Datalist.set_kv_pair_visibility(building_data, "active", false)
@@ -756,7 +760,11 @@ local function update_general_building_details(container, entry, player_id)
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
         local target_count = entry[EK.target_worker_count]
-        Datalist.set_kv_pair_value(building_data, "staff", {"sosciencity.show-staff", entry[EK.worker_count], target_count})
+        Datalist.set_kv_pair_value(
+            building_data,
+            "staff",
+            {"sosciencity.show-staff", entry[EK.worker_count], target_count}
+        )
 
         building_data[format(Gui.unique_prefix_builder, "general", "staff-target")].slider_value = target_count
 
@@ -1024,7 +1032,12 @@ local function create_waterwell_details(container, entry, player_id)
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
-    Datalist.add_kv_pair(building_data, "module", nil, {"sosciencity.module-missing", display_item_stack("water-filter", 1)})
+    Datalist.add_kv_pair(
+        building_data,
+        "module",
+        nil,
+        {"sosciencity.module-missing", display_item_stack("water-filter", 1)}
+    )
 
     update_waterwell_details(container, entry)
 end
@@ -2056,8 +2069,16 @@ local function update_fertilization_station(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    Datalist.set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
-    Datalist.set_kv_pair_value(building_data, "humus-stored", display_item_stack("humus", floor(entry[EK.humus_stored])))
+    Datalist.set_kv_pair_value(
+        building_data,
+        "workhours",
+        {"sosciencity.display-workhours", floor(entry[EK.workhours])}
+    )
+    Datalist.set_kv_pair_value(
+        building_data,
+        "humus-stored",
+        display_item_stack("humus", floor(entry[EK.humus_stored]))
+    )
 end
 
 local function create_fertilization_station(container, entry, player_id)
@@ -2065,11 +2086,13 @@ local function create_fertilization_station(container, entry, player_id)
 
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
+    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
+    Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
 
     Datalist.add_kv_pair(
         building_data,
         "explain-humus",
-        "",
+        {"sosciencity.humus-fertilization"},
         {
             "sosciencity.explain-humus-fertilization",
             Entity.humus_fertilization_workhours * Time.minute,
@@ -2077,8 +2100,6 @@ local function create_fertilization_station(container, entry, player_id)
             Entity.humus_fertilization_speed
         }
     )
-    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
-    Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
 
     update_fertilization_station(container, entry, player_id)
 end
@@ -2092,7 +2113,11 @@ local function update_pruning_station(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    Datalist.set_kv_pair_value(building_data, "workhours", {"sosciencity.display-workhours", floor(entry[EK.workhours])})
+    Datalist.set_kv_pair_value(
+        building_data,
+        "workhours",
+        {"sosciencity.display-workhours", floor(entry[EK.workhours])}
+    )
 end
 
 local function create_pruning_station(container, entry, player_id)
@@ -2100,14 +2125,14 @@ local function create_pruning_station(container, entry, player_id)
 
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
+    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
 
     Datalist.add_kv_pair(
         building_data,
         "explain-pruning",
-        "",
-    {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
+        {"sosciencity.pruning"},
+        {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
     )
-    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
 
     update_pruning_station(container, entry, player_id)
 end

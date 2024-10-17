@@ -637,7 +637,7 @@ Register.set_entity_updater(
     Type.pruning_station,
     function(entry, delta_ticks)
         local building_details = get_building_details(entry)
-        local performance = Inhabitants.evaluate_workforce(entry)
+        local performance = Inhabitants.evaluate_workforce(entry) * (has_power(entry) and 1 or 0)
         entry[EK.performance] = performance
         entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
     end
