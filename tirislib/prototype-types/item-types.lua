@@ -6,15 +6,18 @@ return {
     "blueprint-book",
     "blueprint",
     "capsule",
+    "copy-paste-tool",
     "deconstruction-item",
     "gun",
     "item-with-entity-data",
     "item-with-inventory",
     "item-with-label",
     "item-with-tags",
-    "mining-tool",
     "module",
     "rail-planner",
     "repair-tool",
-    "selection-tool"
+    "selection-tool",
+    "space-platform-starter-pack",
+    "spidertron-remote",
+    "upgrade-item"
 }
