@@ -153,4 +153,17 @@ function Locale.disease_cause(cause)
     return diseased_cause_locales[cause]
 end
 
+local DiseaseCategory = require("enums.disease-category")
+local diseased_category_locales = build_locale_lookup(DiseaseCategory, "disease-category-name")
+
+function Locale.disease_category(category)
+    return diseased_category_locales[category]
+end
+
+local disease_category_descriptions = build_locale_lookup(DiseaseCategory, "disease-category-description")
+
+function Locale.disease_category_description(category)
+    return disease_category_descriptions[category]
+end
+
 return Locale

@@ -39,7 +39,8 @@ Diseases.values = {
         curing_workload = 4,
         categories = {
             [DiseaseCategory.accident] = 100,
-            [DiseaseCategory.birth_defect] = 100
+            [DiseaseCategory.birth_defect] = 100,
+            [DiseaseCategory.escalation] = 1
         },
         work_effectivity = 0.5
     },
@@ -242,7 +243,11 @@ Diseases.values = {
         curing_workload = 5,
         lethality = 0.1,
         natural_recovery = 2 * Time.nauvis_week,
-        categories = {[DiseaseCategory.health] = 10},
+        categories = {
+            [DiseaseCategory.health] = 10,
+            [DiseaseCategory.escalation] = 1,
+            [DiseaseCategory.complication] = 1
+        },
         work_effectivity = 0
     },
     [3001] = {
@@ -255,7 +260,10 @@ Diseases.values = {
         curing_workload = 10,
         lethality = 0.35,
         natural_recovery = 2 * Time.nauvis_week,
-        categories = {[DiseaseCategory.health] = 10},
+        categories = {
+            [DiseaseCategory.health] = 10,
+            [DiseaseCategory.escalation] = 1
+        },
         work_effectivity = 0
     },
     -- 4000+: primarily birth defects
@@ -474,6 +482,10 @@ do
         -- exchange escalation and complication diseases with their ID for efficient lookups
         disease.escalation = disease.escalation and get_disease_id(disease.escalation) or nil
         disease.complication = disease.complication and get_disease_id(disease.complication) or nil
+
+        if disease.contagiousness then
+            disease.categories[DiseaseCategory.infection] = 1
+        end
 
         -- add to lookup-tables
         for category, frequency in pairs(disease.categories or {}) do

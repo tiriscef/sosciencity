@@ -137,6 +137,94 @@ Gui.CityView.add_page {
     end
 }
 
+local Diseases = require("constants.diseases")
+local DiseaseCategory = require("enums.disease-category")
+
+local function fill_disease_catalogue(container, filter)
+    local filtered_content = Tirislib.Luaq.from(Diseases.values)
+    if filter then
+        filtered_content:where(filter)
+    end
+
+    local list = container.ichd
+    list.clear()
+    for _, disease in filtered_content:pairs() do
+        list.add {
+            type = "label",
+            caption = disease.localised_description,
+            style = "sosciencity_paragraph"
+        }
+    end
+end
+
+Gui.set_click_handler_tag(
+    "filter_ichd",
+    function(event)
+        local button = event.element
+        local tags = button.tags
+
+        local is_checked = not button.toggled
+        button.toggled = is_checked
+
+        local flow = button.parent
+        for name in pairs(DiseaseCategory) do
+            if name ~= tags.category_name then
+                flow[name].toggled = false
+            end
+        end
+
+        local category = tags.category
+        fill_disease_catalogue(
+            flow.parent,
+            is_checked and function(_, disease)
+                    return disease.categories[category] ~= nil
+                end or nil
+        )
+    end
+)
+
+Gui.CityView.add_page {
+    name = "diseases",
+    category = "data",
+    localised_name = {"city-view.diseases"},
+    creator = function(container)
+        Gui.Elements.Label.heading_1(container, {"city-view.ICHD"})
+        Gui.Elements.Label.paragraph(container, {"city-view.ICHD-intro"})
+        Gui.Elements.Label.heading_3(container, {"city-view.filter-by-category"})
+
+        local filter_flow =
+            container.add {
+            type = "flow",
+            name = "filters",
+            direction = "horizontal"
+        }
+
+        for name, id in pairs(DiseaseCategory) do
+            filter_flow.add {
+                type = "button",
+                name = name,
+                caption = Locale.disease_category(id),
+                tooltip = Locale.disease_category_description(id),
+                tags = {
+                    sosciencity_gui_event = "filter_ichd",
+                    category = id,
+                    category_name = name
+                },
+                style = "sosciencity_sortable_list_head"
+            }
+        end
+
+        container.add {
+            type = "table",
+            name = "ichd",
+            column_count = 1,
+            style = "sosciencity_sortable_list"
+        }
+
+        fill_disease_catalogue(container)
+    end
+}
+
 local ItemConstants = require("constants.item-constants")
 
 Gui.Elements.SortableList.linked["compostables"] = {
