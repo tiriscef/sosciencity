@@ -46,7 +46,7 @@ function Tirislib.Fluid.iterate()
     local index, value
 
     local function _next()
-        index, value = next(data.raw["fluid"], index)
+        index, value = next(data.raw["fluid"] or {}, index)
 
         if index then
             setmetatable(value, Tirislib.Fluid)

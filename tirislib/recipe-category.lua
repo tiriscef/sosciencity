@@ -46,7 +46,7 @@ function Tirislib.RecipeCategory.iterate()
     local index, value
 
     local function _next()
-        index, value = next(data.raw["recipe-category"], index)
+        index, value = next(data.raw["recipe-category"] or {}, index)
 
         if index then
             setmetatable(value, Tirislib.RecipeCategory)
