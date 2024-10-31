@@ -54,10 +54,10 @@ end
 function Tirislib.Prototype.get(prototype_type, name, mt)
     local ret
     if type(prototype_type) == "string" then
-        ret = data.raw[prototype_type][name]
+        ret = (data.raw[prototype_type] or {})[name]
     elseif type(prototype_type) == "table" then
-        for _, ctype in pairs(prototype_type) do
-            ret = data.raw[ctype] and data.raw[ctype][name] or nil
+        for _, current_type in pairs(prototype_type) do
+            ret = (data.raw[current_type] or {})[name]
             if ret then
                 break
             end
@@ -166,7 +166,7 @@ end
 --- @param _type string
 --- @return string unique_name
 function Tirislib.Prototype.get_unique_name(name, _type)
-    if not data.raw[_type][name] then
+    if not data.raw[_type] or not data.raw[_type][name] then
         return name
     end
 

@@ -60,7 +60,7 @@ function Tirislib.Entity.iterate(types)
     type_index, prototype_type = next(types, type_index)
 
     local function _next()
-        name, entity = next(data.raw[prototype_type], name)
+        name, entity = next(data.raw[prototype_type] or {}, name)
 
         if name then
             setmetatable(entity, Tirislib.Entity)

@@ -46,7 +46,7 @@ function Tirislib.Technology.iterate()
     local index, prototype
 
     local function _next()
-        index, prototype = next(data.raw["technology"], index)
+        index, prototype = next(data.raw["technology"] or {}, index)
 
         if index then
             setmetatable(prototype, Tirislib.Technology)
