@@ -57,7 +57,7 @@ function Tirislib.Prototype.get(prototype_type, name, mt)
         ret = data.raw[prototype_type][name]
     elseif type(prototype_type) == "table" then
         for _, ctype in pairs(prototype_type) do
-            ret = data.raw[ctype][name]
+            ret = data.raw[ctype] and data.raw[ctype][name] or nil
             if ret then
                 break
             end
