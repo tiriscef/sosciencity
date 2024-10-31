@@ -5,13 +5,26 @@ Date: 2024.
     - Some new features.
 
   Features:
+    - Added a new gui: The City Builder's Manual. It has a small ingame-wiki and finally displays the Healthcare and Census reports that tiriscef is talking about all the time.
+    - Only active machines (meaning they worked somewhen during the last 2 minutes) count for the maintenace cost
+    - The happiness of the huwans working in a building with workforce now effects the resulting speed.
+    - New Building: Robo Pruning Station (graphics by _traum) - can prune nearby farms, needs energy.
     - Houses without access to water / food show a warning icon, similar to the vanilla no-power one.
     - Changed the render layer of the caste sprite houses show in alt mode, such that it doesn't overlap the no-power-icon.
     - Buildings with workforce show how many workers they have/need on mouseover.
     - Sanity-checked the fluid boxes of all the buildings. Some of them no longer show the in/out-double arrow, e.g. the fermentation tank and the bioreactor. Some of them no allow fluid to flow through them, e.g. the arboretum or greenhouse.
 
+  Changes:
+    - Renamed the Orchid Plant Care Station to Fertilization Station.
+    - Fertilization Station can no longer prune and doesn't need workers anymore.
+    - Reduced the size of the Fertilization Station to 6x3 (was 6x4).
+
   Bugfixes:
     - Fixed that the flying text when a house is assigned to Ember/Orchid/Clockwork Caste showed the wrong icon.
+    - Renamed Artificial Limp to Artificial Limb because typo.
+
+  Balancing:
+    - Lowered the Competition Are of Groundwater Pumps again.
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.11
