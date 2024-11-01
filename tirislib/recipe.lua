@@ -728,7 +728,7 @@ function Tirislib.Recipe:add_new_result(result, amount, _type, suppress_merge)
 end
 
 function Tirislib.RecipeData.get_first_ingredient(recipe_data)
-    for _, current_ingredient in pairs(recipe_data.ingredients) do
+    for _, current_ingredient in pairs(recipe_data.ingredients or {}) do
         return current_ingredient.name
     end
 end
@@ -740,7 +740,7 @@ function Tirislib.Recipe:get_first_ingredient()
 end
 
 function Tirislib.RecipeData.get_ingredient(recipe_data, name, _type)
-    for _, ingredient in pairs(recipe_data.ingredients) do
+    for _, ingredient in pairs(recipe_data.ingredients or {}) do
         if ingredient.name == name and ingredient.type == _type then
             return ingredient
         end
@@ -757,13 +757,15 @@ end
 
 function Tirislib.RecipeData.add_ingredient(recipe_data, ingredient)
     -- check if the recipe already has an entry for this ingredient
-    for _, current_ingredient in pairs(recipe_data.ingredients) do
+    for _, current_ingredient in pairs(recipe_data.ingredients or {}) do
         if Tirislib.RecipeEntry.can_be_merged(current_ingredient, ingredient) then
             Tirislib.RecipeEntry.merge(current_ingredient, ingredient)
             return
         end
     end
 
+    -- make sure the ingredients table is defined
+    Tirislib.RecipeData.add_ingredients_table(recipe_data)
     -- create a copy to avoid reference bugs
     table.insert(recipe_data.ingredients, Tirislib.Tables.copy(ingredient))
 end
@@ -829,7 +831,7 @@ function Tirislib.Recipe:add_new_ingredient(ingredient, amount, _type)
 end
 
 function Tirislib.RecipeData.remove_ingredient(recipe_data, ingredient_name, ingredient_type)
-    for index, ingredient in pairs(recipe_data.ingredients) do
+    for index, ingredient in pairs(recipe_data.ingredients or {}) do
         if ingredient.name == ingredient_name and ingredient.type == ingredient_type then
             recipe_data.ingredients[index] = nil
         end
@@ -885,7 +887,7 @@ function Tirislib.RecipeData.replace_ingredient(
     replacement_name,
     replacement_type,
     amount_fn)
-    for _, ingredient in pairs(recipe_data.ingredients) do
+    for _, ingredient in pairs(recipe_data.ingredients or {}) do
         if ingredient.name == ingredient_name and ingredient.type == ingredient_type then
             ingredient.name = replacement_name
             ingredient.type = replacement_type
@@ -1082,8 +1084,8 @@ function Tirislib.Recipe:add_unlock(technology_name)
 end
 
 function Tirislib.RecipeData.set_ingredient_amounts(recipe_data, value)
-    for _, entry in pairs(recipe_data.ingredients) do
-        Tirislib.RecipeEntry.set_product_amount(entry, value)
+    for _, entry in pairs(recipe_data.ingredients or {}) do
+        entry.amount = value
     end
 end
 
@@ -1126,7 +1128,7 @@ function Tirislib.Recipe:set_result_amounts(value, expensive_value)
 end
 
 function Tirislib.RecipeData.multiply_ingredient_amounts(recipe_data, multiplier)
-    for _, ingredient in pairs(recipe_data.ingredients) do
+    for _, ingredient in pairs(recipe_data.ingredients or {}) do
         Tirislib.RecipeEntry.multiply_ingredient_amount(ingredient, multiplier)
     end
 end
@@ -1163,7 +1165,7 @@ function Tirislib.Recipe:multiply_expensive_ingredients(multiplier)
 end
 
 function Tirislib.RecipeData.ceil_ingredient_amounts(recipe_data)
-    for _, ingredient in pairs(recipe_data.ingredients) do
+    for _, ingredient in pairs(recipe_data.ingredients or {}) do
         Tirislib.RecipeEntry.transform_amount(ingredient, math.ceil)
     end
 end
@@ -1227,7 +1229,7 @@ function Tirislib.Recipe:floor_results()
 end
 
 function Tirislib.RecipeData.transform_ingredient_entries(recipe_data, fn)
-    for _, entry in pairs(recipe_data.ingredients) do
+    for _, entry in pairs(recipe_data.ingredients or {}) do
         fn(entry)
     end
 end
@@ -1260,7 +1262,7 @@ end
 
 function Tirislib.RecipeData.index_fluid_ingredients(recipe_data)
     local index = 1
-    for _, entry in pairs(recipe_data.ingredients) do
+    for _, entry in pairs(recipe_data.ingredients or {}) do
         if entry.type == "fluid" then
             entry.fluidbox_index = index
             index = index + 1
@@ -1363,7 +1365,7 @@ end
 function Tirislib.RecipeData.ingredients_contain(recipe_data, name, _type)
     _type = _type or "item"
 
-    for _, entry in pairs(recipe_data.ingredients) do
+    for _, entry in pairs(recipe_data.ingredients or {}) do
         if entry.type == "item" and entry.name == name then
             return true
         end
