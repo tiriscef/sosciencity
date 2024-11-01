@@ -43,7 +43,7 @@ Tirislib.Entity.create {
     },
     burner = {
         type = "burner",
-        fuel_category = "garbage",
+        fuel_categories = {"garbage"},
         fuel_inventory_size = 3,
         effectivity = 1,
         emissions_per_minute = {pollution = 10},
