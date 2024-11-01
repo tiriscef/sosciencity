@@ -143,7 +143,7 @@ Tirislib.RecipeGenerator.create {
     product = "tofu",
     product_amount = 30,
     energy_required = 5,
-    byproducts = {{name = "yuba", amount = 10}},
+    byproducts = {{type = "item", name = "yuba", amount = 10}},
     ingredients = {
         {type = "fluid", name = "soy-milk", amount = 200}
     },

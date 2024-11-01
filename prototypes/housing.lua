@@ -503,11 +503,12 @@ local function create_entity(house_name, house, details)
     }:set_size(details.width, details.height)
 
     if details.main_entity ~= "improvised-hut" then
-        entity:add_mining_result({name = details.main_entity, amount = 1})
+        entity:add_mining_result({type = "item", name = details.main_entity, amount = 1})
         entity:copy_localisation_from_item(details.main_entity)
     else
         entity:add_mining_result(
             {
+                type = "item",
                 name = "lumber",
                 amount_min = 2,
                 amount_max = 5
