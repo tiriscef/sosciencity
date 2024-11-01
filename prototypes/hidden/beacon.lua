@@ -96,9 +96,7 @@ Tirislib.Entity.create {
         height = 1
     },
     distribution_effectivity = 1,
-    module_specification = {
-        module_slots = 41
-    },
+    module_slots = 41,
     allowed_effects = {
         "speed",
         "productivity"
