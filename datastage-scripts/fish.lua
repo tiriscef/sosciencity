@@ -5,6 +5,7 @@ end
 for _, entity in Tirislib.Entity.iterate("fish") do
     if string.match(entity.name, "fish") then
         entity:add_mining_result {
+            type = "item",
             name = "wild-algae",
             probability = 0.5,
             amount_min = 1,

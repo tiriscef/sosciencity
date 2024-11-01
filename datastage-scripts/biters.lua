@@ -25,6 +25,7 @@ for _, unit in Tirislib.Entity.iterate(types) do
         local count_min, count_max = get_meat_amounts(unit)
 
         unit:add_loot {
+            type = "item",
             item = "biter-meat",
             probability = PROBABILITY,
             count_min = count_min,

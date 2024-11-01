@@ -12,6 +12,7 @@ for _, tree in Tirislib.Entity.iterate("tree") do
 
     if not string.find(tree.name, "dead") then
         tree:add_mining_result {
+            type = "item",
             name = "wild-edible-plants",
             probability = 0.5,
             amount_min = 1,
@@ -19,6 +20,7 @@ for _, tree in Tirislib.Entity.iterate("tree") do
         }
 
         tree:add_mining_result {
+            type = "item",
             name = "leafage",
             amount_min = 1,
             amount_max = 3
