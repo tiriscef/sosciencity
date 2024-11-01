@@ -369,16 +369,16 @@ local function get_localised_description(house_name, house)
         ret,
         {
             "sosciencity-util.housing",
-            house.room_count,
+            tostring(house.room_count),
             {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
-            {"description.sos-details", house.comfort},
+            {"description.sos-details", tostring(house.comfort)},
             get_localised_qualities(house)
         },
         "\n\n",
         {
             "sosciencity-util.official-looking-point",
             {"sosciencity.range"},
-            {"sosciencity.show-range", 100} -- 2 times the "by foot"-range (50)
+            {"sosciencity.show-range", tostring(100)} -- 2 times the "by foot"-range (50)
         },
         "\n",
         {"sosciencity.grey", {"range-description.housing"}}

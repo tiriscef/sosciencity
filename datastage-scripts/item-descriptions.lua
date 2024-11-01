@@ -60,7 +60,7 @@ for building_name, details in pairs(Buildings.values) do
             Tirislib.Locales.append(
                 item.localised_description,
                 "\n\n",
-                {"sosciencity-util.power-usage", details.power_usage * Time.second / 1000}
+                {"sosciencity-util.power-usage", tostring(details.power_usage * Time.second / 1000)}
             )
 
             entity:copy_localisation_from_item()
@@ -81,7 +81,7 @@ for building_name, details in pairs(Buildings.values) do
                 "\n\n",
                 {
                     "sosciencity-util.workforce",
-                    details.workforce.count,
+                    tostring(details.workforce.count),
                     castes
                 }
             )
@@ -99,7 +99,7 @@ for building_name, details in pairs(Buildings.values) do
                     "sosciencity-util.official-looking-point",
                     {"sosciencity.range"},
                     details.range == "global" and {"sosciencity.global-range"} or
-                        {"sosciencity.show-range", details.range * 2}
+                        {"sosciencity.show-range", tostring(details.range * 2)}
                 }
             )
 

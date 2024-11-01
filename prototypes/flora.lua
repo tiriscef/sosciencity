@@ -57,12 +57,7 @@ local function add_general_growing_attributes(details, plant_details)
             "\n\n",
             {
                 "sosciencity.module-required",
-                {
-                    "sosciencity.xitems",
-                    1,
-                    plant_details.required_module,
-                    {"item-name." .. plant_details.required_module}
-                }
+                Tirislib.Locales.display_item_stack_datastage(plant_details.required_module, 1)
             }
         )
     end

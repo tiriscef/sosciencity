@@ -1399,7 +1399,7 @@ function Tirislib.Locales.display_ingame_time(ticks)
 end
 
 function Tirislib.Locales.display_item_stack_datastage(item, count)
-    return {"sosciencity.xitems", count, item, {"item-name." .. item}}
+    return {"sosciencity.xitems", tostring(count), item, {"item-name." .. item}}
 end
 
 --- Creates a localisation for the given item stack.
