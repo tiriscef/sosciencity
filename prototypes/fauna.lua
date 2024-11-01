@@ -131,7 +131,7 @@ local animals = {
         name = "dodkopus",
         size = 80,
         water_animal = true,
-        slaughter_byproducts = {{name = "ink", amount = 3}},
+        slaughter_byproducts = {{type = "item", name = "ink", amount = 3}},
         unlock = Unlocks.get_tech_name("dodkopus"),
         food_theme = "breed_water_carnivores"
     },
@@ -139,7 +139,7 @@ local animals = {
         name = "ultra-squibbel",
         size = 100,
         water_animal = true,
-        slaughter_byproducts = {{name = "ink", amount = 10}},
+        slaughter_byproducts = {{type = "item", name = "ink", amount = 10}},
         not_breedable = true,
         unlock = Unlocks.get_tech_name("squibbel"),
         food_theme = "breed_water_omnivores"
@@ -148,7 +148,7 @@ local animals = {
         name = "miniscule-squibbel",
         size = 250,
         water_animal = true,
-        slaughter_byproducts = {{name = "ink", amount = 4}},
+        slaughter_byproducts = {{type = "item", name = "ink", amount = 4}},
         unlock = Unlocks.get_tech_name("squibbel"),
         food_theme = "breed_water_omnivores"
     },
@@ -391,7 +391,7 @@ create_husbandry_recipe {
     product_min = 80,
     product_max = 100,
     ingredients = {
-        {name = "primal-egg", amount = 20}
+        {type = "item", name = "primal-egg", amount = 20}
     },
     style = "breeding"
 }
@@ -413,8 +413,8 @@ create_husbandry_recipe {
         {type = "item", name = "primal-quacker", amount = 100}
     },
     byproducts = {
-        {name = "primal-quackpa", amount_min = 8, amount_max = 10},
-        {name = "primal-egg", amount_min = 80, amount_max = 120}
+        {type = "item", name = "primal-quackpa", amount_min = 8, amount_max = 10},
+        {type = "item", name = "primal-egg", amount_min = 80, amount_max = 120}
     }
 }
 
@@ -423,7 +423,7 @@ create_husbandry_recipe {
     product_min = 80,
     product_max = 100,
     ingredients = {
-        {name = "nan-egg", amount = 20}
+        {type = "item", name = "nan-egg", amount = 20}
     },
     style = "breeding"
 }
@@ -445,8 +445,8 @@ create_husbandry_recipe {
         {type = "item", name = "nan-swan", amount = 75}
     },
     byproducts = {
-        {name = "elder-nan", amount_min = 4, amount_max = 5},
-        {name = "nan-egg", amount_min = 30, amount_max = 60}
+        {type = "item", name = "elder-nan", amount_min = 4, amount_max = 5},
+        {type = "item", name = "nan-egg", amount_min = 30, amount_max = 60}
     }
 }
 
@@ -455,7 +455,7 @@ create_husbandry_recipe {
     product_min = 80,
     product_max = 100,
     ingredients = {
-        {name = "bone-egg", amount = 20}
+        {type = "item", name = "bone-egg", amount = 20}
     },
     style = "breeding"
 }
@@ -477,8 +477,8 @@ create_husbandry_recipe {
         {type = "item", name = "bonesnake", amount = 25}
     },
     byproducts = {
-        {name = "elder-bonesnake", amount_min = 4, amount_max = 5},
-        {name = "bone-egg", amount_min = 10, amount_max = 15}
+        {type = "item", name = "elder-bonesnake", amount_min = 4, amount_max = 5},
+        {type = "item", name = "bone-egg", amount_min = 10, amount_max = 15}
     }
 }
 
@@ -514,10 +514,10 @@ create_husbandry_recipe {
     product_min = 0,
     product_max = 2,
     ingredients = {
-        {name = "petunial", amount = 2}
+        {type = "item", name = "petunial", amount = 2}
     },
     byproducts = {
-        {name = "petunial", amount = 2, probability = 0.95}
+        {type = "item", name = "petunial", amount = 2, probability = 0.95}
     },
     energy_required = 60,
     style = "breeding"
