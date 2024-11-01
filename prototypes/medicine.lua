@@ -362,7 +362,7 @@ Tirislib.RecipeGenerator.create {
     product = "sosciencity-emergency-ration",
     name = "sosciencity-emergency-ration",
     category = "sosciencity-handcrafting",
-    localised_description = {"recipe-description.sosciencity-emergency-ration", Food.emergency_ration_calories}
+    localised_description = {"recipe-description.sosciencity-emergency-ration", tostring(Food.emergency_ration_calories)}
 }
 
 Tirislib.RecipeGenerator.create {

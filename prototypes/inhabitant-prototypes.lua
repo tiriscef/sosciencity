@@ -61,7 +61,7 @@ Tirislib.Recipe.create {
     icon_size = 64,
     subgroup = "sosciencity-inhabitants",
     main_product = "",
-    localised_description = {"recipe-description.lay-egg", Biology.egg_calories}
+    localised_description = {"recipe-description.lay-egg", tostring(Biology.egg_calories)}
 }:add_unlock("upbringing")
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
