@@ -56,21 +56,21 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-3.0, -2.0}, type = "input"}},
+            pipe_connections = {{position = {-3.0, -1.0}, flow_direction = "input", direction = defines.direction.north}},
             production_type = "input"
         },
         {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {2.0, -2.0}, type = "input"}},
+            pipe_connections = {{position = {2.0, -1.0}, flow_direction = "input", direction = defines.direction.north}},
             production_type = "input"
         },
         {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {3.0, -2.0}, type = "output"}},
+            pipe_connections = {{position = {3.0, -1.0}, flow_direction = "output", direction = defines.direction.north}},
             production_type = "output"
         }
     },
