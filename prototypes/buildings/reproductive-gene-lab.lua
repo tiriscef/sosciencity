@@ -44,7 +44,7 @@ Tirislib.Entity.create {
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = 0.25,
+        emissions_per_minute = {pollution = 0.25},
         drain = "20kW"
     }
 }:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()

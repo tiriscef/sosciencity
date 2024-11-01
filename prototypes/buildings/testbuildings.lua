@@ -101,7 +101,7 @@ local function create_test_assembling_machine(name, categories)
         energy_source = {
             type = "electric",
             usage_priority = "secondary-input",
-            emissions_per_minute = 1,
+            emissions_per_minute = {pollution = 1},
             drain = "0W"
         },
         localised_name = "test-" .. name
