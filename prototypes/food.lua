@@ -121,8 +121,8 @@ Tirislib.RecipeGenerator.create {
     product_amount = 20,
     energy_required = 3,
     ingredients = {
-        {name = "chickpea", amount = 20},
-        {name = "sesame", amount = 10}
+        {type = "item", name = "chickpea", amount = 20},
+        {type = "item", name = "sesame", amount = 10}
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "hummus"

@@ -332,7 +332,7 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-wood-processing",
     ingredients = {
-        {name = "lumber", amount = 1}
+        {type = "item", name = "lumber", amount = 1}
     },
     allow_productivity = true
 }
@@ -683,12 +683,12 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "simple-fishtrap",
     ingredients = {
-        {name = "gingil-hemp", amount = 5},
-        {name = "rope", amount = 1}
+        {type = "item", name = "gingil-hemp", amount = 5},
+        {type = "item", name = "rope", amount = 1}
     },
     expensive_ingredients = {
-        {name = "gingil-hemp", amount = 8},
-        {name = "rope", amount = 1}
+        {type = "item", name = "gingil-hemp", amount = 8},
+        {type = "item", name = "rope", amount = 1}
     },
     energy_required = 1.5,
     allow_productivity = true,
@@ -698,14 +698,14 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "fishing-net",
     ingredients = {
-        {name = "rope", amount = 5},
-        {name = "yarn", amount = 1},
-        {name = "lumber", amount = 2}
+        {type = "item", name = "rope", amount = 5},
+        {type = "item", name = "yarn", amount = 1},
+        {type = "item", name = "lumber", amount = 2}
     },
     expensive_ingredients = {
-        {name = "rope", amount = 5},
-        {name = "yarn", amount = 1},
-        {name = "lumber", amount = 2}
+        {type = "item", name = "rope", amount = 5},
+        {type = "item", name = "yarn", amount = 1},
+        {type = "item", name = "lumber", amount = 2}
     },
     energy_required = 1,
     allow_productivity = true,
@@ -715,10 +715,10 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "harpoon",
     ingredients = {
-        {name = "rope", amount = 1}
+        {type = "item", name = "rope", amount = 1}
     },
     expensive_ingredients = {
-        {name = "rope", amount = 3}
+        {type = "item", name = "rope", amount = 3}
     },
     themes = {{"handle", 1}, {"mechanism", 2, 3}},
     energy_required = 1,

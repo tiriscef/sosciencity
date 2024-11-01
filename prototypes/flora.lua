@@ -893,10 +893,10 @@ for _, item in pairs(flora_items) do
             product_amount = 3,
             category = "sosciencity-wood-processing",
             ingredients = {
-                {name = item.name, amount = 1}
+                {type = "item", name = item.name, amount = 1}
             },
             byproducts = {
-                {name = "sawdust", amount = 1}
+                {type = "item", name = "sawdust", amount = 1}
             },
             allow_productivity = true,
             unlock = item.unlock
