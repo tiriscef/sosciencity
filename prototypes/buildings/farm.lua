@@ -201,7 +201,7 @@ Tirislib.Entity.create {
     energy_usage = "10W",
     energy_source = {
         type = "void",
-        emissions_per_minute = Sosciencity_Config.agriculture_pollutes and 1 or -5
+        emissions_per_minute = {pollution = Sosciencity_Config.agriculture_pollutes and 1 or -5}
     },
     working_sound = {
         -- memo: make sound files louder in the future
@@ -213,14 +213,14 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {6.0, 4.0}, type = "input"}},
+            pipe_connections = {{position = {6.0, 3.0}, flow_direction = "input", direction = defines.direction.south}},
             production_type = "input"
         },
         {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {8.0, 2.0}, type = "input"}},
+            pipe_connections = {{position = {7.0, 2.0}, flow_direction = "input", direction = defines.direction.east}},
             production_type = "input"
         }
     }

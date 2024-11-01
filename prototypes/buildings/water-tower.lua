@@ -36,10 +36,10 @@ Tirislib.Entity.create {
         pipe_covers = pipecoverspictures(),
         pipe_picture = pipe_pictures,
         pipe_connections = {
-            {position = {0, -2}},
-            {position = {2, 0}},
-            {position = {0, 2}},
-            {position = {-2, 0}}
+            {position = {0, -1}, direction = defines.direction.north},
+            {position = {1, 0}, direction = defines.direction.east},
+            {position = {0, 1}, direction = defines.direction.south},
+            {position = {-1, 0}, direction = defines.direction.west}
         }
     },
     vehicle_impact_sound = Tirislib.Entity.get_standard_impact_sound(),
