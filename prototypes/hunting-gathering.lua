@@ -147,7 +147,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "biter-meat", amount_min = 0, amount_max = 20}
     },
     order = "000655"
-}:add_catalyst("trap", "item", 2, 0.85, 3, 0.7):add_unlock("hunting-fishing")
+}:add_catalyst("trap", "item", 2, 0.85):add_unlock("hunting-fishing")
 
 create_hunting_gathering_recipe {
     name = "hunting-with-trap-cage",
@@ -173,7 +173,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
     },
     order = "000656"
-}:add_catalyst("trap-cage", "item", 2, 0.85, 3, 0.7):add_unlock("hunting-fishing")
+}:add_catalyst("trap-cage", "item", 2, 0.85):add_unlock("hunting-fishing")
 
 create_hunting_gathering_recipe {
     name = "fishing-with-simple-fishtrap",
@@ -195,7 +195,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "fupper", amount_min = 0, amount_max = 1}
     },
     order = "000755"
-}:add_catalyst("simple-fishtrap", "item", 1, 0.9, 1, 0.8):add_unlock("hunting-fishing")
+}:add_catalyst("simple-fishtrap", "item", 1, 0.9):add_unlock("hunting-fishing")
 
 create_hunting_gathering_recipe {
     name = "fishing-with-fishing-net",
@@ -221,7 +221,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.08}
     },
     order = "000756"
-}:add_catalyst("fishing-net", "item", 1, 0.95, 1, 0.9):add_unlock("advanced-fishing")
+}:add_catalyst("fishing-net", "item", 1, 0.95):add_unlock("advanced-fishing")
 
 create_hunting_gathering_recipe {
     name = "fishing-with-harpoon",
@@ -246,4 +246,4 @@ create_hunting_gathering_recipe {
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.4}
     },
     order = "000757"
-}:add_catalyst("harpoon", "item", 1, 0.85, 1, 0.7):add_unlock("advanced-fishing")
+}:add_catalyst("harpoon", "item", 1, 0.85):add_unlock("advanced-fishing")
