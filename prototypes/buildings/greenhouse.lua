@@ -130,9 +130,9 @@ Tirislib.Entity.create {
             pipe_picture = pipe_pictures,
             pipe_connections = {{position = {-8.0, -2.0}, type = "output"}},
             production_type = "output"
-        },
-        off_when_no_fluid_recipe = true
-    }
+        }
+    },
+    off_when_no_fluid_recipe = true
 }:set_size(15, 15):copy_localisation_from_item()
 
 Tirislib.Entity.create {
