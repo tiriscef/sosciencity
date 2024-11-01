@@ -206,7 +206,7 @@ end
 
 local function has_fluid_ingredient(recipe_data)
     for _, ingredient in pairs(recipe_data.ingredients) do
-        if Tirislib.RecipeEntry.yields_fluid(ingredient) then
+        if ingredient.type == "fluid" then
             return true
         end
     end

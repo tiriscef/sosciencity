@@ -309,7 +309,7 @@ local function get_calories_needed(recipe_data)
     local ret = 0
 
     for _, result in pairs(recipe_data.results) do
-        local name = Tirislib.RecipeEntry.get_name(result)
+        local name = result.name
         local amount = Tirislib.RecipeEntry.get_max_yield(result)
         if Food.values[name] then
             ret = ret + Food.values[name].calories * amount
@@ -320,7 +320,7 @@ local function get_calories_needed(recipe_data)
     end
 
     for _, ingredient in pairs(recipe_data.ingredients) do
-        local name = Tirislib.RecipeEntry.get_name(ingredient)
+        local name = ingredient.name
         local amount = Tirislib.RecipeEntry.get_max_yield(ingredient)
         if Food.values[name] then
             ret = ret - Food.values[name].calories * amount

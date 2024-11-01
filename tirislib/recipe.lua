@@ -1,254 +1,145 @@
 ---------------------------------------------------------------------------------------------------
 -- << static class for Recipe Entries >>
--- those tables that the wiki calls ItemProductPrototype or FluidProductPrototype or IngredientPrototype
+
+-- Functions for ItemProductPrototype, FluidProductPrototype, ItemIngredientPrototype and FluidIngredientPrototype.
 Tirislib.RecipeEntry = {}
-local Entries = Tirislib.RecipeEntry
-
---- Converts the RecipeEntryPrototype to named keys if it uses the numbered keys.
---- @param entry RecipeEntryPrototype
-function Entries.convert_to_named_keys(entry)
-    if entry[1] then
-        entry.name = entry[1]
-        entry[1] = nil
-    end
-    if entry[2] then
-        entry.amount = entry[2]
-        entry[2] = nil
-    end
-    if not entry.type then
-        entry.type = "item"
-    end
-end
-
---- Returns the name of the specified stuff.
---- @param entry RecipeEntryPrototype
---- @return string
-function Entries.get_name(entry)
-    return entry.name or entry[1]
-end
-
---- Sets the name of the specified stuff.
---- @param entry table
---- @param name string
-function Entries.set_name(entry, name)
-    if entry[1] then
-        entry[1] = name
-    else
-        entry.name = name
-    end
-end
-
---- Checks if the RecipeEntryPrototype specifies an item.
---- @param entry RecipeEntryPrototype
---- @return boolean
-function Entries.yields_item(entry)
-    if entry.type then
-        return entry.type == "item"
-    end
-    return true
-end
-
---- Checks if the RecipeEntryPrototype specifies a fluid.
---- @param entry RecipeEntryPrototype
---- @return boolean
-function Entries.yields_fluid(entry)
-    return entry.type == "fluid"
-end
-
---- Returns the type of the specified stuff.
---- @param entry RecipeEntryPrototype
---- @return string
-function Entries.get_type(entry)
-    return entry.type or "item"
-end
-
---- Sets the type of the specified stuff.
---- @param entry table
---- @param _type string
-function Entries.set_type(entry, _type)
-    Entries.convert_to_named_keys(entry)
-    entry.type = _type
-end
-
---- Checks if the given RecipeEntryPrototypes specify the same stuff.
---- @param entry1 RecipeEntryPrototype
---- @param entry2 RecipeEntryPrototype
---- @return boolean
-function Entries.specify_same_stuff(entry1, entry2)
-    return (Entries.get_name(entry1) == Entries.get_name(entry2)) and
-        (Entries.get_type(entry1) == Entries.get_type(entry2))
-end
-
---- Checks if the given RecipeEntryPrototype has a catalyst amound defined.
---- @param entry RecipeEntryPrototype
---- @return boolean
-function Entries.has_catalyst(entry)
-    return entry.catalyst_amount ~= nil
-end
 
 --- Sets the RecipeEntryPrototype's return amount to the given value.
 --- @param entry table
---- @param value integer
-function Entries.set_amount(entry, value)
-    entry.amount = value
-    entry[2] = nil
-    entry.amount_min = nil
-    entry.amount_max = nil
-    entry.catalyst_amount = entry.catalyst_amount and value or nil
+--- @param min integer
+--- @param max integer|nil
+function Tirislib.RecipeEntry.set_product_amount(entry, min, max)
+    if not max then
+        entry.amount = min
+        entry.amount_min = nil
+        entry.amount_max = nil
+    else
+        entry.amount = nil
+        entry.amount_min = min
+        entry.amount_max = max
+    end
 end
 
---- Returns the amount defined in this RecipeEntryPrototype, assuming it is an IngredientPrototype.
---- @param entry RecipeEntryPrototype
---- @return number
-function Entries.get_ingredient_amount(entry)
-    return entry.amount or entry[2]
-end
-
---- Sets the amount of this RecipeEntryPrototype, assuming it is an IngredientPrototype.
+--- Adds to the amount of this RecipeEntryPrototype, assuming it is an IngredientPrototype.
 --- @param entry RecipeEntryPrototype
 --- @param min integer
---- @param max integer
-function Entries.add_result_amount(entry, min, max)
+--- @param max integer|nil
+function Tirislib.RecipeEntry.add_product_amount(entry, min, max)
     if not max or min == max then
         if entry.amount_min then
             entry.amount_min = entry.amount_min + min
             entry.amount_max = entry.amount_max + min
-        elseif entry.amount then
-            entry.amount = entry.amount + min
-        elseif entry[2] then
-            entry[2] = entry[2] + min
         else
-            -- I don't actually know if ResultPrototypes without a specified amount are valid
-            -- I will just assume they default to 1
-            Entries.convert_to_named_keys(entry)
-            entry.amount = min + 1
+            entry.amount = entry.amount + min
         end
     else
-        Entries.convert_to_named_keys(entry)
         entry.amount_min = (entry.amount_min or entry.amount) + min
         entry.amount_max = (entry.amount_max or entry.amount) + max
         entry.amount = nil
     end
 end
 
---- Adds the given value to the given RecipeEntryPrototype's amount.
---- @param entry RecipeEntryPrototype
---- @param amount integer
-function Entries.add_ingredient_amount(entry, amount)
-    if entry.amount then
-        entry.amount = entry.amount + amount
-    elseif entry[2] then
-        entry[2] = entry[2] + amount
-    else
-        error("Sosciencity found a IngredientPrototype without a valid amount:\n" .. serpent.block(entry))
-    end
-end
-
 --- Multiplies this RecipeEntryPrototype's amount with the given multiplier.
 --- @param entry RecipePrototype
 --- @param multiplier number
-function Entries.multiply_ingredient_amount(entry, multiplier)
-    if entry.amount then
-        entry.amount = entry.amount * multiplier
-    elseif entry[2] then
-        entry[2] = entry[2] * multiplier
-    else
-        error("Sosciencity found a IngredientPrototype without a valid amount:\n" .. serpent.block(entry))
-    end
+function Tirislib.RecipeEntry.multiply_ingredient_amount(entry, multiplier)
+    entry.amount = entry.amount * multiplier
 end
 
 --- Transforms the given RecipeEntryPrototype's amount by the given function.
 --- @param entry RecipeEntryPrototype
 --- @param fn function
-function Entries.transform_amount(entry, fn)
+function Tirislib.RecipeEntry.transform_amount(entry, fn)
     if entry.amount then
         entry.amount = fn(entry.amount)
         entry.amount = math.max(entry.amount, 1)
-    elseif entry[2] then
-        entry[2] = fn(entry[2])
-        entry[2] = math.max(entry[2], 1)
     elseif entry.amount_min then
         entry.amount_min = fn(entry.amount_min)
         entry.amount_max = fn(entry.amount_max)
-    else
-        error("Sosciencity found a RecipeEntry without a valid amount:\n" .. serpent.block(entry))
     end
 end
 
---- Adds the given value to the given RecipeEntryPrototype's catalyst amount.
---- @param entry RecipeEntryPrototype
---- @param amount integer
-function Entries.add_catalyst_amount(entry, amount)
-    Entries.convert_to_named_keys(entry)
-
-    entry.catalyst_amount = (entry.catalyst_amount or 0) + amount
-end
-
---- Returns the average yield of the given RecipeEntryPrototype, assuming it's a ResultPrototype.
+--- Returns the average yield of the given RecipeEntryPrototype, assuming it's a ProductPrototype.
 --- @param entry RecipeEntryPrototype
 --- @return number yield
-function Entries.get_average_yield(entry)
+function Tirislib.RecipeEntry.get_average_yield(entry)
     local probability = entry.probability or 1
 
     if entry.amount_min then
         return (entry.amount_min + entry.amount_max) * 0.5 * probability
+    else
+        return entry.amount * probability
     end
-
-    local amount = entry.amount or entry[2] or 1
-    return amount * probability
 end
 
---- Returns the average yield of the given RecipeEntryPrototype, assuming it's a ResultPrototype.
+--- Returns the average yield of the given RecipeEntryPrototype, assuming it's a ProductPrototype.
 --- @param entry RecipeEntryPrototype
 --- @return number yield
-function Entries.get_max_yield(entry)
-    if entry.amount_max then
-        return entry.amount_max
-    else
-        return entry.amount or entry[2] or 1
-    end
+function Tirislib.RecipeEntry.get_max_yield(entry)
+    return entry.amount_max or entry.amount
 end
 
---- Returns the probability of the given RecipeEntryPrototype, assuming it's a ResultPrototype.
+--- Returns the probability of the given RecipeEntryPrototype, assuming it's a ProductPrototype.
 --- @param entry RecipeEntryPrototype
 --- @return number
-function Entries.get_probability(entry)
+function Tirislib.RecipeEntry.get_probability(entry)
     return entry.probability or 1
 end
 
---- Sets the probability for the given RecipeEntryPrototype, assuming it'S a ResultPrototype.
---- @param entry RecipeEntryPrototype
---- @param probability number
-function Entries.set_probability(entry, probability)
-    Entries.convert_to_named_keys(entry)
-    entry.probability = probability
+function Tirislib.RecipeEntry.get_percent_spoiled(entry)
+    return entry.percent_spoiled or 0
 end
 
 --- Checks if the given RecipeEntryPrototypes can be merged, meaning they specify the same stuff and have the same probability.
---- @param entry1 RecipeEntryPrototype
---- @param entry2 RecipeEntryPrototype
+--- @param lh RecipeEntryPrototype
+--- @param rh RecipeEntryPrototype
 --- @return boolean
-function Entries.can_be_merged(entry1, entry2)
-    return Entries.specify_same_stuff(entry1, entry2) and
-        Entries.get_probability(entry1) == Entries.get_probability(entry2)
+function Tirislib.RecipeEntry.can_be_merged(lh, rh)
+    -- for FluidProductPrototypes
+    if rh.fluidbox_index and lh.fluidbox_index ~= rh.fluidbox_index then
+        return false
+    end
+
+    return (lh.name == rh.name) and (lh.type == rh.type) and -- generic for all Ingredient-/ProductPrototypes
+        Tirislib.RecipeEntry.get_probability(lh) == Tirislib.RecipeEntry.get_probability(rh) and -- for ProductPrototypes
+        Tirislib.RecipeEntry.get_percent_spoiled(lh) == Tirislib.RecipeEntry.get_percent_spoiled(rh) and -- for ItemProductPrototypes
+        lh.temperature == rh.temperature and -- for FluidProductPrototypes
+        lh.minimum_temperature == rh.minimum_temperature and -- for FluidIngredientPrototypes
+        lh.maximum_temperature == rh.maximum_temperature -- for FluidIngredientPrototypes
 end
 
---- Merges the given RecipeEntryPrototypes.
---- @param entry1 RecipeEntryPrototype
---- @param entry2 RecipeEntryPrototype
-function Entries.merge(entry1, entry2)
-    local min = entry2.amount_min or entry2.amount or entry2[2]
-    local max = entry2.amount_max or entry2.amount or entry2[2]
+--- Merges the given right hand RecipeEntryPrototype into the given left hand RecipeEntryPrototype.
+--- @param lh RecipeEntryPrototype
+--- @param rh RecipeEntryPrototype
+function Tirislib.RecipeEntry.merge(lh, rh)
+    local min = rh.amount_min or rh.amount
+    local max = rh.amount_max or rh.amount
 
-    Entries.add_result_amount(entry1, min, max)
+    Tirislib.RecipeEntry.add_product_amount(lh, min, max)
+
+    if rh.ignored_by_stats then
+        lh.ignored_by_stats = (lh.ignored_by_stats or 0) + rh.ignored_by_stats
+    end
+    if rh.ignored_by_productivity then
+        lh.ignored_by_productivity = (lh.ignored_by_productivity or 0) + rh.ignored_by_productivity
+    end
+    if rh.extra_count_fraction then
+        lh.extra_count_fraction = (lh.extra_count_fraction or 0) + rh.extra_count_fraction
+
+        if lh.extra_count_fraction >= 1 then
+            local overhang = math.floor(lh.extra_count_fraction)
+            lh.extra_count_fraction = lh.extra_count_fraction - overhang
+            Tirislib.RecipeEntry.add_product_amount(lh, overhang)
+        end
+    end
 end
 
---- Creates a ResultPrototype for the given product and with the given average yield.
---- @param product string
+--- Creates a ProductPrototype for the given product and with the given average yield.
+--- @param product ItemID|FluidID
 --- @param amount number
 --- @param _type string|nil defaults to 'item'
 --- @return RecipeEntryPrototype|nil
-function Entries.create_result_prototype(product, amount, _type)
+function Tirislib.RecipeEntry.create_product_prototype(product, amount, _type)
     if amount > 0 then
         local ret = {type = _type or "item", name = product}
 
@@ -258,9 +149,8 @@ function Entries.create_result_prototype(product, amount, _type)
         elseif math.floor(amount) == amount then -- amount doesn't have decimals
             ret.amount = amount
         else
-            -- close enough solution
-            ret.amount_min = math.floor(amount)
-            ret.amount_max = math.ceil(amount)
+            ret.amount = math.floor(amount)
+            ret.extra_count_fraction = amount - math.floor(amount)
         end
 
         return ret
@@ -294,7 +184,8 @@ Tirislib.RecipeArray.__index = Tirislib.PrototypeArray.__index
 local function try_fix_main_product_pains(recipe, product)
     if not recipe.icon and not recipe.icons then
         for _, recipe_data in pairs(Tirislib.Recipe.get_recipe_datas(recipe)) do
-            recipe_data.main_product = recipe_data.main_product or product or Tirislib.RecipeData.get_first_result(recipe_data)
+            recipe_data.main_product =
+                recipe_data.main_product or product or Tirislib.RecipeData.get_first_result(recipe_data)
         end
     end
 end
@@ -726,7 +617,7 @@ function Tirislib.RecipeData.get_first_result(recipe_data)
     end
     if recipe_data.results then
         for _, current_result in pairs(recipe_data.results) do
-            return Entries.get_name(current_result)
+            return current_result.name
         end
     end
 end
@@ -741,13 +632,13 @@ function Tirislib.RecipeData.get_result(recipe_data, name, _type)
     Tirislib.RecipeData.convert_to_results_table(recipe_data)
 
     for _, result in pairs(recipe_data.results) do
-        if Entries.get_name(result) == name and Entries.get_type(result) == _type then
+        if result.name == name and result.type == _type then
             return result
         end
     end
 end
 
---- Returns the ResultPrototype for the specified result, if that recipe contains it.
+--- Returns the ProductPrototype for the specified result, if that recipe contains it.
 --- @param name string
 --- @param _type string
 --- @return RecipeEntryPrototype
@@ -760,8 +651,8 @@ function Tirislib.RecipeData.add_result(recipe_data, result, suppress_merge)
 
     if not suppress_merge then
         for _, current_result in pairs(recipe_data.results) do
-            if Entries.can_be_merged(current_result, result) then
-                Entries.merge(current_result, result)
+            if Tirislib.RecipeEntry.can_be_merged(current_result, result) then
+                Tirislib.RecipeEntry.merge(current_result, result)
                 return
             end
         end
@@ -828,7 +719,7 @@ end
 function Tirislib.Recipe:add_new_result(result, amount, _type, suppress_merge)
     Tirislib.Recipe.add_result(
         self,
-        Tirislib.RecipeEntry.create_result_prototype(result, amount, _type),
+        Tirislib.RecipeEntry.create_product_prototype(result, amount, _type),
         nil,
         suppress_merge
     )
@@ -838,7 +729,7 @@ end
 
 function Tirislib.RecipeData.get_first_ingredient(recipe_data)
     for _, current_ingredient in pairs(recipe_data.ingredients) do
-        return Entries.get_name(current_ingredient)
+        return current_ingredient.name
     end
 end
 
@@ -850,7 +741,7 @@ end
 
 function Tirislib.RecipeData.get_ingredient(recipe_data, name, _type)
     for _, ingredient in pairs(recipe_data.ingredients) do
-        if Entries.get_name(ingredient) == name and Entries.get_type(ingredient) == _type then
+        if ingredient.name == name and ingredient.type == _type then
             return ingredient
         end
     end
@@ -867,13 +758,8 @@ end
 function Tirislib.RecipeData.add_ingredient(recipe_data, ingredient)
     -- check if the recipe already has an entry for this ingredient
     for _, current_ingredient in pairs(recipe_data.ingredients) do
-        if Tirislib.RecipeEntry.specify_same_stuff(current_ingredient, ingredient) then
-            local ingredient_amount = Tirislib.RecipeEntry.get_ingredient_amount(ingredient)
-            Tirislib.RecipeEntry.add_ingredient_amount(current_ingredient, ingredient_amount)
-
-            if Tirislib.RecipeEntry.has_catalyst(current_ingredient) and Tirislib.RecipeEntry.has_catalyst(ingredient) then
-                Tirislib.RecipeEntry.add_catalyst_amount(current_ingredient, ingredient.catalyst_amount)
-            end
+        if Tirislib.RecipeEntry.can_be_merged(current_ingredient, ingredient) then
+            Tirislib.RecipeEntry.merge(current_ingredient, ingredient)
             return
         end
     end
@@ -889,9 +775,6 @@ end
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_ingredient(ingredient, expensive_ingredient)
     expensive_ingredient = expensive_ingredient or ingredient
-
-    Tirislib.RecipeEntry.convert_to_named_keys(ingredient)
-    Tirislib.RecipeEntry.convert_to_named_keys(expensive_ingredient)
 
     Tirislib.Recipe.call_on_normal_recipe_data(self, Tirislib.RecipeData.add_ingredient, ingredient)
     Tirislib.Recipe.call_on_expensive_recipe_data(self, Tirislib.RecipeData.add_ingredient, expensive_ingredient)
@@ -947,10 +830,7 @@ end
 
 function Tirislib.RecipeData.remove_ingredient(recipe_data, ingredient_name, ingredient_type)
     for index, ingredient in pairs(recipe_data.ingredients) do
-        if
-            Tirislib.RecipeEntry.get_name(ingredient) == ingredient_name and
-                Tirislib.RecipeEntry.get_type(ingredient) == ingredient_type
-         then
+        if ingredient.name == ingredient_name and ingredient.type == ingredient_type then
             recipe_data.ingredients[index] = nil
         end
     end
@@ -976,10 +856,7 @@ function Tirislib.RecipeData.remove_result(recipe_data, ingredient_name, ingredi
     Tirislib.RecipeData.convert_to_results_table(recipe_data)
 
     for index, result in pairs(recipe_data.results) do
-        if
-            Tirislib.RecipeEntry.get_name(result) == ingredient_name and
-                Tirislib.RecipeEntry.get_type(result) == ingredient_type
-         then
+        if result.name == ingredient_name and result.type == ingredient_type then
             recipe_data.results[index] = nil
         end
     end
@@ -1009,11 +886,11 @@ function Tirislib.RecipeData.replace_ingredient(
     replacement_type,
     amount_fn)
     for _, ingredient in pairs(recipe_data.ingredients) do
-        if Entries.get_name(ingredient) == ingredient_name and Entries.get_type(ingredient) == ingredient_type then
-            Entries.set_name(ingredient, replacement_name)
-            Entries.set_type(ingredient, replacement_type)
+        if ingredient.name == ingredient_name and ingredient.type == ingredient_type then
+            ingredient.name = replacement_name
+            ingredient.type = replacement_type
             if amount_fn then
-                Entries.transform_amount(ingredient, amount_fn)
+                Tirislib.RecipeEntry.transform_amount(ingredient, amount_fn)
             end
         end
     end
@@ -1058,11 +935,11 @@ function Tirislib.RecipeData.replace_result(
     Tirislib.RecipeData.convert_to_results_table(recipe_data)
 
     for _, result in pairs(recipe_data.results) do
-        if Entries.get_name(result) == result_name and Entries.get_type(result) == result_type then
-            Entries.set_name(result, replacement_name)
-            Entries.set_type(result, replacement_type)
+        if result.name == result_name and result.type == result_type then
+            result.name = replacement_name
+            result.type = replacement_type
             if amount_fn then
-                Entries.transform_amount(result, amount_fn)
+                Tirislib.RecipeEntry.transform_amount(result, amount_fn)
             end
         end
     end
@@ -1206,7 +1083,7 @@ end
 
 function Tirislib.RecipeData.set_ingredient_amounts(recipe_data, value)
     for _, entry in pairs(recipe_data.ingredients) do
-        Tirislib.RecipeEntry.set_amount(entry, value)
+        Tirislib.RecipeEntry.set_product_amount(entry, value)
     end
 end
 
@@ -1229,7 +1106,7 @@ function Tirislib.RecipeData.set_result_amounts(recipe_data, value)
     Tirislib.RecipeData.convert_to_results_table(recipe_data)
 
     for _, entry in pairs(recipe_data.results) do
-        Tirislib.RecipeEntry.set_amount(entry, value)
+        Tirislib.RecipeEntry.set_product_amount(entry, value)
     end
 end
 
@@ -1287,7 +1164,7 @@ end
 
 function Tirislib.RecipeData.ceil_ingredient_amounts(recipe_data)
     for _, ingredient in pairs(recipe_data.ingredients) do
-        Entries.transform_amount(ingredient, math.ceil)
+        Tirislib.RecipeEntry.transform_amount(ingredient, math.ceil)
     end
 end
 
@@ -1301,7 +1178,7 @@ end
 
 function Tirislib.RecipeData.floor_ingredient_amounts(recipe_data)
     for _, ingredient in pairs(recipe_data.results) do
-        Entries.transform_amount(ingredient, math.floor)
+        Tirislib.RecipeEntry.transform_amount(ingredient, math.floor)
     end
 end
 
@@ -1316,7 +1193,7 @@ end
 function Tirislib.RecipeData.ceil_result_amounts(recipe_data)
     if recipe_data.results then
         for _, result in pairs(recipe_data.results) do
-            Entries.transform_amount(result, math.ceil)
+            Tirislib.RecipeEntry.transform_amount(result, math.ceil)
         end
     elseif recipe_data.result_count then
         recipe_data.result_count = math.ceil(recipe_data.result_count)
@@ -1334,7 +1211,7 @@ end
 function Tirislib.RecipeData.floor_result_amounts(recipe_data)
     if recipe_data.results then
         for _, result in pairs(recipe_data.results) do
-            Entries.transform_amount(result, math.floor)
+            Tirislib.RecipeEntry.transform_amount(result, math.floor)
         end
     elseif recipe_data.result_count then
         recipe_data.result_count = math.max(math.floor(recipe_data.result_count), 1)
@@ -1384,7 +1261,7 @@ end
 function Tirislib.RecipeData.index_fluid_ingredients(recipe_data)
     local index = 1
     for _, entry in pairs(recipe_data.ingredients) do
-        if Entries.get_type(entry) == "fluid" then
+        if entry.type == "fluid" then
             entry.fluidbox_index = index
             index = index + 1
         end
@@ -1404,7 +1281,7 @@ function Tirislib.RecipeData.index_fluid_results(recipe_data)
 
     local index = 1
     for _, entry in pairs(recipe_data.results) do
-        if Entries.get_type(entry) == "fluid" then
+        if entry.type == "fluid" then
             entry.fluidbox_index = index
             index = index + 1
         end
@@ -1434,7 +1311,7 @@ end
 function Tirislib.RecipeData.results_contain(recipe_data, name, _type)
     if recipe_data.results then
         for _, entry in pairs(recipe_data.results) do
-            if Entries.get_type(entry) == "item" and Entries.get_name(entry) == name then
+            if entry.type == "item" and entry.name == name then
                 return true
             end
         end
@@ -1459,7 +1336,7 @@ function Tirislib.RecipeData.get_result_amount(recipe_data, name, _type)
     if recipe_data.results then
         local amount = 0
         for _, result in pairs(recipe_data.results) do
-            if Tirislib.RecipeEntry.get_name(result) == name and Tirislib.RecipeEntry.get_type(result) == _type then
+            if result.name == name and result.type == _type then
                 amount = amount + Tirislib.RecipeEntry.get_average_yield(result)
             end
         end
@@ -1487,7 +1364,7 @@ function Tirislib.RecipeData.ingredients_contain(recipe_data, name, _type)
     _type = _type or "item"
 
     for _, entry in pairs(recipe_data.ingredients) do
-        if Entries.get_type(entry) == "item" and Entries.get_name(entry) == name then
+        if entry.type == "item" and entry.name == name then
             return true
         end
     end
@@ -1504,8 +1381,8 @@ end
 
 function Tirislib.RecipeData.get_ingredient_amount(recipe_data, name, _type)
     for _, ingredient in pairs(recipe_data.ingredients or {}) do
-        if Tirislib.RecipeEntry.get_name(ingredient) == name and Tirislib.RecipeEntry.get_type(ingredient) == _type then
-            return Tirislib.RecipeEntry.get_ingredient_amount(ingredient)
+        if ingredient.name == name and ingredient.type == _type then
+            return ingredient.amount
         end
     end
 
@@ -1601,7 +1478,8 @@ end
 --- @param amount_fn function
 --- @return RecipePrototype itself
 function Tirislib.Recipe:pair_result_with_result(result, result_type, result_to_add, result_to_add_type, amount_fn)
-    local normal, expensive = Tirislib.Recipe.call_on_recipe_data(
+    local normal, expensive =
+        Tirislib.Recipe.call_on_recipe_data(
         self,
         Tirislib.RecipeData.pair_result_with_result,
         result,
@@ -1660,7 +1538,8 @@ function Tirislib.Recipe:pair_ingredient_with_result(
     result_type,
     amount_fn,
     probability)
-    local normal, expensive = Tirislib.Recipe.call_on_recipe_data(
+    local normal, expensive =
+        Tirislib.Recipe.call_on_recipe_data(
         self,
         Tirislib.RecipeData.pair_ingredient_with_result,
         ingredient,

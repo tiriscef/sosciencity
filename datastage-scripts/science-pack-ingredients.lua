@@ -63,7 +63,7 @@ local sp_ingredients = {
 local launchable_item_ingredients = {}
 for _, item in Tirislib.Item.iterate() do
     for _, launch_product in pairs(item:get_launch_products()) do
-        local launch_product_name = Tirislib.RecipeEntry.get_name(launch_product)
+        local launch_product_name = launch_product.name
 
         if sp_ingredients[launch_product_name] then
             local details = sp_ingredients[launch_product_name]
