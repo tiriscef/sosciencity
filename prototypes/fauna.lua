@@ -336,17 +336,13 @@ end
 local CALORIES_PER_FOOD_ITEM = 3000
 
 local function add_food(recipe, animal)
-    local calories = {}
-    for difficulty, recipe_data in pairs(recipe:get_recipe_datas()) do
-        calories[difficulty] = get_calories_needed(recipe_data)
-    end
+    local calories = get_calories_needed(recipe)
 
     Tirislib.RecipeGenerator.add_ingredient_theme(
         recipe,
         {
             animal.food_theme,
-            calories[Tirislib.RecipeDifficulty.normal] / CALORIES_PER_FOOD_ITEM,
-            calories[Tirislib.RecipeDifficulty.expensive] / CALORIES_PER_FOOD_ITEM
+            calories / CALORIES_PER_FOOD_ITEM
         }
     )
 end

@@ -284,7 +284,7 @@ function Tirislib.RecipeGenerator.create(details)
         recipe.main_product = product.name
     end
 
-    recipe:create_difficulties()
+    --recipe:create_difficulties()
 
     -- explicit defined
     recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)

@@ -419,11 +419,11 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
     Tirislib.Recipe.create {
         name = "sosciencity-glass",
         energy_required = 3.2,
-        ingredients = {{name = "glass-mixture", amount = 1}},
+        ingredients = {{type = "item", name = "glass-mixture", amount = 1}},
         results = {{type = "item", name = Tirislib.RecipeGenerator.item_alias.glass, amount = 2}},
         category = "smelting",
         main_result = Tirislib.RecipeGenerator.item_alias.glass
-    }:create_difficulties():multiply_expensive_ingredients(2):add_unlock("infrastructure-1")
+    }:add_unlock("infrastructure-1")
 end
 
 Tirislib.RecipeGenerator.create {
@@ -839,7 +839,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "virus-genome",
     ingredients = {
-        {"empty-hard-drive", 1}
+        {type = "item", name = "empty-hard-drive", amount = 1}
     },
     category = "sosciencity-computing-center",
     energy_required = 10,
@@ -850,7 +850,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "plant-genome",
     ingredients = {
-        {"empty-hard-drive", 1}
+        {type = "item", name = "empty-hard-drive", amount = 1}
     },
     category = "sosciencity-computing-center",
     energy_required = 20,
@@ -861,7 +861,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "huwan-genome",
     ingredients = {
-        {"empty-hard-drive", 1}
+        {type = "item", name = "empty-hard-drive", amount = 1}
     },
     category = "sosciencity-computing-center",
     energy_required = 30,
@@ -872,7 +872,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "edited-huwan-genome",
     ingredients = {
-        {"empty-hard-drive", 1}
+        {type = "item", name = "empty-hard-drive", amount = 1}
     },
     category = "sosciencity-computing-center",
     energy_required = 40,
@@ -950,7 +950,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "chemistry",
     unlock = "food-processing"
-}:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.99, 1, 0.98)
+}:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.99)
 
 Tirislib.RecipeGenerator.create {
     product = "proteins",
