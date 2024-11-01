@@ -80,7 +80,7 @@ Tirislib.Entity.create {
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = Sosciencity_Config.agriculture_pollutes and 1 or -5,
+        emissions_per_minute = {pollution = Sosciencity_Config.agriculture_pollutes and 1 or -5},
         drain = "5kW"
     },
     working_sound = {

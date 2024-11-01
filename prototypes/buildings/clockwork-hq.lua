@@ -45,7 +45,7 @@ Tirislib.Entity.create {
     energy_source = {
         type = "burner",
         usage_priority = "secondary-input",
-        emissions_per_minute = 1,
+        emissions_per_minute = {pollution = 1},
         fuel_inventory_size = 1,
         smoke = {
             {
