@@ -912,7 +912,7 @@ function Tirislib.Recipe:replace_ingredient(
     replacement_type,
     amount_fn)
     ingredient_type = ingredient_type or "item"
-    replacement_name = replacement_name or "item"
+    replacement_type = replacement_type or "item"
 
     Tirislib.Recipe.call_on_recipe_data(
         self,
