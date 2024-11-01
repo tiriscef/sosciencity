@@ -1424,7 +1424,7 @@ end
 --- @param percentage number
 --- @return locale
 function Tirislib.Locales.display_percentage(percentage)
-    return {"sosciencity.percentage", round(percentage * 100)}
+    return {"sosciencity.percentage", tostring(round(percentage * 100))}
 end
 
 local function transform_to_enumeration(locale)
