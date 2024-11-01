@@ -28,7 +28,7 @@ style.sosciencity_city_view_header_drag = {
 
 style.sosciencity_city_view_tab_frame = {
     type = "frame_style",
-    parent = "inside_deep_frame_for_tabs",
+    parent = "inside_deep_frame",
     top_padding = 2
 }
 
@@ -161,22 +161,32 @@ style.sosciencity_details_view_frame = {
 
 style.sosciencity_heading_1 = {
     type = "label_style",
-    parent = "heading_1_label",
+    font = "heading-1",
+    font_color = {255, 230, 192},
     left_margin = 30,
     bottom_margin = 10
 }
 
 style.sosciencity_heading_2 = {
     type = "label_style",
-    parent = "heading_2_label",
+    font = "heading-2",
+    font_color = {255, 230, 192},
     left_margin = 15,
     top_margin = 20,
     bottom_margin = 10
 }
 
+-- the old "heading-3" font that is now gone in Factorio 2.0
+Tirislib.Prototype.create {
+    type = "font",
+    name = "heading-3",
+    from = "default-semibold",
+    size = 14
+}
+
 style.sosciencity_heading_3 = {
     type = "label_style",
-    parent = "heading_3_label",
+    font = "heading-3",
     left_margin = 15,
     top_margin = 10,
     bottom_margin = 5,
@@ -256,7 +266,7 @@ style.sosciencity_calculation_table_left = {
 }
 
 style.sosciencity_calculation_table_right = {
-    type = "label_style",
+    type = "label_style"
     --width = 50
 }
 
