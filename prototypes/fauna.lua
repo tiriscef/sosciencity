@@ -644,9 +644,9 @@ if settings.startup["sosciencity-modify-environment"].value then
                 tint = {r = 1, g = 1, b = 1, a = 0.25}
             }
         },
-        autoplace = {
-            order = "sosciencity-c",
-            influence = 0.003
+        autoplace = { 
+            order = "sosciencity-fishwhirl",
+            probability_expression = 0.003
         },
         created_effect = {
             type = "direct",

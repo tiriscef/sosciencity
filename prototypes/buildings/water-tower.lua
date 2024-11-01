@@ -32,7 +32,7 @@ Tirislib.Entity.create {
     corpse = "water-tower-remnants",
     two_direction_only = true,
     fluid_box = {
-        base_area = 50,
+        volume = 5000,
         pipe_covers = pipecoverspictures(),
         pipe_picture = pipe_pictures,
         pipe_connections = {
