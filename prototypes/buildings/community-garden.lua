@@ -13,7 +13,8 @@ Tirislib.Entity.create {
     type = "container",
     name = "community-garden",
     flags = {"placeable-neutral", "player-creation"},
-    collision_mask = {"item-layer", "object-layer", "water-tile"},
+    collision_mask = {layers = {item = true, meltable = true, object = true, water_tile = true, is_object = true, is_lower_object = true}},
+    --collision_mask = {"item-layer", "object-layer", "water-tile"}, TODO: check if this updated collision mask works as intended once I get the mod to run
     minable = {mining_time = 0.5, result = "community-garden"},
     max_health = 200,
     inventory_size = 20,

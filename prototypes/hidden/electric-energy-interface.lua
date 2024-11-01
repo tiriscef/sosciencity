@@ -32,7 +32,8 @@ for entity_name in pairs(Sosciencity_Config.eei_needing_buildings) do
             buffer_capacity = "1MJ",
             usage_priority = "secondary-input"
         },
-        collision_mask = {},
+        collision_mask = {layers = {}},
+        --collision_mask = {},
         is_hack = true
     }
 end
