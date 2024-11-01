@@ -1081,8 +1081,8 @@ Tirislib.Entity.create {
         mining_particle = "wooden-particle",
         mining_time = 1,
         results = {
-            {name = "necrofall", amount_min = 10, amount_max = 15},
-            {name = "leafage", amount_min = 10, amount_max = 15}
+            {type = "item", name = "necrofall", amount_min = 10, amount_max = 15},
+            {type = "item", name = "leafage", amount_min = 10, amount_max = 15}
         }
     },
     mined_sound = sounds.tree_leaves,
