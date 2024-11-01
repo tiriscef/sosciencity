@@ -2159,7 +2159,7 @@ function Gui.DetailsView.create(player)
         type = "frame",
         name = "nested",
         direction = "horizontal",
-        style = "inside_deep_frame_for_tabs"
+        style = "inside_deep_frame"
     }
 
     frame.visible = false
