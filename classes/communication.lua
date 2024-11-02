@@ -272,8 +272,8 @@ end
 
 local function flush_logs()
     if item_statistics == nil then
-        item_statistics = game.forces.player.item_production_statistics
-        fluid_statistics = game.forces.player.fluid_production_statistics
+        item_statistics = game.forces.player.get_item_production_statistics("nauvis")
+        fluid_statistics = game.forces.player.get_fluid_production_statistics("nauvis")
     end
 
     flush_log(item_consumption, item_statistics, -1)
