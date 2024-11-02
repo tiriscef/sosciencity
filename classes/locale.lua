@@ -5,7 +5,7 @@ local EK = require("enums.entry-key")
 Locale = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
     nothing
 ]]

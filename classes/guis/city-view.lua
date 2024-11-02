@@ -132,7 +132,7 @@ local function open_page(player, category_index, page_name, set_tab_index)
     menu.clear()
     fill_menu(menu, category_index, page_name)
 
-    local last_opened_pages = get_subtblr(global, "last_opened_pages", player.index)
+    local last_opened_pages = get_subtblr(storage, "last_opened_pages", player.index)
     last_opened_pages[category_index] = page_name
 
     if set_tab_index then
@@ -221,7 +221,7 @@ local function create_city_view(player)
         name = "tabpane"
     }
 
-    local last_opened_pages = get_subtblr(global, "last_opened_pages", player.index)
+    local last_opened_pages = get_subtblr(storage, "last_opened_pages", player.index)
 
     for index, category in pairs(content) do
         local tab =
@@ -271,7 +271,7 @@ local function create_city_view(player)
         open_page(player, index, last_opened_pages[index] or category.pages[1].name)
     end
 
-    local last_opened_tab = get_subtbl(global, "last_opened_tab")[player.index]
+    local last_opened_tab = get_subtbl(storage, "last_opened_tab")[player.index]
     if last_opened_tab then
         content_tabpane.selected_tab_index = last_opened_tab
     end
@@ -302,7 +302,7 @@ end
 function Gui.CityView.close(player)
     local gui = player.gui.screen[CITY_VIEW_NAME]
     if gui then
-        local last_opened_tab = get_subtbl(global, "last_opened_tab")
+        local last_opened_tab = get_subtbl(storage, "last_opened_tab")
         last_opened_tab[player.index] = gui.content.tabpane.selected_tab_index
 
         gui.destroy()

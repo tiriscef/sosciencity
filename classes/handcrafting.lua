@@ -6,7 +6,7 @@ local Time = require("constants.time")
 Handcrafting = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
     nothing
 ]]
@@ -21,14 +21,14 @@ local get_subtbl = Tirislib.Tables.get_subtbl
 -- << lua state lifecycle stuff >>
 
 function Handcrafting.init()
-    global.blood_donations = {}
+    storage.blood_donations = {}
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << handcrafting finished stuff >>
 
 local function get_recent_donation_count(player_id)
-    local log = get_subtbl(global.blood_donations, player_id)
+    local log = get_subtbl(storage.blood_donations, player_id)
 
     local count = 1 -- set to 1, because the current donation counts
     local current_tick = game.tick

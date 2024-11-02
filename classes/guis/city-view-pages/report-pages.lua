@@ -14,7 +14,7 @@ Gui.CityView.add_page {
     category = "statistics",
     localised_name = {"report-name.census"},
     creator = function(container)
-        if not global.current_reports.immigration then
+        if not storage.current_reports.immigration then
             Gui.Elements.Label.paragraph(container, {"city-view.no-report", {"report-name.census"}})
             return
         end
@@ -24,9 +24,9 @@ Gui.CityView.add_page {
 
         Gui.Elements.Label.heading_3(container, {"city-view.overview"})
 
-        local immigration_sum = Tirislib.Tables.sum(global.current_reports.immigration)
-        local emigration_sum = Tirislib.Tables.sum(global.current_reports.emigration)
-        local death_sum = Tirislib.Tables.sum(global.current_reports.death)
+        local immigration_sum = Tirislib.Tables.sum(storage.current_reports.immigration)
+        local emigration_sum = Tirislib.Tables.sum(storage.current_reports.emigration)
+        local death_sum = Tirislib.Tables.sum(storage.current_reports.death)
         Gui.Elements.CalculationTable.create {
             container = container,
             groups = {
@@ -59,7 +59,7 @@ Gui.CityView.add_page {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports.immigration,
+                        values = storage.current_reports.immigration,
                         left_content = Locale.immigration_cause,
                         right_content = Tirislib.Utils.identity
                     }
@@ -75,7 +75,7 @@ Gui.CityView.add_page {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports.emigration,
+                        values = storage.current_reports.emigration,
                         left_content = Locale.emigration_cause,
                         right_content = Tirislib.Utils.identity
                     }
@@ -91,7 +91,7 @@ Gui.CityView.add_page {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports.death,
+                        values = storage.current_reports.death,
                         left_content = Locale.death_cause,
                         right_content = Tirislib.Utils.identity
                     }
@@ -110,7 +110,7 @@ Gui.CityView.add_page {
     category = "statistics",
     localised_name = {"report-name.healthcare"},
     creator = function(container)
-        if not global.current_reports.diseases then
+        if not storage.current_reports.diseases then
             Gui.Elements.Label.paragraph(container, {"city-view.no-report", {"report-name.healthcare"}})
             return
         end
@@ -119,10 +119,10 @@ Gui.CityView.add_page {
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-report-intro"})
 
         Gui.Elements.Label.heading_3(container, {"city-view.overview"})
-        local new_diseases_sum = Tirislib.Tables.sum(global.current_reports["disease-cause"])
-        local treated_diseases_sum = Tirislib.Tables.sum(global.current_reports["disease-recovery"][true])
-        local recovered_diseases_sum = Tirislib.Tables.sum(global.current_reports["disease-recovery"][false])
-        local disease_death_sum = Tirislib.Tables.sum(global.current_reports["disease-death"])
+        local new_diseases_sum = Tirislib.Tables.sum(storage.current_reports["disease-cause"])
+        local treated_diseases_sum = Tirislib.Tables.sum(storage.current_reports["disease-recovery"][true])
+        local recovered_diseases_sum = Tirislib.Tables.sum(storage.current_reports["disease-recovery"][false])
+        local disease_death_sum = Tirislib.Tables.sum(storage.current_reports["disease-death"])
         Gui.Elements.CalculationTable.create {
             container = container,
             groups = {
@@ -152,10 +152,10 @@ Gui.CityView.add_page {
         }
 
         Gui.Elements.Label.heading_3(container, {"city-view.overview-by-disease"})
-        local disease_overview = Tirislib.Tables.copy(global.current_reports.diseases)
-        Tirislib.Tables.subtract(disease_overview, global.current_reports["disease-recovery"][true])
-        Tirislib.Tables.subtract(disease_overview, global.current_reports["disease-recovery"][false])
-        Tirislib.Tables.subtract(disease_overview, global.current_reports["disease-death"])
+        local disease_overview = Tirislib.Tables.copy(storage.current_reports.diseases)
+        Tirislib.Tables.subtract(disease_overview, storage.current_reports["disease-recovery"][true])
+        Tirislib.Tables.subtract(disease_overview, storage.current_reports["disease-recovery"][false])
+        Tirislib.Tables.subtract(disease_overview, storage.current_reports["disease-death"])
         Gui.Elements.CalculationTable.create {
             container = container,
             groups = {
@@ -181,12 +181,12 @@ Gui.CityView.add_page {
         }
 
         Gui.Elements.Label.heading_3(container, {"city-view.new-diseases"})
-        if Tirislib.Tables.any(global.current_reports.diseases) then
+        if Tirislib.Tables.any(storage.current_reports.diseases) then
             Gui.Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports.diseases,
+                        values = storage.current_reports.diseases,
                         left_content = function(disease_id)
                             return Diseases.values[disease_id].localised_name
                         end,
@@ -202,12 +202,12 @@ Gui.CityView.add_page {
         end
 
         Gui.Elements.Label.heading_3(container, {"city-view.new-diseases-by-cause"})
-        if Tirislib.Tables.any(global.current_reports["disease-cause"]) then
+        if Tirislib.Tables.any(storage.current_reports["disease-cause"]) then
             Gui.Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports["disease-cause"],
+                        values = storage.current_reports["disease-cause"],
                         left_content = Locale.disease_cause,
                         right_content = Tirislib.Utils.identity
                     }
@@ -218,12 +218,12 @@ Gui.CityView.add_page {
         end
 
         Gui.Elements.Label.heading_3(container, {"city-view.treated-diseases"})
-        if Tirislib.Tables.any(global.current_reports["disease-recovery"][true]) then
+        if Tirislib.Tables.any(storage.current_reports["disease-recovery"][true]) then
             Gui.Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports["disease-recovery"][true],
+                        values = storage.current_reports["disease-recovery"][true],
                         left_content = function(disease_id)
                             return Diseases.values[disease_id].localised_name
                         end,
@@ -239,12 +239,12 @@ Gui.CityView.add_page {
         end
 
         Gui.Elements.Label.heading_3(container, {"city-view.recovered-diseases"})
-        if Tirislib.Tables.any(global.current_reports["disease-recovery"][false]) then
+        if Tirislib.Tables.any(storage.current_reports["disease-recovery"][false]) then
             Gui.Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports["disease-recovery"][false],
+                        values = storage.current_reports["disease-recovery"][false],
                         left_content = function(disease_id)
                             return Diseases.values[disease_id].localised_name
                         end,
@@ -260,12 +260,12 @@ Gui.CityView.add_page {
         end
 
         Gui.Elements.Label.heading_3(container, {"city-view.disease-deaths"})
-        if Tirislib.Tables.any(global.current_reports["disease-death"]) then
+        if Tirislib.Tables.any(storage.current_reports["disease-death"]) then
             Gui.Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
-                        values = global.current_reports["disease-death"],
+                        values = storage.current_reports["disease-death"],
                         left_content = function(disease_id)
                             return Diseases.values[disease_id].localised_name
                         end,

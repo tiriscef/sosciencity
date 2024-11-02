@@ -10,22 +10,22 @@ local Types = require("constants.types")
 Register = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.register: table
+    storagee.register: table
         [unit_number]: Entry
 
-    global.register_by_type: table
+    storage.register_by_type: table
         [type]: unit_number-lookup-table
 
-    global.entry_counts:
+    storage.entry_counts:
         [type]: int (total number)
 
-    global.last_index: int|nil (unit_number of the entry the last update cycle stopped on)
+    storage.last_index: int|nil (unit_number of the entry the last update cycle stopped on)
 ]]
 -- local often used globals for almost non-existant performance gains
 
-local global
+local storage
 local register
 local register_by_type
 local entry_counts
@@ -51,10 +51,10 @@ local get_subtbl = Tirislib.Tables.get_subtbl
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    global = _ENV.global
-    register = global.register
-    register_by_type = global.register_by_type
-    entry_counts = global.entry_counts
+    storage = _ENV.storage
+    register = storage.register
+    register_by_type = storage.register_by_type
+    entry_counts = storage.entry_counts
 
     -- These systems are loaded after the register, so we local them during on_load
     fire_all_workers = Inhabitants.unemploy_all_workers
@@ -69,12 +69,11 @@ local function set_locals()
     update_workforce = Inhabitants.update_workforce
 end
 
---- Initialize the register related contents of global.
 function Register.init()
-    global = _ENV.global
-    global.register = {}
-    global.register_by_type = {}
-    global.entry_counts = {}
+    storage = _ENV.storage
+    storage.register = {}
+    storage.register_by_type = {}
+    storage.entry_counts = {}
     set_locals()
 
     -- find and register all the machines that need to be registered
@@ -274,8 +273,8 @@ local function remove_entry_from_register(entry)
 
     -- The last update cycle stopped at this entry.
     -- We go to the next one, so the next cycle doesn't need to start from the first entry.
-    if global.last_index == unit_number then
-        global.last_index = next(register, unit_number)
+    if storage.last_index == unit_number then
+        storage.last_index = next(register, unit_number)
     end
 
     -- general
@@ -418,9 +417,9 @@ Register.next = register_next
 function Register.entity_update_cycle(current_tick)
     local next_entry = Register.next
     local count = 0
-    local index = global.last_index
+    local index = storage.last_index
     local current_entry = try_get(index)
-    local number_of_checks = global.updates_per_cycle
+    local number_of_checks = storage.updates_per_cycle
 
     if not current_entry then
         index, current_entry = next_entry() -- begin a new loop at the start (nil as a key returns the first pair)
@@ -434,7 +433,7 @@ function Register.entity_update_cycle(current_tick)
         index, current_entry = next_entry(index)
         count = count + 1
     end
-    global.last_index = index
+    storage.last_index = index
 end
 
 local function nothing()

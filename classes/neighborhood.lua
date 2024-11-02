@@ -12,9 +12,9 @@ Neighborhood = {}
 --
 -- Future: implement something for entities that are not registered, e.g. trees
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.subscriptions: table
+    storage.subscriptions: table
         [type]: table with (unit_number, ConnectionType)-pairs
 ]]
 -- local often used globals for giant performance gains
@@ -31,7 +31,7 @@ local subscriptions
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    subscriptions = global.subscriptions
+    subscriptions = storage.subscriptions
 end
 
 function Neighborhood.load()
@@ -39,7 +39,7 @@ function Neighborhood.load()
 end
 
 function Neighborhood.init()
-    global.subscriptions = {}
+    storage.subscriptions = {}
     set_locals()
 end
 

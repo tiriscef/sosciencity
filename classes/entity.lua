@@ -17,12 +17,12 @@ local TypeGroup = require("constants.type-groups")
 Entity = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.active_animal_farms: integer
+    storage.active_animal_farms: integer
         Count of the currently active animal farms that are relevant for the zoonosis mechanic
 
-    global.active_machine_count: integer
+    storage.active_machine_count: integer
         Count of the machines that were recently active and are relevant for the maintenance mechanic
 ]]
 -- local all the frequently used globals for supercalifragilisticexpialidocious performance gains
@@ -32,7 +32,7 @@ local Neighborhood = Neighborhood
 local Utils = Tirislib.Utils
 local Table = Tirislib.Tables
 
-local global
+local storage
 local caste_bonuses
 local flora = Biology.flora
 local water_values = DrinkingWater.values
@@ -58,14 +58,14 @@ local log_item = Communication.log_item
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    global = _ENV.global
-    caste_bonuses = global.caste_bonuses
+    storage = _ENV.storage
+    caste_bonuses = storage.caste_bonuses
 end
 
 function Entity.init()
     set_locals()
-    global.active_animal_farms = 0
-    global.active_machine_count = 0
+    storage.active_animal_farms = 0
+    storage.active_machine_count = 0
 end
 
 function Entity.load()
@@ -155,9 +155,9 @@ local function update_active_machine_status(entry)
     local is_active_now = (game.tick - entry[EK.last_time_active]) < active_time_threshold
 
     if not was_active_before and is_active_now then
-        global.active_machine_count = global.active_machine_count + 1
+        storage.active_machine_count = storage.active_machine_count + 1
     elseif was_active_before and not is_active_now then
-        global.active_machine_count = global.active_machine_count - 1
+        storage.active_machine_count = storage.active_machine_count - 1
     end
 
     entry[EK.active_machine_status] = is_active_now
@@ -165,7 +165,7 @@ end
 
 local function remove_active_machine_status(entry)
     if entry[EK.active_machine_status] then
-        global.active_machine_count = global.active_machine_count - 1
+        storage.active_machine_count = storage.active_machine_count - 1
     end
 end
 
@@ -225,9 +225,9 @@ local function update_animal_farm(entry)
     local housed_in_the_past = entry[EK.houses_animals]
 
     if houses_animals and not housed_in_the_past then
-        global.active_animal_farms = global.active_animal_farms + 1
+        storage.active_animal_farms = storage.active_animal_farms + 1
     elseif not houses_animals and housed_in_the_past then
-        global.active_animal_farms = global.active_animal_farms - 1
+        storage.active_animal_farms = storage.active_animal_farms - 1
     end
 
     entry[EK.houses_animals] = houses_animals
@@ -236,7 +236,7 @@ Register.set_entity_updater(Type.animal_farm, update_animal_farm)
 
 local function remove_animal_farm(entry)
     if entry[EK.houses_animals] then
-        global.active_animal_farms = global.active_animal_farms - 1
+        storage.active_animal_farms = storage.active_animal_farms - 1
     end
 end
 Register.set_entity_destruction_handler(Type.animal_farm, remove_animal_farm)
@@ -249,7 +249,7 @@ local function update_city_combinator(entry)
 
     for type, signal in pairs(caste_signals) do
         if Inhabitants.caste_is_researched(type) then
-            control_behavior.set_signal(type, {signal = signal, count = global.population[type]})
+            control_behavior.set_signal(type, {signal = signal, count = storage.population[type]})
         end
     end
 end
@@ -289,8 +289,8 @@ local function analyze_composter_inventory(content)
     end
 
     return item_count * item_type_count * composting_coefficient *
-        Biology.composting_climate_factors[global.current_climate] *
-        Biology.composting_humidity_factors[global.current_humidity], compostable_items
+        Biology.composting_climate_factors[storage.current_climate] *
+        Biology.composting_humidity_factors[storage.current_humidity], compostable_items
 end
 Entity.analyze_composter_inventory = analyze_composter_inventory
 
@@ -424,7 +424,7 @@ local function biomass_to_productivity(biomass)
     end
 end
 
--- put an alias in the global table so the gui can get this value
+-- put an alias in the Entity table so the gui can get this value
 Entity.biomass_to_productivity = biomass_to_productivity
 
 Entity.pruning_productivity = 20 --%
@@ -517,10 +517,10 @@ local function update_farm(entry, delta_ticks)
         end
 
         if building_details.open_environment then
-            if flora_details.preferred_humidity ~= global.current_humidity then
+            if flora_details.preferred_humidity ~= storage.current_humidity then
                 performance = performance * flora_details.wrong_humidity_coefficient
             end
-            if flora_details.preferred_climate ~= global.current_climate then
+            if flora_details.preferred_climate ~= storage.current_climate then
                 performance = performance * flora_details.wrong_climate_coefficient
             end
         end
@@ -730,7 +730,7 @@ Register.set_entity_destruction_handler(Type.nightclub, remove_nightclub)
 
 local function get_water_tiles(entry, building_details)
     local cached_value = entry[EK.water_tiles]
-    if not cached_value or global.last_tile_update > entry[EK.last_update] then
+    if not cached_value or storage.last_tile_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
         local position = entity.position
         local area = Utils.get_range_bounding_box(position, building_details.range)
@@ -778,7 +778,7 @@ Register.set_entity_creation_handler(Type.fishery, create_fishery)
 
 local function get_tree_count(entry, building_details)
     local cached_value = entry[EK.tree_count]
-    if not cached_value or global.last_entity_update > entry[EK.last_update] then
+    if not cached_value or storage.last_entity_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
         local position = entity.position
         local area = Utils.get_range_bounding_box(position, building_details.range)
@@ -1021,7 +1021,7 @@ local function update_upbringing_station(entry)
         return
     end
 
-    if not global.technologies["upbringing"] then
+    if not storage.technologies["upbringing"] then
         return
     end
 
