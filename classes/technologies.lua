@@ -128,7 +128,7 @@ function Technologies.update()
     -- check if the required item was acquired by crafting (shows in the production statistic)
     for technology_name, already_unlocked in pairs(unlocked) do
         if not already_unlocked then
-            production = production or game.forces.player.item_production_statistics
+            production = production or game.forces.player.get_item_production_statistics("nauvis")
             if production.get_input_count(unlocks[technology_name]) > 0 then
                 unlock(technology_name)
             end
