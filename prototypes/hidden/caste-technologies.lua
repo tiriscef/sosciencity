@@ -16,7 +16,8 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-research-blocker", 1}
+                {"automation-science-pack", 1}
+                --{"sosciencity-research-blocker", 1} TODO: Look into possibilities to circumvent the "there is no lab that will accept all of the science packs this technology requires" error
             }
         },
         enabled = false,
@@ -44,7 +45,8 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-research-blocker", 1}
+                {"automation-science-pack", 1}
+                --{"sosciencity-research-blocker", 1}
             }
         },
         enabled = false,
@@ -67,7 +69,8 @@ for i = 0, 20 do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-research-blocker", 1}
+                {"automation-science-pack", 1}
+                --{"sosciencity-research-blocker", 1}
             }
         },
         enabled = false,

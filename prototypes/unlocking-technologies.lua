@@ -24,7 +24,8 @@ for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
             count = 1,
             time = 1,
             ingredients = {
-                {"sosciencity-research-blocker", 1}
+                {"automation-science-pack", 1}
+                --{"sosciencity-research-blocker", 1} TODO: Look into possibilities to use ReseachTrigger instead
             }
         },
         upgrade = false,
