@@ -7,7 +7,7 @@ Tirislib.Item.create {
     icon_size = 64,
     stack_size = 50,
     durability = 1,
-    flags = {"hidden"},
+    hidden = true,
     is_hack = true
 }
 
