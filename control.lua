@@ -189,7 +189,7 @@ local function update_settings()
     storage.starting_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
 
     storage.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
-    storage.profanity = settings.storage["sosciencity-allow-profanity"].value
+    storage.profanity = settings.global["sosciencity-allow-profanity"].value
 
     Communication.settings_update()
 end
@@ -215,7 +215,7 @@ end
 
 local function init()
     storage = _ENV.storage
-    storage.version = game.active_mods["sosciencity"]
+    storage.version = script.active_mods["sosciencity"]
 
     storage.last_entity_update = -1
     storage.last_tile_update = -1
@@ -369,9 +369,9 @@ end
 
 local function on_configuration_change()
     -- Compare the stored version number with the loaded version to detect a mod update
-    if game.active_mods["sosciencity"] ~= storage.version then
+    if script.active_mods["sosciencity"] ~= storage.version then
         local old_version = storage.version
-        storage.version = game.active_mods["sosciencity"]
+        storage.version = script.active_mods["sosciencity"]
 
         Communication.say("tiriscef.", "migration1")
         Communication.say("tiriscef.", "migration2")
