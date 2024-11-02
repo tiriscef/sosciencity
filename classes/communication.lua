@@ -13,46 +13,46 @@ local Time = require("constants.time")
 Communication = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.(fluid/item)_(consumption/production): table
+    storage.(fluid/item)_(consumption/production): table
         [name]: amount consumed/produced
 
-    global.past_banter: array of recent lines said (up to 8)
+    storage.past_banter: array of recent lines said (up to 8)
 
-    global.past_banter_index: int
+    storage.past_banter_index: int
 
-    global.(tiriscef/profanity): bool (if they are enabled)
+    storage.(tiriscef/profanity): bool (if they are enabled)
 
-    global.logs: table
+    storage.logs: table
 
-    global.reports: table
+    storage.reports: table
         [name]: table
 
-    global.current_reports: table
+    storage.current_reports: table
         [name]: table
 
-    global.report_ticks: table
+    storage.report_ticks: table
         [name]: tick of creation
 
-    global.information_params: table
+    storage.information_params: table
         [InformationType]: table of params
 
-    global.information_ticks: table
+    storage.information_ticks: table
         [InformationType]: tick
 
-    global.warning_params: table
+    storage.warning_params: table
         [WarningType]: table of params
 
-    global.warning_ticks: table
+    storage.warning_ticks: table
         [WarningType]: tick
 
-    global.notifications: table
+    storage.notifications: table
         [unit_number]: table of subscribed players
 ]]
 -- local often used globals for smallish performance gains
 
-local global
+local storage
 
 local fluid_statistics
 local fluid_consumption
@@ -93,10 +93,10 @@ local sum = Table.sum
 
 local function generate_speakers_list()
     allowed_speakers = {}
-    if global.tiriscef then
+    if storage.tiriscef then
         allowed_speakers[#allowed_speakers + 1] = "tiriscef."
     end
-    if global.profanity then
+    if storage.profanity then
         allowed_speakers[#allowed_speakers + 1] = "profanity."
     end
 
@@ -107,39 +107,39 @@ local function generate_speakers_list()
 end
 
 local function set_locals()
-    fluid_consumption = global.fluid_consumption
-    fluid_production = global.fluid_production
-    item_consumption = global.item_consumption
-    item_production = global.item_production
+    fluid_consumption = storage.fluid_consumption
+    fluid_production = storage.fluid_production
+    item_consumption = storage.item_consumption
+    item_production = storage.item_production
 
-    --logs = global.logs
-    reports = global.reports
-    current_reports = global.current_reports
-    report_ticks = global.report_ticks
-    reported_event_counts = global.reported_event_counts
+    --logs = storage.logs
+    reports = storage.reports
+    current_reports = storage.current_reports
+    report_ticks = storage.report_ticks
+    reported_event_counts = storage.reported_event_counts
 
-    information_ticks = global.information_ticks
-    information_params = global.information_params
-    warning_ticks = global.warning_ticks
-    warning_params = global.warning_params
+    information_ticks = storage.information_ticks
+    information_params = storage.information_params
+    warning_ticks = storage.warning_ticks
+    warning_params = storage.warning_params
 
-    notifications = global.notifications
+    notifications = storage.notifications
 
     generate_speakers_list()
 end
 
 function Communication.init()
-    global = _ENV.global
+    storage = _ENV.storage
 
-    global.fluid_consumption = {}
-    global.fluid_production = {}
-    global.item_consumption = {}
-    global.item_production = {}
+    storage.fluid_consumption = {}
+    storage.fluid_production = {}
+    storage.item_consumption = {}
+    storage.item_production = {}
 
-    --[[global.logs = {
+    --[[storage.logs = {
         population = {}
     }]]
-    global.reports = {
+    storage.reports = {
         ["immigration"] = {},
         ["emigration"] = {},
         ["death"] = {},
@@ -148,43 +148,43 @@ function Communication.init()
         ["disease-recovery"] = {},
         ["disease-death"] = {}
     }
-    global.current_reports = {}
-    global.report_ticks = {
+    storage.current_reports = {}
+    storage.report_ticks = {
         census = game.tick,
         healthcare = game.tick
     }
-    global.reported_event_counts = {
+    storage.reported_event_counts = {
         census = 0,
         healthcare = 0
     }
 
-    global.past_banter = {}
-    global.past_banter_index = 1
+    storage.past_banter = {}
+    storage.past_banter_index = 1
 
-    global.information_ticks = {}
+    storage.information_ticks = {}
     for _, information_type in pairs(InformationType) do
-        global.information_ticks[information_type] = -Time.nauvis_month
+        storage.information_ticks[information_type] = -Time.nauvis_month
     end
-    global.information_params = {}
+    storage.information_params = {}
 
-    global.warning_ticks = {}
+    storage.warning_ticks = {}
     for _, warning_type in pairs(WarningType) do
-        global.warning_ticks[warning_type] = -Time.nauvis_month
+        storage.warning_ticks[warning_type] = -Time.nauvis_month
     end
-    global.warning_params = {}
+    storage.warning_params = {}
 
-    global.notifications = {}
+    storage.notifications = {}
 
     set_locals()
 end
 
 function Communication.load()
-    global = _ENV.global
+    storage = _ENV.storage
     set_locals()
 end
 
 function Communication.settings_update()
-    global = _ENV.global
+    storage = _ENV.storage
     generate_speakers_list()
 end
 
@@ -350,12 +350,12 @@ function Communication.useless_banter()
         speaker_name, speaker = pick_random_subtable_weighted_by_key(speakers, "b")
         line = random(speaker.b)
         line_index = line + speaker.index
-    until not Table.contains(global.past_banter, line_index)
+    until not Table.contains(storage.past_banter, line_index)
 
     -- log the chosen banter
-    local index = global.past_banter_index
-    global.past_banter[index] = line_index
-    global.past_banter_index = (index < 8) and (index + 1) or 1
+    local index = storage.past_banter_index
+    storage.past_banter[index] = line_index
+    storage.past_banter_index = (index < 8) and (index + 1) or 1
 
     say(speaker_name, "b" .. line)
 end

@@ -2,9 +2,9 @@
 Scheduler = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.schedule: table
+    storage.schedule: table
         [tick]: array of planned events
 ]]
 --[[
@@ -21,11 +21,11 @@ local schedule
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    schedule = global.schedule
+    schedule = storage.schedule
 end
 
 function Scheduler.init()
-    global.schedule = {}
+    storage.schedule = {}
     set_locals()
 end
 

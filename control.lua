@@ -126,15 +126,15 @@ require("classes.gui")
 ---@class RenderingType
 
 --[[
-    Data this script stores in global
+    Data this script stores in storage
     --------------------------------
-    global.last_entity_update: tick
-    global.last_tile_update: tick
+    storage.last_entity_update: tick
+    storage.last_tile_update: tick
 ]]
 ---------------------------------------------------------------------------------------------------
 -- local all the frequently called functions for miniscule performance gains
 
-local global
+local storage
 
 local add_fear = Inhabitants.add_fear
 local ease_fear = Inhabitants.ease_fear
@@ -179,23 +179,23 @@ local function update_cycle()
 
     update_communication(current_tick)
 
-    global.last_update = current_tick
+    storage.last_update = current_tick
 end
 
 local function update_settings()
-    global.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
+    storage.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
 
-    global.maintenance_enabled = settings.global["sosciencity-penalty-module"].value
-    global.starting_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
+    storage.maintenance_enabled = settings.global["sosciencity-penalty-module"].value
+    storage.starting_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
 
-    global.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
-    global.profanity = settings.global["sosciencity-allow-profanity"].value
+    storage.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
+    storage.profanity = settings.storage["sosciencity-allow-profanity"].value
 
     Communication.settings_update()
 end
 
 local function set_locals()
-    global = _ENV.global
+    storage = _ENV.storage
 end
 
 local function on_load()
@@ -214,11 +214,11 @@ local function on_load()
 end
 
 local function init()
-    global = _ENV.global
-    global.version = game.active_mods["sosciencity"]
+    storage = _ENV.storage
+    storage.version = game.active_mods["sosciencity"]
 
-    global.last_entity_update = -1
-    global.last_tile_update = -1
+    storage.last_entity_update = -1
+    storage.last_tile_update = -1
 
     Scheduler.init()
     Weather.init()
@@ -235,7 +235,7 @@ local function init()
 
     update_settings()
 
-    global.last_update = game.tick
+    storage.last_update = game.tick
 
     on_load()
 
@@ -245,7 +245,7 @@ local function init()
 end
 
 local function on_entity_built(event)
-    global.last_entity_update = game.tick
+    storage.last_entity_update = game.tick
 
     local entity = event.created_entity
 
@@ -258,7 +258,7 @@ local function on_entity_built(event)
 end
 
 local function on_clone_built(event)
-    global.last_entity_update = game.tick
+    storage.last_entity_update = game.tick
 
     local destination = event.destination
 
@@ -283,7 +283,7 @@ local function on_clone_built(event)
 end
 
 local function on_script_built(event)
-    global.last_entity_update = game.tick
+    storage.last_entity_update = game.tick
 
     local entity = event.entity
 
@@ -297,7 +297,7 @@ local function on_script_built(event)
 end
 
 local function on_entity_removed(event)
-    global.last_entity_update = game.tick
+    storage.last_entity_update = game.tick
 
     local entity = event.entity -- all removement events use 'entity' as key
     if not entity.valid then
@@ -308,7 +308,7 @@ local function on_entity_removed(event)
 end
 
 local function on_entity_died(event)
-    global.last_entity_update = game.tick
+    storage.last_entity_update = game.tick
 
     local entity = event.entity
 
@@ -330,7 +330,7 @@ local function on_entity_died(event)
 end
 
 local function on_entity_mined(event)
-    global.last_entity_update = game.tick
+    storage.last_entity_update = game.tick
 
     local entity = event.entity
     if not entity.valid then
@@ -369,9 +369,9 @@ end
 
 local function on_configuration_change()
     -- Compare the stored version number with the loaded version to detect a mod update
-    if game.active_mods["sosciencity"] ~= global.version then
-        local old_version = global.version
-        global.version = game.active_mods["sosciencity"]
+    if game.active_mods["sosciencity"] ~= storage.version then
+        local old_version = storage.version
+        storage.version = game.active_mods["sosciencity"]
 
         Communication.say("tiriscef.", "migration1")
         Communication.say("tiriscef.", "migration2")
@@ -398,7 +398,7 @@ local function on_configuration_change()
         Gui.reset_guis()
 
         -- Rebuild entries
-        local old_register = Tirislib.Tables.copy(global.register)
+        local old_register = Tirislib.Tables.copy(storage.register)
 
         for _, entry in pairs(old_register) do
             Register.remove_entry(entry, DeconstructionCause.mod_update)
@@ -411,7 +411,7 @@ local function on_configuration_change()
 
         -- don't know why, but the migration script doesn't activate for some saves
         -- TODO: remove this after some updates maybe
-        global.active_machine_count = global.active_machine_count or 0
+        storage.active_machine_count = storage.active_machine_count or 0
     end
 end
 
@@ -443,7 +443,7 @@ end
 local function on_tile_update()
     -- just notes the tick of the last tile-change
     -- this allows me to expensively update tile information only when it's necessary
-    global.last_tile_update = game.tick
+    storage.last_tile_update = game.tick
 end
 
 local train_types =

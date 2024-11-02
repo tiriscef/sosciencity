@@ -794,7 +794,7 @@ local function update_general_building_details(container, entry, player_id)
     end
 
     if type_details.affected_by_clockwork then
-        local clockwork_value = global.caste_bonuses[Type.clockwork]
+        local clockwork_value = storage.caste_bonuses[Type.clockwork]
         Datalist.set_kv_pair_value(
             building_data,
             "maintenance",
@@ -1056,7 +1056,7 @@ local function update_farm(container, entry, player_id)
     Datalist.set_kv_pair_value(
         building_data,
         "orchid-bonus",
-        {"sosciencity.percentage-bonus", global.caste_bonuses[Type.orchid], {"sosciencity.productivity"}}
+        {"sosciencity.percentage-bonus", storage.caste_bonuses[Type.orchid], {"sosciencity.productivity"}}
     )
 
     local flora_details = Biology.flora[entry[EK.species]]
@@ -1078,14 +1078,14 @@ local function update_farm(container, entry, player_id)
             Datalist.set_kv_pair_value(
                 building_data,
                 "climate",
-                flora_details.preferred_climate == global.current_climate and
+                flora_details.preferred_climate == storage.current_climate and
                     {
                         "sosciencity.right-climate",
                         climate_locales[flora_details.preferred_climate]
                     } or
                     {
                         "sosciencity.wrong-climate",
-                        climate_locales[global.current_climate],
+                        climate_locales[storage.current_climate],
                         climate_locales[flora_details.preferred_climate],
                         {
                             "sosciencity.percentage-malus",
@@ -1097,14 +1097,14 @@ local function update_farm(container, entry, player_id)
             Datalist.set_kv_pair_value(
                 building_data,
                 "humidity",
-                flora_details.preferred_humidity == global.current_humidity and
+                flora_details.preferred_humidity == storage.current_humidity and
                     {
                         "sosciencity.right-humidity",
                         humidity_locales[flora_details.preferred_humidity]
                     } or
                     {
                         "sosciencity.wrong-humidity",
-                        humidity_locales[global.current_humidity],
+                        humidity_locales[storage.current_humidity],
                         humidity_locales[flora_details.preferred_humidity],
                         {
                             "sosciencity.percentage-malus",
@@ -1359,7 +1359,7 @@ local function update_immigration_port_details(container, entry, player_id)
     Datalist.set_kv_pair_value(building_data, "next-wave", display_time(ticks_to_next_wave))
 
     local immigrants_list = general.immigration
-    for caste, immigrants in pairs(global.immigration) do
+    for caste, immigrants in pairs(storage.immigration) do
         local key = tostring(caste)
         Datalist.set_kv_pair_value(
             immigrants_list,
@@ -1400,7 +1400,7 @@ local function create_immigration_port_details(container, entry, player_id)
     Gui.Elements.Label.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
     local immigrants_list = Datalist.create(general, "immigration")
 
-    for caste in pairs(global.immigration) do
+    for caste in pairs(storage.immigration) do
         Datalist.add_kv_pair(immigrants_list, tostring(caste), type_definitions[caste].localised_name)
     end
 
@@ -1560,7 +1560,7 @@ local function create_hospital_details(container, entry, player_id)
     end
 
     Datalist.add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
-    Datalist.set_kv_pair_visibility(building_data, "blood_donations", global.technologies["transfusion-medicine"])
+    Datalist.set_kv_pair_visibility(building_data, "blood_donations", storage.technologies["transfusion-medicine"])
 
     local textfield =
         Datalist.add_kv_textfield(
@@ -1572,8 +1572,8 @@ local function create_hospital_details(container, entry, player_id)
     )
     textfield.text = tostring(entry[EK.blood_donation_threshold])
     textfield.tooltip = {"sosciencity.blood-donation-threshold"}
-    building_data["key-blood-donation-threshold"].visible = global.technologies["transfusion-medicine"]
-    textfield.visible = global.technologies["transfusion-medicine"]
+    building_data["key-blood-donation-threshold"].visible = storage.technologies["transfusion-medicine"]
+    textfield.visible = storage.technologies["transfusion-medicine"]
 
     Gui.Elements.Label.header_label(general, "header-patients", {"sosciencity.patients"})
     Datalist.create(general, "patients")
@@ -2310,7 +2310,7 @@ end
 function Gui.DetailsView.update()
     local current_tick = game.tick
 
-    for player_id, unit_number in pairs(global.details_view) do
+    for player_id, unit_number in pairs(storage.details_view) do
         local entry = Register.try_get(unit_number)
         local player = game.get_player(player_id)
 
@@ -2350,7 +2350,7 @@ function Gui.DetailsView.open(player, unit_number)
     nested.clear()
     creater(nested, entry, player_id)
     details_view.visible = true
-    global.details_view[player_id] = unit_number
+    storage.details_view[player_id] = unit_number
 end
 
 --- Closes the details view for the given player.
@@ -2358,7 +2358,7 @@ end
 function Gui.DetailsView.close(player)
     local details_view = get_details_view(player)
     details_view.visible = false
-    global.details_view[player.index] = nil
+    storage.details_view[player.index] = nil
     details_view.caption = nil
     details_view.nested.clear()
 end
@@ -2368,7 +2368,7 @@ end
 function Gui.DetailsView.rebuild_for_entry(entry)
     local unit_number = entry[EK.unit_number]
 
-    for player_index, viewed_unit_number in pairs(global.details_view) do
+    for player_index, viewed_unit_number in pairs(storage.details_view) do
         if unit_number == viewed_unit_number then
             local player = game.get_player(player_index)
             Gui.DetailsView.close(player)

@@ -28,20 +28,20 @@ local CITY_INFO_NAME = "sosciencity-city-info"
 local function update_population_flow(container)
     local datalist = container.general.flow.datalist
 
-    datalist.population.caption = Table.array_sum(global.population)
+    datalist.population.caption = Table.array_sum(storage.population)
 
     local machine_count = Register.get_machine_count()
     local machine_count_label = datalist.machine_count
     machine_count_label.caption = machine_count
     machine_count_label.tooltip = {
         "sosciencity.tooltip-machines",
-        global.active_machine_count
+        storage.active_machine_count
     }
 
     datalist.turret_count.caption = Register.get_type_count(Type.turret)
 
-    local climate = global.current_climate
-    local humidity = global.current_humidity
+    local climate = storage.current_climate
+    local humidity = storage.current_humidity
     datalist.weather.caption = weather_locales[humidity][climate]
     datalist.weather.tooltip = {
         "sosciencity.explain-weather",
@@ -123,19 +123,19 @@ end
 
 local tooltip_fns = {
     [Type.clockwork] = function()
-        local housing = global.housing_capacity[Type.clockwork]
+        local housing = storage.housing_capacity[Type.clockwork]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.clockwork], 0.1)
-        local maintenance_cost = global.active_machine_count
+        local points = round_to_step(storage.caste_points[Type.clockwork], 0.1)
+        local maintenance_cost = storage.active_machine_count
 
         local points_locale = points
-        if global.maintenance_enabled and maintenance_cost > 0 then
-            local remaining_points = points - max(0, maintenance_cost - global.starting_clockwork_points)
+        if storage.maintenance_enabled and maintenance_cost > 0 then
+            local remaining_points = points - max(0, maintenance_cost - storage.starting_clockwork_points)
             points_locale = {
                 "sosciencity.tooltip-maintenance-calc",
                 remaining_points,
                 points,
-                global.starting_clockwork_points,
+                storage.starting_clockwork_points,
                 maintenance_cost
             }
             points = remaining_points
@@ -145,7 +145,7 @@ local tooltip_fns = {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.clockwork],
+                storage.population[Type.clockwork],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points_locale
@@ -157,43 +157,43 @@ local tooltip_fns = {
                 "sosciencity.tooltip-clockwork-bonus",
                 maintenance_cost,
                 round_to_step(points / max(1, maintenance_cost), 0.1),
-                global.caste_bonuses[Type.clockwork]
+                storage.caste_bonuses[Type.clockwork]
             }
         else
-            ret[#ret + 1] = {"sosciencity.tooltip-insufficient-maintenance", global.caste_bonuses[Type.clockwork]}
+            ret[#ret + 1] = {"sosciencity.tooltip-insufficient-maintenance", storage.caste_bonuses[Type.clockwork]}
         end
 
         return ret
     end,
     [Type.orchid] = function()
-        local housing = global.housing_capacity[Type.orchid]
+        local housing = storage.housing_capacity[Type.orchid]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.orchid], 0.1)
+        local points = round_to_step(storage.caste_points[Type.orchid], 0.1)
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.orchid],
+                storage.population[Type.orchid],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
             },
             {
                 "sosciencity.tooltip-orchid-bonus",
-                global.caste_bonuses[Type.orchid]
+                storage.caste_bonuses[Type.orchid]
             }
         }
     end,
     [Type.gunfire] = function()
-        local housing = global.housing_capacity[Type.gunfire]
+        local housing = storage.housing_capacity[Type.gunfire]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.gunfire], 0.1)
+        local points = round_to_step(storage.caste_points[Type.gunfire], 0.1)
         local turrets = Register.get_type_count(Type.turret)
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.gunfire],
+                storage.population[Type.gunfire],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
@@ -202,20 +202,20 @@ local tooltip_fns = {
                 "sosciencity.tooltip-gunfire-bonus",
                 turrets,
                 round_to_step(points / max(1, turrets), 0.1),
-                global.caste_bonuses[Type.gunfire]
+                storage.caste_bonuses[Type.gunfire]
             }
         }
     end,
     [Type.ember] = function()
-        local housing = global.housing_capacity[Type.ember]
+        local housing = storage.housing_capacity[Type.ember]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.ember], 0.1)
-        local non_ember_pop = Table.array_sum(global.population) - global.population[Type.ember]
+        local points = round_to_step(storage.caste_points[Type.ember], 0.1)
+        local non_ember_pop = Table.array_sum(storage.population) - storage.population[Type.ember]
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.ember],
+                storage.population[Type.ember],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
@@ -224,77 +224,77 @@ local tooltip_fns = {
                 "sosciencity.tooltip-ember-bonus",
                 non_ember_pop,
                 round_to_step(points / max(1, non_ember_pop), 0.01),
-                global.caste_bonuses[Type.ember]
+                storage.caste_bonuses[Type.ember]
             }
         }
     end,
     [Type.foundry] = function()
-        local housing = global.housing_capacity[Type.foundry]
+        local housing = storage.housing_capacity[Type.foundry]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.foundry], 0.1)
+        local points = round_to_step(storage.caste_points[Type.foundry], 0.1)
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.foundry],
+                storage.population[Type.foundry],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
             },
             {
                 "sosciencity.tooltip-foundry-bonus",
-                global.caste_bonuses[Type.foundry]
+                storage.caste_bonuses[Type.foundry]
             }
         }
     end,
     [Type.gleam] = function()
-        local housing = global.housing_capacity[Type.gleam]
+        local housing = storage.housing_capacity[Type.gleam]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.gleam], 0.1)
+        local points = round_to_step(storage.caste_points[Type.gleam], 0.1)
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.gleam],
+                storage.population[Type.gleam],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
             },
             {
                 "sosciencity.tooltip-gleam-bonus",
-                global.caste_bonuses[Type.gleam]
+                storage.caste_bonuses[Type.gleam]
             }
         }
     end,
     [Type.aurora] = function()
-        local housing = global.housing_capacity[Type.aurora]
+        local housing = storage.housing_capacity[Type.aurora]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.aurora], 0.1)
+        local points = round_to_step(storage.caste_points[Type.aurora], 0.1)
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.aurora],
+                storage.population[Type.aurora],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
             },
             {
                 "sosciencity.tooltip-aurora-bonus",
-                global.caste_bonuses[Type.aurora]
+                storage.caste_bonuses[Type.aurora]
             }
         }
     end,
     [Type.plasma] = function()
-        local housing = global.housing_capacity[Type.plasma]
+        local housing = storage.housing_capacity[Type.plasma]
         local housing_improvised = housing[true]
-        local points = round_to_step(global.caste_points[Type.plasma], 0.1)
-        local non_plasma_pop = Table.array_sum(global.population) - global.population[Type.plasma]
+        local points = round_to_step(storage.caste_points[Type.plasma], 0.1)
+        local non_plasma_pop = Table.array_sum(storage.population) - storage.population[Type.plasma]
         return {
             "",
             {
                 "sosciencity.tooltip-caste-general",
-                global.population[Type.plasma],
+                storage.population[Type.plasma],
                 housing[false] + housing_improvised,
                 housing_improvised,
                 points
@@ -303,7 +303,7 @@ local tooltip_fns = {
                 "sosciencity.tooltip-plasma-bonus",
                 non_plasma_pop,
                 round_to_step(points / max(1, non_plasma_pop), 0.01),
-                global.caste_bonuses[Type.plasma]
+                storage.caste_bonuses[Type.plasma]
             }
         }
     end
@@ -320,9 +320,9 @@ local function update_caste_flow(container, caste_id, caste_tooltips)
         local flow = caste_frame.flow
 
         local population_label = flow["caste-population"]
-        population_label.caption = global.population[caste_id]
+        population_label.caption = storage.population[caste_id]
 
-        local bonus_value = global.caste_bonuses[caste_id]
+        local bonus_value = storage.caste_bonuses[caste_id]
         local caste_bonus_label = flow["caste-bonus"]
         caste_bonus_label.caption = {
             "caste-bonus.show-" .. castes[caste_id].name,

@@ -8,15 +8,15 @@ local Unlocks = require("constants.unlocks")
 Technologies = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.technologies: table
+    storage.technologies: table
         [tech_name]: bool (researched) or int (level)
 
-    global.unlocked: table
+    storage.unlocked: table
         [tech_name]: bool (is it unlocked)
 
-    global.gated_technologies: table
+    storage.gated_technologies: table
         [tech_name]: bool (is it enabled)
 ]]
 -- local often used globals for humongous performance gains
@@ -94,11 +94,11 @@ end
 --- Event handler function for finished technologies.
 function Technologies.finished(name)
     if tracked_techs[name] then
-        global.technologies[name] = true
+        storage.technologies[name] = true
     end
 
     if tracked_multi_level_techs[name] then
-        global.technologies[name] = determine_tech_level(name)
+        storage.technologies[name] = determine_tech_level(name)
     end
 end
 
@@ -118,7 +118,7 @@ end
 
 local condition_fns = {
     [Condition.caste_points] = function(details)
-        return global.caste_points[details.caste] >= details.count
+        return storage.caste_points[details.caste] >= details.count
     end
 }
 
@@ -177,37 +177,36 @@ end
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    unlocked = global.unlocked
-    gated_technologies = global.gated_technologies
+    unlocked = storage.unlocked
+    gated_technologies = storage.gated_technologies
 end
 
---- Initialize the technology related contents of global.
 function Technologies.init()
     local techs = game.forces.player.technologies
 
     -- tracked technologies
-    global.technologies = {}
+    storage.technologies = {}
 
     for name in pairs(tracked_techs) do
-        global.technologies[name] = techs[name].researched
+        storage.technologies[name] = techs[name].researched
     end
 
     for name in pairs(tracked_multi_level_techs) do
-        global.technologies[name] = determine_tech_level(name)
+        storage.technologies[name] = determine_tech_level(name)
     end
 
     -- unlockables
-    global.unlocked = {}
+    storage.unlocked = {}
 
     for tech_name in pairs(unlocks) do
-        global.unlocked[tech_name] = techs[tech_name].researched
+        storage.unlocked[tech_name] = techs[tech_name].researched
     end
 
     -- gated technologies
-    global.gated_technologies = {}
+    storage.gated_technologies = {}
 
     for tech_name in pairs(Unlocks.gated_technologies) do
-        global.gated_technologies[tech_name] = techs[tech_name].enabled
+        storage.gated_technologies[tech_name] = techs[tech_name].enabled
     end
 
     set_locals()

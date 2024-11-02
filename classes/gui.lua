@@ -2,27 +2,27 @@
 Gui = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.details_view: table
+    storage.details_view: table
         [player_id]: unit_number (of the entity whose details are watched by the player)
 ]]
 -- local often used globals for microscopic performance gains
 
-local global
+local storage
 local Register = Register
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    global = _ENV.global
+    storage = _ENV.storage
 end
 
 --- Initialize the guis for all existing players.
 function Gui.init()
     set_locals()
-    global.details_view = {}
+    storage.details_view = {}
 
     for _, player in pairs(game.players) do
         Gui.create_guis(player)
@@ -52,7 +52,7 @@ local function look_for_event_handler(event, lookup)
 
     if handler then
         local player_id = event.player_index
-        local entry = Register.try_get(global.details_view[player_id])
+        local entry = Register.try_get(storage.details_view[player_id])
 
         handler[1](entry, gui_element, player_id, unpack(handler[2]))
         return true

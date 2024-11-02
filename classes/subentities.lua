@@ -6,7 +6,7 @@ local SubentityType = require("enums.subentity-type")
 Subentities = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
     nothing
 ]]

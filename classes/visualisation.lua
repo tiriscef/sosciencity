@@ -8,9 +8,9 @@ local Housing = require("constants.housing")
 Visualisation = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.mouseover_highlights: table
+    storage.mouseover_highlights: table
         [player_index]: table of render_ids
 ]]
 -- local often used globals for ridiculous performance gains
@@ -29,11 +29,11 @@ local highlights
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    highlights = global.mouseover_highlights
+    highlights = storage.mouseover_highlights
 end
 
 function Visualisation.init()
-    global.mouseover_highlights = {}
+    storage.mouseover_highlights = {}
 
     set_locals()
 end

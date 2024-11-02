@@ -345,7 +345,7 @@ end
 Gui.Elements.SortableList = {}
 
 -- We're stuffing the data and category definitions inside the 'linked' table during startup.
--- Otherwise I don't know a way to implement this without stuffing all this in global,
+-- Otherwise I don't know a way to implement this without stuffing all this in storage,
 -- which I don't want because the data could get outdated and which I can't without dirty
 -- workarounds as the category definitions contain functions.
 

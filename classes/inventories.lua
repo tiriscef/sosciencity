@@ -20,7 +20,7 @@ local ItemConstants = require("constants.item-constants")
 Inventories = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
     nothing
 ]]
@@ -59,7 +59,6 @@ local function set_locals()
     is_active = Entity.is_active
 end
 
---- Initialize the register related contents of global.
 function Inventories.init()
     set_locals()
 end

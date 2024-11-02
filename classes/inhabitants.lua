@@ -28,19 +28,19 @@ local TypeGroup = require("constants.type-groups")
 Inhabitants = {}
 
 --[[
-    Data this class stores in global
+    Data this class stores in storage
     --------------------------------
-    global.population: table
+    storage.population: table
         [caste_id]: int (inhabitants count)
 
-    global.housing_capacity: table
+    storage.housing_capacity: table
         [caste_id]: table
             [bool (improvised)]: integer (capacity of all houses)
 
-    global.caste_points: table
+    storage.caste_points: table
         [caste_id]: float (total caste bonus points)
 
-    global.caste_bonuses: table
+    storage.caste_bonuses: table
         [Type.clockwork]: integer (machine speed bonus in %)
         [Type.orchid]: integer (farm productivity bonus in %)
         [Type.gunfire]: integer (turret damage bonus in %)
@@ -50,32 +50,32 @@ Inhabitants = {}
         [Type.gleam]: integer (laboratory productivity bonus in %)
         [Type.aurora]: integer (rocket silo productivity bonus in %)
 
-    global.immigration: table
+    storage.immigration: table
         [caste_id]: float (number of immigrants in the next wave)
 
-    global.free_houses: table
+    storage.free_houses: table
         [bool (improvised)]: table
             [caste_id]: table
                 [unit_number]: truthy (lookup)
 
-    global.next_houses: table
+    storage.next_houses: table
         [bool (improvised)]: table
             [caste_id]: shuffled array of unit_numbers
 
-    global.fear: float (fear level)
+    storage.fear: float (fear level)
 
-    global.last_fear_event: tick
+    storage.last_fear_event: tick
 
-    global.homeless: table
+    storage.homeless: table
         [caste_id]: InhabitantGroup
 
-    global.last_social_change: tick
+    storage.last_social_change: tick
 
-    global.starting_clockwork_points: number
+    storage.starting_clockwork_points: number
 ]]
 -- local often used globals for enormous performance gains
 
-local global
+local storage
 local population
 local caste_points
 local caste_bonuses
@@ -140,15 +140,15 @@ local Luaq_from = Tirislib.Luaq.from
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    global = _ENV.global
-    population = global.population
-    caste_points = global.caste_points
-    caste_bonuses = global.caste_bonuses
-    immigration = global.immigration
-    homeless = global.homeless
-    free_houses = global.free_houses
-    next_free_houses = global.next_free_houses
-    technologies = global.technologies
+    storage = _ENV.storage
+    population = storage.population
+    caste_points = storage.caste_points
+    caste_bonuses = storage.caste_bonuses
+    immigration = storage.immigration
+    homeless = storage.homeless
+    free_houses = storage.free_houses
+    next_free_houses = storage.next_free_houses
+    technologies = storage.technologies
 end
 
 local function new_caste_table()
@@ -164,34 +164,34 @@ local function new_caste_table()
     }
 end
 
---- Initialize the inhabitants related contents of global.
+--- Initialize the inhabitants related contents of storage.
 function Inhabitants.init()
-    global = _ENV.global
+    storage = _ENV.storage
 
-    global.fear = 0
-    global.population = new_caste_table()
-    global.housing_capacity = {}
-    global.caste_points = new_caste_table()
-    global.caste_bonuses = new_caste_table()
-    global.immigration = new_caste_table()
-    global.free_houses = {
+    storage.fear = 0
+    storage.population = new_caste_table()
+    storage.housing_capacity = {}
+    storage.caste_points = new_caste_table()
+    storage.caste_bonuses = new_caste_table()
+    storage.immigration = new_caste_table()
+    storage.free_houses = {
         [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
         [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
     }
-    global.next_free_houses = {
+    storage.next_free_houses = {
         [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
         [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
     }
-    global.homeless = {}
+    storage.homeless = {}
 
     set_locals()
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
-        global.housing_capacity[caste_id] = {[true] = 0, [false] = 0}
+        storage.housing_capacity[caste_id] = {[true] = 0, [false] = 0}
         homeless[caste_id] = InhabitantGroup.new(caste_id)
     end
 
-    global.last_social_change = game.tick
+    storage.last_social_change = game.tick
 end
 
 --- Sets local references during on_load
@@ -745,17 +745,17 @@ end
 
 --- Gets the current Clockwork caste bonus.
 local function get_clockwork_bonus()
-    local maintenance_cost = global.active_machine_count
+    local maintenance_cost = storage.active_machine_count
     local points = caste_points[Type.clockwork]
 
-    if global.maintenance_enabled then
-        local maintenance_points = points + global.starting_clockwork_points
+    if storage.maintenance_enabled then
+        local maintenance_points = points + storage.starting_clockwork_points
 
         if maintenance_cost > maintenance_points then
             return floor(map_range(maintenance_cost, maintenance_points, max(1, 2 * maintenance_points), 0, -60))
         end
 
-        points = points - max(0, maintenance_cost - global.starting_clockwork_points)
+        points = points - max(0, maintenance_cost - storage.starting_clockwork_points)
     end
 
     return floor(5 * (max(0, points) / max(1, maintenance_cost)) ^ 0.8)
@@ -1321,7 +1321,7 @@ end
 
 --- Needs to be called when there is a change of any type that affects the social environment.
 function Inhabitants.social_environment_change()
-    global.last_social_change = game.tick
+    storage.last_social_change = game.tick
 end
 
 --- the time a ga reproduction cycle lasts
@@ -1435,7 +1435,7 @@ local function evaluate_social_environment(entry, sanity_summands, delta_ticks)
         entry[EK.ga_conceptions] = 0
     end
 
-    if entry[EK.last_update] < global.last_social_change then
+    if entry[EK.last_update] < storage.last_social_change then
         build_social_environment(entry)
     end
 
@@ -1536,7 +1536,7 @@ function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
 end
 
 function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks * (global.active_animal_farms ^ 0.5) / 5000000
+    return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) / 5000000
 end
 
 Inhabitants.disease_progress_updaters = {
@@ -1783,7 +1783,7 @@ local function evaluate_sosciety(happiness_summands, health_summands, sanity_sum
     happiness_summands[HappinessSummand.ember] = caste_bonuses[Type.ember]
     health_summands[HealthSummand.plasma] = caste_bonuses[Type.plasma]
 
-    local fear_malus = global.fear * caste.fear_resilience
+    local fear_malus = storage.fear * caste.fear_resilience
     happiness_summands[HappinessSummand.fear] = fear_malus
     if fear_malus > 5 then
         health_summands[HealthSummand.fear] = fear_malus / 2
@@ -1887,7 +1887,7 @@ local function update_housing_census(entry)
     end
 
     -- caste bonus points
-    local efficiency = 1 + 0.1 * global.technologies[castes[caste_id].efficiency_tech]
+    local efficiency = 1 + 0.1 * storage.technologies[castes[caste_id].efficiency_tech]
     local manpower = get_employable_count(entry) -- the number of healthy inhabitants that are not busy working at a manufactory
     for disease, count in pairs(entry[EK.diseases]) do
         if disease ~= HEALTHY then
@@ -1991,17 +1991,17 @@ end
 --- A fear level of 10 will decrease to 0 after 12.5 minutes.
 function Inhabitants.ease_fear(current_tick)
     local coefficient = 1e-7
-    local time_since_last_event = current_tick - (global.last_fear_event or 0)
+    local time_since_last_event = current_tick - (storage.last_fear_event or 0)
 
     if time_since_last_event > 7200 then -- 2 minutes
-        global.fear = max(0, global.fear - time_since_last_event * coefficient)
+        storage.fear = max(0, storage.fear - time_since_last_event * coefficient)
     end
 end
 
 --- Adds fear after a civil building got destroyed.
 function Inhabitants.add_fear()
-    global.last_fear_event = game.tick
-    global.fear = global.fear + 0.25
+    storage.last_fear_event = game.tick
+    storage.fear = storage.fear + 0.25
 end
 
 --- Adds fear after an inhabited house was destroyed.
@@ -2009,7 +2009,7 @@ function Inhabitants.add_casualty_fear(destroyed_house)
     Inhabitants.add_fear()
 
     local casualties = destroyed_house[EK.inhabitants]
-    global.fear = global.fear + 0.05 * casualties
+    storage.fear = storage.fear + 0.05 * casualties
     Communication.report_death(destroyed_house[EK.inhabitants], DeathCause.killed)
 end
 
@@ -2095,8 +2095,8 @@ function Inhabitants.create_house(entry)
     build_social_environment(entry)
 
     local housing_details = get_housing_details(entry)
-    global.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
-        global.housing_capacity[entry[EK.type]][housing_details.is_improvised] + get_capacity(entry)
+    storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
+        storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] + get_capacity(entry)
 end
 
 function Inhabitants.copy_house(source, destination)
@@ -2127,8 +2127,8 @@ function Inhabitants.remove_house(entry, cause)
     Inhabitants.social_environment_change()
 
     local housing_details = get_housing_details(entry)
-    global.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
-        global.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
+    storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
+        storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
 end
 
 -- Set event handlers for the housing entities.
