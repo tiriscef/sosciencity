@@ -11,7 +11,7 @@ local function create_food_locales()
     Food.already_created_locales = true
 
     for name, values in pairs(Food.values) do
-        local prototype = game.item_prototypes[name]
+        local prototype = prototypes.item[name]
         if prototype then
             values.localised_name = prototype.localised_name
             values.localised_description = prototype.localised_description
@@ -242,10 +242,10 @@ Gui.Elements.SortableList.linked["compostables"] = {
             name = "name",
             localised_name = {"city-view.item"},
             content = function(entry)
-                return {"", string.format("[item=%s] ", entry.name), game.item_prototypes[entry.name].localised_name}
+                return {"", string.format("[item=%s] ", entry.name), prototypes.item[entry.name].localised_name}
             end,
             tooltip = function(entry)
-                return game.item_prototypes[entry.name].localised_description
+                return prototypes.item[entry.name].localised_description
             end,
             order = function(entry)
                 return entry.name

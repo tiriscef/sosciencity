@@ -951,7 +951,7 @@ local function create_composting_catalogue(container)
     )
     composting_list["key-head"].style.width = 220
 
-    local item_prototypes = game.item_prototypes
+    local item_prototypes = prototypes.item
 
     for item, value in pairs(ItemConstants.compost_values) do
         local item_representation = {"", format("[item=%s]  ", item), item_prototypes[item].localised_name}
@@ -1919,7 +1919,7 @@ local function create_water_catalogue(container)
     )
     data_list["key-head"].style.width = 220
 
-    local fluid_prototypes = game.fluid_prototypes
+    local fluid_prototypes = prototypes.fluid
 
     for water, effect in pairs(DrinkingWater.values) do
         local water_representation = {"", format("[fluid=%s]  ", water), fluid_prototypes[water].localised_name}
