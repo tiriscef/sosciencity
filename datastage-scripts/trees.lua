@@ -4,6 +4,7 @@ end
 
 for _, tree in Tirislib.Entity.iterate("tree") do
     tree:add_mining_result {
+        type = "item",
         name = "wild-fungi",
         probability = 0.2,
         amount_min = 1,
