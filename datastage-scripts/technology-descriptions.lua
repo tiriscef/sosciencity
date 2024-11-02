@@ -5,7 +5,7 @@ local Unlocks = require("constants.unlocks")
 
 local condition_fns = {
     [Condition.caste_points] = function(condition)
-        return {"sosciencity-util.having-points", condition.count, Castes.values[condition.caste].localised_name_short}
+        return {"sosciencity-util.having-points", tostring(condition.count), Castes.values[condition.caste].localised_name_short}
     end
 }
 

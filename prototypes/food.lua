@@ -85,16 +85,16 @@ for _, food in pairs(foods) do
         {"food-group." .. food_details.group},
         Food.taste_names[food_details.taste_category],
         {"color-scale." .. taste, {"taste-scale." .. taste}},
-        {"description.sos-details", food_details.taste_quality},
+        {"description.sos-details", tostring(food_details.taste_quality)},
         {"color-scale." .. health, {"health-scale." .. health}},
-        {"description.sos-details", food_details.healthiness},
+        {"description.sos-details", tostring(food_details.healthiness)},
         {"color-scale." .. luxury, {"luxury-scale." .. luxury}},
-        {"description.sos-details", food_details.luxury},
-        food_details.fat,
+        {"description.sos-details", tostring(food_details.luxury)},
+        tostring(food_details.fat),
         {"description.sos-details", percentage(food_details.fat, calories)},
-        food_details.carbohydrates,
+        tostring(food_details.carbohydrates),
         {"description.sos-details", percentage(food_details.carbohydrates, calories)},
-        food_details.proteins,
+        tostring(food_details.proteins),
         {"description.sos-details", percentage(food_details.proteins, calories)}
     }
 end
