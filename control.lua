@@ -247,7 +247,7 @@ end
 local function on_entity_built(event)
     storage.last_entity_update = game.tick
 
-    local entity = event.created_entity
+    local entity = event.entity
 
     if not entity or not entity.valid then
         return
@@ -280,20 +280,6 @@ local function on_clone_built(event)
 
     -- otherwise register the destination entity on it's own
     add_to_register(destination, entity_type)
-end
-
-local function on_script_built(event)
-    storage.last_entity_update = game.tick
-
-    local entity = event.entity
-
-    if not entity or not entity.valid then
-        return
-    end
-
-    local entity_type = get_entity_type(entity)
-
-    add_to_register(entity, entity_type)
 end
 
 local function on_entity_removed(event)
@@ -515,9 +501,9 @@ script.on_nth_tick(10, update_cycle)
 local filter = {{filter = "ghost", invert = true}}
 script.on_event(defines.events.on_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
+script.on_event(defines.events.script_raised_built, on_entity_built, filter)
+script.on_event(defines.events.script_raised_revive, on_entity_built, filter)
 script.on_event(defines.events.on_entity_cloned, on_clone_built, filter)
-script.on_event(defines.events.script_raised_built, on_script_built, filter)
-script.on_event(defines.events.script_raised_revive, on_script_built, filter)
 
 -- removement
 script.on_event(defines.events.on_player_mined_entity, on_entity_mined, filter)
