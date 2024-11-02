@@ -35,7 +35,7 @@ end
 
 local function get_housing_level(house)
     for i = 1, 7 do
-        local tech = game.technology_prototypes["architecture-" .. i]
+        local tech = prototypes.technology["architecture-" .. i]
 
         for _, effect in pairs(tech.effects) do
             if effect.recipe == house then
@@ -50,7 +50,7 @@ end
 local function write_files()
     -- find and write the animal-calorific-equivalents
     animal_calorie_values =
-        Tirislib.Luaq.from(game.recipe_prototypes):where(
+        Tirislib.Luaq.from(prototypes.recipe):where(
         function(_, recipe)
             return recipe.category == "sosciencity-slaughter"
         end
@@ -63,7 +63,7 @@ local function write_files()
         end
     ):to_table()
 
-    game.write_file(
+    helpers.write_file(
         "animal-values.csv",
         Tirislib.String.join(
             "\n",
@@ -85,7 +85,7 @@ local function write_files()
     }
 
     local animal_food_recipes =
-        Tirislib.Luaq.from(game.recipe_prototypes):where(
+        Tirislib.Luaq.from(prototypes.recipe):where(
         function(_, recipe)
             return animal_foods[recipe.products[1] and recipe.products[1].name or ""] ~= nil
         end
@@ -98,7 +98,7 @@ local function write_files()
         end
     ):to_array()
 
-    game.write_file(
+    helpers.write_file(
         "animal-foods.csv",
         Tirislib.String.join(
             "\n",
@@ -113,7 +113,7 @@ local function write_files()
 
     -- find and write the calorie-changing-recipes
     local results = {}
-    for _, recipe in pairs(game.recipe_prototypes) do
+    for _, recipe in pairs(prototypes.recipe) do
         local calories_in = get_calories(recipe, "ingredients")
         local calories_out = get_calories(recipe, "products")
 
@@ -135,7 +135,7 @@ local function write_files()
         end
     end
 
-    game.write_file(
+    helpers.write_file(
         "food-recipes.csv",
         Tirislib.String.join(
             "\n",
@@ -144,7 +144,7 @@ local function write_files()
         )
     )
 
-    game.write_file(
+    helpers.write_file(
         "food-items.csv",
         Tirislib.String.join(
             "\n",
@@ -160,7 +160,7 @@ local function write_files()
     -- housing
     local housing_data = {}
     for name, housing in pairs(Housing.values) do
-        local prototype = game.entity_prototypes[name]
+        local prototype = prototypes.entity[name]
         if prototype ~= nil then
             local size = prototype.tile_height * prototype.tile_width
 
@@ -191,7 +191,7 @@ local function write_files()
         header = header .. caste.name .. " happiness;" .. caste.name .. "s/house;"
     end
 
-    game.write_file("housing.csv", Tirislib.String.join("\n", header, housing_data))
+    helpers.write_file("housing.csv", Tirislib.String.join("\n", header, housing_data))
 
     -- diseases
     local disease_data = {}
@@ -213,7 +213,7 @@ local function write_files()
         header = header .. category .. ";"
     end
 
-    game.write_file("diseases.csv", Tirislib.String.join("\n", header, disease_data))
+    helpers.write_file("diseases.csv", Tirislib.String.join("\n", header, disease_data))
 
     -- drinking water
     header = "recipe;units/s;units/min;"
@@ -221,7 +221,7 @@ local function write_files()
         header = header .. caste.name .. "s/crafting machine;"
     end
 
-    local water_values = Tirislib.Luaq.from(game.recipe_prototypes):where(
+    local water_values = Tirislib.Luaq.from(prototypes.recipe):where(
         function(_, recipe)
             for _, product in pairs(recipe.products) do
                 if DrinkingWater.values[product.name] then
@@ -247,7 +247,7 @@ local function write_files()
         end
     ):to_array()
 
-    game.write_file("drinking_water.csv", Tirislib.String.join("\n", header, water_values))
+    helpers.write_file("drinking_water.csv", Tirislib.String.join("\n", header, water_values))
 
     game.print("Wrote balancing data")
 end

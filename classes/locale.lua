@@ -90,7 +90,7 @@ end
 function Locale.materials(materials)
     local ret = {""}
     local first = true
-    local item_prototypes = game.item_prototypes
+    local item_prototypes = prototypes.item
 
     for material, count in pairs(materials) do
         local entry = {""}

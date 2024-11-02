@@ -1408,7 +1408,7 @@ end
 --- @param count integer
 --- @return locale
 function Tirislib.Locales.display_item_stack(item, count)
-    return {"sosciencity.xitems", count, item, game.item_prototypes[item].localised_name}
+    return {"sosciencity.xitems", count, item, prototypes.item[item].localised_name}
 end
 
 --- Creates a localisation for the given fluid stack.
@@ -1417,7 +1417,7 @@ end
 --- @param count integer
 --- @return locale
 function Tirislib.Locales.display_fluid_stack(fluid, count)
-    return {"sosciencity.xfluids", count, fluid, game.fluid_prototypes[fluid].localised_name}
+    return {"sosciencity.xfluids", count, fluid, prototypes.fluid[fluid].localised_name}
 end
 
 --- Creates a localisation for the given value.
