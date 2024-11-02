@@ -10,7 +10,7 @@ Tirislib.Item.create {
     category = "speed",
     tier = 0,
     stack_size = 1,
-    effect = {speed = {bonus = -0.80}},
+    effect = {speed = -0.80},
     localised_name = {"item-name.hidden-module"},
     localised_description = {"item-description.hidden-module"},
     is_hack = true
@@ -30,7 +30,7 @@ for i = 0, 14 do
         category = "speed",
         tier = 0,
         stack_size = 1,
-        effect = {speed = {bonus = strength}},
+        effect = {speed = strength},
         localised_name = {"item-name.hidden-module"},
         localised_description = {"item-description.hidden-module"},
         is_hack = true
@@ -47,7 +47,7 @@ for i = 0, 14 do
         category = "productivity",
         tier = 0,
         stack_size = 1,
-        effect = {productivity = {bonus = strength}},
+        effect = {productivity = strength},
         localised_name = {"item-name.hidden-module"},
         localised_description = {"item-description.hidden-module"},
         is_hack = true
