@@ -39,38 +39,21 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut.png",
+                filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-hr.png",
                 priority = "high",
-                width = width,
-                height = height,
+                width = width * 2,
+                height = height * 2,
                 shift = shift,
-                scale = 1.25,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-hr.png",
-                    priority = "high",
-                    width = width * 2,
-                    height = height * 2,
-                    shift = shift,
-                    scale = 0.625
-                }
+                scale = 0.625
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-shadowmap-hr.png",
                 priority = "high",
-                width = width,
-                height = height,
+                width = width * 2,
+                height = height * 2,
                 shift = shift,
-                scale = 1.25,
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-shadowmap-hr.png",
-                    priority = "high",
-                    width = width * 2,
-                    height = height * 2,
-                    shift = shift,
-                    scale = 0.625,
-                    draw_as_shadow = true
-                }
+                scale = 0.625,
+                draw_as_shadow = true
             }
         }
     },

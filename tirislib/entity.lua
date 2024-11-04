@@ -210,56 +210,32 @@ end
 
 local pipepictures = {
     north = {
-        filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-N.png",
-        width = 35,
-        height = 18,
-        shift = util.by_pixel(2.5, 14),
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-N.png",
-            width = 71,
-            height = 38,
-            shift = util.by_pixel(2.25, 13.5),
-            scale = 0.5
-        }
+        filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-N.png",
+        width = 71,
+        height = 38,
+        shift = util.by_pixel(2.25, 13.5),
+        scale = 0.5
     },
     east = {
-        filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-E.png",
-        width = 20,
-        height = 38,
-        shift = util.by_pixel(-25, 1),
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-E.png",
-            width = 42,
-            height = 76,
-            shift = util.by_pixel(-24.5, 1),
-            scale = 0.5
-        }
+        filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-E.png",
+        width = 42,
+        height = 76,
+        shift = util.by_pixel(-24.5, 1),
+        scale = 0.5
     },
     south = {
-        filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-S.png",
-        width = 44,
-        height = 31,
-        shift = util.by_pixel(0, -31.5),
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-S.png",
-            width = 88,
-            height = 61,
-            shift = util.by_pixel(0, -31.25),
-            scale = 0.5
-        }
+        filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-S.png",
+        width = 88,
+        height = 61,
+        shift = util.by_pixel(0, -31.25),
+        scale = 0.5
     },
     west = {
-        filename = "__sosciencity-graphics__/graphics/entity/assembling-machine-1-pipe-W.png",
-        width = 19,
-        height = 37,
-        shift = util.by_pixel(25.5, 1.5),
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-W.png",
-            width = 39,
-            height = 73,
-            shift = util.by_pixel(25.75, 1.25),
-            scale = 0.5
-        }
+        filename = "__sosciencity-graphics__/graphics/entity/hr-assembling-machine-1-pipe-W.png",
+        width = 39,
+        height = 73,
+        shift = util.by_pixel(25.75, 1.25),
+        scale = 0.5
     }
 }
 
@@ -288,8 +264,7 @@ function Tirislib.Entity.get_standard_pipe_cover(directions)
     return copy_directions(pipecovers, directions)
 end
 
-local PIXEL_PER_TILE = 32
-local PIXEL_PER_TILE_HR = 64
+local PIXEL_PER_TILE = 64
 
 --- Deprecated. Creates the standard picture prototype framework.
 --- @param path string
@@ -301,36 +276,21 @@ function Tirislib.Entity.create_standard_picture_old(path, width, height, shift)
     return {
         layers = {
             {
-                filename = path .. ".png",
+                filename = path .. "-hr.png",
                 priority = "high",
                 width = width * PIXEL_PER_TILE,
                 height = height * PIXEL_PER_TILE,
                 shift = shift,
-                hr_version = {
-                    filename = path .. "-hr.png",
-                    priority = "high",
-                    width = width * PIXEL_PER_TILE_HR,
-                    height = height * PIXEL_PER_TILE_HR,
-                    shift = shift,
-                    scale = 0.5
-                }
+                scale = 0.5
             },
             {
-                filename = path .. "-shadowmap.png",
+                filename = path .. "-shadowmap-hr.png",
                 priority = "high",
                 width = width * PIXEL_PER_TILE,
                 height = height * PIXEL_PER_TILE,
                 shift = shift,
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = path .. "-shadowmap-hr.png",
-                    priority = "high",
-                    width = width * PIXEL_PER_TILE_HR,
-                    height = height * PIXEL_PER_TILE_HR,
-                    shift = shift,
-                    scale = 0.5,
-                    draw_as_shadow = true
-                }
+                scale = 0.5,
+                draw_as_shadow = true
             }
         }
     }
@@ -359,85 +319,49 @@ function Tirislib.Entity.create_standard_picture(details)
 
     local layers = {
         {
-            filename = path .. "-lr.png",
+            filename = path .. ".png",
             frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
-            scale = scale,
-            hr_version = {
-                filename = path .. ".png",
-                frame_count = 1,
-                priority = "high",
-                width = width * PIXEL_PER_TILE_HR,
-                height = height * PIXEL_PER_TILE_HR,
-                shift = shift,
-                scale = 0.5 * scale
-            }
+            scale = 0.5 * scale
         }
     }
 
     if details.shadowmap then
         layers[#layers + 1] = {
-            filename = path .. "-shadowmap-lr.png",
+            filename = path .. "-shadowmap.png",
             frame_count = 1,
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
-            scale = scale,
-            draw_as_shadow = true,
-            hr_version = {
-                filename = path .. "-shadowmap.png",
-                frame_count = 1,
-                width = width * PIXEL_PER_TILE_HR,
-                height = height * PIXEL_PER_TILE_HR,
-                shift = shift,
-                scale = 0.5 * scale,
-                draw_as_shadow = true
-            }
+            scale = 0.5 * scale,
+            draw_as_shadow = true
         }
     end
 
     if details.lightmap then
         layers[#layers + 1] = {
-            filename = path .. "-lightmap-lr.png",
+            filename = path .. "-lightmap.png",
             frame_count = 1,
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
-            scale = scale,
-            draw_as_light = true,
-            hr_version = {
-                filename = path .. "-lightmap.png",
-                frame_count = 1,
-                width = width * PIXEL_PER_TILE_HR,
-                height = height * PIXEL_PER_TILE_HR,
-                shift = shift,
-                scale = 0.5 * scale,
-                draw_as_light = true
-            }
+            scale = 0.5 * scale,
+            draw_as_light = true
         }
     end
 
     if details.glow then
         layers[#layers + 1] = {
-            filename = path .. "-glow-lr.png",
+            filename = path .. "-glow.png",
             frame_count = 1,
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
-            scale = scale,
-            draw_as_glow = true,
-            hr_version = {
-                filename = path .. "-glow.png",
-                frame_count = 1,
-                width = width * PIXEL_PER_TILE_HR,
-                height = height * PIXEL_PER_TILE_HR,
-                shift = shift,
-                scale = 0.5 * scale,
-                draw_as_glow = true
-            }
+            scale = 0.5 * scale,
+            draw_as_glow = true
         }
     end
 

@@ -39,70 +39,39 @@ Tirislib.Entity.create {
     picture = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub.png",
+                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-hr.png",
                 priority = "high",
-                width = 704,
-                height = 448,
-                shift = {0.0, -2.5},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-hr.png",
-                    priority = "high",
-                    width = 1408,
-                    height = 896,
-                    scale = 0.5,
-                    shift = {0.0, -2.5}
-                }
+                width = 1408,
+                height = 896,
+                scale = 0.5,
+                shift = {0.0, -2.5}
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-shadowmap-hr.png",
                 priority = "high",
-                width = 704,
-                height = 448,
+                width = 1408,
+                height = 896,
+                scale = 0.5,
                 shift = {1.0, -2.5},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-shadowmap-hr.png",
-                    priority = "high",
-                    width = 1408,
-                    height = 896,
-                    scale = 0.5,
-                    shift = {1.0, -2.5},
-                    draw_as_shadow = true
-                }
+                draw_as_shadow = true
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-lightmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-lightmap-hr.png",
                 priority = "high",
-                width = 736,
-                height = 512,
+                width = 1472,
+                height = 1024,
+                scale = 0.5,
                 shift = {0.5, -0.5},
-                draw_as_light = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-lightmap-hr.png",
-                    priority = "high",
-                    width = 1472,
-                    height = 1024,
-                    scale = 0.5,
-                    shift = {0.5, -0.5},
-                    draw_as_light = true
-                }
+                draw_as_light = true
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-emission.png",
+                filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-emission-hr.png",
                 priority = "high",
-                width = 736,
-                height = 512,
+                width = 1472,
+                height = 1024,
+                scale = 0.5,
                 shift = {0.5, -0.5},
-                draw_as_glow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/nightclub/nightclub-emission-hr.png",
-                    priority = "high",
-                    width = 1472,
-                    height = 1024,
-                    scale = 0.5,
-                    shift = {0.5, -0.5},
-                    draw_as_glow = true
-                }
+                draw_as_glow = true
             }
         }
     },

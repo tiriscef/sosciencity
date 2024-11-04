@@ -40,36 +40,21 @@ Tirislib.Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump.png",
-                    width = 128,
-                    height = 160,
+                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-hr.png",
+                    width = 256,
+                    height = 320,
                     frames = 1,
                     shift = {0.5, -1},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-hr.png",
-                        width = 256,
-                        height = 320,
-                        frames = 1,
-                        shift = {0.5, -1},
-                        scale = 0.5
-                    }
+                    scale = 0.5
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap.png",
-                    width = 128,
-                    height = 160,
+                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap-hr.png",
+                    width = 256,
+                    height = 320,
                     frames = 1,
                     shift = {0.5, -1},
                     draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap-hr.png",
-                        width = 256,
-                        height = 320,
-                        frames = 1,
-                        shift = {0.5, -1},
-                        draw_as_shadow = true,
-                        scale = 0.5
-                    }
+                    scale = 0.5
                 }
             }
         }
@@ -107,19 +92,12 @@ Tirislib.Entity.create {
     order = "dead-groundwater-pump:(",
     remove_on_tile_placement = false,
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-remnants-hr.png",
         direction_count = 1,
-        width = 128,
-        height = 160,
+        width = 256,
+        height = 320,
         shift = {0.5, -1},
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-remnants-hr.png",
-            direction_count = 1,
-            width = 256,
-            height = 320,
-            shift = {0.5, -1},
-            scale = 0.5
-        }
+        scale = 0.5
     },
     localised_name = {"item-name.groundwater-pump"}
 }:set_size(3, 3)

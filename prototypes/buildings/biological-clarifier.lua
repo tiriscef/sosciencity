@@ -40,36 +40,21 @@ Tirislib.Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-idle.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-idle-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = sprite_width * 32,
-                    height = sprite_height * 32,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-idle-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = sprite_width * 64,
-                        height = sprite_height * 64,
-                        scale = 0.5
-                    }
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = sprite_width * 32,
-                    height = sprite_height * 32,
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = sprite_width * 64,
-                        height = sprite_height * 64,
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
+                    draw_as_shadow = true
                 }
             }
         }
@@ -78,23 +63,14 @@ Tirislib.Entity.create {
         {
             constant_speed = true,
             animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-sheet.png",
+                filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-sheet-hr.png",
                 frame_count = 60,
                 priority = "extra-high",
-                width = sprite_width * 32,
-                height = sprite_height * 32,
-                line_length = 3,
-                animation_speed = 12 / 60,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/biological-clarifier/biological-clarifier-sheet-hr.png",
-                    frame_count = 60,
-                    priority = "extra-high",
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5,
-                    line_length = 7,
-                    animation_speed = 12 / 60
-                }
+                width = sprite_width * 64,
+                height = sprite_height * 64,
+                scale = 0.5,
+                line_length = 7,
+                animation_speed = 12 / 60
             }
         }
     },

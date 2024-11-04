@@ -40,40 +40,23 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum.png",
+                filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-hr.png",
                 frame_count = 1,
                 priority = "extra-high",
-                width = 544,
-                height = 576,
+                width = 1088,
+                height = 1152,
                 shift = {0.0, -0.5},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = 1088,
-                    height = 1152,
-                    shift = {0.0, -0.5},
-                    scale = 0.5
-                }
+                scale = 0.5
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-shadowmap-hr.png",
                 frame_count = 1,
                 priority = "extra-high",
-                width = 544,
-                height = 576,
+                width = 1088,
+                height = 1152,
                 shift = {0.0, -0.5},
                 draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-shadowmap-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = 1088,
-                    height = 1152,
-                    shift = {0.0, -0.5},
-                    draw_as_shadow = true,
-                    scale = 0.5
-                }
+                scale = 0.5
             }
         }
     },
@@ -124,7 +107,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0.0, -7.0}, flow_direction = "output", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {0.0, -7.0}, flow_direction = "output", direction = defines.direction.north}
+            },
             production_type = "output"
         }
     },
@@ -146,19 +131,12 @@ Tirislib.Entity.create {
     tile_width = 15,
     tile_height = 7,
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-remnants-hr.png",
         direction_count = 1,
-        width = 544,
-        height = 576,
+        width = 1088,
+        height = 1152,
         shift = {0.0, -1.0},
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-remnants-hr.png",
-            direction_count = 1,
-            width = 1088,
-            height = 1152,
-            shift = {0.0, -1.0},
-            scale = 0.5
-        }
+        scale = 0.5
     },
     localised_name = {"item-name.arboretum"}
 }:set_size(15, 15)

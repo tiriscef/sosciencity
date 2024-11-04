@@ -39,36 +39,21 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet.png",
+                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
                 frame_count = 1,
-                width = sprite_width * 32,
-                height = sprite_height * 32,
-                shift = {0.0, -1.0},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
-                    frame_count = 1,
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5,
-                    shift = {0.0, -1.0}
-                }
+                width = sprite_width * 64,
+                height = sprite_height * 64,
+                scale = 0.5,
+                shift = {0.0, -1.0}
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-shadowmap-hr.png",
                 frame_count = 1,
-                width = sprite_width * 32,
-                height = sprite_height * 32,
+                width = sprite_width * 64,
+                height = sprite_height * 64,
+                scale = 0.5,
                 shift = {0.0, -1.0},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-shadowmap-hr.png",
-                    frame_count = 1,
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5,
-                    shift = {0.0, -1.0},
-                    draw_as_shadow = true
-                }
+                draw_as_shadow = true
             }
         }
     },
@@ -77,25 +62,15 @@ Tirislib.Entity.create {
             always_draw = true,
             constant_speed = true,
             animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet.png",
+                filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
                 frame_count = 60,
                 priority = "extra-high",
-                width = sprite_width * 32,
-                height = sprite_height * 32,
+                width = sprite_width * 64,
+                height = sprite_height * 64,
+                scale = 0.5,
                 shift = {0.0, -1.0},
-                line_length = 20,
-                animation_speed = 10 / 60,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/aquafarm/aquafarm-sheet-hr.png",
-                    frame_count = 60,
-                    priority = "extra-high",
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5,
-                    shift = {0.0, -1.0},
-                    line_length = 10,
-                    animation_speed = 10 / 60
-                }
+                line_length = 10,
+                animation_speed = 10 / 60
             }
         }
     },

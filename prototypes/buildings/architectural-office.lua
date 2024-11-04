@@ -39,32 +39,19 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office.png",
+                filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-hr.png",
                 priority = "high",
-                width = 224,
-                height = 224,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-hr.png",
-                    priority = "high",
-                    width = 448,
-                    height = 448,
-                    scale = 0.5
-                }
+                width = 448,
+                height = 448,
+                scale = 0.5
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-shadowmap-hr.png",
                 priority = "high",
-                width = 224,
-                height = 224,
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-shadowmap-hr.png",
-                    priority = "high",
-                    width = 448,
-                    height = 448,
-                    scale = 0.5,
-                    draw_as_shadow = true
-                }
+                width = 448,
+                height = 448,
+                scale = 0.5,
+                draw_as_shadow = true
             }
         }
     },

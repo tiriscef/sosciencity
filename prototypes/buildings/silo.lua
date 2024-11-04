@@ -34,36 +34,21 @@ Tirislib.Entity.create {
     picture = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/silo/silo.png",
+                filename = "__sosciencity-graphics__/graphics/entity/silo/silo-hr.png",
                 priority = "high",
-                width = 160,
-                height = 256,
+                width = 320,
+                height = 512,
                 shift = {1, -2.5},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/silo/silo-hr.png",
-                    priority = "high",
-                    width = 320,
-                    height = 512,
-                    shift = {1, -2.5},
-                    scale = 0.5
-                }
+                scale = 0.5
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/silo/silo-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/silo/silo-shadowmap-hr.png",
                 priority = "high",
-                width = 160,
-                height = 256,
+                width = 320,
+                height = 512,
                 shift = {1, -2.5},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/silo/silo-shadowmap-hr.png",
-                    priority = "high",
-                    width = 320,
-                    height = 512,
-                    shift = {1, -2.5},
-                    scale = 0.5,
-                    draw_as_shadow = true
-                }
+                scale = 0.5,
+                draw_as_shadow = true
             }
         }
     },

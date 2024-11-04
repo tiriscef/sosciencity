@@ -37,38 +37,22 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit.png",
+                filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-hr.png",
                 frame_count = 1,
                 priority = "high",
-                width = 128,
-                height = 128,
-                shift = {0.5, -0.5},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-hr.png",
-                    frame_count = 1,
-                    priority = "high",
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    shift = {0.5, -0.5}
-                }
+                width = 256,
+                height = 256,
+                scale = 0.5,
+                shift = {0.5, -0.5}
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-shadowmap-hr.png",
                 frame_count = 1,
-                width = 128,
-                height = 128,
+                width = 256,
+                height = 256,
+                scale = 0.5,
                 shift = {0.5, -0.5},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-shadowmap-hr.png",
-                    frame_count = 1,
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    shift = {0.5, -0.5},
-                    draw_as_shadow = true
-                }
+                draw_as_shadow = true
             }
         }
     },

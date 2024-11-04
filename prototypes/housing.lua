@@ -33,36 +33,21 @@ local housing_prototype_details = {
         picture = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/house/house-1.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/house/house-1-hr.png",
                     priority = "high",
-                    width = 320,
-                    height = 256,
+                    width = 640,
+                    height = 512,
                     shift = {1, -1},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/house/house-1-hr.png",
-                        priority = "high",
-                        width = 640,
-                        height = 512,
-                        shift = {1, -1},
-                        scale = 0.5
-                    }
+                    scale = 0.5
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap-hr.png",
                     priority = "high",
-                    width = 320,
-                    height = 256,
+                    width = 640,
+                    height = 512,
                     shift = {1, -1},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/house/house-1-shadowmap-hr.png",
-                        priority = "high",
-                        width = 640,
-                        height = 512,
-                        shift = {1, -1},
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
+                    scale = 0.5,
+                    draw_as_shadow = true
                 }
             }
         },
@@ -119,36 +104,21 @@ local housing_prototype_details = {
         picture = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-hr.png",
                     priority = "high",
-                    width = 384,
-                    height = 288,
+                    width = 768,
+                    height = 576,
                     shift = {2.0, -0.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-hr.png",
-                        priority = "high",
-                        width = 768,
-                        height = 576,
-                        shift = {2.0, -0.5},
-                        scale = 0.5
-                    }
+                    scale = 0.5
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-shadowmap-hr.png",
                     priority = "high",
-                    width = 384,
-                    height = 288,
+                    width = 768,
+                    height = 576,
                     shift = {2.0, -0.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/bunkerhouse/bunkerhouse-shadowmap-hr.png",
-                        priority = "high",
-                        width = 768,
-                        height = 576,
-                        shift = {2.0, -0.5},
-                        scale = 0.5,
-                        draw_as_shadow = true
-                    }
+                    scale = 0.5,
+                    draw_as_shadow = true
                 }
             }
         },

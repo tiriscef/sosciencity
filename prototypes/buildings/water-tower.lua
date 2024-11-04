@@ -47,36 +47,21 @@ Tirislib.Entity.create {
         picture = {
             sheets = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower.png",
-                    width = 160,
-                    height = 224,
+                    filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-hr.png",
+                    width = 320,
+                    height = 448,
                     frames = 1,
                     shift = {0, -2},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-hr.png",
-                        width = 320,
-                        height = 448,
-                        frames = 1,
-                        shift = {0, -2},
-                        scale = 0.5
-                    }
+                    scale = 0.5
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-shadowmap.png",
-                    width = 160,
-                    height = 224,
+                    filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-shadowmap-hr.png",
+                    width = 320,
+                    height = 448,
                     frames = 1,
                     shift = {0, -2},
                     draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-shadowmap-hr.png",
-                        width = 320,
-                        height = 448,
-                        frames = 1,
-                        shift = {0, -2},
-                        draw_as_shadow = true,
-                        scale = 0.5
-                    }
+                    scale = 0.5
                 }
             }
         },
@@ -105,19 +90,12 @@ Tirislib.Entity.create {
     order = "dead-water-tower:(",
     remove_on_tile_placement = false,
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants-hr.png",
         direction_count = 1,
-        width = 160,
-        height = 160,
+        width = 320,
+        height = 320,
         shift = {0, -1},
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants-hr.png",
-            direction_count = 1,
-            width = 320,
-            height = 320,
-            shift = {0, -1},
-            scale = 0.5
-        }
+        scale = 0.5
     },
     localised_name = {"item-name.water-tower"}
 }:set_size(size_x, size_y)

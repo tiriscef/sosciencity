@@ -46,40 +46,23 @@ Tirislib.Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/bloomhouse/bloomhouse.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/bloomhouse/bloomhouse-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = sprite_width * 32,
-                    height = sprite_height * 32,
-                    shift = {0.0, 0.0},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/bloomhouse/bloomhouse-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = sprite_width * 64,
-                        height = sprite_height * 64,
-                        scale = 0.5,
-                        shift = {0.0, 0.0}
-                    }
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
+                    shift = {0.0, 0.0}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/bloomhouse/bloomhouse-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/bloomhouse/bloomhouse-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = sprite_width * 32,
-                    height = sprite_height * 32,
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
                     shift = {0.0, 0.0},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/bloomhouse/bloomhouse-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = sprite_width * 64,
-                        height = sprite_height * 64,
-                        scale = 0.5,
-                        shift = {0.0, 0.0},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         }

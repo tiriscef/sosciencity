@@ -38,80 +38,46 @@ Tirislib.Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 736,
-                    height = 288,
-                    shift = {0.5, -1.0},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 1472,
-                        height = 576,
-                        scale = 0.5,
-                        shift = {0.5, -1.0}
-                    }
+                    width = 1472,
+                    height = 576,
+                    scale = 0.5,
+                    shift = {0.5, -1.0}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 736,
-                    height = 288,
+                    width = 1472,
+                    height = 576,
+                    scale = 0.5,
                     shift = {0.5, -1.0},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 1472,
-                        height = 576,
-                        scale = 0.5,
-                        shift = {0.5, -1.0},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         },
         east = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 224,
-                    height = 736,
-                    shift = {0.0, -0.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 448,
-                        height = 1472,
-                        scale = 0.5,
-                        shift = {0.0, -0.5}
-                    }
+                    width = 448,
+                    height = 1472,
+                    scale = 0.5,
+                    shift = {0.0, -0.5}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 224,
-                    height = 736,
+                    width = 448,
+                    height = 1472,
+                    scale = 0.5,
                     shift = {0.0, -0.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 448,
-                        height = 1472,
-                        scale = 0.5,
-                        shift = {0.0, -0.5},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         }
