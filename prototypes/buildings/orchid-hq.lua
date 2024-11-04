@@ -33,40 +33,23 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-lr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
                 frame_count = 1,
-                height = 672,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
-                    frame_count = 1,
-                    height = 1344,
-                    priority = "high",
-                    scale = 0.5,
-                    shift = {6.75, -5.0},
-                    width = 2304
-                },
+                height = 1344,
                 priority = "high",
+                scale = 0.5,
                 shift = {6.75, -5.0},
-                width = 1152
+                width = 2304
             },
             {
                 draw_as_shadow = true,
-                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap-lr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
                 frame_count = 1,
-                height = 672,
-                hr_version = {
-                    draw_as_shadow = true,
-                    filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
-                    frame_count = 1,
-                    height = 1344,
-                    priority = "high",
-                    scale = 0.5,
-                    shift = {6.25, -5.5},
-                    width = 2304
-                },
+                height = 1344,
                 priority = "high",
+                scale = 0.5,
                 shift = {6.25, -5.5},
-                width = 1152
+                width = 2304
             }
         }
     },

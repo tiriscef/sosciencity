@@ -40,40 +40,23 @@ Tirislib.Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = sprite_width * 32,
-                    height = sprite_height * 32,
-                    shift = {0.0, 0.0},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = sprite_width * 64,
-                        height = sprite_height * 64,
-                        scale = 0.5,
-                        shift = {0.0, 0.0}
-                    }
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
+                    shift = {0.0, 0.0}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = sprite_width * 32,
-                    height = sprite_height * 32,
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
                     shift = {0.0, 0.0},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = sprite_width * 64,
-                        height = sprite_height * 64,
-                        scale = 0.5,
-                        shift = {0.0, 0.0},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         }
@@ -106,7 +89,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0.5, -1.5}, flow_direction = "output", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {0.5, -1.5}, flow_direction = "output", direction = defines.direction.north}
+            },
             production_type = "output"
         },
         {

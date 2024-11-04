@@ -33,36 +33,21 @@ Tirislib.Entity.create {
     picture = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port.png",
+                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-hr.png",
                 priority = "high",
-                width = 544,
-                height = 256,
+                width = 1088,
+                height = 512,
                 shift = {0, -0.5},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-hr.png",
-                    priority = "high",
-                    width = 1088,
-                    height = 512,
-                    shift = {0, -0.5},
-                    scale = 0.5
-                }
+                scale = 0.5
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap-hr.png",
                 priority = "high",
-                width = 544,
-                height = 256,
+                width = 1088,
+                height = 512,
                 shift = {0, -0.5},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-shadowmap-hr.png",
-                    priority = "high",
-                    width = 1088,
-                    height = 512,
-                    shift = {0, -0.5},
-                    scale = 0.5,
-                    draw_as_shadow = true
-                }
+                scale = 0.5,
+                draw_as_shadow = true
             }
         }
     }
@@ -81,18 +66,11 @@ Tirislib.Entity.create {
     order = "dead-zeppelin-port:(",
     remove_on_tile_placement = false,
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-remnants-hr.png",
         direction_count = 1,
-        width = 192,
-        height = 192,
+        width = 384,
+        height = 384,
         shift = {0.5, -0.5},
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/zeppelin-port/zeppelin-port-remnants-hr.png",
-            direction_count = 1,
-            width = 384,
-            height = 384,
-            shift = {0.5, -0.5},
-            scale = 0.5
-        }
+        scale = 0.5
     }
 }:set_size(5, 5)]]

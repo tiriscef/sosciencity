@@ -42,36 +42,21 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery.png",
+                filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-hr.png",
                 priority = "high",
-                width = 576,
-                height = 576,
+                width = 1152,
+                height = 1152,
                 shift = {0.5, -0.5},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-hr.png",
-                    priority = "high",
-                    width = 1152,
-                    height = 1152,
-                    shift = {0.5, -0.5},
-                    scale = 0.5
-                }
+                scale = 0.5
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-shadowmap-hr.png",
                 priority = "high",
-                width = 576,
-                height = 576,
+                width = 1152,
+                height = 1152,
                 shift = {0.5, -0.5},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-shadowmap-hr.png",
-                    priority = "high",
-                    width = 1152,
-                    height = 1152,
-                    shift = {0.5, -0.5},
-                    scale = 0.5,
-                    draw_as_shadow = true
-                }
+                scale = 0.5,
+                draw_as_shadow = true
             }
         }
     },
@@ -110,7 +95,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-7.0, -1.0}, flow_direction = "output", direction = defines.direction.west}},
+            pipe_connections = {
+                {position = {-7.0, -1.0}, flow_direction = "output", direction = defines.direction.west}
+            },
             production_type = "output"
         }
     },

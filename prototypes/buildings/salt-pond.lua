@@ -45,26 +45,15 @@ Tirislib.Entity.create {
             always_draw = true,
             constant_speed = true,
             animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond-sheet-lr.png",
+                filename = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond-sheet.png",
                 frame_count = 60,
                 priority = "high",
-                width = sprite_width * 32,
-                height = sprite_height * 32,
-                scale = 1.5,
+                width = sprite_width * 64,
+                height = sprite_height * 64,
+                scale = 0.75,
                 shift = {0.5, -0.5},
                 line_length = 7,
-                animation_speed = 20 / 60,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond-sheet.png",
-                    frame_count = 60,
-                    priority = "high",
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.75,
-                    shift = {0.5, -0.5},
-                    line_length = 7,
-                    animation_speed = 20 / 60
-                }
+                animation_speed = 20 / 60
             }
         }
     },

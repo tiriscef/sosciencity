@@ -38,160 +38,92 @@ Tirislib.Entity.create {
         north = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 544,
-                    height = 288,
-                    shift = {0.0, 0.0},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 1088,
-                        height = 576,
-                        scale = 0.5,
-                        shift = {0.0, 0.0}
-                    }
+                    width = 1088,
+                    height = 576,
+                    scale = 0.5,
+                    shift = {0.0, 0.0}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 544,
-                    height = 288,
+                    width = 1088,
+                    height = 576,
+                    scale = 0.5,
                     shift = {0.0, 0.0},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 1088,
-                        height = 576,
-                        scale = 0.5,
-                        shift = {0.0, 0.0},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         },
         east = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 288,
-                    height = 544,
-                    shift = {0.0, 0.0},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 576,
-                        height = 1088,
-                        scale = 0.5,
-                        shift = {0.0, 0.0}
-                    }
+                    width = 576,
+                    height = 1088,
+                    scale = 0.5,
+                    shift = {0.0, 0.0}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 288,
-                    height = 544,
+                    width = 576,
+                    height = 1088,
+                    scale = 0.5,
                     shift = {0.0, 0.0},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 576,
-                        height = 1088,
-                        scale = 0.5,
-                        shift = {0.0, 0.0},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         },
         south = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 544,
-                    height = 320,
-                    shift = {0.0, -0.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 1088,
-                        height = 640,
-                        scale = 0.5,
-                        shift = {0.0, -0.5}
-                    }
+                    width = 1088,
+                    height = 640,
+                    scale = 0.5,
+                    shift = {0.0, -0.5}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 544,
-                    height = 320,
+                    width = 1088,
+                    height = 640,
+                    scale = 0.5,
                     shift = {0.0, -0.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 1088,
-                        height = 640,
-                        scale = 0.5,
-                        shift = {0.0, -0.5},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         },
         west = {
             layers = {
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 288,
-                    height = 576,
-                    shift = {0.0, -0.5},
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 576,
-                        height = 1152,
-                        scale = 0.5,
-                        shift = {0.0, -0.5}
-                    }
+                    width = 576,
+                    height = 1152,
+                    scale = 0.5,
+                    shift = {0.0, -0.5}
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-shadowmap.png",
+                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-shadowmap-hr.png",
                     frame_count = 1,
                     priority = "extra-high",
-                    width = 288,
-                    height = 576,
+                    width = 576,
+                    height = 1152,
+                    scale = 0.5,
                     shift = {0.0, -0.5},
-                    draw_as_shadow = true,
-                    hr_version = {
-                        filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-shadowmap-hr.png",
-                        frame_count = 1,
-                        priority = "extra-high",
-                        width = 576,
-                        height = 1152,
-                        scale = 0.5,
-                        shift = {0.0, -0.5},
-                        draw_as_shadow = true
-                    }
+                    draw_as_shadow = true
                 }
             }
         }
@@ -242,56 +174,29 @@ Tirislib.Entity.create {
     tile_height = 7,
     animation = {
         direction_count = 4,
-        width = 544,
-        height = 544,
+        width = 1088,
+        height = 1088,
+        scale = 0.5,
         stripes = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-remnants-hr.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-remnants-hr.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-remnants-hr.png",
                 width_in_frames = 1,
                 height_in_frames = 1
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-remnants.png",
+                filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-remnants-hr.png",
                 width_in_frames = 1,
                 height_in_frames = 1
-            }
-        },
-        hr_version = {
-            direction_count = 4,
-            width = 1088,
-            height = 1088,
-            scale = 0.5,
-            stripes = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-north-remnants-hr.png",
-                    width_in_frames = 1,
-                    height_in_frames = 1
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-east-remnants-hr.png",
-                    width_in_frames = 1,
-                    height_in_frames = 1
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-south-remnants-hr.png",
-                    width_in_frames = 1,
-                    height_in_frames = 1
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/farm/farm-west-remnants-hr.png",
-                    width_in_frames = 1,
-                    height_in_frames = 1
-                }
             }
         }
     },

@@ -39,38 +39,22 @@ Tirislib.Entity.create {
     animation = {
         layers = {
             {
-                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse.png",
+                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-hr.png",
                 frame_count = 1,
                 priority = "high",
-                width = 544,
-                height = 544,
-                shift = {0.0, -1.0},
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-hr.png",
-                    frame_count = 1,
-                    priority = "high",
-                    width = 1088,
-                    height = 1088,
-                    scale = 0.5,
-                    shift = {0.0, -1.0}
-                }
+                width = 1088,
+                height = 1088,
+                scale = 0.5,
+                shift = {0.0, -1.0}
             },
             {
-                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap.png",
+                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap-hr.png",
                 frame_count = 1,
-                width = 544,
-                height = 544,
+                width = 1088,
+                height = 1088,
+                scale = 0.5,
                 shift = {0.0, -1.0},
-                draw_as_shadow = true,
-                hr_version = {
-                    filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap-hr.png",
-                    frame_count = 1,
-                    width = 1088,
-                    height = 1088,
-                    scale = 0.5,
-                    shift = {0.0, -1.0},
-                    draw_as_shadow = true
-                }
+                draw_as_shadow = true
             }
         }
     },
@@ -128,7 +112,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-7.0, -2.0}, flow_direction = "output", direction = defines.direction.west}},
+            pipe_connections = {
+                {position = {-7.0, -2.0}, flow_direction = "output", direction = defines.direction.west}
+            },
             production_type = "output"
         }
     },
@@ -150,19 +136,12 @@ Tirislib.Entity.create {
     tile_width = 15,
     tile_height = 7,
     animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-remnants.png",
+        filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-remnants-hr.png",
         direction_count = 1,
-        width = 544,
-        height = 544,
+        width = 1088,
+        height = 1088,
         shift = {0.0, -1.0},
-        hr_version = {
-            filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-remnants-hr.png",
-            direction_count = 1,
-            width = 1088,
-            height = 1088,
-            shift = {0.0, -1.0},
-            scale = 0.5
-        }
+        scale = 0.5
     },
     localised_name = {"item-name.greenhouse"}
 }:set_size(15, 15)
