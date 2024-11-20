@@ -493,6 +493,15 @@ function Tirislib.Utils.add_random_float_offset(position, offset)
     position.y = position.y + random() * 2 * offset - offset
 end
 
+--- Gets a sprite "shift" vector from the entity's bounding box center coordinates and the sprite's size.
+--- @param center table in tiles
+--- @param height number in tiles
+--- @param width number in tiles
+--- @return table shift
+function Tirislib.Utils.center_coordinates_to_shift(center, height, width)
+    return {width / 2 - center[1], height / 2 - center[2]}
+end
+
 --- Updates a progress value inside the given table and returns the number of full progresses.
 --- @param tbl table
 --- @param key any

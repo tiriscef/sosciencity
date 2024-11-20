@@ -17,8 +17,8 @@ Tirislib.RecipeGenerator.create {
     unlock = "fermentation"
 }:add_unlock("medbay")
 
-local sprite_width = 9
-local sprite_height = 9
+local sprite_width = 14
+local sprite_height = 14
 
 Tirislib.Entity.create {
     type = "assembling-machine",
@@ -32,28 +32,29 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond",
-        center = {4.0, 5.0},
-        width = 9,
-        height = 9,
-        scale = 1.5,
-        shadowmap = true
-    },
-    working_visualisations = {
-        {
-            always_draw = true,
-            constant_speed = true,
-            animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond-sheet.png",
-                frame_count = 60,
-                priority = "high",
-                width = sprite_width * 64,
-                height = sprite_height * 64,
-                scale = 0.75,
-                shift = {0.5, -0.5},
-                line_length = 7,
-                animation_speed = 20 / 60
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond",
+            shift = {0.0, 0.0},
+            width = 14,
+            height = 14,
+            shadowmap = true
+        },
+        working_visualisations = {
+            {
+                always_draw = true,
+                constant_speed = true,
+                animation = {
+                    filename = "__sosciencity-graphics__/graphics/entity/salt-pond/salt-pond-sheet.png",
+                    frame_count = 30,
+                    priority = "high",
+                    width = sprite_width * 64,
+                    height = sprite_height * 64,
+                    scale = 0.5,
+                    shift = {0.0, 0.0},
+                    line_length = 4,
+                    animation_speed = 15 / 60
+                }
             }
         }
     },
