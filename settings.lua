@@ -28,6 +28,13 @@ data:extend {
         default_value = true
     },
     {
+        type = "bool-setting", --- set to disable notes etc when setting toggled (deafult requires = yes), purely for larger modpacks like mine that makes factories absolutely massive -cyberKoi** (also added to mod name and mod description in prototype En)
+        name = "sosciencity-remove-extra-science-ingredient",
+        order = "aae",
+        setting_type = "startup",
+        default_value = false
+    },
+    {
         type = "bool-setting",
         name = "sosciencity-penalty-module",
         order = "aaa",
