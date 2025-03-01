@@ -197,10 +197,10 @@ end
 
 function Subentities.remove_common_sprite(entry, render_type)
     local attached_renders = get_subtbl(entry, EK.attached_renderings)
-    local id = attached_renders[render_type]
+    local render = attached_renders[render_type]
 
-    if id and rendering.is_valid(id) then
-        rendering.destroy(id)
+    if render and render.valid then
+        render.destroy()
         attached_renders[render_type] = nil
     end
 end
@@ -274,9 +274,18 @@ end
 function Subentities.remove_sprites(entry)
     local attached_renders = entry[EK.attached_renderings]
     if attached_renders then
-        for _, id in pairs(attached_renders) do
-            if rendering.is_valid(id) then
-                rendering.destroy(id)
+        for _, render in pairs(attached_renders) do
+            -- TODO: this is a ~temp fix for factorio 1.1 maps, not sure if it should persist
+            if type(render) == "number" then
+                local render_obj = rendering.get_object_by_id(render)
+                if render_obj then
+                    render_obj.destroy()
+                end
+                return
+            end
+
+            if render.valid then
+                render.destroy()
             end
         end
     end
