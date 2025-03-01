@@ -969,7 +969,7 @@ local function update_composter_details(container, entry, player_id)
     Datalist.set_kv_pair_value(building_data, "humus", {"sosciencity.humus-count", round(humus / 100)})
 
     local inventory = Inventories.get_chest_inventory(entry)
-    local progress_factor = Entity.analyze_composter_inventory(inventory.get_contents())
+    local progress_factor = Entity.analyze_composter_inventory(Inventories.get_contents(inventory)())
     -- display the composting speed as zero when the composter is full
     if humus >= get_building_details(entry).capacity then
         progress_factor = 0

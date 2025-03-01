@@ -339,7 +339,7 @@ end
 
 local function update_composter(entry, delta_ticks)
     local inventory = get_chest_inventory(entry)
-    local contents = inventory.get_contents()
+    local contents = Inventories.get_contents(inventory)
     local progress_factor, compostable_items = analyze_composter_inventory(contents)
 
     local progress = entry[EK.composting_progress] + progress_factor * delta_ticks
@@ -734,7 +734,7 @@ local function get_water_tiles(entry, building_details)
         local entity = entry[EK.entity]
         local position = entity.position
         local area = Utils.get_range_bounding_box(position, building_details.range)
-        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water-tile"}
+        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
 
         entry[EK.water_tiles] = water_tiles
         return water_tiles
@@ -1096,7 +1096,7 @@ local function analyze_waste_dump_inventory(inventory)
     local garbage_count = 0
     local non_garbage_items = {}
 
-    for item, count in pairs(inventory.get_contents()) do
+    for item, count in pairs(Inventories.get_contents(inventory)) do
         if garbage_values[item] ~= nil then
             garbage_items[item] = count
             garbage_count = garbage_count + count

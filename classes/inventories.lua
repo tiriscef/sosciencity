@@ -86,6 +86,18 @@ function Inventories.assembler_has_module(entity, module_name)
     return inventory.get_item_count(module_name) > 0
 end
 
+--- Replicates the behavior of the old 'LuaInventory.get_contents'-method from Factorio 1.1
+--- @param inventory LuaInventory
+function Inventories.get_contents(inventory)
+    local ret = {}
+
+    for _, item in pairs(inventory.get_contents()) do
+        ret[item.name] = item.count
+    end
+
+    return ret
+end
+
 --- Returns a table with the (item, amount)-pairs of the combined contents of the given Inventories.
 --- @param inventories table
 --- @return table
@@ -93,7 +105,7 @@ function Inventories.get_combined_contents(inventories)
     local ret = {}
 
     for _, inventory in pairs(inventories) do
-        table_add(ret, inventory.get_contents())
+        table_add(ret, Inventories.get_contents(inventory))
     end
 
     return ret
@@ -206,7 +218,7 @@ end
 --- @return boolean
 function Inventories.try_remove_item_range(entry, items, suppress_logging)
     local inventory = get_chest_inventory(entry)
-    local contents = inventory.get_contents()
+    local contents = Inventories.get_contents(inventory)
 
     for name, desired_amount in pairs(items) do
         local available_amount = contents[name] or 0
@@ -313,7 +325,7 @@ end
 function Inventories.get_garbage_value(entry)
     local value = 0
     local inventory = get_chest_inventory(entry)
-    local items = inventory.get_contents()
+    local items = Inventories.get_contents(inventory)
 
     for name, count in pairs(items) do
         local garbage_multiplier = garbage_values[name]
