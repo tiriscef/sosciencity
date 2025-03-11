@@ -32,6 +32,7 @@ local get_or_create_subentity
 
 ---------------------------------------------------------------------------------------------------
 -- << hidden beacons >>
+
 local SPEED_MODULE_NAME = "-sosciencity-speed"
 local PRODUCTIVITY_MODULE_NAME = "-sosciencity-productivity"
 local PENALTY_MODULE_NAME = "sosciencity-penalty"
@@ -187,8 +188,7 @@ function Subentities.add_common_sprite(entry, render_type)
         rendering.draw_sprite(
         {
             sprite = common_sprites[render_type],
-            target = entity,
-            target_offset = common_sprite_offsets[render_type],
+            target = {entity = entity, offset = common_sprite_offsets[render_type]},
             surface = entity.surface,
             render_layer = "189" -- lower than the default "arrow", so mouseover renderings should be drawn over this
         }
@@ -233,13 +233,11 @@ local function add(entry, _type)
     end
 
     local subentity =
-        entity.surface.create_entity(
-        {
-            name = get_subentity_name(entry, _type),
-            position = position,
-            force = entity.force
-        }
-    )
+        entity.surface.create_entity {
+        name = get_subentity_name(entry, _type),
+        position = position,
+        force = entity.force
+    }
 
     subentities[_type] = subentity
 

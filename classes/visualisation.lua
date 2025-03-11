@@ -107,8 +107,7 @@ local function highlight_workforce(player_id, entry, building_details, created_h
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
         sprite = "sosciencity-people",
-        target = entity,
-        target_offset = {-0.75, 0},
+        target = {entity = entity, offset = {-0.75, 0}},
         x_scale = 0.375,
         y_scale = 0.375,
         surface = entity.surface,
@@ -118,8 +117,7 @@ local function highlight_workforce(player_id, entry, building_details, created_h
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
         text = {"sosciencity.fraction", entry[EK.worker_count], building_details.workforce.count},
-        target = entity,
-        target_offset = {-0.25, 0},
+        target = {entity = entity, offset = {-0.25, 0}},
         surface = entity.surface,
         players = {player_id},
         color = Color.white,
@@ -247,8 +245,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
         sprite = "sosciencity-people",
-        target = entity,
-        target_offset = {-1.75, -1},
+        target = {entity = entity, offset = {-1.75, -1}},
         x_scale = scale,
         y_scale = scale,
         surface = entity.surface,
@@ -258,8 +255,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
         text = {"sosciencity.fraction", inhabitants, capacity},
-        target = entity,
-        target_offset = {-1.25, -1},
+        target = {entity = entity, offset = {-1.25, -1}},
         surface = entity.surface,
         players = players,
         color = Color.white,
@@ -272,8 +268,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
         sprite = "sosciencity-happiness",
-        target = entity,
-        target_offset = {0.75, -1},
+        target = {entity = entity, offset = {0.75, -1}},
         x_scale = scale,
         y_scale = scale,
         surface = entity.surface,
@@ -283,8 +278,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
         text = inhabitants > 0 and round_to_step(entry[EK.happiness], 0.1) or "/",
-        target = entity,
-        target_offset = {1.25, -1},
+        target = {entity = entity, offset = {1.25, -1}},
         surface = entity.surface,
         players = players,
         color = Color.white,
@@ -297,10 +291,9 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
         sprite = "sosciencity-health",
-        target = entity,
+        target = {entity = entity, offset = {-1.75, 1}},
         surface = entity.surface,
         players = players,
-        target_offset = {-1.75, 1},
         x_scale = scale,
         y_scale = scale,
         only_in_alt_mode = true
@@ -308,8 +301,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
         text = inhabitants > 0 and round_to_step(entry[EK.health], 0.1) or "/",
-        target = entity,
-        target_offset = {-1.25, 1},
+        target = {entity = entity, offset = {-1.25, 1}},
         surface = entity.surface,
         players = players,
         color = Color.white,
@@ -322,10 +314,9 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
         sprite = "sosciencity-sanity",
-        target = entity,
+        target = {entity = entity, offset = {0.75, 1}},
         surface = entity.surface,
         players = players,
-        target_offset = {0.75, 1},
         x_scale = scale,
         y_scale = scale,
         only_in_alt_mode = true
@@ -333,8 +324,7 @@ local function show_inhabitants(player_id, entry, created_highlights)
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {
         text = inhabitants > 0 and round_to_step(entry[EK.sanity], 0.1) or "/",
-        target = entity,
-        target_offset = {1.25, 1},
+        target = {entity = entity, offset = {1.25, 1}},
         surface = entity.surface,
         players = players,
         color = Color.white,
