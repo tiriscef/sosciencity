@@ -30,14 +30,16 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/gunfire-hq/gunfire-hq",
-        shift = {1.5, 0.0},
-        width = 20,
-        height = 14,
-        shadowmap = true,
-        glow = true,
-        lightmap = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/gunfire-hq/gunfire-hq",
+            shift = {1.5, 0.0},
+            width = 20,
+            height = 14,
+            shadowmap = true,
+            glow = true,
+            lightmap = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-caste-gunfire"},

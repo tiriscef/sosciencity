@@ -36,41 +36,43 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = {
-        north = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-idle-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-shadowmap-hr.png",
-                    frame_count = 1,
+    graphics_set = {
+        animation = {
+            north = {
+                layers = {
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-idle-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = sprite_width * 64,
+                        height = sprite_height * 64,
+                        scale = 0.5
+                    },
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-shadowmap-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = sprite_width * 64,
+                        height = sprite_height * 64,
+                        scale = 0.5,
+                        draw_as_shadow = true
+                    }
+                }
+            }
+        },
+        working_visualisations = {
+            {
+                constant_speed = true,
+                animation = {
+                    filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-sheet-hr.png",
+                    frame_count = 60,
                     priority = "extra-high",
                     width = sprite_width * 64,
                     height = sprite_height * 64,
                     scale = 0.5,
-                    draw_as_shadow = true
+                    line_length = 7,
+                    animation_speed = 12 / 60
                 }
-            }
-        }
-    },
-    working_visualisations = {
-        {
-            constant_speed = true,
-            animation = {
-                filename = "__sosciencity-graphics__/graphics/entity/sedimentation-clarifier/sedimentation-clarifier-sheet-hr.png",
-                frame_count = 60,
-                priority = "extra-high",
-                width = sprite_width * 64,
-                height = sprite_height * 64,
-                scale = 0.5,
-                line_length = 7,
-                animation_speed = 12 / 60
             }
         }
     },

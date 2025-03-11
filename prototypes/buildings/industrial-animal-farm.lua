@@ -34,50 +34,52 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = {
-        north = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = 1472,
-                    height = 576,
-                    scale = 0.5,
-                    shift = {0.5, -1.0}
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-shadowmap-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = 1472,
-                    height = 576,
-                    scale = 0.5,
-                    shift = {0.5, -1.0},
-                    draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            north = {
+                layers = {
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = 1472,
+                        height = 576,
+                        scale = 0.5,
+                        shift = {0.5, -1.0}
+                    },
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-north-shadowmap-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = 1472,
+                        height = 576,
+                        scale = 0.5,
+                        shift = {0.5, -1.0},
+                        draw_as_shadow = true
+                    }
                 }
-            }
-        },
-        east = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = 448,
-                    height = 1472,
-                    scale = 0.5,
-                    shift = {0.0, -0.5}
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-shadowmap-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = 448,
-                    height = 1472,
-                    scale = 0.5,
-                    shift = {0.0, -0.5},
-                    draw_as_shadow = true
+            },
+            east = {
+                layers = {
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = 448,
+                        height = 1472,
+                        scale = 0.5,
+                        shift = {0.0, -0.5}
+                    },
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/industrial-animal-farm/industrial-animal-farm-east-shadowmap-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = 448,
+                        height = 1472,
+                        scale = 0.5,
+                        shift = {0.0, -0.5},
+                        draw_as_shadow = true
+                    }
                 }
             }
         }

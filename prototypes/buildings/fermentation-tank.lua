@@ -36,27 +36,29 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = {
-        north = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5,
-                    shift = {0.0, 0.0}
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-shadowmap-hr.png",
-                    frame_count = 1,
-                    priority = "extra-high",
-                    width = sprite_width * 64,
-                    height = sprite_height * 64,
-                    scale = 0.5,
-                    shift = {0.0, 0.0},
-                    draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            north = {
+                layers = {
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = sprite_width * 64,
+                        height = sprite_height * 64,
+                        scale = 0.5,
+                        shift = {0.0, 0.0}
+                    },
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/fermentation-tank/fermentation-tank-shadowmap-hr.png",
+                        frame_count = 1,
+                        priority = "extra-high",
+                        width = sprite_width * 64,
+                        height = sprite_height * 64,
+                        scale = 0.5,
+                        shift = {0.0, 0.0},
+                        draw_as_shadow = true
+                    }
                 }
             }
         }

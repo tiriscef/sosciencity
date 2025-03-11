@@ -34,25 +34,27 @@ Tirislib.Entity.create {
         module_slots = 2
     },
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-hr.png",
-                frame_count = 1,
-                priority = "high",
-                width = 256,
-                height = 256,
-                scale = 0.5,
-                shift = {0.5, -0.5}
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-shadowmap-hr.png",
-                frame_count = 1,
-                width = 256,
-                height = 256,
-                scale = 0.5,
-                shift = {0.5, -0.5},
-                draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-hr.png",
+                    frame_count = 1,
+                    priority = "high",
+                    width = 256,
+                    height = 256,
+                    scale = 0.5,
+                    shift = {0.5, -0.5}
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/slaughter-pit/slaughter-pit-shadowmap-hr.png",
+                    frame_count = 1,
+                    width = 256,
+                    height = 256,
+                    scale = 0.5,
+                    shift = {0.5, -0.5},
+                    draw_as_shadow = true
+                }
             }
         }
     },

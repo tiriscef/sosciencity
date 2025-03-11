@@ -29,14 +29,16 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/reproductive-gene-lab/reproductive-gene-lab",
-        width = 12,
-        height = 8,
-        shift = {2.5, 0.5},
-        shadowmap = true,
-        lightmap = true,
-        glow = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/reproductive-gene-lab/reproductive-gene-lab",
+            width = 12,
+            height = 8,
+            shift = {2.5, 0.5},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-reproductive-gene-lab"},

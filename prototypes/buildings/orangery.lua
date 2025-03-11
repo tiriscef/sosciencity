@@ -39,24 +39,26 @@ Tirislib.Entity.create {
         module_slots = 3
     },
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-hr.png",
-                priority = "high",
-                width = 1152,
-                height = 1152,
-                shift = {0.5, -0.5},
-                scale = 0.5
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-shadowmap-hr.png",
-                priority = "high",
-                width = 1152,
-                height = 1152,
-                shift = {0.5, -0.5},
-                scale = 0.5,
-                draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-hr.png",
+                    priority = "high",
+                    width = 1152,
+                    height = 1152,
+                    shift = {0.5, -0.5},
+                    scale = 0.5
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/orangery/orangery-shadowmap-hr.png",
+                    priority = "high",
+                    width = 1152,
+                    height = 1152,
+                    shift = {0.5, -0.5},
+                    scale = 0.5,
+                    draw_as_shadow = true
+                }
             }
         }
     },

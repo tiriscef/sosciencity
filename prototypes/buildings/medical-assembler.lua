@@ -35,12 +35,14 @@ Tirislib.Entity.create {
         module_slots = 4
     },
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/medical-assembler/medical-assembler",
-        center = {3.0, 3.0},
-        width = 7,
-        height = 6,
-        shadowmap = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/medical-assembler/medical-assembler",
+            center = {3.0, 3.0},
+            width = 7,
+            height = 6,
+            shadowmap = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-pharma"},
@@ -88,7 +90,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-0.5, -1.5}, flow_direction = "input", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {-0.5, -1.5}, flow_direction = "input", direction = defines.direction.north}
+            },
             production_type = "input"
         }
     },

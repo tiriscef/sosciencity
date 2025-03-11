@@ -36,22 +36,24 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-hr.png",
-                priority = "high",
-                width = 448,
-                height = 448,
-                scale = 0.5
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-shadowmap-hr.png",
-                priority = "high",
-                width = 448,
-                height = 448,
-                scale = 0.5,
-                draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-hr.png",
+                    priority = "high",
+                    width = 448,
+                    height = 448,
+                    scale = 0.5
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/architectural-office/architectural-office-shadowmap-hr.png",
+                    priority = "high",
+                    width = 448,
+                    height = 448,
+                    scale = 0.5,
+                    draw_as_shadow = true
+                }
             }
         }
     },

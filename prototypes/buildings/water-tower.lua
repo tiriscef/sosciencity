@@ -89,13 +89,15 @@ Tirislib.Entity.create {
     subgroup = "remnants",
     order = "dead-water-tower:(",
     remove_on_tile_placement = false,
-    animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants-hr.png",
-        direction_count = 1,
-        width = 320,
-        height = 320,
-        shift = {0, -1},
-        scale = 0.5
+    graphics_set = {
+        animation = {
+            filename = "__sosciencity-graphics__/graphics/entity/water-tower/water-tower-remnants-hr.png",
+            direction_count = 1,
+            width = 320,
+            height = 320,
+            shift = {0, -1},
+            scale = 0.5
+        }
     },
     localised_name = {"item-name.water-tower"}
 }:set_size(size_x, size_y)

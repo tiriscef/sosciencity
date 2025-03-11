@@ -70,13 +70,15 @@ Tirislib.Entity.create {
     subgroup = "remnants",
     order = "dead-trash-site:(",
     remove_on_tile_placement = false,
-    animation = {
-        filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-remnants-hr.png",
-        direction_count = 1,
-        width = 384,
-        height = 384,
-        shift = {0.5, -0.5},
-        scale = 0.5 * 0.8
+    graphics_set = {
+        animation = {
+            filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-remnants-hr.png",
+            direction_count = 1,
+            width = 384,
+            height = 384,
+            shift = {0.5, -0.5},
+            scale = 0.5 * 0.8
+        }
     },
     localised_name = {"item-name.trash-site"}
 }:set_size(4, 4)

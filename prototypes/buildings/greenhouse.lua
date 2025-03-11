@@ -36,25 +36,27 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-hr.png",
-                frame_count = 1,
-                priority = "high",
-                width = 1088,
-                height = 1088,
-                scale = 0.5,
-                shift = {0.0, -1.0}
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap-hr.png",
-                frame_count = 1,
-                width = 1088,
-                height = 1088,
-                scale = 0.5,
-                shift = {0.0, -1.0},
-                draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-hr.png",
+                    frame_count = 1,
+                    priority = "high",
+                    width = 1088,
+                    height = 1088,
+                    scale = 0.5,
+                    shift = {0.0, -1.0}
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/greenhouse/greenhouse-shadowmap-hr.png",
+                    frame_count = 1,
+                    width = 1088,
+                    height = 1088,
+                    scale = 0.5,
+                    shift = {0.0, -1.0},
+                    draw_as_shadow = true
+                }
             }
         }
     },
