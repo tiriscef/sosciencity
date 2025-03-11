@@ -32,14 +32,16 @@ Tirislib.Entity.create {
         module_slots = 2
     },
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/wood-processer/wood-processer",
-        center = {4.0, 4.0},
-        width = 12.5,
-        height = 7,
-        shadowmap = true,
-        glow = true,
-        lightmap = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/wood-processer/wood-processer",
+            center = {4.0, 4.0},
+            width = 12.5,
+            height = 7,
+            shadowmap = true,
+            glow = true,
+            lightmap = true
+        }
     },
     crafting_speed = 2,
     crafting_categories = {"sosciencity-wood-processing"},
@@ -52,7 +54,8 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.1},
         drain = "5kW"
     },
-    working_sound = { -- TODO: better fitting sound
+    working_sound = {
+        -- TODO: better fitting sound
         sound = {
             {
                 filename = "__base__/sound/assembling-machine-t1-1.ogg",

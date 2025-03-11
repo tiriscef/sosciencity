@@ -36,25 +36,27 @@ Tirislib.Entity.create {
         module_slots = 1
     },
     allowed_effects = {"productivity", "speed"}, -- try to disallow player craftable modules
-    animation = {
-        north = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-hr.png",
-                    width = 256,
-                    height = 320,
-                    frames = 1,
-                    shift = {0.5, -1},
-                    scale = 0.5
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap-hr.png",
-                    width = 256,
-                    height = 320,
-                    frames = 1,
-                    shift = {0.5, -1},
-                    draw_as_shadow = true,
-                    scale = 0.5
+    graphics_set = {
+        animation = {
+            north = {
+                layers = {
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-hr.png",
+                        width = 256,
+                        height = 320,
+                        frames = 1,
+                        shift = {0.5, -1},
+                        scale = 0.5
+                    },
+                    {
+                        filename = "__sosciencity-graphics__/graphics/entity/groundwater-pump/groundwater-pump-shadowmap-hr.png",
+                        width = 256,
+                        height = 320,
+                        frames = 1,
+                        shift = {0.5, -1},
+                        draw_as_shadow = true,
+                        scale = 0.5
+                    }
                 }
             }
         }

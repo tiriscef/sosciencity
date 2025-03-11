@@ -87,13 +87,15 @@ local function create_test_assembling_machine(name, categories)
             module_slots = 2
         },
         allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-        animation = {
-            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-            priority = "high",
-            width = 192,
-            height = 192,
-            scale = 0.5,
-            frame_count = 1
+        graphics_set = {
+            animation = {
+                filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+                priority = "high",
+                width = 192,
+                height = 192,
+                scale = 0.5,
+                frame_count = 1
+            }
         },
         crafting_speed = 1,
         crafting_categories = categories,

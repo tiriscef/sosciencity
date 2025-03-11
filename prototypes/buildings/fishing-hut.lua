@@ -36,24 +36,26 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-hr.png",
-                priority = "high",
-                width = width * 2,
-                height = height * 2,
-                shift = shift,
-                scale = 0.625
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-shadowmap-hr.png",
-                priority = "high",
-                width = width * 2,
-                height = height * 2,
-                shift = shift,
-                scale = 0.625,
-                draw_as_shadow = true
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-hr.png",
+                    priority = "high",
+                    width = width * 2,
+                    height = height * 2,
+                    shift = shift,
+                    scale = 0.625
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/fishing-hut/fishing-hut-shadowmap-hr.png",
+                    priority = "high",
+                    width = width * 2,
+                    height = height * 2,
+                    shift = shift,
+                    scale = 0.625,
+                    draw_as_shadow = true
+                }
             }
         }
     },

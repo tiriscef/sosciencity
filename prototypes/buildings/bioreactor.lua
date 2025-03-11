@@ -32,13 +32,15 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/bioreactor/bioreactor",
-        width = 15,
-        height = 11,
-        shift = {2.0, 0.0},
-        shadowmap = true,
-        glow = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/bioreactor/bioreactor",
+            width = 15,
+            height = 11,
+            shift = {2.0, 0.0},
+            shadowmap = true,
+            glow = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-bioreactor"},
@@ -75,21 +77,27 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-1.0, -4.0}, flow_direction = "output", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {-1.0, -4.0}, flow_direction = "output", direction = defines.direction.north}
+            },
             production_type = "output"
         },
         {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {0.0, -4.0}, flow_direction = "output", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {0.0, -4.0}, flow_direction = "output", direction = defines.direction.north}
+            },
             production_type = "output"
         },
         {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {1.0, -4.0}, flow_direction = "output", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {1.0, -4.0}, flow_direction = "output", direction = defines.direction.north}
+            },
             production_type = "output"
         }
     },

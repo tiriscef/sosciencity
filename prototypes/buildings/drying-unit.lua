@@ -32,14 +32,16 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/drying-unit/drying-unit",
-        width = 6,
-        height = 6,
-        center = {2.5, 3.5},
-        shadowmap = true,
-        lightmap = true,
-        glow = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/drying-unit/drying-unit",
+            width = 6,
+            height = 6,
+            center = {2.5, 3.5},
+            shadowmap = true,
+            lightmap = true,
+            glow = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-drying-unit"},

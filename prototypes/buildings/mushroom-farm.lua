@@ -32,13 +32,15 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/mushroom-farm/mushroom-farm",
-        shift = {0.0, 0.5},
-        width = 7,
-        height = 6,
-        shadowmap = true,
-        glow = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/mushroom-farm/mushroom-farm",
+            shift = {0.0, 0.5},
+            width = 7,
+            height = 6,
+            shadowmap = true,
+            glow = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-mushroom-farm"},

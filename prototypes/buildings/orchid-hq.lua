@@ -30,26 +30,28 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
-                frame_count = 1,
-                height = 1344,
-                priority = "high",
-                scale = 0.5,
-                shift = {6.75, -5.0},
-                width = 2304
-            },
-            {
-                draw_as_shadow = true,
-                filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
-                frame_count = 1,
-                height = 1344,
-                priority = "high",
-                scale = 0.5,
-                shift = {6.25, -5.5},
-                width = 2304
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq.png",
+                    frame_count = 1,
+                    height = 1344,
+                    priority = "high",
+                    scale = 0.5,
+                    shift = {6.75, -5.0},
+                    width = 2304
+                },
+                {
+                    draw_as_shadow = true,
+                    filename = "__sosciencity-graphics__/graphics/entity/orchid-hq/orchid-hq-shadowmap.png",
+                    frame_count = 1,
+                    height = 1344,
+                    priority = "high",
+                    scale = 0.5,
+                    shift = {6.25, -5.5},
+                    width = 2304
+                }
             }
         }
     },

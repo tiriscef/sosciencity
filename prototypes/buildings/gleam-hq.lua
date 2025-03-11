@@ -32,23 +32,25 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                priority = "high",
-                width = 224,
-                height = 224,
-                scale = 1,
-                frame_count = 1
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/gleam-caste.png",
-                priority = "high",
-                width = 256,
-                height = 256,
-                scale = 0.8,
-                frame_count = 1
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/placeholder.png",
+                    priority = "high",
+                    width = 224,
+                    height = 224,
+                    scale = 1,
+                    frame_count = 1
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/gleam-caste.png",
+                    priority = "high",
+                    width = 256,
+                    height = 256,
+                    scale = 0.8,
+                    frame_count = 1
+                }
             }
         }
     },

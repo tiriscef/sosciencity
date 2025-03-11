@@ -28,14 +28,16 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/waste-incineration-plant/waste-incineration-plant",
-        shift = {2.0, 0.5},
-        width = 21,
-        height = 16,
-        shadowmap = true,
-        glow = true,
-        lightmap = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/waste-incineration-plant/waste-incineration-plant",
+            shift = {2.0, 0.5},
+            width = 21,
+            height = 16,
+            shadowmap = true,
+            glow = true,
+            lightmap = true
+        }
     },
     energy_source = {
         type = "electric",
