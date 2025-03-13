@@ -37,26 +37,28 @@ Tirislib.Entity.create {
         module_slots = 3
     },
     allowed_effects = {"productivity", "speed"},
-    animation = {
-        layers = {
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-hr.png",
-                frame_count = 1,
-                priority = "extra-high",
-                width = 1088,
-                height = 1152,
-                shift = {0.0, -0.5},
-                scale = 0.5
-            },
-            {
-                filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-shadowmap-hr.png",
-                frame_count = 1,
-                priority = "extra-high",
-                width = 1088,
-                height = 1152,
-                shift = {0.0, -0.5},
-                draw_as_shadow = true,
-                scale = 0.5
+    graphics_set = {
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-hr.png",
+                    frame_count = 1,
+                    priority = "extra-high",
+                    width = 1088,
+                    height = 1152,
+                    shift = {0.0, -0.5},
+                    scale = 0.5
+                },
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/arboretum/arboretum-shadowmap-hr.png",
+                    frame_count = 1,
+                    priority = "extra-high",
+                    width = 1088,
+                    height = 1152,
+                    shift = {0.0, -0.5},
+                    draw_as_shadow = true,
+                    scale = 0.5
+                }
             }
         }
     },

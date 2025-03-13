@@ -32,15 +32,17 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
-    animation = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/algae-farm/algae-farm",
-        center = {2.5, 3.0},
-        width = 8,
-        height = 5,
-        scale = 1.5,
-        shadowmap = true,
-        glow = true,
-        lightmap = true
+    graphics_set = {
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/algae-farm/algae-farm",
+            center = {2.5, 3.0},
+            width = 8,
+            height = 5,
+            scale = 1.5,
+            shadowmap = true,
+            glow = true,
+            lightmap = true
+        }
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-algae-farm"},
@@ -56,7 +58,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-3.0, -1.0}, flow_direction = "input", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {-3.0, -1.0}, flow_direction = "input", direction = defines.direction.north}
+            },
             production_type = "input"
         },
         {
@@ -70,7 +74,9 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {3.0, -1.0}, flow_direction = "output", direction = defines.direction.north}},
+            pipe_connections = {
+                {position = {3.0, -1.0}, flow_direction = "output", direction = defines.direction.north}
+            },
             production_type = "output"
         }
     },
