@@ -2,7 +2,6 @@ Tirislib.Prototype.batch_create {
     {
         type = "item-group",
         name = "sosciencity-infrastructure",
-        inventory_order = "za",
         order = "za",
         icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
         icon_size = 128
@@ -70,7 +69,6 @@ Tirislib.Prototype.batch_create {
     {
         type = "item-group",
         name = "sosciencity-production",
-        inventory_order = "zb",
         order = "za",
         icon = "__sosciencity-graphics__/graphics/icon/production-group.png",
         icon_size = 128
