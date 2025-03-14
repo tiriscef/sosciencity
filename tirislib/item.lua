@@ -207,7 +207,7 @@ function Tirislib.Item:add_sprite_variations(size, path, count)
             {
                 size = size,
                 filename = path .. "-" .. i .. ".png",
-                scale = 16. / size
+                scale = 32. / size
             }
         )
     end
@@ -227,7 +227,7 @@ function Tirislib.Item:add_icon_to_sprite_variations()
         {
             size = self.icon_size,
             filename = self.icon,
-            scale = 16. / self.icon_size
+            scale = 32. / self.icon_size
         }
     )
 
