@@ -26,8 +26,12 @@ local flora_items = {
     {name = "zetorn-wood", wood = true, unlock = "explore-alien-flora-1"},
     {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
     {name = "gingil-hemp", sprite_variations = {name = "gingil-hemp-pile", count = 3}},
-    {name = "necrofall"},
-    {name = "phytofall-blossom"}
+    {name = "wild-flowers", sprite_variations = {name = "wild-flowers", count = 5, include_icon = true}},
+    {name = "necrofall", sprite_variations = {name = "necrofall-pile", count = 4}},
+    {name = "phytofall-blossom", sprite_variations = {name = "phytofall-blossom-pile", count = 4}},
+    {name = "chromafall", sprite_variations = {name = "chromafall-pile", count = 4}},
+    {name = "chronofall", sprite_variations = {name = "chronofall-pile", count = 4}},
+    {name = "chamofall", sprite_variations = {name = "chamofall-pile", count = 4}}
 }
 
 for _, item in pairs(flora_items) do
@@ -438,12 +442,6 @@ create_identification_recipe {
 }
 
 -- necrofall
-create_annual_recipe {
-    product = "necrofall",
-    product_probability = 0.5,
-    unlock = Unlocks.get_tech_name("necrofall")
-}
-
 create_annual_bloomhouse_recipe {
     product = "necrofall",
     unlock = Unlocks.get_tech_name("necrofall")
@@ -490,15 +488,8 @@ create_identification_recipe {
 }
 
 -- phytofall blossom
-create_annual_recipe {
-    product = "phytofall-blossom",
-    product_probability = 0.5,
-    unlock = "orchid-caste"
-}
-
 create_annual_bloomhouse_recipe {
-    product = "phytofall-blossom",
-    unlock = "orchid-caste"
+    product = "phytofall-blossom"
 }
 
 -- potato
