@@ -288,9 +288,7 @@ local function analyze_composter_inventory(content)
         end
     end
 
-    return item_count * item_type_count * composting_coefficient *
-        Biology.composting_climate_factors[storage.current_climate] *
-        Biology.composting_humidity_factors[storage.current_humidity], compostable_items
+    return item_count * item_type_count * composting_coefficient, compostable_items
 end
 Entity.analyze_composter_inventory = analyze_composter_inventory
 
@@ -517,12 +515,7 @@ local function update_farm(entry, delta_ticks)
         end
 
         if building_details.open_environment then
-            if flora_details.preferred_humidity ~= storage.current_humidity then
-                performance = performance * flora_details.wrong_humidity_coefficient
-            end
-            if flora_details.preferred_climate ~= storage.current_climate then
-                performance = performance * flora_details.wrong_climate_coefficient
-            end
+            -- TODO: new system for inconsistent outdoor growth
         end
 
         if flora_details.persistent then

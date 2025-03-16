@@ -31,7 +31,6 @@ local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 local TypeGroup = require("constants.type-groups")
 local Types = require("constants.types")
-local WeatherLocales = require("constants.weather-locales")
 
 -- local often used globals for microscopic performance gains
 
@@ -61,9 +60,6 @@ local display_item_stack = Tirislib.Locales.display_item_stack
 local display_time = Tirislib.Locales.display_time
 
 local Table = Tirislib.Tables
-
-local climate_locales = WeatherLocales.climate
-local humidity_locales = WeatherLocales.humidity
 
 local Datalist = Gui.Elements.Datalist
 
@@ -1071,61 +1067,6 @@ local function update_farm(container, entry, player_id)
             )
         end
 
-        Datalist.set_kv_pair_visibility(building_data, "climate", true)
-        Datalist.set_kv_pair_visibility(building_data, "humidity", true)
-
-        if building_details.open_environment then
-            Datalist.set_kv_pair_value(
-                building_data,
-                "climate",
-                flora_details.preferred_climate == storage.current_climate and
-                    {
-                        "sosciencity.right-climate",
-                        climate_locales[flora_details.preferred_climate]
-                    } or
-                    {
-                        "sosciencity.wrong-climate",
-                        climate_locales[storage.current_climate],
-                        climate_locales[flora_details.preferred_climate],
-                        {
-                            "sosciencity.percentage-malus",
-                            100 - flora_details.wrong_climate_coefficient * 100,
-                            {"sosciencity.speed"}
-                        }
-                    }
-            )
-            Datalist.set_kv_pair_value(
-                building_data,
-                "humidity",
-                flora_details.preferred_humidity == storage.current_humidity and
-                    {
-                        "sosciencity.right-humidity",
-                        humidity_locales[flora_details.preferred_humidity]
-                    } or
-                    {
-                        "sosciencity.wrong-humidity",
-                        humidity_locales[storage.current_humidity],
-                        humidity_locales[flora_details.preferred_humidity],
-                        {
-                            "sosciencity.percentage-malus",
-                            100 - flora_details.wrong_humidity_coefficient * 100,
-                            {"sosciencity.speed"}
-                        }
-                    }
-            )
-        else
-            Datalist.set_kv_pair_value(
-                building_data,
-                "climate",
-                {"sosciencity.closed-climate", climate_locales[flora_details.preferred_climate]}
-            )
-            Datalist.set_kv_pair_value(
-                building_data,
-                "humidity",
-                {"sosciencity.closed-humidity", humidity_locales[flora_details.preferred_humidity]}
-            )
-        end
-
         if
             flora_details.required_module and
                 not Inventories.assembler_has_module(entry[EK.entity], flora_details.required_module)
@@ -1142,8 +1083,6 @@ local function update_farm(container, entry, player_id)
     else
         -- no recipe set
         Datalist.set_kv_pair_visibility(building_data, "biomass", false)
-        Datalist.set_kv_pair_visibility(building_data, "climate", false)
-        Datalist.set_kv_pair_visibility(building_data, "humidity", false)
         Datalist.set_kv_pair_visibility(building_data, "module", false)
     end
 
@@ -1180,8 +1119,6 @@ local function create_farm(container, entry, player_id)
 
     Datalist.add_kv_pair(building_data, "orchid-bonus", {"caste-short.orchid"})
     Datalist.add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
-    Datalist.add_kv_pair(building_data, "climate", {"sosciencity.climate"})
-    Datalist.add_kv_pair(building_data, "humidity", {"sosciencity.humidity"})
 
     if get_building_details(entry).accepts_plant_care then
         Datalist.add_kv_checkbox(
