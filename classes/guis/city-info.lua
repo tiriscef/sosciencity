@@ -7,7 +7,6 @@ local Type = require("enums.type")
 -- constants
 local Castes = require("constants.castes")
 local Color = require("constants.color")
-local WeatherLocales = require("constants.weather-locales")
 
 -- local often used globals for microscopic performance gains
 local castes = Castes.values
@@ -18,10 +17,6 @@ local max = math.max
 local round_to_step = Tirislib.Utils.round_to_step
 
 local Table = Tirislib.Tables
-
-local climate_locales = WeatherLocales.climate
-local humidity_locales = WeatherLocales.humidity
-local weather_locales = WeatherLocales.weather
 
 local CITY_INFO_NAME = "sosciencity-city-info"
 
@@ -39,20 +34,6 @@ local function update_population_flow(container)
     }
 
     datalist.turret_count.caption = Register.get_type_count(Type.turret)
-
-    local climate = storage.current_climate
-    local humidity = storage.current_humidity
-    datalist.weather.caption = weather_locales[humidity][climate]
-    datalist.weather.tooltip = {
-        "sosciencity.explain-weather",
-        climate_locales[climate],
-        humidity_locales[humidity]
-    }
-    datalist["key-weather"].tooltip = {
-        "sosciencity.explain-weather",
-        climate_locales[climate],
-        humidity_locales[humidity]
-    }
 end
 
 local function add_city_info_entry(data_list, key, key_caption, caption_color)
@@ -116,7 +97,6 @@ local function create_population_flow(container)
     add_city_info_entry(datalist, "population", {"sosciencity.population"})
     add_city_info_entry(datalist, "machine_count", {"sosciencity.machines"})
     add_city_info_entry(datalist, "turret_count", {"sosciencity.turrets"})
-    add_city_info_entry(datalist, "weather", {"sosciencity.weather"}, Color.yellowish_green)
 
     update_population_flow(container)
 end

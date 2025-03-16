@@ -1,8 +1,5 @@
-local Humidity = require("enums.humidity")
-
 local Biology = require("constants.biology")
 local Unlocks = require("constants.unlocks")
-local WeatherLocales = require("constants.weather-locales")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -48,12 +45,6 @@ Tirislib.Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_s
 ---------------------------------------------------------------------------------------------------
 -- << farming recipes >>
 
-local humidity_multipliers = {
-    [Humidity.dry] = 1 / 4,
-    [Humidity.moderate] = 1 / 2,
-    [Humidity.humid] = 1
-}
-
 local function add_general_growing_attributes(details, plant_details)
     if plant_details.required_module then
         Tirislib.Locales.append(
@@ -72,7 +63,6 @@ local function create_annual_recipe(details)
     local plant_details = Biology.flora[product.name]
 
     local energy_required = 200 / plant_details.growth_coefficient
-    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
 
     Tirislib.RecipeGenerator.merge_details(
         details,
@@ -81,8 +71,6 @@ local function create_annual_recipe(details)
             product_min = 0,
             product_max = 100 * (details.output_multiplier or 1),
             energy_required = energy_required,
-            expensive_energy_required = energy_required * 1.2,
-            themes = {{"water", water_required, water_required * 2}},
             ingredients = {
                 {type = "item", name = product.name, amount = 10 * (details.output_multiplier or 1)}
             },
@@ -99,11 +87,7 @@ local function create_annual_recipe(details)
             localised_name = {"recipe-name.annual", product:get_localised_name()},
             localised_description = {
                 "recipe-description.annual",
-                product:get_localised_name(),
-                WeatherLocales.climate[plant_details.preferred_climate],
-                WeatherLocales.humidity[plant_details.preferred_humidity],
-                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
-                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+                product:get_localised_name()
             },
             category = "sosciencity-farming-annual",
             subgroup = "sosciencity-flora",
@@ -129,8 +113,6 @@ local function create_perennial_recipe(details)
     local product = Tirislib.Item.get_by_name(details.product)
     local plant_details = Biology.flora[product.name]
 
-    local water_required = 150 * humidity_multipliers[plant_details.preferred_humidity]
-
     Tirislib.RecipeGenerator.merge_details(
         details,
         {
@@ -138,17 +120,11 @@ local function create_perennial_recipe(details)
             product_min = 5 * (details.output_multiplier or 1),
             product_max = 10 * (details.output_multiplier or 1),
             energy_required = 25,
-            expensive_energy_required = 17.5,
-            themes = {{"water", water_required, water_required * 2}},
             byproducts = {{type = "item", name = "leafage", amount = 1}},
             localised_name = {"recipe-name.perennial", product:get_localised_name()},
             localised_description = {
                 "recipe-description.perennial",
-                product:get_localised_name(),
-                WeatherLocales.climate[plant_details.preferred_climate],
-                WeatherLocales.humidity[plant_details.preferred_humidity],
-                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
-                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+                product:get_localised_name()
             },
             category = "sosciencity-farming-perennial",
             subgroup = "sosciencity-flora-perennial",
@@ -175,7 +151,6 @@ local function create_annual_bloomhouse_recipe(details)
     local plant_details = Biology.flora[product.name]
 
     local energy_required = 200 / plant_details.growth_coefficient
-    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
 
     Tirislib.RecipeGenerator.merge_details(
         details,
@@ -184,8 +159,6 @@ local function create_annual_bloomhouse_recipe(details)
             product_min = 50 * (details.output_multiplier or 1),
             product_max = 100 * (details.output_multiplier or 1),
             energy_required = energy_required,
-            expensive_energy_required = energy_required * 1.2,
-            themes = {{"water", water_required, water_required * 2}},
             ingredients = {
                 {type = "item", name = product.name, amount = 10},
                 {type = "item", name = "pot", amount = 20}
@@ -293,6 +266,7 @@ end
 create_perennial_recipe {
     product = "apple",
     output_multiplier = 1.4,
+    ingredients = {{type = "fluid", name = "water", amount = 75}},
     byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("apple")
 }
@@ -306,6 +280,7 @@ create_neogenesis_recipe {
 create_perennial_recipe {
     product = "avocado",
     output_multiplier = 0.8,
+    ingredients = {{type = "fluid", name = "water", amount = 150}},
     byproducts = {{type = "item", name = "avocado-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("avocado")
 }
@@ -318,6 +293,7 @@ create_neogenesis_recipe {
 create_annual_recipe {
     product = "bell-pepper",
     output_multiplier = 1.5,
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = Unlocks.get_tech_name("bell-pepper")
 }
 
@@ -329,6 +305,7 @@ create_neogenesis_recipe {
 -- blue grapes
 create_annual_recipe {
     product = "blue-grapes",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = "open-environment-farming"
 }
 
@@ -352,6 +329,7 @@ create_identification_recipe {
 create_perennial_recipe {
     product = "cherry",
     output_multiplier = 1.6,
+    ingredients = {{type = "fluid", name = "water", amount = 75}},
     byproducts = {{type = "item", name = "cherry-wood", amount = 1, probability = 0.2}},
     unlock = Unlocks.get_tech_name("cherry")
 }
@@ -363,6 +341,7 @@ create_neogenesis_recipe {
 -- chickpea
 create_annual_recipe {
     product = "chickpea",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = "hummus"
 }
 
@@ -375,6 +354,7 @@ create_neogenesis_recipe {
 create_annual_recipe {
     product = "eggplant",
     output_multiplier = 1.5,
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = Unlocks.get_tech_name("eggplant")
 }
 
@@ -392,6 +372,7 @@ create_annual_recipe {
 -- hardcorn punk
 create_annual_recipe {
     product = "hardcorn-punk",
+    ingredients = {{type = "fluid", name = "water", amount = 1000}},
     unlock = "food-processing"
 }
 
@@ -428,6 +409,7 @@ create_annual_recipe {
 -- manok
 create_annual_recipe {
     product = "manok",
+    ingredients = {{type = "fluid", name = "water", amount = 1000}},
     unlock = "explore-alien-flora-1"
 }
 
@@ -444,6 +426,7 @@ create_identification_recipe {
 -- necrofall
 create_annual_bloomhouse_recipe {
     product = "necrofall",
+    ingredients = {{type = "fluid", name = "water", amount = 200}},
     unlock = Unlocks.get_tech_name("necrofall")
 }
 
@@ -473,6 +456,7 @@ create_neogenesis_recipe {
 -- ortrot
 create_perennial_recipe {
     product = "ortrot",
+    ingredients = {{type = "fluid", name = "water", amount = 75}},
     byproducts = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
     unlock = "explore-alien-flora-2"
 }
@@ -489,12 +473,14 @@ create_identification_recipe {
 
 -- phytofall blossom
 create_annual_bloomhouse_recipe {
-    product = "phytofall-blossom"
+    product = "phytofall-blossom",
+    ingredients = {{type = "fluid", name = "water", amount = 200}}
 }
 
 -- potato
 create_annual_recipe {
     product = "potato",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = Unlocks.get_tech_name("potato")
 }
 
@@ -506,12 +492,14 @@ create_neogenesis_recipe {
 -- razha bean
 create_annual_recipe {
     product = "razha-bean",
+    ingredients = {{type = "fluid", name = "water", amount = 1000}},
     unlock = "open-environment-farming"
 }
 
 -- sesame
 create_annual_recipe {
     product = "sesame",
+    ingredients = {{type = "fluid", name = "water", amount = 1000}},
     unlock = "hummus"
 }
 
@@ -523,6 +511,7 @@ create_neogenesis_recipe {
 -- sugar beet
 create_annual_recipe {
     product = "sugar-beet",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = Unlocks.get_tech_name("sugar-beet")
 }
 
@@ -533,6 +522,7 @@ create_neogenesis_recipe {
 -- sugar cane
 create_annual_recipe {
     product = "sugar-cane",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = Unlocks.get_tech_name("sugar-cane")
 }
 
@@ -543,6 +533,7 @@ create_neogenesis_recipe {
 -- tello
 create_annual_recipe {
     product = "tello-fruit",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = "explore-alien-flora-1"
 }
 
@@ -560,6 +551,7 @@ create_identification_recipe {
 create_annual_recipe {
     product = "tomato",
     output_multiplier = 1.5,
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = Unlocks.get_tech_name("tomato")
 }
 
@@ -571,6 +563,7 @@ create_neogenesis_recipe {
 -- plemnemm cotton
 create_annual_recipe {
     product = "plemnemm-cotton",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     output_multiplier = 2
 }
 
@@ -583,12 +576,14 @@ create_perennial_recipe {
 -- unnamed fruit
 create_annual_recipe {
     product = "unnamed-fruit",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = "open-environment-farming"
 }
 
 -- weird berry
 create_annual_recipe {
     product = "weird-berry",
+    ingredients = {{type = "fluid", name = "water", amount = 500}},
     unlock = "explore-alien-flora-1"
 }
 
@@ -627,7 +622,6 @@ local function create_mushroom_recipe(details)
     local plant_details = Biology.flora[product.name]
 
     local energy_required = 30 / plant_details.growth_coefficient
-    local water_required = energy_required * 10 * humidity_multipliers[plant_details.preferred_humidity]
 
     Tirislib.RecipeGenerator.merge_details(
         details,
@@ -637,8 +631,6 @@ local function create_mushroom_recipe(details)
             product_max = 60 * (details.output_multiplier or 1),
             product_probability = details.product_probability,
             energy_required = energy_required,
-            expensive_energy_required = energy_required * 1.2,
-            themes = {{"water", water_required, water_required * 2}},
             byproducts = {
                 {
                     type = "item",
@@ -651,11 +643,7 @@ local function create_mushroom_recipe(details)
             localised_name = {"recipe-name.farm-mushroom", product:get_localised_name()},
             localised_description = {
                 "recipe-description.annual",
-                product:get_localised_name(),
-                WeatherLocales.climate[plant_details.preferred_climate],
-                WeatherLocales.humidity[plant_details.preferred_humidity],
-                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1),
-                Tirislib.Locales.display_percentage(plant_details.wrong_humidity_coefficient - 1)
+                product:get_localised_name()
             },
             category = "sosciencity-mushroom-farm",
             subgroup = "sosciencity-mushrooms",
@@ -680,28 +668,39 @@ end
 -- fawoxylas
 create_mushroom_recipe {
     product = "fawoxylas",
-    ingredients = {{type = "item", name = "tiriscefing-willow-wood", amount = 30}},
+    ingredients = {
+        {type = "item", name = "tiriscefing-willow-wood", amount = 30}
+    },
     unlock = "mushroom-farming"
 }
 
 -- pocelial
 create_mushroom_recipe {
     product = "pocelial",
-    ingredients = {{type = "item", name = "humus", amount = 20}},
+    ingredients = {
+        {type = "fluid", name = "water", amount = 300},
+        {type = "item", name = "humus", amount = 20}
+    },
     unlock = "mushroom-farming"
 }
 
 -- red hatty
 create_mushroom_recipe {
     product = "red-hatty",
-    ingredients = {{type = "item", name = "humus", amount = 20}},
+    ingredients = {
+        {type = "fluid", name = "water", amount = 300},
+        {type = "item", name = "humus", amount = 20}
+    },
     unlock = "mushroom-farming"
 }
 
 -- birdsnake
 create_mushroom_recipe {
     product = "birdsnake",
-    ingredients = {{type = "item", name = "humus", amount = 10}},
+    ingredients = {
+        {type = "fluid", name = "water", amount = 300},
+        {type = "item", name = "humus", amount = 10}
+    },
     themes = {{"stone", 10}},
     unlock = "mushroom-farming"
 }
@@ -714,7 +713,6 @@ local function create_algae_recipe(details)
     local plant_details = Biology.flora[product.name]
 
     local energy_required = 120 / plant_details.growth_coefficient
-    local water_required = energy_required * 10
 
     Tirislib.RecipeGenerator.merge_details(
         details,
@@ -723,8 +721,6 @@ local function create_algae_recipe(details)
             product_min = 20 * (details.output_multiplier or 1),
             product_max = 40 * (details.output_multiplier or 1),
             energy_required = energy_required,
-            expensive_energy_required = energy_required * 1.2,
-            themes = {{"water", water_required, water_required * 2}},
             byproducts = {
                 {
                     type = "item",
@@ -737,9 +733,7 @@ local function create_algae_recipe(details)
             localised_name = {"recipe-name.farm-algae", product:get_localised_name()},
             localised_description = {
                 "recipe-description.farm-algae",
-                product:get_localised_name(),
-                WeatherLocales.climate[plant_details.preferred_climate],
-                Tirislib.Locales.display_percentage(plant_details.wrong_climate_coefficient - 1)
+                product:get_localised_name()
             },
             category = "sosciencity-algae-farm",
             subgroup = "sosciencity-algae",
@@ -766,6 +760,7 @@ end
 -- endower flower
 create_algae_recipe {
     product = "endower-flower",
+    ingredients = {{type = "fluid", name = "water", amount = 5000}},
     unlock = "algae-farming"
 }
 
@@ -773,12 +768,14 @@ create_algae_recipe {
 create_algae_recipe {
     product = "pyrifera",
     output_multiplier = 2,
+    ingredients = {{type = "fluid", name = "water", amount = 5000}},
     unlock = "algae-farming"
 }
 
 -- queen algae
 create_algae_recipe {
     product = "queen-algae",
+    ingredients = {{type = "fluid", name = "water", amount = 5000}},
     unlock = "algae-farming"
 }
 
@@ -1064,7 +1061,16 @@ Tirislib.Entity.create {
     name = "necrofall-circle",
     type = "simple-entity",
     flags = {"placeable-neutral", "placeable-off-grid"},
-    collision_mask = {layers = {item = true, meltable = true, object = true, water_tile = true, is_object = true, is_lower_object = true}},
+    collision_mask = {
+        layers = {
+            item = true,
+            meltable = true,
+            object = true,
+            water_tile = true,
+            is_object = true,
+            is_lower_object = true
+        }
+    },
     --collision_mask = {"item-layer", "object-layer", "water-tile"},
     count_as_rock_for_filtered_deconstruction = true,
     subgroup = "grass",

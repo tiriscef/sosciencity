@@ -94,7 +94,6 @@ local Types = require("constants.types")
 
 require("classes.locale")
 require("classes.scheduler")
-require("classes.weather")
 require("classes.replacer")
 require("classes.register")
 require("classes.technologies")
@@ -156,7 +155,6 @@ local update_inhabitants = Inhabitants.update
 local update_gui = Gui.update_guis
 local update_scheduler = Scheduler.update
 local update_communication = Communication.update
-local update_weather = Weather.update
 local update_technologies = Technologies.update
 
 local create_mouseover_highlights = Visualisation.create_mouseover_highlights
@@ -170,7 +168,6 @@ local function update_cycle()
 
     ease_fear(current_tick)
     update_scheduler(current_tick)
-    update_weather(current_tick)
     update_inhabitants(current_tick)
     update_entities(current_tick)
     update_technologies()
@@ -221,7 +218,6 @@ local function init()
     storage.last_tile_update = -1
 
     Scheduler.init()
-    Weather.init()
     Neighborhood.init()
     Technologies.init()
     Register.init()
