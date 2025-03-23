@@ -366,7 +366,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     Datalist.set_kv_pair_value(general_list, "employed-count", {"sosciencity.show-employed-count", employed})
     Datalist.set_kv_pair_value(general_list, "diseased-count", {"sosciencity.show-diseased-count", diseased})
 
-    Datalist.set_kv_pair_visibility(general_list, "disease-rate", true)
+    Datalist.set_kv_pair_visibility(general_list, "disease-rate", DEBUG)
     local disease_progress_flow = Datalist.get_kv_value_element(general_list, "disease-rate")
     for category_name, category_id in pairs(DiseaseCategory) do
         local updater = Inhabitants.disease_progress_updaters[category_id]

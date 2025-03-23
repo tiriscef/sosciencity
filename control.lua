@@ -9,6 +9,8 @@ require("tirislib.init")
 ---------------------------------------------------------------------------------------------------
 -- << debug stuff >>
 
+DEBUG = false
+
 if script.active_mods["sosciencity-debug"] then
     DEBUG = true
 
