@@ -191,18 +191,25 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << flying texts >>
 
+--- Creates a temporary text at the entry's entity's position. Not actually flying anymore, was removed with factorio 2.
+--- @param entry Entry
+--- @param text locale
 function Communication.create_flying_text(entry, text)
     local entity = entry[EK.entity]
 
-    entity.surface.create_entity {
-        name = "flying-text",
-        position = entity.position,
-        text = text
+    rendering.draw_text {
+        text = text,
+        surface = entity.surface,
+        target = {entity = entity},
+        color = {1, 1, 1, 1},
+        use_rich_text = true,
+        time_to_live = 5 * Time.second,
+        alignment = "center"
     }
 end
 local create_flying_text = Communication.create_flying_text
 
----------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------
 -- << production and consumption statistics >>
 -- we collect all the produced/consumed stuff and log them collectively
 -- this reduces the amount of API calls and avoids the problem that the statistics log only integer numbers
