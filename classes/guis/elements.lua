@@ -514,16 +514,8 @@ Gui.Elements.Sprite = {}
 function Gui.Elements.Sprite.create_caste_sprite(container, caste_id, size)
     local caste = Castes.values[caste_id]
 
-    local flow =
-        container.add {
-        type = "flow",
-        direction = "horizontal"
-    }
-    flow.style.horizontally_stretchable = true
-    flow.style.horizontal_align = "center"
-
     local sprite =
-        flow.add {
+        container.add {
         type = "sprite",
         name = "caste-sprite",
         sprite = "technology/" .. caste.name .. "-caste"
@@ -713,6 +705,11 @@ end
 
 Gui.Elements.Button = {}
 
+--- Creates a button that when clicked brings the player to the given city view page.
+--- @param container LuaGuiElement
+--- @param category_name string
+--- @param page_name string
+--- @return LuaGuiElement button
 function Gui.Elements.Button.page_link(container, category_name, page_name)
     local flow =
         container.add {
@@ -735,4 +732,36 @@ function Gui.Elements.Button.page_link(container, category_name, page_name)
     }
 
     return flow
+end
+
+---------------------------------------------------------------------------------------------------
+-- << Flows >>
+---------------------------------------------------------------------------------------------------
+
+Gui.Elements.Flow = {}
+
+--- Creates a simple horizontal flow that centers its children.
+--- @param container LuaGuiElement
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Flow.horizontal_center(container, name)
+    return container.add {
+        type = "flow",
+        name = name,
+        direction = "horizontal",
+        style = "sosciencity_horizontal_center_flow"
+    }
+end
+
+--- Creates a simple horizontal flow that orders its children to the right.
+--- @param container LuaGuiElement
+--- @param name string|nil
+--- @return LuaGuiElement
+function Gui.Elements.Flow.horizontal_right(container, name)
+    return container.add {
+        type = "flow",
+        name = name,
+        direction = "horizontal",
+        style = "sosciencity_horizontal_right_flow"
+    }
 end

@@ -247,6 +247,18 @@ style.sosciencity_page_link_flow = {
     bottom_margin = 10
 }
 
+style.sosciencity_horizontal_center_flow = {
+    type = "horizontal_flow_style",
+    horizontally_stretchable = "on",
+    horizontal_align = "center"
+}
+
+style.sosciencity_horizontal_right_flow = {
+    type = "horizontal_flow_style",
+    horizontally_stretchable = "on",
+    horizontal_align = "right"
+}
+
 style.sosciencity_calculation_table = {
     type = "table_style",
     parent = "bordered_table",
