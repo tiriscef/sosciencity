@@ -514,8 +514,16 @@ Gui.Elements.Sprite = {}
 function Gui.Elements.Sprite.create_caste_sprite(container, caste_id, size)
     local caste = Castes.values[caste_id]
 
-    local sprite =
+    local flow =
         container.add {
+        type = "flow",
+        direction = "horizontal"
+    }
+    flow.style.horizontally_stretchable = true
+    flow.style.horizontal_align = "center"
+
+    local sprite =
+        flow.add {
         type = "sprite",
         name = "caste-sprite",
         sprite = "technology/" .. caste.name .. "-caste"

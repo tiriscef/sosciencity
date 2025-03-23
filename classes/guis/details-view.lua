@@ -596,102 +596,6 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     update_housing_detailed_info_tab(tabbed_pane, entry)
 end
 
-local function add_caste_infos(container, caste_id)
-    local caste = castes[caste_id]
-
-    Gui.Elements.Sprite.create_caste_sprite(container, caste_id, 128)
-
-    local caste_data = Datalist.create(container, "caste-infos")
-    Datalist.add_kv_pair(caste_data, "caste-name", {"sosciencity.name"}, caste.localised_name)
-    Datalist.add_kv_pair(caste_data, "description", "", {"technology-description." .. caste.name .. "-caste"})
-    Datalist.add_kv_pair(
-        caste_data,
-        "taste",
-        {"sosciencity.taste"},
-        {
-            "sosciencity.show-taste",
-            Food.taste_names[caste.favored_taste],
-            Food.taste_names[caste.least_favored_taste]
-        }
-    )
-    Datalist.add_kv_pair(
-        caste_data,
-        "food-count",
-        {"sosciencity.food-count"},
-        {"sosciencity.show-food-count", caste.minimum_food_count}
-    )
-    Datalist.add_kv_pair(
-        caste_data,
-        "luxury",
-        {"sosciencity.luxury"},
-        {"sosciencity.show-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
-    )
-    Datalist.add_kv_pair(
-        caste_data,
-        "room-count",
-        {"sosciencity.room-needs"},
-        {"sosciencity.show-room-needs", caste.required_room_count}
-    )
-    Datalist.add_kv_pair(
-        caste_data,
-        "power-demand",
-        {"sosciencity.power-demand"},
-        {"sosciencity.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
-    )
-    Datalist.add_kv_pair(
-        caste_data,
-        "water-demand",
-        {"sosciencity.water"},
-        {"sosciencity.show-water-demand", caste.water_demand * Time.minute}
-    )
-
-    local housing_flow = Datalist.add_kv_flow(caste_data, "housing-qualities", {"sosciencity.housing"})
-    housing_flow.add {
-            type = "label",
-            name = "comfort",
-            caption = {"sosciencity.show-comfort-needs", caste.minimum_comfort}
-        }.style.single_line = false
-
-    local prefered_flow =
-        housing_flow.add {
-        type = "flow",
-        name = "prefered-qualities",
-        direction = "vertical"
-    }
-    Datalist.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-qualities"})
-    local disliked_flow =
-        housing_flow.add {
-        type = "flow",
-        name = "disliked-qualities",
-        direction = "vertical"
-    }
-    Datalist.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-qualities"})
-
-    for quality, assessment in pairs(caste.housing_preferences) do
-        local quality_flow
-        if assessment > 0 then
-            quality_flow = prefered_flow
-        else
-            quality_flow = disliked_flow
-        end
-
-        quality_flow.add {
-            type = "label",
-            name = quality,
-            caption = {"", {"housing-quality." .. quality}, format(" (%+.1f)", assessment)},
-            tooltip = {"housing-quality-description." .. quality}
-        }
-    end
-end
-
-local function add_caste_info_tab(tabbed_pane, caste_id)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste", {"caste-short." .. castes[caste_id].name})
-    flow.style.vertical_spacing = 6
-    flow.style.horizontal_align = "center"
-
-    add_caste_infos(flow, caste_id)
-end
-
 local function update_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     update_housing_general_info_tab(tabbed_pane, entry)
@@ -707,7 +611,6 @@ local function create_housing_details(container, entry)
     local caste_id = entry[EK.type]
     add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     add_housing_detailed_info_tab(tabbed_pane, entry)
-    add_caste_info_tab(tabbed_pane, caste_id)
 end
 
 ---------------------------------------------------------------------------------------------------
