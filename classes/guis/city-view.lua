@@ -114,9 +114,6 @@ end
 local function open_page(player, category_index, page_name, set_tab_index)
     local category = content[category_index]
     local page = Gui.CityView.get_page_definition(category, page_name)
-    if not page then
-        return
-    end
 
     local gui = player.gui.screen[CITY_VIEW_NAME]
     if not gui then
@@ -126,7 +123,9 @@ local function open_page(player, category_index, page_name, set_tab_index)
 
     local page_container = tab.page.scroll
     page_container.clear()
-    page.creator(page_container)
+    if page then
+        page.creator(page_container)
+    end
 
     local menu = tab.menu.scroll
     menu.clear()
@@ -223,7 +222,7 @@ local function create_city_view(player)
 
     local last_opened_pages = get_subtblr(storage, "last_opened_pages", player.index)
 
-    for index, category in pairs(content) do
+    for category_index, category in pairs(content) do
         local tab =
             content_tabpane.add {
             type = "tab",
@@ -268,7 +267,9 @@ local function create_city_view(player)
             style = "sosciencity_city_view_page_content_scroll_pane"
         }
 
-        open_page(player, index, last_opened_pages[index] or category.pages[1].name)
+        -- open_page also calls fill_menu to set the correct style for the opened page
+        -- so we don't call fill_menu here, as that would be overwritten anyway
+        open_page(player, category_index, last_opened_pages[category_index] or category.pages[1].name)
     end
 
     local last_opened_tab = get_subtbl(storage, "last_opened_tab")[player.index]
@@ -336,4 +337,5 @@ Gui.add_gui_closed_handler(
 
 require("classes.guis.city-view-pages.report-pages")
 require("classes.guis.city-view-pages.data-pages")
+require("classes.guis.city-view-pages.caste-pages")
 require("classes.guis.city-view-pages.howto-pages")
