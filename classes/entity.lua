@@ -245,15 +245,17 @@ Register.set_entity_destruction_handler(Type.animal_farm, remove_animal_farm)
 -- << city combinator >>
 
 local function update_city_combinator(entry)
-    local control_behavior = entry[EK.entity].get_control_behavior()
+    --[[local control_behavior = entry[EK.entity].get_control_behavior()
 
     for type, signal in pairs(caste_signals) do
         if Inhabitants.caste_is_researched(type) then
             control_behavior.set_signal(type, {signal = signal, count = storage.population[type]})
         end
-    end
+    end]]
+
+    -- TODO: This doesn't work anymore and I currently have no clue how to implement this in factorio 2
 end
-Register.set_entity_updater(Type.city_combinator, update_city_combinator)
+--Register.set_entity_updater(Type.city_combinator, update_city_combinator)
 
 ---------------------------------------------------------------------------------------------------
 -- << composting >>

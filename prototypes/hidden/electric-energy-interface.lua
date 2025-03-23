@@ -22,11 +22,6 @@ for entity_name in pairs(Sosciencity_Config.eei_needing_buildings) do
             "no-automated-item-insertion",
             "placeable-off-grid"
         },
-        base_picture = {
-            filename = "__sosciencity-graphics__/graphics/empty.png",
-            width = 1,
-            height = 1
-        },
         energy_source = {
             type = "electric",
             buffer_capacity = "1MJ",
