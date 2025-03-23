@@ -198,7 +198,7 @@ local function create_city_view(player)
     header.add {
         type = "sprite-button",
         name = "sosciencity-close-city-view",
-        sprite = "utility/close_white",
+        sprite = "utility/close",
         hovered_sprite = "utility/close_black",
         clicked_sprite = "utility/close_black",
         style = "close_button",
