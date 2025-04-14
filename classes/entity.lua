@@ -434,6 +434,30 @@ Entity.humus_fertilization_speed = 30 --%
 Entity.humus_fertilization_workhours = 1 / Time.minute
 Entity.humus_fertilitation_consumption = 10 / Time.minute
 
+local function square_wave(tick, min_value, max_value, hold_time_max, slope_down_time, hold_time_min, slope_up_time, interpolate)
+    if not interpolate then
+        interpolate = Tirislib.Utils.identity
+    end
+
+    local cycle_time = tick % (hold_time_max + slope_down_time + hold_time_min + slope_up_time)
+
+    if cycle_time < hold_time_max then
+        -- phase 1: holding the max value
+        return max_value
+    elseif cycle_time < hold_time_max + slope_down_time then
+        -- phase 2: interpolating to min value
+        local progress = (cycle_time - hold_time_max) / slope_down_time
+        return max_value - (max_value - min_value) * interpolate(progress)
+    elseif cycle_time < hold_time_max + slope_down_time + hold_time_min then
+        -- phase 3: holding the min value
+        return min_value
+    else
+        -- phase 4: interpolating back to max value
+        local progress = (cycle_time - (hold_time_max + slope_down_time + hold_time_min)) / slope_up_time
+        return min_value + (max_value - min_value) * interpolate(progress)
+    end
+end
+
 local function update_farm(entry, delta_ticks)
     local entity = entry[EK.entity]
     local building_details = get_building_details(entry)
@@ -511,13 +535,23 @@ local function update_farm(entry, delta_ticks)
     if species_name then
         local flora_details = flora[species_name]
 
-        if flora_details.required_module then
-            performance =
-                performance * (Inventories.assembler_has_module(entity, flora_details.required_module) and 1 or 0)
+        if flora_details.required_module and not Inventories.assembler_has_module(entity, flora_details.required_module) then
+            performance = 0
         end
 
-        if building_details.open_environment then
-            -- TODO: new system for inconsistent outdoor growth
+        if building_details.open_environment and flora_details.growth_variance then
+            local growth_variance = flora_details.growth_variance
+            performance =
+                performance *
+                square_wave(
+                    game.tick + growth_variance.time_offset,
+                    growth_variance.min_value,
+                    growth_variance.max_value,
+                    growth_variance.hold_time_max,
+                    growth_variance.slope_down_time,
+                    growth_variance.hold_time_min,
+                    growth_variance.slope_up_time
+                )
         end
 
         if flora_details.persistent then

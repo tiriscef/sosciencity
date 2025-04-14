@@ -1,4 +1,5 @@
 local Gender = require("enums.gender")
+local Time = require("constants.time")
 
 --- Values regarding carbon-based life-forms
 local Biology = {}
@@ -10,6 +11,15 @@ Biology.flora = {
     ["apple"] = {
         persistent = true,
         growth_coefficient = 1,
+        growth_variance = {
+            max_value = 1,
+            min_value = 0.6,
+            hold_time_max = Time.minute,
+            slope_down_time = Time.minute,
+            hold_time_min = Time.minute,
+            slope_up_time = Time.minute,
+            time_offset = 0
+        },
         --preferred_climate = Climate.temperate,
         --wrong_climate_coefficient = 0.8,
         --preferred_humidity = Humidity.moderate,
@@ -163,7 +173,6 @@ Biology.flora = {
         --preferred_humidity = Humidity.humid,
         --wrong_humidity_coefficient = 0.7,
         recipes = {
-            "farming-annual-necrofall",
             "farming-annual-bloomhouse-necrofall"
         }
     },
@@ -204,7 +213,6 @@ Biology.flora = {
         --preferred_humidity = Humidity.moderate,
         --wrong_humidity_coefficient = 0.7,
         recipes = {
-            "farming-annual-phytofall-blossom",
             "farming-annual-bloomhouse-phytofall-blossom"
         }
     },
