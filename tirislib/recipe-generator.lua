@@ -284,8 +284,6 @@ function Tirislib.RecipeGenerator.create(details)
         recipe.main_product = product.name
     end
 
-    --recipe:create_difficulties()
-
     -- explicit defined
     recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
     recipe:add_result_range(details.byproducts, details.expensive_byproducts, true)
@@ -293,11 +291,6 @@ function Tirislib.RecipeGenerator.create(details)
     -- theme defined
     Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
     Tirislib.RecipeGenerator.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
-
-    if details.expensive_multiplier then
-        recipe:multiply_expensive_ingredients(details.expensive_multiplier)
-    end
-    recipe:set_expensive_field("energy_required", details.expensive_energy_required or details.energy_required or 0.5)
 
     recipe:add_unlock(details.unlock)
 
