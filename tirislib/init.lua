@@ -44,6 +44,7 @@ Tirislib = Tirislib or {}
 Tirislib.internal_version = tirislib_internal_version
 
 require("testing")
+require("lazy-luaq")
 require("utils")
 
 if Tirislib.Utils.is_data_stage() then
