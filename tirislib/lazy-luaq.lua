@@ -34,8 +34,88 @@ function LazyLuaq.from(tbl)
         content = tbl,
         is_content_iterator = true
     }
-
     setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function move_next_range(self)
+    local count = self.last_index or 0
+    local value = self.start_value + count * self.step
+
+    if value <= self.end_value then
+        self.last_index = count + 1
+        return count + 1, value
+    end
+end
+
+--- Creates a LazyLuaqQuery with the number range from the given starting value to the given end value.
+--- @param start_value number
+--- @param end_value number
+--- @param step number?
+--- @return LazyLuaqQuery
+function LazyLuaq.range(start_value, end_value, step)
+    step = step or 1
+
+    local ret = {
+        start_value = start_value,
+        end_value = end_value,
+        step = step,
+        move_next = move_next_range,
+        is_content_iterator = true
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function move_next_repeat_element(self)
+    local count = self.last_index or 0
+
+    if count < self.times then
+        self.last_index = count + 1
+        return count + 1, self.element
+    end
+end
+
+--- Creates a LazyLuaqQuery that repeats the given element the given number of times.
+--- @param element any
+--- @param times number
+--- @return LazyLuaqQuery
+function LazyLuaq.repeat_element(element, times)
+    local ret = {
+        element = element,
+        times = times,
+        move_next = move_next_repeat_element,
+        is_content_iterator = true
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function move_next_repeat_function(self)
+    local count = self.last_index or 0
+
+    if count < self.times then
+        self.last_index = count + 1
+        return count + 1, self.generator()
+    end
+end
+
+--- Creates a LazyLuaqQuery that repeats the given generator function the given number of times.
+--- @param generator function
+--- @param times number
+--- @return LazyLuaqQuery
+function LazyLuaq.repeat_function(generator, times)
+    local ret = {
+        generator = generator,
+        times = times,
+        move_next = move_next_repeat_function,
+        is_content_iterator = true
+    }
+    setmetatable(ret, LazyLuaq)
+
     return ret
 end
 
@@ -148,6 +228,19 @@ function LazyLuaq:all(condition)
         end
     end
     return true
+end
+
+--- Returns true if the given element appears in the sequence. Uses default comparator.
+--- @param element any
+--- @return boolean
+function LazyLuaq:contains(element)
+    for _, value in self:iterate() do
+        if value == element then
+            return true
+        end
+    end
+
+    return false
 end
 
 --- Returns the first element (that fulfills the given condition - if given).
