@@ -4,7 +4,7 @@
 LazyLuaq = {}
 LazyLuaq.__index = LazyLuaq
 
--- An iterator needs a  'move_next' and a 'reset' function.
+-- An iterator needs a 'move_next' and a 'reset' function.
 -- I didn't feel like writing classes for every iterator and weirdly it was slower in my rudimentary performance tests.
 -- That's why I'm just setting them in the table directly.
 
@@ -25,6 +25,9 @@ function LazyLuaq:reset()
         self.content:reset()
     end
 end
+
+---------------------------------------------------------------------------------------------------
+--- Generators
 
 --- Creates a LazyLuaqQuery that iterates over the given table.
 --- @param tbl table
@@ -118,6 +121,10 @@ function LazyLuaq.repeat_function(generator, times)
 
     return ret
 end
+
+---------------------------------------------------------------------------------------------------
+--- Functions using the iterators
+--- -> Execution is immediate
 
 --- Iterator for use with the 'for .. in' syntax.
 --- @return function move_next
@@ -384,6 +391,10 @@ function LazyLuaq:product()
     return ret
 end
 
+---------------------------------------------------------------------------------------------------
+--- Functions extending the iterators
+--- -> Execution is deferred
+
 local function where_move_next(self)
     local index, value = self.content:move_next()
 
@@ -522,7 +533,7 @@ local function take_while_move_next(self)
 
     local still_take = self.condition(value, index)
     if still_take then
-       return index, value
+        return index, value
     else
         self.do_take = false
     end
@@ -770,6 +781,245 @@ function LazyLuaq:distinct_by(selector)
     setmetatable(ret, LazyLuaq)
 
     return ret
+end
+
+local function lookup(elements)
+    if getmetatable(elements) == LazyLuaq then
+        return elements:to_lookup()
+    else
+        local ret = {}
+        for _, value in pairs(elements) do
+            ret[value] = true
+        end
+        return ret
+    end
+end
+
+local function except_move_next(self)
+    if self.lookup == nil then
+        self.lookup = lookup(self.elements)
+    end
+
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    if self.lookup[value] then
+        return except_move_next(self)
+    else
+        return index, value
+    end
+end
+
+local function lookup_deleting_reset(self)
+    self.lookup = nil
+    self.content:reset()
+end
+
+--- Produces the set difference of two sequences.
+--- @param elements table|LazyLuaqQuery
+--- @return LazyLuaqQuery
+function LazyLuaq:except(elements)
+    local ret = {
+        content = self:distinct(),
+        move_next = except_move_next,
+        elements = elements,
+        reset = lookup_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function lookup_with_selector(elements, selector)
+    if getmetatable(elements) == LazyLuaq then
+        return elements:select(selector):to_lookup()
+    else
+        local ret = {}
+        for _, value in pairs(elements) do
+            ret[selector(value)] = true
+        end
+        return ret
+    end
+end
+
+local function except_by_move_next(self)
+    if self.lookup == nil then
+        self.lookup = lookup_with_selector(self.elements, self.selector)
+    end
+
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    local valueKey = self.selector(value)
+    if self.lookup[valueKey] then
+        return except_by_move_next(self)
+    else
+        return index, value
+    end
+end
+
+--- Produces the set difference of two sequences according to the given selector function.
+--- @param elements table|LazyLuaqQuery
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:except_by(elements, selector)
+    local ret = {
+        content = self:distinct_by(selector),
+        move_next = except_by_move_next,
+        elements = elements,
+        selector = selector,
+        reset = lookup_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+--- Produces the set union of two sequences.
+--- @param elements table|LazyLuaqQuery
+--- @return LazyLuaqQuery
+function LazyLuaq:union(elements)
+    if getmetatable(elements) ~= LazyLuaq then
+        elements = LazyLuaq.from(elements)
+    end
+    local self_distinct = self:distinct()
+    local elements_distinct = elements:distinct()
+
+    return self_distinct:concat(elements_distinct:except(self_distinct))
+end
+
+--- Produces the set union of two sequences according to the given selector function.
+--- @param elements table|LazyLuaqQuery
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:union_by(elements, selector)
+    if getmetatable(elements) ~= LazyLuaq then
+        elements = LazyLuaq.from(elements)
+    end
+    local self_distinct = self:distinct_by(selector)
+    local elements_distinct = elements:distinct_by(selector)
+
+    return self_distinct:concat(elements_distinct:except_by(self_distinct, selector))
+end
+
+local function intersect_move_next(self)
+    if self.lookup == nil then
+        self.lookup = lookup(self.elements)
+    end
+
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    if self.lookup[value] then
+        return index, value
+    else
+        return intersect_move_next(self)
+    end
+end
+
+--- Produces the set intersection of two sequences.
+--- @param elements table|LazyLuaqQuery
+--- @return LazyLuaqQuery
+function LazyLuaq:intersect(elements)
+    local ret = {
+        content = self:distinct(),
+        move_next = intersect_move_next,
+        elements = elements,
+        reset = lookup_deleting_reset -- both just need to delete the lookup table
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function intersect_by_move_next(self)
+    if self.lookup == nil then
+        self.lookup = lookup_with_selector(self.elements, self.selector)
+    end
+
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    local valueKey = self.selector(value)
+    if self.lookup[valueKey] then
+        return index, value
+    else
+        return intersect_by_move_next(self)
+    end
+end
+
+--- Produces the set intersection of two sequences.
+--- @param elements table|LazyLuaqQuery
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:intersect_by(elements, selector)
+    local ret = {
+        content = self:distinct_by(selector),
+        move_next = intersect_by_move_next,
+        elements = elements,
+        selector = selector,
+        reset = lookup_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+--- Produces the set symmetric difference of two sequences.
+--- @param elements table|LazyLuaqQuery
+--- @return LazyLuaqQuery
+function LazyLuaq:symmetric_difference(elements)
+    if getmetatable(elements) ~= LazyLuaq then
+        elements = LazyLuaq.from(elements)
+    end
+    self = self:distinct()
+    elements = elements:distinct()
+
+    local left = self:except(elements)
+    local right = elements:except(self)
+
+    return left:concat(right)
+end
+
+--- Produces the set symmetric difference of two sequences according to the given selector function.
+--- @param elements table|LazyLuaqQuery
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:symmetric_difference_by(elements, selector)
+    if getmetatable(elements) ~= LazyLuaq then
+        elements = LazyLuaq.from(elements)
+    end
+    self = self:distinct_by(selector)
+    elements = elements:distinct_by(selector)
+
+    local left = self:except_by(elements, selector)
+    local right = elements:except_by(self, selector)
+
+    return left:concat(right)
+end
+
+---------------------------------------------------------------------------------------------------
+--- Functions returning new iterators
+--- -> Execution is immediate
+
+--- Immediately executes the iterator and returns a new LazyLuaqQuery with the results.<br>
+--- Can be useful to cache the results of an expensive query that needs to be iterated multiple times.
+--- @return LazyLuaqQuery
+function LazyLuaq:cache_execution()
+    local tbl = self:to_table()
+    return LazyLuaq.from(tbl)
 end
 
 --- Sorts the sequence in ascending order.
