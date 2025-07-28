@@ -405,7 +405,7 @@ local function where_move_next(self)
     if self.where_fn(value) then
         return index, value
     else
-        return self:move_next()
+        return where_move_next(self)
     end
 end
 
@@ -484,6 +484,36 @@ function LazyLuaq:select_many(selector)
         selector = selector,
         move_next = select_many_move_next,
         reset = select_many_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function choose_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    local condition_met, projection = self.selector(value, index)
+
+    if condition_met then
+        return index, projection
+    else
+        return choose_move_next(self)
+    end
+end
+
+--- Filters and projects the elements of the sequence.
+--- @param selector function should return a (boolean, any) tuple
+--- @return LazyLuaqQuery
+function LazyLuaq:choose(selector)
+    local ret = {
+        content = self,
+        selector = selector,
+        move_next = choose_move_next
     }
     setmetatable(ret, LazyLuaq)
 
