@@ -205,7 +205,7 @@ function Gui.on_gui_opened(event)
 end
 
 --- Initializes the guis for the given player. Has to be called after a new player gets created.
---- @param player Player
+--- @param player LuaPlayer
 function Gui.create_guis(player)
     Gui.CityInfo.create(player)
     Gui.DetailsView.create(player)

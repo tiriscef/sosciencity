@@ -1,4 +1,5 @@
 --- Enum table for warning types
+--- @enum WarningType
 local WarningType = {}
 
 WarningType.no_food = 1

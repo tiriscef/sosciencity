@@ -400,7 +400,7 @@ function Gui.CityInfo.update()
 end
 
 --- Destroys the city info gui.
---- @param player Player
+--- @param player LuaPlayer
 function Gui.CityInfo.destroy(player)
     local city_info_gui = player.gui.top[CITY_INFO_NAME]
 

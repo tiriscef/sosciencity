@@ -1,4 +1,5 @@
 --- Enum table for happiness factors.
+--- @enum HappinessFactor
 local HappinessFactor = {}
 
 HappinessFactor.not_enough_food_variety = 1

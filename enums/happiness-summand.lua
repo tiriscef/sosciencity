@@ -1,4 +1,5 @@
 --- Enum table for happiness summands.
+--- @enum HappinessSummand
 local HappinessSummand = {}
 
 HappinessSummand.housing = 1

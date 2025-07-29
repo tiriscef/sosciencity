@@ -42,7 +42,7 @@ local all_neighbors_of_type = Neighborhood.all_of_type
 local get_neighbors_of_type = Neighborhood.get_by_type
 
 local chest = defines.inventory.chest
-local assembler_modules = defines.inventory.assembling_machine_modules
+local crafter_modules = defines.inventory.crafter_modules
 
 local table_add = Table.add
 
@@ -73,7 +73,7 @@ end
 
 --- Returns the chest inventory associated with this entry. Assumes that there is any.
 --- @param entry Entry
---- @return Inventory
+--- @return LuaInventory
 function Inventories.get_chest_inventory(entry)
     return entry[EK.entity].get_inventory(chest)
 end
@@ -81,7 +81,7 @@ local get_chest_inventory = Inventories.get_chest_inventory
 
 --- Checks if the given assembler entry has the given module.
 function Inventories.assembler_has_module(entity, module_name)
-    local inventory = entity.get_inventory(assembler_modules)
+    local inventory = entity.get_inventory(crafter_modules)
 
     return inventory.get_item_count(module_name) > 0
 end
@@ -120,7 +120,7 @@ end
 
 --- Tries to insert the given amount of the given item into the inventory and adds the inserted items to the production statistics.
 --- Returns the amount that was actually inserted.
---- @param inventory Inventory
+--- @param inventory LuaInventory
 --- @param item string
 --- @param amount number
 --- @param suppress_logging boolean|nil
@@ -146,7 +146,7 @@ local try_insert = Inventories.try_insert
 
 --- Tries to remove the given amount of the given item from the inventory and adds the removed items to the production statistics.
 --- Returns the amount that was actually removed.
---- @param inventory Inventory
+--- @param inventory LuaInventory
 --- @param item string
 --- @param amount integer
 --- @param suppress_logging boolean|nil
@@ -256,8 +256,8 @@ end
 --- Tries to move the specified amount of items from the source inventory to the destination inventory. Assumes this amount of items actually exists in the source inventory.can_insert
 --- @param item string
 --- @param count integer
---- @param source_inventory Inventory
---- @param destination_inventory Inventory
+--- @param source_inventory LuaInventory
+--- @param destination_inventory LuaInventory
 --- @return integer
 function Inventories.try_move(item, count, source_inventory, destination_inventory)
     local inserted = destination_inventory.insert {name = item, count = count}

@@ -1,4 +1,5 @@
 --- Enum table for disease categories
+--- @enum DiseaseCategory
 local DiseaseCategory = {}
 
 --XXX: DiseaseCategory and DiseasedCause likely could be merged

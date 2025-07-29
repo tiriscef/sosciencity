@@ -1,4 +1,5 @@
 --- Enum table for information types
+--- @enum InformationType
 local InformationType = {}
 
 InformationType.acquisition_unlock = 1

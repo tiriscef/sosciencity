@@ -1,4 +1,5 @@
 --- Enum table for subscription connection types
+--- @enum ConnectionType
 local ConnectionType = {}
 
 --- the connection is established when either one entity can reach the other

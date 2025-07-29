@@ -1,4 +1,5 @@
 --- Enum table for common entity rendering additions
+--- @enum RenderingType
 local RenderingType = {}
 
 RenderingType.altmode_sprite = 1

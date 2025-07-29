@@ -1,4 +1,5 @@
 --- Enum table for destruction causes
+--- @enum DeconstructionCause
 local DeconstructionCause = {}
 
 DeconstructionCause.unknown = 0

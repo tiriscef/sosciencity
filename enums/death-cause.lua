@@ -1,4 +1,5 @@
 --- Enum table for dead inhabitants
+--- @enum DeathCause
 local DeathCause = {}
 
 DeathCause.unknown = 0

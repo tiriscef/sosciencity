@@ -109,23 +109,6 @@ require("classes.entity")
 require("classes.handcrafting")
 require("classes.gui")
 
----------------------------------------------------------------------------------------------------
--- EmmyLua stuff
-
----@class Entity
----@class Player
----@class Inventory
----@class Entry
----@class Type
----@class SubentityType
----@class InhabitantGroup
----@class DiseaseGroup
----@class DiseaseID
----@class DiseaseCategory
----@class AgeGroup
----@class GenderGroup
----@class RenderingType
-
 --[[
     Data this script stores in storage
     --------------------------------

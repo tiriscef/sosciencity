@@ -326,7 +326,7 @@ Scheduler.set_event("say_random_variant", say_random_variant)
 Communication.say_random_variant = say_random_variant
 
 --- Lets the given speaker say the given line, but only to the given player.
---- @param player Entity
+--- @param player LuaPlayer
 --- @param speaker string
 --- @param line string
 local function tell(player, speaker, line, ...)

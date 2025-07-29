@@ -1,4 +1,5 @@
 --- Enum table for health factors.
+--- @enum HealthFactor
 local HealthFactor = {}
 
 HealthFactor.hunger = 1
