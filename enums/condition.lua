@@ -1,4 +1,5 @@
 --- Enum table for types of conditions.
+--- @enum Condition
 local Condition = {}
 
 Condition.custom = 0

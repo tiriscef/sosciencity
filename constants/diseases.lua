@@ -10,6 +10,9 @@ local Diseases = {}
 
 Diseases.not_curable = 1000000000
 
+--- the ID of a disease
+--- @alias DiseaseID integer
+
 --- Disease definitions\
 --- **name:** prototype name of the disease\
 --- **localised_name:** localised name for this disease\

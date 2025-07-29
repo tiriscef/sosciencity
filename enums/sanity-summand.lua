@@ -1,4 +1,5 @@
 --- Enum table for sanity summands.
+--- @enum SanitySummand
 local SanitySummand = {}
 
 SanitySummand.innate = 1

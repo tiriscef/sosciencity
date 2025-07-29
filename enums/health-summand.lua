@@ -1,4 +1,5 @@
 --- Enum table for health summands.
+--- @enum HealthSummand
 local HealthSummand = {}
 
 HealthSummand.nutrients = 1

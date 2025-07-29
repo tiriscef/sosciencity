@@ -1,4 +1,5 @@
 --- Enum table for entry table keys.
+--- @enum EntryKey
 local EK = {}
 
 -- general

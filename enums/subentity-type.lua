@@ -1,4 +1,5 @@
 --- Enum table for subentity types.
+--- @enum SubentityType
 local SubentityType = {}
 
 SubentityType.beacon = 1

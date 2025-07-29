@@ -1,4 +1,5 @@
 --- Enum table for tastes.
+--- @enum Taste
 local Taste = {}
 
 Taste.bitter = 1

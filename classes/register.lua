@@ -9,6 +9,9 @@ local Types = require("constants.types")
 --- Static class that stores and manages entities in hopefully performant ways.
 Register = {}
 
+--- An Entry from the Register, encapsulating a LuaEntity
+--- @class Entry
+
 --[[
     Data this class stores in storage
     --------------------------------
@@ -288,7 +291,7 @@ local function remove_entry_from_register(entry)
 end
 
 --- Returns a new entry for the given entity with the given type.
---- @param entity Entity
+--- @param entity LuaEntity
 --- @param _type Type
 --- @return Entry
 local function get_new_entry(entity, _type)
@@ -307,7 +310,7 @@ local function get_new_entry(entity, _type)
 end
 
 --- Adds the given entity to the register. Optionally the type can be specified.
---- @param entity Entity
+--- @param entity LuaEntity
 --- @param _type Type|nil
 function Register.add(entity, _type)
     _type = _type or get_entity_type(entity)
@@ -330,7 +333,7 @@ local add_entity = Register.add
 
 --- Adds the given destination entity to the register with the same type as the source entry and copies the relevant entry data.
 --- @param source Entry
---- @param destination Entity
+--- @param destination LuaEntity
 function Register.clone(source, destination)
     local _type = source[EK.type]
     local destination_entry = add_entity(destination, _type)
@@ -355,7 +358,7 @@ end
 local remove_entry = Register.remove_entry
 
 --- Removes the given entity from the register.
---- @param entity Entity
+--- @param entity LuaEntity
 function Register.remove_entity(entity, unit_number, cause)
     unit_number = unit_number or entity.unit_number
 

@@ -203,6 +203,7 @@ end
 -- << inhabitant diseases >>
 
 --- Object class for holding the diseases of a group of inhabitants.
+--- @class DiseaseGroup
 DiseaseGroup = {}
 
 DiseaseGroup.HEALTHY = 0
@@ -361,6 +362,8 @@ local not_healthy = DiseaseGroup.not_healthy
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant ages >>
 
+--- Object class for holding the Ages of an InhabitantGroup
+--- @class AgeGroup
 AgeGroup = {}
 
 --- Returns a new AgeGroup table with fixed ages.
@@ -463,6 +466,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant genders >>
 
+--- Object class for holding the Genders of an InhabitantGroup
+--- @class GenderGroup
 GenderGroup = {}
 
 function GenderGroup.new(agender, fale, pachin, ga)
@@ -523,6 +528,7 @@ end
 -- << inhabitant groups >>
 
 --- Object class for holding groups of inhabitants.
+--- @class InhabitantGroup
 InhabitantGroup = {}
 
 local DEFAULT_HAPPINESS = 10

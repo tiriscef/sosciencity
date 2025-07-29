@@ -40,7 +40,7 @@ local PENALTY_MODULE_NAME = "sosciencity-penalty"
 local MAX_MODULE_STRENGTH = 14
 
 --- Inserts modules with the given name until their combined bonus sum to the given value.
---- @param beacon_inventory Inventory
+--- @param beacon_inventory LuaInventory
 --- @param module_name string
 --- @param value integer
 local function set_binary_modules(beacon_inventory, module_name, value)

@@ -1,4 +1,5 @@
 --- Enum table for registered entity types.
+--- @enum Type
 local Type = {}
 
 -- housing types

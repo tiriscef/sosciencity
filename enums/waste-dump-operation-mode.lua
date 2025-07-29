@@ -1,4 +1,5 @@
 --- Enum table for the operation modes of waste dumps
+--- @enum WasteDumpOperationMode
 local WasteDumpOperationMode = {}
 
 --- nothing will happen to the garbage inside the dump

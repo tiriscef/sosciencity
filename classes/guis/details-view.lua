@@ -2169,7 +2169,7 @@ function Gui.DetailsView.update()
 end
 
 --- Builds a details gui for the given player and the given entity.
---- @param player Player
+--- @param player LuaPlayer
 --- @param unit_number integer
 function Gui.DetailsView.open(player, unit_number)
     local entry = Register.try_get(unit_number)
@@ -2194,7 +2194,7 @@ function Gui.DetailsView.open(player, unit_number)
 end
 
 --- Closes the details view for the given player.
---- @param player Player
+--- @param player LuaPlayer
 function Gui.DetailsView.close(player)
     local details_view = get_details_view(player)
     details_view.visible = false
@@ -2218,7 +2218,7 @@ function Gui.DetailsView.rebuild_for_entry(entry)
 end
 
 --- Destroys the city info gui.
---- @param player Player
+--- @param player LuaPlayer
 function Gui.DetailsView.destroy(player)
     local details_view_gui = player.gui.screen[DETAILS_VIEW_NAME]
 

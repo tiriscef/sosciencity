@@ -1,4 +1,5 @@
 --- Enum table for disease causes
+--- @enum DiseasedCause
 local DiseasedCause = {}
 
 DiseasedCause.health = 1

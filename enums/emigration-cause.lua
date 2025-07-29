@@ -1,4 +1,5 @@
 --- Enum table for emigration causes
+--- @enum EmigrationCause
 local EmigrationCause = {}
 
 EmigrationCause.unknown = 0

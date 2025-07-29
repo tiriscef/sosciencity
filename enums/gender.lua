@@ -1,4 +1,5 @@
 --- Enum table for genders
+--- @enum Gender
 local Gender = {}
 
 Gender.agender = 1
