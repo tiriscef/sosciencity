@@ -8,6 +8,21 @@ LazyLuaq.__index = LazyLuaq
 -- I didn't feel like writing classes for every iterator and weirdly it was slower in my rudimentary performance tests.
 -- That's why I'm just setting them in the table directly.
 
+-- A LazyLuaqQuery iteration cannot be iterated 'twice' at the same time.
+-- So nested iterations like this don't work:
+--
+-- for _, i in query:iterate() do
+--     for _, i in query:iterate() do
+--         -- this results in an endless iteration
+--     end
+-- end
+--
+-- This is pretty unfortunate, but a design decision to use the Query-Object to hold the iteration index.
+-- The other option would have been to create a index-table for the iterations.
+-- But this would limit the querys to arrays and not allow sequences where the indexes are important.
+-- 
+-- A workaround is to copy the query with the copy() function. 
+
 --- Standard-Iterator using next
 --- @return any index
 --- @return any value
@@ -24,6 +39,24 @@ function LazyLuaq:reset()
     if not self.is_content_iterator then
         self.content:reset()
     end
+end
+
+--- Returns a copy of the given query.
+--- @return LazyLuaqQuery
+function LazyLuaq:copy()
+    local ret = {}
+
+    for i, v in pairs(self) do
+        if getmetatable(v) == LazyLuaq then
+            ret[i] = v:copy()
+        else
+            ret[i] = v
+        end
+    end
+
+    setmetatable(ret, LazyLuaq)
+
+    return ret
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -289,7 +322,7 @@ end
 --- @return any max_element
 --- @return any max_index
 --- @return any max_value according to the selector
-function LazyLuaq:maxBy(selector)
+function LazyLuaq:max_by(selector)
     self:reset()
     local candidate_index, candidate = self:move_next()
     local candidate_value = selector(candidate, candidate_index)
@@ -328,7 +361,7 @@ end
 --- @return any min_element
 --- @return any min_index
 --- @return any min_value according to the selector
-function LazyLuaq:minBy(selector)
+function LazyLuaq:min_by(selector)
     self:reset()
     local candidate_index, candidate = self:move_next()
     local candidate_value = selector(candidate, candidate_index)
@@ -1018,7 +1051,7 @@ function LazyLuaq:symmetric_difference(elements)
     elements = elements:distinct()
 
     local left = self:except(elements)
-    local right = elements:except(self)
+    local right = elements:copy():except(self)
 
     return left:concat(right)
 end
@@ -1035,7 +1068,7 @@ function LazyLuaq:symmetric_difference_by(elements, selector)
     elements = elements:distinct_by(selector)
 
     local left = self:except_by(elements, selector)
-    local right = elements:except_by(self, selector)
+    local right = elements:copy():except_by(self, selector)
 
     return left:concat(right)
 end
@@ -1152,4 +1185,18 @@ function LazyLuaq:group_by(selector)
     end
 
     return LazyLuaq.from(groups)
+end
+
+local random = math.random
+
+--- Shuffles the elements of this sequence.
+function LazyLuaq:shuffle()
+    local array = self:to_array()
+
+    for i = #array, 2, -1 do
+        local j = random(i)
+        array[i], array[j] = array[j], array[i]
+    end
+
+    return LazyLuaq.from(array)
 end
