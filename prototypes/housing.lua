@@ -377,26 +377,24 @@ end
 
 local quality_effect_on_recipe = {
     sheltered = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_sheltered", house.room_count, house.room_count * 1.2, tech_level})
+        table.insert(details.themes, {"housing_sheltered", house.room_count, tech_level})
     end,
     green = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_green", house.room_count, house.room_count * 1.2, tech_level})
+        table.insert(details.themes, {"housing_green", house.room_count, tech_level})
     end,
     technical = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_technical", house.room_count, house.room_count * 1.2, tech_level})
+        table.insert(details.themes, {"housing_technical", house.room_count, tech_level})
     end,
     spacey = function(details, house, tech_level)
         -- increase the "building" theme amount
         details.themes[1][2] = details.themes[1][2] * 1.25
-        details.themes[1][2] = details.themes[1][3] * 1.25
     end,
     compact = function(details, house, tech_level)
         -- decrease the "building" theme amount
         details.themes[1][2] = details.themes[1][2] * 0.8
-        details.themes[1][2] = details.themes[1][3] * 0.8
     end,
     decorated = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_decorated", house.room_count, house.room_count * 1.2, tech_level})
+        table.insert(details.themes, {"furnishing_decorated", house.room_count, tech_level})
     end,
     simple = function(details, house, tech_level)
         -- change the normal "furnishing" theme to the simple one
@@ -415,7 +413,7 @@ local quality_effect_on_recipe = {
         details.themes[1][1] = "cheap_building"
     end,
     tall = function(details, house, tech_level)
-        table.insert(details.themes, {"tall_building_structure", house.room_count, house.room_count, tech_level})
+        table.insert(details.themes, {"tall_building_structure", house.room_count, tech_level})
     end,
     low = function(details, house, tech_level)
         -- no idea
@@ -425,8 +423,8 @@ local quality_effect_on_recipe = {
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
     local ingredient_themes = {
-        {"building", house.room_count * 0.5, math.ceil(house.room_count * 0.6), tech_level},
-        {"furnishing", house.room_count, math.ceil(house.room_count * 1.2), house.comfort}
+        {"building", house.room_count * 0.5, tech_level},
+        {"furnishing", house.room_count, house.comfort}
     }
 
     local recipe_details = {

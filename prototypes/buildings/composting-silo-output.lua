@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "composting-silo-output",
-    themes = {{"plating", 10, 15}, {"framework", 5, 7}},
+    themes = {{"plating", 10}, {"framework", 5}},
     default_theme_level = 1,
     unlock = "composting-silo"
 }

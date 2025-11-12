@@ -63,7 +63,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-caste-ember",
     energy_required = 2,
-    expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "writing-paper", amount = 1},
         {type = "item", name = "gingil-hemp", amount = 2}
@@ -76,7 +75,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-caste-orchid",
     energy_required = 2,
-    expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "writing-paper", amount = 4},
         {type = "item", name = "phytofall-blossom", amount = 1},
@@ -90,7 +88,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-caste-gunfire",
     energy_required = 2,
-    expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "writing-paper", amount = 4}
     },
@@ -102,7 +99,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
-    expensive_energy_required = 6,
     ingredients = {
         {type = "item", name = "writing-paper", amount = 4},
         {type = "item", name = "rope", amount = 5},
@@ -117,7 +113,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-caste-foundry",
     energy_required = 2,
-    expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 4}
     },
@@ -129,7 +124,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     category = "sosciencity-caste-gleam",
     energy_required = 2,
-    expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "complex-scientific-data", amount = 2}
     },
@@ -141,7 +135,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 4,
     --category = "sosciencity-caste-aurora",
     energy_required = 2,
-    expensive_energy_required = 3,
     ingredients = {
         {type = "item", name = "published-paper", amount = 20}
     },
