@@ -337,13 +337,33 @@ Tirislib.RecipeGenerator.create {
     allow_productivity = true
 }
 
-Tirislib.RecipeGenerator.create_per_theme_level {
+--[[Tirislib.RecipeGenerator.create_per_theme_level {
     product = "screw-set",
     followed_theme = "screw_material",
     dynamic_fields = {
         product_amount = function(n)
             return math.ceil(n / 10) * 2
         end
+    },
+    allow_productivity = true,
+    unlock = "architecture-1"
+}]]
+
+Tirislib.RecipeGenerator.create {
+    product = "screw-set",
+    product_amount = 2,
+    ingredients = {
+        {type = "item", name = "copper-plate", amount = 2}
+    },
+    allow_productivity = true,
+    unlock = "architecture-1"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "screw-set",
+    product_amount = 2,
+    ingredients = {
+        {type = "item", name = "iron-plate", amount = 2}
     },
     allow_productivity = true,
     unlock = "architecture-1"
@@ -364,9 +384,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 10,
     energy_required = 8,
     ingredients = {
-        {type = "item", name = "plemnemm-cotton", amount = 20}
-    },
-    expensive_ingredients = {
         {type = "item", name = "plemnemm-cotton", amount = 20},
         {type = "item", name = "lumber", amount = 1}
     },
@@ -391,17 +408,13 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "gingil-hemp", amount = 20}
     },
-    expensive_ingredients = {
-        {type = "item", name = "gingil-hemp", amount = 20},
-        {type = "item", name = "lumber", amount = 1}
-    },
     allow_productivity = true,
     unlock = "hunting-fishing"
 }:add_unlock("clockwork-caste")
 
 Tirislib.RecipeGenerator.create {
     product = "pot",
-    themes = {{"ceramic", 2, 3}},
+    themes = {{"ceramic", 2}},
     unlock = "indoor-growing"
 }
 
@@ -409,7 +422,7 @@ if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode t
     Tirislib.RecipeGenerator.create {
         product = "glass-mixture",
         energy_required = 1.6,
-        themes = {{"glass_educt", 2, 3}},
+        themes = {{"glass_educt", 2}},
         category = Tirislib.RecipeGenerator.category_alias[
             Sosciencity_Config.glass_compatibility_mode and "handcrafting" or "mixing"
         ],
@@ -440,9 +453,9 @@ Tirislib.RecipeGenerator.create {
     product_amount = 2,
     energy_required = 1.6,
     themes = {
-        {"glass", 1, 2},
-        {"gravel", 1, 2},
-        {"iron_ore", 1, 2}
+        {"glass", 1},
+        {"gravel", 1},
+        {"iron_ore", 1}
     },
     category = Tirislib.RecipeGenerator.category_alias.mixing,
     unlock = "architecture-3"
@@ -486,12 +499,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "plemnemm-cotton", amount = 10},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "lumber", amount = 6},
-        {type = "item", name = "cloth", amount = 4},
-        {type = "item", name = "plemnemm-cotton", amount = 10},
-        {type = "item", name = "screw-set", amount = 1}
     }
 }
 
@@ -499,10 +506,6 @@ Tirislib.RecipeGenerator.create {
     product = "carpet",
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
-        {type = "item", name = "yarn", amount = 1}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "cloth", amount = 3},
         {type = "item", name = "yarn", amount = 1}
     }
 }
@@ -512,10 +515,6 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "lumber", amount = 3},
-        {type = "item", name = "screw-set", amount = 1}
     }
 }
 
@@ -524,10 +523,6 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "lumber", amount = 8},
-        {type = "item", name = "screw-set", amount = 1}
     }
 }
 
@@ -535,10 +530,6 @@ Tirislib.RecipeGenerator.create {
     product = "curtain",
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
-        {type = "item", name = "yarn", amount = 1}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "cloth", amount = 3},
         {type = "item", name = "yarn", amount = 1}
     }
 }
@@ -556,9 +547,9 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "refrigerator",
     themes = {
-        {"electronics", 1, 2},
+        {"electronics", 1},
         {"casing", 1},
-        {"cooling_fluid", 20, 50}
+        {"cooling_fluid", 20}
     },
     default_theme_level = 2,
     category = "crafting-with-fluid"
@@ -572,13 +563,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "yarn", amount = 1},
         {type = "item", name = "plemnemm-cotton", amount = 10},
         {type = "item", name = "screw-set", amount = 2}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "lumber", amount = 8},
-        {type = "item", name = "cloth", amount = 4},
-        {type = "item", name = "yarn", amount = 1},
-        {type = "item", name = "plemnemm-cotton", amount = 10},
-        {type = "item", name = "screw-set", amount = 2}
     }
 }
 
@@ -588,7 +572,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "screw-set", amount = 1}
     },
     themes = {
-        {"wiring", 5, 10, 0},
+        {"wiring", 5, 0},
         {"casing", 1}
     },
     default_theme_level = 3
@@ -598,10 +582,6 @@ Tirislib.RecipeGenerator.create {
     product = "table",
     ingredients = {
         {type = "item", name = "lumber", amount = 4},
-        {type = "item", name = "screw-set", amount = 1}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "lumber", amount = 6},
         {type = "item", name = "screw-set", amount = 1}
     }
 }
@@ -625,10 +605,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
-    expensive_ingredients = {
-        {type = "item", name = "lumber", amount = 4},
-        {type = "item", name = "gingil-hemp", amount = 4}
-    },
     allow_productivity = true
 }
 
@@ -641,11 +617,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sawdust", amount = 5},
         {type = "item", name = "gingil-hemp", amount = 5}
     },
-    expensive_ingredients = {
-        {type = "item", name = "sawdust", amount = 10},
-        {type = "item", name = "gingil-hemp", amount = 10}
-    },
-    themes = {{"paper_production", 1, 1.5}},
+    themes = {{"paper_production", 1}},
     allow_productivity = true,
     unlock = "clockwork-caste"
 }:add_unlock("gunfire-caste")
@@ -653,7 +625,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "trap",
     themes = {
-        {"mechanism", 2, 3}
+        {"mechanism", 2}
     },
     energy_required = 0.8,
     allow_productivity = true,
@@ -664,7 +636,7 @@ Tirislib.RecipeGenerator.create {
     product = "trap-cage",
     themes = {
         {"plating", 2},
-        {"grating", 10, 16}
+        {"grating", 10}
     },
     energy_required = 0.8,
     allow_productivity = true,
@@ -686,10 +658,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "gingil-hemp", amount = 5},
         {type = "item", name = "rope", amount = 1}
     },
-    expensive_ingredients = {
-        {type = "item", name = "gingil-hemp", amount = 8},
-        {type = "item", name = "rope", amount = 1}
-    },
     energy_required = 1.5,
     allow_productivity = true,
     unlock = "hunting-fishing"
@@ -698,11 +666,6 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "fishing-net",
     ingredients = {
-        {type = "item", name = "rope", amount = 5},
-        {type = "item", name = "yarn", amount = 1},
-        {type = "item", name = "lumber", amount = 2}
-    },
-    expensive_ingredients = {
         {type = "item", name = "rope", amount = 5},
         {type = "item", name = "yarn", amount = 1},
         {type = "item", name = "lumber", amount = 2}
@@ -717,10 +680,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "rope", amount = 1}
     },
-    expensive_ingredients = {
-        {type = "item", name = "rope", amount = 3}
-    },
-    themes = {{"handle", 1}, {"mechanism", 2, 3}},
+    themes = {{"handle", 1}, {"mechanism", 2}},
     energy_required = 1,
     allow_productivity = true,
     unlock = "advanced-fishing"
@@ -731,10 +691,6 @@ Tirislib.RecipeGenerator.create {
     product_amount = 3,
     ingredients = {
         {type = "item", name = "iron-plate", amount = 1},
-        {type = "fluid", name = "sulfuric-acid", amount = 10}
-    },
-    expensive_ingredients = {
-        {type = "item", name = "iron-plate", amount = 2},
         {type = "fluid", name = "sulfuric-acid", amount = 10}
     },
     category = "chemistry",
@@ -826,12 +782,11 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "empty-hard-drive",
     themes = {
-        {"electronics", 20, 30},
+        {"electronics", 20},
         {"casing", 1},
         {"wiring", 10}
     },
     energy_required = 4,
-    expensive_energy_required = 5,
     default_theme_level = 3,
     unlock = "sosciencity-computing"
 }
@@ -843,7 +798,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-computing-center",
     energy_required = 10,
-    expensive_energy_required = 15,
     unlock = "sosciencity-computing"
 }
 
@@ -854,7 +808,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-computing-center",
     energy_required = 20,
-    expensive_energy_required = 30,
     unlock = "sosciencity-computing"
 }
 
@@ -865,7 +818,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-computing-center",
     energy_required = 30,
-    expensive_energy_required = 45,
     unlock = "sosciencity-computing"
 }
 
@@ -876,7 +828,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-computing-center",
     energy_required = 40,
-    expensive_energy_required = 60,
     unlock = "in-situ-gene-editing"
 }
 
@@ -941,7 +892,6 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "solid-fat",
     energy_required = 1.6,
-    expensive_energy_required = 2.4,
     themes = {
         {"hydrogen", 10}
     },
@@ -978,14 +928,14 @@ Tirislib.RecipeGenerator.create {
     product_min = 1,
     product_max = 5,
     energy_required = 2,
-    themes = {{"glass", 5, 10}, {"plastic", 2, 3}},
+    themes = {{"glass", 5}, {"plastic", 2}},
     default_theme_level = 2,
     unlock = "genetic-neogenesis"
 }
 
 Tirislib.RecipeGenerator.create {
     product = "semipermeable-membrane",
-    themes = {{"plastic", 5, 7}, {"framework", 1}},
+    themes = {{"plastic", 5}, {"framework", 1}},
     default_theme_level = 2,
     unlock = "genetic-neogenesis"
 }
@@ -998,11 +948,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "glass-instruments", amount = 1},
         {type = "fluid", name = "ethanol", amount = 15}
     },
-    expensive_ingredients = {
-        {type = "item", name = "pemtenn-extract", amount = 3},
-        {type = "item", name = "glass-instruments", amount = 2},
-        {type = "fluid", name = "ethanol", amount = 20}
-    },
     category = "chemistry",
     unlock = "genetic-neogenesis"
 }
@@ -1010,7 +955,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "phospholipids",
     energy_required = 3.2,
-    themes = {{"phosphorous_source", 1, 2}},
+    themes = {{"phosphorous_source", 1}},
     ingredients = {
         {type = "item", name = "solid-fat", amount = 1},
         {type = "item", name = "glass-instruments", amount = 1},

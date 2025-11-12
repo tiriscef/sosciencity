@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create {
     product = "egg-collecting-station",
-    themes = {{"plating", 20, 30}, {"framework", 20, 30}, {"brick", 20, 20}},
+    themes = {{"plating", 20}, {"framework", 20}, {"brick", 20}},
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     default_theme_level = 2,
     unlock = "infrastructure-3"

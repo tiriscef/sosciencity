@@ -448,7 +448,7 @@ end
 --- Returns the name of the ingredient of this recipe. If there is more than one ingredient, then the first one will be returned.
 --- @return string
 function Tirislib.Recipe:get_first_ingredient()
-    for _, current_ingredient in Tirislib.Recipe:iterate_ingredients() do
+    for _, current_ingredient in Tirislib.Recipe.iterate_ingredients(self) do
         return current_ingredient.name
     end
 end
@@ -458,7 +458,7 @@ end
 --- @param _type string
 --- @return RecipeEntryPrototype|nil
 function Tirislib.Recipe:get_ingredient(name, _type)
-    for _, ingredient in Tirislib.Recipe:iterate_ingredients() do
+    for _, ingredient in Tirislib.Recipe.iterate_ingredients(self) do
         if ingredient.name == name and ingredient.type == _type then
             return ingredient
         end
@@ -474,7 +474,7 @@ function Tirislib.Recipe:add_ingredient(ingredient)
     end
 
     -- check if the recipe already has an entry for this ingredient
-    for _, current_ingredient in Tirislib.Recipe:iterate_ingredients() do
+    for _, current_ingredient in Tirislib.Recipe.iterate_ingredients(self) do
         if Tirislib.RecipeEntry.can_be_merged(current_ingredient, ingredient) then
             Tirislib.RecipeEntry.merge(current_ingredient, ingredient)
             return self
@@ -494,7 +494,7 @@ function Tirislib.Recipe:add_ingredient_range(ingredients)
         return self
     end
 
-    for _, entry in Tirislib.Recipe:iterate_ingredients() do
+    for _, entry in pairs(ingredients) do
         Tirislib.Recipe.add_ingredient(self, entry)
     end
 
@@ -520,7 +520,7 @@ function Tirislib.Recipe:remove_ingredient(name, _type)
     _type = _type or "item"
 
     local foundindex = {}
-    for index, ingredient in Tirislib.Recipe:iterate_ingredients() do
+    for index, ingredient in Tirislib.Recipe.iterate_ingredients(self) do
         if ingredient.name == name and ingredient.type == _type then
             foundindex[#foundindex + 1] = index
         end
@@ -701,7 +701,7 @@ end
 --- @param fn function
 --- @return RecipePrototype itself
 function Tirislib.Recipe:transform_ingredient_entries(fn)
-    for _, entry in Tirislib.Recipe:iterate_ingredients() do
+    for _, entry in Tirislib.Recipe.iterate_ingredients(self) do
         fn(entry)
     end
 
@@ -723,7 +723,7 @@ end
 --- @return RecipePrototype itself
 function Tirislib.Recipe:index_fluid_ingredients()
     local index = 1
-    for _, entry in Tirislib.Recipe:iterate_ingredients() do
+    for _, entry in Tirislib.Recipe.iterate_ingredients(self) do
         if entry.type == "fluid" then
             entry.fluidbox_index = index
             index = index + 1
@@ -797,7 +797,7 @@ end
 function Tirislib.Recipe:has_ingredient(name, _type)
     _type = _type or "item"
 
-    for _, entry in Tirislib.Recipe:iterate_ingredients() do
+    for _, entry in Tirislib.Recipe.iterate_ingredients(self) do
         if entry.type == "item" and entry.name == name then
             return true
         end
@@ -812,7 +812,7 @@ end
 function Tirislib.Recipe:get_ingredient_count(name, _type)
     _type = _type or "item"
 
-    for _, ingredient in Tirislib.Recipe:iterate_ingredients() do
+    for _, ingredient in Tirislib.Recipe.iterate_ingredients(self) do
         if ingredient.name == name and ingredient.type == _type then
             return ingredient.amount
         end

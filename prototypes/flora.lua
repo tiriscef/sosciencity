@@ -970,7 +970,7 @@ Tirislib.Item.batch_create(
 
 Tirislib.RecipeGenerator.create {
     product = "apple-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "ortrot-sapling", amount = 1},
         {type = "item", name = "apple", amount = 10}
@@ -982,7 +982,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "avocado-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "avocado", amount = 10}
@@ -994,7 +994,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "cherry-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "cherry", amount = 10}
@@ -1006,7 +1006,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "lemon-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "zetorn-sapling", amount = 1},
         {type = "item", name = "lemon", amount = 10}
@@ -1018,7 +1018,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "orange-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "zetorn-sapling", amount = 1},
         {type = "item", name = "orange", amount = 10}
@@ -1030,7 +1030,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "ortrot-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "ortrot", amount = 10}
@@ -1042,7 +1042,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "zetorn-sapling",
-    themes = {{"soil", 10, 25}},
+    themes = {{"soil", 10}},
     ingredients = {
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "zetorn", amount = 10}

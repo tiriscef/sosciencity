@@ -68,7 +68,6 @@ for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-eg
     Tirislib.RecipeGenerator.create {
         product = egg,
         energy_required = 120,
-        expensive_energy_required = 160,
         ingredients = {
             {type = "item", name = "blood-bag", amount = 1},
             {type = "item", name = "huwan-genome", amount = 1}

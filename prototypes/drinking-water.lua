@@ -57,7 +57,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "fluid", name = "water", amount = 600}
     },
-    result_themes = {{"sediment", 1, 1, 0}},
+    result_themes = {{"sediment", 1, 0}},
     category = "sosciencity-sedimentation-clarifier",
     energy_required = 10,
     unlock = "drinking-water-treatment"

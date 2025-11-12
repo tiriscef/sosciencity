@@ -83,8 +83,7 @@ end
 function Tirislib.RecipeGenerator.add_ingredient_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local expensive_amount = theme[3]
-    local level = theme[4] or default_level or 1
+    local level = theme[3] or default_level or 0
 
     local theme_definition = get_theme_definition(name, level)
     if not theme_definition then
@@ -95,15 +94,7 @@ function Tirislib.RecipeGenerator.add_ingredient_theme(recipe, theme, default_le
         entry.amount = entry.amount * amount
     end
 
-    local expensive_theme_definition
-    if expensive_amount then
-        expensive_theme_definition = get_theme_definition(name, level)
-        for _, entry in pairs(expensive_theme_definition) do
-            entry.amount = entry.amount * expensive_amount
-        end
-    end
-
-    recipe:add_ingredient_range(theme_definition, expensive_theme_definition)
+    recipe:add_ingredient_range(theme_definition)
 end
 
 function Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, themes, default_level)
@@ -119,27 +110,18 @@ end
 function Tirislib.RecipeGenerator.add_result_theme(recipe, theme, default_level)
     local name = theme[1]
     local amount = theme[2]
-    local expensive_amount = theme[3]
-    local level = theme[4] or default_level or 1
+    local level = theme[3] or default_level or 0
 
     local results = get_theme_definition(name, level, true)
     if not results then
         return
     end
 
-    local expensive_results
-    if expensive_amount then
-        expensive_results = get_theme_definition(name, level, true)
-        for _, entry in pairs(expensive_results) do
-            entry.amount = entry.amount * expensive_amount
-        end
-    end
-
     for _, entry in pairs(results) do
         entry.amount = entry.amount * amount
     end
 
-    recipe:add_result_range(results, expensive_results)
+    recipe:add_result_range(results)
 end
 
 function Tirislib.RecipeGenerator.add_result_theme_range(recipe, themes, default_level)
@@ -166,7 +148,7 @@ local function get_product_prototype(details)
             local _, found_again = Tirislib.Fluid.get_by_name(product_name)
             if found_again then
                 error(
-                    "Tirislib RecipeGenerator was told to create a recipe for a product with an implicit type, but there is is both an item and a fluid with the given name:  " ..
+                    "Tirislib RecipeGenerator was told to create a recipe for a product with an implicit type, but there is is both an item and a fluid with the given name: " ..
                         product_name
                 )
             end
@@ -177,7 +159,7 @@ local function get_product_prototype(details)
 
     if not found then
         error(
-            "Tirislib RecipeGenerator was told to create a recipe for a non-existant product. A task it's unable to complete. The product's name is " ..
+            "Tirislib RecipeGenerator was told to create a recipe for a non-existant product. A task it's unable to complete. The product's name is: " ..
                 tostring(product_name)
         )
     end
@@ -223,16 +205,12 @@ end
 --- **product_probability:** probability of the main product\
 --- **name:** name of the recipe (defaults to the name of the product)\
 --- **byproducts:** array of ResultPrototypes\
---- **expensive_byproducts:** array of ResultPrototypes (defaults to the byproducts field)\
 --- **category:** RecipeCategory of the recipe (defaults to "crafting" or "crafting-with-fluid")\
 --- **themes:** array of themes\
 --- **result_themes:** array of themes\
 --- **default_theme_level:** number\
 --- **ingredients:** array of IngredientPrototypes\
---- **expensive_ingredients:** array of IngredientPrototypes (defaults to the ingredient field)\
---- **expensive_multiplier:** ingredient multiplier for expensive mode\
 --- **energy_required:** energy_required field for the recipe (defaults to 0.5)\
---- **expensive_energy_required:** energy_required field for the expensive recipe (defaults to energy_required)\
 --- **unlock:** technology that unlocks the recipe\
 --- **additional_fields:** other fields that should be set for the recipe\
 --- **allow_productivity:** bool\
@@ -280,8 +258,8 @@ function Tirislib.RecipeGenerator.create(details)
     end
 
     -- explicit defined
-    recipe:add_ingredient_range(details.ingredients, details.expensive_ingredients)
-    recipe:add_result_range(details.byproducts, details.expensive_byproducts, true)
+    recipe:add_ingredient_range(details.ingredients)
+    recipe:add_result_range(details.byproducts, true)
 
     -- theme defined
     Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
@@ -352,7 +330,7 @@ function Tirislib.RecipeGenerator.create_per_theme_level(details)
     return created_recipes
 end
 
-local arrays = {"ingredients", "expensive_ingredients", "byproducts", "expensive_byproducts", "themes", "result_themes"}
+local arrays = {"ingredients", "byproducts", "themes", "result_themes"}
 arrays = Tirislib.Tables.array_to_lookup(arrays)
 
 --- Merges the right hand recipe details into the left hand recipe details.
