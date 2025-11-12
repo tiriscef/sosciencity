@@ -204,19 +204,14 @@ local function get_main_product_entry(product, details)
     return main_product
 end
 
-local function has_fluid_ingredient(recipe_data)
-    for _, ingredient in pairs(recipe_data.ingredients) do
+local function get_standard_category(recipe)
+    for _, ingredient in recipe:iterate_ingredients() do
         if ingredient.type == "fluid" then
-            return true
+            return "crafting-with-fluid"
         end
     end
 
-    return false
-end
-
-local function get_standard_category(recipe)
-    local normal, expensive = recipe:call_on_recipe_data(has_fluid_ingredient)
-    return (normal or expensive) and "crafting-with-fluid" or "crafting"
+    return "crafting"
 end
 
 --- Creates a dynamic recipe.\
