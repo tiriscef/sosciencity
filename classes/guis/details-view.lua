@@ -384,6 +384,43 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     end
 end
 
+local priority_presets = {
+    ["low"] = {value = -10, locale = {"sosciencity.priority-low"}},
+    ["mid"] = {value = 0, locale = {"sosciencity.priority-mid"}},
+    ["high"] = {value = 10, locale = {"sosciencity.priority-high"}},
+    ["very-high"] = {value = 20, locale = {"sosciencity.priority-very-high"}}
+}
+
+Gui.set_click_handler_tag(
+    "set_housing_priority_with_preset",
+    function(event)
+        local tags = event.element.tags
+
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then
+            return
+        end
+
+        entry[EK.housing_priority] = tags.priority_value
+
+        Gui.DetailsView.rebuild_for_entry(entry)
+    end
+)
+
+Gui.set_gui_confirmed_handler_tag(
+    "set_housing_priority",
+    function(event)
+        local tags = event.element.tags
+
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then
+            return
+        end
+
+        entry[EK.housing_priority] = tonumber(event.element.text)
+    end
+)
+
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     local flow = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"})
 
@@ -438,6 +475,40 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
         if assessment then
             quality_text.style.font_color = assessment > 0 and Color.green or Color.red
         end
+    end
+
+    local priority_flow = Gui.Elements.Flow.horizontal_right(flow, "priority_flow")
+    priority_flow.add {
+        type = "label",
+        caption = {"sosciencity.priority"},
+        tooltip = {"sosciencity.explain-housing-priority"}
+    }
+    local textfield =
+        priority_flow.add {
+        type = "textfield",
+        name = "priority",
+        numeric = true,
+        tooltip = {"sosciencity.explain-housing-priority"},
+        tags = {
+            sosciencity_gui_event = "set_housing_priority",
+            unit_number = entry[EK.unit_number]
+        }
+    }
+    textfield.text = tostring(entry[EK.housing_priority])
+
+    local priority_buttons_flow = Gui.Elements.Flow.horizontal_right(flow)
+    for _, priority_preset in pairs(priority_presets) do
+        priority_buttons_flow.add {
+            type = "button",
+            caption = priority_preset.locale,
+            tags = {
+                sosciencity_gui_event = "set_housing_priority_with_preset",
+                unit_number = entry[EK.unit_number],
+                priority_value = priority_preset.value,
+                player_index = tabbed_pane.player_index
+            },
+            style = "sosciencity_sortable_list_head"
+        }
     end
 
     Gui.Elements.Utils.separator_line(flow)
@@ -2005,6 +2076,9 @@ function Gui.DetailsView.create(player)
     frame.visible = false
 end
 
+--- Returns the DetailsView for the given player.
+--- @param player LuaPlayer
+--- @return LuaGuiElement
 local function get_details_view(player)
     local details_view = player.gui.screen[DETAILS_VIEW_NAME]
 
@@ -2018,9 +2092,16 @@ local function get_details_view(player)
     end
 end
 
+Gui.DetailsView.get = get_details_view
+
+--- Returns the nested content-part of the DetailView for the given player.
+--- @param player LuaPlayer
+--- @return LuaGuiElement
 local function get_nested_details_view(player)
     return get_details_view(player).nested
 end
+
+Gui.DetailsView.get_nested = get_nested_details_view
 
 local type_gui_specifications = {
     [Type.mining_drill] = {

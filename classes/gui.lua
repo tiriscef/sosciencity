@@ -150,7 +150,22 @@ end
 --- [element name]: table
 ---     [1]: function
 ---     [2]: array of arguments
-local gui_confirmed_lookup = {}
+local gui_confirmed_lookup_tag = {}
+
+--- Sets the 'on_gui_confirmed' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
+--- Params for the event handler function: (entry, gui_element, player_id, [additional params])
+--- @param tag string
+--- @param fn function
+function Gui.set_gui_confirmed_handler_tag(tag, fn)
+    Tirislib.Utils.desync_protection()
+    gui_confirmed_lookup_tag[tag] = fn
+end
+
+--- Lookup for gui confirmed event handlers.
+--- [element name]: table
+---     [1]: function
+---     [2]: array of arguments
+local gui_confirmed_lookup_name = {}
 
 --- Sets the 'on_gui_confirmed' event handler for a gui element with the given name. Additional arguments for the call can be specified.\
 --- Params for the event handler function: (entry, gui_element, player_id, [additional params])
@@ -158,12 +173,12 @@ local gui_confirmed_lookup = {}
 --- @param fn function
 function Gui.set_gui_confirmed_handler(name, fn, ...)
     Tirislib.Utils.desync_protection()
-    gui_confirmed_lookup[name] = {fn, {...}}
+    gui_confirmed_lookup_name[name] = {fn, {...}}
 end
 
 --- Event handler for confirmed guis
 function Gui.on_gui_confirmed(event)
-    look_for_event_handler(event, gui_confirmed_lookup)
+    return (look_for_event_handler(event, gui_confirmed_lookup_name) or look_for_event_handler_by_tag(event, gui_confirmed_lookup_tag))
 end
 
 --- Array of functions to be called on the on_gui_closed-event.
@@ -188,7 +203,7 @@ end
 --- Array of functions to be called on the on_gui_opened-event.
 local gui_opened_handlers = {}
 
---- Adds a 'on_gui_closed' event handler.
+--- Adds a 'on_gui_opened' event handler.
 --- @param fn function
 function Gui.add_gui_opened_handler(fn)
     Tirislib.Utils.desync_protection()
