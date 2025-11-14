@@ -292,7 +292,7 @@ local function on_entity_died(event)
             add_fear()
         end
 
-        remove_entry(entry, DeconstructionCause.destroyed)
+        remove_entry(entry, DeconstructionCause.destroyed, event)
     end
 end
 
@@ -307,7 +307,7 @@ local function on_entity_mined(event)
     local unit_number = entity.unit_number
     local entry = try_get_entry(unit_number)
     if entry then
-        remove_entry(entry, DeconstructionCause.mined)
+        remove_entry(entry, DeconstructionCause.mined, event)
     end
 
     unlock_on_mined_entity(event.buffer)

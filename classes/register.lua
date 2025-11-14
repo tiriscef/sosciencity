@@ -206,11 +206,11 @@ function Register.set_entity_destruction_handler(_type, fn)
     on_destroyed_lookup[_type] = fn
 end
 
-local function on_destruction(_type, entry, cause)
+local function on_destruction(_type, entry, cause, event)
     local fn = on_destroyed_lookup[_type]
 
     if fn then
-        fn(entry, cause)
+        fn(entry, cause, event)
     end
 end
 
@@ -344,11 +344,13 @@ end
 
 --- Removes the given entry from the register.
 --- @param entry Entry
-function Register.remove_entry(entry, cause)
+--- @param cause DeconstructionCause
+--- @param event table?
+function Register.remove_entry(entry, cause, event)
     local _type = entry[EK.type]
 
     destroy_custom_building(entry)
-    on_destruction(_type, entry, cause)
+    on_destruction(_type, entry, cause, event)
     remove_subentities(entry)
     unsubscribe_neighborhood(entry)
     remove_notifications(entry)
@@ -393,7 +395,7 @@ function Register.try_get(unit_number)
         if entry[EK.entity].valid then
             return entry
         else
-            remove_entry(entry)
+            remove_entry(entry, DeconstructionCause.unknown)
         end
     end
 end
@@ -411,7 +413,7 @@ local function register_next(unit_number)
     if entry[EK.entity].valid then
         return unit_number, entry
     else
-        remove_entry(entry)
+        remove_entry(entry, DeconstructionCause.unknown)
         return register_next(unit_number)
     end
 end
