@@ -252,7 +252,6 @@ local function update_city_combinator(entry)
             control_behavior.set_signal(type, {signal = signal, count = storage.population[type]})
         end
     end]]
-
     -- TODO: This doesn't work anymore and I currently have no clue how to implement this in factorio 2
 end
 --Register.set_entity_updater(Type.city_combinator, update_city_combinator)
@@ -372,15 +371,18 @@ local function update_composter(entry, delta_ticks)
 end
 Register.set_entity_updater(Type.composter, update_composter)
 
-local function remove_composter(entry, cause)
+local function remove_composter(entry, cause, event)
     if not entry[EK.entity].valid then
         return
     end
 
     local humus = floor(entry[EK.humus])
 
-    if cause ~= DeconstructionCause.mod_update and humus > 0 then
+    if cause == DeconstructionCause.destroyed and humus > 0 then
         Inventories.spill_items(entry, "humus", humus)
+    end
+    if cause == DeconstructionCause.mined and humus > 0 then
+        event.buffer.insert {name = "humus", count = humus}
     end
 end
 Register.set_entity_destruction_handler(Type.composter, remove_composter)
