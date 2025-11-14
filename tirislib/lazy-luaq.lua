@@ -795,7 +795,7 @@ local function distinct_move_next(self)
     end
 end
 
-local function distinct_reset(self)
+local function seen_deleting_reset(self)
     self.seen = {}
     self.content:reset()
 end
@@ -807,7 +807,7 @@ function LazyLuaq:distinct()
         content = self,
         seen = {},
         move_next = distinct_move_next,
-        reset = distinct_reset
+        reset = seen_deleting_reset
     }
     setmetatable(ret, LazyLuaq)
 
@@ -831,15 +831,76 @@ local function distinct_by_move_next(self)
 end
 
 --- Returns the distinct elements of the sequence according to the given selector function.
----@param selector function
----@return LazyLuaqQuery
+--- @param selector function
+--- @return LazyLuaqQuery
 function LazyLuaq:distinct_by(selector)
     local ret = {
         content = self,
         seen = {},
         selector = selector,
         move_next = distinct_by_move_next,
-        reset = distinct_reset
+        reset = seen_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function duplicates_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    if self.seen[value] then
+        return index, value
+    else
+        self.seen[value] = true
+        return duplicates_move_next(self)
+    end
+end
+
+--- Returns the duplicate elements of the sequence, skipping first occuring elements.
+--- @return LazyLuaqQuery
+function LazyLuaq:duplicates()
+    local ret = {
+        content = self,
+        seen = {},
+        move_next = duplicates_move_next,
+        reset = seen_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function duplicates_by_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    local valueKey = self.selector(value)
+    if self.seen[valueKey] then
+        return index, value
+    else
+        self.seen[valueKey] = true
+        return duplicates_by_move_next(self)
+    end
+end
+
+--- Returns the duplicate elements of the sequence according to the given selector function.
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:duplicates_by(selector)
+    local ret = {
+        content = self,
+        seen = {},
+        selector = selector,
+        move_next = duplicates_by_move_next,
+        reset = seen_deleting_reset
     }
     setmetatable(ret, LazyLuaq)
 
