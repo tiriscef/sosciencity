@@ -16,6 +16,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }
+Sosciencity_Config.remove_quality_multipliers("aquafarm")
 
 local sprite_height = 14
 local sprite_width = 12

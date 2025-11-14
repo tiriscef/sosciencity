@@ -11,6 +11,7 @@ require("datastage-scripts.trees")
 require("datastage-scripts.rocks")
 require("datastage-scripts.fish")
 require("datastage-scripts.lumber")
+require("datastage-scripts.quality-modifiers")
 
 require("integrations-updates")
 

@@ -17,6 +17,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "infrastructure-1"
 }
+Sosciencity_Config.remove_quality_multipliers("hunting-hut")
 
 local shift = {0.35, -0.5}
 local width = 160

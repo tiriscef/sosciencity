@@ -17,6 +17,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }
+Sosciencity_Config.remove_quality_multipliers("industrial-animal-farm")
 
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 

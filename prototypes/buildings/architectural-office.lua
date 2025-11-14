@@ -21,6 +21,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 1,
     unlock = "architecture-2"
 }
+Sosciencity_Config.remove_quality_multipliers("architectural-office")
 
 Tirislib.Entity.create {
     type = "assembling-machine",

@@ -16,6 +16,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 1,
     unlock = "algae-farming"
 }
+Sosciencity_Config.remove_quality_multipliers("algae-farm")
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south", "north"}

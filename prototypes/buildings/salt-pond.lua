@@ -16,6 +16,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 1,
     unlock = "fermentation"
 }:add_unlock("medbay")
+Sosciencity_Config.remove_quality_multipliers("salt-pond")
 
 local sprite_width = 14
 local sprite_height = 14

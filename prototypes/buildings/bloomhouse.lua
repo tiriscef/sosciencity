@@ -20,6 +20,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 2,
     unlock = "indoor-growing"
 }
+Sosciencity_Config.remove_quality_multipliers("bloomhouse")
 
 local height = 7
 local width = 7
