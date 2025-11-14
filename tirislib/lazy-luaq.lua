@@ -20,8 +20,8 @@ LazyLuaq.__index = LazyLuaq
 -- This is pretty unfortunate, but a design decision to use the Query-Object to hold the iteration index.
 -- The other option would have been to create a index-table for the iterations.
 -- But this would limit the querys to arrays and not allow sequences where the indexes are important.
--- 
--- A workaround is to copy the query with the copy() function. 
+--
+-- A workaround is to copy the query with the copy() function.
 
 --- Standard-Iterator using next
 --- @return any index
@@ -1325,4 +1325,36 @@ function LazyLuaq:shuffle()
     end
 
     return LazyLuaq.from(array)
+end
+
+local function reverse_move_next(self)
+    local index = self.last_index
+    if index == nil then
+        index = #self.content
+    end
+
+    if index > 0 then
+        self.last_index = index - 2
+        return self.content[index], self.content[index - 1]
+    end
+end
+
+--- Returns the sequence in reversed order.
+--- @return LazyLuaqQuery
+function LazyLuaq:reverse()
+    local array = {}
+
+    for k, v in self:iterate() do
+        array[#array + 1] = v
+        array[#array + 1] = k
+    end
+
+    local ret = {
+        content = array,
+        move_next = reverse_move_next,
+        is_content_iterator = true
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
 end
