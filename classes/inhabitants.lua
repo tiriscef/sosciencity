@@ -2033,6 +2033,10 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << housing life cycle and event handlers >>
 
+local function on_setting_paste_to_inhabited(source, destination)
+    destination[EK.housing_priority] = source[EK.housing_priority] or 0
+end
+
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
 --- @param entry Entry
 --- @param caste_id integer
@@ -2056,11 +2060,15 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     end
 end
 
-local function on_settings_paste(source, destination)
-    Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
+local function on_settings_paste_to_empty(source, destination)
+    local success = Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
+
+    if success then
+        on_setting_paste_to_inhabited(source, destination)
+    end
 end
 
---- Initializes the given entry so it can work as an housing entry.
+-- Initializes the given entry so it can work as an housing entry.
 --- @param entry Entry
 function Inhabitants.create_house(entry)
     InhabitantGroup.new_house(entry)
@@ -2095,6 +2103,8 @@ function Inhabitants.create_house(entry)
 
     entry[EK.blood_donation_progress] = 0.4 * random()
 
+    entry[EK.housing_priority] = 0
+
     update_free_space_status(entry)
 
     Inhabitants.social_environment_change()
@@ -2109,6 +2119,7 @@ function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source, true)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Table.copy(source[EK.disease_progress])
+    destination[EK.housing_priority] = source[EK.housing_priority] or 0
     update_housing_census(destination)
 end
 
@@ -2143,7 +2154,8 @@ for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
     Register.set_entity_updater(caste, update_house)
     Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
-    Register.set_settings_paste_handler(caste, Type.empty_house, on_settings_paste)
+    Register.set_settings_paste_handler(caste, caste, on_setting_paste_to_inhabited)
+    Register.set_settings_paste_handler(caste, Type.empty_house, on_settings_paste_to_empty)
 end
 
 ---------------------------------------------------------------------------------------------------

@@ -7,7 +7,8 @@ local Time = require("constants.time")
 local function add_caste_infos(container, caste_id)
     local caste = Castes.values[caste_id]
 
-    Gui.Elements.Sprite.create_caste_sprite(container, caste_id, 256)
+    local centered_flow = Gui.Elements.Flow.horizontal_center(container)
+    Gui.Elements.Sprite.create_caste_sprite(centered_flow, caste_id, 256)
 
     Gui.Elements.Label.heading_1(container, caste.localised_name)
     Gui.Elements.Label.paragraph(container, {"technology-description." .. caste.name .. "-caste"})

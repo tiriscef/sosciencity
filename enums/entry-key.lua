@@ -124,6 +124,8 @@ EK.social_progress = 229
 EK.ga_conceptions = 230
 --- the progress toward the next attempted blood donation
 EK.blood_donation_progress = 231
+--- the priority with which inhabitants will move into this house
+EK.housing_priority = 232
 
 -- water distributer
 

@@ -343,10 +343,7 @@ local function on_configuration_change()
         Communication.say("tiriscef.", "migration1")
         Communication.say("tiriscef.", "migration2")
 
-        local version_notes = {
-            ["0.1.5"] = "This update nerved drinking water generation very drasticly.",
-            ["0.1.8"] = "Gathering was reworked. Clockwork and Ember were exchanged progression-wise. The recipes for Inventions have changed. Have fun!"
-        }
+        local version_notes = {}
 
         for version, note in pairs(version_notes) do
             if Tirislib.Utils.version_is_smaller_than(old_version, version) then
