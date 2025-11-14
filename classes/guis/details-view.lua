@@ -478,6 +478,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
     end
 
     local priority_flow = Gui.Elements.Flow.horizontal_right(flow, "priority_flow")
+    priority_flow.style.vertical_align = "center"
     priority_flow.add {
         type = "label",
         caption = {"sosciencity.priority"},
@@ -504,10 +505,10 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id)
             tags = {
                 sosciencity_gui_event = "set_housing_priority_with_preset",
                 unit_number = entry[EK.unit_number],
-                priority_value = priority_preset.value,
-                player_index = tabbed_pane.player_index
+                priority_value = priority_preset.value
             },
-            style = "sosciencity_sortable_list_head"
+            style = "sosciencity_sortable_list_head",
+            tooltip = {"sosciencity.tooltip-priority-button", priority_preset.value}
         }
     end
 
