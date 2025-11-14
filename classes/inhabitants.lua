@@ -1218,7 +1218,7 @@ local function try_occupy_empty_housing()
         -- try to distribute the inhabitants
         for _, current_house in pairs(empty_houses) do
             if Inhabitants.try_allow_for_caste(current_house, caste_id, false) then
-                -- Inhabitants.try_allow_for_caste registeres the house with a new entry
+                -- Inhabitants.try_allow_for_caste registers the house with a new entry
                 -- so we need to try_get the new one
                 try_add_to_house(try_get(current_house[EK.unit_number]), group)
             end
@@ -1229,13 +1229,6 @@ local function try_occupy_empty_housing()
         end
 
         ::continue::
-    end
-end
-
-local HUTS = {}
-for name, house in pairs(Housing.values) do
-    if house.is_improvised then
-        HUTS[#HUTS + 1] = name
     end
 end
 
@@ -1263,10 +1256,10 @@ local function create_improvised_huts()
                 end
                 Utils.add_random_offset(pos, 1)
 
-                local hut_to_create = HUTS[random(#HUTS)]
+                local hut_to_create = Housing.huts[random(#Housing.huts)]
                 local new_hut =
                     surface.create_entity {
-                    name = hut_to_create,
+                    name = hut_to_create.name,
                     position = pos,
                     force = "player",
                     create_build_effect_smoke = false
