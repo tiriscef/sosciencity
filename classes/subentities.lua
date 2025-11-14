@@ -273,7 +273,7 @@ function Subentities.remove_sprites(entry)
     local attached_renders = entry[EK.attached_renderings]
     if attached_renders then
         for _, render in pairs(attached_renders) do
-            -- TODO: this is a ~temp fix for factorio 1.1 maps, not sure if it should persist
+            -- DELETEME: this is a ~temp fix for factorio 1.1 maps
             if type(render) == "number" then
                 local render_obj = rendering.get_object_by_id(render)
                 if render_obj then

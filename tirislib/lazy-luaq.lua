@@ -1,8 +1,10 @@
 --- @class LazyLuaqQuery
 --- Table query functions - with lazily evaluated iterators.<br>
 --- Inspired by .NET's Linq.<br>
-LazyLuaq = {}
+local LazyLuaq = {}
 LazyLuaq.__index = LazyLuaq
+
+Tirislib.LazyLuaq = LazyLuaq
 
 -- An iterator needs a 'move_next' and a 'reset' function.
 -- I didn't feel like writing classes for every iterator and weirdly it was slower in my rudimentary performance tests.

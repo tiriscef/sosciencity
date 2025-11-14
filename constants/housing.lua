@@ -2,6 +2,8 @@ local EK = require("enums.entry-key")
 
 local Castes = require("constants.castes")
 
+--- @class HouseDefinition
+
 --- Things that people live in.
 local Housing = {}
 
@@ -11,15 +13,16 @@ Housing.values = {
         comfort = 0,
         is_improvised = true,
         one_room_per_inhabitant = true,
-        qualities = {"cheap", "individualistic", "low"}
+        qualities = {"cheap", "individualistic", "low"},
+        alternatives = {"improvised-hut-2"}
     },
-    ["improvised-hut-2"] = {
+    --[[["improvised-hut-2"] = {
         room_count = 4,
         comfort = 0,
         is_improvised = true,
         one_room_per_inhabitant = true,
         qualities = {"cheap", "individualistic", "low"}
-    },
+    },]]
     --[[["boring-brick-house"] = {
         room_count = 32,
         comfort = 5,
@@ -109,13 +112,17 @@ Housing.values = {
 local houses = Housing.values
 local castes = Castes.values
 
-Housing.next = {}
-
+--- Returns the HouseDefinition for this Entry.
+--- @param entry Entry of a house
+--- @return HouseDefinition
 function Housing.get(entry)
     return houses[entry[EK.name]]
 end
 local get_housing = Housing.get
 
+--- Returns the maximum capacity that this house can hold.
+--- @param entry Entry of a house
+--- @return integer
 function Housing.get_capacity(entry)
     local housing_details = get_housing(entry)
     local room_count = housing_details.room_count
@@ -128,10 +135,17 @@ function Housing.get_capacity(entry)
 end
 local get_capacity = Housing.get_capacity
 
+--- Returns the count of people that can move into the house until it's full.
+--- @param entry Entry of a house
+--- @return integer
 function Housing.get_free_capacity(entry)
     return get_capacity(entry) - entry[EK.inhabitants]
 end
 
+--- Checks if the house is suitable for the given caste.
+--- @param house HouseDefinition
+--- @param caste_id integer
+--- @return boolean
 function Housing.allowes_caste(house, caste_id)
     local caste = castes[caste_id]
     return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)
@@ -141,19 +155,11 @@ end
 do
     local to_add = {}
 
-    for house_name, house in pairs(houses) do
-        house.main_entity = house_name
-        local alternatives = house.alternatives
-        if alternatives then
-            for i = 1, #alternatives do
-                to_add[alternatives[i]] = house
-                Housing.next[alternatives[i]] = alternatives[i + 1] or house_name
+    for _, house in pairs(houses) do
+        if house.alternatives then
+            for i = 1, #house.alternatives do
+                to_add[house.alternatives[i]] = house
             end
-
-            Housing.next[house_name] = alternatives[1]
-            table.insert(alternatives, house_name)
-
-            alternatives = Tirislib.Tables.array_to_lookup(house.alternatives)
         end
 
         table.sort(house.qualities)
@@ -162,6 +168,17 @@ do
     end
 
     Tirislib.Tables.set_fields(houses, to_add)
+
+    for name, house in pairs(houses) do
+        house.name = name
+    end
+
+    Housing.huts =
+        Tirislib.LazyLuaq.from(Housing.values):where(
+        function(house)
+            return house.is_improvised
+        end
+    ):to_array()
 end
 
 return Housing

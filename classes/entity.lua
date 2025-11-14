@@ -870,8 +870,8 @@ Register.set_entity_creation_handler(Type.salt_pond, create_salt_pond)
 -- << market >>
 
 function Entity.market_has_food(entry)
-    for item in pairs(entry[EK.inventory_contents]) do
-        if Food.values[item] then
+    for _, item_stack in pairs(entry[EK.inventory_contents]) do
+        if Food.values[item_stack.name] then
             return true
         end
     end

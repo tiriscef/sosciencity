@@ -361,6 +361,11 @@ function Visualisation.remove_mouseover_highlights(player_id)
 
     for i = 1, #renders do
         local render = renders[i]
+        -- DELETEME temp fix for old render-ids
+        if type(render) == "number" then
+            render = rendering.get_object_by_id(render)
+            renders[i] = render
+        end
         if render.valid then
             render.destroy()
         end
