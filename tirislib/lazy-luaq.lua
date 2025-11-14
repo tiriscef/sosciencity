@@ -424,6 +424,14 @@ function LazyLuaq:product()
     return ret
 end
 
+--- Calls the given function for every element in the sequence.
+--- @param fn function
+function LazyLuaq:for_each(fn)
+    for _, value in self:iterate() do
+        fn(value)
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 --- Functions extending the iterators
 --- -> Execution is deferred
@@ -795,7 +803,7 @@ local function distinct_move_next(self)
     end
 end
 
-local function distinct_reset(self)
+local function seen_deleting_reset(self)
     self.seen = {}
     self.content:reset()
 end
@@ -807,7 +815,7 @@ function LazyLuaq:distinct()
         content = self,
         seen = {},
         move_next = distinct_move_next,
-        reset = distinct_reset
+        reset = seen_deleting_reset
     }
     setmetatable(ret, LazyLuaq)
 
@@ -831,15 +839,76 @@ local function distinct_by_move_next(self)
 end
 
 --- Returns the distinct elements of the sequence according to the given selector function.
----@param selector function
----@return LazyLuaqQuery
+--- @param selector function
+--- @return LazyLuaqQuery
 function LazyLuaq:distinct_by(selector)
     local ret = {
         content = self,
         seen = {},
         selector = selector,
         move_next = distinct_by_move_next,
-        reset = distinct_reset
+        reset = seen_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function duplicates_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    if self.seen[value] then
+        return index, value
+    else
+        self.seen[value] = true
+        return duplicates_move_next(self)
+    end
+end
+
+--- Returns the duplicate elements of the sequence, skipping first occuring elements.
+--- @return LazyLuaqQuery
+function LazyLuaq:duplicates()
+    local ret = {
+        content = self,
+        seen = {},
+        move_next = duplicates_move_next,
+        reset = seen_deleting_reset
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function duplicates_by_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    local valueKey = self.selector(value)
+    if self.seen[valueKey] then
+        return index, value
+    else
+        self.seen[valueKey] = true
+        return duplicates_by_move_next(self)
+    end
+end
+
+--- Returns the duplicate elements of the sequence according to the given selector function.
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:duplicates_by(selector)
+    local ret = {
+        content = self,
+        seen = {},
+        selector = selector,
+        move_next = duplicates_by_move_next,
+        reset = seen_deleting_reset
     }
     setmetatable(ret, LazyLuaq)
 
@@ -1071,6 +1140,63 @@ function LazyLuaq:symmetric_difference_by(elements, selector)
     local right = elements:copy():except_by(self, selector)
 
     return left:concat(right)
+end
+
+local function interleave_move_next(self)
+    -- if all sequences are finished, stop
+    if #self.sequences == #self.finished_sequences then
+        return
+    end
+
+    -- iterate the sequences first
+    local sequence_index, sequence = next(self.sequences, self.last_sequence_index)
+    self.last_sequence_index = sequence_index
+
+    -- if sequence_index is nil, we reached the end of the sequences and loop around
+    if sequence_index == nil or self.finished_sequences[sequence_index] then
+        return interleave_move_next(self)
+    end
+
+    local index, value = sequence:move_next()
+    if index ~= nil then
+        return index, value
+    else
+        -- this sequence is over, iterate to the next
+        self.finished_sequences[sequence_index] = true
+        return interleave_move_next(self)
+    end
+end
+
+local function interleave_reset(self)
+    for i = 1, #self.sequences do
+        self.sequences[i]:reset()
+    end
+
+    self.finished_sequences = {}
+    self.last_sequence_index = nil
+end
+
+--- Interleaves the sequence with one or more others.
+--- @param ... LazyLuaqQuery|table|array
+--- @return LazyLuaqQuery
+function LazyLuaq:interleave(...)
+    local sequences = {self, ...}
+    for i = 2, #sequences do
+        local sequence = sequences[i]
+        if getmetatable(sequence) ~= LazyLuaq then
+            sequences[i] = LazyLuaq.from(sequence)
+        end
+    end
+
+    local ret = {
+        sequences = sequences,
+        move_next = interleave_move_next,
+        reset = interleave_reset,
+        finished_sequences = {}
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
 end
 
 ---------------------------------------------------------------------------------------------------
