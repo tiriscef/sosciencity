@@ -16,6 +16,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }
+Sosciencity_Config.remove_quality_multipliers("groundwater-pump")
 
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 

@@ -19,6 +19,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 3,
     unlock = "controlled-environment-farming"
 }
+Sosciencity_Config.remove_quality_multipliers("orangery")
 
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 

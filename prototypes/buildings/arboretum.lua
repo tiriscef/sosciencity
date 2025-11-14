@@ -16,6 +16,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 0,
     unlock = "open-environment-farming"
 }
+Sosciencity_Config.remove_quality_multipliers("arboretum")
 
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover {"south"}

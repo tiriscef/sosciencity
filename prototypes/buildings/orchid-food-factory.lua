@@ -21,6 +21,7 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 2,
     unlock = "food-processing"
 }
+Sosciencity_Config.remove_quality_multipliers("orchid-food-factory")
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}

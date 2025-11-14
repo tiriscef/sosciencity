@@ -17,6 +17,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "ember-caste"
 }
+Sosciencity_Config.remove_quality_multipliers("ember-hq")
 
 Tirislib.Entity.create {
     type = "assembling-machine",

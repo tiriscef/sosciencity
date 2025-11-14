@@ -19,6 +19,7 @@ local default_values = {
         {size = 64, filename = "__sosciencity-graphics__/graphics/icon/blueprint-4.png", scale = 0.25}
     },
     eei_needing_buildings = {},
+    buildings_needing_quality_multipliers = {},
     building_stacksize = 50,
     add_glass = true,
     glass_compatibility_mode = false,
@@ -26,8 +27,17 @@ local default_values = {
     lumber_in_vanilla_recipes = settings.startup["sosciencity-lumber-in-vanilla-recipes"].value
 }
 
+--- Creates an Electric Energy Interface for the entity of the given name.
+--- @param entity_name string
 function default_values.add_eei(entity_name)
     default_values.eei_needing_buildings[entity_name] = true
+end
+
+--- Sets the quality multipliers to 1 for the given crafting machine type entity.<br>
+--- This function is there to postpone the creation of the multipliers to data-final-fixes, because other mods can create more qualities.
+--- @param entity_name string
+function default_values.remove_quality_multipliers(entity_name)
+    default_values.buildings_needing_quality_multipliers[entity_name] = true
 end
 
 if mods["sosciencity-debug"] then
