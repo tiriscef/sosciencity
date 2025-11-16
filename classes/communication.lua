@@ -200,7 +200,7 @@ function Communication.create_flying_text(entry, text)
     rendering.draw_text {
         text = text,
         surface = entity.surface,
-        target = {entity = entity},
+        target = {entity = entity, offset = {0, -1.5}},
         color = {1, 1, 1, 1},
         use_rich_text = true,
         time_to_live = 5 * Time.second,
