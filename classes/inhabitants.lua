@@ -58,10 +58,6 @@ Inhabitants = {}
             [caste_id]: table
                 [unit_number]: truthy (lookup)
 
-    storage.next_houses: table
-        [bool (improvised)]: table
-            [caste_id]: shuffled array of unit_numbers
-
     storage.fear: float (fear level)
 
     storage.last_fear_event: tick
@@ -82,7 +78,6 @@ local caste_bonuses
 local immigration
 local homeless
 local free_houses
-local next_free_houses
 local technologies
 
 local Register = Register
@@ -147,7 +142,6 @@ local function set_locals()
     immigration = storage.immigration
     homeless = storage.homeless
     free_houses = storage.free_houses
-    next_free_houses = storage.next_free_houses
     technologies = storage.technologies
 end
 
@@ -175,10 +169,6 @@ function Inhabitants.init()
     storage.caste_bonuses = new_caste_table()
     storage.immigration = new_caste_table()
     storage.free_houses = {
-        [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
-        [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
-    }
-    storage.next_free_houses = {
         [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
         [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
     }
@@ -1104,34 +1094,6 @@ local function update_free_space_status(entry)
     end
 end
 
-local function get_next_free_house(caste_id, improvised)
-    local next_houses_table = next_free_houses[improvised][caste_id]
-
-    if #next_houses_table == 0 then
-        -- create the next free houses queue
-        Table.merge(next_houses_table, free_houses[improvised][caste_id])
-        shuffle(next_houses_table)
-
-        -- check if there are any free houses at all
-        if #next_houses_table == 0 then
-            return nil
-        end
-    end
-
-    local unit_number = next_houses_table[#next_houses_table]
-    next_houses_table[#next_houses_table] = nil
-
-    local entry = try_get(unit_number)
-    if entry and entry[EK.type] == caste_id and get_free_capacity(entry) > 0 then
-        return entry
-    else
-        -- remove it from the list of free houses
-        free_houses[caste_id][unit_number] = nil
-        -- skip this outdated house
-        return get_next_free_house(caste_id, improvised)
-    end
-end
-
 --- Tries to add the specified amount of inhabitants to the house-entry.
 --- Returns the number of inhabitants that were added.
 --- @param entry Entry
@@ -1157,13 +1119,26 @@ end
 local function distribute(group, to_improvised)
     local count_before = group[EK.inhabitants]
     local caste_id = group[EK.type]
-    local next_house = get_next_free_house(caste_id, to_improvised)
+
+    local query =
+        Tirislib.LazyLuaq.from(free_houses[to_improvised][caste_id]):choose(
+        function(unit_number)
+            local entry = try_get(unit_number)
+            return entry ~= nil, entry
+        end
+    ):order_by_descending(
+        function(house)
+            return house[EK.housing_priority]
+        end
+    )
 
     local to_distribute = count_before
-    while to_distribute > 0 and next_house do
-        to_distribute = to_distribute - try_add_to_house(next_house, group)
+    for _, house in query:iterate() do
+        to_distribute = to_distribute - try_add_to_house(house, group)
 
-        next_house = get_next_free_house(caste_id, to_improvised)
+        if to_distribute == 0 then
+            break
+        end
     end
 
     return count_before - to_distribute
@@ -1210,8 +1185,10 @@ local function try_occupy_empty_housing()
                 local housing_details1 = get_housing_details(house1)
                 local housing_details2 = get_housing_details(house2)
 
-                return Inhabitants.evaluate_housing_qualities(housing_details1, castes[caste_id]) + housing_details1.comfort >
-                    Inhabitants.evaluate_housing_qualities(housing_details2, castes[caste_id]) + housing_details2.comfort
+                return Inhabitants.evaluate_housing_qualities(housing_details1, castes[caste_id]) +
+                    housing_details1.comfort >
+                    Inhabitants.evaluate_housing_qualities(housing_details2, castes[caste_id]) +
+                        housing_details2.comfort
             end
         )
 
@@ -1841,7 +1818,6 @@ local function update_emigration(entry, happiness, caste_id, delta_ticks)
     --[[if emigration_trend > 0 then
         Communication.warning(WarningType.emigration, entry)
     end]]
-
     local trend = entry[EK.emigration_trend] + emigration_trend
 
     if trend > 1 then
@@ -2126,7 +2102,6 @@ function Inhabitants.remove_house(entry, cause)
     local caste_id = entry[EK.type]
     local improvised = get_housing_details(entry).is_improvised
     free_houses[improvised][caste_id][unit_number] = nil
-    Table.remove_all(next_free_houses[improvised][caste_id], unit_number)
 
     if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
