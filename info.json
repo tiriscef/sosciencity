@@ -8,7 +8,8 @@
     "factorio_version": "2.0",
     "dependencies": [
         "sosciencity-graphics >= 0.0.12",
-        "(?)Krastorio2"
+        "(?)Krastorio2",
+        "?enable-all-feature-flags"
     ],
     "description": "Factorio: Skylines. Adds citizens to the game. Attract various castes to your city in order to progress the game."
 }
