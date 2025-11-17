@@ -8,12 +8,26 @@ local Housing = require("constants.housing")
 --- Defines the general custom properties for various entities.
 local Building = {}
 
+--- Definition table for a Custom Building
+--- @class CustomBuildingDefinition
+--- @field type Type
+--- @field range integer|string tiles in every direction or 'global'
+--- @field power_usage number in kW
+--- @field speed number in 1/tick, depends on type
+--- @field workforce WorkforceDefinition
+
+--- Definition table for a building's workforce
+--- @class WorkforceDefinition
+--- @field count integer Count of workers needed
+--- @field castes Type[] array of casteIDs that can work in this building
+
 local range_by_foot = 50
 
---- Values of various custom behaviours I implemented for the Custom Buildings.\
---- **range:** number (tiles) or "global"\
---- **power_usage:** number (kW)\
---- **speed:** number (1/tick)
+--- Values of various custom behaviours I implemented for the Custom Buildings.<br>
+--- **range:** number (tiles in every direction) or "global"<br>
+--- **power_usage:** number (kW)<br>
+--- **speed:** number (1/tick)<br>
+--- **workforce:** WorkforceDefinition
 Building.values = {
     ["algae-farm"] = {
         type = Type.automatic_farm,
@@ -218,7 +232,7 @@ Building.values = {
     },
     ["pharmacy"] = {
         type = Type.pharmacy,
-        range = "global"
+        range = 15
     },
     ["psych-ward"] = {
         type = Type.psych_ward,
