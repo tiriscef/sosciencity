@@ -516,24 +516,23 @@ Diseases.categories =
     end
 ):to_table()
 
---- table with (disease category, table of diseases)-pairs
-Diseases.by_category = {}
---- table with (disease category, sum of frequencies)-pairs for efficient random choosing
-Diseases.frequency_sums = {}
-
 --- table with (disease category, diseased cause)-pairs
 Diseases.disease_causes = {
     [DiseaseCategory.health] = DiseasedCause.health,
     [DiseaseCategory.sanity] = DiseasedCause.sanity,
     [DiseaseCategory.accident] = DiseasedCause.accident,
     [DiseaseCategory.birth_defect] = DiseasedCause.birth,
-    [DiseaseCategory.zoonosis] = DiseasedCause.zoonosis
+    [DiseaseCategory.zoonosis] = DiseasedCause.zoonosis,
+    [DiseaseCategory.malnutrition] = DiseasedCause.malnutrition,
+    [DiseaseCategory.dehydration] = DiseaseCategory.dehydration,
+    [DiseaseCategory.food_poisoning] = DiseasedCause.food_poisoning,
+    [DiseaseCategory.water_poisoning] = DiseasedCause.water_poisoning,
+    [DiseaseCategory.hard_work] = DiseasedCause.workplace_accident,
+    [DiseaseCategory.office_work] = DiseasedCause.workplace_accident,
+    [DiseaseCategory.moderate_work] = DiseasedCause.workplace_accident,
+    [DiseaseCategory.fishing_hut] = DiseasedCause.workplace_accident,
+    [DiseaseCategory.hunting_hut] = DiseasedCause.workplace_accident
 }
-
-for _, category in pairs(DiseaseCategory) do
-    Diseases.by_category[category] = {}
-    Diseases.frequency_sums[category] = 0
-end
 
 -- postprocessing
 do
@@ -647,17 +646,6 @@ do
         -- exchange escalation and complication diseases with their ID for efficient lookups
         disease.escalation = disease.escalation and get_disease_id(disease.escalation) or nil
         disease.complication = disease.complication and get_disease_id(disease.complication) or nil
-
-        if disease.contagiousness then
-            disease.categories[DiseaseCategory.infection] = 1
-        end
-
-        -- add to lookup-tables
-        for category, frequency in pairs(disease.categories or {}) do
-            Diseases.by_category[category][id] = disease
-            Diseases.frequency_sums[category] = Diseases.frequency_sums[category] + frequency
-            disease["frequency" .. category] = frequency
-        end
     end
 end
 
