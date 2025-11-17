@@ -444,11 +444,12 @@ local weighted_random = Tirislib.Utils.weighted_random
 
 --- Generates the weights array, key-lookup array, result array and the weights sum for the given dice.
 --- @param dice table
+--- @param ommit_zero_entries boolean?
 --- @return table weights
 --- @return table key_lookup
 --- @return table results
 --- @return number sum
-local function prepare_dice(dice)
+local function prepare_dice(dice, ommit_zero_entries)
     local weights = {}
     local lookup = {}
     local ret = {}
@@ -458,7 +459,7 @@ local function prepare_dice(dice)
     for key, probability in pairs(dice) do
         weights[index] = probability
         lookup[index] = key
-        ret[key] = 0
+        ret[key] = not ommit_zero_entries and 0 or nil
         sum = sum + probability
 
         index = index + 1
@@ -473,12 +474,13 @@ end
 --- A dice is defined as a table whose values are the probability weight of the associated key.
 --- @param dice table
 --- @param count integer
---- @param actual_count integer|nil defaults to 20
+--- @param actual_count integer? defaults to 20
+--- @param ommit_zero_entries boolean?
 --- @return table
-function Tirislib.Utils.dice_rolls(dice, count, actual_count)
+function Tirislib.Utils.dice_rolls(dice, count, actual_count, ommit_zero_entries)
     actual_count = actual_count or 20
 
-    local weights, lookup, ret, sum = prepare_dice(dice)
+    local weights, lookup, ret, sum = prepare_dice(dice, ommit_zero_entries)
     local count_per_roll = 1
     local modulo = 0
     if count > actual_count then
@@ -488,7 +490,7 @@ function Tirislib.Utils.dice_rolls(dice, count, actual_count)
 
     for i = 1, min(count, actual_count) do
         local rolled = lookup[weighted_random(weights, sum)]
-        ret[rolled] = ret[rolled] + count_per_roll + (i <= modulo and 1 or 0)
+        ret[rolled] = (ret[rolled] or 0) + count_per_roll + (i <= modulo and 1 or 0)
     end
 
     return ret

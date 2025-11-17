@@ -177,7 +177,7 @@ Gui.set_click_handler_tag(
         fill_disease_catalogue(
             flow.parent,
             is_checked and function(_, disease)
-                    return disease.categories[category] ~= nil
+                    return Diseases.categories[category][disease.id] ~= nil
                 end or nil
         )
     end

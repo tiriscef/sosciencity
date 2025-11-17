@@ -289,35 +289,19 @@ function DiseaseGroup.make_sick(group, disease_id, count)
 end
 local make_sick = DiseaseGroup.make_sick
 
-local frequency_keys = {}
-for _, disease_category in pairs(DiseaseCategory) do
-    frequency_keys[disease_category] = "frequency" .. disease_category
-end
-
 --- Tries to make the given number of people sick with random diseases of the given category.
 --- @param group DiseaseGroup
 --- @param disease_category DiseaseCategory
 --- @param count integer
---- @param actual_count integer|nil
---- @param suppress_logging boolean|nil
+--- @param actual_count integer?
+--- @param suppress_logging boolean?
 function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_count, suppress_logging)
     actual_count = min(count, actual_count or 20)
 
-    local count_per_pick = 1
-    local modulo = 0
-    if count > actual_count then
-        count_per_pick = floor(count / actual_count)
-        modulo = count % actual_count
-    end
+    local rolled_diseases = dice_rolls(Diseases.categories[disease_category], count, actual_count, true)
 
-    for i = 1, actual_count do
-        local disease_id =
-            Table.pick_random_subtable_weighted_by_key(
-            Diseases.by_category[disease_category],
-            frequency_keys[disease_category],
-            Diseases.frequency_sums[disease_category]
-        )
-        local sickened = make_sick(group, disease_id, count_per_pick + (i <= modulo and 1 or 0))
+    for disease_id, rolled_count in pairs(rolled_diseases) do
+        local sickened = make_sick(group, disease_id, rolled_count)
 
         if not suppress_logging and sickened > 0 then
             Communication.report_diseased(disease_id, sickened, Diseases.disease_causes[disease_category])

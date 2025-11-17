@@ -198,9 +198,9 @@ local function write_files()
     for _, disease in pairs(Diseases.values) do
         local res = disease.name .. ";"
 
-        for _, category in pairs(DiseaseCategory) do
-            if disease.categories[category] then
-                res = res .. (100 * disease.categories[category] / Diseases.frequency_sums[category])
+        for _, category_id in pairs(DiseaseCategory) do
+            if Diseases.categories[category_id][disease.id] then
+                res = res .. (100 * disease.categories[category_id] / Tirislib.Tables.sum(Diseases.categories[category_id]))
             end
             res = res .. ";"
         end
