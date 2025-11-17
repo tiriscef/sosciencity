@@ -435,15 +435,33 @@ Diseases.categories = {
     [DiseaseCategory.infection] = {},
     [DiseaseCategory.escalation] = {},
     [DiseaseCategory.complication] = {},
-    [DiseaseCategory.malnutrition] = {},
-    [DiseaseCategory.dehydration] = {},
-    [DiseaseCategory.food_poisoning] = {},
-    [DiseaseCategory.water_poisoning] = {},
-    [DiseaseCategory.hard_work] = {},
-    [DiseaseCategory.office_work] = {},
-    [DiseaseCategory.moderate_work] = {},
-    [DiseaseCategory.fishing_hut] = {},
-    [DiseaseCategory.hunting_hut] = {}
+    [DiseaseCategory.malnutrition] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.dehydration] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.food_poisoning] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.water_poisoning] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.hard_work] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.office_work] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.moderate_work] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.fishing_hut] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    },
+    [DiseaseCategory.hunting_hut] = {
+        ["limb-loss"] = 100 -- TODO: placeholder
+    }
 }
 
 -- automatically fill the complication category

@@ -1,3 +1,4 @@
+local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local SubentityType = require("enums.subentity-type")
 local Type = require("enums.type")
@@ -20,6 +21,8 @@ local Building = {}
 --- @class WorkforceDefinition
 --- @field count integer Count of workers needed
 --- @field castes Type[] array of casteIDs that can work in this building
+--- @field disease_category DiseaseCategory the category of diseases that this work can cause
+--- @field disease_frequency number the frequency with which diseases are caused by this work
 
 local range_by_foot = 50
 
@@ -47,14 +50,18 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 8,
-            castes = {Type.clockwork, Type.gleam, Type.foundry}
+            castes = {Type.clockwork, Type.gleam, Type.foundry},
+            disease_category = DiseaseCategory.office_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["bloomhouse"] = {
         type = Type.farm,
         workforce = {
             count = 2,
-            castes = {Type.orchid}
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         },
         accepts_plant_care = true
     },
@@ -66,7 +73,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 20,
-            castes = {Type.clockwork}
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.hard_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["composting-silo"] = {
@@ -89,7 +98,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 20,
-            castes = {Type.ember}
+            castes = {Type.ember},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["farm"] = {
@@ -109,7 +120,9 @@ Building.values = {
         water_tiles = 300,
         workforce = {
             count = 4,
-            castes = {Type.orchid}
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.fishing_hut,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["foundry-hq"] = {
@@ -117,7 +130,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 20,
-            castes = {Type.foundry}
+            castes = {Type.foundry},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["gene-clinic"] = {
@@ -129,7 +144,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 20,
-            castes = {Type.gleam}
+            castes = {Type.gleam},
+            disease_category = DiseaseCategory.office_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["greenhouse"] = {
@@ -145,7 +162,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 10,
-            castes = {Type.gunfire}
+            castes = {Type.gunfire},
+            disease_category = DiseaseCategory.hard_work,
+            disease_frequency = 0.1 * Time.minute
         },
         subentities = {
             SubentityType.turret_gunfire_hq1,
@@ -166,7 +185,9 @@ Building.values = {
         speed = 2 / Time.second,
         workforce = {
             count = 10,
-            castes = {Type.plasma}
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         },
         power_usage = 100
     },
@@ -176,7 +197,9 @@ Building.values = {
         tree_count = 100,
         workforce = {
             count = 4,
-            castes = {Type.orchid}
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.hunting_hut,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["industrial-animal-farm"] = {
@@ -197,7 +220,9 @@ Building.values = {
         speed = 0.4 / Time.second,
         workforce = {
             count = 5,
-            castes = {Type.orchid, Type.plasma}
+            castes = {Type.orchid, Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         },
         power_usage = 50
     },
@@ -219,7 +244,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 10,
-            castes = {Type.orchid}
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["orchid-hq"] = {
@@ -227,7 +254,9 @@ Building.values = {
         range = range_by_foot,
         workforce = {
             count = 20,
-            castes = {Type.orchid}
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["pharmacy"] = {
@@ -289,7 +318,9 @@ Building.values = {
         speed = 20 / Time.second,
         workforce = {
             count = 20,
-            castes = {Type.plasma}
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
         },
         power_usage = 50
     },
@@ -308,7 +339,9 @@ Building.values = {
         water_tiles = 300,
         workforce = {
             count = 20,
-            castes = {Type.clockwork}
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.fishing_hut,
+            disease_frequency = 0.1 * Time.minute
         }
     },
     ["test-composter"] = {
