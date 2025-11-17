@@ -1,4 +1,5 @@
 local Food = require("constants.food")
+local Time = require("constants.time")
 
 local function percentage(numerator, denominator)
     return string.format("%.0f", 100. * numerator / denominator) .. "%"
