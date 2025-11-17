@@ -28,6 +28,7 @@ ItemConstants.compost_values = {
     ["dried-solfaen"] = 0.1,
     ["eggplant"] = 1,
     ["endower-flower"] = 0.5,
+    ["expired-food"] = 0.5,
     ["fawoxylas"] = 0.5,
     ["feathers"] = 0.5,
     ["fish-meat"] = 0.5,

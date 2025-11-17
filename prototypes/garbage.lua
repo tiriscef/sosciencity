@@ -27,6 +27,9 @@ local garbage_items = {
             fuel_category = "garbage"
         },
         sprite_variations = {name = "slaughter-waste", count = 1, include_icon = true}
+    },
+    {
+        name = "expired-food"
     }
 }
 

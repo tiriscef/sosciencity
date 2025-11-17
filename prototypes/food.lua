@@ -9,58 +9,240 @@ end
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local foods = {
-    {name = "mammal-meat"},
-    {name = "bird-meat"},
-    {name = "insect-meat"},
-    {name = "fish-meat"},
-    {name = "biter-meat", sprite_variations = {name = "biter-meat", count = 2, include_icon = true}},
-    {name = "fermented-biter-meat", sprite_variations = {name = "fermented-biter-meat", count = 2, include_icon = true}},
-    {name = "offal", sprite_variations = {name = "offal", count = 2, include_icon = true}},
-    {name = "nan-egg"},
-    {name = "primal-egg"},
-    {name = "bone-egg"},
-    {name = "unnamed-fruit", sprite_variations = {name = "unnamed-fruit-pile", count = 4}},
-    {name = "weird-berry", sprite_variations = {name = "weird-berry-pile", count = 4}},
-    {name = "brutal-pumpkin", sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}},
-    {name = "ortrot", sprite_variations = {name = "ortrot-pile", count = 4}},
-    {name = "apple", sprite_variations = {name = "apple-pile", count = 4}},
-    {name = "blue-grapes", sprite_variations = {name = "blue-grapes-pile", count = 3}},
-    {name = "lemon", sprite_variations = {name = "lemon-pile", count = 3}},
-    {name = "orange", sprite_variations = {name = "orange-pile", count = 3}},
-    {name = "zetorn", sprite_variations = {name = "zetorn-pile", count = 3}},
-    {name = "cherry", sprite_variations = {name = "cherry-pile", count = 3}},
-    {name = "olive", sprite_variations = {name = "olive-pile", count = 3}},
-    {name = "bell-pepper", sprite_variations = {name = "bell-pepper-pile", count = 4}},
-    {name = "potato", sprite_variations = {name = "potato-pile", count = 4}},
-    {name = "sesame", sprite_variations = {name = "sesame-pile", count = 3}},
-    {name = "sugar-beet", sprite_variations = {name = "sugar-beet-pile", count = 3}},
-    {name = "tomato", sprite_variations = {name = "tomato-pile", count = 4}},
-    {name = "eggplant", sprite_variations = {name = "eggplant-pile", count = 5}},
-    {name = "fawoxylas", sprite_variations = {name = "fawoxylas-pile", count = 4}},
-    {name = "avocado", sprite_variations = {name = "avocado-pile", count = 4}},
-    {name = "chickpea", sprite_variations = {name = "chickpea-pile", count = 3}},
-    {name = "liontooth", sprite_variations = {name = "liontooth-pile", count = 3}},
-    {name = "manok", sprite_variations = {name = "manok-pile", count = 3}},
-    {name = "tello-fruit", sprite_variations = {name = "tello-pile", count = 3, include_icon = true}},
-    {name = "razha-bean", sprite_variations = {name = "razha-bean-pile", count = 3}},
+    {
+        name = "mammal-meat",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "bird-meat",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "insect-meat",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "fish-meat",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "biter-meat",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "biter-meat", count = 2, include_icon = true}
+    },
+    {
+        name = "fermented-biter-meat",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "fermented-biter-meat", count = 2, include_icon = true}
+    },
+    {
+        name = "offal",
+        distinctions = {spoil_ticks = 10 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "offal", count = 2, include_icon = true}
+    },
+    {
+        name = "nan-egg",
+        distinctions = {spoil_ticks = 30 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "primal-egg",
+        distinctions = {spoil_ticks = 30 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "bone-egg",
+        distinctions = {spoil_ticks = 30 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "unnamed-fruit",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "unnamed-fruit-pile", count = 4}
+    },
+    {
+        name = "weird-berry",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "weird-berry-pile", count = 4}
+    },
+    {
+        name = "brutal-pumpkin",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "brutal-pumpkin", count = 2, include_icon = true}
+    },
+    {
+        name = "ortrot",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "ortrot-pile", count = 4}
+    },
+    {
+        name = "apple",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "apple-pile", count = 4}
+    },
+    {
+        name = "blue-grapes",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "blue-grapes-pile", count = 3}
+    },
+    {
+        name = "lemon",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "lemon-pile", count = 3}
+    },
+    {
+        name = "orange",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "orange-pile", count = 3}
+    },
+    {
+        name = "zetorn",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "zetorn-pile", count = 3}
+    },
+    {
+        name = "cherry",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "cherry-pile", count = 3}
+    },
+    {
+        name = "olive",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "olive-pile", count = 3}
+    },
+    {
+        name = "bell-pepper",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "bell-pepper-pile", count = 4}
+    },
+    {
+        name = "potato",
+        distinctions = {spoil_ticks = 40 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "potato-pile", count = 4}
+    },
+    {
+        name = "sesame",
+        distinctions = {spoil_ticks = 40 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "sesame-pile", count = 3}
+    },
+    {
+        name = "sugar-beet",
+        distinctions = {spoil_ticks = 30 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "sugar-beet-pile", count = 3}
+    },
+    {
+        name = "tomato",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "tomato-pile", count = 4}
+    },
+    {
+        name = "eggplant",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "eggplant-pile", count = 5}
+    },
+    {
+        name = "fawoxylas",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "fawoxylas-pile", count = 4}
+    },
+    {
+        name = "avocado",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "avocado-pile", count = 4}
+    },
+    {
+        name = "chickpea",
+        distinctions = {spoil_ticks = 40 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "chickpea-pile", count = 3}
+    },
+    {
+        name = "liontooth",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "liontooth-pile", count = 3}
+    },
+    {
+        name = "manok",
+        distinctions = {spoil_ticks = 40 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "manok-pile", count = 3}
+    },
+    {
+        name = "tello-fruit",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "tello-pile", count = 3, include_icon = true}
+    },
+    {
+        name = "razha-bean",
+        distinctions = {spoil_ticks = 40 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "razha-bean-pile", count = 3}
+    },
     {
         name = "dried-solfaen",
         sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true},
-        distinctions = {subgroup = "sosciencity-microorganism-products"}
+        distinctions = {
+            subgroup = "sosciencity-microorganism-products",
+            spoil_ticks = 40 * Time.minute,
+            spoil_result = "expired-food"
+        }
     },
-    {name = "tofu"},
-    {name = "yuba"},
-    {name = "hummus"},
-    {name = "bread", sprite_variations = {name = "bread-pile", count = 3}},
-    {name = "queen-algae", sprite_variations = {name = "queen-algae", count = 3, include_icon = true}},
-    {name = "endower-flower", sprite_variations = {name = "endower-flower", count = 3, include_icon = true}},
-    {name = "pyrifera", sprite_variations = {name = "pyrifera", count = 3, include_icon = true}},
-    {name = "pocelial", sprite_variations = {name = "pocelial-pile", count = 3}},
-    {name = "red-hatty", sprite_variations = {name = "red-hatty-pile", count = 3}},
-    {name = "birdsnake", sprite_variations = {name = "birdsnake-pile", count = 3}},
-    {name = "wild-edible-plants", sprite_variations = {name = "wild-edible-plants", count = 7, include_icon = true}},
-    {name = "wild-fungi", sprite_variations = {name = "wild-fungi", count = 7, include_icon = true}},
-    {name = "wild-algae", sprite_variations = {name = "wild-algae", count = 7, include_icon = true}}
+    {
+        name = "tofu",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "yuba",
+        distinctions = {spoil_ticks = 40 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "hummus",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"}
+    },
+    {
+        name = "bread",
+        distinctions = {spoil_ticks = 20 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "bread-pile", count = 3}
+    },
+    {
+        name = "queen-algae",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "queen-algae", count = 3, include_icon = true}
+    },
+    {
+        name = "endower-flower",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "endower-flower", count = 3, include_icon = true}
+    },
+    {
+        name = "pyrifera",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "pyrifera", count = 3, include_icon = true}
+    },
+    {
+        name = "pocelial",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "pocelial-pile", count = 3}
+    },
+    {
+        name = "red-hatty",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "red-hatty-pile", count = 3}
+    },
+    {
+        name = "birdsnake",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "birdsnake-pile", count = 3}
+    },
+    {
+        name = "wild-edible-plants",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "wild-edible-plants", count = 7, include_icon = true}
+    },
+    {
+        name = "wild-fungi",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "wild-fungi", count = 7, include_icon = true}
+    },
+    {
+        name = "wild-algae",
+        distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
+        sprite_variations = {name = "wild-algae", count = 7, include_icon = true}
+    }
 }
 
 -- add the food values to the... prototype prototype
