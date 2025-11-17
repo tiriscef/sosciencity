@@ -13,6 +13,24 @@ Diseases.not_curable = 1000000000
 --- the ID of a disease
 --- @alias DiseaseID integer
 
+--- Definition table for a disease
+--- @class DiseaseDefinition
+--- @field name string
+--- @field localised_name locale
+--- @field localised_description locale
+--- @field cure_items table with (item name, count)-pairs
+--- @field curing_workload number
+--- @field curing_facility Type
+--- @field contagiousness number
+--- @field lethality number
+--- @field natural_recovery number
+--- @field escalation DiseaseID
+--- @field escalation_probability number
+--- @field complication DiseaseID
+--- @field complication_probability number
+--- @field complication_lethality number
+--- @field work_effectivity number
+
 --- Disease definitions\
 --- **name:** prototype name of the disease\
 --- **localised_name:** localised name for this disease\
@@ -344,7 +362,141 @@ Diseases.values = {
         escalation_probability = 0.2,
         work_effectivity = 0
     }
+    -- 9000+: primarily malnutrition
+
+    -- 10000+: primarily dehydration
+
+    -- 11000+: primarily food poisoning
+
+    -- 12000+: primarily polluted water
+
+    -- 20000+: primarily hard work accident group
+
+    -- 21000+: primarily office work accident group
+
+    -- 22000+: primarily moderate work accident group
+
+    -- 30000+: fishing hut accident group
+
+    -- 31000+: hunting gut accident group
 }
+
+local function get_disease_id(disease_name)
+    for id, disease in pairs(Diseases.values) do
+        if disease_name == disease.name then
+            return id
+        end
+    end
+    error("Diseases looked for the ID of a nonexistant disease: " .. disease_name)
+end
+
+--- Defines which diseases belong to the categories and with which frequency. Contains the DiseaseID as keys and a frequency as value.
+Diseases.categories = {
+    [DiseaseCategory.health] = {
+        ["rare-cold"] = 100,
+        ["yeast-infection"] = 100,
+        ["riverhorse-like-flu"] = 100,
+        ["headaches"] = 100,
+        ["diarrhea"] = 100,
+        ["exhaustion"] = 500,
+        ["kidney-stone"] = 300,
+        ["lung-infection"] = 10,
+        ["necrosis"] = 10,
+        ["weak-heart"] = 5
+    },
+    [DiseaseCategory.sanity] = {
+        ["depression"] = 50,
+        ["schizophrenia"] = 50,
+        ["reality-loss"] = 100,
+        ["factorio-addiction"] = 100,
+        ["burnout"] = 100,
+        ["exhaustion"] = 200
+    },
+    [DiseaseCategory.accident] = {
+        ["limb-loss"] = 100,
+        ["broken-bone"] = 150,
+        ["burnt-skin"] = 300,
+        ["deep-cuts"] = 300,
+        ["biter-bite"] = 50,
+        ["joint-dislocation"] = 400,
+        ["hematoma"] = 400,
+        ["exhaustion"] = 200
+    },
+    [DiseaseCategory.birth_defect] = {
+        ["limb-loss"] = 100,
+        ["weak-heart"] = 100,
+        ["gender-dysphoria"] = 50,
+        ["lack-of-purple-blood-cells"] = 600,
+        ["huntingtons"] = 100
+    },
+    [DiseaseCategory.zoonosis] = {
+        ["real-riverhorse-flu"] = 100
+    },
+    [DiseaseCategory.infection] = {},
+    [DiseaseCategory.escalation] = {},
+    [DiseaseCategory.complication] = {},
+    [DiseaseCategory.malnutrition] = {},
+    [DiseaseCategory.dehydration] = {},
+    [DiseaseCategory.food_poisoning] = {},
+    [DiseaseCategory.water_poisoning] = {},
+    [DiseaseCategory.hard_work] = {},
+    [DiseaseCategory.office_work] = {},
+    [DiseaseCategory.moderate_work] = {},
+    [DiseaseCategory.fishing_hut] = {},
+    [DiseaseCategory.hunting_hut] = {}
+}
+
+-- automatically fill the complication category
+Diseases.categories[DiseaseCategory.complication] =
+    Tirislib.LazyLuaq.from(Diseases.values):choose(
+    function(disease)
+        return disease.complication ~= nil, disease.complication
+    end
+):to_dictionary(
+    function()
+        return 1
+    end,
+    Tirislib.Utils.identity
+)
+
+-- automatically fill the escalation category
+Diseases.categories[DiseaseCategory.escalation] =
+    Tirislib.LazyLuaq.from(Diseases.values):choose(
+    function(disease)
+        return disease.escalation ~= nil, disease.escalation
+    end
+):to_dictionary(
+    function()
+        return 1
+    end,
+    Tirislib.Utils.identity
+)
+
+-- automatically fill the infection category
+Diseases.categories[DiseaseCategory.infection] =
+    Tirislib.LazyLuaq.from(Diseases.values):choose(
+    function(disease)
+        return disease.contagiousness ~= nil, disease.name
+    end
+):to_dictionary(
+    function()
+        return 1
+    end,
+    Tirislib.Utils.identity
+)
+
+-- exchange the disease-name-keys with their corresponding DiseaseIDs
+Diseases.categories =
+    Tirislib.LazyLuaq.from(Diseases.categories):select(
+    function(category)
+        return Tirislib.LazyLuaq.from(category):to_dictionary(
+            Tirislib.Utils.identity,
+            function(_, key)
+                return get_disease_id(key)
+            end
+        )
+    end
+):to_table()
 
 --- table with (disease category, table of diseases)-pairs
 Diseases.by_category = {}
@@ -466,18 +618,10 @@ do
         )
     end
 
-    local function get_disease_id(disease_name)
-        for id, disease in pairs(Diseases.values) do
-            if disease_name == disease.name then
-                return id
-            end
-        end
-        error("Diseases looked for the ID of a nonexistant disease: " .. disease_name)
-    end
-
     for id, disease in pairs(Diseases.values) do
         disease.localised_name = {"disease-name." .. disease.name}
         disease.localised_description = get_localised_description(disease)
+        disease.id = id
 
         -- convert recovery from ticks till recovery to progress per tick
         disease.natural_recovery = disease.natural_recovery and 1 / disease.natural_recovery or nil
