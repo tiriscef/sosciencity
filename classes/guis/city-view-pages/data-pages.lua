@@ -194,9 +194,9 @@ Gui.CityView.add_page {
 
         local filter_flow =
             container.add {
-            type = "flow",
+            type = "table",
             name = "filters",
-            direction = "horizontal"
+            column_count = 7
         }
 
         for name, id in pairs(DiseaseCategory) do
