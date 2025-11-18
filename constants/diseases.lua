@@ -363,7 +363,27 @@ Diseases.values = {
         work_effectivity = 0
     },
     -- 9000+: primarily malnutrition
-
+    [9000] = {
+        name = "kwashiorkor",
+        cure_items = {
+            --["vitamine-supplements"] = 1,
+            --["nutritional-supplements"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.9,
+        natural_recovery = 3 * Time.nauvis_day,
+        work_effectivity = 0
+    },
+    [9001] = {
+        name = "marasmus",
+        cure_items = {
+            ["sosciencity-emergency-ration"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.9,
+        natural_recovery = 3 * Time.nauvis_day,
+        work_effectivity = 0
+    },
     -- 10000+: primarily dehydration
     [10000] = {
         name = "dehydration",
@@ -473,7 +493,8 @@ Diseases.categories = {
     [DiseaseCategory.escalation] = {},
     [DiseaseCategory.complication] = {},
     [DiseaseCategory.malnutrition] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["kwashiorkor"] = 100,
+        ["marasmus"] = 100
     },
     [DiseaseCategory.dehydration] = {
         ["dehydration"] = 300,
