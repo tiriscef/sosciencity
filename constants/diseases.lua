@@ -361,11 +361,48 @@ Diseases.values = {
         escalation = "lung-infection",
         escalation_probability = 0.2,
         work_effectivity = 0
-    }
+    },
     -- 9000+: primarily malnutrition
 
     -- 10000+: primarily dehydration
-
+    [10000] = {
+        name = "dehydration",
+        cure_items = {
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.1,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "severe-dehydration",
+        escalation_probability = 0.7,
+        work_effectivity = 0.5
+    },
+    [10001] = {
+        name = "severe-dehydration",
+        cure_items = {
+            ["isotonic-saline-solution"] = 3,
+            --["vitamine-supplement"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.5,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "extreme-dehydration",
+        escalation_probability = 1,
+        work_effectivity = 0
+    },
+    [10002] = {
+        name = "extreme-dehydration",
+        cure_items = {
+            ["isotonic-saline-solution"] = 3,
+            --["vitamine-supplements"] = 1,
+            --["nutritional-supplements"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 5,
+        lethality = 1,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0
+    },
     -- 11000+: primarily food poisoning
 
     -- 12000+: primarily polluted water
@@ -439,7 +476,9 @@ Diseases.categories = {
         ["limb-loss"] = 100 -- TODO: placeholder
     },
     [DiseaseCategory.dehydration] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["dehydration"] = 300,
+        ["severe-dehydration"] = 100,
+        ["extreme-dehydration"] = 10
     },
     [DiseaseCategory.food_poisoning] = {
         ["limb-loss"] = 100 -- TODO: placeholder
