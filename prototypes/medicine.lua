@@ -365,6 +365,8 @@ Tirislib.RecipeGenerator.create {
     localised_description = {"recipe-description.sosciencity-emergency-ration", tostring(Food.emergency_ration_calories)}
 }
 
+-- TODO: emergency ration needs a non-handcrafting recipe because I want to use it as a medicine item
+
 Tirislib.RecipeGenerator.create {
     product = "sosciencity-medical-kit",
     product_amount = 1,
