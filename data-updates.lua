@@ -1,5 +1,6 @@
 require("tirislib.init")
 Tirislib.Prototype.modname = "sosciencity"
+Tirislib.Prototype.placeholder_icon = "__sosciencity-graphics__/graphics/icon/placeholder.png"
 
 -- Call scripts that make changes mostly to Sosciencity's prototypes.
 

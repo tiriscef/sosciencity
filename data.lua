@@ -1,6 +1,7 @@
 -- initialisation
 require("tirislib.init")
 Tirislib.Prototype.modname = "sosciencity"
+Tirislib.Prototype.placeholder_icon = "__sosciencity-graphics__/graphics/icon/placeholder.png"
 
 require("datastage-configuration")
 require("recipe-generator-config")

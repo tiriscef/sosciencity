@@ -126,10 +126,12 @@ function Tirislib.Item.batch_create(item_detail_array, batch_details)
 
     local created_items = {}
     for index, details in pairs(item_detail_array) do
+        local icon = details.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. details.name .. ".png")
+
         local prototype = {
             type = prototype_type,
             name = details.name,
-            icon = path .. details.name .. ".png",
+            icon = icon,
             icon_size = size,
             subgroup = subgroup,
             order = string.format("%03d", index),

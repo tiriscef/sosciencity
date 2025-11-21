@@ -401,7 +401,7 @@ Diseases.values = {
         name = "severe-dehydration",
         cure_items = {
             ["isotonic-saline-solution"] = 3,
-            --["vitamine-supplement"] = 1
+            ["vitamine-supplements"] = 1
         },
         curing_workload = 3,
         lethality = 0.5,
@@ -414,8 +414,8 @@ Diseases.values = {
         name = "extreme-dehydration",
         cure_items = {
             ["isotonic-saline-solution"] = 3,
-            --["vitamine-supplements"] = 1,
-            --["nutritional-supplements"] = 1,
+            ["vitamine-supplements"] = 1,
+            ["nutritional-supplements"] = 1,
             ["blood-bag"] = 1
         },
         curing_workload = 5,

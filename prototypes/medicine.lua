@@ -16,31 +16,10 @@ local medicine_items = {
     {name = "potent-analgesics", sprite_variations = {name = "potent-analgesics-pile", count = 3}},
     {name = "anesthetics", sprite_variations = {name = "anesthetics-pile", count = 3}},
     {name = "antibiotics", sprite_variations = {name = "antibiotics-pile", count = 3}},
-    {name = "antimycotics", sprite_variations = {name = "antimycotics-pile", count = 3}}
+    {name = "antimycotics", sprite_variations = {name = "antimycotics-pile", count = 3}},
+    {name = "vitamine-supplements", use_placeholder_icon = true},
+    {name = "nutritional-supplements", use_placeholder_icon = true}
 }
-
-local function find_curable_diseases(item_name)
-    local ret = {}
-
-    for _, disease in pairs(Diseases.values) do
-        if disease.cure_items and disease.cure_items[item_name] then
-            ret[#ret + 1] = disease.localised_name
-        end
-    end
-
-    return ret
-end
-
-for _, medicine in pairs(medicine_items) do
-    medicine.distinctions = medicine.destinctions or {}
-    local distinctions = medicine.distinctions
-
-    distinctions.localised_description = {
-        "sosciencity-util.medicine",
-        {"item-description." .. medicine.name},
-        Tirislib.Locales.create_enumeration(find_curable_diseases(medicine.name), "[color=#FFFFFF], [/color]")
-    }
-end
 
 Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
 

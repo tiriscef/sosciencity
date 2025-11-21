@@ -1,5 +1,6 @@
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
+local Diseases = require("constants.diseases")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 local Type = require("enums.type")
@@ -104,10 +105,38 @@ for building_name, details in pairs(Buildings.values) do
             )
 
             if range_descriptions[details.type] then
-                Tirislib.Locales.append(item.localised_description, "\n", {"sosciencity.grey", range_descriptions[details.type]})
+                Tirislib.Locales.append(
+                    item.localised_description,
+                    "\n",
+                    {"sosciencity.grey", range_descriptions[details.type]}
+                )
             end
 
             entity:copy_localisation_from_item()
         end
+    end
+end
+
+-- Medicine items that are used to cure diseases
+
+local medicine_items = {}
+
+for _, disease in pairs(Diseases.values) do
+    for item in pairs(disease.cure_items or {}) do
+        local tbl = Tirislib.Tables.get_subtbl(medicine_items, item)
+        tbl[#tbl + 1] = {"sosciencity-util.in-green", disease.localised_name}
+    end
+end
+
+for medicine_item, diseases in pairs(medicine_items) do
+    local item, found = Tirislib.Item.get_by_name(medicine_item)
+
+    if found then
+        item.custom_tooltip_fields = item.custom_tooltip_fields or {}
+
+        item.custom_tooltip_fields[#item.custom_tooltip_fields + 1] = {
+            name = {"sosciencity-util.used-to-cure"},
+            value = Tirislib.Locales.create_enumeration(diseases, ", ")
+        }
     end
 end

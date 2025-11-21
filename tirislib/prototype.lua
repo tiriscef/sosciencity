@@ -3,6 +3,9 @@ Tirislib.Prototype = Tirislib.Prototype or {}
 --- The name of the mod that is currently running. Used to set the inofficial 'owner' field for created prototypes.
 Tirislib.Prototype.modname = nil
 
+--- Path to the icon to use for placeholder reasons.
+Tirislib.Prototype.placeholder_icon = nil
+
 --- Class for arrays of prototypes. Setter-functions can be called on them.
 Tirislib.PrototypeArray = {}
 
