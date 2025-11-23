@@ -235,7 +235,8 @@ local function on_entity_built(event)
     end
 
     local entity_type = get_entity_type(entity)
-    add_to_register(entity, entity_type)
+
+    add_to_register(entity, entity_type, event)
 end
 
 local function on_clone_built(event)
@@ -260,7 +261,7 @@ local function on_clone_built(event)
     end
 
     -- otherwise register the destination entity on it's own
-    add_to_register(destination, entity_type)
+    add_to_register(destination, entity_type, event)
 end
 
 local function on_entity_removed(event)
@@ -463,6 +464,34 @@ local function on_script_trigger(event)
     end
 end
 
+local function on_player_setup_blueprint(event)
+    local blueprint = event.stack or event.record
+    if not blueprint then
+        return
+    end
+
+    local entities = blueprint.get_blueprint_entities()
+    if not entities then
+        return
+    end
+
+    for index, blueprint_entity in pairs(entities) do
+        local entity = event.surface.find_entity(blueprint_entity.name, blueprint_entity.position)
+        if not entity then
+            goto continue
+        end
+
+        local entry = try_get_entry(entity.unit_number)
+        if not entry then
+            goto continue
+        end
+
+        Register.on_blueprinted(entry, blueprint, index)
+
+        ::continue::
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << event handler registration >>
 
@@ -533,6 +562,9 @@ script.on_event(defines.events.on_player_cheat_mode_disabled, on_cheat_mode_disa
 
 -- trigger events
 script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
+
+-- player creates a blueprint
+script.on_event(defines.events.on_player_setup_blueprint, on_player_setup_blueprint)
 
 ---------------------------------------------------------------------------------------------------
 -- << balancing stuff >>

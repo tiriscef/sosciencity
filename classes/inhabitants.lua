@@ -2101,6 +2101,13 @@ function Inhabitants.remove_house(entry, cause)
         storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
 end
 
+function Inhabitants.blueprint_house(entry)
+    return {
+        caste = entry[EK.type],
+        priority = entry[EK.housing_priority]
+    }
+end
+
 -- Set event handlers for the housing entities.
 for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_creation_handler(caste, Inhabitants.create_house)
@@ -2109,6 +2116,7 @@ for _, caste in pairs(TypeGroup.all_castes) do
     Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
     Register.set_settings_paste_handler(caste, caste, on_setting_paste_to_inhabited)
     Register.set_settings_paste_handler(caste, Type.empty_house, on_settings_paste_to_empty)
+    Register.set_blueprinted_handler(caste, Inhabitants.blueprint_house)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2147,5 +2155,22 @@ local function update_empty_house(entry)
 end
 
 Register.set_entity_updater(Type.empty_house, update_empty_house)
+
+local function create_empty_house(entry, event)
+    local tags = Table.get_subtbl_recursive_passive(event, "tags", "sosciencity")
+
+    local caste = tags.caste
+    if caste then
+        local success = Inhabitants.try_allow_for_caste(entry, caste, true)
+
+        if success then
+            entry = try_get(entry[EK.unit_number])
+            local priority = tags.priority
+            entry[EK.housing_priority] = priority
+        end
+    end
+end
+
+Register.set_entity_creation_handler(Type.empty_house, create_empty_house)
 
 return Inhabitants
