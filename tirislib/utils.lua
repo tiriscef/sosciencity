@@ -1342,6 +1342,25 @@ function Tirislib.Tables.get_subtbl_recursive(tbl, ...)
     return ret
 end
 
+--- Gets the subtable that is nested with the given sequence of keys inside the given table.<br>
+--- If there is no subtable with a given key, the function returns nil.
+--- @param tbl table
+--- @return table
+function Tirislib.Tables.get_subtbl_recursive_passive(tbl, ...)
+    local ret = tbl
+
+    for i = 1, select("#", ...) do
+        local key = select(i, ...)
+        ret = ret[key]
+
+        if ret == nil then
+            return nil
+        end
+    end
+
+    return ret
+end
+
 --- Groups the tables inside the given table by the content of the given key.\
 --- In case an inner table doesn't have a value for the given key it gets added to the group of the default_key
 --- if one is given.

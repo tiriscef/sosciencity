@@ -149,11 +149,11 @@ function Register.set_entity_creation_handler(_type, fn)
     on_creation_lookup[_type] = fn
 end
 
-local function on_creation(_type, entry)
+local function on_creation(_type, entry, event)
     local fn = on_creation_lookup[_type]
 
     if fn then
-        fn(entry)
+        fn(entry, event)
     end
 end
 
@@ -247,6 +247,29 @@ function Register.on_settings_pasted(source_type, source, destination_type, dest
     end
 end
 
+local blueprinted_lookup = {}
+
+--- Sets the function that gets called when the player makes a blueprint of an entry.
+--- @param _type Type
+--- @param fn function should return a table with the tags to store in the blueprint
+function Register.set_blueprinted_handler(_type, fn)
+    Tirislib.Utils.desync_protection()
+    blueprinted_lookup[_type] = fn
+end
+
+--- Calls the event handler when a blueprint is being setup of an entry.
+--- @param entry Entry
+--- @param blueprint LuaRecord
+--- @param index uint8
+function Register.on_blueprinted(entry, blueprint, index)
+    local fn = blueprinted_lookup[entry[EK.type]]
+
+    if fn then
+        local tags = fn(entry)
+        blueprint.set_blueprint_entity_tag(index, "sosciencity", tags)
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << register system >>
 
@@ -294,7 +317,7 @@ end
 --- @param entity LuaEntity
 --- @param _type Type
 --- @return Entry
-local function get_new_entry(entity, _type)
+local function create_new_entry(entity, _type)
     local current_tick = game.tick
 
     local entry = {
@@ -312,20 +335,21 @@ end
 --- Adds the given entity to the register. Optionally the type can be specified.
 --- @param entity LuaEntity
 --- @param _type Type|nil
-function Register.add(entity, _type)
+--- @param event table?
+function Register.add(entity, _type, event)
     _type = _type or get_entity_type(entity)
     if _type == Type.null then
         return
     end
 
-    local entry = get_new_entry(entity, _type)
+    local entry = create_new_entry(entity, _type)
 
     add_entry_to_register(entry)
 
     init_custom_building(entry)
     add_subentities(entry)
     establish_new_neighbor(entry)
-    on_creation(_type, entry)
+    on_creation(_type, entry, event)
 
     return entry
 end
