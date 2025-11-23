@@ -55,6 +55,15 @@ Building.values = {
             disease_frequency = 0.1 * Time.minute
         }
     },
+    ["atelier"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 8,
+            castes = {Type.ember},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 * Time.minute
+        }
+    },
     ["bloomhouse"] = {
         type = Type.farm,
         workforce = {
