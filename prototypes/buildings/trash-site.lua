@@ -33,7 +33,6 @@ Tirislib.Entity.create {
     },
     picture = {
         layers = {
-            -- TODO low res sprites
             {
                 filename = "__sosciencity-graphics__/graphics/entity/trash-site/trash-site-hr.png",
                 priority = "high",

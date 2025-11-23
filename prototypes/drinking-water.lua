@@ -18,6 +18,19 @@ Tirislib.Fluid.batch_create(
 )
 
 Tirislib.RecipeGenerator.create {
+    name = "boiled-water",
+    product = "drinkable-water",
+    product_type = "fluid",
+    product_amount = 50,
+    ingredients = {
+        {type = "fluid", name = "water", amount = 50}
+    },
+    category = "sosciencity-water-heater",
+    energy_required = 10,
+    unlock = "infrastructure-1"
+}
+
+Tirislib.RecipeGenerator.create {
     name = "drinkable-water-from-ground",
     product = "drinkable-water",
     product_type = "fluid",

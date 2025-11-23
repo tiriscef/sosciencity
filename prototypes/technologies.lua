@@ -479,7 +479,7 @@ Tirislib.Technology.create {
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
     upgrade = true,
-    prerequisites = {},
+    prerequisites = {"automation-science-pack"},
     unit = {
         count = 9,
         ingredients = {
