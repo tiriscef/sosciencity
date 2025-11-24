@@ -22,7 +22,7 @@ local Building = {}
 --- @field count integer Count of workers needed
 --- @field castes Type[] array of casteIDs that can work in this building
 --- @field disease_category DiseaseCategory the category of diseases that this work can cause
---- @field disease_frequency number the frequency with which diseases are caused by this work
+--- @field disease_frequency number the frequency with which diseases are caused by this work (as progress per worker per tick)
 
 local range_by_foot = 50
 
@@ -30,7 +30,8 @@ local range_by_foot = 50
 --- **range:** number (tiles in every direction) or "global"<br>
 --- **power_usage:** number (kW)<br>
 --- **speed:** number (1/tick)<br>
---- **workforce:** WorkforceDefinition
+--- **workforce:** WorkforceDefinition<br>
+--- I'm defining the disease_frequency as progress per tick *when fully staffed*. The postprocessing divides the value by the count.
 Building.values = {
     ["algae-farm"] = {
         type = Type.automatic_farm,
@@ -52,7 +53,7 @@ Building.values = {
             count = 8,
             castes = {Type.clockwork, Type.gleam, Type.foundry},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["atelier"] = {
@@ -61,7 +62,7 @@ Building.values = {
             count = 8,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["bloomhouse"] = {
@@ -70,7 +71,7 @@ Building.values = {
             count = 2,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         },
         accepts_plant_care = true
     },
@@ -84,7 +85,7 @@ Building.values = {
             count = 20,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.2 / Time.minute
         }
     },
     ["composting-silo"] = {
@@ -109,7 +110,7 @@ Building.values = {
             count = 20,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["farm"] = {
@@ -131,7 +132,7 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.fishing_hut,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["foundry-hq"] = {
@@ -141,7 +142,7 @@ Building.values = {
             count = 20,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["gene-clinic"] = {
@@ -155,7 +156,7 @@ Building.values = {
             count = 20,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["greenhouse"] = {
@@ -173,7 +174,7 @@ Building.values = {
             count = 10,
             castes = {Type.gunfire},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.2 / Time.minute
         },
         subentities = {
             SubentityType.turret_gunfire_hq1,
@@ -196,7 +197,7 @@ Building.values = {
             count = 10,
             castes = {Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         },
         power_usage = 100
     },
@@ -208,7 +209,7 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.hunting_hut,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["industrial-animal-farm"] = {
@@ -231,7 +232,7 @@ Building.values = {
             count = 5,
             castes = {Type.orchid, Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         },
         power_usage = 50
     },
@@ -255,7 +256,7 @@ Building.values = {
             count = 10,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["orchid-hq"] = {
@@ -265,7 +266,7 @@ Building.values = {
             count = 20,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.05 / Time.minute
         }
     },
     ["pharmacy"] = {
@@ -329,7 +330,7 @@ Building.values = {
             count = 20,
             castes = {Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         },
         power_usage = 50
     },
@@ -350,7 +351,7 @@ Building.values = {
             count = 20,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.fishing_hut,
-            disease_frequency = 0.1 * Time.minute
+            disease_frequency = 0.1 / Time.minute
         }
     },
     ["test-composter"] = {
@@ -382,6 +383,10 @@ for _, details in pairs(Building.values) do
     -- convert power usages to J / tick
     if details.power_usage then
         details.power_usage = details.power_usage * 1000 / Time.second
+    end
+
+    if details.workforce then
+        details.workforce.disease_frequency = details.workforce.disease_frequency / details.workforce.count
     end
 end
 
