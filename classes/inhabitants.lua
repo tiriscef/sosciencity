@@ -1500,11 +1500,53 @@ function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
     return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) / 5000000
 end
 
+local function get_workplace_accident_progress(entry, delta_ticks, disease_category)
+    local progress = 0
+    for unit_number, count in pairs(entry[EK.employments]) do
+        local workplace_entry = try_get(unit_number)
+
+        if workplace_entry then
+            local building_details = get_building_details(workplace_entry)
+            local workforce = building_details.workforce
+            if workforce and workforce.disease_category == disease_category then
+                progress = progress + count * workforce.disease_frequency * delta_ticks
+            end
+        end
+    end
+
+    return progress
+end
+
+function Inhabitants.get_hard_work_accident_progress(entry, delta_ticks)
+    return get_workplace_accident_progress(entry, delta_ticks, DiseaseCategory.hard_work)
+end
+
+function Inhabitants.get_office_accident_progress(entry, delta_ticks)
+    return get_workplace_accident_progress(entry, delta_ticks, DiseaseCategory.office_work)
+end
+
+function Inhabitants.get_moderate_work_accident_progress(entry, delta_ticks)
+    return get_workplace_accident_progress(entry, delta_ticks, DiseaseCategory.moderate_work)
+end
+
+function Inhabitants.get_fishing_hut_accident_progress(entry, delta_ticks)
+    return get_workplace_accident_progress(entry, delta_ticks, DiseaseCategory.fishing_hut)
+end
+
+function Inhabitants.get_hunting_hut_accident_progress(entry, delta_ticks)
+    return get_workplace_accident_progress(entry, delta_ticks, DiseaseCategory.hunting_hut)
+end
+
 Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.accident] = Inhabitants.get_accident_disease_progress,
     [DiseaseCategory.health] = Inhabitants.get_health_disease_progress,
     [DiseaseCategory.sanity] = Inhabitants.get_sanity_disease_progress,
-    [DiseaseCategory.zoonosis] = Inhabitants.get_zoonosis_disease_progress
+    [DiseaseCategory.zoonosis] = Inhabitants.get_zoonosis_disease_progress,
+    [DiseaseCategory.hard_work] = Inhabitants.get_hard_work_accident_progress,
+    [DiseaseCategory.office_work] = Inhabitants.get_office_accident_progress,
+    [DiseaseCategory.moderate_work] = Inhabitants.get_moderate_work_accident_progress,
+    [DiseaseCategory.fishing_hut] = Inhabitants.get_fishing_hut_accident_progress,
+    [DiseaseCategory.hunting_hut] = Inhabitants.get_hunting_hut_accident_progress
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 
