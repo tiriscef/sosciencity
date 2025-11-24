@@ -99,13 +99,21 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << custom building systems >>
 
-local function init_custom_building(entry)
+--- Generic creation handler for CustomBuilding-systems that aren't specific to one type.
+--- @param entry Entry
+--- @param event table?
+local function init_custom_building(entry, event)
     local building_details = get_building_details(entry)
 
     if building_details.workforce then
         entry[EK.worker_count] = 0
         entry[EK.workers] = {}
         entry[EK.target_worker_count] = building_details.workforce.count
+    end
+
+    local tags = Tirislib.Tables.get_subtbl_recursive_passive(event, "tags", "sosciencity")
+    if tags and tags.target_worker_count then
+        entry[EK.target_worker_count] = tags.target_worker_count
     end
 end
 
@@ -133,6 +141,14 @@ local function paste_custom_building_settings(source, destination)
     if source_details.workforce and destination_details.workforce then
         destination[EK.target_worker_count] =
             math.min(source[EK.target_worker_count], destination_details.workforce.count)
+    end
+end
+
+local function blueprint_custom_building(entry)
+    if entry[EK.target_worker_count] then
+        return {
+            target_worker_count = entry[EK.target_worker_count]
+        }
     end
 end
 
@@ -262,10 +278,19 @@ end
 --- @param blueprint LuaRecord
 --- @param index uint8
 function Register.on_blueprinted(entry, blueprint, index)
-    local fn = blueprinted_lookup[entry[EK.type]]
+    local tags = blueprint_custom_building(entry)
 
+    local fn = blueprinted_lookup[entry[EK.type]]
     if fn then
-        local tags = fn(entry)
+        local type_specific_tags = fn(entry)
+        if tags then
+            Tirislib.Tables.set_fields(tags, type_specific_tags)
+        else
+            tags = type_specific_tags
+        end
+    end
+
+    if tags ~= nil then
         blueprint.set_blueprint_entity_tag(index, "sosciencity", tags)
     end
 end
@@ -346,7 +371,7 @@ function Register.add(entity, _type, event)
 
     add_entry_to_register(entry)
 
-    init_custom_building(entry)
+    init_custom_building(entry, event)
     add_subentities(entry)
     establish_new_neighbor(entry)
     on_creation(_type, entry, event)
