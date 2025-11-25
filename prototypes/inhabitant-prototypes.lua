@@ -5,6 +5,10 @@ local Biology = require("constants.biology")
 
 local items = {
     {
+        name = "hehe",
+        sprite_variations = {name = "hehe", count = 3, include_icon = true}
+    },
+    {
         name = "huwan-egg",
         sprite_variations = {name = "huwan-egg", count = 4, include_icon = true},
         distinctions = {
@@ -48,14 +52,24 @@ local items = {
 
 Tirislib.Item.batch_create(items, {subgroup = "sosciencity-inhabitants", stack_size = 10})
 
+Tirislib.RecipeGenerator.create {
+    product = "hehe",
+    themes = {{"plating", 2}, {"plating2", 4}, {"glass", 2}, {"wiring", 1}},
+    energy_required = 1,
+    unlock = "upbringing"
+}
+
 Tirislib.Recipe.create {
     name = "lay-egg",
     category = "sosciencity-handcrafting",
     enabled = true,
     energy_required = 1,
-    ingredients = {},
+    ingredients = {
+        {type = "item", name = "hehe", amount = 1}
+    },
     results = {
-        {type = "item", name = "huwan-agender-egg", amount_min = 1, amount_max = 3}
+        {type = "item", name = "huwan-agender-egg", amount_min = 1, amount_max = 3},
+        {type = "item", name = "hehe", amount = 1, probability = 0.9}
     },
     icon = "__sosciencity-graphics__/graphics/icon/huwan-agender-egg.png",
     icon_size = 64,

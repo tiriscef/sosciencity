@@ -215,6 +215,11 @@ Tirislib.RecipeGenerator.add_themes {
             {type = "item", name = "steel-plate", amount = 1}
         }
     },
+    plating2 = {
+        [0] = {
+            {type = "item", name = "copper-plate", amount = 1}
+        }
+    },
     pump = {
         [2] = {
             {type = "item", name = "pump", amount = 1}

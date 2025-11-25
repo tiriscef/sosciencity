@@ -13,6 +13,9 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create {
     product = "reproductive-gene-lab",
     themes = {{"machine", 10}, {"piping", 200}, {"glass", 100}},
+    ingredients = {
+        {type = "item", name = "hehe", amount = 90}
+    },
     default_theme_level = 3,
     unlock = "huwan-genetic-neogenesis"
 }
