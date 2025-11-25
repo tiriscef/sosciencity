@@ -13,7 +13,10 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create {
     product = "upbringing-station",
     themes = {{"building", 2}, {"machine", 2}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    ingredients = {
+        {type = "item", name = "hehe", amount = 25},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 0,
     unlock = "upbringing"
 }

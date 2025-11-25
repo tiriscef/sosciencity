@@ -1554,7 +1554,7 @@ local function create_disease_cases(entry, disease_group, delta_ticks)
     local progresses = entry[EK.disease_progress]
 
     for disease_category, updater in pairs(disease_progress_updaters) do
-        local progress = progresses[disease_category] + updater(entry, delta_ticks)
+        local progress = (progresses[disease_category] or 0) + updater(entry, delta_ticks) -- DELETEME fix for old maps
 
         if progress >= 1 then
             local new_diseases = floor(progress)
@@ -2029,10 +2029,6 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << housing life cycle and event handlers >>
 
-local function on_setting_paste_to_inhabited(source, destination)
-    destination[EK.housing_priority] = source[EK.housing_priority] or 0
-end
-
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
 --- @param entry Entry
 --- @param caste_id integer
@@ -2056,6 +2052,10 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     end
 end
 
+local function on_setting_paste_to_inhabited(source, destination)
+    destination[EK.housing_priority] = source[EK.housing_priority] or 0
+end
+
 local function on_settings_paste_to_empty(source, destination)
     local success = Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
 
@@ -2064,7 +2064,7 @@ local function on_settings_paste_to_empty(source, destination)
     end
 end
 
--- Initializes the given entry so it can work as an housing entry.
+--- Creation-Handler for houses.
 --- @param entry Entry
 function Inhabitants.create_house(entry)
     InhabitantGroup.new_house(entry)
@@ -2111,6 +2111,9 @@ function Inhabitants.create_house(entry)
         storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] + get_capacity(entry)
 end
 
+--- Copy-Handler for houses.
+--- @param source Entry
+--- @param destination Entry
 function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source, true)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
@@ -2119,7 +2122,7 @@ function Inhabitants.copy_house(source, destination)
     update_housing_census(destination)
 end
 
---- Removes all the inhabitants living in the house. Must be called when a housing entity stops existing.
+--- Destruction-Handler for houses.
 --- @param entry Entry
 function Inhabitants.remove_house(entry, cause)
     unemploy_all_inhabitants(entry)
@@ -2143,6 +2146,9 @@ function Inhabitants.remove_house(entry, cause)
         storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
 end
 
+--- Blueprint-Handler for houses.
+--- @param entry Entry
+--- @return table tags
 function Inhabitants.blueprint_house(entry)
     return {
         caste = entry[EK.type],

@@ -13,9 +13,12 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create {
     product = "egg-collecting-station",
     themes = {{"plating", 20}, {"framework", 20}, {"brick", 20}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
-    default_theme_level = 2,
-    unlock = "infrastructure-3"
+    ingredients = {
+        {type = "item", name = "hehe", amount = 72},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
+    default_theme_level = 0,
+    unlock = "infrastructure-1"
 }
 
 Tirislib.Entity.create {
@@ -35,7 +38,7 @@ Tirislib.Entity.create {
         shift = {2.0 * 5 / 6, -0.5 * 5 / 6},
         width = 12,
         height = 9,
-        scale = 5/6,
+        scale = 5 / 6,
         shadowmap = true,
         glow = true
     },
