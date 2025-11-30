@@ -22,7 +22,7 @@ Communication = {}
 
     storage.past_banter_index: int
 
-    storage.(tiriscef/profanity): bool (if they are enabled)
+    storage.(tiriscef): bool (if they are enabled)
 
     storage.logs: table
 
@@ -95,9 +95,6 @@ local function generate_speakers_list()
     allowed_speakers = {}
     if storage.tiriscef then
         allowed_speakers[#allowed_speakers + 1] = "tiriscef."
-    end
-    if storage.profanity then
-        allowed_speakers[#allowed_speakers + 1] = "profanity."
     end
 
     speakers = {}
@@ -346,11 +343,6 @@ function Communication.say_welcome(player)
 end
 
 function Communication.useless_banter()
-    if #allowed_speakers == 0 then
-        game.print {"", {"tiriscef.prefix"}, {"muted-tiriscef." .. random(10)}}
-        return
-    end
-
     -- pick a random speaker and line until we found a line that wasn't used recently
     local speaker_name, speaker, line, line_index
     repeat
