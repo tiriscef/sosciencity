@@ -55,7 +55,6 @@ Speakers["tiriscef."] = {
         ["b56f"] = standard_delay,
         ["b57"] = 6 * Time.second,
         ["b59"] = standard_delay,
-        ["b60"] = standard_delay,
         ["b63"] = standard_delay,
         ["b64"] = standard_delay,
         ["b66"] = standard_delay,
@@ -87,37 +86,6 @@ Speakers["tiriscef."] = {
         ["b138f"] = 3 * Time.second
     },
     index = 0
-}
-
-Speakers["profanity."] = {
-    ["acquisition-unlock"] = 1,
-    ["b"] = 29,
-    ["roadkill"] = 5,
-    ["report-begin"] = 3,
-    ["report-end"] = 3,
-    ["census-immigration"] = 2,
-    ["census-emigration"] = 2,
-    ["healthcare"] = 2,
-    ["healthcare-recovery"] = 2,
-    ["healthcare-infection-warning"] = 2,
-    ["unlocked-gated-technology"] = 1,
-    ["warning-insufficient-maintenance"] = 3,
-    ["warning-badly-insufficient-maintenance"] = 3,
-    ["warning-homelessness"] = 3,
-    lines_with_followup = {
-        ["b1"] = standard_delay,
-        ["b7"] = standard_delay,
-        ["b9"] = 3 * Time.second,
-        ["b13"] = standard_delay,
-        ["b14"] = standard_delay,
-        ["b15"] = standard_delay,
-        ["b18"] = standard_delay,
-        ["b19"] = standard_delay,
-        ["b21"] = 5 * Time.second,
-        ["b21f"] = 6 * Time.second,
-        ["b24"] = standard_delay
-    },
-    index = 10000
 }
 
 return Speakers

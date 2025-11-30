@@ -49,13 +49,6 @@ data:extend {
         default_value = true
     },
     {
-        type = "bool-setting",
-        name = "sosciencity-allow-profanity",
-        order = "bab",
-        setting_type = "runtime-global",
-        default_value = false
-    },
-    {
         type = "int-setting",
         name = "sosciencity-entity-updates-per-cycle",
         order = "zaa",

@@ -171,7 +171,6 @@ local function update_settings()
     storage.starting_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
 
     storage.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
-    storage.profanity = settings.global["sosciencity-allow-profanity"].value
 
     Communication.settings_update()
 end
