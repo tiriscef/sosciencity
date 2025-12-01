@@ -109,6 +109,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-kitchen-for-all"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-medical-school"
     },
     {
