@@ -236,6 +236,16 @@ Building.values = {
         },
         power_usage = 50
     },
+    ["medical-school"] = {
+        type = Type.caste_education_building,
+        workforce = {
+            count = 10,
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.01 / Time.minute
+        },
+        result_caste = Type.plasma
+    },
     ["mushroom-farm"] = {
         type = Type.automatic_farm,
         accepts_plant_care = false

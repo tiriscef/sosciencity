@@ -354,7 +354,14 @@ Types.definitions = {
         localised_name = {"sosciencity.waste-dump"},
         localised_description = {"sosciencity.explain-waste-dump"}
     },
-    [Type.city_combinator] = {}
+    [Type.city_combinator] = {},
+    [Type.caste_education_building] = {
+        localised_name = {"sosciencity.caste-education-building"},
+        localised_description = {"sosciencity.explain-caste-education-building"},
+        is_civil = true,
+        signature_color = Color.white,
+        has_subscriptions = true
+    }
 }
 local definitions = Types.definitions
 

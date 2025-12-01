@@ -2,25 +2,22 @@ local Type = require("enums.type")
 
 local TypeGroup = {}
 
+--- All the enabled castes.
 TypeGroup.all_castes = {
-    Type.clockwork,
-    Type.orchid,
-    Type.gunfire,
     Type.ember,
+    Type.orchid,
+    Type.clockwork,
+    Type.plasma,
+    Type.gunfire,
     Type.foundry,
-    Type.gleam,
-    Type.aurora,
-    Type.plasma
+    Type.gleam
 }
 
+--- The castes that can be obtained by Upbringing Station.
 TypeGroup.breedable_castes = {
-    Type.clockwork,
-    Type.orchid,
-    Type.gunfire,
     Type.ember,
-    Type.foundry,
-    Type.gleam,
-    Type.plasma
+    Type.orchid,
+    Type.clockwork
 }
 
 TypeGroup.affected_by_clockwork = {

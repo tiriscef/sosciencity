@@ -2121,6 +2121,10 @@ local type_gui_specifications = {
         creater = create_general_building_details,
         updater = update_general_building_details
     },
+    [Type.caste_education_building] = {
+        creater = create_general_building_details,
+        updater = update_general_building_details
+    },
     [Type.composter] = {
         creater = create_composter_details,
         updater = update_composter_details

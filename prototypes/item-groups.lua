@@ -26,6 +26,12 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-education-buildings",
+        group = "sosciencity-infrastructure",
+        order = "aca"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-buildings",
         group = "sosciencity-infrastructure",
         order = "baa"
@@ -240,6 +246,12 @@ Tirislib.Prototype.batch_create {
         name = "sosciencity-inhabitants",
         group = "sosciencity-production",
         order = "aja"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-education-recipes",
+        group = "sosciencity-production",
+        order = "aka"
     },
     -- idea items/recipes in the vanilla intermediate tab
     {
