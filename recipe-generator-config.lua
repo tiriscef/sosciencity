@@ -421,37 +421,28 @@ Tirislib.RecipeGenerator.add_themes {
     furnishing = {
         [0] = {},
         [1] = {
-            {type = "item", name = "table", amount = 0.5}
+            {type = "item", name = "furniture", amount = 0.5}
         },
         [2] = {
-            {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 0.5}
+            {type = "item", name = "furniture", amount = 1.5}
         },
         [3] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1}
+            {type = "item", name = "furniture", amount = 3},
         },
         [4] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1}
+            {type = "item", name = "furniture", amount = 4},
         },
         [5] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1.5},
+            {type = "item", name = "furniture", amount = 4},
             {type = "item", name = "curtain", amount = 1},
             {type = "item", name = "stove", amount = 1 / 2}
         },
         [6] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1.5},
+            {type = "item", name = "furniture", amount = 5},
             {type = "item", name = "curtain", amount = 1},
             {type = "item", name = "carpet", amount = 1},
             {type = "item", name = "air-conditioner", amount = 1 / 3},
@@ -459,9 +450,7 @@ Tirislib.RecipeGenerator.add_themes {
         },
         [7] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "furniture", amount = 5},
             {type = "item", name = "curtain", amount = 1},
             {type = "item", name = "carpet", amount = 1},
             {type = "item", name = "air-conditioner", amount = 1 / 3},
@@ -470,9 +459,7 @@ Tirislib.RecipeGenerator.add_themes {
         },
         [8] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "furniture", amount = 6},
             {type = "item", name = "curtain", amount = 1},
             {type = "item", name = "carpet", amount = 1},
             {type = "item", name = "air-conditioner", amount = 0.5},
@@ -481,9 +468,7 @@ Tirislib.RecipeGenerator.add_themes {
         },
         [9] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 2},
+            {type = "item", name = "furniture", amount = 7},
             {type = "item", name = "curtain", amount = 1},
             {type = "item", name = "carpet", amount = 1},
             {type = "item", name = "air-conditioner", amount = 2 / 3},
@@ -492,9 +477,7 @@ Tirislib.RecipeGenerator.add_themes {
         },
         [10] = {
             {type = "item", name = "bed", amount = 3},
-            {type = "item", name = "chair", amount = 2},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 3},
+            {type = "item", name = "furniture", amount = 8},
             {type = "item", name = "curtain", amount = 1},
             {type = "item", name = "carpet", amount = 1},
             {type = "item", name = "air-conditioner", amount = 1},
@@ -505,59 +488,45 @@ Tirislib.RecipeGenerator.add_themes {
     simple_furnishing = {
         [0] = {},
         [1] = {
-            {type = "item", name = "table", amount = 1 / 2}
+            {type = "item", name = "furniture", amount = 1 / 2}
         },
         [2] = {
-            {type = "item", name = "table", amount = 1 / 2},
-            {type = "item", name = "chair", amount = 1 / 2}
+            {type = "item", name = "furniture", amount = 1}
         },
         [3] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 3 / 4},
-            {type = "item", name = "table", amount = 1 / 2}
+            {type = "item", name = "furniture", amount = 1.5}
         },
         [4] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 3 / 4},
-            {type = "item", name = "cupboard", amount = 1 / 3}
+            {type = "item", name = "furniture", amount = 2},
         },
         [5] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 3 / 4},
-            {type = "item", name = "cupboard", amount = 2 / 3}
+            {type = "item", name = "furniture", amount = 2.5}
         },
         [6] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 3 / 4},
-            {type = "item", name = "cupboard", amount = 2 / 3},
+            {type = "item", name = "furniture", amount = 2.5},
             {type = "item", name = "air-conditioner", amount = 1 / 5},
             {type = "item", name = "stove", amount = 1 / 4}
         },
         [7] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1},
+            {type = "item", name = "furniture", amount = 3},
             {type = "item", name = "air-conditioner", amount = 1 / 5},
             {type = "item", name = "stove", amount = 1 / 4}
         },
         [8] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1},
+            {type = "item", name = "furniture", amount = 3},
             {type = "item", name = "air-conditioner", amount = 1 / 4},
             {type = "item", name = "stove", amount = 1 / 4},
             {type = "item", name = "refrigerator", amount = 1 / 4}
         },
         [9] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1},
+            {type = "item", name = "furniture", amount = 3},
             {type = "item", name = "air-conditioner", amount = 1 / 3},
             {type = "item", name = "stove", amount = 1 / 4},
             {type = "item", name = "refrigerator", amount = 1 / 4},
@@ -565,9 +534,7 @@ Tirislib.RecipeGenerator.add_themes {
         },
         [10] = {
             {type = "item", name = "bed", amount = 1},
-            {type = "item", name = "chair", amount = 1.5},
-            {type = "item", name = "table", amount = 1},
-            {type = "item", name = "cupboard", amount = 1.5},
+            {type = "item", name = "furniture", amount = 4},
             {type = "item", name = "air-conditioner", amount = 1 / 2},
             {type = "item", name = "stove", amount = 1 / 4},
             {type = "item", name = "refrigerator", amount = 1 / 4},

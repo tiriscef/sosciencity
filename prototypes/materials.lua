@@ -57,17 +57,9 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100}
     },
     {
-        name = "chair",
-        distinctions = {subgroup = "sosciencity-furniture", stack_size = 100}
-    },
-    {
-        name = "table",
-        distinctions = {subgroup = "sosciencity-furniture", stack_size = 100}
-    },
-    {
-        name = "cupboard",
+        name = "furniture",
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100},
-        sprite_variations = {name = "cupboard", count = 1, include_icon = true}
+        sprite_variations = {name = "furniture", count = 4}
     },
     {
         name = "carpet",
@@ -511,15 +503,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "chair",
-    ingredients = {
-        {type = "item", name = "lumber", amount = 2},
-        {type = "item", name = "screw-set", amount = 1}
-    }
-}
-
-Tirislib.RecipeGenerator.create {
-    product = "cupboard",
+    product = "furniture",
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "screw-set", amount = 1}
@@ -576,14 +560,6 @@ Tirislib.RecipeGenerator.create {
         {"casing", 1}
     },
     default_theme_level = 3
-}
-
-Tirislib.RecipeGenerator.create {
-    product = "table",
-    ingredients = {
-        {type = "item", name = "lumber", amount = 4},
-        {type = "item", name = "screw-set", amount = 1}
-    }
 }
 
 Tirislib.RecipeGenerator.create {
