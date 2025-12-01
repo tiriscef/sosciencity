@@ -40,6 +40,11 @@ EK.workers = 51
 --- the number of workers this entry wants to have
 EK.target_worker_count = 52
 
+-- crafting machines
+
+--- the number of finished products of this crafting machine
+EK.last_products_finished = 60
+
 -- subentity stuff
 
 --- the current power usage of this entry's eei

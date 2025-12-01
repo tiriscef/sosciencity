@@ -16,6 +16,10 @@ local format = string.format
 
 -- TODO XXX: migrate random locale functions from all around the code to this class
 
+--- The localised name of a caste.
+--- @param caste_id Type
+--- @param short boolean?
+--- @return locale
 function Locale.caste(caste_id, short)
     if short then
         return castes[caste_id].localised_name_short

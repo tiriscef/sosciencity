@@ -43,6 +43,8 @@ local min = math.min
 local max = math.max
 local random = math.random
 
+local try_get = Register.try_get
+
 local get_building_details = Buildings.get
 
 local has_power = Subentities.has_power
@@ -107,6 +109,25 @@ end
 
 local function get_maintenance_performance()
     return 1 + caste_bonuses[Type.clockwork] / 100
+end
+
+--- Sets the active-status for this building.
+--- @param entry Entry
+--- @param active boolean
+--- @param inactive_custom_status CustomEntityStatus?
+local function set_active(entry, active, inactive_custom_status)
+    local stored = entry[EK.active]
+    if stored ~= active then
+        entry[EK.active] = active
+        entry[EK.entity].active = active
+        Subentities.set_active(entry, active)
+
+        if active == false then
+            entry[EK.entity].custom_status = inactive_custom_status
+        else
+            entry[EK.entity].custom_status = nil
+        end
+    end
 end
 
 local function is_active(entry)
@@ -240,6 +261,60 @@ local function remove_animal_farm(entry)
     end
 end
 Register.set_entity_destruction_handler(Type.animal_farm, remove_animal_farm)
+
+---------------------------------------------------------------------------------------------------
+-- << caste education building >>
+
+local function create_caste_education_building(entry)
+    entry[EK.last_products_finished] = entry[EK.entity].products_finished
+end
+Register.set_entity_creation_handler(Type.caste_education_building, create_caste_education_building)
+
+local function update_caste_education_building(entry)
+    local entity = entry[EK.entity]
+    local new_finished_products = entity.products_finished
+
+    if entry[EK.last_products_finished] < new_finished_products then
+        entry[EK.last_products_finished] = new_finished_products
+
+        local details = get_building_details(entry)
+        local converted_group = InhabitantGroup.new(details.result_caste)
+
+        -- remove the employed students from their houses
+        for unit_number, student_count in pairs(entry[EK.workers]) do
+            local house = try_get(unit_number)
+            if house then
+                -- take only healthy inhabitants
+                local students = InhabitantGroup.take_specific(house, student_count, DiseaseGroup.new(student_count))
+                InhabitantGroup.merge(converted_group, students, true, true)
+            end
+        end
+        Inhabitants.unemploy_all_workers(entry)
+
+        Communication.send_notification(
+            entry,
+            {
+                "sosciencity.finished-caste-education",
+                Locale.entry_in_chat(entry),
+                converted_group[EK.inhabitants],
+                Locale.caste(converted_group[EK.type])
+            }
+        )
+
+        -- add them as the result_caste
+        if converted_group[EK.inhabitants] > 0 then
+            Inhabitants.add_to_city(converted_group)
+        end
+    else
+        if Inhabitants.get_workforce_count(entry) > 0 then
+            set_active(entry, true)
+        else
+            set_active(entry, false, {diode = defines.entity_status_diode.red, label = {"sosciencity.no-students"}})
+            entity.crafting_progress = 0
+        end
+    end
+end
+Register.set_entity_updater(Type.caste_education_building, update_caste_education_building)
 
 ---------------------------------------------------------------------------------------------------
 -- << city combinator >>
@@ -436,7 +511,15 @@ Entity.humus_fertilization_speed = 30 --%
 Entity.humus_fertilization_workhours = 1 / Time.minute
 Entity.humus_fertilitation_consumption = 10 / Time.minute
 
-local function square_wave(tick, min_value, max_value, hold_time_max, slope_down_time, hold_time_min, slope_up_time, interpolate)
+local function square_wave(
+    tick,
+    min_value,
+    max_value,
+    hold_time_max,
+    slope_down_time,
+    hold_time_min,
+    slope_up_time,
+    interpolate)
     if not interpolate then
         interpolate = Tirislib.Utils.identity
     end
@@ -1017,6 +1100,7 @@ local function finish_class(entry, class, mode)
         entry,
         {
             "sosciencity.finished-class",
+            Locale.entry_in_chat(entry),
             count,
             Tirislib.Locales.create_enumeration_with_numbers(castes, Locale.caste_short, nil, {"sosciencity.and"}, true)
         }

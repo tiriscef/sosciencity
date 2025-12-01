@@ -444,6 +444,12 @@ end
 --- @class GenderGroup
 GenderGroup = {}
 
+--- Creates a new GenderGroup.
+--- @param agender integer?
+--- @param fale integer?
+--- @param pachin integer?
+--- @param ga integer?
+--- @return GenderGroup
 function GenderGroup.new(agender, fale, pachin, ga)
     return {agender or 0, fale or 0, pachin or 0, ga or 0}
 end
@@ -511,13 +517,13 @@ local DEFAULT_SANITY = 10
 
 --- Constructs a new InhabitantGroup object.
 --- @param caste Type
---- @param count integer|nil
---- @param happiness number|nil
---- @param health number|nil
---- @param sanity number|nil
---- @param diseases DiseaseGroup|nil
---- @param genders GenderGroup|nil
---- @param ages AgeGroup|nil
+--- @param count integer?
+--- @param happiness number?
+--- @param health number?
+--- @param sanity number?
+--- @param diseases DiseaseGroup?
+--- @param genders GenderGroup?
+--- @param ages AgeGroup?
 --- @return InhabitantGroup
 function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, genders, ages)
     count = count or 0
@@ -554,7 +560,8 @@ function InhabitantGroup.new_immigrant_group(caste, count)
     }
 end
 
---- Throws all inhabitants of the given InhabitantGroup in a shredder.
+--- Throws all inhabitants of the given InhabitantGroup in a shredder.<br>
+--- Can also be used to initialize a table where the EK.type is already set as a InhabitantGroup
 --- @param group InhabitantGroup
 function InhabitantGroup.empty(group)
     group[EK.inhabitants] = 0
@@ -562,7 +569,7 @@ function InhabitantGroup.empty(group)
     group[EK.health] = 0
     group[EK.sanity] = 0
     group[EK.diseases] = new_disease_group(0)
-    group[EK.genders] = GenderGroup.new_immigrants(0, group[EK.type])
+    group[EK.genders] = GenderGroup.new()
     group[EK.ages] = AgeGroup.new(0)
 end
 
@@ -584,9 +591,10 @@ local groups_can_merge = InhabitantGroup.can_be_merged
 --- Merges the inhabitants of the right InhabitantGroup into the left one.
 --- @param lh InhabitantGroup
 --- @param rh InhabitantGroup
---- @param keep_rh boolean|nil
-function InhabitantGroup.merge(lh, rh, keep_rh)
-    if not groups_can_merge(lh, rh) then
+--- @param keep_rh boolean?
+--- @param allow_caste_mismatch boolean? If the check that both groups are of the same type should be ommitted.
+function InhabitantGroup.merge(lh, rh, keep_rh, allow_caste_mismatch)
+    if not allow_caste_mismatch and not groups_can_merge(lh, rh) then
         error("Sosciencity tried to merge two incompatible InhabitantGroup objects.")
     end
 
@@ -634,9 +642,9 @@ local take_inhabitants = InhabitantGroup.take
 --- Like InhabitantGroup.take, but allowes to specify the diseases, genders or ages to take.
 --- @param group InhabitantGroup
 --- @param count integer
---- @param diseases DiseaseGroup|nil DiseaseGroup of the taken inhabitants.
---- @param genders GenderGroup|nil GenderGroup of the taken inhabitants.
---- @param ages AgeGroup|nil AgeGroup of the taken Inhabitants.
+--- @param diseases DiseaseGroup? DiseaseGroup of the taken inhabitants.
+--- @param genders GenderGroup? GenderGroup of the taken inhabitants.
+--- @param ages AgeGroup? AgeGroup of the taken Inhabitants.
 --- @return InhabitantGroup
 function InhabitantGroup.take_specific(group, count, diseases, genders, ages)
     local existing_count = group[EK.inhabitants]
@@ -980,7 +988,7 @@ local function unemploy_inhabitants(house, count)
     return count
 end
 
---- Ends the employment of all employed inhabitants of this house.
+--- Ends the employment of all employed inhabitants of this house.<br>
 --- Must be called if a house gets deconstructed.
 --- @param house Entry with inhabitants
 local function unemploy_all_inhabitants(house)
@@ -1042,6 +1050,23 @@ function Inhabitants.evaluate_workforce(manufactory)
     end
 
     return worker_equivalents / workforce.count
+end
+
+--- Returns the count of employed workers this building has.
+--- @param manufactory Entry
+--- @return integer
+function Inhabitants.get_workforce_count(manufactory)
+    local workers = 0
+
+    for unit_number, worker_count in pairs(manufactory[EK.workers]) do
+        local house = try_get(unit_number)
+
+        if house then
+            workers = workers + worker_count
+        end
+    end
+
+    return workers
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2206,6 +2231,10 @@ Register.set_entity_updater(Type.empty_house, update_empty_house)
 
 local function create_empty_house(entry, event)
     local tags = Table.get_subtbl_recursive_passive(event, "tags", "sosciencity")
+
+    if tags == nil then
+        return
+    end
 
     local caste = tags.caste
     if caste then

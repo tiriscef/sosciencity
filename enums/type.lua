@@ -31,6 +31,7 @@ Type.psych_ward = 201
 Type.intensive_care_unit = 202
 Type.gene_clinic = 203
 Type.improvised_hospital = 230
+Type.caste_education_building = 231
 
 -- crafting machines
 

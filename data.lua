@@ -26,6 +26,7 @@ require("prototypes.ideas")
 require("prototypes.fauna")
 require("prototypes.food")
 require("prototypes.flora")
+require("prototypes.education")
 
 require("prototypes.hunting-gathering")
 
