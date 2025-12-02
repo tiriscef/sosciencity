@@ -581,6 +581,18 @@ Food.values = {
         luxury = 7,
         portion_size = 2.5,
         group = "birdsnake"
+    },
+    ["potluck"] = {
+        fat = 15, -- TODO: values
+        carbohydrates = 15,
+        proteins = 15,
+        healthiness = 8,
+        food_category = "processed",
+        taste_category = Taste.umami,
+        taste_quality = 7,
+        luxury = 7,
+        portion_size = 1,
+        group = "potluck"
     }
 }
 

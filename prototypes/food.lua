@@ -242,6 +242,11 @@ local foods = {
         name = "wild-algae",
         distinctions = {spoil_ticks = 15 * Time.minute, spoil_result = "expired-food"},
         sprite_variations = {name = "wild-algae", count = 7, include_icon = true}
+    },
+    {
+        name = "potluck",
+        distinctions = {spoil_ticks = 1 * Time.hour, spoil_result = "expired-food"},
+        sprite_variations = {name = "potluck", count = 3, include_icon = true}
     }
 }
 
@@ -345,4 +350,15 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "food-processing"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "potluck",
+    energy_required = 3,
+    ingredients = {
+        {type = "item", name = "wild-edible-plants", amount = 1},
+        {type = "item", name = "wild-fungi", amount = 1},
+        {type = "item", name = "wild-algae", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all"
 }

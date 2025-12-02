@@ -11,7 +11,7 @@ for item_name, humus in pairs(ItemConstants.compost_values) do
     local item, found = Tirislib.Item.get_by_name(item_name)
 
     if found then
-        -- XXX: Make sure the description isn't implicit. Not the most beautiful code..
+        -- This ensures the description isn't implicit.
         item.localised_description = item:get_localised_description()
         Tirislib.Locales.append(
             item.localised_description,
@@ -47,7 +47,10 @@ local range_descriptions = {
     [Type.improvised_hospital] = {"range-description.hospital"},
     [Type.composter_output] = {"range-description.composter-output"},
     [Type.pharmacy] = {"range-description.pharmacy"},
-    [Type.egg_collector] = {"range-description.egg-collector"}
+    [Type.egg_collector] = {"range-description.egg-collector"},
+    [Type.caste_education_building] = {"range-description.caste-education-building"},
+    [Type.kitchen_for_all] = {"range-description.kitchen-for-all"},
+    [Type.empty_house] = {"range-description.housing"}
 }
 
 for building_name, details in pairs(Buildings.values) do
@@ -113,6 +116,15 @@ for building_name, details in pairs(Buildings.values) do
             end
 
             entity:copy_localisation_from_item()
+        end
+
+        if details.inhabitant_count then
+            item.custom_tooltip_fields = item.custom_tooltip_fields or {}
+
+            item.custom_tooltip_fields[#item.custom_tooltip_fields+1] = {
+                name = {"sosciencity.inhabitants-needed"},
+                value = tostring(details.inhabitant_count)
+            }
         end
     end
 end

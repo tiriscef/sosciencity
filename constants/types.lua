@@ -24,6 +24,7 @@ local inhabitant_subscriptions = {
     [Type.water_distributer] = ConnectionType.from_neighbor,
     [Type.dumpster] = ConnectionType.bidirectional,
     [Type.nightclub] = ConnectionType.to_neighbor,
+    [Type.kitchen_for_all] = ConnectionType.to_neighbor,
     [Type.egg_collector] = ConnectionType.to_neighbor,
     [Type.hospital] = ConnectionType.bidirectional,
     [Type.improvised_hospital] = ConnectionType.bidirectional,
@@ -189,6 +190,23 @@ Types.definitions = {
             [Type.gleam] = ConnectionType.from_neighbor,
             [Type.aurora] = ConnectionType.from_neighbor,
             [Type.plasma] = ConnectionType.from_neighbor
+        },
+        is_civil = true
+    },
+    [Type.kitchen_for_all] = {
+        localised_name = {"item-name.kitchen-for-all"},
+        localised_description = {"item-description.kitchen-for-all"},
+        signature_color = Color.purple,
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.from_neighbor,
+            [Type.orchid] = ConnectionType.from_neighbor,
+            [Type.gunfire] = ConnectionType.from_neighbor,
+            [Type.ember] = ConnectionType.from_neighbor,
+            [Type.foundry] = ConnectionType.from_neighbor,
+            [Type.gleam] = ConnectionType.from_neighbor,
+            [Type.aurora] = ConnectionType.from_neighbor,
+            [Type.plasma] = ConnectionType.from_neighbor,
+            [Type.kitchen_for_all] = ConnectionType.bidirectional
         },
         is_civil = true
     },
