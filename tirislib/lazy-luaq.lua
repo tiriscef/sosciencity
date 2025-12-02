@@ -285,6 +285,19 @@ function LazyLuaq:contains(element)
     return false
 end
 
+--- Returns the number of elements in the sequence.<br>
+--- This is calculated by iterating over the sequence.
+--- @return integer
+function LazyLuaq:count()
+    local ret = 0
+
+    for _ in self:iterate() do
+        ret = ret + 1
+    end
+
+    return ret
+end
+
 --- Returns the first element (that fulfills the given condition - if given).
 --- @param condition function?
 --- @return any first_element
@@ -466,6 +479,34 @@ function LazyLuaq:where(condition)
     return ret
 end
 
+local function where_key_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    if value[self.key] then
+        return index, value
+    else
+        return where_key_move_next(self)
+    end
+end
+
+--- Filters the sequence of tables based on if the value for the given key is truthy.
+--- @param key any
+--- @return LazyLuaqQuery
+function LazyLuaq:where_key(key)
+    local ret = {
+        content = self,
+        key = key,
+        move_next = where_key_move_next
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
 local function select_move_next(self)
     local index, value = self.content:move_next()
 
@@ -485,6 +526,31 @@ function LazyLuaq:select(selector)
         content = self,
         selector = selector,
         move_next = select_move_next
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function select_key_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    value = value[self.key]
+    return index, value
+end
+
+--- Selects the key of the table-elements of the sequence.
+--- @param key any
+--- @return LazyLuaqQuery
+function LazyLuaq:select_key(key)
+    local ret = {
+        content = self,
+        key = key,
+        move_next = select_key_move_next
     }
     setmetatable(ret, LazyLuaq)
 
@@ -557,6 +623,36 @@ function LazyLuaq:choose(selector)
         content = self,
         selector = selector,
         move_next = choose_move_next
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+local function choose_key_move_next(self)
+    local index, value = self.content:move_next()
+
+    if index == nil then
+        return
+    end
+
+    local kv = value[self.key]
+
+    if kv then
+        return index, kv
+    else
+        return choose_key_move_next(self)
+    end
+end
+
+--- Filters and projects the sequence of tables by the value of the given key.
+--- @param key any
+--- @return LazyLuaqQuery
+function LazyLuaq:choose_key(key)
+    local ret = {
+        content = self,
+        key = key,
+        move_next = choose_key_move_next
     }
     setmetatable(ret, LazyLuaq)
 
