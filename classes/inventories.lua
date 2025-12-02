@@ -38,7 +38,7 @@ local log_item = Communication.log_item
 local log_items = Communication.log_items
 local log_fluid = Communication.log_fluid
 
-local all_neighbors_of_type = Neighborhood.all_of_type
+local all_neighbors_of_type = Neighborhood.iterate_type
 local get_neighbors_of_type = Neighborhood.get_by_type
 
 local chest = defines.inventory.chest
