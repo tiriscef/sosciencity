@@ -884,7 +884,7 @@ local function look_for_workers(manufactory, acceptable_castes, count)
     local workers_found = 0
 
     for i = 1, #acceptable_castes do
-        for _, house in Neighborhood.all_of_type(manufactory, acceptable_castes[i]) do
+        for _, house in Neighborhood.iterate_type(manufactory, acceptable_castes[i]) do
             workers_found = workers_found + try_employ(manufactory, house, count - workers_found)
 
             if workers_found == count then
@@ -1178,7 +1178,7 @@ local function try_occupy_empty_housing()
         -- find and sort the empty houses
         local empty_houses = {}
 
-        for _, empty_house in Register.all_of_type(Type.empty_house) do
+        for _, empty_house in Register.iterate_type(Type.empty_house) do
             if empty_house[EK.is_liveable] and Housing.allowes_caste(get_housing_details(empty_house), caste_id) then
                 empty_houses[#empty_houses + 1] = empty_house
             end
@@ -1220,7 +1220,7 @@ end
 
 local function create_improvised_huts()
     for caste_id, group in pairs(homeless) do
-        for _, market in Register.all_of_type(Type.market) do
+        for _, market in Register.iterate_type(Type.market) do
             if not Entity.market_has_food(market) then
                 goto continue
             end
@@ -1321,9 +1321,9 @@ local function build_social_environment(entry)
     local in_reach = {[itself] = itself}
 
     for _, _type in pairs(TypeGroup.social_places) do
-        for _, building in Neighborhood.all_of_type(entry, _type) do
+        for _, building in Neighborhood.iterate_type(entry, _type) do
             for _, caste in pairs(TypeGroup.all_castes) do
-                for _, house in Neighborhood.all_of_type(building, caste) do
+                for _, house in Neighborhood.iterate_type(building, caste) do
                     local unit_number = house[EK.unit_number]
                     in_reach[unit_number] = unit_number
                 end
@@ -1598,7 +1598,7 @@ local function is_recoverable(id)
 end
 
 local function has_facility(hospital, facility_type)
-    for _, facility in Neighborhood.all_of_type(hospital, facility_type) do
+    for _, facility in Neighborhood.iterate_type(hospital, facility_type) do
         if Entity.is_active(facility) then
             return true
         end
@@ -1826,13 +1826,13 @@ end
 
 local function evaluate_neighborhood(entry, happiness_summands, health_summands)
     local nightclub_bonus = 0
-    for _, nightclub in Neighborhood.all_of_type(entry, Type.nightclub) do
+    for _, nightclub in Neighborhood.iterate_type(entry, Type.nightclub) do
         nightclub_bonus = max(nightclub_bonus, nightclub[EK.performance])
     end
     happiness_summands[HappinessSummand.nightclub] = nightclub_bonus
 
     local animal_farm_count = 0
-    for _, animal_farm in Neighborhood.all_of_type(entry, Type.animal_farm) do
+    for _, animal_farm in Neighborhood.iterate_type(entry, Type.animal_farm) do
         if animal_farm[EK.houses_animals] then
             animal_farm_count = animal_farm_count + 1
         end
@@ -2197,7 +2197,7 @@ end
 
 local function update_empty_house(entry)
     local has_water = false
-    for _, water_distributer in Neighborhood.all_of_type(entry, Type.water_distributer) do
+    for _, water_distributer in Neighborhood.iterate_type(entry, Type.water_distributer) do
         if water_distributer[EK.water_name] then
             has_water = true
             break
@@ -2211,7 +2211,7 @@ local function update_empty_house(entry)
     end
 
     local has_food = false
-    for _, market in Neighborhood.all_of_type(entry, Type.market) do
+    for _, market in Neighborhood.iterate_type(entry, Type.market) do
         if Entity.market_has_food(market) then
             has_food = true
             break

@@ -493,7 +493,7 @@ end
 local function nothing()
 end
 
-local function all_of_type_iterator(type_table, key)
+local function type_iterator(type_table, key)
     key = next(type_table, key)
 
     if key == nil then
@@ -504,19 +504,19 @@ local function all_of_type_iterator(type_table, key)
     if entry then
         return key, entry
     else
-        return all_of_type_iterator(type_table, key)
+        return type_iterator(type_table, key)
     end
 end
 
 --- Iterator for all entries of a specific type
 --- @param _type Type
-function Register.all_of_type(_type)
+function Register.iterate_type(_type)
     local tbl = register_by_type[_type]
     if not tbl then
         return nothing
     end
 
-    return all_of_type_iterator, tbl
+    return type_iterator, tbl
 end
 
 --- Returns the number of existing entries of the given type.

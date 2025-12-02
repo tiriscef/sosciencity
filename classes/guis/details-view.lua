@@ -1401,7 +1401,7 @@ local function find_all_neighborhood_diseases(entry)
     local ret = {}
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
-        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+        for _, house in Neighborhood.iterate_type(entry, caste_id) do
             Table.add(ret, house[EK.diseases])
         end
     end
@@ -1422,7 +1422,7 @@ local function update_hospital_details(container, entry, player_id)
     facility_flow.clear()
     for _, _type in pairs(TypeGroup.hospital_complements) do
         local has_one = false
-        for _, facility in Neighborhood.all_of_type(entry, _type) do
+        for _, facility in Neighborhood.iterate_type(entry, _type) do
             if Entity.is_active(facility) then
                 has_one = true
                 break
@@ -1745,7 +1745,7 @@ local function analyse_dependants(entry, consumption_key)
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
         local caste_inhabitants = 0
-        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+        for _, house in Neighborhood.iterate_type(entry, caste_id) do
             caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
         end
 
@@ -1910,7 +1910,7 @@ local function analyse_garbage_output(entry)
 
     for _, caste_id in pairs(TypeGroup.all_castes) do
         local caste_inhabitants = 0
-        for _, house in Neighborhood.all_of_type(entry, caste_id) do
+        for _, house in Neighborhood.iterate_type(entry, caste_id) do
             caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
         end
         inhabitant_count = inhabitant_count + caste_inhabitants

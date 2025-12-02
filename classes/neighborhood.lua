@@ -141,7 +141,7 @@ function Neighborhood.subscribe_to(entry, neighbor_type, connection_type)
     get_subtbl(subscriptions, neighbor_type)[unit_number] = connection_type
 
     -- find all the neighbors already existing
-    for _, possible_neighbor in Register.all_of_type(neighbor_type) do
+    for _, possible_neighbor in Register.iterate_type(neighbor_type) do
         try_connect(entry, possible_neighbor, connection_type)
     end
 end
@@ -246,7 +246,7 @@ end
 local function nothing()
 end
 
-local function all_of_type_iterator(neighbor_table, key)
+local function type_iterator(neighbor_table, key)
     local supposed_type
     key, supposed_type = next(neighbor_table, key)
 
@@ -259,19 +259,19 @@ local function all_of_type_iterator(neighbor_table, key)
         return key, entry
     else
         neighbor_table[key] = nil
-        return all_of_type_iterator(neighbor_table, key)
+        return type_iterator(neighbor_table, key)
     end
 end
 
 --- Lazy iterator over all neighbors of the given type.
 --- @param entry Entry
 --- @param _type Type
-function Neighborhood.all_of_type(entry, _type)
+function Neighborhood.iterate_type(entry, _type)
     if not entry[EK.neighbors] or not entry[EK.neighbors][_type] then
         return nothing
     end
 
-    return all_of_type_iterator, entry[EK.neighbors][_type]
+    return type_iterator, entry[EK.neighbors][_type]
 end
 
 -- Thanks to justarandomgeek for this piece of code.

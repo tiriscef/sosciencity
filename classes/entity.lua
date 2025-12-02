@@ -474,7 +474,7 @@ Register.set_entity_copy_handler(Type.composter, copy_composter)
 local function update_composter_output(entry)
     local inventory = get_chest_inventory(entry)
 
-    for _, composter in Neighborhood.all_of_type(entry, Type.composter) do
+    for _, composter in Neighborhood.iterate_type(entry, Type.composter) do
         local humus_amount = composter[EK.humus]
         local to_output = floor(humus_amount)
 
@@ -565,7 +565,7 @@ local function update_farm(entry, delta_ticks)
 
         local percentage_to_consume = 1
 
-        for _, fertilization_station in Neighborhood.all_of_type(entry, Type.fertilization_station) do
+        for _, fertilization_station in Neighborhood.iterate_type(entry, Type.fertilization_station) do
             local humus_available = fertilization_station[EK.humus_stored]
             local workhours_available = fertilization_station[EK.workhours]
 
@@ -599,7 +599,7 @@ local function update_farm(entry, delta_ticks)
         local workhours_needed = delta_ticks * Entity.pruning_workhours
         local workhours_consumed = 0
 
-        for _, pruning_station in Neighborhood.all_of_type(entry, Type.pruning_station) do
+        for _, pruning_station in Neighborhood.iterate_type(entry, Type.pruning_station) do
             local consumed = min(pruning_station[EK.workhours], workhours_needed - workhours_consumed)
 
             pruning_station[EK.workhours] = pruning_station[EK.workhours] - consumed
@@ -1008,7 +1008,7 @@ function Entity.get_hospital_inventories(entry)
     local ret = {get_chest_inventory(entry)}
 
     for _, _type in pairs(TypeGroup.hospital_complements) do
-        for _, building in Neighborhood.all_of_type(entry, _type) do
+        for _, building in Neighborhood.iterate_type(entry, _type) do
             ret[#ret + 1] = get_chest_inventory(building)
         end
     end
