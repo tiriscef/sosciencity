@@ -223,4 +223,9 @@ EK.garbagify_progress = 1204
 --- is this animal farm housing animals?
 EK.houses_animals = 1300
 
+-- kitchen for all
+
+EK.participating_inhabitants = 1400
+
+
 return EK

@@ -29,7 +29,8 @@ TypeGroup.affected_by_clockwork = {
 }
 
 TypeGroup.social_places = {
-    Type.nightclub
+    Type.nightclub,
+    Type.kitchen_for_all
 }
 
 TypeGroup.hospital_complements = {

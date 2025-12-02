@@ -24,6 +24,7 @@ local Building = {}
 --- @field disease_category DiseaseCategory the category of diseases that this work can cause
 --- @field disease_frequency number the frequency with which diseases are caused by this work (as progress per worker per tick)
 
+--- The standard range for connections where the huwans are supposed to walk to the entity.
 local range_by_foot = 50
 
 --- Values of various custom behaviours I implemented for the Custom Buildings.<br>
@@ -220,6 +221,11 @@ Building.values = {
         type = Type.intensive_care_unit,
         range = 7
     },
+    ["kitchen-for-all"] = {
+        type = Type.kitchen_for_all,
+        range = range_by_foot,
+        inhabitant_count = 20
+    },
     ["market-hall"] = {
         type = Type.market,
         range = range_by_foot
@@ -238,6 +244,7 @@ Building.values = {
     },
     ["medical-school"] = {
         type = Type.caste_education_building,
+        range = range_by_foot,
         workforce = {
             count = 10,
             castes = {Type.orchid},

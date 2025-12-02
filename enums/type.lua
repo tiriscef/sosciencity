@@ -22,6 +22,7 @@ Type.dumpster = 104
 Type.immigration_port = 106
 Type.transportation = 107
 Type.nightclub = 108
+Type.kitchen_for_all = 109
 
 Type.egg_collector = 197
 Type.upbringing_station = 198

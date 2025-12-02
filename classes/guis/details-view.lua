@@ -2050,6 +2050,29 @@ local function create_pruning_station(container, entry, player_id)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << kitchen for all >>
+
+local function update_kitchen_for_all(container, entry, player_id)
+    update_general_building_details(container, entry, player_id)
+
+    local tabbed_pane = container.tabpane
+    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+
+    Datalist.set_kv_pair_value(building_data, "inhabitants", entry[EK.participating_inhabitants])
+end
+
+local function create_kitchen_for_all(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
+
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local building_data = general.building
+
+    Datalist.add_kv_pair(building_data, "inhabitants", {"sosciencity.inhabitants"})
+
+    update_kitchen_for_all(container, entry, player_id)
+end
+
+---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
 
 function Gui.DetailsView.create(player)
@@ -2159,6 +2182,10 @@ local type_gui_specifications = {
     [Type.improvised_hospital] = {
         creater = create_hospital_details,
         updater = update_hospital_details
+    },
+    [Type.kitchen_for_all] = {
+        creater = create_kitchen_for_all,
+        updater = update_kitchen_for_all
     },
     [Type.pharmacy] = {
         creater = create_general_building_details,
