@@ -2073,6 +2073,26 @@ local function create_kitchen_for_all(container, entry, player_id)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << cold storage >>
+
+local function create_cold_storage(container, entry, player_id)
+    local tabbed_pane = create_general_building_details(container, entry, player_id)
+
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local building_data = general.building
+
+    local definition = get_building_details(entry)
+    Datalist.add_kv_pair(
+        building_data,
+        "spoil-slowdown",
+        {"sosciencity.spoil-slowdown"},
+        Tirislib.Locales.display_percentage(definition.spoil_slowdown)
+    )
+
+    update_general_building_details(container, entry, player_id)
+end
+
+---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
 
 function Gui.DetailsView.create(player)
@@ -2154,6 +2174,10 @@ local type_gui_specifications = {
     },
     [Type.composter_output] = {
         creater = create_general_building_details,
+        updater = update_general_building_details
+    },
+    [Type.cold_storage] = {
+        creater = create_cold_storage,
         updater = update_general_building_details
     },
     [Type.dumpster] = {

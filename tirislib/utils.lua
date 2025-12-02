@@ -347,7 +347,7 @@ end
 
 --- Rounds the given value mathematically.
 --- @param number number
---- @return number
+--- @return integer
 function Tirislib.Utils.round(number)
     return floor(number + 0.5)
 end
