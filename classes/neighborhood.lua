@@ -314,7 +314,7 @@ end
 
 --- Lazy iterator over all neighbors.
 --- @param entry Entry
-function Neighborhood.all(entry)
+function Neighborhood.iterate_all(entry)
     if not entry[EK.neighbors] then
         return nothing
     end

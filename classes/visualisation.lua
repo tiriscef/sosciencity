@@ -228,7 +228,7 @@ local function highlight_neighbors(player_id, entry, created_highlights)
     end
 
     local players = {player_id}
-    for _, neighbor_entry in Neighborhood.all(entry) do
+    for _, neighbor_entry in Neighborhood.iterate_all(entry) do
         create_neighbor_highlights(players, neighbor_entry, created_highlights)
     end
 end

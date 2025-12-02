@@ -488,6 +488,47 @@ end
 Register.set_entity_updater(Type.composter_output, update_composter_output)
 
 ---------------------------------------------------------------------------------------------------
+-- << cold storage >>
+
+--- Manipulates the spoil_ticks of all Food item stacks in the given inventory to simulate a slower spoil rate.
+--- @param inventory LuaInventory
+--- @param delta_ticks integer
+--- @param percentage number
+function Entity.delay_food_spoilage(inventory, delta_ticks, percentage)
+    for i = 1, #inventory do
+        local item_stack = inventory[i]
+
+        if not item_stack.valid_for_read or not Food.values[item_stack.name] then
+            goto continue
+        end
+
+        local spoil_tick = item_stack.spoil_tick
+        if spoil_tick == 0 then
+            goto continue
+        end
+
+        item_stack.spoil_tick = spoil_tick + Utils.round(delta_ticks * percentage)
+
+        ::continue::
+    end
+end
+
+local function update_cold_storage(entry, delta_ticks)
+    local definition = get_building_details(entry)
+    local inventory = get_chest_inventory(entry)
+
+    local active = is_active(entry)
+    entry[EK.active] = active
+
+    if not active then
+        return
+    end
+
+    Entity.delay_food_spoilage(inventory, delta_ticks, definition.spoil_slowdown)
+end
+Register.set_entity_updater(Type.cold_storage, update_cold_storage)
+
+---------------------------------------------------------------------------------------------------
 -- << farms >>
 
 local get_species = Biology.get_species

@@ -59,7 +59,7 @@ Type.composter_output = 1201
 Type.fertilization_station = 1202
 Type.pruning_station = 1203
 Type.waste_dump = 1204
-Type.cooling_warehouse = 1205
+Type.cold_storage = 1205
 
 Type.turret = 2000
 Type.lab = 2001

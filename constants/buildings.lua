@@ -97,8 +97,10 @@ Building.values = {
         type = Type.composter_output,
         range = 5
     },
-    ["cooling-warehouse"] = {
-        type = Type.cooling_warehouse
+    ["cold-storage-warehouse"] = {
+        type = Type.cold_storage,
+        power_usage = 300,
+        spoil_slowdown = 0.8
     },
     ["egg-collecting-station"] = {
         type = Type.egg_collector,

@@ -364,9 +364,9 @@ Types.definitions = {
         },
         signature_color = Color.yellowish_green
     },
-    [Type.cooling_warehouse] = {
-        localised_name = {"sosciencity.cooling-warehouse"},
-        localised_description = {"sosciencity.explain-cooling-warehouse"}
+    [Type.cold_storage] = {
+        localised_name = {"item-name.cold-storage-warehouse"},
+        localised_description = {"item-description.cold-storage-warehouse"}
     },
     [Type.waste_dump] = {
         localised_name = {"sosciencity.waste-dump"},

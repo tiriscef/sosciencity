@@ -1,30 +1,28 @@
--- TODO: actual graphics
+-- TODO: graphics
 
 Tirislib.Item.create {
     type = "item",
-    name = "cooling-warehouse",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    name = "cold-storage-warehouse",
+    icon = Tirislib.Prototype.placeholder_icon,
     icon_size = 64,
     subgroup = "sosciencity-food-buildings",
     order = "daa",
-    place_result = "cooling-warehouse",
+    place_result = "cold-storage-warehouse",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "cooling-warehouse",
+    product = "cold-storage-warehouse",
     themes = {{"building", 2}, {"machine", 2}},
     unlock = "food-processing"
 }
 
 Tirislib.Entity.create {
     type = "container",
-    name = "cooling-warehouse",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
+    name = "cold-storage-warehouse",
     flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "cooling-warehouse"},
+    minable = {mining_time = 0.5, result = "cold-storage-warehouse"},
     max_health = 200,
     inventory_size = 80,
     corpse = "small-remnants",
@@ -33,15 +31,14 @@ Tirislib.Entity.create {
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     picture = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+        filename = "__sosciencity-graphics__/graphics/placeholder.png",
         priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
+        width = 224,
+        height = 224,
+        scale = 6 / 7
     },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3):copy_localisation_from_item()
-Sosciencity_Config.add_eei("cooling-warehouse")
+}:set_size(6, 6):copy_localisation_from_item():copy_icon_from_item()
+Sosciencity_Config.add_eei("cold-storage-warehouse")
