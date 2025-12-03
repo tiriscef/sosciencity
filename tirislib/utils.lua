@@ -674,7 +674,7 @@ function Tirislib.Utils.is_data_stage()
     return (data ~= nil)
 end
 
--- Returns true if the game is currently in the control stage.
+--- Returns true if the game is currently in the control stage.
 function Tirislib.Utils.is_control_stage()
     return (data == nil)
 end

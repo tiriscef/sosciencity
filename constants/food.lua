@@ -631,4 +631,22 @@ Food.taste_names = {
 Food.emergency_ration_calories = 1000
 Food.food_leftovers_chance = 0.125
 
+if Tirislib.Utils.is_control_stage() then
+    for food_name, food_data in pairs(Food.values) do
+        local food_prototype = prototypes.item[food_name]
+
+        if not food_prototype then
+            goto continue
+        end
+
+        local max_spoil = {}
+        food_data.max_spoil = max_spoil
+        for quality in pairs(prototypes.quality) do
+            max_spoil[quality] = food_prototype.get_spoil_ticks(quality)
+        end
+
+        ::continue::
+    end
+end
+
 return Food

@@ -498,7 +498,12 @@ function Entity.delay_food_spoilage(inventory, delta_ticks, percentage)
     for i = 1, #inventory do
         local item_stack = inventory[i]
 
-        if not item_stack.valid_for_read or not Food.values[item_stack.name] then
+        if not item_stack.valid_for_read then
+            goto continue
+        end
+
+        local food_definition = Food.values[item_stack.name]
+        if not food_definition then
             goto continue
         end
 
@@ -507,7 +512,9 @@ function Entity.delay_food_spoilage(inventory, delta_ticks, percentage)
             goto continue
         end
 
-        item_stack.spoil_tick = spoil_tick + Utils.round(delta_ticks * percentage)
+        local max_allowed_tick = game.tick + food_definition.max_spoil[item_stack.quality.name]
+
+        item_stack.spoil_tick = math.min(spoil_tick + Utils.round(delta_ticks * percentage), max_allowed_tick)
 
         ::continue::
     end
