@@ -116,7 +116,7 @@ Gui.Elements.SortableList.linked["food"] = {
             name = "taste-category",
             localised_name = {"sosciencity.taste"},
             content = function(entry)
-                return Food.taste_names[entry.taste_category]
+                return Locale.taste_category(entry.taste_category)
             end,
             order = function(entry)
                 return entry.taste_category

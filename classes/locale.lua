@@ -170,4 +170,11 @@ function Locale.disease_category_description(category)
     return disease_category_descriptions[category]
 end
 
+local Taste = require("enums.taste")
+local taste_category_locales = build_locale_lookup(Taste, "taste-category")
+
+function Locale.taste_category(category)
+    return taste_category_locales[category]
+end
+
 return Locale

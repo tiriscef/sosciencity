@@ -614,20 +614,6 @@ for name, food in pairs(Food.values) do
     food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
 end
 
-Food.taste_names = {
-    [Taste.bitter] = {"taste-category.bitter"},
-    [Taste.neutral] = {"taste-category.neutral"},
-    [Taste.salty] = {"taste-category.salty"},
-    [Taste.soily] = {"taste-category.soily"},
-    [Taste.acidic] = {"taste-category.acidic"},
-    [Taste.spicy] = {"taste-category.spicy"},
-    [Taste.fruity] = {"taste-category.fruity"},
-    [Taste.umami] = {"taste-category.umami"},
-    [Taste.weirdly_chemical] = {"taste-category.weirdly-chemical"},
-    [Taste.sulfuric] = {"taste-category.sulfuric"},
-    [Taste.varying] = {"taste-category.varying"}
-}
-
 Food.emergency_ration_calories = 1000
 Food.food_leftovers_chance = 0.125
 
