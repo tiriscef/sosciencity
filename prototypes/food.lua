@@ -1,5 +1,6 @@
 local Food = require("constants.food")
 local Time = require("constants.time")
+local Locale = require("classes.locale")
 
 local function percentage(numerator, denominator)
     return string.format("%.0f", 100. * numerator / denominator) .. "%"
@@ -271,7 +272,7 @@ for _, food in pairs(foods) do
         {"item-description." .. food.name},
         {"food-category." .. food_details.food_category},
         {"food-group." .. food_details.group},
-        Food.taste_names[food_details.taste_category],
+        Locale.taste_category(food_details.taste_category),
         {"color-scale." .. taste, {"taste-scale." .. taste}},
         {"description.sos-details", tostring(food_details.taste_quality)},
         {"color-scale." .. health, {"health-scale." .. health}},

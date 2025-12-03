@@ -1,7 +1,6 @@
 Gui.CityView.add_category("caste", {"sosciencity.caste"})
 
 local Castes = require("constants.castes")
-local Food = require("constants.food")
 local Time = require("constants.time")
 
 local function add_caste_infos(container, caste_id)
@@ -20,8 +19,8 @@ local function add_caste_infos(container, caste_id)
         {"sosciencity.taste"},
         {
             "sosciencity.show-taste",
-            Food.taste_names[caste.favored_taste],
-            Food.taste_names[caste.least_favored_taste]
+            Locale.taste_category(caste.favored_taste),
+            Locale.taste_category(caste.least_favored_taste)
         }
     )
     Gui.Elements.Datalist.add_kv_pair(
