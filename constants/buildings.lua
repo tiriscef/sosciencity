@@ -89,6 +89,24 @@ Building.values = {
             disease_frequency = 0.2 / Time.minute
         }
     },
+    ["clockwork-mines"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 10,
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.hard_work,
+            disease_frequency = 0.2 / Time.minute
+        }
+    },
+    ["clockwork-quarry"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 10,
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.hard_work,
+            disease_frequency = 0.1 / Time.minute
+        }
+    },
     ["composting-silo"] = {
         type = Type.composter,
         capacity = 5000
