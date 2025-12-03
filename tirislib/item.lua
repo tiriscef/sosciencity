@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for items >>
+--- @class ItemPrototype
 Tirislib.Item = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
@@ -7,6 +8,7 @@ Tirislib.Item = {}
 Tirislib.Item.__index = Tirislib.Item
 
 --- Class for arrays of items. Setter-functions can be called on them.
+--- @class ItemPrototypeArray
 Tirislib.ItemArray = {}
 Tirislib.ItemArray.__index = Tirislib.PrototypeArray.__index
 

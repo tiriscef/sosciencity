@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 -- << static class for Recipe Entries >>
 
--- Functions for ItemProductPrototype, FluidProductPrototype, ItemIngredientPrototype and FluidIngredientPrototype.
+--- Functions for ItemProductPrototype, FluidProductPrototype, ItemIngredientPrototype and FluidIngredientPrototype.
+--- @class RecipeEntryPrototype
 Tirislib.RecipeEntry = {}
 
 --- Sets the RecipeEntryPrototype's return amount to the given value.
@@ -159,6 +160,7 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << class for recipes >>
+--- @class RecipePrototype
 Tirislib.Recipe = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
@@ -166,6 +168,7 @@ Tirislib.Recipe = {}
 Tirislib.Recipe.__index = Tirislib.Recipe
 
 --- Class for arrays of recipes. Setter-functions can be called on them.
+--- @class RecipePrototypeArray
 Tirislib.RecipeArray = {}
 Tirislib.RecipeArray.__index = Tirislib.PrototypeArray.__index
 
@@ -416,7 +419,7 @@ end
 
 --- Adds the given results to the recipe.
 --- @param results table of RecipeEntryPrototypes
---- @param suppress_merge boolean if the result should be merged with a similar other result prototype
+--- @param suppress_merge boolean? if the result should be merged with a similar other result prototype
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_result_range(results, suppress_merge)
     if not results then

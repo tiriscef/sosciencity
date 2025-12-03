@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for recipe categories >>
+--- @class RecipeCategoryPrototype
 Tirislib.RecipeCategory = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
@@ -7,6 +8,7 @@ Tirislib.RecipeCategory = {}
 Tirislib.RecipeCategory.__index = Tirislib.RecipeCategory
 
 --- Class for arrays of recipes. Setter-functions can be called on them.
+--- @class RecipeCategoryPrototypeArray
 Tirislib.RecipeCategoryArray = {}
 Tirislib.RecipeCategoryArray.__index = Tirislib.PrototypeArray.__index
 
