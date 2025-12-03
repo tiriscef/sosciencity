@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for entities >>
+--- @class EntityPrototype
 Tirislib.Entity = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
@@ -7,8 +8,14 @@ Tirislib.Entity = {}
 Tirislib.Entity.__index = Tirislib.Entity
 
 --- Class for arrays of entities. Setter-functions can be called on them.
+--- @class EntityPrototypeArray
 Tirislib.EntityArray = {}
 Tirislib.EntityArray.__index = Tirislib.PrototypeArray.__index
+
+--- @class SpritePrototype
+--- @class AnimationPrototype
+--- @class PicturePrototype
+--- @class SoundPrototype
 
 -- << getter functions >>
 local entity_types = require("prototype-types.entity-types")
@@ -464,7 +471,7 @@ function Tirislib.Entity:get_localised_description()
 end
 
 --- Copies the localisation of the item with the given name to this EntityPrototype.
---- @param item_name string
+--- @param item_name string?
 --- @return EntityPrototype itself
 function Tirislib.Entity:copy_localisation_from_item(item_name)
     if not item_name then
@@ -487,7 +494,7 @@ function Tirislib.Entity:copy_localisation_from_item(item_name)
 end
 
 --- Copies the icon of the item with the given name to this EntityPrototype.
---- @param item_name string
+--- @param item_name string?
 --- @return EntityPrototype itself
 function Tirislib.Entity:copy_icon_from_item(item_name)
     if not item_name then

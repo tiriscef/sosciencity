@@ -6,6 +6,10 @@ local ceil = math.ceil
 local floor = math.floor
 local select = select
 
+--- @class locale
+--- @class point2d
+--- @class array
+
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
 
@@ -24,6 +28,7 @@ end
 ---------------------------------------------------------------------------------------------------
 --- Table query functions.
 --- Obviously inspired by .NET's Linq but lacking the lazy evaluation capabilities.
+--- @class LuaqQuery
 Tirislib.Luaq = {}
 
 Tirislib.Luaq.__index = Tirislib.Luaq

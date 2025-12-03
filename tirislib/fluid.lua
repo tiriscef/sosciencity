@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for fluids >>
+--- @class FluidPrototype
 Tirislib.Fluid = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
@@ -7,6 +8,7 @@ Tirislib.Fluid = {}
 Tirislib.Fluid.__index = Tirislib.Fluid
 
 --- Class for arrays of fluids. Setter-functions can be called on them.
+--- @class FluidPrototypeArray
 Tirislib.FluidArray = {}
 Tirislib.FluidArray.__index = Tirislib.PrototypeArray.__index
 

@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << class for technologies >>
+--- @class TechnologyPrototype
 Tirislib.Technology = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
@@ -7,8 +8,11 @@ Tirislib.Technology = {}
 Tirislib.Technology.__index = Tirislib.Technology
 
 --- Class for arrays of technologies. Setter-functions can be called on them.
+--- @class TechnologyPrototypeArray
 Tirislib.TechnologyArray = {}
 Tirislib.TechnologyArray.__index = Tirislib.PrototypeArray.__index
+
+--- @class TechnologyEffectPrototype
 
 --- Gets the TechnologyPrototype of the given name. If no such Technology exists, a dummy object will be returned instead.
 --- @param name string
