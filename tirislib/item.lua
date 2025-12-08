@@ -14,6 +14,7 @@ Tirislib.ItemArray.__index = Tirislib.PrototypeArray.__index
 
 -- << getter functions >>
 local item_types = require("prototype-types.item-types")
+local equipment_types = require("prototype-types.equipment-types")
 
 --- Gets the ItemPrototype of the given name. If no such Item exists, a dummy object will be returned instead.
 --- @param name string
@@ -128,7 +129,8 @@ function Tirislib.Item.batch_create(item_detail_array, batch_details)
 
     local created_items = {}
     for index, details in pairs(item_detail_array) do
-        local icon = details.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. details.name .. ".png")
+        local icon =
+            details.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. details.name .. ".png")
 
         local prototype = {
             type = prototype_type,
@@ -252,7 +254,27 @@ end
 --- Returns the localised name of the item.
 --- @return locale
 function Tirislib.Item:get_localised_name()
-    return self.localised_name or {"item-name." .. self.name}
+    if self.localised_name then
+        return self.localised_name
+    end
+
+    if self.place_result then
+        local entity = Tirislib.Entity.get_by_name(self.place_result)
+        return entity:get_localised_name()
+    end
+    if self.place_as_equipment_result then
+        local equipment = Tirislib.Prototype.get(equipment_types, self.place_as_equipment_result)
+        return equipment.localised_name or {"equipment-name" .. self.place_as_equipment_result}
+    end
+    if self.place_as_tile then
+        local tile = Tirislib.Prototype.get("tile", self.place_as_tile)
+
+        if tile.localised_name then
+            return tile.localised_name
+        end
+    end
+
+    return {"item-name." .. self.name}
 end
 
 --- Returns the localised description of the item.
