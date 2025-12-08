@@ -15,6 +15,18 @@ local material_items = {
         sprite_variations = {name = "marble", count = 7, include_icon = true}
     },
     {
+        name = "sand",
+        sprite_variations = {name = "sand", count = 3, include_icon = true}
+    },
+    {
+        name = "lime",
+        use_placeholder_icon = true
+    },
+    {
+        name = "soda",
+        use_placeholder_icon = true
+    },
+    {
         name = "tools",
         sprite_variations = {name = "tools", count = 5}
     },
