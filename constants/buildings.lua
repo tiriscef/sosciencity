@@ -233,6 +233,17 @@ Building.values = {
             disease_frequency = 0.1 / Time.minute
         }
     },
+    ["huwanities-faculty"] = {
+        type = Type.caste_education_building,
+        range = range_by_foot,
+        workforce = {
+            count = 10,
+            castes = {Type.ember},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.01 / Time.minute
+        },
+        result_caste = Type.gleam
+    },
     ["industrial-animal-farm"] = {
         type = Type.animal_farm,
         range = 50
@@ -273,9 +284,31 @@ Building.values = {
         },
         result_caste = Type.plasma
     },
+    ["military-school"] = {
+        type = Type.caste_education_building,
+        range = range_by_foot,
+        workforce = {
+            count = 10,
+            castes = {Type.ember, Type.orchid, Type.clockwork},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.01 / Time.minute
+        },
+        result_caste = Type.gunfire
+    },
     ["mushroom-farm"] = {
         type = Type.automatic_farm,
         accepts_plant_care = false
+    },
+    ["natural-sciences-faculty"] = {
+        type = Type.caste_education_building,
+        range = range_by_foot,
+        workforce = {
+            count = 10,
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.01 / Time.minute
+        },
+        result_caste = Type.foundry
     },
     ["nightclub"] = {
         type = Type.nightclub,

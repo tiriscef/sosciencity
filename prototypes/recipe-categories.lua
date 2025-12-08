@@ -117,6 +117,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-huwanities-faculty"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-kitchen-for-all"
     },
     {
@@ -125,7 +129,15 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-military-school"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-mushroom-farm"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-natural-sciences-faculty"
     },
     {
         type = "recipe-category",
