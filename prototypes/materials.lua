@@ -11,6 +11,18 @@ local material_items = {
         distinctions = {fuel_value = "200kJ", fuel_category = "chemical"}
     },
     {
+        name = "marble",
+        sprite_variations = {name = "marble", count = 7, include_icon = true}
+    },
+    {
+        name = "tools",
+        sprite_variations = {name = "tools", count = 5}
+    },
+    {
+        name = "power-tools",
+        use_placeholder_icon = true
+    },
+    {
         name = "screw-set",
         sprite_variations = {name = "screw-set", count = 2, include_icon = true}
     },
@@ -329,17 +341,32 @@ Tirislib.RecipeGenerator.create {
     allow_productivity = true
 }
 
---[[Tirislib.RecipeGenerator.create_per_theme_level {
-    product = "screw-set",
-    followed_theme = "screw_material",
-    dynamic_fields = {
-        product_amount = function(n)
-            return math.ceil(n / 10) * 2
-        end
+Tirislib.RecipeGenerator.create {
+    product = "marble",
+    category = "sosciencity-clockwork-quarry",
+    allow_productivity = true
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "tools",
+    ingredients = {
+        {type = "item", name = "lumber", amount = 2},
+        {type = "item", name = "iron-plate", amount = 2}
     },
-    allow_productivity = true,
-    unlock = "architecture-1"
-}]]
+    --category = "sosciencity-clockwork-workshop"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "power-tools",
+    themes = {
+        {"electronics", 1}, {"battery", 1}
+    },
+    default_theme_level = 3,
+    ingredients = {
+        {type = "item", name = "steel-plate", amount = 2}
+    },
+    --category = "sosciencity-clockwork-workshop"
+}
 
 Tirislib.RecipeGenerator.create {
     product = "screw-set",
