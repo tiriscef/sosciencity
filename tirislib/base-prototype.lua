@@ -11,10 +11,14 @@ function Tirislib.BasePrototype:convert_to_icons_table()
         self.icons = {}
 
         if self.icon then
-            self.icons[#self.icons+1] = {icon = self.icon}
+            self.icons[#self.icons + 1] = {
+                icon = self.icon,
+                icon_size = self.icon_size
+            }
         end
 
         self.icon = nil
+        self.icon_size = nil
     end
 end
 
@@ -37,7 +41,7 @@ function Tirislib.BasePrototype:add_icon_layer(path, shift, scale, tint)
         shift = named_icon_shifts[shift]
     end
 
-    self.icons[#self.icons+1] = {
+    self.icons[#self.icons + 1] = {
         icon = path,
         shift = shift,
         scale = scale or 0.3,
