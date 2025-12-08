@@ -26,6 +26,8 @@ local material_items = {
         name = "soda",
         use_placeholder_icon = true
     },
+    {name = "glass"},
+    {name = "glass-mixture"},
     {
         name = "tools",
         sprite_variations = {name = "tools", count = 5}
@@ -272,13 +274,6 @@ local material_items = {
     }
 }
 
-if Sosciencity_Config.add_glass then
-    material_items[#material_items + 1] = {name = "glass"}
-end
-if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode then
-    material_items[#material_items + 1] = {name = "glass-mixture"}
-end
-
 Tirislib.Item.batch_create(
     material_items,
     {prefix = Sosciencity_Config.prefix, subgroup = "sosciencity-materials", stack_size = 200}
@@ -355,6 +350,22 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "marble",
+    product_amount = 2,
+    energy_required = 4,
+    ingredients = {
+        {type = "item", name = "tools", amount = 1}
+    },
+    category = "sosciencity-clockwork-quarry",
+    allow_productivity = true
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "marble",
+    product_amount = 5,
+    energy_required = 4,
+    ingredients = {
+        {type = "item", name = "power-tools", amount = 1}
+    },
     category = "sosciencity-clockwork-quarry",
     allow_productivity = true
 }
@@ -364,19 +375,20 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "iron-plate", amount = 2}
-    },
+    }
     --category = "sosciencity-clockwork-workshop"
 }
 
 Tirislib.RecipeGenerator.create {
     product = "power-tools",
     themes = {
-        {"electronics", 1}, {"battery", 1}
+        {"electronics", 1},
+        {"battery", 1}
     },
     default_theme_level = 3,
     ingredients = {
         {type = "item", name = "steel-plate", amount = 2}
-    },
+    }
     --category = "sosciencity-clockwork-workshop"
 }
 
@@ -449,26 +461,61 @@ Tirislib.RecipeGenerator.create {
     unlock = "indoor-growing"
 }
 
-if Sosciencity_Config.add_glass or Sosciencity_Config.glass_compatibility_mode then
-    Tirislib.RecipeGenerator.create {
-        product = "glass-mixture",
-        energy_required = 1.6,
-        themes = {{"glass_educt", 2}},
-        category = Tirislib.RecipeGenerator.category_alias[
-            Sosciencity_Config.glass_compatibility_mode and "handcrafting" or "mixing"
-        ],
-        unlock = "infrastructure-1"
-    }
+Tirislib.RecipeGenerator.create {
+    product = "sand",
+    energy_required = 4,
+    ingredients = {
+        {type = "item", name = "stone", amount = 1}
+    },
+    unlock = "infrastructure-1"
+}
 
-    Tirislib.Recipe.create {
-        name = "sosciencity-glass",
-        energy_required = 3.2,
-        ingredients = {{type = "item", name = "glass-mixture", amount = 1}},
-        results = {{type = "item", name = Tirislib.RecipeGenerator.item_alias.glass, amount = 2}},
-        category = "smelting",
-        main_result = Tirislib.RecipeGenerator.item_alias.glass
-    }:add_unlock("infrastructure-1")
-end
+Tirislib.RecipeGenerator.create {
+    product = "sand",
+    product_amount = 10,
+    energy_required = 4,
+    ingredients = {},
+    category = "sosciencity-clockwork-quarry"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "glass-mixture",
+    product_amount = 5,
+    energy_required = 1.6,
+    ingredients = {
+        {type = "item", name = "sand", amount = 5},
+        {type = "item", name = "lime", amount = 1},
+        {type = "item", name = "soda", amount = 1}
+    },
+    category = Tirislib.RecipeGenerator.category_alias["mixing"],
+    unlock = "infrastructure-1"
+}
+
+Tirislib.Recipe.create {
+    name = "sosciencity-glass",
+    energy_required = 3.2,
+    ingredients = {{type = "item", name = "glass-mixture", amount = 1}},
+    results = {{type = "item", name = "glass", amount = 2}},
+    category = "smelting",
+    main_result = "glass"
+}:add_unlock("infrastructure-1")
+
+Tirislib.RecipeGenerator.create {
+    product = "glass",
+    product_amount = 2,
+    energy_required = 3.2,
+    ingredients = {{type = "item", name = "glass-mixture", amount = 1}},
+    category = "smelting"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "glass",
+    product_amount = 1,
+    energy_required = 3.2,
+    ingredients = {{type = "item", name = "sand", amount = 1}},
+    category = "smelting",
+    unlock = "infrastructure-1"
+}
 
 Tirislib.RecipeGenerator.create {
     product = "window",
@@ -722,6 +769,23 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-salt-pond",
     unlock = "fermentation"
 }:add_unlock("medbay")
+
+Tirislib.RecipeGenerator.create {
+    product = "lime",
+    product_amount = 2,
+    energy_required = 4,
+    category = "sosciencity-salt-pond"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "soda",
+    product_amount = 2,
+    energy_required = 5,
+    ingredients = {
+        {type = "item", name = "pyrifera", amount = 5}
+    },
+    category = Tirislib.RecipeGenerator.category_alias.drying
+}
 
 Tirislib.RecipeGenerator.create {
     product = "amylum",
