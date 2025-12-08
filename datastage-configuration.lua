@@ -21,8 +21,6 @@ local default_values = {
     eei_needing_buildings = {},
     buildings_needing_quality_multipliers = {},
     building_stacksize = 50,
-    add_glass = true,
-    glass_compatibility_mode = false,
     agriculture_pollutes = settings.startup["sosciencity-agriculture-pollution"].value,
     lumber_in_vanilla_recipes = settings.startup["sosciencity-lumber-in-vanilla-recipes"].value
 }
