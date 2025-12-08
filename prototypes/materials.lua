@@ -491,15 +491,6 @@ Tirislib.RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
-Tirislib.Recipe.create {
-    name = "sosciencity-glass",
-    energy_required = 3.2,
-    ingredients = {{type = "item", name = "glass-mixture", amount = 1}},
-    results = {{type = "item", name = "glass", amount = 2}},
-    category = "smelting",
-    main_result = "glass"
-}:add_unlock("infrastructure-1")
-
 Tirislib.RecipeGenerator.create {
     product = "glass",
     product_amount = 2,

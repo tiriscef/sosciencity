@@ -255,6 +255,7 @@ function Tirislib.RecipeGenerator.create(details)
         end
     else
         recipe.main_product = product.name
+        recipe.localised_name = product:get_localised_name()
     end
 
     -- explicit defined
