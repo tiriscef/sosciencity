@@ -1456,3 +1456,16 @@ function LazyLuaq:reverse()
 
     return ret
 end
+
+--- Normalizes the (numeric) sequence.<br>
+--- Meaning the sum of all elements will be (close to) 1.
+--- @return LazyLuaqQuery
+function LazyLuaq:normalize()
+    local sum = self:sum()
+
+    if sum > 0 then
+        return self:select(function(element) return element / sum end)
+    else
+        return self
+    end
+end
