@@ -358,16 +358,18 @@ function Inventories.output_eggs(entry, count)
     return try_insert(house_inventory, Biology.egg_fertile, min(20 - already_inside, count))
 end
 
-local egg_values = Biology.egg_values
-
-function Inventories.hatch_eggs(entry, max_count)
-    local eggs = Table.get_keyset(egg_values)
+--- Removes eggs from the given entry's inventory.
+--- @param entry Entry
+--- @param max_count integer
+--- @return table eggs with (item_name, count)-pairs
+function Inventories.remove_eggs(entry, max_count)
+    local eggs = Table.get_keyset(Biology.egg_data)
     Table.shuffle(eggs)
 
-    local genders = GenderGroup.new()
     local count = 0
     local inventory = get_chest_inventory(entry)
 
+    local ret = {}
     for _, egg in pairs(eggs) do
         if max_count - count == 0 then
             break
@@ -375,10 +377,10 @@ function Inventories.hatch_eggs(entry, max_count)
         local consumed = try_remove(inventory, egg, max_count - count)
 
         count = count + consumed
-        GenderGroup.merge(genders, Utils.dice_rolls(egg_values[egg], consumed, 5), true)
+        ret[egg] = consumed
     end
 
-    return count, genders
+    return ret
 end
 
 function Inventories.count_calories(inventory)

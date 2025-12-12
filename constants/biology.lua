@@ -366,36 +366,51 @@ Biology.flora = {
 Biology.egg_calories = 2000
 Biology.egg_fertile = "huwan-egg"
 
-Biology.egg_values = {
+Biology.egg_data = {
     ["huwan-egg"] = {
-        [Gender.agender] = 0.3,
-        [Gender.fale] = 0.2,
-        [Gender.pachin] = 0.2,
-        [Gender.ga] = 0.3
+        genders = {
+            [Gender.agender] = 0.3,
+            [Gender.fale] = 0.2,
+            [Gender.pachin] = 0.2,
+            [Gender.ga] = 0.3
+        },
+        birth_defect_probability = 0.25
     },
     ["huwan-agender-egg"] = {
-        [Gender.agender] = 1,
-        [Gender.fale] = 0,
-        [Gender.pachin] = 0,
-        [Gender.ga] = 0
+        genders = {
+            [Gender.agender] = 1,
+            [Gender.fale] = 0,
+            [Gender.pachin] = 0,
+            [Gender.ga] = 0
+        },
+        birth_defect_probability = 0.1
     },
     ["huwan-fale-egg"] = {
-        [Gender.agender] = 0,
-        [Gender.fale] = 1,
-        [Gender.pachin] = 0,
-        [Gender.ga] = 0
+        genders = {
+            [Gender.agender] = 0,
+            [Gender.fale] = 1,
+            [Gender.pachin] = 0,
+            [Gender.ga] = 0
+        },
+        birth_defect_probability = 0.1
     },
     ["huwan-pachin-egg"] = {
-        [Gender.agender] = 0,
-        [Gender.fale] = 0,
-        [Gender.pachin] = 1,
-        [Gender.ga] = 0
+        genders = {
+            [Gender.agender] = 0,
+            [Gender.fale] = 0,
+            [Gender.pachin] = 1,
+            [Gender.ga] = 0
+        },
+        birth_defect_probability = 0.1
     },
     ["huwan-ga-egg"] = {
-        [Gender.agender] = 0,
-        [Gender.fale] = 0,
-        [Gender.pachin] = 0,
-        [Gender.ga] = 1
+        genders = {
+            [Gender.agender] = 0,
+            [Gender.fale] = 0,
+            [Gender.pachin] = 0,
+            [Gender.ga] = 1
+        },
+        birth_defect_probability = 0.1
     }
 }
 

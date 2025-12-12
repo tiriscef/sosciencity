@@ -6,14 +6,21 @@ local Biology = require("constants.biology")
 local items = {
     {
         name = "hehe",
-        sprite_variations = {name = "hehe", count = 3, include_icon = true}
+        sprite_variations = {name = "hehe", count = 3, include_icon = true},
+        distinctions = {stack_size = 100}
     },
     {
         name = "huwan-egg",
         sprite_variations = {name = "huwan-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity.any"}}
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.any"}
+            }
         }
     },
     {
@@ -21,7 +28,13 @@ local items = {
         sprite_variations = {name = "huwan-agender-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-1"}}
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.gender-1"}
+            }
         }
     },
     {
@@ -29,7 +42,13 @@ local items = {
         sprite_variations = {name = "huwan-fale-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-2"}}
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.gender-2"}
+            }
         }
     },
     {
@@ -37,7 +56,13 @@ local items = {
         sprite_variations = {name = "huwan-pachin-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-3"}}
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.gender-3"}
+            }
         }
     },
     {
@@ -45,7 +70,13 @@ local items = {
         sprite_variations = {name = "huwan-ga-egg", count = 4, include_icon = true},
         distinctions = {
             localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg", {"sosciencity.gender-4"}}
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.gender-4"}
+            }
         }
     }
 }
@@ -90,5 +121,13 @@ for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-eg
         category = "sosciencity-reproductive-gene-lab",
         localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index)}},
         unlock = "huwan-genetic-neogenesis"
+    }
+end
+
+for egg_name, egg_data in Biology.egg_data do
+    local item = Tirislib.Item.get(egg_name)
+    item:add_custom_tooltip {
+        name = {"sosciencity.birth-defect-probability"},
+        value = tostring(egg_data.birth_defect_probability * 100)
     }
 end
