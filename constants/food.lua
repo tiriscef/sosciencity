@@ -631,6 +631,9 @@ if Tirislib.Utils.is_control_stage() then
             max_spoil[quality] = food_prototype.get_spoil_ticks(quality)
         end
 
+        food_data.localised_name = food_prototype.localised_name
+        food_data.localised_description = food_prototype.localised_description
+
         ::continue::
     end
 end
