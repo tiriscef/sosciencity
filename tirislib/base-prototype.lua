@@ -50,3 +50,11 @@ function Tirislib.BasePrototype:add_icon_layer(path, shift, scale, tint)
 
     return self
 end
+
+--- Adds a custom tooltip field to the prototype.
+--- @param tooltip_table table
+function Tirislib.BasePrototype:add_custom_tooltip(tooltip_table)
+    self.custom_tooltip_fields = self.custom_tooltip_fields or {}
+
+    self.custom_tooltip_fields[#self.custom_tooltip_fields + 1] = tooltip_table
+end

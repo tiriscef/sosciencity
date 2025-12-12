@@ -116,43 +116,48 @@ end
 --- **Item specification:**\
 --- **name:** name of the item prototype\
 --- **sprite_variations:** sprite variations for the prototype to use\
---- **distinctions:** table of prototype fields that should be different from the batch specification
---- @param item_detail_array table
---- @param batch_details table
+--- **distinctions:** table of prototype fields that should be different from the batch specification\
+--- **custom_tooltip_fields:** array of custom tooltip fields
+--- @param item_data_array table
+--- @param batch_data table
 --- @return ItemPrototypeArray
-function Tirislib.Item.batch_create(item_detail_array, batch_details)
-    local prototype_type = batch_details.type or "item"
-    local path = batch_details.icon_path or "__sosciencity-graphics__/graphics/icon/"
-    local size = batch_details.icon_size or 64
-    local subgroup = batch_details.subgroup
-    local stack_size = batch_details.stack_size or 200
+function Tirislib.Item.batch_create(item_data_array, batch_data)
+    local prototype_type = batch_data.type or "item"
+    local path = batch_data.icon_path or "__sosciencity-graphics__/graphics/icon/"
+    local size = batch_data.icon_size or 64
+    local subgroup = batch_data.subgroup
+    local stack_size = batch_data.stack_size or 200
 
     local created_items = {}
-    for index, details in pairs(item_detail_array) do
+    for index, data in pairs(item_data_array) do
         local icon =
-            details.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. details.name .. ".png")
+            data.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. data.name .. ".png")
 
         local prototype = {
             type = prototype_type,
-            name = details.name,
+            name = data.name,
             icon = icon,
             icon_size = size,
             subgroup = subgroup,
             order = string.format("%03d", index),
             stack_size = stack_size
         }
-        Tirislib.Tables.set_fields_passively(prototype, batch_details)
-        Tirislib.Tables.set_fields(prototype, details.distinctions)
+        Tirislib.Tables.set_fields_passively(prototype, batch_data)
+        Tirislib.Tables.set_fields(prototype, data.distinctions)
 
         local item = Tirislib.Item.create(prototype)
 
-        local variations = details.sprite_variations
+        local variations = data.sprite_variations
         if variations then
             item:add_sprite_variations(64, path .. variations.name, variations.count)
 
             if variations.include_icon then
                 item:add_icon_to_sprite_variations()
             end
+        end
+
+        for _, field in pairs(data.custom_tooltip_fields or {}) do
+            item:add_custom_tooltip(field)
         end
 
         created_items[#created_items + 1] = item
