@@ -2,23 +2,6 @@ Gui.CityView.add_category("data", {"city-view.data"})
 
 local Food = require("constants.food")
 
--- XXX: create the locales during on_load once 2.0 is out and makes that possible
-
-local function create_food_locales()
-    if Food.already_created_locales then
-        return
-    end
-    Food.already_created_locales = true
-
-    for name, values in pairs(Food.values) do
-        local prototype = prototypes.item[name]
-        if prototype then
-            values.localised_name = prototype.localised_name
-            values.localised_description = prototype.localised_description
-        end
-    end
-end
-
 Gui.Elements.SortableList.linked["food"] = {
     data = Food.values,
     categories = {
@@ -130,8 +113,6 @@ Gui.CityView.add_page {
     category = "data",
     localised_name = {"city-view.food"},
     creator = function(container)
-        create_food_locales()
-
         Gui.Elements.Label.heading_1(container, {"city-view.food-text-1"})
         Gui.Elements.SortableList.create(container, "food")
     end
