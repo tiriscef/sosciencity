@@ -74,24 +74,24 @@ end
 --- **Fluid specification:**\
 --- **name:** name of the fluid prototype\
 --- **distinctions:** table of prototype fields that should be different from the batch specification
---- @param fluid_detail_array table
---- @param batch_details table
+--- @param fluid_data_array table
+--- @param batch_data table
 --- @return FluidPrototypeArray
-function Tirislib.Fluid.batch_create(fluid_detail_array, batch_details)
-    local path = batch_details.icon_path or "__sosciencity-graphics__/graphics/icon/"
-    local size = batch_details.icon_size or 64
-    local subgroup = batch_details.subgroup
-    local base_color = batch_details.base_color
-    local flow_color = batch_details.flow_color or base_color
-    local default_temperature = batch_details.default_temperature or 10
-    local max_temperature = batch_details.max_temperature or 100
+function Tirislib.Fluid.batch_create(fluid_data_array, batch_data)
+    local path = batch_data.icon_path or "__sosciencity-graphics__/graphics/icon/"
+    local size = batch_data.icon_size or 64
+    local subgroup = batch_data.subgroup
+    local base_color = batch_data.base_color
+    local flow_color = batch_data.flow_color or base_color
+    local default_temperature = batch_data.default_temperature or 10
+    local max_temperature = batch_data.max_temperature or 100
 
     local created_items = {}
-    for index, details in pairs(fluid_detail_array) do
+    for index, data in pairs(fluid_data_array) do
         local fluid =
             Tirislib.Fluid.create {
-            name = details.name,
-            icon = path .. details.name .. ".png",
+            name = data.name,
+            icon = path .. data.name .. ".png",
             icon_size = size,
             subgroup = subgroup,
             order = string.format("%03d", index),
@@ -101,7 +101,11 @@ function Tirislib.Fluid.batch_create(fluid_detail_array, batch_details)
             flow_color = flow_color
         }
 
-        Tirislib.Tables.set_fields(fluid, details.distinctions)
+        Tirislib.Tables.set_fields(fluid, data.distinctions)
+
+        for _, field in pairs(data.custom_tooltip_fields or {}) do
+            fluid:add_custom_tooltip(field)
+        end
 
         created_items[#created_items + 1] = fluid
     end
