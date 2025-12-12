@@ -336,10 +336,14 @@ local function update_city_combinator(entry)
         for i = 1, 10 do
             local signal = section.get_slot(i)
             local value = signal.value
-            if not value then goto continue end
+            if not value then
+                goto continue
+            end
 
             local name = value.name
-            if not name then goto continue end
+            if not name then
+                goto continue
+            end
 
             local caste = population_signals[name]
             if caste then
@@ -1133,7 +1137,7 @@ Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_ho
 
 -- Data structure for a upbringing class object:
 -- [1]: tick of creation
--- [2]: GenderGroup
+-- [2]: table with (item_name, count)-pairs
 
 local caste_is_researched = Inhabitants.caste_is_researched
 local get_caste_efficiency = Inhabitants.get_caste_efficiency
@@ -1150,21 +1154,22 @@ local function get_researched_castes()
     return ret
 end
 
+-- TODO: I don't understand this function anymore, rewrite
 local function get_upbringing_expectations(mode)
     local researched_castes = get_researched_castes()
-    local number_of_unresearched_castes = #researched_castes
+    local number_of_researched_castes = #researched_castes
 
     local targeted_chance = 0
     if mode ~= Type.null then
         targeted_chance = 1 - 0.4 / (0.125 * get_caste_efficiency(mode) + 1)
-        number_of_unresearched_castes = number_of_unresearched_castes - 1
+        number_of_researched_castes = number_of_researched_castes - 1
 
-        if number_of_unresearched_castes == 0 then
+        if number_of_researched_castes == 0 then
             targeted_chance = 1
         end
     end
 
-    local untargeted_chance = (1 - targeted_chance) / number_of_unresearched_castes
+    local untargeted_chance = (1 - targeted_chance) / number_of_researched_castes
 
     local ret = {}
 
@@ -1181,24 +1186,32 @@ end
 Entity.get_upbringing_expectations = get_upbringing_expectations
 
 local function finish_class(entry, class, mode)
-    local genders = class[2]
-    local count = Table.array_sum(genders)
-    local probabilities = get_upbringing_expectations(mode)
-    local castes = Utils.dice_rolls(probabilities, count)
-    local birth_defect_probability = Inhabitants.get_birth_defect_probability()
+    local count = Table.sum(class[2])
+
+    local genders = GenderGroup.new()
+    local diseases = DiseaseGroup.new(count)
+    for egg_name, egg_count in pairs(class[2]) do
+        GenderGroup.merge(genders, Utils.dice_rolls(Biology.egg_data[egg_name], egg_count, 5))
+
+        local birth_defect_count =
+            Utils.coin_flips(
+            Biology.egg_data[egg_name].birth_defect_probability * 0.8 ^ storage.technologies["improved-reproductive-healthcare"],
+            egg_count
+        )
+        if birth_defect_count > 0 then
+            DiseaseGroup.make_sick_randomly(diseases, DiseaseCategory.birth_defect, birth_defect_count)
+        end
+    end
+
+    local caste_probabilities = get_upbringing_expectations(mode)
+    local castes = Utils.dice_rolls(caste_probabilities, count, 20, true)
 
     for caste, caste_count in pairs(castes) do
-        if caste_count > 0 then
-            local caste_genders = GenderGroup.take(genders, caste_count)
-            local caste_diseases = DiseaseGroup.new(caste_count)
-            local sick_count = Utils.coin_flips(birth_defect_probability, caste_count)
-            if sick_count > 0 then
-                DiseaseGroup.make_sick_randomly(caste_diseases, DiseaseCategory.birth_defect, sick_count)
-            end
+        local caste_genders = GenderGroup.take(genders, caste_count)
+        local caste_diseases = DiseaseGroup.take(diseases, caste_count)
 
-            local graduates = InhabitantGroup.new(caste, caste_count, nil, nil, nil, caste_diseases, caste_genders)
-            Inhabitants.add_to_city(graduates)
-        end
+        local graduates = InhabitantGroup.new(caste, caste_count, nil, nil, nil, caste_diseases, caste_genders)
+        Inhabitants.add_to_city(graduates)
     end
 
     entry[EK.graduates] = entry[EK.graduates] + count
@@ -1278,10 +1291,10 @@ local function update_upbringing_station(entry)
     -- create new classes
     if current_tick - most_recent_class >= 10 * Time.second then
         local free_capacity = details.capacity - students
-        local hatched, genders = Inventories.hatch_eggs(entry, free_capacity)
+        local eggs = Inventories.remove_eggs(entry, free_capacity)
 
-        if hatched > 0 then
-            classes[#classes + 1] = {current_tick, genders}
+        if Table.sum(eggs) > 0 then
+            classes[#classes + 1] = {current_tick, eggs}
         end
     end
 
