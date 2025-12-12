@@ -722,7 +722,7 @@ local is_researched = Inhabitants.caste_is_researched
 
 --- Returns the level of the efficiency technology for the given caste.
 --- @param caste_id Type
-function Inhabitants.get_caste_efficiency(caste_id)
+function Inhabitants.get_caste_efficiency_level(caste_id)
     return technologies[castes[caste_id].efficiency_tech]
 end
 

@@ -1060,6 +1060,19 @@ function Tirislib.Tables.sum(tbl)
 end
 local sum = Tirislib.Tables.sum
 
+--- Normalizes the numeric elements in the given table.<br>
+--- Meaning the sum of all elements will be (close to) 1.
+--- @param tbl table
+function Tirislib.Tables.normalize(tbl)
+    local table_sum = sum(tbl)
+
+    if table_sum > 0 then
+        for index, value in pairs(tbl) do
+            tbl[index] = value / table_sum
+        end
+    end
+end
+
 --- Calculates the sum of all elements in the given array.
 --- @param tbl table
 --- @return number

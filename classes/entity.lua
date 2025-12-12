@@ -1139,49 +1139,15 @@ Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_ho
 -- [1]: tick of creation
 -- [2]: table with (item_name, count)-pairs
 
-local caste_is_researched = Inhabitants.caste_is_researched
-local get_caste_efficiency = Inhabitants.get_caste_efficiency
-
-local function get_researched_castes()
-    local ret = {}
-
-    for _, caste_id in pairs(TypeGroup.breedable_castes) do
-        if caste_is_researched(caste_id) then
-            ret[#ret + 1] = caste_id
-        end
-    end
-
-    return ret
-end
-
--- TODO: I don't understand this function anymore, rewrite
+--- Returns the probabilities that new inhabitants will join the breedable castes with the given caste-focus of the upbringing station.
+--- @param mode Type
+--- @return table
 local function get_upbringing_expectations(mode)
-    local researched_castes = get_researched_castes()
-    local number_of_researched_castes = #researched_castes
-
-    local targeted_chance = 0
-    if mode ~= Type.null then
-        targeted_chance = 1 - 0.4 / (0.125 * get_caste_efficiency(mode) + 1)
-        number_of_researched_castes = number_of_researched_castes - 1
-
-        if number_of_researched_castes == 0 then
-            targeted_chance = 1
+    return Tirislib.LazyLuaq.from(TypeGroup.breedable_castes):where(Inhabitants.caste_is_researched):select(
+        function(caste)
+            return mode == caste and 4 / 3 + 1 / 3 * Inhabitants.get_caste_efficiency_level(caste) or 1
         end
-    end
-
-    local untargeted_chance = (1 - targeted_chance) / number_of_researched_castes
-
-    local ret = {}
-
-    for _, caste_id in pairs(researched_castes) do
-        if caste_id == mode then
-            ret[caste_id] = targeted_chance
-        else
-            ret[caste_id] = untargeted_chance
-        end
-    end
-
-    return ret
+    ):normalize():to_table()
 end
 Entity.get_upbringing_expectations = get_upbringing_expectations
 
@@ -1195,7 +1161,8 @@ local function finish_class(entry, class, mode)
 
         local birth_defect_count =
             Utils.coin_flips(
-            Biology.egg_data[egg_name].birth_defect_probability * 0.8 ^ storage.technologies["improved-reproductive-healthcare"],
+            Biology.egg_data[egg_name].birth_defect_probability *
+                0.8 ^ storage.technologies["improved-reproductive-healthcare"],
             egg_count
         )
         if birth_defect_count > 0 then
