@@ -4,7 +4,7 @@ Tirislib.Recipe.create {
     enabled = true,
     energy_required = 10,
     ingredients = {
-        {type = "item", name = "lumber", amount = 1}
+        {type = "item", name = "medical-report", amount = 10}
     },
     results = {},
     icon = "__sosciencity-graphics__/graphics/plasma-caste.png",
