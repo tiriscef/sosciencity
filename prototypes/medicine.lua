@@ -5,6 +5,7 @@ local Food = require("constants.food")
 -- << items >>
 
 local medicine_items = {
+    {name = "medical-report", use_placeholder_icon = true},
     {name = "activated-carbon", sprite_variations = {name = "activated-carbon", count = 3, include_icon = true}},
     {name = "artificial-limb"},
     {name = "artificial-heart"},
