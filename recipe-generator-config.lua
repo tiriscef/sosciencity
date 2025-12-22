@@ -81,9 +81,6 @@ Tirislib.RecipeGenerator.add_themes {
     casing = {
         [0] = {{type = "item", name = "iron-plate", amount = 2}}
     },
-    ceramic = {
-        [0] = {{type = "item", name = "stone-brick", amount = 1}}
-    },
     chest = {
         [0] = {{type = "item", name = "wooden-chest", amount = 1}},
         [1] = {{type = "item", name = "iron-chest", amount = 1}},

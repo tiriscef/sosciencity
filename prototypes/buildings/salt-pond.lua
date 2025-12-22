@@ -65,6 +65,5 @@ Tirislib.Entity.create {
     energy_source = {
         type = "void",
         emissions_per_minute = {pollution = 0.25}
-    },
-    fixed_recipe = "salty-water-evaporation"
+    }
 }:set_size(12, 12):copy_localisation_from_item():copy_icon_from_item()
