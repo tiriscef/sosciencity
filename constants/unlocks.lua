@@ -1,4 +1,4 @@
-local Condition = require("enums.condition")
+local UnlockCondition = require("enums.unlock-condition")
 local Type = require("enums.type")
 
 --- Returns an array with (technology_name, item_name)-pairs.
@@ -44,14 +44,14 @@ Unlocks.by_item_aquisition = {
 Unlocks.gated_technologies = {
     ["explore-alien-flora-1"] = {
         {
-            type = Condition.caste_points,
+            type = UnlockCondition.caste_points,
             count = 30,
             caste = Type.orchid
         }
     },
     ["explore-alien-flora-2"] = {
         {
-            type = Condition.caste_points,
+            type = UnlockCondition.caste_points,
             count = 150,
             caste = Type.orchid
         }

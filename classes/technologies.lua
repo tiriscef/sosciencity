@@ -1,4 +1,4 @@
-local Condition = require("enums.condition")
+local UnlockCondition = require("enums.unlock-condition")
 local InformationType = require("enums.information-type")
 
 local Castes = require("constants.castes")
@@ -117,7 +117,7 @@ local function enable(technology_name)
 end
 
 local condition_fns = {
-    [Condition.caste_points] = function(details)
+    [UnlockCondition.caste_points] = function(details)
         return storage.caste_points[details.caste] >= details.count
     end
 }

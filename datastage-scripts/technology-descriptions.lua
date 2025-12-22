@@ -1,10 +1,10 @@
-local Condition = require("enums.condition")
+local UnlockCondition = require("enums.unlock-condition")
 
 local Castes = require("constants.castes")
 local Unlocks = require("constants.unlocks")
 
 local condition_fns = {
-    [Condition.caste_points] = function(condition)
+    [UnlockCondition.caste_points] = function(condition)
         return {"sosciencity-util.having-points", tostring(condition.count), Castes.values[condition.caste].localised_name_short}
     end
 }
