@@ -211,10 +211,14 @@ local ItemConstants = require("constants.item-constants")
 Gui.Elements.SortableList.linked["compostables"] = {
     data = Tirislib.Luaq.from(ItemConstants.compost_values):select(
         function(name, humus)
+            local prototype = prototypes.item[name]
+
             return {
                 name = name,
                 humus = humus,
-                mold = ItemConstants.mold_producers[name]
+                mold = ItemConstants.mold_producers[name],
+                localised_name = prototype.localised_name,
+                localised_description = prototype.localised_description
             }
         end
     ):to_table(),
@@ -223,10 +227,10 @@ Gui.Elements.SortableList.linked["compostables"] = {
             name = "name",
             localised_name = {"city-view.item"},
             content = function(entry)
-                return {"", string.format("[item=%s] ", entry.name), prototypes.item[entry.name].localised_name}
+                return {"", string.format("[item=%s] ", entry.name), entry.localised_name}
             end,
             tooltip = function(entry)
-                return prototypes.item[entry.name].localised_description
+                return entry.localised_description
             end,
             order = function(entry)
                 return entry.name
@@ -265,5 +269,47 @@ Gui.CityView.add_page {
     creator = function(container)
         Gui.Elements.Label.heading_1(container, {"city-view.compostables-head"})
         Gui.Elements.SortableList.create(container, "compostables")
+    end
+}
+
+local DrinkingWater = require("constants.drinking-water")
+
+Gui.Elements.SortableList.linked["drinking-water"] = {
+    data = DrinkingWater.values,
+    categories = {
+        {
+            name = "name",
+            localised_name = {"sosciencity.drinking-water"},
+            content = function(entry)
+                return {"", string.format("[fluid=%s] ", entry.name), entry.localised_name}
+            end,
+            tooltip = function(entry)
+                return entry.localised_description
+            end,
+            order = function(entry)
+                return entry.name
+            end,
+            constant_font = "default-bold"
+        },
+        {
+            name = "healthiness",
+            localised_name = {"sosciencity.health"},
+            content = function(entry)
+                return entry.healthiness
+            end,
+            order = function (entry)
+                return entry.healthiness
+            end
+        }
+    }
+}
+
+Gui.CityView.add_page {
+    name = "drinking-water",
+    category = "data",
+    localised_name = {"sosciencity.drinking-water"},
+    creator = function(container)
+        Gui.Elements.Label.heading_1(container, {"sosciencity.drinking-water"})
+        Gui.Elements.SortableList.create(container, "drinking-water")
     end
 }

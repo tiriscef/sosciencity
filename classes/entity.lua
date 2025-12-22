@@ -1464,9 +1464,9 @@ local function update_water_distributer(entry)
     -- but needs to be checked often
     if is_active(entry) then
         for fluid_name in pairs(entity.get_fluid_contents()) do
-            local water_value = water_values[fluid_name]
-            if water_value then
-                entry[EK.water_quality] = water_value
+            local water_data = water_values[fluid_name]
+            if water_data then
+                entry[EK.water_quality] = water_data.healthiness
                 entry[EK.water_name] = fluid_name
                 return
             end

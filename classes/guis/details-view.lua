@@ -1833,9 +1833,9 @@ local function create_water_catalogue(container)
 
     local fluid_prototypes = prototypes.fluid
 
-    for water, effect in pairs(DrinkingWater.values) do
+    for water, data in pairs(DrinkingWater.values) do
         local water_representation = {"", format("[fluid=%s]  ", water), fluid_prototypes[water].localised_name}
-        Datalist.add_operand_entry(data_list, water, water_representation, Locale.integer_summand(effect))
+        Datalist.add_operand_entry(data_list, water, water_representation, Locale.integer_summand(data.healthiness))
     end
 end
 
