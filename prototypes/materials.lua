@@ -19,15 +19,27 @@ local material_items = {
         sprite_variations = {name = "sand", count = 3, include_icon = true}
     },
     {
-        name = "lime",
-        use_placeholder_icon = true
+        name = "limestone",
+        sprite_variations = {name = "limestone", count = 3, include_icon = true}
     },
     {
         name = "soda",
-        use_placeholder_icon = true
+        sprite_variations = {name = "soda", count = 3, include_icon = true}
     },
     {name = "glass"},
     {name = "glass-mixture"},
+    {
+        name = "clay-minerals",
+        sprite_variations = {name = "clay-minerals", count = 3, include_icon = true}
+    },
+    {
+        name = "ceramic-mixture",
+        sprite_variations = {name = "ceramic-mixture", count = 3, include_icon = true}
+    },
+    {
+        name = "ceramic",
+        sprite_variations = {name = "ceramic", count = 3, include_icon = true}
+    },
     {
         name = "tools",
         sprite_variations = {name = "tools", count = 5}
@@ -86,6 +98,16 @@ local material_items = {
         name = "furniture",
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100},
         sprite_variations = {name = "furniture", count = 4}
+    },
+    {
+        name = "kitchen-furniture",
+        distinctions = {subgroup = "sosciencity-furniture", stack_size = 100},
+        use_placeholder_icon = true
+    },
+    {
+        name = "bathroom-furniture",
+        distinctions = {subgroup = "sosciencity-furniture", stack_size = 100},
+        use_placeholder_icon = true
     },
     {
         name = "carpet",
@@ -457,7 +479,9 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     product = "pot",
-    themes = {{"ceramic", 2}},
+    ingredients = {
+        {type = "item", name = "ceramic", amount = 2}
+    },
     unlock = "indoor-growing"
 }
 
@@ -465,7 +489,7 @@ Tirislib.RecipeGenerator.create {
     product = "sand",
     energy_required = 4,
     ingredients = {
-        {type = "item", name = "stone", amount = 1}
+        {type = "item", name = "stone", amount = 5}
     },
     unlock = "infrastructure-1"
 }
@@ -484,7 +508,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 1.6,
     ingredients = {
         {type = "item", name = "sand", amount = 5},
-        {type = "item", name = "lime", amount = 1},
+        {type = "item", name = "limestone", amount = 1},
         {type = "item", name = "soda", amount = 1}
     },
     category = Tirislib.RecipeGenerator.category_alias["mixing"],
@@ -506,6 +530,34 @@ Tirislib.RecipeGenerator.create {
     ingredients = {{type = "item", name = "sand", amount = 1}},
     category = "smelting",
     unlock = "infrastructure-1"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "clay-minerals",
+    product_amount = 5,
+    energy_required = 5,
+    ingredients = {
+        {type = "fluid", name = "steam", amount = 600}
+    },
+    category = "sosciencity-clockwork-quarry"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "ceramic-mixture",
+    product_amount = 2,
+    ingredients = {
+        {type = "item", name = "clay-minerals", amount = 2},
+        {type = "item", name = "limestone", amount = 1},
+        {type = "fluid", name = "water", amount = 100}
+    }
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "ceramic",
+    ingredients = {
+        {type = "item", name = "ceramic-mixture", amount = 1}
+    },
+    category = "smelting"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -588,6 +640,24 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
+    product = "kitchen-furniture",
+    themes = {{"piping", 2}},
+    ingredients = {
+        {type = "item", name = "furniture", amount = 2},
+        {type = "item", name = "refrigerator", amount = 1},
+        {type = "item", name = "stove", amount = 1}
+    }
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "bathroom-furniture",
+    themes = {{"piping", 2}, {"plating2", 2}},
+    ingredients = {
+        {type = "item", name = "ceramic", amount = 3}
+    }
+}
+
+Tirislib.RecipeGenerator.create {
     product = "curtain",
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
@@ -636,7 +706,7 @@ Tirislib.RecipeGenerator.create {
         {"wiring", 5, 0},
         {"casing", 1}
     },
-    default_theme_level = 3
+    default_theme_level = 2
 }
 
 Tirislib.RecipeGenerator.create {
@@ -762,7 +832,7 @@ Tirislib.RecipeGenerator.create {
 }:add_unlock("medbay")
 
 Tirislib.RecipeGenerator.create {
-    product = "lime",
+    product = "limestone",
     product_amount = 2,
     energy_required = 4,
     category = "sosciencity-salt-pond"

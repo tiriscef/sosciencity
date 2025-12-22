@@ -124,7 +124,7 @@ for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-eg
     }
 end
 
-for egg_name, egg_data in Biology.egg_data do
+for egg_name, egg_data in pairs(Biology.egg_data) do
     local item = Tirislib.Item.get(egg_name)
     item:add_custom_tooltip {
         name = {"sosciencity.birth-defect-probability"},
