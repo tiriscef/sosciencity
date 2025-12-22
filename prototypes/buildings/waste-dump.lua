@@ -24,6 +24,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "waste-dump"},
     max_health = 200,
     inventory_size = 50,
+    inventory_type = "with_filters_and_bar",
     corpse = "small-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
