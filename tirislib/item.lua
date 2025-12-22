@@ -130,8 +130,7 @@ function Tirislib.Item.batch_create(item_data_array, batch_data)
 
     local created_items = {}
     for index, data in pairs(item_data_array) do
-        local icon =
-            data.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. data.name .. ".png")
+        local icon = data.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. data.name .. ".png")
 
         local prototype = {
             type = prototype_type,
@@ -285,7 +284,27 @@ end
 --- Returns the localised description of the item.
 --- @return locale
 function Tirislib.Item:get_localised_description()
-    return self.localised_description or {"item-description." .. self.name}
+    if self.localised_description then
+        return self.localised_description
+    end
+
+    if self.place_result then
+        local entity = Tirislib.Entity.get_by_name(self.place_result)
+        return entity:get_localised_description()
+    end
+    if self.place_as_equipment_result then
+        local equipment = Tirislib.Prototype.get(equipment_types, self.place_as_equipment_result)
+        return equipment.localised_description or {"equipment-name" .. self.place_as_equipment_result}
+    end
+    if self.place_as_tile then
+        local tile = Tirislib.Prototype.get("tile", self.place_as_tile)
+
+        if tile.localised_description then
+            return tile.localised_description
+        end
+    end
+
+    return {"item-description." .. self.name}
 end
 
 local meta = {
