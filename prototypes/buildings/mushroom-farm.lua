@@ -72,4 +72,4 @@ Tirislib.Entity.create {
         sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
         apparent_volume = 1.5
     }
-}:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(5, 5):copy_icon_from_item()

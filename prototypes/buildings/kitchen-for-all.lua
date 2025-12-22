@@ -50,4 +50,4 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.15},
         drain = "0W"
     }
-}:set_size(5, 5):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(5, 5):copy_icon_from_item()

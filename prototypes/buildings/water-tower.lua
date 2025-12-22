@@ -75,7 +75,7 @@ Tirislib.Entity.create {
     circuit_wire_connection_points = circuit_connector_definitions["storage-tank"].points,
     circuit_connector_sprites = circuit_connector_definitions["storage-tank"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(size_x, size_y):copy_localisation_from_item()
+}:set_size(size_x, size_y)
 
 Tirislib.Entity.create {
     type = "corpse",
@@ -97,5 +97,5 @@ Tirislib.Entity.create {
         shift = {0, -1},
         scale = 0.5
     },
-    localised_name = {"item-name.water-tower"}
+    localised_name = {"entity-name.water-tower"}
 }:set_size(size_x, size_y)

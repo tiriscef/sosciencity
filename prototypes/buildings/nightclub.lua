@@ -82,5 +82,5 @@ Tirislib.Entity.create {
         filename = "__sosciencity-graphics__/sound/nightclub.ogg",
         volume = 2.5
     }
-}:set_size(size_x, size_y):copy_localisation_from_item()
+}:set_size(size_x, size_y)
 Sosciencity_Config.add_eei("nightclub")

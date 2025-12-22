@@ -34,4 +34,4 @@ Tirislib.Entity.create {
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(3, 3):copy_icon_from_item()

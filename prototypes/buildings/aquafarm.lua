@@ -117,4 +117,4 @@ Tirislib.Entity.create {
         }
     },
     off_when_no_fluid_recipe = true
-}:set_size(10, 10):copy_localisation_from_item()
+}:set_size(10, 10)

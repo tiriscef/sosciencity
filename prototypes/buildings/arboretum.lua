@@ -117,7 +117,7 @@ Tirislib.Entity.create {
         }
     },
     off_when_no_fluid_recipe = true
-}:set_size(15, 15):copy_localisation_from_item()
+}:set_size(15, 15)
 
 Tirislib.Entity.create {
     type = "corpse",
@@ -141,5 +141,5 @@ Tirislib.Entity.create {
         shift = {0.0, -1.0},
         scale = 0.5
     },
-    localised_name = {"item-name.arboretum"}
+    localised_name = {"entity-name.arboretum"}
 }:set_size(15, 15)

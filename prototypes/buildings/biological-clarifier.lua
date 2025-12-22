@@ -115,4 +115,4 @@ Tirislib.Entity.create {
             production_type = "output"
         }
     }
-}:set_size(7, 7):copy_localisation_from_item()
+}:set_size(7, 7)

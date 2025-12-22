@@ -54,77 +54,74 @@ local range_descriptions = {
 }
 
 for building_name, details in pairs(Buildings.values) do
-    local item, found = Tirislib.Item.get_by_name(building_name)
-    local entity = Tirislib.Entity.get_by_name(item.place_result)
+    local entity, found = Tirislib.Entity.get_by_name(building_name)
 
-    if found then
-        if details.power_usage then
-            item.localised_description = item:get_localised_description()
+    if not found then
+        goto continue
+    end
 
-            Tirislib.Locales.append(
-                item.localised_description,
-                "\n\n",
-                {"sosciencity-util.power-usage", tostring(details.power_usage * Time.second / 1000)}
-            )
+    if details.power_usage then
+        entity.localised_description = entity:get_localised_description()
 
-            entity:copy_localisation_from_item()
-        end
+        Tirislib.Locales.append(
+            entity.localised_description,
+            "\n\n",
+            {"sosciencity-util.power-usage", tostring(details.power_usage * Time.second / 1000)}
+        )
+    end
 
-        if details.workforce then
-            item.localised_description = item:get_localised_description()
+    if details.workforce then
+        entity.localised_description = entity:get_localised_description()
 
-            local castes =
-                Tirislib.Luaq.from(details.workforce.castes):select(
-                function(_, caste_id)
-                    return Castes.values[caste_id].localised_name_short
-                end
-            ):call(Tirislib.Locales.create_enumeration, nil, {"sosciencity.or"})
-
-            Tirislib.Locales.append(
-                item.localised_description,
-                "\n\n",
-                {
-                    "sosciencity-util.workforce",
-                    tostring(details.workforce.count),
-                    castes
-                }
-            )
-
-            entity:copy_localisation_from_item()
-        end
-
-        if details.range then
-            item.localised_description = item:get_localised_description()
-
-            Tirislib.Locales.append(
-                item.localised_description,
-                "\n\n",
-                {
-                    "sosciencity-util.official-looking-point",
-                    {"sosciencity.range"},
-                    details.range == "global" and {"sosciencity.global-range"} or
-                        {"sosciencity.show-range", tostring(details.range * 2)}
-                }
-            )
-
-            if range_descriptions[details.type] then
-                Tirislib.Locales.append(
-                    item.localised_description,
-                    "\n",
-                    {"sosciencity.grey", range_descriptions[details.type]}
-                )
+        local castes =
+            Tirislib.Luaq.from(details.workforce.castes):select(
+            function(_, caste_id)
+                return Castes.values[caste_id].localised_name_short
             end
+        ):call(Tirislib.Locales.create_enumeration, nil, {"sosciencity.or"})
 
-            entity:copy_localisation_from_item()
-        end
-
-        if details.inhabitant_count then
-            item:add_custom_tooltip {
-                name = {"sosciencity.inhabitants-needed"},
-                value = tostring(details.inhabitant_count)
+        Tirislib.Locales.append(
+            entity.localised_description,
+            "\n\n",
+            {
+                "sosciencity-util.workforce",
+                tostring(details.workforce.count),
+                castes
             }
+        )
+    end
+
+    if details.inhabitant_count then
+        entity:add_custom_tooltip {
+            name = {"sosciencity.inhabitants-needed"},
+            value = tostring(details.inhabitant_count)
+        }
+    end
+
+    if details.range then
+        entity.localised_description = entity:get_localised_description()
+
+        Tirislib.Locales.append(
+            entity.localised_description,
+            "\n\n",
+            {
+                "sosciencity-util.official-looking-point",
+                {"sosciencity.range"},
+                details.range == "global" and {"sosciencity.global-range"} or
+                    {"sosciencity.show-range", tostring(details.range * 2)}
+            }
+        )
+
+        if range_descriptions[details.type] then
+            Tirislib.Locales.append(
+                entity.localised_description,
+                "\n",
+                {"sosciencity.grey", range_descriptions[details.type]}
+            )
         end
     end
+
+    ::continue::
 end
 
 -- Medicine items that are used to cure diseases

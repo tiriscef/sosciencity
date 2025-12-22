@@ -73,4 +73,4 @@ Tirislib.Entity.create {
         filename = "__sosciencity-graphics__/sound/slaughter-pit.ogg",
         volume = 0.5
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(3, 3)
