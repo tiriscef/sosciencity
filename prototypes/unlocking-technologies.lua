@@ -11,7 +11,7 @@ Tirislib.Item.create {
     is_hack = true
 }
 
-for tech_name, item_name in pairs(Unlocks.by_item_aquisition) do
+for tech_name, item_name in pairs(Unlocks.by_item_acquisition) do
     local item = Tirislib.Item.get_by_name(item_name)
     local localised_name = item:get_localised_name()
 

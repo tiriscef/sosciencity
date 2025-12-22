@@ -43,10 +43,15 @@ local tracked_multi_level_techs = {
 }
 
 local gated_technologies
-local unlocks = Unlocks.by_item_aquisition
+local unlocks = Unlocks.by_item_acquisition
 local unlocked
 
 local floor = math.floor
+
+local function set_locals()
+    unlocked = storage.unlocked
+    gated_technologies = storage.gated_technologies
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << general >>
@@ -61,13 +66,14 @@ local function determine_tech_level(name)
         return tech.level - 1
     end
 
+    -- case two: there are multiple technologies named 'name-number'
     local details = tracked_multi_level_techs[name]
     while techs[name .. "-" .. (level + 1)].researched do
         level = level + 1
     end
 
-    --for some reason the level of the infinite technology always returns level + 1
-    --and .researched always returns false
+    -- for some reason the level of the infinite technology always returns level + 1
+    -- and .researched always returns false
     if level == details.max_finite_level then
         level = techs[name .. "-" .. (level + 1)].level - 1
     end
@@ -102,13 +108,17 @@ function Technologies.finished(name)
     end
 end
 
-local function unlock(technology_name)
+--- Sets the technology with the given name to researched.
+--- @param technology_name string
+local function research(technology_name)
     local tech = game.forces.player.technologies[technology_name]
     tech.researched = true
     unlocked[technology_name] = true
     Communication.inform(InformationType.acquisition_unlock, tech.localised_name)
 end
 
+--- Sets the technology with the given name to enabled such that it can be researched by the player.
+--- @param technology_name string
 local function enable(technology_name)
     local tech = game.forces.player.technologies[technology_name]
     tech.enabled = true
@@ -116,9 +126,20 @@ local function enable(technology_name)
     Communication.inform(InformationType.unlocked_gated_technology, tech.localised_name)
 end
 
-local condition_fns = {
-    [UnlockCondition.caste_points] = function(details)
-        return storage.caste_points[details.caste] >= details.count
+local unlocking_condition_check_fns = {
+    [UnlockCondition.item_acquisition] = function(condition)
+        local production_statistics = game.forces.player.get_item_production_statistics("nauvis")
+
+        return production_statistics.get_input_count(condition.item) > 0
+    end,
+    [UnlockCondition.caste_points] = function(condition)
+        return storage.caste_points[condition.caste] >= condition.count
+    end,
+    [UnlockCondition.caste_population] = function(condition)
+        return storage.population[condition.caste] >= condition.count
+    end,
+    [UnlockCondition.population] = function(condition)
+        return Tirislib.Tables.array_sum(storage.population) >= condition.count
     end
 }
 
@@ -130,24 +151,26 @@ function Technologies.update()
         if not already_unlocked then
             production = production or game.forces.player.get_item_production_statistics("nauvis")
             if production.get_input_count(unlocks[technology_name]) > 0 then
-                unlock(technology_name)
+                research(technology_name)
             end
         end
     end
 
     -- check the gated technologies
     for technology_name, already_enabled in pairs(gated_technologies) do
-        if not already_enabled then
-            local met = true
+        if already_enabled then
+            goto continue
+        end
 
-            for _, condition in pairs(Unlocks.gated_technologies[technology_name]) do
-                met = met and condition_fns[condition.type](condition)
-            end
-
-            if met then
-                enable(technology_name)
+        for _, condition in pairs(Unlocks.gated_technologies[technology_name]) do
+            if not unlocking_condition_check_fns[condition.type](condition) then
+                goto continue
             end
         end
+
+        enable(technology_name)
+
+        ::continue::
     end
 end
 
@@ -155,7 +178,7 @@ function Technologies.on_mined_entity(inventory)
     for technology_name, already_unlocked in pairs(unlocked) do
         if not already_unlocked then
             if inventory.get_item_count(unlocks[technology_name]) > 0 then
-                unlock(technology_name)
+                research(technology_name)
             end
         end
     end
@@ -175,11 +198,6 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
-
-local function set_locals()
-    unlocked = storage.unlocked
-    gated_technologies = storage.gated_technologies
-end
 
 function Technologies.init()
     local techs = game.forces.player.technologies

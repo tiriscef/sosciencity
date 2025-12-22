@@ -1,15 +1,15 @@
 local UnlockCondition = require("enums.unlock-condition")
 local Type = require("enums.type")
 
---- Returns an array with (technology_name, item_name)-pairs.
---- The technologies are hidden and get enabled when the player aquired the given item.
+--- Custom technology enabling/researching methods.
 local Unlocks = {}
 
 local function get_tech_name(item_name)
     return string.format("sosciencity-unlock-%s", item_name)
 end
 
-Unlocks.by_item_aquisition = {
+--- Technologies that are researched by aquiring a given item.
+Unlocks.by_item_acquisition = {
     [get_tech_name("apple")] = "apple",
     [get_tech_name("avocado")] = "avocado",
     [get_tech_name("bell-pepper")] = "bell-pepper",
@@ -41,6 +41,7 @@ Unlocks.by_item_aquisition = {
     [get_tech_name("warnal")] = "warnal"
 }
 
+--- Technologies that are gated by one or more conditions.
 Unlocks.gated_technologies = {
     ["explore-alien-flora-1"] = {
         {
@@ -65,7 +66,7 @@ Unlocks.gated_technologies = {
 function Unlocks.get_tech_name(item_name)
     local name = get_tech_name(item_name)
 
-    if not Unlocks.by_item_aquisition[name] then
+    if not Unlocks.by_item_acquisition[name] then
         log("Unregistered unlocking technology name: " .. item_name)
     end
 
