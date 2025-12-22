@@ -368,8 +368,7 @@ local function create_item(house_name, house, details)
         order = get_order(house),
         stack_size = details.stack_size or Sosciencity_Config.building_stacksize,
         place_result = house_name,
-        pictures = Sosciencity_Config.blueprint_on_belt,
-        localised_description = get_localised_description(house_name, house)
+        pictures = Sosciencity_Config.blueprint_on_belt
     }
 
     Tirislib.Tables.set_fields(item_prototype, details.distinctions)
@@ -472,7 +471,6 @@ local function create_entity(house_name, house, details)
 
     if details.main_entity ~= "improvised-hut" then
         entity:add_mining_result({type = "item", name = details.main_entity, amount = 1})
-        entity:copy_localisation_from_item(details.main_entity)
     else
         entity:add_mining_result(
             {

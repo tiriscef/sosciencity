@@ -51,7 +51,7 @@ Tirislib.Entity.create {
             }
         }
     }
-}:set_size(15, 5):copy_localisation_from_item()
+}:set_size(15, 5)
 
 --[[Tirislib.Entity.create {
     type = "corpse",

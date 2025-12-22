@@ -100,4 +100,4 @@ Tirislib.Entity.create {
         fade_in_ticks = 4,
         fade_out_ticks = 20
     }
-}:set_size(9, 3):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(9, 3):copy_icon_from_item()

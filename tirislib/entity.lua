@@ -474,6 +474,10 @@ end
 --- @param item_name string?
 --- @return EntityPrototype itself
 function Tirislib.Entity:copy_localisation_from_item(item_name)
+    if Tirislib then
+        return self
+    end
+
     if not item_name then
         if self.minable then
             -- TODO: annoying case of results-table instead of single result

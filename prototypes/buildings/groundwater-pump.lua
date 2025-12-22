@@ -80,7 +80,7 @@ Tirislib.Entity.create {
             production_type = "output"
         }
     }
-}:set_size(3, 3):copy_localisation_from_item()
+}:set_size(3, 3)
 
 Tirislib.Entity.create {
     type = "corpse",
@@ -102,5 +102,5 @@ Tirislib.Entity.create {
         shift = {0.5, -1},
         scale = 0.5
     },
-    localised_name = {"item-name.groundwater-pump"}
+    localised_name = {"entity-name.groundwater-pump"}
 }:set_size(3, 3)

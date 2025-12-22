@@ -55,7 +55,7 @@ Tirislib.Entity.create {
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(4, 4):copy_localisation_from_item()
+}:set_size(4, 4)
 
 Tirislib.Entity.create {
     type = "corpse",
@@ -77,5 +77,5 @@ Tirislib.Entity.create {
         shift = {0.5, -0.5},
         scale = 0.5 * 0.8
     },
-    localised_name = {"item-name.trash-site"}
+    localised_name = {"entity-name.trash-site"}
 }:set_size(4, 4)

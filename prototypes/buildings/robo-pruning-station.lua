@@ -49,5 +49,5 @@ Tirislib.Entity.create {
         max_sounds_per_type = 3,
         audible_distance_modifier = 0.75
     }
-}:set_size(5, 3):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(5, 3):copy_icon_from_item()
 Sosciencity_Config.add_eei("robo-pruning-station")

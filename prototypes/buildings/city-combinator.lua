@@ -374,4 +374,4 @@ Tirislib.Entity.create {
             volume = 0.5
         }
     }
-}:copy_localisation_from_item()
+}

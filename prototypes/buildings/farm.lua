@@ -159,7 +159,7 @@ Tirislib.Entity.create {
             production_type = "input"
         }
     }
-}:set_size(15, 7):copy_localisation_from_item()
+}:set_size(15, 7)
 
 Tirislib.Entity.create {
     type = "corpse",
@@ -203,5 +203,5 @@ Tirislib.Entity.create {
             }
         }
     },
-    localised_name = {"item-name.farm"}
+    localised_name = {"entity-name.farm"}
 }:set_size(15, 7)

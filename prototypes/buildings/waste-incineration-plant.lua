@@ -72,4 +72,4 @@ Tirislib.Entity.create {
         }
     },
     max_power_output = "2.5MW"
-}:set_size(13, 7):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(13, 7):copy_icon_from_item()

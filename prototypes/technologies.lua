@@ -1109,7 +1109,7 @@ Tirislib.Technology.create {
         },
         time = 15
     },
-    localised_name = {"item-name.composting-silo"}
+    localised_name = {"entity-name.composting-silo"}
 }
 
 Tirislib.Technology.create {

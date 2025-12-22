@@ -68,4 +68,4 @@ Tirislib.Entity.create {
             production_type = "input"
         }
     }
-}:set_size(3, 3):copy_localisation_from_item():copy_icon_from_item()
+}:set_size(3, 3):copy_icon_from_item()
