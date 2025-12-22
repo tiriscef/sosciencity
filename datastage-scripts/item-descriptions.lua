@@ -11,20 +11,20 @@ for item_name, humus in pairs(ItemConstants.compost_values) do
     local item, found = Tirislib.Item.get_by_name(item_name)
 
     if found then
-        -- This ensures the description isn't implicit.
-        item.localised_description = item:get_localised_description()
-        Tirislib.Locales.append(
-            item.localised_description,
-            "\n\n",
-            {"sosciencity-util.compostables", Tirislib.Locales.display_item_stack_datastage("humus", humus)}
-        )
-        if ItemConstants.mold_producers[item_name] then
-            Tirislib.Locales.append(
-                item.localised_description,
-                ", ",
-                Tirislib.Locales.display_item_stack_datastage("mold", 1)
+        local localised_output = Tirislib.Locales.display_item_stack_datastage("humus", humus)
+        local produces_mold = ItemConstants.mold_producers[item_name]
+        if produces_mold then
+            localised_output =
+                Tirislib.Locales.create_enumeration(
+                {localised_output, Tirislib.Locales.display_item_stack_datastage("mold", 1)},
+                ", "
             )
         end
+
+        item:add_custom_tooltip {
+            name = {"sosciencity-util.compostable"},
+            value = localised_output
+        }
     end
 end
 
@@ -119,9 +119,7 @@ for building_name, details in pairs(Buildings.values) do
         end
 
         if details.inhabitant_count then
-            item.custom_tooltip_fields = item.custom_tooltip_fields or {}
-
-            item.custom_tooltip_fields[#item.custom_tooltip_fields+1] = {
+            item:add_custom_tooltip {
                 name = {"sosciencity.inhabitants-needed"},
                 value = tostring(details.inhabitant_count)
             }
@@ -144,9 +142,7 @@ for medicine_item, diseases in pairs(medicine_items) do
     local item, found = Tirislib.Item.get_by_name(medicine_item)
 
     if found then
-        item.custom_tooltip_fields = item.custom_tooltip_fields or {}
-
-        item.custom_tooltip_fields[#item.custom_tooltip_fields + 1] = {
+        item:add_custom_tooltip {
             name = {"sosciencity-util.used-to-cure"},
             value = Tirislib.Locales.create_enumeration(diseases, ", ")
         }
