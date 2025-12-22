@@ -4,8 +4,19 @@ local Castes = require("constants.castes")
 local Unlocks = require("constants.unlocks")
 
 local condition_fns = {
+    [UnlockCondition.item_acquisition] = function(condition)
+        local item = Tirislib.Item.get_by_name(condition.item)
+
+        return {"sosciencity-util.acquisition", item:get_localised_name()}
+    end,
     [UnlockCondition.caste_points] = function(condition)
         return {"sosciencity-util.having-points", tostring(condition.count), Castes.values[condition.caste].localised_name_short}
+    end,
+    [UnlockCondition.caste_population] = function (condition)
+        return {"sosciencity-util.caste-population", tostring(condition.count), Castes.values[condition.caste].localised_name_short}
+    end,
+    [UnlockCondition.population] = function(condition)
+        return {"sosciencity-util.population", tostring(condition.count)}
     end
 }
 
