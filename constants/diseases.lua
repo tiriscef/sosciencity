@@ -30,7 +30,7 @@ Diseases.not_curable = 1000000000
 --- @field complication_probability number
 --- @field complication_lethality number
 --- @field work_effectivity number
---- @field reports_per_tretment number
+--- @field reports_per_treatment number
 
 --- Disease definitions<br>
 --- **name:** prototype name of the disease<br>
@@ -66,7 +66,7 @@ Diseases.values = {
             [DiseaseCategory.escalation] = 1
         },
         work_effectivity = 0.5,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [2] = {
         name = "broken-bone",
@@ -78,7 +78,7 @@ Diseases.values = {
         natural_recovery = 3 * Time.nauvis_week,
         categories = {[DiseaseCategory.accident] = 150},
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [3] = {
         name = "burnt-skin",
@@ -89,7 +89,7 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.accident] = 300},
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [4] = {
         name = "deep-cuts",
@@ -101,7 +101,7 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.accident] = 300},
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [5] = {
         name = "biter-bite",
@@ -116,7 +116,7 @@ Diseases.values = {
         escalation = "necrosis",
         escalation_probability = 0.25,
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [6] = {
         name = "joint-dislocation",
@@ -126,7 +126,7 @@ Diseases.values = {
         escalation = "limb-loss",
         escalation_probability = 0.1,
         work_effectivity = 0,
-        reports_per_tretment = 0.5
+        reports_per_treatment = 0.5
     },
     [7] = {
         name = "hematoma",
@@ -146,7 +146,7 @@ Diseases.values = {
         lethality = 0.1,
         categories = {[DiseaseCategory.sanity] = 50},
         work_effectivity = 0.5,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [1001] = {
         name = "schizophrenia",
@@ -158,7 +158,7 @@ Diseases.values = {
         lethality = 0.2,
         categories = {[DiseaseCategory.sanity] = 50},
         work_effectivity = 0.3,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [1002] = {
         name = "reality-loss",
@@ -170,7 +170,7 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100},
         work_effectivity = 0.3,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [1003] = {
         name = "factorio-addiction",
@@ -179,7 +179,7 @@ Diseases.values = {
         natural_recovery = 2 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100},
         work_effectivity = 0.5,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [1004] = {
         name = "burnout",
@@ -188,7 +188,7 @@ Diseases.values = {
         natural_recovery = 3 * Time.nauvis_week,
         categories = {[DiseaseCategory.sanity] = 100},
         work_effectivity = 0.25,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     -- 2000+: primarily health related
     [2000] = {
@@ -200,7 +200,7 @@ Diseases.values = {
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.25,
-        reports_per_tretment = 0.5
+        reports_per_treatment = 0.5
     },
     [2001] = {
         name = "yeast-infection",
@@ -213,7 +213,7 @@ Diseases.values = {
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.5,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [2002] = {
         name = "riverhorse-like-flu",
@@ -227,7 +227,7 @@ Diseases.values = {
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.5,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [2003] = {
         name = "headaches",
@@ -238,7 +238,7 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         work_effectivity = 0.5,
-        reports_per_tretment = 0.25
+        reports_per_treatment = 0.25
     },
     [2004] = {
         name = "diarrhea",
@@ -250,7 +250,7 @@ Diseases.values = {
         natural_recovery = 2 * Time.nauvis_day,
         categories = {[DiseaseCategory.health] = 100},
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [2005] = {
         name = "exhaustion",
@@ -262,7 +262,7 @@ Diseases.values = {
             [DiseaseCategory.accident] = 200
         },
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [2006] = {
         name = "kidney-stone",
@@ -272,7 +272,7 @@ Diseases.values = {
             [DiseaseCategory.health] = 300
         },
         work_effectivity = 0.2,
-        reports_per_tretment = 0.5
+        reports_per_treatment = 0.5
     },
     -- 3000+: primarily escalation diseases
     [3000] = {
@@ -290,7 +290,7 @@ Diseases.values = {
             [DiseaseCategory.complication] = 1
         },
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [3001] = {
         name = "necrosis",
@@ -307,7 +307,7 @@ Diseases.values = {
             [DiseaseCategory.escalation] = 1
         },
         work_effectivity = 0,
-        reports_per_tretment = 2
+        reports_per_treatment = 2
     },
     -- 4000+: primarily birth defects
     [4000] = {
@@ -330,7 +330,7 @@ Diseases.values = {
             [DiseaseCategory.birth_defect] = 100
         },
         work_effectivity = 0.4,
-        reports_per_tretment = 2
+        reports_per_treatment = 2
     },
     [4001] = {
         name = "gender-dysphoria",
@@ -344,7 +344,7 @@ Diseases.values = {
         --curing_facility = Type.gene_clinic,
         categories = {[DiseaseCategory.birth_defect] = 50},
         work_effectivity = 0.7,
-        reports_per_tretment = 2
+        reports_per_treatment = 2
     },
     [4002] = {
         name = "lack-of-purple-blood-cells",
@@ -356,7 +356,7 @@ Diseases.values = {
             [DiseaseCategory.birth_defect] = 600
         },
         work_effectivity = 0.3,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [4003] = {
         name = "huntingtons",
@@ -371,7 +371,7 @@ Diseases.values = {
         natural_recovery = 3 * Time.nauvis_month,
         lethality = 1,
         work_effectivity = 0.6,
-        reports_per_tretment = 2
+        reports_per_treatment = 2
     },
     -- 5000+: primarily zoonoses
     [5001] = {
@@ -387,7 +387,7 @@ Diseases.values = {
         escalation = "lung-infection",
         escalation_probability = 0.2,
         work_effectivity = 0,
-        reports_per_tretment = 0.5
+        reports_per_treatment = 0.5
     },
     -- 9000+: primarily malnutrition
     [9000] = {
@@ -400,7 +400,7 @@ Diseases.values = {
         lethality = 0.9,
         natural_recovery = 3 * Time.nauvis_day,
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [9001] = {
         name = "marasmus",
@@ -411,7 +411,7 @@ Diseases.values = {
         lethality = 0.9,
         natural_recovery = 3 * Time.nauvis_day,
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     -- 10000+: primarily dehydration
     [10000] = {
@@ -425,7 +425,7 @@ Diseases.values = {
         escalation = "severe-dehydration",
         escalation_probability = 0.7,
         work_effectivity = 0.5,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [10001] = {
         name = "severe-dehydration",
@@ -439,7 +439,7 @@ Diseases.values = {
         escalation = "extreme-dehydration",
         escalation_probability = 1,
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     [10002] = {
         name = "extreme-dehydration",
@@ -453,7 +453,7 @@ Diseases.values = {
         lethality = 1,
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0,
-        reports_per_tretment = 1
+        reports_per_treatment = 1
     },
     -- 11000+: primarily food poisoning
 

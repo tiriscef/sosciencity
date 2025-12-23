@@ -118,31 +118,54 @@ function Inventories.cache_contents(entry)
     entry[EK.inventory_contents] = get_chest_inventory(entry).get_contents()
 end
 
---- Tries to insert the given amount of the given item into the inventory and adds the inserted items to the production statistics.
---- Returns the amount that was actually inserted.
+--- Tries to insert the given count of the given item into the inventory and adds the inserted items to the production statistics.
+--- Returns the count that was actually inserted.
 --- @param inventory LuaInventory
 --- @param item string
---- @param amount number
---- @param suppress_logging boolean|nil
+--- @param count number
+--- @param suppress_logging boolean?
 --- @return integer
-function Inventories.try_insert(inventory, item, amount, suppress_logging)
-    if amount <= 0 then
+function Inventories.try_insert(inventory, item, count, suppress_logging)
+    if count <= 0 then
         return 0
     end
 
-    local inserted_amount =
+    local inserted_count =
         inventory.insert {
         name = item,
-        count = amount
+        count = count
     }
 
     if not suppress_logging then
-        log_item(item, inserted_amount)
+        log_item(item, inserted_count)
     end
 
-    return inserted_amount
+    return inserted_count
 end
 local try_insert = Inventories.try_insert
+
+--- Tries to insert the given count of the given item into the given inventories and adds the inserted items to the production statistics.<br>
+--- Returns the count that was actually inserted.
+--- @param inventories LuaInventory[]
+--- @param item string
+--- @param count integer
+--- @param suppress_logging boolean?
+--- @return integer
+function Inventories.try_insert_into_inventory_range(inventories, item, count, suppress_logging)
+    if count <= 0 then
+        return 0
+    end
+
+    local inserted_count = 0
+    for _, inventory in pairs(inventories) do
+        inserted_count = inserted_count + try_insert(inventory, item, count - inserted_count, suppress_logging)
+        if inserted_count == count then
+            break
+        end
+    end
+
+    return inserted_count
+end
 
 --- Tries to remove the given amount of the given item from the inventory and adds the removed items to the production statistics.
 --- Returns the amount that was actually removed.
@@ -253,7 +276,7 @@ function Inventories.remove_item_range_from_inventory_range(inventories, items)
     end
 end
 
---- Tries to move the specified amount of items from the source inventory to the destination inventory. Assumes this amount of items actually exists in the source inventory.can_insert
+--- Tries to move the specified amount of items from the source inventory to the destination inventory. Assumes this amount of items actually exists in the source inventory.
 --- @param item string
 --- @param count integer
 --- @param source_inventory LuaInventory
