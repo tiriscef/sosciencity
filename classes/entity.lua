@@ -1079,6 +1079,9 @@ Register.set_entity_updater(Type.market, Inventories.cache_contents)
 ---------------------------------------------------------------------------------------------------
 -- << hospital >>
 
+--- Returns the LuaInventory of the given hospital and all hospital complement buildings connected to it.
+--- @param entry Entry hospital
+--- @return LuaInventory[]
 function Entity.get_hospital_inventories(entry)
     local ret = {get_chest_inventory(entry)}
 
@@ -1110,6 +1113,13 @@ local function create_hospital(entry)
     entry[EK.treatment_permissions] = {}
     entry[EK.blood_donation_threshold] = 100
     entry[EK.blood_donations] = 0
+
+    -- if the hospital doesn't already have filters set up, filter the first slot for medical reports
+    local inventory = get_chest_inventory(entry)
+    if not inventory.supports_filters() or inventory.is_filtered() then
+        return
+    end
+    inventory.set_filter(1, "medical-report")
 end
 Register.set_entity_creation_handler(Type.hospital, create_hospital)
 Register.set_entity_creation_handler(Type.improvised_hospital, create_hospital)
