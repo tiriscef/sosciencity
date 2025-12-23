@@ -1456,11 +1456,11 @@ local special_sideeffect_fns = {
 }
 
 --- Determines the side effects of a cured disease.
----@param entry Entry
----@param disease_id DiseaseID
----@param count integer
----@param cured boolean
----@param new_diseases table Holds the escalation or complication diseases that are to be added.
+--- @param entry Entry
+--- @param disease_id DiseaseID
+--- @param count integer
+--- @param cured boolean
+--- @param new_diseases table Holds the escalation or complication diseases that are to be added.
 local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
     local disease = disease_values[disease_id]
 
@@ -1658,6 +1658,12 @@ local function treat_diseases(entry, hospitals, diseases, disease_group, new_dis
             local treated = try_treat_disease(hospital, contents, inventories, disease_group, disease_id, count)
 
             if treated > 0 then
+                local disease_data = disease_values[disease_id]
+                local reports_generated = Utils.coin_flips_overcrit(disease_data.reports_per_treatment, treated, 5)
+                if reports_generated > 0 then
+                    Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports_generated)
+                end
+
                 cure_side_effects(entry, disease_id, treated, true, new_diseases)
                 local statistics = hospital[EK.treated]
                 statistics[disease_id] = (statistics[disease_id] or 0) + treated

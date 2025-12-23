@@ -506,7 +506,7 @@ end
 --- of times and extrapolate for bigger values.
 --- @param probability number
 --- @param count integer
---- @param actual_count integer|nil defaults to 20
+--- @param actual_count integer? defaults to 20
 --- @return integer success_count
 function Tirislib.Utils.coin_flips(probability, count, actual_count)
     actual_count = actual_count or 20
@@ -527,6 +527,19 @@ function Tirislib.Utils.coin_flips(probability, count, actual_count)
     end
 
     return successes
+end
+local coin_flips = Tirislib.Utils.coin_flips
+
+--- Flips a coin the given number of times and returns the number of successes.<br>
+--- Implements an 'overcrit'-logic, meaning probabilities over 100% will guarantee one success per 100% and flip with the remaining percentage.
+--- @param probability number
+--- @param count integer
+--- @param actual_count integer?
+function Tirislib.Utils.coin_flips_overcrit(probability, count, actual_count)
+    local guaranteed = floor(probability)
+    probability = probability - guaranteed
+
+    return coin_flips(probability, count, actual_count) + guaranteed
 end
 
 --- Returns an integer in the given intervall that is different that the given number n.
