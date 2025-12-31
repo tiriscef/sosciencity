@@ -143,7 +143,7 @@ local material_items = {
         name = "feathers",
         sprite_variations = {name = "feather-pile", count = 4}
     },
-    {name = "ink"},
+    {name = "dye"},
     {
         name = "writing-paper",
         sprite_variations = {name = "writing-paper-pile", count = 4}
@@ -670,7 +670,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "lumber", amount = 1},
         {type = "item", name = "cloth", amount = 1},
-        {type = "item", name = "ink", amount = 1}
+        {type = "item", name = "dye", amount = 1}
     },
     category = "sosciencity-caste-ember"
 }
@@ -710,7 +710,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "ink",
+    product = "dye",
     ingredients = {
         {type = "fluid", name = "water", amount = 10},
         {type = "item", name = "ferrous-sulfate", amount = 1},
