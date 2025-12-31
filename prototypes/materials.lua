@@ -143,7 +143,19 @@ local material_items = {
         name = "feathers",
         sprite_variations = {name = "feather-pile", count = 4}
     },
-    {name = "dye"},
+    {
+        name = "dye",
+        sprite_variations = {name = "dye", count = 3, include_icon = true}
+    },
+    {
+        name = "wax",
+        use_placeholder_icon = true,
+        distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}
+    },
+    {
+        name = "crayons",
+        sprite_variations = {name = "crayons", count = 4}
+    },
     {
         name = "writing-paper",
         sprite_variations = {name = "writing-paper-pile", count = 4}
@@ -712,12 +724,38 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     product = "dye",
     ingredients = {
+        {type = "item", name = "wild-flowers", amount = 10}
+    },
+    unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "dye",
+    ingredients = {
+        {type = "item", name = "chromafall", amount = 2}
+    },
+    unlock = "orchid-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "dye",
+    product_amount = 5,
+    ingredients = {
         {type = "fluid", name = "water", amount = 10},
         {type = "item", name = "ferrous-sulfate", amount = 1},
-        {type = "item", name = "necrofall", amount = 2}
+        {type = "item", name = "chromafall", amount = 2}
     },
     category = "chemistry",
     unlock = "clockwork-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "crayons",
+    ingredients = {
+        {type = "item", name = "wax", amount = 1},
+        {type = "item", name = "dye", amount = 1}
+    },
+    --unlock = "ember-caste"
 }
 
 Tirislib.RecipeGenerator.create {
