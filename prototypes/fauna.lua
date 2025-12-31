@@ -131,7 +131,7 @@ local animals = {
         name = "dodkopus",
         size = 80,
         water_animal = true,
-        slaughter_byproducts = {{type = "item", name = "ink", amount = 3}},
+        slaughter_byproducts = {{type = "item", name = "dye", amount = 3}},
         unlock = Unlocks.get_tech_name("dodkopus"),
         food_theme = "breed_water_carnivores"
     },
@@ -139,7 +139,7 @@ local animals = {
         name = "ultra-squibbel",
         size = 100,
         water_animal = true,
-        slaughter_byproducts = {{type = "item", name = "ink", amount = 10}},
+        slaughter_byproducts = {{type = "item", name = "dye", amount = 10}},
         not_breedable = true,
         unlock = Unlocks.get_tech_name("squibbel"),
         food_theme = "breed_water_omnivores"
@@ -148,7 +148,7 @@ local animals = {
         name = "miniscule-squibbel",
         size = 250,
         water_animal = true,
-        slaughter_byproducts = {{type = "item", name = "ink", amount = 4}},
+        slaughter_byproducts = {{type = "item", name = "dye", amount = 4}},
         unlock = Unlocks.get_tech_name("squibbel"),
         food_theme = "breed_water_omnivores"
     },
