@@ -118,7 +118,7 @@ Building.values = {
     ["cold-storage-warehouse"] = {
         type = Type.cold_storage,
         power_usage = 300,
-        spoil_slowdown = 0.8
+        spoil_slowdown = 0.9
     },
     ["egg-collecting-station"] = {
         type = Type.egg_collector,
@@ -356,6 +356,10 @@ Building.values = {
         type = Type.salt_pond,
         range = 10.5,
         water_tiles = 45
+    },
+    ["storage-cellar"] = {
+        type = Type.cold_storage,
+        spoil_slowdown = 0.6
     },
     ["trash-site"] = {
         type = Type.dumpster,
