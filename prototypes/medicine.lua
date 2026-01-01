@@ -5,21 +5,54 @@ local Food = require("constants.food")
 -- << items >>
 
 local medicine_items = {
-    {name = "medical-report", use_placeholder_icon = true},
-    {name = "activated-carbon", sprite_variations = {name = "activated-carbon", count = 3, include_icon = true}},
+    {
+        name = "medical-report",
+        sprite_variations = {name = "medical-report", count = 3, include_icon = true}
+    },
+    {
+        name = "activated-carbon",
+        sprite_variations = {name = "activated-carbon", count = 3, include_icon = true}
+    },
     {name = "artificial-limb"},
     {name = "artificial-heart"},
-    {name = "bandage", sprite_variations = {name = "bandage-pile", count = 3}},
+    {
+        name = "bandage",
+        sprite_variations = {name = "bandage-pile", count = 3}
+    },
     {name = "isotonic-saline-solution"},
     {name = "blood-bag"},
-    {name = "psychotropics", sprite_variations = {name = "psychotropics-pile", count = 3}},
-    {name = "analgesics", sprite_variations = {name = "analgesics-pile", count = 3}},
-    {name = "potent-analgesics", sprite_variations = {name = "potent-analgesics-pile", count = 3}},
-    {name = "anesthetics", sprite_variations = {name = "anesthetics-pile", count = 3}},
-    {name = "antibiotics", sprite_variations = {name = "antibiotics-pile", count = 3}},
-    {name = "antimycotics", sprite_variations = {name = "antimycotics-pile", count = 3}},
-    {name = "vitamine-supplements", use_placeholder_icon = true},
-    {name = "nutritional-supplements", use_placeholder_icon = true}
+    {
+        name = "psychotropics",
+        sprite_variations = {name = "psychotropics-pile", count = 3}
+    },
+    {
+        name = "analgesics",
+        sprite_variations = {name = "analgesics-pile", count = 3}
+    },
+    {
+        name = "potent-analgesics",
+        sprite_variations = {name = "potent-analgesics-pile", count = 3}
+    },
+    {
+        name = "anesthetics",
+        sprite_variations = {name = "anesthetics-pile", count = 3}
+    },
+    {
+        name = "antibiotics",
+        sprite_variations = {name = "antibiotics-pile", count = 3}
+    },
+    {
+        name = "antimycotics",
+        sprite_variations = {name = "antimycotics-pile", count = 3}
+    },
+    {
+        name = "vitamine-supplements",
+        use_placeholder_icon = true
+    },
+    {
+        name = "nutritional-supplements",
+        use_placeholder_icon = true
+    }
 }
 
 Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
@@ -342,7 +375,10 @@ Tirislib.RecipeGenerator.create {
     product = "sosciencity-emergency-ration",
     name = "sosciencity-emergency-ration",
     category = "sosciencity-handcrafting",
-    localised_description = {"recipe-description.sosciencity-emergency-ration", tostring(Food.emergency_ration_calories)}
+    localised_description = {
+        "recipe-description.sosciencity-emergency-ration",
+        tostring(Food.emergency_ration_calories)
+    }
 }
 
 -- TODO: emergency ration needs a non-handcrafting recipe because I want to use it as a medicine item
