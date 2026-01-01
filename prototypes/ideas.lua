@@ -27,7 +27,7 @@ Tirislib.Recipe.create {
     category = "sosciencity-handcrafting",
     enabled = true,
     energy_required = 5,
-    ingredients = {{type = "item", name = "writing-paper", amount = 2}},
+    ingredients = {{type = "item", name = "paper", amount = 2}},
     results = {
         {type = "item", name = "sketchbook", amount_min = 2, amount_max = 4}
     },
@@ -45,7 +45,7 @@ Tirislib.Recipe.create {
     enabled = false,
     energy_required = 5,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 1},
+        {type = "item", name = "paper", amount = 1},
         {type = "item", name = "phytofall-blossom", amount = 1}
     },
     results = {
@@ -64,7 +64,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-ember",
     energy_required = 2,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 1},
+        {type = "item", name = "paper", amount = 1},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
     unlock = "ember-caste"
@@ -76,7 +76,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-orchid",
     energy_required = 2,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 4},
+        {type = "item", name = "paper", amount = 4},
         {type = "item", name = "phytofall-blossom", amount = 1},
         {type = "item", name = "necrofall", amount = 1}
     },
@@ -89,7 +89,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-gunfire",
     energy_required = 2,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 4}
+        {type = "item", name = "paper", amount = 4}
     },
     unlock = "gunfire-caste"
 }
@@ -100,7 +100,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 4},
+        {type = "item", name = "paper", amount = 4},
         {type = "item", name = "rope", amount = 5},
         {type = "item", name = "lumber", amount = 20},
         {type = "item", name = "screw-set", amount = 20}

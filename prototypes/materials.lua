@@ -157,8 +157,8 @@ local material_items = {
         sprite_variations = {name = "crayons", count = 4}
     },
     {
-        name = "writing-paper",
-        sprite_variations = {name = "writing-paper-pile", count = 4}
+        name = "paper",
+        sprite_variations = {name = "paper-pile", count = 4}
     },
     {name = "semipermeable-membrane"},
     {
@@ -606,7 +606,7 @@ Tirislib.RecipeGenerator.create {
     product = "architectural-concept",
     energy_required = 2,
     ingredients = {
-        {type = "item", name = "writing-paper", amount = 2}
+        {type = "item", name = "paper", amount = 2}
     },
     category = "sosciencity-architecture",
     unlock = "infrastructure-1"
@@ -759,7 +759,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "writing-paper",
+    product = "paper",
     product_amount = 1,
     energy_required = 5,
     ingredients = {
@@ -770,7 +770,7 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "writing-paper",
+    product = "paper",
     product_amount = 10,
     energy_required = 5,
     category = "chemistry",
