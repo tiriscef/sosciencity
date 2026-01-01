@@ -1341,6 +1341,8 @@ local function create_disease_catalogue(container)
     local tabbed_pane = get_or_create_tabbed_pane(container)
     local tab = Gui.Elements.Tabs.create(tabbed_pane, "diseases", {"sosciencity.diseases"})
 
+    Gui.Elements.Button.page_link(tab, "data", "diseases")
+
     local data_list = Datalist.create(tab, "diseases", 3)
     data_list.style.column_alignments[2] = "right"
 

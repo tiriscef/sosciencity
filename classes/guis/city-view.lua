@@ -112,13 +112,19 @@ local function fill_menu(container, category_index, selected_page)
 end
 
 local function open_page(player, category_index, page_name, set_tab_index)
+    local gui = player.gui.screen[CITY_VIEW_NAME]
+
+    -- If the gui is not already open, we create it. If that fails, we don't do anything.
+    if not gui then
+        gui = Gui.CityView.open(player)
+        if not gui then
+            return
+        end
+    end
+
     local category = content[category_index]
     local page = Gui.CityView.get_page_definition(category, page_name)
 
-    local gui = player.gui.screen[CITY_VIEW_NAME]
-    if not gui then
-        return
-    end
     local tab = gui.content.tabpane[category.name]
 
     local page_container = tab.page.scroll
@@ -150,7 +156,10 @@ Gui.set_click_handler_tag(
     end
 )
 
-local function create_city_view(player)
+--- Opens the CityView for the given player. This can theoretically fail, if other mods interfere.
+--- @param player LuaPlayer
+--- @return LuaGuiElement? CityView
+function Gui.CityView.open(player)
     local city_view_frame =
         player.gui.screen.add {
         type = "frame",
@@ -298,7 +307,10 @@ local function create_city_view(player)
     }
 
     city_view_frame.force_auto_center()
+
+    return city_view_frame
 end
+local create_city_view = Gui.CityView.open
 
 function Gui.CityView.close(player)
     local gui = player.gui.screen[CITY_VIEW_NAME]
