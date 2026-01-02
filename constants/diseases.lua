@@ -373,6 +373,21 @@ Diseases.values = {
         work_effectivity = 0.6,
         reports_per_treatment = 2
     },
+    [4004] = {
+        name = "premature-hatch-syndrome",
+        cure_items = {
+            ["nutritional-supplements"] = 1,
+            ["huwan-hormones"] = 1
+        },
+        curing_workload = 1,
+        categories = {
+            [DiseaseCategory.birth_defect] = 600
+        },
+        natural_recovery = 1 * Time.nauvis_week,
+        lethality = 0.1,
+        work_effectivity = 0.3,
+        reports_per_treatment = 1
+    },
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
@@ -512,10 +527,11 @@ Diseases.categories = {
         ["exhaustion"] = 200
     },
     [DiseaseCategory.birth_defect] = {
+        ["lack-of-purple-blood-cells"] = 600,
+        ["premature-hatch-syndrome"] = 600,
         ["limb-loss"] = 100,
         ["weak-heart"] = 100,
         ["gender-dysphoria"] = 50,
-        ["lack-of-purple-blood-cells"] = 600,
         ["huntingtons"] = 100
     },
     [DiseaseCategory.zoonosis] = {
