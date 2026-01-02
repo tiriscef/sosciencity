@@ -52,6 +52,10 @@ local medicine_items = {
     {
         name = "nutritional-supplements",
         use_placeholder_icon = true
+    },
+    {
+        name = "huwan-hormones",
+        use_placeholder_icon = true
     }
 }
 
