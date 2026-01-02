@@ -36,12 +36,33 @@ Tirislib.Entity.create {
     },
     allowed_effects = {"productivity", "consumption", "speed", "pollution"},
     graphics_set = {
-        animation = Tirislib.Entity.create_standard_picture {
-            path = "__sosciencity-graphics__/graphics/entity/medical-assembler/medical-assembler",
-            center = {3.0, 3.0},
-            width = 7,
-            height = 6,
-            shadowmap = true
+        animation = {
+            layers = {
+                {
+                    filename = "__sosciencity-graphics__/graphics/entity/medical-assembler/medical-assembler-shadowmap.png",
+                    frame_count = 1,
+                    height = 320,
+                    width = 448,
+                    scale = 0.5,
+                    shift = {0.5, -0.5},
+                    draw_as_shadow = true
+                }
+            }
+        },
+        working_visualisations = {
+            {
+                always_draw = true,
+                animation = {
+                    filename = "__sosciencity-graphics__/graphics/entity/medical-assembler/medical-assembler-sheet.png",
+                    frame_count = 21,
+                    height = 320,
+                    width = 448,
+                    scale = 0.5,
+                    shift = {0.5, -0.5},
+                    line_length = 4,
+                    animation_speed = 3
+                }
+            }
         }
     },
     crafting_speed = 1,
@@ -96,5 +117,5 @@ Tirislib.Entity.create {
             production_type = "input"
         }
     },
-    off_when_no_fluid_recipe = true
+    fluid_boxes_fluid_boxes_off_when_no_fluid_recipe = true
 }:set_size(4, 4):copy_icon_from_item()
