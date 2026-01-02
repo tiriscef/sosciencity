@@ -124,5 +124,5 @@ Tirislib.Entity.create {
             production_type = "output"
         }
     },
-    off_when_no_fluid_recipe = true
+    fluid_boxes_off_when_no_fluid_recipe = true
 }:set_size(20, 5)
