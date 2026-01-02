@@ -481,7 +481,7 @@ local function remove_composter(entry, cause, event)
     local humus = floor(entry[EK.humus])
 
     if cause == DeconstructionCause.destroyed and humus > 0 then
-        Inventories.spill_items(entry, "humus", humus)
+        Inventories.spill_items(entry, "humus", humus / 10)
     end
     if cause == DeconstructionCause.mined and humus > 0 then
         event.buffer.insert {name = "humus", count = humus}
@@ -795,15 +795,18 @@ Register.set_entity_creation_handler(
 
 Register.set_entity_destruction_handler(
     Type.fertilization_station,
-    function(entry, cause)
+    function(entry, cause, event)
         if not entry[EK.entity].valid then
             return
         end
 
         local humus = floor(entry[EK.humus_stored])
 
-        if cause ~= DeconstructionCause.mod_update and humus > 0 then
-            Inventories.spill_items(entry, "humus", humus, true)
+        if cause == DeconstructionCause.destroyed and humus > 0 then
+            Inventories.spill_items(entry, "humus", humus / 10)
+        end
+        if cause == DeconstructionCause.mined and humus > 0 then
+            event.buffer.insert {name = "humus", count = humus}
         end
     end
 )
@@ -1452,13 +1455,20 @@ local function paste_waste_dump_settings(source, destination)
 end
 Register.set_settings_paste_handler(Type.waste_dump, Type.waste_dump, paste_waste_dump_settings)
 
-local function remove_waste_dump(entry, cause)
+local function remove_waste_dump(entry, cause, event)
     if not entry[EK.entity].valid then
         return
     end
 
-    if cause ~= DeconstructionCause.mod_update then
-        Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
+    if cause == DeconstructionCause.destroyed then
+        Inventories.spill_item_range(entry, "humus", true)
+    end
+    if cause == DeconstructionCause.mined then
+        for item, count in pairs(entry[EK.stored_garbage]) do
+            if count > 0 then
+                event.buffer.insert {name = item, count = count}
+            end
+        end
     end
 end
 Register.set_entity_destruction_handler(Type.waste_dump, remove_waste_dump)
