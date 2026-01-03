@@ -1940,6 +1940,35 @@ local function remove_housing_census(entry)
     caste_points[caste_id] = caste_points[caste_id] - entry[EK.caste_points]
 end
 
+local function set_custom_status(entry)
+    local inhabitants = entry[EK.inhabitants]
+    local capacity = Housing.get_capacity(entry)
+
+    local diode, locale_key
+    if inhabitants == 0 then
+        diode = defines.entity_status_diode.red
+        locale_key = "sosciencity-custom-status.empty-house"
+    elseif inhabitants == capacity then
+        diode = defines.entity_status_diode.green
+        locale_key = "sosciencity-custom-status.full-house"
+    else
+        diode = defines.entity_status_diode.yellow
+        locale_key = "sosciencity-custom-status.inhabited-house"
+    end
+
+    entry[EK.entity].custom_status = {
+        diode = diode,
+        label = {
+            locale_key,
+            inhabitants,
+            capacity,
+            Utils.round_to_step(entry[EK.happiness], 0.1),
+            Utils.round_to_step(entry[EK.health], 0.1),
+            Utils.round_to_step(entry[EK.sanity], 0.1)
+        }
+    }
+end
+
 --- Updates the given housing entry.
 --- @param entry Entry
 --- @param delta_ticks integer
@@ -1992,6 +2021,8 @@ local function update_house(entry, delta_ticks)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)
     update_blood_donations(entry, delta_ticks)
+
+    set_custom_status(entry)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -2231,6 +2262,11 @@ local function update_empty_house(entry)
     end
 
     entry[EK.is_liveable] = has_water and has_food
+
+    entry[EK.entity].custom_status = {
+        diode = defines.entity_status_diode.red,
+        label = {"sosciencity-custom-status.no-caste-assigned"}
+    }
 end
 
 Register.set_entity_updater(Type.empty_house, update_empty_house)
