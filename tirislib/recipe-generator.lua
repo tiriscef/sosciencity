@@ -134,12 +134,11 @@ function Tirislib.RecipeGenerator.add_result_theme_range(recipe, themes, default
     end
 end
 
-local function get_product_prototype(details)
-    local product_name = details.product
+local function get_product_prototype(product_name, product_type)
     local product, found
 
-    if details.product_type then -- explicitly set
-        product, found = (details.product_type == "item" and Tirislib.Item or Tirislib.Fluid).get_by_name(product_name)
+    if product_type then -- explicitly set
+        product, found = (product_type == "item" and Tirislib.Item or Tirislib.Fluid).get_by_name(product_name)
     else -- implicit, look if an item or a fluid exists
         product, found = Tirislib.Item.get_by_name(product_name)
 
@@ -223,7 +222,7 @@ end
 --- **index_fluid_ingredients:** bool (defaults to false)\
 --- **index_fluid_results:** bool (defaults to false)\
 function Tirislib.RecipeGenerator.create(details)
-    local product = get_product_prototype(details)
+    local product = get_product_prototype(details.product, details.product_type)
     local main_product = get_main_product_entry(product, details)
 
     local recipe =
