@@ -145,6 +145,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-orchid-paradise"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-pharma"
     },
     {

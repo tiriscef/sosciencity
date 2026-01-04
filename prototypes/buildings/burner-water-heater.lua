@@ -6,7 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-water-buildings",
     order = "aba",
     place_result = "burner-water-heater",
-    stack_size = Sosciencity_Config.building_stacksize
+    stack_size = Sosciencity_Config.building_stacksize,
+    pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create {

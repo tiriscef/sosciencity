@@ -7,7 +7,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "kitchen-for-all",
-    stack_size = Sosciencity_Config.building_stacksize
+    stack_size = Sosciencity_Config.building_stacksize,
+    pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create {
