@@ -1,29 +1,29 @@
--- TODO: graphics, most everything
-
+-- TODO: recipe
 Tirislib.Item.create {
     type = "item",
-    name = "clockwork-quarry",
-    icon = Tirislib.Prototype.placeholder_icon,
+    name = "orchid-paradise",
+    icon = "__sosciencity-graphics__/graphics/icon/orchid-paradise.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
-    place_result = "clockwork-quarry",
+    place_result = "orchid-paradise",
     stack_size = Sosciencity_Config.building_stacksize,
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "clockwork-quarry",
+    product = "orchid-paradise",
     themes = {{"building", 1}},
-    default_theme_level = 0,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}}
+    default_theme_level = 1,
+    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+    unlock = "orchid-caste"
 }
 
 Tirislib.Entity.create {
     type = "assembling-machine",
-    name = "clockwork-quarry",
+    name = "orchid-paradise",
     flags = {"placeable-neutral", "player-creation"},
-    minable = {mining_time = 0.5, result = "clockwork-quarry"},
+    minable = {mining_time = 0.5, result = "orchid-paradise"},
     max_health = 200,
     corpse = "small-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
@@ -32,28 +32,17 @@ Tirislib.Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "consumption"},
     graphics_set = {
-        animation = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                    priority = "high",
-                    width = 224,
-                    height = 224,
-                    scale = 6/7
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/clockwork-caste.png",
-                    priority = "high",
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    frame_count = 1
-                }
-            }
+        animation = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/orchid-paradise/orchid-paradise",
+            center = {4.5, 6.5},
+            width = 14,
+            height = 11,
+            shadowmap = true,
+            glow = true
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-clockwork-quarry"},
+    crafting_categories = {"sosciencity-orchid-paradise"},
     energy_usage = "60kW",
     energy_source = {
         type = "electric",
@@ -61,4 +50,4 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.15},
         drain = "0W"
     }
-}:set_size(6, 6):copy_icon_from_item()
+}:set_size(7, 7):copy_icon_from_item()

@@ -339,6 +339,16 @@ Building.values = {
             disease_frequency = 0.05 / Time.minute
         }
     },
+    ["orchid-paradise"] = {
+        type = Type.manufactory,
+        range = range_by_foot,
+        workforce = {
+            count = 4,
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.05 / Time.minute
+        }
+    },
     ["pharmacy"] = {
         type = Type.pharmacy,
         range = 15
