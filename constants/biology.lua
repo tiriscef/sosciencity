@@ -411,6 +411,24 @@ Biology.egg_data = {
             [Gender.ga] = 1
         },
         birth_defect_probability = 0.1
+    },
+    ["huwan-egg-autoreproduction"] = {
+        genders = {
+            [Gender.agender] = 0.6,
+            [Gender.fale] = 0.15,
+            [Gender.pachin] = 0.15,
+            [Gender.ga] = 0.1
+        },
+        birth_defect_probability = 0.1
+    },
+    ["huwan-egg-ovosynthesis"] = {
+        genders = {
+            [Gender.agender] = 0.2,
+            [Gender.fale] = 0.1,
+            [Gender.pachin] = 0.4,
+            [Gender.ga] = 0.3
+        },
+        birth_defect_probability = 0.25
     }
 }
 
