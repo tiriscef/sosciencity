@@ -78,7 +78,35 @@ local items = {
                 value = {"sosciencity.gender-4"}
             }
         }
-    }
+    },
+    {
+        name = "huwan-egg-autoreproduction",
+        sprite_variations = {name = "huwan-egg-autoreproduction", count = 4, include_icon = true},
+        distinctions = {
+            localised_name = {"item-name.huwan-egg"},
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.autoreproduction-egg"}
+            }
+        }
+    },
+    {
+        name = "huwan-egg-ovosynthesis",
+        sprite_variations = {name = "huwan-egg-ovosynthesis", count = 4, include_icon = true},
+        distinctions = {
+            localised_name = {"item-name.huwan-egg"},
+            localised_description = {"item-description.huwan-egg"}
+        },
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.gender"},
+                value = {"sosciencity.any"}
+            }
+        }
+    },
 }
 
 Tirislib.Item.batch_create(items, {subgroup = "sosciencity-inhabitants", stack_size = 10})
@@ -96,18 +124,20 @@ Tirislib.Recipe.create {
     enabled = true,
     energy_required = 1,
     ingredients = {
-        {type = "item", name = "hehe", amount = 1}
+        {type = "item", name = "hehe", amount = 3}
     },
     results = {
-        {type = "item", name = "huwan-agender-egg", amount_min = 1, amount_max = 3},
-        {type = "item", name = "hehe", amount = 1, probability = 0.9}
+        {type = "item", name = "huwan-egg-autoreproduction", amount_min = 2, amount_max = 3},
+        {type = "item", name = "hehe", amount_min = 2, amount_max = 3}
     },
-    icon = "__sosciencity-graphics__/graphics/icon/huwan-agender-egg.png",
+    icon = "__sosciencity-graphics__/graphics/icon/huwan-egg-autoreproduction.png",
     icon_size = 64,
     subgroup = "sosciencity-inhabitants",
     main_product = "",
     localised_description = {"recipe-description.lay-egg", tostring(Biology.egg_calories)}
 }:add_unlock("upbringing")
+
+-- TODO: ovosynthesis recipe
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
     Tirislib.RecipeGenerator.create {
