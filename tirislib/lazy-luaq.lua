@@ -157,6 +157,44 @@ function LazyLuaq.repeat_function(generator, times)
     return ret
 end
 
+local function iterator_move_next(self)
+    local last_index = self.last_index or self.initial_index
+    local index, element = self.fn(self.param, last_index)
+
+    if index == nil then
+        return
+    end
+
+    if element == nil then
+        element = index
+        index = (self.last_index or self.initial_index or 0) + 1
+    end
+
+    self.last_index = index
+    return index, element
+end
+
+--- Creates a LazyLuaqQuery from any iterator that can be used with the 'for ... in' syntax.<br>
+--- Or at least I have tested it with functions that return just an element or an index and an element.<br>
+--- I don't know if there are more variants.<br>
+--- Usage is like: `LazyLuaq.from_iterator(pairs(tbl))`
+--- @param fn function? iterator-function
+--- @param param any
+--- @param initial_index any
+--- @return LazyLuaqQuery
+function LazyLuaq.from_iterator(fn, param, initial_index)
+    local ret = {
+        move_next = iterator_move_next,
+        fn = fn,
+        param = param,
+        initial_index = initial_index,
+        is_content_iterator = true
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
 ---------------------------------------------------------------------------------------------------
 --- Functions using the iterators
 --- -> Execution is immediate
@@ -514,8 +552,8 @@ local function select_move_next(self)
         return
     end
 
-    value = self.selector(value, index)
-    return index, value
+    local new_value, new_index = self.selector(value, index)
+    return (new_index ~= nil and new_index or index), new_value
 end
 
 --- Projects all elements of the sequence.
@@ -1300,13 +1338,21 @@ end
 ---------------------------------------------------------------------------------------------------
 --- Functions returning new iterators
 --- -> Execution is immediate
+---
+local function pair_table(value, index)
+    return {value, index}
+end
+
+local function unpack_pair_table(t)
+    return t[1], t[2]
+end
 
 --- Immediately executes the iterator and returns a new LazyLuaqQuery with the results.<br>
 --- Can be useful to cache the results of an expensive query that needs to be iterated multiple times.
 --- @return LazyLuaqQuery
 function LazyLuaq:cache_execution()
-    local tbl = self:to_table()
-    return LazyLuaq.from(tbl)
+    local arr = self:select(pair_table):to_array()
+    return LazyLuaq.from(arr):select(unpack_pair_table)
 end
 
 --- Sorts the sequence in ascending order.
@@ -1464,7 +1510,11 @@ function LazyLuaq:normalize()
     local sum = self:sum()
 
     if sum > 0 then
-        return self:select(function(element) return element / sum end)
+        return self:select(
+            function(element)
+                return element / sum
+            end
+        )
     else
         return self
     end
