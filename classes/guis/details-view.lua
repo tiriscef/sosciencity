@@ -1509,11 +1509,16 @@ Gui.set_gui_confirmed_handler(
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
 
+local breedable_castes = Tirislib.LazyLuaq.from(Castes.all)
+    :where_key("breedable")
+    :select_key("type")
+    :to_array()
+
 local function update_upbringing_mode_radiobuttons(entry, mode_flow)
     local mode = entry[EK.education_mode]
 
     for index, radiobutton in pairs(mode_flow.children) do
-        local mode_id = TypeGroup.breedable_castes[index]
+        local mode_id = breedable_castes[index]
 
         if mode_id then
             radiobutton.visible = Inhabitants.caste_is_researched(mode_id)
@@ -1565,7 +1570,7 @@ local function update_upbringing_station(container, entry, player_id)
     local probabilities = Entity.get_upbringing_expectations(entry[EK.education_mode])
     local at_least_one = false
 
-    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+    for _, caste_id in pairs(breedable_castes) do
         local probability = probabilities[caste_id]
         local caste = castes[caste_id]
 
@@ -1605,7 +1610,7 @@ local function create_upbringing_station(container, entry, player_id)
     -- Mode flow
     local mode_flow = Datalist.add_kv_flow(building_data, "mode", {"sosciencity.mode"})
 
-    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+    for _, caste_id in pairs(breedable_castes) do
         mode_flow.add {
             name = format(Gui.unique_prefix_builder, "education-mode", caste_id),
             type = "radiobutton",
@@ -1630,7 +1635,7 @@ local function create_upbringing_station(container, entry, player_id)
         caption = {"sosciencity.no-castes"}
     }
 
-    for _, caste_id in pairs(TypeGroup.breedable_castes) do
+    for _, caste_id in pairs(breedable_castes) do
         local caste = castes[caste_id]
         probabilities_flow.add {
             name = caste.name,
@@ -1644,7 +1649,7 @@ local function create_upbringing_station(container, entry, player_id)
     update_upbringing_station(container, entry)
 end
 
-for _, caste_id in pairs(Table.union_array(TypeGroup.breedable_castes, {Type.null})) do
+for _, caste_id in pairs(Table.union_array(breedable_castes, {Type.null})) do
     Gui.set_checked_state_handler(
         format(Gui.unique_prefix_builder, "education-mode", caste_id),
         generic_radiobutton_handler,
