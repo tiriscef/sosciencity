@@ -49,14 +49,14 @@ local sp_ingredients = {
         ingredient_type = "item",
         amount_fn = identity
     },
-    [Sosciencity_Config.aurora_pack] = {
+    --[[[Sosciencity_Config.aurora_pack] = {
         result_type = "item",
         ingredient = "well-funded-scientific-thesis",
         ingredient_type = "item",
         amount_fn = function(n)
             return n * 0.1
         end
-    }
+    }]]
 }
 
 -- find launchable items that produce the science packs
