@@ -93,17 +93,17 @@ local function add_caste_infos(container, caste_id)
     end
 end
 
-for id, values in pairs(Castes.values) do
+for _, caste in pairs(Castes.all) do
     Gui.CityView.add_page {
-        name = values.name,
+        name = caste.name,
         category = "caste",
-        localised_name = values.localised_name_short,
+        localised_name = caste.localised_name_short,
         creator = function(container)
-            add_caste_infos(container, id)
+            add_caste_infos(container, caste.type)
         end,
         enabler = function()
             -- always show the first castes and the later ones once they are researched
-            return (values.tech_name == "upbringing") or (storage.technologies[values.tech_name])
+            return (caste.tech_name == "upbringing") or (storage.technologies[caste.tech_name])
         end
     }
 end

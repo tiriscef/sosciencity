@@ -12,6 +12,7 @@ local Buildings = require("constants.buildings")
 local Color = require("constants.color")
 local Housing = require("constants.housing")
 local TypeGroup = require("constants.type-groups")
+local Castes = require("constants.castes")
 
 ---------------------------------------------------------------------------------------------------
 -- << definitions >>
@@ -35,8 +36,8 @@ local hospital_subscriptions = {}
 for _, _type in pairs(TypeGroup.hospital_complements) do
     hospital_subscriptions[_type] = ConnectionType.from_neighbor
 end
-for _, _type in pairs(TypeGroup.all_castes) do
-    hospital_subscriptions[_type] = ConnectionType.bidirectional
+for _, caste in pairs(Castes.all) do
+    hospital_subscriptions[caste.type] = ConnectionType.bidirectional
 end
 
 --- Type definitions\
