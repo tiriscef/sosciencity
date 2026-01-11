@@ -647,10 +647,10 @@ local function update_farm(entry, delta_ticks)
 
             local percentage_available =
                 min(
-                percentage_to_consume,
-                humus_available / humus_needed * percentage_to_consume,
-                workhours_available / workhours_needed * percentage_to_consume
-            )
+                    percentage_to_consume,
+                    humus_available / humus_needed * percentage_to_consume,
+                    workhours_available / workhours_needed * percentage_to_consume
+                )
 
             percentage_to_consume = percentage_to_consume - percentage_available
             local consumed_humus = humus_needed * percentage_available
@@ -1164,11 +1164,11 @@ Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_ho
 local function get_upbringing_expectations(mode)
     return Tirislib.LazyLuaq.from(Castes.all)
         :where_key("breedable")
-        :where(Inhabitants.caste_is_researched)
+        :where(function(caste) return Inhabitants.caste_is_researched(caste.type) end)
         :select(
             function(caste)
-                return mode == caste and 4 / 3 + 1 / 3 * Inhabitants.get_caste_efficiency_level(caste) or 1,
-                caste.type
+                return mode == caste.type and 4 / 3 + 1 / 3 * Inhabitants.get_caste_efficiency_level(caste.type) or 1,
+                    caste.type
             end
         )
         :normalize()
@@ -1186,10 +1186,10 @@ local function finish_class(entry, class, mode)
 
         local birth_defect_count =
             Utils.coin_flips(
-            Biology.egg_data[egg_name].birth_defect_probability *
+                Biology.egg_data[egg_name].birth_defect_probability *
                 0.8 ^ storage.technologies["improved-reproductive-healthcare"],
-            egg_count
-        )
+                egg_count
+            )
         if birth_defect_count > 0 then
             DiseaseGroup.make_sick_randomly(diseases, DiseaseCategory.birth_defect, birth_defect_count)
         end
@@ -1529,8 +1529,8 @@ local function update_waterwell(entry)
     local recipe = entity.get_recipe()
     if
         recipe and recipe.name == "clean-water-from-ground" and
-            not Inventories.assembler_has_module(entity, "water-filter")
-     then
+        not Inventories.assembler_has_module(entity, "water-filter")
+    then
         set_crafting_machine_performance(entry, 0)
         return
     end
