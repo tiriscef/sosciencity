@@ -115,36 +115,39 @@ local function add_caste_chooser_tab(tabbed_pane, house_details)
     flow.style.vertical_spacing = 6
 
     local at_least_one = false
-    for caste_id, caste in pairs(castes) do
-        if Inhabitants.caste_is_researched(caste_id) then
-            local caste_name = caste.name
+    for _, caste in pairs(Castes.all) do
+        if not Inhabitants.caste_is_researched(caste.type) then
+            goto continue
+        end
 
-            local button =
-                flow.add {
+        local caste_name = caste.name
+
+        local button =
+            flow.add {
                 type = "button",
                 name = format(Gui.unique_prefix_builder, "assign-caste", caste_name),
                 caption = {"caste-name." .. caste_name},
                 mouse_button_filter = {"left"}
             }
-            button.style.width = 150
+        button.style.width = 150
 
-            if Housing.allowes_caste(house_details, caste_id) then
-                button.tooltip = {
-                    "sosciencity.move-in",
-                    Locale.integer_summand(
-                        Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort
-                    )
-                }
-            elseif castes[caste_id].required_room_count > house_details.room_count then
-                button.tooltip = {"sosciencity.not-enough-room"}
-            else
-                button.tooltip = {"sosciencity.not-enough-comfort"}
-            end
-            button.enabled = Housing.allowes_caste(house_details, caste_id)
-            at_least_one = true
+        if Housing.allowes_caste(house_details, caste.type) then
+            button.tooltip = {
+                "sosciencity.move-in",
+                Locale.integer_summand(
+                    Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort
+                )
+            }
+        elseif caste.required_room_count > house_details.room_count then
+            button.tooltip = {"sosciencity.not-enough-room"}
+        else
+            button.tooltip = {"sosciencity.not-enough-comfort"}
         end
-    end
+        button.enabled = Housing.allowes_caste(house_details, caste.type)
+        at_least_one = true
 
+        ::continue::
+    end
     if not at_least_one then
         flow.add {
             type = "label",
@@ -159,11 +162,11 @@ local function caste_assignment_button_handler(entry, _, _, caste_id)
     Inhabitants.try_allow_for_caste(entry, caste_id, true)
 end
 
-for id, caste in pairs(castes) do
+for _, caste in pairs(Castes.all) do
     Gui.set_click_handler(
         format(Gui.unique_prefix_builder, "assign-caste", caste.name),
         caste_assignment_button_handler,
-        id
+        caste.type
     )
 end
 
@@ -1402,8 +1405,8 @@ end
 local function find_all_neighborhood_diseases(entry)
     local ret = {}
 
-    for _, caste_id in pairs(TypeGroup.all_castes) do
-        for _, house in Neighborhood.iterate_type(entry, caste_id) do
+    for _, caste in pairs(Castes.all) do
+        for _, house in Neighborhood.iterate_type(entry, caste.type) do
             Table.add(ret, house[EK.diseases])
         end
     end
@@ -1745,14 +1748,14 @@ local function analyse_dependants(entry, consumption_key)
     local inhabitant_count = 0
     local consumption = 0
 
-    for _, caste_id in pairs(TypeGroup.all_castes) do
+    for _, caste in pairs(Castes.all) do
         local caste_inhabitants = 0
-        for _, house in Neighborhood.iterate_type(entry, caste_id) do
+        for _, house in Neighborhood.iterate_type(entry, caste.type) do
             caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
         end
 
         inhabitant_count = inhabitant_count + caste_inhabitants
-        consumption = consumption + caste_inhabitants * Castes.values[caste_id][consumption_key]
+        consumption = consumption + caste_inhabitants * caste[consumption_key]
     end
 
     return inhabitant_count, consumption
@@ -1910,14 +1913,13 @@ local function analyse_garbage_output(entry)
     local garbage = 0
     local calorific_demand = 0
 
-    for _, caste_id in pairs(TypeGroup.all_castes) do
+    for _, caste in pairs(Castes.all) do
         local caste_inhabitants = 0
-        for _, house in Neighborhood.iterate_type(entry, caste_id) do
+        for _, house in Neighborhood.iterate_type(entry, caste.type) do
             caste_inhabitants = caste_inhabitants + house[EK.inhabitants]
         end
         inhabitant_count = inhabitant_count + caste_inhabitants
 
-        local caste = Castes.values[caste_id]
         garbage = garbage + caste_inhabitants * caste.garbage_coefficient
         calorific_demand = calorific_demand + caste_inhabitants * caste.calorific_demand
     end
@@ -2278,8 +2280,8 @@ local type_gui_specifications = {
 }
 
 -- add the caste specifications
-for caste_id in pairs(castes) do
-    type_gui_specifications[caste_id] = {
+for _, caste in pairs(Castes.all) do
+    type_gui_specifications[caste.type] = {
         creater = create_housing_details,
         updater = update_housing_details
     }

@@ -26,7 +26,7 @@ local tracked_techs = {
 }
 
 -- add caste techs
-for _, caste in pairs(Castes.values) do
+for _, caste in pairs(Castes.all) do
     tracked_techs[caste.tech_name] = true
 end
 

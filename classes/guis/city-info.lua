@@ -371,16 +371,16 @@ function Gui.CityInfo.create(player, caste_tooltips)
 
     create_population_flow(frame)
 
-    for id in pairs(castes) do
-        create_caste_flow(frame, id, caste_tooltips)
+    for _, caste in pairs(Castes.all) do
+        create_caste_flow(frame, caste.type, caste_tooltips)
     end
 end
 
 --- Updates the city info gui for all existing players.
 function Gui.CityInfo.update()
     local caste_tooltips = {}
-    for id in pairs(castes) do
-        caste_tooltips[id] = tooltip_fns[id]()
+    for _, caste in pairs(Castes.all) do
+        caste_tooltips[caste.type] = tooltip_fns[caste.type]()
     end
 
     for _, player in pairs(game.connected_players) do
@@ -390,8 +390,8 @@ function Gui.CityInfo.update()
         if city_info_gui ~= nil and city_info_gui.valid then
             update_population_flow(city_info_gui)
 
-            for id in pairs(castes) do
-                update_caste_flow(city_info_gui, id, caste_tooltips)
+            for _, caste in pairs(Castes.all) do
+                update_caste_flow(city_info_gui, caste.type, caste_tooltips)
             end
         else
             Gui.CityInfo.create(player, caste_tooltips)

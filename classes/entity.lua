@@ -12,6 +12,7 @@ local Food = require("constants.food")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 local TypeGroup = require("constants.type-groups")
+local Castes = require("constants.castes")
 
 ---Static class for the game logic of my entities.
 Entity = {}
@@ -882,14 +883,19 @@ local function update_kitchen_for_all(entry)
     local definition = get_building_details(entry)
 
     local inhabitants =
-        Tirislib.LazyLuaq.from(TypeGroup.all_castes):select_many(
-        function(caste)
-            return Neighborhood.get_by_type(entry, caste)
-        end
-    ):select_key(EK.inhabitants):sum()
+        Tirislib.LazyLuaq.from(Castes.all)
+        :select_many(
+            function(caste)
+                return Neighborhood.get_by_type(entry, caste.type)
+            end
+        )
+        :select_key(EK.inhabitants)
+        :sum()
 
     local other_kitchens =
-        Tirislib.LazyLuaq.from(Neighborhood.get_by_type(entry, Type.kitchen_for_all)):where_key(EK.active):count()
+        Tirislib.LazyLuaq.from(Neighborhood.get_by_type(entry, Type.kitchen_for_all))
+        :where_key(EK.active)
+        :count()
 
     local participating_inhabitants = inhabitants / (other_kitchens + 1)
     local enough_inhabitants = participating_inhabitants > definition.inhabitant_count
@@ -1156,11 +1162,17 @@ Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_ho
 --- @param mode Type
 --- @return table
 local function get_upbringing_expectations(mode)
-    return Tirislib.LazyLuaq.from(TypeGroup.breedable_castes):where(Inhabitants.caste_is_researched):select(
-        function(caste)
-            return mode == caste and 4 / 3 + 1 / 3 * Inhabitants.get_caste_efficiency_level(caste) or 1
-        end
-    ):normalize():to_table()
+    return Tirislib.LazyLuaq.from(Castes.all)
+        :where_key("breedable")
+        :where(Inhabitants.caste_is_researched)
+        :select(
+            function(caste)
+                return mode == caste and 4 / 3 + 1 / 3 * Inhabitants.get_caste_efficiency_level(caste) or 1,
+                caste.type
+            end
+        )
+        :normalize()
+        :to_table()
 end
 Entity.get_upbringing_expectations = get_upbringing_expectations
 

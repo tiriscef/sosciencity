@@ -146,16 +146,13 @@ local function set_locals()
 end
 
 local function new_caste_table()
-    return {
-        [Type.clockwork] = 0,
-        [Type.orchid] = 0,
-        [Type.gunfire] = 0,
-        [Type.ember] = 0,
-        [Type.foundry] = 0,
-        [Type.gleam] = 0,
-        [Type.aurora] = 0,
-        [Type.plasma] = 0
-    }
+    return Tirislib.LazyLuaq.from(Castes.all)
+        :select(
+            function(caste)
+                return 0, caste.type
+            end
+        )
+        :to_table()
 end
 
 --- Initialize the inhabitants related contents of storage.
@@ -169,16 +166,28 @@ function Inhabitants.init()
     storage.caste_bonuses = new_caste_table()
     storage.immigration = new_caste_table()
     storage.free_houses = {
-        [true] = Table.new_array_of_arrays(#TypeGroup.all_castes),
-        [false] = Table.new_array_of_arrays(#TypeGroup.all_castes)
+        [true] = Tirislib.LazyLuaq.from(Castes.all)
+            :select(
+                function(caste)
+                    return {}, caste.type
+                end
+            )
+            :to_table(),
+        [false] = Tirislib.LazyLuaq.from(Castes.all)
+            :select(
+                function(caste)
+                    return {}, caste.type
+                end
+            )
+            :to_table()
     }
     storage.homeless = {}
 
     set_locals()
 
-    for _, caste_id in pairs(TypeGroup.all_castes) do
-        storage.housing_capacity[caste_id] = {[true] = 0, [false] = 0}
-        homeless[caste_id] = InhabitantGroup.new(caste_id)
+    for _, caste in pairs(Castes.all) do
+        storage.housing_capacity[caste.type] = {[true] = 0, [false] = 0}
+        homeless[caste.type] = InhabitantGroup.new(caste.type)
     end
 
     storage.last_social_change = game.tick
@@ -454,8 +463,8 @@ function GenderGroup.new(agender, fale, pachin, ga)
     return {agender or 0, fale or 0, pachin or 0, ga or 0}
 end
 
-function GenderGroup.new_immigrants(count, caste)
-    return dice_rolls(castes[caste].immigration_genders, count, 20)
+function GenderGroup.new_immigrants(count, caste_id)
+    return dice_rolls(castes[caste_id].immigration_genders, count, 20)
 end
 
 function GenderGroup.merge(lh, rh, keep_rh)
@@ -1322,8 +1331,8 @@ local function build_social_environment(entry)
 
     for _, _type in pairs(TypeGroup.social_places) do
         for _, building in Neighborhood.iterate_type(entry, _type) do
-            for _, caste in pairs(TypeGroup.all_castes) do
-                for _, house in Neighborhood.iterate_type(building, caste) do
+            for _, caste in pairs(Castes.all) do
+                for _, house in Neighborhood.iterate_type(building, caste.type) do
                     local unit_number = house[EK.unit_number]
                     in_reach[unit_number] = unit_number
                 end
@@ -2219,14 +2228,14 @@ function Inhabitants.blueprint_house(entry)
 end
 
 -- Set event handlers for the housing entities.
-for _, caste in pairs(TypeGroup.all_castes) do
-    Register.set_entity_creation_handler(caste, Inhabitants.create_house)
-    Register.set_entity_copy_handler(caste, Inhabitants.copy_house)
-    Register.set_entity_updater(caste, update_house)
-    Register.set_entity_destruction_handler(caste, Inhabitants.remove_house)
-    Register.set_settings_paste_handler(caste, caste, on_setting_paste_to_inhabited)
-    Register.set_settings_paste_handler(caste, Type.empty_house, on_settings_paste_to_empty)
-    Register.set_blueprinted_handler(caste, Inhabitants.blueprint_house)
+for _, caste in pairs(Castes.all) do
+    Register.set_entity_creation_handler(caste.type, Inhabitants.create_house)
+    Register.set_entity_copy_handler(caste.type, Inhabitants.copy_house)
+    Register.set_entity_updater(caste.type, update_house)
+    Register.set_entity_destruction_handler(caste.type, Inhabitants.remove_house)
+    Register.set_settings_paste_handler(caste.type, caste.type, on_setting_paste_to_inhabited)
+    Register.set_settings_paste_handler(caste.type, Type.empty_house, on_settings_paste_to_empty)
+    Register.set_blueprinted_handler(caste.type, Inhabitants.blueprint_house)
 end
 
 ---------------------------------------------------------------------------------------------------

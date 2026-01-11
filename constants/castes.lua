@@ -4,7 +4,9 @@ local Type = require("enums.type")
 
 local Time = require("constants.time")
 
---- Things that define different kinds of people.
+--- Things that define different kinds of people.<br>
+--- Use Castes.values to get the data of a caste by its type id.<br>
+--- Use Castes.all for iterating all enabled castes.
 local Castes = {}
 
 Castes.values = {
@@ -12,6 +14,9 @@ Castes.values = {
         name = "clockwork",
         localised_name = {"caste-name.clockwork"},
         localised_name_short = {"caste-short.clockwork"},
+        enabled = true,
+        order = 3,
+        breedable = true,
         tech_name = "upbringing",
         efficiency_tech = "clockwork-caste-efficiency",
         fear_resilience = 0.5,
@@ -55,6 +60,9 @@ Castes.values = {
         name = "orchid",
         localised_name = {"caste-name.orchid"},
         localised_name_short = {"caste-short.orchid"},
+        enabled = true,
+        order = 2,
+        breedable = true,
         tech_name = "upbringing",
         efficiency_tech = "orchid-caste-efficiency",
         fear_resilience = 1,
@@ -96,6 +104,9 @@ Castes.values = {
         name = "gunfire",
         localised_name = {"caste-name.gunfire"},
         localised_name_short = {"caste-short.gunfire"},
+        enabled = true,
+        order = 5,
+        breedable = false,
         tech_name = "gunfire-caste",
         efficiency_tech = "gunfire-caste-efficiency",
         fear_resilience = 0,
@@ -141,6 +152,9 @@ Castes.values = {
         name = "ember",
         localised_name = {"caste-name.ember"},
         localised_name_short = {"caste-short.ember"},
+        enabled = true,
+        order = 1,
+        breedable = true,
         tech_name = "upbringing",
         efficiency_tech = "ember-caste-efficiency",
         fear_resilience = 1.2,
@@ -179,6 +193,9 @@ Castes.values = {
         name = "foundry",
         localised_name = {"caste-name.foundry"},
         localised_name_short = {"caste-short.foundry"},
+        enabled = true,
+        order = 6,
+        breedable = false,
         tech_name = "foundry-caste",
         efficiency_tech = "foundry-caste-efficiency",
         fear_resilience = 0.7,
@@ -221,6 +238,9 @@ Castes.values = {
         name = "gleam",
         localised_name = {"caste-name.gleam"},
         localised_name_short = {"caste-short.gleam"},
+        enabled = true,
+        order = 7,
+        breedable = false,
         tech_name = "gleam-caste",
         efficiency_tech = "gleam-caste-efficiency",
         fear_resilience = 1,
@@ -261,6 +281,9 @@ Castes.values = {
         name = "aurora",
         localised_name = {"caste-name.aurora"},
         localised_name_short = {"caste-short.aurora"},
+        enabled = false,
+        order = 8,
+        breedable = false,
         tech_name = "aurora-caste",
         efficiency_tech = "aurora-caste-efficiency",
         fear_resilience = 2,
@@ -307,6 +330,9 @@ Castes.values = {
         name = "plasma",
         localised_name = {"caste-name.plasma"},
         localised_name_short = {"caste-short.plasma"},
+        enabled = true,
+        order = 4,
+        breedable = false,
         tech_name = "plasma-caste",
         efficiency_tech = "plasma-caste-efficiency",
         fear_resilience = 1,
@@ -348,12 +374,23 @@ Castes.values = {
 }
 
 -- postprocessing
-for _, caste in pairs(Castes.values) do
+for type, caste in pairs(Castes.values) do
+    caste.type = type
+
     -- convert calorific demand to kcal per tick
     caste.calorific_demand = caste.calorific_demand / Time.nauvis_day
 
     -- convert power demand to J / tick: https://wiki.factorio.com/Types/Energy
     caste.power_demand = caste.power_demand * 1000 / Time.second
 end
+
+Castes.all =
+    Tirislib.LazyLuaq.from(Castes.values)
+    :where_key("enabled"):order_by(
+        function(caste)
+            return caste.order
+        end
+    )
+    :to_array()
 
 return Castes
