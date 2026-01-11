@@ -25,22 +25,15 @@ local tracked_techs = {
     ["transfusion-medicine"] = true
 }
 
+local tracked_multi_level_techs = {
+    ["improved-reproductive-healthcare"] = {}
+}
+
 -- add caste techs
 for _, caste in pairs(Castes.all) do
     tracked_techs[caste.tech_name] = true
+    tracked_multi_level_techs[caste.efficiency_tech] = {}
 end
-
-local tracked_multi_level_techs = {
-    ["clockwork-caste-efficiency"] = {},
-    ["orchid-caste-efficiency"] = {},
-    ["gunfire-caste-efficiency"] = {},
-    ["ember-caste-efficiency"] = {},
-    ["foundry-caste-efficiency"] = {},
-    ["gleam-caste-efficiency"] = {},
-    ["aurora-caste-efficiency"] = {},
-    ["plasma-caste-efficiency"] = {},
-    ["improved-reproductive-healthcare"] = {}
-}
 
 local gated_technologies
 local unlocks = Unlocks.by_item_acquisition

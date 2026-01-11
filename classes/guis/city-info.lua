@@ -23,7 +23,7 @@ local CITY_INFO_NAME = "sosciencity-city-info"
 local function update_population_flow(container)
     local datalist = container.general.flow.datalist
 
-    datalist.population.caption = Table.array_sum(storage.population)
+    datalist.population.caption = Table.sum(storage.population)
 
     local machine_count = Register.get_machine_count()
     local machine_count_label = datalist.machine_count
@@ -190,7 +190,7 @@ local tooltip_fns = {
         local housing = storage.housing_capacity[Type.ember]
         local housing_improvised = housing[true]
         local points = round_to_step(storage.caste_points[Type.ember], 0.1)
-        local non_ember_pop = Table.array_sum(storage.population) - storage.population[Type.ember]
+        local non_ember_pop = Table.sum(storage.population) - storage.population[Type.ember]
         return {
             "",
             {
@@ -269,7 +269,7 @@ local tooltip_fns = {
         local housing = storage.housing_capacity[Type.plasma]
         local housing_improvised = housing[true]
         local points = round_to_step(storage.caste_points[Type.plasma], 0.1)
-        local non_plasma_pop = Table.array_sum(storage.population) - storage.population[Type.plasma]
+        local non_plasma_pop = Table.sum(storage.population) - storage.population[Type.plasma]
         return {
             "",
             {

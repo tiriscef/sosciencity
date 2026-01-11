@@ -737,7 +737,7 @@ end
 
 --- Returns the total number of inhabitants.
 function Inhabitants.get_population_count()
-    return array_sum(population)
+    return Table.sum(population)
 end
 
 --- Gets the current Clockwork caste bonus.
@@ -771,7 +771,7 @@ end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    local non_ember_population = array_sum(population) - population[Type.ember]
+    local non_ember_population = Table.sum(population) - population[Type.ember]
     if non_ember_population > 0 then
         return floor_to_step((3 * max(0, caste_points[Type.ember]) / non_ember_population) ^ 0.6, 0.1)
     else
@@ -795,7 +795,7 @@ local function get_aurora_bonus()
 end
 
 local function get_plasma_bonus()
-    local non_plasma_population = array_sum(population) - population[Type.plasma]
+    local non_plasma_population = Table.sum(population) - population[Type.plasma]
     if non_plasma_population > 0 then
         return floor_to_step((max(0, caste_points[Type.plasma]) / non_plasma_population) ^ 0.5, 0.1)
     else
@@ -818,7 +818,7 @@ local function update_caste_bonuses()
 
     caste_bonuses[Type.orchid] = get_orchid_bonus()
     caste_bonuses[Type.ember] = get_ember_bonus()
-    caste_bonuses[Type.aurora] = get_aurora_bonus()
+    --caste_bonuses[Type.aurora] = get_aurora_bonus()
     caste_bonuses[Type.plasma] = get_plasma_bonus()
 
     -- hidden technology based bonuses
