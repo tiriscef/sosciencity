@@ -50,7 +50,7 @@ local function fire_event(event)
     local fn = event_lookup[event[1]]
 
     if fn then
-        fn(unpack(event[2]))
+        fn(table.unpack(event[2]))
     end
 end
 

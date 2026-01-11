@@ -128,7 +128,7 @@ function Tirislib.Prototype.finish_postponed()
     while to_do_count < last_to_do_count do
         Tirislib.Prototype.postponed_functions = {}
         for _, postponed in pairs(to_do) do
-            postponed.fn(unpack(postponed.arg))
+            postponed.fn(table.unpack(postponed.arg))
         end
 
         to_do = Tirislib.Prototype.postponed_functions

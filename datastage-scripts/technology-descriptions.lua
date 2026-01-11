@@ -33,5 +33,5 @@ for tech_name, conditions in pairs(Unlocks.gated_technologies) do
         localised_conditions[#localised_conditions+1] = condition_fns[condition.type](condition)
     end
 
-    Tirislib.Locales.append(technology:get_localised_description(), unpack(localised_conditions))
+    Tirislib.Locales.append(technology:get_localised_description(), table.unpack(localised_conditions))
 end

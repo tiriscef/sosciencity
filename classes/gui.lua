@@ -54,7 +54,7 @@ local function look_for_event_handler(event, lookup)
         local player_id = event.player_index
         local entry = Register.try_get(storage.details_view[player_id])
 
-        handler[1](entry, gui_element, player_id, unpack(handler[2]))
+        handler[1](entry, gui_element, player_id, table.unpack(handler[2]))
         return true
     end
 

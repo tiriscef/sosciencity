@@ -612,7 +612,7 @@ function Communication.warning(warning_type, ...)
 end
 
 local function send_speaker_warning(warning_type)
-    warn_fns[warning_type](unpack(warning_params[warning_type]))
+    warn_fns[warning_type](table.unpack(warning_params[warning_type]))
 
     warning_params[warning_type] = nil
     warning_ticks[warning_type] = game.tick
@@ -659,7 +659,7 @@ local information_fns = {
 }
 
 local function send_information(information_type)
-    information_fns[information_type](unpack(information_params[information_type]))
+    information_fns[information_type](table.unpack(information_params[information_type]))
 
     information_params[information_type] = nil
     information_ticks[information_type] = game.tick
