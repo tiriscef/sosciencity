@@ -4,6 +4,7 @@
 local LazyLuaq = {}
 LazyLuaq.__index = LazyLuaq
 
+Tirislib = Tirislib or {}
 Tirislib.LazyLuaq = LazyLuaq
 
 -- An iterator needs a 'move_next' and a 'reset' function.
@@ -59,6 +60,29 @@ function LazyLuaq:copy()
     setmetatable(ret, LazyLuaq)
 
     return ret
+end
+
+---------------------------------------------------------------------------------------------------
+--- Helper functions
+
+local function pack(...)
+    return {...}
+end
+
+local function lookup(elements)
+    if getmetatable(elements) == LazyLuaq then
+        return elements:to_lookup()
+    else
+        local ret = {}
+        for _, value in pairs(elements) do
+            ret[value] = true
+        end
+        return ret
+    end
+end
+
+local function identity(...)
+    return ...
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -175,8 +199,8 @@ local function iterator_move_next(self)
 end
 
 --- Creates a LazyLuaqQuery from any iterator that can be used with the 'for ... in' syntax.<br>
---- Or at least I have tested it with functions that return just an element or an index and an element.<br>
---- I don't know if there are more variants.<br>
+--- It doesn't really work with iterators that have more than 2 returns. But those wouldn't necessarily work with LazyLuaq in general.<br>
+--- If the iterator only returns one element, a numbered index is being added.<br>
 --- Usage is like: `LazyLuaq.from_iterator(pairs(tbl))`
 --- @param fn function? iterator-function
 --- @param param any
@@ -353,6 +377,26 @@ function LazyLuaq:first(condition)
     end
 end
 
+--- Returns the last element (that fulfills the given condition - if given).
+--- @param condition function?
+function LazyLuaq:last(condition)
+    if condition then
+        local last_element
+        for index, element in self:iterate() do
+            if condition(element, index) then
+                last_element = element
+            end
+        end
+        return last_element
+    else
+        local last_element
+        for _, element in self:iterate() do
+            last_element = element
+        end
+        return last_element
+    end
+end
+
 --- Returns the maximum value in the sequence.
 --- @return any max_value
 --- @return any max_index
@@ -378,6 +422,9 @@ end
 function LazyLuaq:max_by(selector)
     self:reset()
     local candidate_index, candidate = self:move_next()
+    if candidate == nil then
+        return
+    end
     local candidate_value = selector(candidate, candidate_index)
 
     for index, element in self:iterate() do
@@ -390,6 +437,32 @@ function LazyLuaq:max_by(selector)
     end
 
     return candidate, candidate_index, candidate_value
+end
+
+--- Returns a sequence with all maximal elements according to the selector function.
+--- @param selector function?
+--- @return LazyLuaqQuery
+function LazyLuaq:maxima(selector)
+    selector = selector or identity
+
+    local ret = {}
+
+    self:reset()
+    local _, first_element = self:move_next()
+    local max_value = selector(first_element)
+
+    for index, element in self:iterate() do
+        local value = selector(element, index)
+        if value > max_value then
+            ret = {}
+            ret[#ret + 1] = element
+            max_value = value
+        elseif value == max_value then
+            ret[#ret + 1] = element
+        end
+    end
+
+    return LazyLuaq.from(ret)
 end
 
 --- Returns the minimum value in the sequence.
@@ -417,6 +490,9 @@ end
 function LazyLuaq:min_by(selector)
     self:reset()
     local candidate_index, candidate = self:move_next()
+    if candidate == nil then
+        return
+    end
     local candidate_value = selector(candidate, candidate_index)
 
     for index, element in self:iterate() do
@@ -429,6 +505,32 @@ function LazyLuaq:min_by(selector)
     end
 
     return candidate, candidate_index, candidate_value
+end
+
+--- Returns a sequence with all minimal elements according to the selector function.
+--- @param selector function?
+--- @return LazyLuaqQuery
+function LazyLuaq:minima(selector)
+    selector = selector or identity
+
+    local ret = {}
+
+    self:reset()
+    local _, first_element = self:move_next()
+    local min_value = selector(first_element)
+
+    for index, element in self:iterate() do
+        local value = selector(element, index)
+        if value < min_value then
+            ret = {}
+            ret[#ret + 1] = element
+            min_value = value
+        elseif value == min_value then
+            ret[#ret + 1] = element
+        end
+    end
+
+    return LazyLuaq.from(ret)
 end
 
 --- Computes the average of the sequence. A selector function can be given.
@@ -1051,18 +1153,6 @@ function LazyLuaq:duplicates_by(selector)
     return ret
 end
 
-local function lookup(elements)
-    if getmetatable(elements) == LazyLuaq then
-        return elements:to_lookup()
-    else
-        local ret = {}
-        for _, value in pairs(elements) do
-            ret[value] = true
-        end
-        return ret
-    end
-end
-
 local function except_move_next(self)
     if self.lookup == nil then
         self.lookup = lookup(self.elements)
@@ -1329,6 +1419,75 @@ function LazyLuaq:interleave(...)
         move_next = interleave_move_next,
         reset = interleave_reset,
         finished_sequences = {}
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+--- Combines two sequences element-wise until one ends.<br>
+--- A selector function can be given. Otherwise returns an array with the 2 elements.
+--- @param sequence LazyLuaqQuery|table|array
+--- @param selector function?
+--- @return LazyLuaqQuery
+function LazyLuaq:zip(sequence, selector)
+    selector = selector or pack
+
+    if getmetatable(sequence) ~= LazyLuaq then
+        sequence = LazyLuaq.from(sequence)
+    end
+
+    local index = 0
+    local ret = {
+        move_next = function()
+            local _, left = self:move_next()
+            if left == nil then
+                return
+            end
+            local _, right = sequence:move_next()
+            if right ~= nil then
+                index = index + 1
+                return index, selector(left, right)
+            end
+        end,
+        reset = function()
+            index = 0
+            self:reset()
+            sequence:reset()
+        end
+    }
+    setmetatable(ret, LazyLuaq)
+
+    return ret
+end
+
+--- Returns a sequence resulting from applying a function to each element with it's previous element.
+--- @param selector function?
+--- @return LazyLuaqQuery
+function LazyLuaq:pairwise(selector)
+    selector = selector or pack
+
+    local index = 0
+    local last_element
+    local ret = {
+        move_next = function()
+            if last_element == nil then
+                local i
+                i, last_element = self:move_next()
+            end
+
+            local _, element = self:move_next()
+            if element ~= nil then
+                index = index + 1
+                last_element, element = element, last_element
+                return index, selector(element, last_element)
+            end
+        end,
+        reset = function()
+            last_element = nil
+            index = 0
+            self:reset()
+        end
     }
     setmetatable(ret, LazyLuaq)
 
