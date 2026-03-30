@@ -26,15 +26,6 @@ Tirislib.LazyLuaq = LazyLuaq
 --
 -- A workaround is to copy the query with the copy() function.
 
---- Standard-Iterator using next
---- @return any index
---- @return any value
-function LazyLuaq:move_next()
-    local index, value = next(self.content, self.last_index)
-    self.last_index = index
-    return index, value
-end
-
 --- Resets the iterator to begin anew.
 function LazyLuaq:reset()
     self.last_index = nil
@@ -60,6 +51,12 @@ function LazyLuaq:copy()
     setmetatable(ret, LazyLuaq)
 
     return ret
+end
+
+--- Returns a string representation of the query by materializing its elements.
+--- @return string
+function LazyLuaq:__tostring()
+    return string.format("LazyLuaqQuery%s", serpent.line(self:to_table()))
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -88,13 +85,36 @@ end
 ---------------------------------------------------------------------------------------------------
 --- Generators
 
+local function from_move_next(self)
+    -- the stop flag is there to make the iterator actually stop after a complete iteration
+    -- otherwise the next-function would start anew when it gets nil as index
+    if self.stop then
+        return
+    end
+
+    local index, element = next(self.content, self.last_index)
+    self.last_index = index
+    if index == nil then
+        self.stop = true
+    end
+    return index, element
+end
+
+local function from_reset(self)
+    self.stop = false
+    self.last_index = nil
+end
+
 --- Creates a LazyLuaqQuery that iterates over the given table.
 --- @param tbl table
 --- @return LazyLuaqQuery
 function LazyLuaq.from(tbl)
     local ret = {
         content = tbl,
-        is_content_iterator = true
+        is_content_iterator = true,
+        stop = false,
+        move_next = from_move_next,
+        reset = from_reset
     }
     setmetatable(ret, LazyLuaq)
 
@@ -256,12 +276,17 @@ function LazyLuaq:to_table()
 end
 
 --- Returns a lookup table with the values of the sequence.
+--- @param element any? Defaults to true
 --- @return table
-function LazyLuaq:to_lookup()
+function LazyLuaq:to_lookup(element)
+    if element == nil then
+        element = true
+    end
+
     local ret = {}
 
     for _, value in self:iterate() do
-        ret[value] = true
+        ret[value] = element
     end
 
     return ret
@@ -284,17 +309,25 @@ function LazyLuaq:to_dictionary(value_selector, index_selector)
 end
 
 --- Applies an accumulator function over the sequence.
---- @param seed any?
+--- If no seed is provided, the first element is used as the seed and accumulation starts from the second element.
 --- @param aggregator function
+--- @param seed any?
 --- @param result_selector function?
 --- @return any
-function LazyLuaq:aggregate(seed, aggregator, result_selector)
+function LazyLuaq:aggregate(aggregator, seed, result_selector)
+    self:reset()
+
     local ret = seed
     if ret == nil then
-        ret = self:first()
+        local _, first = self:move_next()
+        ret = first
     end
 
-    for _, value in self:iterate() do
+    while true do
+        local index, value = self:move_next()
+        if index == nil then
+            break
+        end
         ret = aggregator(ret, value)
     end
 
@@ -482,7 +515,7 @@ function LazyLuaq:min()
     return candidate, candidate_index
 end
 
---- Returns the maximum element in the sequence according to the selector function.
+--- Returns the minimum element in the sequence according to the selector function.
 --- @param selector function
 --- @return any min_element
 --- @return any min_index
@@ -592,16 +625,16 @@ end
 --- -> Execution is deferred
 
 local function where_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.where_fn(value, index) then
-        return index, value
-    else
-        return where_move_next(self)
+        if self.where_fn(value, index) then
+            return index, value
+        end
     end
 end
 
@@ -620,16 +653,16 @@ function LazyLuaq:where(condition)
 end
 
 local function where_key_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if value[self.key] then
-        return index, value
-    else
-        return where_key_move_next(self)
+        if value[self.key] then
+            return index, value
+        end
     end
 end
 
@@ -698,24 +731,26 @@ function LazyLuaq:select_key(key)
 end
 
 local function select_many_move_next(self)
-    local tbl = self.tbl
-    if tbl ~= nil then
-        local index, value = next(tbl, self.tbl_index)
-        self.tbl_index = index
+    while true do
+        local tbl = self.tbl
+        if tbl ~= nil then
+            local index, value = next(tbl, self.tbl_index)
+            self.tbl_index = index
 
-        if index ~= nil then
-            return index, value
+            if index ~= nil then
+                return index, value
+            end
         end
+
+        local index, value = self.content:move_next()
+
+        if index == nil then
+            return
+        end
+
+        self.tbl = self.selector(value, index)
+        self.tbl_index = nil
     end
-
-    local index, value = self.content:move_next()
-
-    if index == nil then
-        return
-    end
-
-    self.tbl = self.selector(value, index)
-    return select_many_move_next(self)
 end
 
 local function select_many_reset(self)
@@ -740,18 +775,18 @@ function LazyLuaq:select_many(selector)
 end
 
 local function choose_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    local condition_met, projection = self.selector(value, index)
+        local condition_met, projection = self.selector(value, index)
 
-    if condition_met then
-        return index, projection
-    else
-        return choose_move_next(self)
+        if condition_met then
+            return index, projection
+        end
     end
 end
 
@@ -770,18 +805,18 @@ function LazyLuaq:choose(selector)
 end
 
 local function choose_key_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    local kv = value[self.key]
+        local kv = value[self.key]
 
-    if kv then
-        return index, kv
-    else
-        return choose_key_move_next(self)
+        if kv then
+            return index, kv
+        end
     end
 end
 
@@ -800,21 +835,15 @@ function LazyLuaq:choose_key(key)
 end
 
 local function take_move_next(self)
-    local index, value = self.content:move_next()
-
-    if index == nil then
-        return
-    end
-
     if self.i < self.n then
         self.i = self.i + 1
-        return index, value
+        return self.content:move_next()
     end
 end
 
 local function take_reset(self)
-    self.i = 0
     self.content:reset()
+    self.i = 0
 end
 
 --- Takes the first n elements from the sequence.
@@ -870,17 +899,18 @@ function LazyLuaq:take_while(condition)
 end
 
 local function skip_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.i < self.n then
-        self.i = self.i + 1
-        return skip_move_next(self)
-    else
-        return index, value
+        if self.i < self.n then
+            self.i = self.i + 1
+        else
+            return index, value
+        end
     end
 end
 
@@ -906,23 +936,22 @@ function LazyLuaq:skip(n)
 end
 
 local function skip_while_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.do_skip then
-        local still_skip = self.condition(value, index)
-
-        if still_skip then
-            return skip_while_move_next(self)
+        if self.do_skip then
+            if not self.condition(value, index) then
+                self.do_skip = false
+                return index, value
+            end
         else
-            self.do_skip = false
+            return index, value
         end
     end
-
-    return index, value
 end
 
 local function skip_while_reset(self)
@@ -947,33 +976,53 @@ function LazyLuaq:skip_while(condition)
 end
 
 local function concat_move_next(self)
-    local index, value = self.left_content:move_next()
+    if self.in_first then
+        local index, value = self.content:move_next()
 
-    if index ~= nil then
-        return index, value
+        if index ~= nil then
+            return index, value
+        end
+        self.in_first = false
     end
 
-    return self.right_content:move_next()
+    return self.second:move_next()
 end
 
 local function concat_reset(self)
-    self.left_content:reset()
-    self.right_content:reset()
+    self.in_first = true
+    self.content:reset()
+    self.second:reset()
 end
 
---- Combines the sequence with the given other LazyLuaqQuery sequence.
---- @param sequence LazyLuaqQuery
+--- Combines the sequence with the given other sequence.
+--- @param sequence LazyLuaqQuery|table|array
 --- @return LazyLuaqQuery
 function LazyLuaq:concat(sequence)
+    if getmetatable(sequence) ~= LazyLuaq then
+        sequence = LazyLuaq.from(sequence)
+    end
+
     local ret = {
-        left_content = self,
-        right_content = sequence,
+        content = self,
+        second = sequence,
+        in_first = true,
         move_next = concat_move_next,
         reset = concat_reset
     }
     setmetatable(ret, LazyLuaq)
 
     return ret
+end
+
+--- Prepends the given sequence's elements to this sequence.
+--- @param sequence LazyLuaqQuery|table|array
+--- @return LazyLuaqQuery
+function LazyLuaq:prepend(sequence)
+    if getmetatable(sequence) ~= LazyLuaq then
+        sequence = LazyLuaq.from(sequence)
+    end
+
+    return sequence:concat(self)
 end
 
 local function chunk_move_next(self)
@@ -1027,17 +1076,17 @@ function LazyLuaq:chunk(size)
 end
 
 local function distinct_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.seen[value] then
-        return distinct_move_next(self)
-    else
-        self.seen[value] = true
-        return index, value
+        if not self.seen[value] then
+            self.seen[value] = true
+            return index, value
+        end
     end
 end
 
@@ -1061,18 +1110,18 @@ function LazyLuaq:distinct()
 end
 
 local function distinct_by_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    local valueKey = self.selector(value)
-    if self.seen[valueKey] then
-        return distinct_by_move_next(self)
-    else
-        self.seen[valueKey] = true
-        return index, value
+        local valueKey = self.selector(value)
+        if not self.seen[valueKey] then
+            self.seen[valueKey] = true
+            return index, value
+        end
     end
 end
 
@@ -1093,17 +1142,18 @@ function LazyLuaq:distinct_by(selector)
 end
 
 local function duplicates_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.seen[value] then
-        return index, value
-    else
-        self.seen[value] = true
-        return duplicates_move_next(self)
+        if self.seen[value] then
+            return index, value
+        else
+            self.seen[value] = true
+        end
     end
 end
 
@@ -1122,18 +1172,19 @@ function LazyLuaq:duplicates()
 end
 
 local function duplicates_by_move_next(self)
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    local valueKey = self.selector(value)
-    if self.seen[valueKey] then
-        return index, value
-    else
-        self.seen[valueKey] = true
-        return duplicates_by_move_next(self)
+        local valueKey = self.selector(value)
+        if self.seen[valueKey] then
+            return index, value
+        else
+            self.seen[valueKey] = true
+        end
     end
 end
 
@@ -1158,16 +1209,16 @@ local function except_move_next(self)
         self.lookup = lookup(self.elements)
     end
 
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.lookup[value] then
-        return except_move_next(self)
-    else
-        return index, value
+        if not self.lookup[value] then
+            return index, value
+        end
     end
 end
 
@@ -1208,17 +1259,17 @@ local function except_by_move_next(self)
         self.lookup = lookup_with_selector(self.elements, self.selector)
     end
 
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    local valueKey = self.selector(value)
-    if self.lookup[valueKey] then
-        return except_by_move_next(self)
-    else
-        return index, value
+        local valueKey = self.selector(value)
+        if not self.lookup[valueKey] then
+            return index, value
+        end
     end
 end
 
@@ -1271,16 +1322,16 @@ local function intersect_move_next(self)
         self.lookup = lookup(self.elements)
     end
 
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    if self.lookup[value] then
-        return index, value
-    else
-        return intersect_move_next(self)
+        if self.lookup[value] then
+            return index, value
+        end
     end
 end
 
@@ -1304,17 +1355,17 @@ local function intersect_by_move_next(self)
         self.lookup = lookup_with_selector(self.elements, self.selector)
     end
 
-    local index, value = self.content:move_next()
+    while true do
+        local index, value = self.content:move_next()
 
-    if index == nil then
-        return
-    end
+        if index == nil then
+            return
+        end
 
-    local valueKey = self.selector(value)
-    if self.lookup[valueKey] then
-        return index, value
-    else
-        return intersect_by_move_next(self)
+        local valueKey = self.selector(value)
+        if self.lookup[valueKey] then
+            return index, value
+        end
     end
 end
 
@@ -1342,11 +1393,11 @@ function LazyLuaq:symmetric_difference(elements)
     if getmetatable(elements) ~= LazyLuaq then
         elements = LazyLuaq.from(elements)
     end
-    self = self:distinct()
-    elements = elements:distinct()
+    local left_distinct = self:distinct()
+    local right_distinct = elements:distinct()
 
-    local left = self:except(elements)
-    local right = elements:copy():except(self)
+    local left = left_distinct:except(right_distinct)
+    local right = right_distinct:copy():except(left_distinct)
 
     return left:concat(right)
 end
@@ -1359,37 +1410,38 @@ function LazyLuaq:symmetric_difference_by(elements, selector)
     if getmetatable(elements) ~= LazyLuaq then
         elements = LazyLuaq.from(elements)
     end
-    self = self:distinct_by(selector)
-    elements = elements:distinct_by(selector)
+    local left_distinct = self:distinct_by(selector)
+    local right_distinct = elements:distinct_by(selector)
 
-    local left = self:except_by(elements, selector)
-    local right = elements:copy():except_by(self, selector)
+    local left = left_distinct:except_by(right_distinct, selector)
+    local right = right_distinct:copy():except_by(left_distinct, selector)
 
     return left:concat(right)
 end
 
 local function interleave_move_next(self)
-    -- if all sequences are finished, stop
-    if #self.sequences == #self.finished_sequences then
-        return
-    end
+    while true do
+        -- if all sequences are finished, stop
+        if #self.sequences == #self.finished_sequences then
+            return
+        end
 
-    -- iterate the sequences first
-    local sequence_index, sequence = next(self.sequences, self.last_sequence_index)
-    self.last_sequence_index = sequence_index
+        -- iterate the sequences first
+        local sequence_index, sequence = next(self.sequences, self.last_sequence_index)
+        self.last_sequence_index = sequence_index
 
-    -- if sequence_index is nil, we reached the end of the sequences and loop around
-    if sequence_index == nil or self.finished_sequences[sequence_index] then
-        return interleave_move_next(self)
-    end
-
-    local index, value = sequence:move_next()
-    if index ~= nil then
-        return index, value
-    else
-        -- this sequence is over, iterate to the next
-        self.finished_sequences[sequence_index] = true
-        return interleave_move_next(self)
+        -- if sequence_index is nil, we reached the end of the sequences and loop around
+        if sequence_index == nil or self.finished_sequences[sequence_index] then
+            -- continue to loop around or skip finished sequences
+        else
+            local index, value = sequence:move_next()
+            if index ~= nil then
+                return index, value
+            else
+                -- this sequence is over, iterate to the next
+                self.finished_sequences[sequence_index] = true
+            end
+        end
     end
 end
 
@@ -1425,6 +1477,24 @@ function LazyLuaq:interleave(...)
     return ret
 end
 
+local function zip_move_next(self)
+    local _, left = self.content:move_next()
+    if left == nil then
+        return
+    end
+    local _, right = self.second:move_next()
+    if right ~= nil then
+        self.i = self.i + 1
+        return self.i, self.selector(left, right)
+    end
+end
+
+local function zip_reset(self)
+    self.i = 0
+    self.content:reset()
+    self.second:reset()
+end
+
 --- Combines two sequences element-wise until one ends.<br>
 --- A selector function can be given. Otherwise returns an array with the 2 elements.
 --- @param sequence LazyLuaqQuery|table|array
@@ -1437,57 +1507,53 @@ function LazyLuaq:zip(sequence, selector)
         sequence = LazyLuaq.from(sequence)
     end
 
-    local index = 0
     local ret = {
-        move_next = function()
-            local _, left = self:move_next()
-            if left == nil then
-                return
-            end
-            local _, right = sequence:move_next()
-            if right ~= nil then
-                index = index + 1
-                return index, selector(left, right)
-            end
-        end,
-        reset = function()
-            index = 0
-            self:reset()
-            sequence:reset()
-        end
+        content = self,
+        second = sequence,
+        selector = selector,
+        i = 0,
+        move_next = zip_move_next,
+        reset = zip_reset
     }
     setmetatable(ret, LazyLuaq)
 
     return ret
 end
 
---- Returns a sequence resulting from applying a function to each element with it's previous element.
+local function pairwise_move_next(self)
+    if self.last_element == nil then
+        local _
+        _, self.last_element = self.content:move_next()
+    end
+
+    local _, element = self.content:move_next()
+    if element ~= nil then
+        self.i = self.i + 1
+        local previous = self.last_element
+        self.last_element = element
+        return self.i, self.selector(previous, element)
+    end
+end
+
+local function pairwise_reset(self)
+    self.last_element = nil
+    self.i = 0
+    self.content:reset()
+end
+
+--- Returns a sequence resulting from applying a function to each element with its previous element.
 --- @param selector function?
 --- @return LazyLuaqQuery
 function LazyLuaq:pairwise(selector)
     selector = selector or pack
 
-    local index = 0
-    local last_element
     local ret = {
-        move_next = function()
-            if last_element == nil then
-                local i
-                i, last_element = self:move_next()
-            end
-
-            local _, element = self:move_next()
-            if element ~= nil then
-                index = index + 1
-                last_element, element = element, last_element
-                return index, selector(element, last_element)
-            end
-        end,
-        reset = function()
-            last_element = nil
-            index = 0
-            self:reset()
-        end
+        content = self,
+        selector = selector,
+        i = 0,
+        last_element = nil,
+        move_next = pairwise_move_next,
+        reset = pairwise_reset
     }
     setmetatable(ret, LazyLuaq)
 
@@ -1531,29 +1597,41 @@ end
 --- @return LazyLuaqQuery
 function LazyLuaq:order_by(selector, comparator)
     local array = {}
-    local key_lookup = {}
+    local keys = {}
     for index, value in self:iterate() do
-        array[#array + 1] = value
-        key_lookup[value] = selector(value, index)
+        local i = #array + 1
+        array[i] = value
+        keys[i] = selector(value, index)
+    end
+
+    -- Build an index array and sort that, so duplicate values don't collide
+    local indices = {}
+    for i = 1, #array do
+        indices[i] = i
     end
 
     if comparator then
         table.sort(
-            array,
+            indices,
             function(a, b)
-                return comparator(key_lookup[a], key_lookup[b])
+                return comparator(keys[a], keys[b])
             end
         )
     else
         table.sort(
-            array,
+            indices,
             function(a, b)
-                return key_lookup[a] < key_lookup[b]
+                return keys[a] < keys[b]
             end
         )
     end
 
-    return LazyLuaq.from(array)
+    local sorted = {}
+    for i = 1, #indices do
+        sorted[i] = array[indices[i]]
+    end
+
+    return LazyLuaq.from(sorted)
 end
 
 --- Sorts the sequence in descending order.
@@ -1576,20 +1654,31 @@ end
 --- @return LazyLuaqQuery
 function LazyLuaq:order_by_descending(selector)
     local array = {}
-    local key_lookup = {}
+    local keys = {}
     for index, value in self:iterate() do
-        array[#array + 1] = value
-        key_lookup[value] = selector(value, index)
+        local i = #array + 1
+        array[i] = value
+        keys[i] = selector(value, index)
+    end
+
+    local indices = {}
+    for i = 1, #array do
+        indices[i] = i
     end
 
     table.sort(
-        array,
+        indices,
         function(a, b)
-            return key_lookup[a] > key_lookup[b]
+            return keys[a] > keys[b]
         end
     )
 
-    return LazyLuaq.from(array)
+    local sorted = {}
+    for i = 1, #indices do
+        sorted[i] = array[indices[i]]
+    end
+
+    return LazyLuaq.from(sorted)
 end
 
 --- Sorts the sequence in ascending order and only returns up to the given count of top elements.<br>
