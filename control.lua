@@ -14,8 +14,7 @@ DEBUG = false
 if script.active_mods["sosciencity-debug"] then
     DEBUG = true
 
-    -- development tools
-    pcall(require, "__profiler__/profiler.lua")
+    require("tests.load-tests")
 
     commands.add_command(
         "sosciencity-tests",
@@ -48,15 +47,6 @@ if script.active_mods["sosciencity-debug"] then
 
             game.print(results)
             log(results)
-        end
-    )
-
-    commands.add_command(
-        "sosciencity-test-tiristest",
-        "",
-        function()
-            require("tests.testing")
-            game.print("tests.testing loaded")
         end
     )
 end
