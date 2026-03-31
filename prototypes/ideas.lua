@@ -3,8 +3,8 @@
 local idea_items = {
     {name = "sketchbook"},
     {
-        name = "botanical-study",
-        sprite_variations = {name = "botanical-study", count = 4}
+        name = "environmental-study",
+        use_placeholder_icon = true
     },
     {name = "strategic-considerations"},
     {
@@ -13,7 +13,7 @@ local idea_items = {
     },
     {name = "complex-scientific-data"},
     {name = "published-paper"},
-    {name = "well-funded-scientific-thesis"}
+    --{name = "well-funded-scientific-thesis"}
 }
 
 Tirislib.Item.batch_create(idea_items, {subgroup = "sosciencity-ideas", stack_size = 100})
@@ -36,7 +36,7 @@ Tirislib.Recipe.create {
     subgroup = "sosciencity-ideas-per-hand",
     order = "00000",
     main_product = ""
-}
+}:add_unlock("automation-science-pack")
 
 Tirislib.Recipe.create {
     type = "recipe",
@@ -60,25 +60,36 @@ Tirislib.Recipe.create {
 
 Tirislib.RecipeGenerator.create {
     product = "sketchbook",
-    product_amount = 4,
+    product_amount = 2,
     category = "sosciencity-caste-ember",
-    energy_required = 2,
+    energy_required = 4,
     ingredients = {
-        {type = "item", name = "paper", amount = 1},
+        {type = "item", name = "paper", amount = 2},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
     unlock = "ember-caste"
 }
 
 Tirislib.RecipeGenerator.create {
-    product = "botanical-study",
+    product = "sketchbook",
+    product_amount = 8,
+    category = "sosciencity-caste-ember",
+    energy_required = 8,
+    ingredients = {
+        {type = "item", name = "sketch", amount = 4},
+        {type = "item", name = "paper", amount = 4},
+        {type = "item", name = "gingil-hemp", amount = 4}
+    },
+    unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "environmental-study",
     product_amount = 4,
     category = "sosciencity-caste-orchid",
     energy_required = 2,
     ingredients = {
-        {type = "item", name = "paper", amount = 4},
-        {type = "item", name = "phytofall-blossom", amount = 1},
-        {type = "item", name = "necrofall", amount = 1}
+        {type = "item", name = "botanical-study", amount = 4}
     },
     unlock = "orchid-caste"
 }
@@ -89,7 +100,9 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-gunfire",
     energy_required = 2,
     ingredients = {
-        {type = "item", name = "paper", amount = 4}
+        {type = "item", name = "sketch", amount = 4},
+        {type = "item", name = "paper", amount = 4},
+        {type = "item", name = "military-grade-crayons", amount = 4}
     },
     unlock = "gunfire-caste"
 }
@@ -130,7 +143,7 @@ Tirislib.RecipeGenerator.create {
     unlock = "gleam-caste"
 }
 
-Tirislib.RecipeGenerator.create {
+--[[Tirislib.RecipeGenerator.create {
     product = "well-funded-scientific-thesis",
     product_amount = 4,
     --category = "sosciencity-caste-aurora",
@@ -139,4 +152,4 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "published-paper", amount = 20}
     },
     unlock = "aurora-caste"
-}
+}]]

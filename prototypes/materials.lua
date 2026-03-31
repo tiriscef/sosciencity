@@ -135,16 +135,19 @@ local material_items = {
         distinctions = {subgroup = "sosciencity-furniture", stack_size = 100}
     },
     {
-        name = "painting",
-        distinctions = {subgroup = "sosciencity-furniture", stack_size = 100},
-        sprite_variations = {name = "painting-on-belt", count = 7}
-    },
-    {
         name = "feathers",
         sprite_variations = {name = "feather-pile", count = 4}
     },
+    {name = "semipermeable-membrane"},
+    -- Art Materials Category
+    {
+        name = "paper",
+        distinctions = {subgroup = "sosciencity-art-materials"},
+        sprite_variations = {name = "paper-pile", count = 4}
+    },
     {
         name = "dye",
+        distinctions = {subgroup = "sosciencity-art-materials"},
         sprite_variations = {name = "dye", count = 3, include_icon = true}
     },
     {
@@ -154,13 +157,45 @@ local material_items = {
     },
     {
         name = "crayons",
+        distinctions = {subgroup = "sosciencity-art-materials"},
         sprite_variations = {name = "crayons", count = 4}
     },
     {
-        name = "paper",
-        sprite_variations = {name = "paper-pile", count = 4}
+        name = "military-grade-crayons",
+        distinctions = {subgroup = "sosciencity-art-materials"}
     },
-    {name = "semipermeable-membrane"},
+    -- Art Category
+    {
+        name = "sketch",
+        distinctions = {subgroup = "sosciencity-art", stack_size = 100},
+        use_placeholder_icon = true
+    },
+    {
+        name = "mosaic",
+        distinctions = {subgroup = "sosciencity-art", stack_size = 100},
+        use_placeholder_icon = true
+    },
+    {
+        name = "painting",
+        distinctions = {subgroup = "sosciencity-art", stack_size = 100},
+        sprite_variations = {name = "painting-on-belt", count = 7}
+    },
+    {
+        name = "statue",
+        distinctions = {subgroup = "sosciencity-art", stack_size = 100}
+    },
+    {
+        name = "jewellery",
+        distinctions = {subgroup = "sosciencity-art", stack_size = 100},
+        use_placeholder_icon = true
+    },
+    -- Environmental Study Category
+    {
+        name = "botanical-study",
+        distinctions = {subgroup = "sosciencity-environmental-studies", stack_size = 100},
+        sprite_variations = {name = "botanical-study", count = 4}
+    },
+    -- Gathering Category
     {
         name = "trap",
         distinctions = {subgroup = "sosciencity-gathering"}
@@ -721,6 +756,8 @@ Tirislib.RecipeGenerator.create {
     default_theme_level = 2
 }
 
+-- Art Materials Category
+
 Tirislib.RecipeGenerator.create {
     product = "dye",
     ingredients = {
@@ -759,6 +796,16 @@ Tirislib.RecipeGenerator.create {
 }
 
 Tirislib.RecipeGenerator.create {
+    product = "military-grade-crayons",
+    ingredients = {
+        {type = "item", name = "crayons", amount = 1},
+        {type = "item", name = "wax", amount = 1},
+        {type = "item", name = "sugar", amount = 1}
+    },
+    unlock = "gunfire-caste"
+}
+
+Tirislib.RecipeGenerator.create {
     product = "paper",
     product_amount = 1,
     energy_required = 5,
@@ -782,6 +829,78 @@ Tirislib.RecipeGenerator.create {
     allow_productivity = true,
     unlock = "clockwork-caste"
 }:add_unlock("gunfire-caste")
+
+-- Art Category
+
+Tirislib.RecipeGenerator.create {
+    product = "sketch",
+    ingredients = {
+        {type = "item", name = "paper", amount = 1},
+        {type = "item", name = "dye", amount = 1}
+    },
+    category = "sosciencity-atelier"
+    --unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "mosaic",
+    ingredients = {
+        {type = "item", name = "sketch", amount = 1},
+        {type = "item", name = "ceramic", amount = 1},
+        {type = "item", name = "glass", amount = 1},
+        {type = "item", name = "dye", amount = 1}
+    },
+    category = "sosciencity-atelier"
+    --unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "statue",
+    ingredients = {
+        {type = "item", name = "sketch", amount = 1},
+        {type = "item", name = "marble", amount = 1},
+        {type = "item", name = "tools", amount = 1}
+    },
+    category = "sosciencity-atelier"
+    --unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "statue",
+    ingredients = {
+        {type = "item", name = "sketch", amount = 1},
+        {type = "item", name = "marble", amount = 1},
+        {type = "item", name = "tools", amount = 1}
+    },
+    category = "sosciencity-atelier"
+    --unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "jewellery",
+    ingredients = {
+        -- TODO: ingredients :)
+    },
+    category = "sosciencity-atelier"
+    --unlock = "ember-caste"
+}
+
+-- Environmental Study Category
+
+Tirislib.RecipeGenerator.create {
+    product = "botanical-study",
+    product_amount = 4,
+    category = "sosciencity-caste-orchid",
+    energy_required = 2,
+    ingredients = {
+        {type = "item", name = "paper", amount = 4},
+        {type = "item", name = "phytofall-blossom", amount = 1},
+        {type = "item", name = "necrofall", amount = 1}
+    },
+    unlock = "orchid-caste"
+}
+
+-- Gathering Category
 
 Tirislib.RecipeGenerator.create {
     product = "trap",
@@ -1078,7 +1197,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "chemistry",
     unlock = "food-processing"
-}:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.99)
+}:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.5)
 
 Tirislib.RecipeGenerator.create {
     product = "proteins",

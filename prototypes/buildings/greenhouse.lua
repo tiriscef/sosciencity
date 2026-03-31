@@ -80,44 +80,28 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {7.0, 0.0}, flow_direction = "input", direction = defines.direction.east}},
+            pipe_connections = {{position = {7.0, 2.0}, flow_direction = "input-output", direction = defines.direction.east}},
             production_type = "input"
         },
         {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {7.0, 2.0}, flow_direction = "input", direction = defines.direction.east}},
+            pipe_connections = {{position = {-7.0, 2.0}, flow_direction = "input-output", direction = defines.direction.west}},
             production_type = "input"
         },
         {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {7.0, -2.0}, flow_direction = "input", direction = defines.direction.east}},
-            production_type = "input"
-        },
-        {
-            volume = 1000,
-            pipe_covers = pipecoverspictures(),
-            pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-7.0, 0.0}, flow_direction = "output", direction = defines.direction.west}},
+            pipe_connections = {{position = {7.0, -2.0}, flow_direction = "input-output", direction = defines.direction.east}},
             production_type = "output"
         },
         {
             volume = 1000,
             pipe_covers = pipecoverspictures(),
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {-7.0, 2.0}, flow_direction = "output", direction = defines.direction.west}},
-            production_type = "output"
-        },
-        {
-            volume = 1000,
-            pipe_covers = pipecoverspictures(),
-            pipe_picture = pipe_pictures,
-            pipe_connections = {
-                {position = {-7.0, -2.0}, flow_direction = "output", direction = defines.direction.west}
-            },
+            pipe_connections = {{position = {-7.0, -2.0}, flow_direction = "input-output", direction = defines.direction.west}},
             production_type = "output"
         }
     },

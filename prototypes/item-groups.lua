@@ -95,25 +95,43 @@ Tirislib.Prototype.batch_create {
         type = "item-subgroup",
         name = "sosciencity-furniture",
         group = "sosciencity-production",
-        order = "abb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-biology-materials",
-        group = "sosciencity-production",
         order = "abc"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-laboratory-materials",
+        name = "sosciencity-art-materials",
         group = "sosciencity-production",
         order = "abd"
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-art",
+        group = "sosciencity-production",
+        order = "abd"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-environmental-studies",
+        group = "sosciencity-production",
+        order = "abdb"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-biology-materials",
+        group = "sosciencity-production",
+        order = "abf"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-laboratory-materials",
+        group = "sosciencity-production",
+        order = "abg"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-data",
         group = "sosciencity-production",
-        order = "abe"
+        order = "abh"
     },
     {
         type = "item-subgroup",
