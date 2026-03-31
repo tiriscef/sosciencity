@@ -138,7 +138,7 @@ local function fill_disease_catalogue(container, filter)
     end
 end
 
-Gui.set_click_handler_tag(
+Gui.set_click_handler(
     "filter_ichd",
     function(event)
         local button = event.element
