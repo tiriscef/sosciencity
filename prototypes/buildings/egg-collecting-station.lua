@@ -18,7 +18,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 0,
-    unlock = "infrastructure-1"
+    unlock = "upbringing"
 }
 
 Tirislib.Entity.create {

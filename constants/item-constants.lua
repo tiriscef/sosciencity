@@ -4,6 +4,7 @@ local ItemConstants = {}
 ItemConstants.garbage_values = {
     ["garbage"] = 1,
     ["food-leftovers"] = 1,
+    ["expired-food"] = 1,
     ["leafage"] = 0.5,
     ["slaughter-waste"] = 1.5,
     ["sewage-sludge"] = 1.5,
