@@ -193,6 +193,7 @@ end
 --- @param group_name string The group to run
 --- @param suppress_exceptions boolean Whether to catch errors via xpcall
 --- @return string summary The formatted test results
+--- @return table results The structured results context
 function Tirislib.Testing.run_group_suite(group_name, suppress_exceptions)
     local results = new_results()
     active_results = results
@@ -204,12 +205,13 @@ function Tirislib.Testing.run_group_suite(group_name, suppress_exceptions)
     end
 
     active_results = nil
-    return string.format("Group '%s'\n%s", group_name, get_logged_results(results))
+    return string.format("Group '%s'\n%s", group_name, get_logged_results(results)), results
 end
 
 --- Runs all test cases.
 --- @param suppress_exceptions boolean Whether to catch errors via xpcall
 --- @return string summary The formatted test results
+--- @return table results The structured results context
 function Tirislib.Testing.run_all(suppress_exceptions)
     local results = new_results()
     active_results = results
@@ -219,7 +221,27 @@ function Tirislib.Testing.run_all(suppress_exceptions)
     end
 
     active_results = nil
-    return string.format("Running all tests\n%s", get_logged_results(results))
+    return string.format("Running all tests\n%s", get_logged_results(results)), results
+end
+
+--- Runs a function in an isolated results context.
+--- Useful for meta-testing: the function can call asserts and even fail,
+--- without affecting the outer test run's results.
+--- @param fn function The function to run
+--- @return table results The isolated results context
+function Tirislib.Testing.run_isolated(fn)
+    local results = new_results()
+    local old_active = active_results
+    active_results = results
+    results.current_test = "isolated"
+
+    local ok, err = xpcall(fn, debug.traceback)
+    if not ok then
+        results.test_error = err
+    end
+
+    active_results = old_active
+    return results
 end
 
 ---------------------------------------------------------------------------------------------------

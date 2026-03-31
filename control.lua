@@ -15,6 +15,7 @@ if script.active_mods["sosciencity-debug"] then
     DEBUG = true
 
     require("tests.load-tests")
+    require("tests.controlstage.load-tests")
 
     commands.add_command(
         "sosciencity-tests",
