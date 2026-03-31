@@ -496,7 +496,7 @@ function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_categor
     end
 end
 
-Gui.set_click_handler_tag(
+Gui.set_click_handler(
     "sort_list",
     function(event)
         local button = event.element

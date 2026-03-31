@@ -145,7 +145,7 @@ local function open_page(player, category_index, page_name, set_tab_index)
     end
 end
 
-Gui.set_click_handler_tag(
+Gui.set_click_handler(
     "open_page",
     function(event)
         local player = game.get_player(event.player_index)
@@ -332,7 +332,7 @@ local function toggle_city_view_opened(player)
     end
 end
 
-Gui.set_click_handler_tag(
+Gui.set_click_handler(
     "toggle-city-view-opened",
     function(event)
         toggle_city_view_opened(game.get_player(event.player_index))
