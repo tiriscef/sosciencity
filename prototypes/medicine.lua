@@ -72,7 +72,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "salt", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 5,
     allow_productivity = true,
@@ -88,7 +88,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "salt", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 5,
     allow_productivity = true,
@@ -131,7 +131,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "cloth", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 10,
     allow_productivity = true,
@@ -144,7 +144,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "item", name = "salt", amount = 1}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 2,
     unlock = "medbay"
@@ -157,7 +157,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -171,7 +171,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -185,7 +185,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -198,7 +198,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "necrofall", amount = 5},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -212,7 +212,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sugar", amount = 3},
         {type = "fluid", name = "flinnum", amount = 10}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -227,7 +227,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "fluid", name = "fatty-oil", amount = 10}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,

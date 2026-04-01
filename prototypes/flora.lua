@@ -746,8 +746,8 @@ local function create_algae_recipe(details)
                 }
             },
             icon_size = 64,
-            index_fluid_ingredients = true,
-            index_fluid_results = true,
+            do_index_fluid_ingredients = true,
+            do_index_fluid_results = true,
             unlock = "basic-biotechnology"
         }
     )
