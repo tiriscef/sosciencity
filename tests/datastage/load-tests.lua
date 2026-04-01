@@ -1,5 +1,11 @@
 -- Data-stage-only tests
 require("tests.datastage.prototype")
+require("tests.datastage.base-prototype")
+require("tests.datastage.item")
+require("tests.datastage.fluid")
+require("tests.datastage.entity")
+require("tests.datastage.technology")
+require("tests.datastage.recipe-category")
 require("tests.datastage.recipe-entry")
 require("tests.datastage.recipe")
 require("tests.datastage.recipe-generator")

@@ -7,7 +7,7 @@ Tirislib.RecipeCategory = {}
 -- lua is weird
 Tirislib.RecipeCategory.__index = Tirislib.RecipeCategory
 
---- Class for arrays of recipes. Setter-functions can be called on them.
+--- Class for arrays of recipe categories. Setter-functions can be called on them.
 --- @class RecipeCategoryPrototypeArray
 Tirislib.RecipeCategoryArray = {}
 Tirislib.RecipeCategoryArray.__index = Tirislib.PrototypeArray.__index

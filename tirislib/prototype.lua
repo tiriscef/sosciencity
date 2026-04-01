@@ -1,7 +1,7 @@
 --- @class Prototype
 Tirislib.Prototype = Tirislib.Prototype or {}
 
---- The name of the mod that is currently running. Used to set the inofficial 'owner' field for created prototypes.
+--- The name of the mod that is currently running. Used to set the unofficial 'owner' field for created prototypes.
 Tirislib.Prototype.modname = nil
 
 --- Path to the icon to use for placeholder reasons.
@@ -49,7 +49,7 @@ function Tirislib.Prototype.is_dummy(prototype)
 end
 
 --- Gets the prototype of the specified type (or one of the specified types) out of data.raw.
---- Returns a dummy prototype if no one was found, so that I can manipulate prototypes without
+--- Returns a dummy prototype if none was found, so that prototypes can be manipulated without
 --- checking if they exist.
 --- @param prototype_type string|table
 --- @param name string
@@ -89,7 +89,7 @@ function Tirislib.Prototype.create(prototype)
     return ret
 end
 
---- Creates the prototypes in the given array and add them to data.raw.
+--- Creates the prototypes in the given array and adds them to data.raw.
 --- @param prototypes array
 --- @return PrototypeArray created_prototypes
 function Tirislib.Prototype.batch_create(prototypes)
@@ -104,12 +104,10 @@ function Tirislib.Prototype.batch_create(prototypes)
     return ret
 end
 
---- Some functions (mainly those who make changes to another prototype which might not
---- yet be created) might postpone their execution.
---- So they will add a table with all the necessary data and a execute-function to the
---- Prototype.postpones_functions table.
---- A call to finish_postponed will iterate repeatedly over the table and execute the
---- stored functions.
+--- Some functions (mainly those that modify another prototype which might not yet be
+--- created) can postpone their execution. They are stored in Prototype.postponed_functions
+--- as {fn, arg} entries. A call to finish_postponed will iterate repeatedly over the
+--- table and execute the stored functions until no new ones are added.
 Tirislib.Prototype.postponed_functions = Tirislib.Prototype.postponed_functions or {}
 
 --- Postpones the function call to when Tirislib.Prototype.finish gets called. 
@@ -139,29 +137,9 @@ function Tirislib.Prototype.finish_postponed()
     return to_do_count == 0 -- return true if there are no more things to do
 end
 
---- A table with all the recipes which should be added to productivity modules
-Tirislib.Prototype.productivity_recipes = Tirislib.Prototype.productivity_recipes or {}
-
---- Adds the given recipe name to the recipe whitelist of productivity modules.
---- @param recipe_name string
-function Tirislib.Prototype.add_recipe_to_productivity_modules(recipe_name)
-    table.insert(Tirislib.Prototype.productivity_recipes, recipe_name)
-end
-
---- Actually adds the marked recipe names to the whitelist of productivity modules.
-function Tirislib.Prototype.finish_productivity_modules()
-    for _, _module in Tirislib.Item.iterate("module") do
-        if _module.category == "productivity" and _module.limitation then
-            Tirislib.Tables.merge(_module.limitation, Tirislib.Prototype.productivity_recipes)
-        end
-    end
-    Tirislib.Prototype.productivity_recipes = {}
-end
-
 --- Boilerplate function. Has to be called at the end of a data stage.
 function Tirislib.Prototype.finish()
     Tirislib.Prototype.finish_postponed()
-    Tirislib.Prototype.finish_productivity_modules()
 
     remove_metatables()
 end

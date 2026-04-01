@@ -11,10 +11,20 @@ function Tirislib.BasePrototype:convert_to_icons_table()
         self.icons = {}
 
         if self.icon then
-            self.icons[#self.icons + 1] = {
+            local layer = {
                 icon = self.icon,
                 icon_size = self.icon_size
             }
+
+            -- preserve Factorio 2.0 IconData fields
+            if self.icon_draw_background ~= nil then
+                layer.draw_background = self.icon_draw_background
+            end
+            if self.icon_floating ~= nil then
+                layer.floating = self.icon_floating
+            end
+
+            self.icons[#self.icons + 1] = layer
         end
 
         self.icon = nil
@@ -31,10 +41,12 @@ local named_icon_shifts = {
 
 --- Adds a new icon layer ontop the one of this prototype.
 --- @param path string
---- @param shift table|string|nil
+--- @param shift table|string|nil a pixel offset table or a named position ("topleft", "topright", "bottomleft", "bottomright")
 --- @param scale number|nil
 --- @param tint table|nil
-function Tirislib.BasePrototype:add_icon_layer(path, shift, scale, tint)
+--- @param icon_size number|nil defaults to 64
+--- @return BasePrototype itself
+function Tirislib.BasePrototype:add_icon_layer(path, shift, scale, tint, icon_size)
     Tirislib.BasePrototype.convert_to_icons_table(self)
 
     if type(shift) == "string" then
@@ -43,6 +55,7 @@ function Tirislib.BasePrototype:add_icon_layer(path, shift, scale, tint)
 
     self.icons[#self.icons + 1] = {
         icon = path,
+        icon_size = icon_size or 64,
         shift = shift,
         scale = scale or 0.3,
         tint = tint
@@ -53,8 +66,11 @@ end
 
 --- Adds a custom tooltip field to the prototype.
 --- @param tooltip_table table
+--- @return BasePrototype itself
 function Tirislib.BasePrototype:add_custom_tooltip(tooltip_table)
     self.custom_tooltip_fields = self.custom_tooltip_fields or {}
 
     self.custom_tooltip_fields[#self.custom_tooltip_fields + 1] = tooltip_table
+
+    return self
 end

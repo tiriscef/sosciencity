@@ -21,11 +21,11 @@ function Tirislib.RecipeEntry.set_product_amount(entry, min, max)
     end
 end
 
---- Adds to the amount of this RecipeEntryPrototype, assuming it is an IngredientPrototype.
+--- Adds to the amount of this RecipeEntryPrototype.
 --- @param entry RecipeEntryPrototype
 --- @param min integer
 --- @param max integer|nil
-function Tirislib.RecipeEntry.add_product_amount(entry, min, max)
+function Tirislib.RecipeEntry.add_amount(entry, min, max)
     if not max or min == max then
         if entry.amount_min then
             entry.amount_min = entry.amount_min + min
@@ -41,10 +41,16 @@ function Tirislib.RecipeEntry.add_product_amount(entry, min, max)
 end
 
 --- Multiplies this RecipeEntryPrototype's amount with the given multiplier.
---- @param entry RecipePrototype
+--- @param entry RecipeEntryPrototype
 --- @param multiplier number
-function Tirislib.RecipeEntry.multiply_ingredient_amount(entry, multiplier)
-    entry.amount = entry.amount * multiplier
+function Tirislib.RecipeEntry.multiply_amount(entry, multiplier)
+    if entry.amount then
+        entry.amount = entry.amount * multiplier
+    end
+    if entry.amount_min then
+        entry.amount_min = entry.amount_min * multiplier
+        entry.amount_max = entry.amount_max * multiplier
+    end
 end
 
 --- Transforms the given RecipeEntryPrototype's amount by the given function.
@@ -73,7 +79,7 @@ function Tirislib.RecipeEntry.get_average_yield(entry)
     end
 end
 
---- Returns the average yield of the given RecipeEntryPrototype, assuming it's a ProductPrototype.
+--- Returns the maximum yield of the given RecipeEntryPrototype, assuming it's a ProductPrototype.
 --- @param entry RecipeEntryPrototype
 --- @return number yield
 function Tirislib.RecipeEntry.get_max_yield(entry)
@@ -96,17 +102,35 @@ end
 --- @param rh RecipeEntryPrototype
 --- @return boolean
 function Tirislib.RecipeEntry.can_be_merged(lh, rh)
-    -- for FluidProductPrototypes
-    if rh.fluidbox_index and lh.fluidbox_index ~= rh.fluidbox_index then
+    if lh.name ~= rh.name or lh.type ~= rh.type then
         return false
     end
 
-    return (lh.name == rh.name) and (lh.type == rh.type) and -- generic for all Ingredient-/ProductPrototypes
-        Tirislib.RecipeEntry.get_probability(lh) == Tirislib.RecipeEntry.get_probability(rh) and -- for ProductPrototypes
-        Tirislib.RecipeEntry.get_percent_spoiled(lh) == Tirislib.RecipeEntry.get_percent_spoiled(rh) and -- for ItemProductPrototypes
-        lh.temperature == rh.temperature and -- for FluidProductPrototypes
-        lh.minimum_temperature == rh.minimum_temperature and -- for FluidIngredientPrototypes
-        lh.maximum_temperature == rh.maximum_temperature -- for FluidIngredientPrototypes
+    if Tirislib.RecipeEntry.get_probability(lh) ~= Tirislib.RecipeEntry.get_probability(rh) then
+        return false
+    end
+
+    if Tirislib.RecipeEntry.get_percent_spoiled(lh) ~= Tirislib.RecipeEntry.get_percent_spoiled(rh) then
+        return false
+    end
+
+    -- FluidProductPrototype fields
+    if rh.fluidbox_index and lh.fluidbox_index ~= rh.fluidbox_index then
+        return false
+    end
+    if lh.temperature ~= rh.temperature then
+        return false
+    end
+
+    -- FluidIngredientPrototype fields
+    if lh.minimum_temperature ~= rh.minimum_temperature then
+        return false
+    end
+    if lh.maximum_temperature ~= rh.maximum_temperature then
+        return false
+    end
+
+    return true
 end
 
 --- Merges the given right hand RecipeEntryPrototype into the given left hand RecipeEntryPrototype.
@@ -116,7 +140,7 @@ function Tirislib.RecipeEntry.merge(lh, rh)
     local min = rh.amount_min or rh.amount
     local max = rh.amount_max or rh.amount
 
-    Tirislib.RecipeEntry.add_product_amount(lh, min, max)
+    Tirislib.RecipeEntry.add_amount(lh, min, max)
 
     if rh.ignored_by_stats then
         lh.ignored_by_stats = (lh.ignored_by_stats or 0) + rh.ignored_by_stats
@@ -130,7 +154,7 @@ function Tirislib.RecipeEntry.merge(lh, rh)
         if lh.extra_count_fraction >= 1 then
             local overhang = math.floor(lh.extra_count_fraction)
             lh.extra_count_fraction = lh.extra_count_fraction - overhang
-            Tirislib.RecipeEntry.add_product_amount(lh, overhang)
+            Tirislib.RecipeEntry.add_amount(lh, overhang)
         end
     end
 end
@@ -291,7 +315,6 @@ end
 --- Default values for some possible keys.
 local default_values = {
     category = "crafting",
-    result_count = 1,
     energy_required = 0.5,
     emissions_multiplier = 1,
     requester_paste_multiplier = 30,
@@ -522,15 +545,11 @@ end
 function Tirislib.Recipe:remove_ingredient(name, _type)
     _type = _type or "item"
 
-    local foundindex = {}
-    for index, ingredient in Tirislib.Recipe.iterate_ingredients(self) do
+    for index = #self.ingredients, 1, -1 do
+        local ingredient = self.ingredients[index]
         if ingredient.name == name and ingredient.type == _type then
-            foundindex[#foundindex + 1] = index
+            table.remove(self.ingredients, index)
         end
-    end
-
-    for _, index in pairs(foundindex) do
-        table.remove(self.ingredients, index)
     end
 
     return self
@@ -543,15 +562,11 @@ end
 function Tirislib.Recipe:remove_result(name, _type)
     _type = _type or "item"
 
-    local foundindex = {}
-    for index, result in Tirislib.Recipe.iterate_results(self) do
+    for index = #self.results, 1, -1 do
+        local result = self.results[index]
         if result.name == name and result.type == _type then
-            foundindex[#foundindex + 1] = index
+            table.remove(self.results, index)
         end
-    end
-
-    for _, index in pairs(foundindex) do
-        table.remove(self.results, index)
     end
 
     return self
@@ -590,7 +605,7 @@ end
 --- @return RecipePrototype itself
 function Tirislib.Recipe:replace_result(result_name, replacement_name, result_type, replacement_type, amount_fn)
     result_type = result_type or "item"
-    replacement_name = replacement_name or "item"
+    replacement_type = replacement_type or "item"
 
     for _, result in Tirislib.Recipe.iterate_results(self) do
         if result.name == result_name and result.type == result_type then
@@ -676,30 +691,6 @@ function Tirislib.Recipe:add_unlock(technology_name)
     return self
 end
 
---- Rounds all ingredient amounts down, but not to zero. Makes sure that they are integers.
---- @return RecipePrototype itself
-function Tirislib.Recipe:floor_ingredients()
-    -- TODO: Leaving this in for the moment. But I think this kind of function might not be a good idea
-
-    for _, ingredient in Tirislib.Recipe.iterate_ingredients(self) do
-        Tirislib.RecipeEntry.transform_amount(ingredient, math.floor)
-    end
-
-    return self
-end
-
---- Rounds all result amounts down, but not to zero. Makes sure that they are integers.
---- @return RecipePrototype itself
-function Tirislib.Recipe:floor_results()
-    -- TODO: Leaving this in for the moment. But I think this kind of function might not be a good idea
-
-    for _, result in Tirislib.Recipe.iterate_results(self) do
-        Tirislib.RecipeEntry.transform_amount(result, math.floor)
-    end
-
-    return self
-end
-
 --- Transforms all ingredient entries with the given function.
 --- @param fn function
 --- @return RecipePrototype itself
@@ -750,12 +741,10 @@ function Tirislib.Recipe:index_fluid_results()
     return self
 end
 
---- Adds the recipe to all productivity module's whitelist.
---- @return RecipePrototype
+--- Allows productivity modules for this recipe.
+--- @return RecipePrototype itself
 function Tirislib.Recipe:allow_productivity_modules()
-    -- TODO: This might be deprecated
-
-    Tirislib.Prototype.add_recipe_to_productivity_modules(self.name)
+    self.allow_productivity = true
 
     return self
 end
@@ -770,7 +759,7 @@ function Tirislib.Recipe:has_result(name, _type)
     _type = _type or "item"
 
     for _, entry in Tirislib.Recipe.iterate_results(self) do
-        if entry.type == "item" and entry.name == name then
+        if entry.type == _type and entry.name == name then
             return true
         end
     end
@@ -801,7 +790,7 @@ function Tirislib.Recipe:has_ingredient(name, _type)
     _type = _type or "item"
 
     for _, entry in Tirislib.Recipe.iterate_ingredients(self) do
-        if entry.type == "item" and entry.name == name then
+        if entry.type == _type and entry.name == name then
             return true
         end
     end

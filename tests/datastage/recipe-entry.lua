@@ -28,24 +28,24 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << RecipeEntry.add_product_amount >>
+-- << RecipeEntry.add_amount >>
 
 Tirislib.Testing.add_test_case(
-    "RecipeEntry.add_product_amount adds to fixed amount",
+    "RecipeEntry.add_amount adds to fixed amount",
     "lib.recipe-entry",
     function()
         local entry = {name = "test", type = "item", amount = 5}
-        Tirislib.RecipeEntry.add_product_amount(entry, 3)
+        Tirislib.RecipeEntry.add_amount(entry, 3)
         Assert.equals(entry.amount, 8)
     end
 )
 
 Tirislib.Testing.add_test_case(
-    "RecipeEntry.add_product_amount with range converts fixed to range",
+    "RecipeEntry.add_amount with range converts fixed to range",
     "lib.recipe-entry",
     function()
         local entry = {name = "test", type = "item", amount = 5}
-        Tirislib.RecipeEntry.add_product_amount(entry, 2, 4)
+        Tirislib.RecipeEntry.add_amount(entry, 2, 4)
         Assert.equals(entry.amount_min, 7)
         Assert.equals(entry.amount_max, 9)
     end

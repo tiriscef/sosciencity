@@ -86,12 +86,12 @@ function Tirislib.Fluid.batch_create(fluid_data_array, batch_data)
     local default_temperature = batch_data.default_temperature or 10
     local max_temperature = batch_data.max_temperature or 100
 
-    local created_items = {}
-    for index, data in pairs(fluid_data_array) do
+    local created_fluids = {}
+    for index, fluid_data in pairs(fluid_data_array) do
         local fluid =
             Tirislib.Fluid.create {
-            name = data.name,
-            icon = path .. data.name .. ".png",
+            name = fluid_data.name,
+            icon = path .. fluid_data.name .. ".png",
             icon_size = size,
             subgroup = subgroup,
             order = string.format("%03d", index),
@@ -101,26 +101,26 @@ function Tirislib.Fluid.batch_create(fluid_data_array, batch_data)
             flow_color = flow_color
         }
 
-        Tirislib.Tables.set_fields(fluid, data.distinctions)
+        Tirislib.Tables.set_fields(fluid, fluid_data.distinctions)
 
-        for _, field in pairs(data.custom_tooltip_fields or {}) do
+        for _, field in pairs(fluid_data.custom_tooltip_fields or {}) do
             fluid:add_custom_tooltip(field)
         end
 
-        created_items[#created_items + 1] = fluid
+        created_fluids[#created_fluids + 1] = fluid
     end
 
-    setmetatable(created_items, Tirislib.FluidArray)
-    return created_items
+    setmetatable(created_fluids, Tirislib.FluidArray)
+    return created_fluids
 end
 
---- Returns the localised name of the item.
+--- Returns the localised name of the fluid.
 --- @return locale
 function Tirislib.Fluid:get_localised_name()
     return self.localised_name or {"fluid-name." .. self.name}
 end
 
---- Returns the localised description of the item.
+--- Returns the localised description of the fluid.
 --- @return locale
 function Tirislib.Fluid:get_localised_description()
     return self.localised_description or {"fluid-description." .. self.name}
