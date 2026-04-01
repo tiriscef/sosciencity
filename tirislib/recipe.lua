@@ -741,13 +741,6 @@ function Tirislib.Recipe:index_fluid_results()
     return self
 end
 
---- Allows productivity modules for this recipe.
---- @return RecipePrototype itself
-function Tirislib.Recipe:allow_productivity_modules()
-    self.allow_productivity = true
-
-    return self
-end
 
 -- << analyze >>
 

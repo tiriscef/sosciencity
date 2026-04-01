@@ -7,15 +7,15 @@ Tirislib.RecipeGenerator = {}
 
 local ingredient_themes = {}
 
---- Table with Theme -> table with (level, array of IngredientPrototypes) pairs\
---- Most of the time level is defined by the research stage at which the player should be able to use this recipe.\
---- **0:** Start of the game, nothing researched\
---- **1:** automation science\
---- **2:** logistic science\
---- **3:** chemical science\
---- **4:** production science\
---- **5:** utility science\
---- **6:** space science\
+--- Table with Theme -> table with (level, array of IngredientPrototypes) pairs<br>
+--- Most of the time level is defined by the research stage at which the player should be able to use this recipe.<br>
+--- **0:** Start of the game, nothing researched<br>
+--- **1:** automation science<br>
+--- **2:** logistic science<br>
+--- **3:** chemical science<br>
+--- **4:** production science<br>
+--- **5:** utility science<br>
+--- **6:** space science<br>
 --- **7:** post space science
 function Tirislib.RecipeGenerator.add_themes(themes)
     for k, v in pairs(themes) do
@@ -25,7 +25,7 @@ end
 
 local result_themes = {}
 
---- Table with Theme -> table with (level, array of ResultPrototypes) pairs\
+--- Table with Theme -> table with (level, array of ResultPrototypes) pairs<br>
 --- These are separate from the ingredient themes, because ResultPrototypes aren't valid IngredientPrototypes.
 function Tirislib.RecipeGenerator.add_result_themes(themes)
     for k, v in pairs(themes) do
@@ -70,7 +70,13 @@ end
 local function get_theme_definition(name, level, for_result)
     local ret
 
-    local theme_definition = (for_result and result_themes[name]) or ingredient_themes[name]
+    local theme_definition
+    if for_result then
+        theme_definition = result_themes[name]
+    else
+        theme_definition = ingredient_themes[name]
+    end
+
     if theme_definition then
         ret = get_nearest_level(theme_definition, level)
     else
@@ -195,32 +201,31 @@ local function get_standard_category(recipe)
     return "crafting"
 end
 
---- Creates a dynamic recipe.\
---- **product:** name of the main product\
---- **product_type:** type of the main product (defaults to "item")\
---- **product_amount:** amount of the main product (defaults to 1)\
---- **product_min:** minimal amount of the main product (if the recipe should use a range)\
---- **product_max:** maximal amount of the main product (if the recipe should use a range)\
---- **product_probability:** probability of the main product\
---- **name:** name of the recipe (defaults to the name of the product)\
---- **byproducts:** array of ResultPrototypes\
---- **category:** RecipeCategory of the recipe (defaults to "crafting" or "crafting-with-fluid")\
---- **themes:** array of themes\
---- **result_themes:** array of themes\
---- **default_theme_level:** number\
---- **ingredients:** array of IngredientPrototypes\
---- **energy_required:** energy_required field for the recipe (defaults to 0.5)\
---- **unlock:** technology that unlocks the recipe\
---- **additional_fields:** other fields that should be set for the recipe\
---- **allow_productivity:** bool\
---- **localised_name:** locale\
---- **localised_description:** locale\
---- **icon:** path to icon\
---- **icons:** array of SpritePrototypes\
---- **icon_size:** integer\
---- **subgroup:** name of the subgroup (defaults to the product's subgroup)\
---- **index_fluid_ingredients:** bool (defaults to false)\
---- **index_fluid_results:** bool (defaults to false)\
+--- Creates a dynamic recipe.<br>
+--- **product:** name of the main product<br>
+--- **product_type:** type of the main product (defaults to "item")<br>
+--- **product_amount:** amount of the main product (defaults to 1)<br>
+--- **product_min:** minimal amount of the main product (if the recipe should use a range)<br>
+--- **product_max:** maximal amount of the main product (if the recipe should use a range)<br>
+--- **product_probability:** probability of the main product<br>
+--- **name:** name of the recipe (defaults to the name of the product)<br>
+--- **byproducts:** array of ResultPrototypes<br>
+--- **category:** RecipeCategory of the recipe (defaults to "crafting" or "crafting-with-fluid")<br>
+--- **themes:** array of themes<br>
+--- **result_themes:** array of themes<br>
+--- **default_theme_level:** number<br>
+--- **ingredients:** array of IngredientPrototypes<br>
+--- **energy_required:** energy_required field for the recipe (defaults to 0.5)<br>
+--- **unlock:** technology that unlocks the recipe<br>
+--- **additional_fields:** other fields that should be set for the recipe<br>
+--- **localised_name:** locale<br>
+--- **localised_description:** locale<br>
+--- **icon:** path to icon<br>
+--- **icons:** array of SpritePrototypes<br>
+--- **icon_size:** integer<br>
+--- **subgroup:** name of the subgroup (defaults to the product's subgroup)<br>
+--- **index_fluid_ingredients:** bool (defaults to false)<br>
+--- **index_fluid_results:** bool (defaults to false)
 function Tirislib.RecipeGenerator.create(details)
     local product = get_product_prototype(details.product, details.product_type)
     local main_product = get_main_product_entry(product, details)
@@ -274,7 +279,7 @@ function Tirislib.RecipeGenerator.create(details)
     recipe:set_fields(details.additional_fields)
 
     if details.allow_productivity then
-        recipe:allow_productivity_modules()
+        recipe.allow_productivity = true
     end
 
     if details.index_fluid_ingredients then
@@ -288,46 +293,181 @@ function Tirislib.RecipeGenerator.create(details)
     return recipe
 end
 
---- Creates a dynamic recipe for every level of a given ingredient theme.\
---- Additional fields:\
---- **followed_theme:** name\
---- **followed_theme_amount:** number or function\
---- **dynamic_fields:** table with (detail field, fn) pairs. The functions will be called with the theme level as the argument.\
-function Tirislib.RecipeGenerator.create_per_theme_level(details)
-    local theme_name = details.followed_theme
-    local theme_definition = ingredient_themes[theme_name]
-    local theme_amount = details.followed_theme_amount or 1
-    local dynamic = details.dynamic_fields or {}
+-- << prototype-based creation >>
 
-    local created_recipes = {}
-    setmetatable(created_recipes, Tirislib.RecipeArray)
-
-    if not theme_definition then
-        log("Tirislib RecipeGenerator was told to follow an undefined theme: " .. details.followed_theme)
-        theme_definition = {}
+--- Separates theme entries from real entries in an array.
+--- Theme entries are identified by having a `theme` key.
+local function separate_themes(entries)
+    if not entries then
+        return nil, nil
     end
 
-    for level in pairs(theme_definition) do
-        local current_details = Tirislib.Tables.copy(details)
+    local real, themes
+    for _, entry in pairs(entries) do
+        if entry.theme ~= nil then
+            themes = themes or {}
+            themes[#themes + 1] = entry
+        else
+            real = real or {}
+            real[#real + 1] = entry
+        end
+    end
 
-        -- set dynamic fields
-        for field, fn in pairs(dynamic) do
-            current_details[field] = fn(level)
+    return real, themes
+end
+
+--- Finds the result entry marked as product, or defaults to the first result.
+--- Strips the product flag from the entry.
+local function find_product_entry(results)
+    if not results or #results == 0 then
+        return nil
+    end
+
+    for _, entry in pairs(results) do
+        if entry.product then
+            entry.product = nil
+            return entry
+        end
+    end
+
+    return results[1]
+end
+
+--- Derives recipe fields from the product's item/fluid prototype where not already set.
+local function derive_fields_from_product(prototype, product_entry)
+    if not product_entry then
+        return
+    end
+
+    local product = get_product_prototype(product_entry.name, product_entry.type)
+
+    prototype.name = prototype.name or Tirislib.Prototype.get_unique_name(product.name, "recipe")
+    prototype.subgroup = prototype.subgroup or product.subgroup
+    prototype.order = prototype.order or product.order
+
+    if prototype.always_show_products == nil then
+        prototype.always_show_products = (product.place_result == nil)
+    end
+
+    -- localisation and icon derivation
+    local has_custom_identity = prototype.localised_name or prototype.localised_description or prototype.icon or prototype.icons
+    local caller_set_name = prototype.localised_name ~= nil
+
+    if has_custom_identity then
+        prototype.localised_name = prototype.localised_name or product:get_localised_name()
+        prototype.localised_description = prototype.localised_description or product:get_localised_description()
+
+        if caller_set_name and prototype.show_amount_in_title == nil then
+            prototype.show_amount_in_title = false
         end
 
-        -- set the current followed theme
-        local themes = Tirislib.Tables.get_subtbl(current_details, "themes")
-        themes[#themes + 1] = {
-            theme_name,
-            type(theme_amount) == "function" and theme_amount(level) or theme_amount,
-            nil,
-            level
-        }
+        if not prototype.icon and not prototype.icons then
+            prototype.icon = product.icon
+            prototype.icons = product.icons
+            prototype.icon_size = prototype.icon_size or product.icon_size or 64
+        end
+    else
+        prototype.main_product = product.name
+        prototype.localised_name = product:get_localised_name()
+    end
+end
 
-        created_recipes[#created_recipes + 1] = Tirislib.RecipeGenerator.create(current_details)
+--- Creates a recipe from a (potentially incomplete) recipe prototype.<br>
+--- The prototype can contain regular recipe fields as well as these extra keys:<br>
+--- **unlock:** technology that unlocks the recipe<br>
+--- **default_theme_level:** default level for theme entries without an explicit level<br>
+--- **index_fluid_ingredients:** bool<br>
+--- **index_fluid_results:** bool<br>
+---<br>
+--- Entries in the **ingredients** and **results** arrays can be theme entries:<br>
+--- `{theme = "metal", amount = 2, level = 3}`<br>
+--- These are expanded into real ingredients/results based on the theme definitions.<br>
+---<br>
+--- One result entry can be marked as the product:<br>
+--- `{type = "item", name = "my-widget", amount = 1, product = true}`<br>
+--- The product is used to derive name, subgroup, order, localisation, and icon where not explicitly set.<br>
+--- If no entry is marked, the first result is used as the product.<br>
+--- The product is optional if all derived fields are provided explicitly.
+function Tirislib.RecipeGenerator.create_from_prototype(prototype)
+    -- consume and nil extra keys
+    local unlock = prototype.unlock
+    local default_theme_level = prototype.default_theme_level
+    local index_fluid_ingredients = prototype.index_fluid_ingredients
+    local index_fluid_results = prototype.index_fluid_results
+    prototype.unlock = nil
+    prototype.default_theme_level = nil
+    prototype.index_fluid_ingredients = nil
+    prototype.index_fluid_results = nil
+
+    -- separate theme entries from real entries
+    local real_ingredients, ingredient_theme_entries = separate_themes(prototype.ingredients)
+    local real_results, result_theme_entries = separate_themes(prototype.results)
+    prototype.ingredients = real_ingredients
+    prototype.results = real_results or {}
+
+    -- find product and derive missing fields
+    local product_entry = find_product_entry(prototype.results)
+    derive_fields_from_product(prototype, product_entry)
+
+    -- defaults
+    if prototype.enabled == nil then
+        prototype.enabled = true
+    end
+    prototype.energy_required = prototype.energy_required or 0.5
+
+    -- track caller-provided values before creation
+    local explicit_category = prototype.category
+    local explicit_always_show_made_in = prototype.always_show_made_in
+
+    -- create the recipe
+    local recipe = Tirislib.Recipe.create(prototype)
+
+    -- expand ingredient themes
+    if ingredient_theme_entries then
+        for _, entry in pairs(ingredient_theme_entries) do
+            Tirislib.RecipeGenerator.add_ingredient_theme(
+                recipe,
+                {entry.theme, entry.amount or 1, entry.level},
+                default_theme_level
+            )
+        end
+        recipe:transform_ingredient_entries(function(e) Tirislib.RecipeEntry.transform_amount(e, math.floor) end)
     end
 
-    return created_recipes
+    -- expand result themes
+    if result_theme_entries then
+        for _, entry in pairs(result_theme_entries) do
+            Tirislib.RecipeGenerator.add_result_theme(
+                recipe,
+                {entry.theme, entry.amount or 1, entry.level},
+                default_theme_level
+            )
+        end
+        recipe:transform_result_entries(function(e) Tirislib.RecipeEntry.transform_amount(e, math.floor) end)
+    end
+
+    -- unlock
+    if unlock then
+        recipe:add_unlock(unlock)
+    end
+
+    -- category (auto-detect after themes are expanded so fluid ingredients are known)
+    local category = explicit_category or get_standard_category(recipe)
+    recipe:set_field("category", category)
+    if explicit_always_show_made_in == nil then
+        recipe:set_field("always_show_made_in", category ~= "crafting")
+    end
+
+    -- post-processing
+    if index_fluid_ingredients then
+        recipe:index_fluid_ingredients()
+    end
+
+    if index_fluid_results then
+        recipe:index_fluid_results()
+    end
+
+    return recipe
 end
 
 local arrays = {"ingredients", "byproducts", "themes", "result_themes"}
@@ -346,6 +486,27 @@ function Tirislib.RecipeGenerator.merge_details(lh, rh)
             Tirislib.Tables.merge(Tirislib.Tables.get_subtbl(lh, key), value)
         else
             -- set the field passively
+            lh[key] = (lh[key] ~= nil) and lh[key] or value
+        end
+    end
+end
+
+local prototype_arrays = {ingredients = true, results = true}
+
+--- Merges the right hand recipe prototype into the left hand recipe prototype.<br>
+--- Array fields (`ingredients`, `results`) are concatenated. This includes inline theme entries.<br>
+--- All other fields are set passively (only if not already present in lh).
+--- @param lh table
+--- @param rh table
+function Tirislib.RecipeGenerator.merge_prototypes(lh, rh)
+    if not lh or not rh then
+        return
+    end
+
+    for key, value in pairs(rh) do
+        if prototype_arrays[key] then
+            Tirislib.Tables.merge(Tirislib.Tables.get_subtbl(lh, key), value)
+        else
             lh[key] = (lh[key] ~= nil) and lh[key] or value
         end
     end
