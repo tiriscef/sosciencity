@@ -178,6 +178,23 @@ function Gui.on_gui_confirmed(event)
     look_for_event_handler_by_tag(event, gui_confirmed_lookup_tag)
 end
 
+--- Lookup for text changed event handlers by tag.
+--- [tag]: function
+local text_changed_lookup_tag = {}
+
+--- Sets the 'on_gui_text_changed' event handler for gui elements with the given 'sosciencity_gui_event'-tag.
+--- @param tag string
+--- @param fn function
+function Gui.set_text_changed_handler(tag, fn)
+    Tirislib.Utils.desync_protection()
+    text_changed_lookup_tag[tag] = fn
+end
+
+--- Event handler for text changed events
+function Gui.on_gui_text_changed(event)
+    look_for_event_handler_by_tag(event, text_changed_lookup_tag)
+end
+
 --- Array of functions to be called on the on_gui_closed-event.
 local gui_closed_handlers = {}
 

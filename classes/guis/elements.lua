@@ -156,6 +156,7 @@ function Gui.Elements.Datalist.add_kv_checkbox(
     checkbox_name,
     key_caption,
     checkbox_caption,
+    initial_state,
     key_font,
     checkbox_font)
     local flow = add_kv_flow(data_list, key, key_caption, key_font, "horizontal")
@@ -165,7 +166,7 @@ function Gui.Elements.Datalist.add_kv_checkbox(
         flow.add {
         type = "checkbox",
         name = checkbox_name,
-        state = true
+        state = initial_state ~= nil and initial_state or true
     }
 
     local label =
@@ -422,7 +423,7 @@ Gui.Elements.SortableList.sort_mode_symbols = {
 --- Rebuilds the SortableList with the given sorting mode and category.
 --- @param list LuaGuiElement
 --- @param link string  key to linked data and categories
---- @param selected_category string
+--- @param selected_category string?
 --- @param sort_mode string
 function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_category, sort_mode)
     list.clear()
@@ -487,7 +488,7 @@ function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_categor
             }
 
             if category.font then
-                row_entry.style.font = category.font(entry)
+                row_entry.style.font = category.font(entry.data)
             end
             if category.constant_font then
                 row_entry.style.font = category.constant_font
@@ -587,12 +588,14 @@ function Gui.Elements.Label.header_label(container, name, caption)
         caption = caption
     }
     header.style.font = "default-bold"
+
+    return header
 end
 
 --- Creates a generic 'heading_1' label.
 --- @param container LuaGuiElement
 --- @param caption locale
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Label.heading_1(container, caption, name)
     return container.add {
@@ -606,7 +609,7 @@ end
 --- Creates a generic 'heading_2' label.
 --- @param container LuaGuiElement
 --- @param caption locale
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Label.heading_2(container, caption, name)
     return container.add {
@@ -620,7 +623,7 @@ end
 --- Creates a generic 'heading_3' label.
 --- @param container LuaGuiElement
 --- @param caption locale
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Label.heading_3(container, caption, name)
     return container.add {
@@ -634,7 +637,7 @@ end
 --- Creates a generic multi-line 'paragraph' label.
 --- @param container LuaGuiElement
 --- @param caption locale
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Label.paragraph(container, caption, name)
     return container.add {
@@ -647,7 +650,7 @@ end
 
 --- Creates a flow stylised for a list.
 --- @param container LuaGuiElement
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Label.list_flow(container, name)
     return container.add {
@@ -661,8 +664,8 @@ end
 --- Creates a generic bullet point with a marker in front.
 --- @param container LuaGuiElement
 --- @param text_caption locale
---- @param marker_caption locale|nil
---- @param name string|nil
+--- @param marker_caption locale?
+--- @param name string?
 --- @return LuaGuiElement flow the flow that contains marker and text
 function Gui.Elements.Label.bullet_point(container, text_caption, marker_caption, name)
     local flow =
@@ -678,7 +681,7 @@ function Gui.Elements.Label.bullet_point(container, text_caption, marker_caption
         caption = marker_caption or ">",
         style = "sosciencity_list_marker"
     }
-    Gui.Elements.Label.paragraph(flow, text_caption, name)
+    Gui.Elements.Label.paragraph(flow, text_caption)
 
     return flow
 end
@@ -686,8 +689,8 @@ end
 --- Creates a generic list with the given bullet points.
 --- @param container LuaGuiElement
 --- @param point_captions array of locales
---- @param marker_caption locale|nil
---- @param name string|nil
+--- @param marker_caption locale?
+--- @param name string?
 --- @return LuaGuiElement flow the flow that contains the list
 function Gui.Elements.Label.list(container, point_captions, marker_caption, name)
     local list_container = Gui.Elements.Label.list_flow(container, name)
@@ -698,6 +701,137 @@ function Gui.Elements.Label.list(container, point_captions, marker_caption, name
 
     return list_container
 end
+
+---------------------------------------------------------------------------------------------------
+-- << Numeric Expression Textfield >>
+---------------------------------------------------------------------------------------------------
+
+--- A textfield that accepts arithmetic expressions and suffixes (k, M) and evaluates them on Enter.
+Gui.Elements.NumericTextField = {}
+
+local suffix_multipliers = {
+    k = 1e3,
+    K = 1e3,
+    m = 1e6,
+    M = 1e6
+}
+
+--- Evaluates a numeric expression string, supporting suffixes.
+--- @param text string
+--- @return number? result
+local function evaluate_numeric_expression(text)
+    if text == "" then
+        return
+    end
+
+    -- Replace suffix notation before evaluating, e.g. "10k" -> "10000", "2.5M" -> "2500000"
+    text = text:gsub("(%d+%.?%d*)([kKmM])", function(num, suffix)
+        return tostring(tonumber(num) * suffix_multipliers[suffix])
+    end)
+
+    -- Evaluate using load() with an empty environment so no globals are accessible
+    local chunk = load("return " .. text, "expression", "t", {})
+    if not chunk then
+        return nil
+    end
+
+    local ok, result = pcall(chunk)
+    if not ok then
+        return nil
+    end
+
+    if type(result) ~= "number" then
+        return nil
+    end
+
+    return result
+end
+
+local function format_number(n)
+    -- Show integers without a decimal point
+    if n == math.floor(n) then
+        return tostring(math.floor(n))
+    else
+        return tostring(n)
+    end
+end
+
+--- Lookup for post-evaluation confirmed handlers by tag.
+--- Registered via Gui.Elements.NumericTextField.set_confirmed_handler.
+local numeric_confirmed_handlers = {}
+
+--- Registers a handler to be called after a NumericTextField successfully evaluates its expression.
+--- The textfield must have been created with a matching 'numeric_confirmed_event' tag.
+--- The handler receives (event, result) where result is the evaluated number.
+--- @param tag string
+--- @param fn function(event, result)
+function Gui.Elements.NumericTextField.set_confirmed_handler(tag, fn)
+    Tirislib.Utils.desync_protection()
+    numeric_confirmed_handlers[tag] = fn
+end
+
+--- Creates a textfield that evaluates arithmetic expressions on Enter.
+--- Supports suffixes: k/K (×1000), m/M (×1000000).
+--- Pass 'numeric_confirmed_event = "tag"' in extra_tags to hook into post-evaluation via
+--- Gui.Elements.NumericTextField.set_confirmed_handler.
+--- @param container LuaGuiElement
+--- @param name string?
+--- @param extra_tags table? additional tags
+--- @return LuaGuiElement textfield
+function Gui.Elements.NumericTextField.create(container, name, extra_tags)
+    local tags = {sosciencity_gui_event = "evaluate_numeric_expression"}
+    if extra_tags then
+        for k, v in pairs(extra_tags) do
+            tags[k] = v
+        end
+    end
+
+    local textfield = container.add {
+        type = "textfield",
+        name = name,
+        tags = tags,
+        style = "sosciencity_numeric_textfield"
+    }
+
+    return textfield
+end
+
+Gui.set_gui_confirmed_handler(
+    "evaluate_numeric_expression",
+    function(event)
+        local textfield = event.element
+        local text = textfield.text
+
+        local result = evaluate_numeric_expression(text)
+
+        if not result then
+            textfield.style = "sosciencity_numeric_textfield_error"
+            textfield.tooltip = {"sosciencity.invalid-expression"}
+            return
+        end
+
+        textfield.style = "sosciencity_numeric_textfield"
+        textfield.tooltip = ""
+        textfield.text = format_number(result)
+
+        local secondary_tag = textfield.tags.numeric_confirmed_event
+        if secondary_tag then
+            local handler = numeric_confirmed_handlers[secondary_tag]
+            if handler then
+                handler(event, result)
+            end
+        end
+    end
+)
+
+Gui.set_text_changed_handler(
+    "evaluate_numeric_expression",
+    function(event)
+        local textfield = event.element
+        textfield.style = "sosciencity_numeric_textfield"
+        textfield.tooltip = ""
+    end
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << Buttons >>
@@ -742,7 +876,7 @@ Gui.Elements.Flow = {}
 
 --- Creates a simple horizontal flow that centers its children.
 --- @param container LuaGuiElement
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Flow.horizontal_center(container, name)
     return container.add {
@@ -755,7 +889,7 @@ end
 
 --- Creates a simple horizontal flow that orders its children to the right.
 --- @param container LuaGuiElement
---- @param name string|nil
+--- @param name string?
 --- @return LuaGuiElement
 function Gui.Elements.Flow.horizontal_right(container, name)
     return container.add {
