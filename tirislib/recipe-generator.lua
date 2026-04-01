@@ -224,8 +224,8 @@ end
 --- **icons:** array of SpritePrototypes<br>
 --- **icon_size:** integer<br>
 --- **subgroup:** name of the subgroup (defaults to the product's subgroup)<br>
---- **index_fluid_ingredients:** bool (defaults to false)<br>
---- **index_fluid_results:** bool (defaults to false)
+--- **do_index_fluid_ingredients:** bool (defaults to false)<br>
+--- **do_index_fluid_results:** bool (defaults to false)
 function Tirislib.RecipeGenerator.create(details)
     local product = get_product_prototype(details.product, details.product_type)
     local main_product = get_main_product_entry(product, details)
@@ -282,11 +282,11 @@ function Tirislib.RecipeGenerator.create(details)
         recipe.allow_productivity = true
     end
 
-    if details.index_fluid_ingredients then
+    if details.do_index_fluid_ingredients then
         recipe:index_fluid_ingredients()
     end
 
-    if details.index_fluid_results then
+    if details.do_index_fluid_results then
         recipe:index_fluid_results()
     end
 
@@ -376,8 +376,8 @@ end
 --- The prototype can contain regular recipe fields as well as these extra keys:<br>
 --- **unlock:** technology that unlocks the recipe<br>
 --- **default_theme_level:** default level for theme entries without an explicit level<br>
---- **index_fluid_ingredients:** bool<br>
---- **index_fluid_results:** bool<br>
+--- **do_index_fluid_ingredients:** bool<br>
+--- **do_index_fluid_results:** bool<br>
 ---<br>
 --- Entries in the **ingredients** and **results** arrays can be theme entries:<br>
 --- `{theme = "metal", amount = 2, level = 3}`<br>
@@ -392,12 +392,12 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
     -- consume and nil extra keys
     local unlock = prototype.unlock
     local default_theme_level = prototype.default_theme_level
-    local index_fluid_ingredients = prototype.index_fluid_ingredients
-    local index_fluid_results = prototype.index_fluid_results
+    local index_fluid_ingredients = prototype.do_index_fluid_ingredients
+    local index_fluid_results = prototype.do_index_fluid_results
     prototype.unlock = nil
     prototype.default_theme_level = nil
-    prototype.index_fluid_ingredients = nil
-    prototype.index_fluid_results = nil
+    prototype.do_index_fluid_ingredients = nil
+    prototype.do_index_fluid_results = nil
 
     -- separate theme entries from real entries
     local real_ingredients, ingredient_theme_entries = separate_themes(prototype.ingredients)

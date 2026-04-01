@@ -26,7 +26,9 @@ local function create_recipe(name, fields)
         end
     end
     create_test_item(name .. "-result")
-    return Tirislib.Recipe.create(proto)
+    local created_prototype = Tirislib.Recipe.create(proto)
+    created_prototypes[#created_prototypes + 1] = created_prototype
+    return created_prototype
 end
 
 local function teardown()
@@ -437,6 +439,7 @@ Tirislib.Testing.add_test_case(
         original:add_ingredient({type = "item", name = "iron-plate", amount = 3})
 
         local copy, found = Tirislib.Recipe.copy("test-r-copy-orig", "test-r-copy-new")
+        created_prototypes[#created_prototypes + 1] = copy
         Assert.is_true(found)
         Assert.equals(copy.name, "test-r-copy-new")
         Assert.is_true(copy:has_ingredient("iron-plate"))

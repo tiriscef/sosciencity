@@ -448,7 +448,7 @@ Tirislib.Testing.add_test_case(
             name = "test-rg-fluid-recipe"
         })
 
-        Assert.is_true(recipe:has_result("test-rg-fluid-product"))
+        Assert.is_true(recipe:has_result("test-rg-fluid-product", "fluid"))
     end,
     setup,
     teardown
@@ -762,14 +762,14 @@ Tirislib.Testing.add_test_case(
             name = "test-rg-cfp-nil-recipe",
             results = {{type = "item", name = "test-rg-cfp-nil-product", amount = 1}},
             default_theme_level = 2,
-            index_fluid_ingredients = true,
-            index_fluid_results = true
+            do_index_fluid_ingredients = true,
+            do_index_fluid_results = true
         }
 
         Assert.is_nil(recipe.unlock)
         Assert.is_nil(recipe.default_theme_level)
-        Assert.is_nil(recipe.index_fluid_ingredients)
-        Assert.is_nil(recipe.index_fluid_results)
+        Assert.is_nil(recipe.do_index_fluid_ingredients)
+        Assert.is_nil(recipe.do_index_fluid_results)
     end,
     setup,
     teardown

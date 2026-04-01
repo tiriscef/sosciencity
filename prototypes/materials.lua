@@ -1013,7 +1013,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "flour", amount = 5},
         {type = "fluid", name = "clean-water", amount = 80}
     },
-    index_fluid_ingredients = true,
+    do_index_fluid_ingredients = true,
     category = "sosciencity-pharma",
     energy_required = 4,
     allow_productivity = true,

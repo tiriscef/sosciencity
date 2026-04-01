@@ -25,7 +25,7 @@ local Datalist = Gui.Elements.Datalist
 -- << upbringing station >>
 
 local breedable_castes =
-    Luaq_from(Castes.all):where_key("breedable"):select_key("type"):to_array()
+    Tirislib.LazyLuaq.from(Castes.all):where_key("breedable"):select_key("type"):to_array()
 
 local function update_upbringing_mode_radiobuttons(entry, mode_flow)
     local mode = entry[EK.education_mode]
