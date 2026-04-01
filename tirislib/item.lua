@@ -129,12 +129,12 @@ function Tirislib.Item.batch_create(item_data_array, batch_data)
     local stack_size = batch_data.stack_size or 200
 
     local created_items = {}
-    for index, data in pairs(item_data_array) do
-        local icon = data.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. data.name .. ".png")
+    for index, item_data in pairs(item_data_array) do
+        local icon = item_data.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. item_data.name .. ".png")
 
         local prototype = {
             type = prototype_type,
-            name = data.name,
+            name = item_data.name,
             icon = icon,
             icon_size = size,
             subgroup = subgroup,
@@ -142,11 +142,11 @@ function Tirislib.Item.batch_create(item_data_array, batch_data)
             stack_size = stack_size
         }
         Tirislib.Tables.set_fields_passively(prototype, batch_data)
-        Tirislib.Tables.set_fields(prototype, data.distinctions)
+        Tirislib.Tables.set_fields(prototype, item_data.distinctions)
 
         local item = Tirislib.Item.create(prototype)
 
-        local variations = data.sprite_variations
+        local variations = item_data.sprite_variations
         if variations then
             item:add_sprite_variations(64, path .. variations.name, variations.count)
 
@@ -155,7 +155,7 @@ function Tirislib.Item.batch_create(item_data_array, batch_data)
             end
         end
 
-        for _, field in pairs(data.custom_tooltip_fields or {}) do
+        for _, field in pairs(item_data.custom_tooltip_fields or {}) do
             item:add_custom_tooltip(field)
         end
 
@@ -171,31 +171,23 @@ end
 --- Checks if the item is launchable, which means that it has launch products.
 --- @return boolean
 function Tirislib.Item:is_launchable()
-    return (self.rocket_launch_product ~= nil) or (self.rocket_launch_products ~= nil)
+    return self.rocket_launch_products ~= nil
 end
 
 --- Returns the RecipeEntryPrototypes of this item's launch products.
 --- @return table
 function Tirislib.Item:get_launch_products()
-    if not self:is_launchable() then
-        return {}
-    end
-
-    return self.rocket_launch_product and {self.rocket_launch_product} or self.rocket_launch_products
+    return self.rocket_launch_products or {}
 end
 
 --- Adds the given RecipeEntryPrototype to this item's launch products.
 --- @param product_prototype RecipeEntryPrototype
 --- @return ItemPrototype itself
 function Tirislib.Item:add_launch_product(product_prototype)
-    if not self:is_launchable() then
-        self.rocket_launch_products = {product_prototype}
-    else
-        if self.rocket_launch_product then
-            self.rocket_launch_products = {self.rocket_launch_product}
-            self.rocket_launch_product = nil
-        end
+    if self.rocket_launch_products then
         table.insert(self.rocket_launch_products, product_prototype)
+    else
+        self.rocket_launch_products = {product_prototype}
     end
 
     return self
@@ -268,7 +260,7 @@ function Tirislib.Item:get_localised_name()
     end
     if self.place_as_equipment_result then
         local equipment = Tirislib.Prototype.get(equipment_types, self.place_as_equipment_result)
-        return equipment.localised_name or {"equipment-name" .. self.place_as_equipment_result}
+        return equipment.localised_name or {"equipment-name." .. self.place_as_equipment_result}
     end
     if self.place_as_tile then
         local tile = Tirislib.Prototype.get("tile", self.place_as_tile)
@@ -294,7 +286,7 @@ function Tirislib.Item:get_localised_description()
     end
     if self.place_as_equipment_result then
         local equipment = Tirislib.Prototype.get(equipment_types, self.place_as_equipment_result)
-        return equipment.localised_description or {"equipment-name" .. self.place_as_equipment_result}
+        return equipment.localised_description or {"equipment-description." .. self.place_as_equipment_result}
     end
     if self.place_as_tile then
         local tile = Tirislib.Prototype.get("tile", self.place_as_tile)

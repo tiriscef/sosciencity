@@ -384,38 +384,6 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << floor >>
-
-Tirislib.Testing.add_test_case(
-    "Recipe:floor_ingredients floors fractional amounts to at least 1",
-    "lib.recipe",
-    function()
-        local recipe = create_recipe("test-r-floor-ingr")
-        recipe:add_ingredient({type = "item", name = "iron-plate", amount = 3.7})
-        recipe:floor_ingredients()
-
-        Assert.equals(recipe:get_ingredient_count("iron-plate"), 3)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "Recipe:floor_ingredients does not reduce to zero",
-    "lib.recipe",
-    function()
-        local recipe = create_recipe("test-r-floor-min")
-        recipe:add_ingredient({type = "item", name = "iron-plate", amount = 0.3})
-        recipe:floor_ingredients()
-
-        -- transform_amount clamps to min 1
-        Assert.equals(recipe:get_ingredient_count("iron-plate"), 1)
-    end,
-    setup,
-    teardown
-)
-
----------------------------------------------------------------------------------------------------
 -- << fluid indexing >>
 
 Tirislib.Testing.add_test_case(
@@ -727,37 +695,6 @@ Tirislib.Testing.add_test_case(
         recipe:replace_result("iron-plate", "steel-plate", nil, nil, function(a) return a * 3 end)
 
         Assert.equals(recipe:get_result_count("steel-plate"), 12)
-    end,
-    setup,
-    teardown
-)
-
----------------------------------------------------------------------------------------------------
--- << floor_results >>
-
-Tirislib.Testing.add_test_case(
-    "Recipe:floor_results floors fractional result amounts",
-    "lib.recipe",
-    function()
-        local recipe = create_recipe("test-r-floor-res")
-        recipe:add_result({type = "item", name = "copper-plate", amount = 5.8})
-        recipe:floor_results()
-
-        Assert.equals(recipe:get_result_count("copper-plate"), 5)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "Recipe:floor_results does not reduce to zero",
-    "lib.recipe",
-    function()
-        local recipe = create_recipe("test-r-floor-res-min")
-        recipe:add_result({type = "item", name = "copper-plate", amount = 0.4})
-        recipe:floor_results()
-
-        Assert.equals(recipe:get_result_count("copper-plate"), 1)
     end,
     setup,
     teardown

@@ -145,13 +145,12 @@ end
 --- @return TechnologyPrototype itself
 function Tirislib.Technology:remove_prerequisite(tech_name)
     if not self.prerequisites then
-        -- nothing to do
         return self
     end
 
-    for index, prerequisite in pairs(self.prerequisites) do
-        if prerequisite == tech_name then
-            self.prerequisites[index] = nil
+    for index = #self.prerequisites, 1, -1 do
+        if self.prerequisites[index] == tech_name then
+            table.remove(self.prerequisites, index)
         end
     end
 
@@ -170,21 +169,13 @@ end
 --- Returns the localised name of the technology.
 --- @return locale
 function Tirislib.Technology:get_localised_name()
-    if not self.localised_name then
-        self.localised_name = {"technology-name." .. get_true_name(self)}
-    end
-
-    return self.localised_name
+    return self.localised_name or {"technology-name." .. get_true_name(self)}
 end
 
 --- Returns the localised description of the technology.
 --- @return locale
 function Tirislib.Technology:get_localised_description()
-    if not self.localised_description then
-        self.localised_description = {"technology-description." .. get_true_name(self)}
-    end
-
-    return self.localised_description
+    return self.localised_description or {"technology-description." .. get_true_name(self)}
 end
 
 local meta = {

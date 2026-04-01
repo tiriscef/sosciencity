@@ -20,7 +20,7 @@ local function new_test_case(name, groups, testfunction, setup, teardown)
     for _, g in pairs(Tirislib.String.split(groups, "|")) do
         group_set[g] = true
     end
-    
+
     return {name = name, fn = testfunction, groups = group_set, setup = setup, teardown = teardown}
 end
 
@@ -107,42 +107,67 @@ local function log_failed_assert(results, message)
     }
 end
 
+local separator_line = "-------------------------------------------"
+
 --- Formats the accumulated results into a human-readable summary string.
 --- @param results table The results context
 --- @return string summary The formatted test results
 local function get_logged_results(results)
     local failed_test_count = #results.failed_tests
     local failed_assert_count = #results.failed_asserts
+    local all_passed = failed_test_count == 0 and failed_assert_count == 0
 
-    local head =
-        string.format(
-        "%d tests with %d asserts were run - of which %d tests and %d asserts failed.",
-        results.executed_tests,
-        results.executed_asserts,
-        failed_test_count,
-        failed_assert_count
-    )
-
-    local test_messages = {}
-    for _, failed_test in pairs(results.failed_tests) do
-        test_messages[#test_messages + 1] = string.format("Test '%s' failed:\n%s", failed_test.name, failed_test.error_message)
+    local parts = {}
+    local function add(s)
+        parts[#parts + 1] = s
     end
 
-    local assert_messages = {}
-    local grouped = Tirislib.Tables.group_by_key(results.failed_asserts, "test_case")
-    for test_name, failed_asserts in pairs(grouped) do
-        assert_messages[#assert_messages + 1] = string.format("In Test '%s':", test_name)
-        for _, failed_assert in pairs(failed_asserts) do
-            assert_messages[#assert_messages + 1] = failed_assert.error_message
+    -- summary
+    add(separator_line)
+    if all_passed then
+        add(string.format("ALL PASSED: %d tests, %d asserts", results.executed_tests, results.executed_asserts))
+    else
+        local passed_tests = results.executed_tests - failed_test_count
+        local passed_asserts = results.executed_asserts - failed_assert_count
+        add(string.format(
+            "FAILED: %d/%d tests passed, %d/%d asserts passed",
+            passed_tests, results.executed_tests,
+            passed_asserts, results.executed_asserts
+        ))
+    end
+    add(separator_line)
+
+    -- crashed tests
+    if failed_test_count > 0 then
+        add("")
+        add("Crashed tests:")
+        for _, failed_test in pairs(results.failed_tests) do
+            add(string.format("  [CRASH] %s", failed_test.name))
+            -- indent each line of the error message
+            for line in failed_test.error_message:gmatch("[^\n]+") do
+                add("    " .. line)
+            end
         end
     end
 
-    return Tirislib.String.join(
-        "\n\n",
-        head,
-        Tirislib.String.join("\n", test_messages),
-        Tirislib.String.join("\n", assert_messages)
-    )
+    -- failed asserts
+    if failed_assert_count > 0 then
+        local grouped = Tirislib.Tables.group_by_key(results.failed_asserts, "test_case")
+        add("")
+        add("Failed asserts:")
+        for test_name, failed_asserts in pairs(grouped) do
+            add(string.format("  [FAIL] %s", test_name))
+            for _, failed_assert in pairs(failed_asserts) do
+                -- indent each line of the error message
+                for line in failed_assert.error_message:gmatch("[^\n]+") do
+                    add("    " .. line)
+                end
+            end
+        end
+    end
+
+    add(separator_line)
+    return table.concat(parts, "\n")
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -418,7 +443,8 @@ function Assert.greater_than(value, threshold, message)
     log_assert_execution(results)
 
     if value <= threshold then
-        log_failed_assert(results, format_failure(message, "> " .. get_string_representation(threshold), get_string_representation(value)))
+        log_failed_assert(results,
+            format_failure(message, "> " .. get_string_representation(threshold), get_string_representation(value)))
     end
 end
 
@@ -431,7 +457,8 @@ function Assert.less_than(value, threshold, message)
     log_assert_execution(results)
 
     if value >= threshold then
-        log_failed_assert(results, format_failure(message, "< " .. get_string_representation(threshold), get_string_representation(value)))
+        log_failed_assert(results,
+            format_failure(message, "< " .. get_string_representation(threshold), get_string_representation(value)))
     end
 end
 
@@ -457,6 +484,7 @@ function Assert.contains(tbl, value, message)
     log_assert_execution(results)
 
     if not Tirislib.Tables.contains(tbl, value) then
-        log_failed_assert(results, message or string.format("Expected table to contain %s", get_string_representation(value)))
+        log_failed_assert(results,
+            message or string.format("Expected table to contain %s", get_string_representation(value)))
     end
 end

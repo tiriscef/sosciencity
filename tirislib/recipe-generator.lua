@@ -103,7 +103,7 @@ function Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, themes, def
             Tirislib.RecipeGenerator.add_ingredient_theme(recipe, theme, default_level)
         end
 
-        recipe:floor_ingredients()
+        recipe:transform_ingredient_entries(function(entry) Tirislib.RecipeEntry.transform_amount(entry, math.floor) end)
     end
 end
 
@@ -130,7 +130,7 @@ function Tirislib.RecipeGenerator.add_result_theme_range(recipe, themes, default
             Tirislib.RecipeGenerator.add_result_theme(recipe, theme, default_level)
         end
 
-        recipe:floor_results()
+        recipe:transform_result_entries(function(entry) Tirislib.RecipeEntry.transform_amount(entry, math.floor) end)
     end
 end
 

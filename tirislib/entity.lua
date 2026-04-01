@@ -83,8 +83,8 @@ function Tirislib.Entity.iterate(types)
     return _next, name, entity
 end
 
---- Returns an ItemPrototypeArray with all ItemPrototypes of the given subtypes.
---- @return ItemPrototypeArray prototypes
+--- Returns an EntityPrototypeArray with all EntityPrototypes of the given subtypes.
+--- @return EntityPrototypeArray prototypes
 function Tirislib.Entity.all(...)
     local types = {...}
     if #types == 0 then
@@ -95,8 +95,8 @@ function Tirislib.Entity.all(...)
     local array = {}
     setmetatable(array, Tirislib.EntityArray)
 
-    for _, item in Tirislib.Entity.iterate(types) do
-        array[#array + 1] = item
+    for _, entity in Tirislib.Entity.iterate(types) do
+        array[#array + 1] = entity
     end
 
     return array
@@ -155,7 +155,7 @@ function Tirislib.Entity:set_selection_box(width, height)
     return self
 end
 
---- Sets the size of the EntityPrototype, which inclused the selection and collision box.
+--- Sets the size of the EntityPrototype, which includes the selection and collision box.
 --- @param width number
 --- @param height number
 --- @return EntityPrototype itself
@@ -246,7 +246,7 @@ local pipepictures = {
     }
 }
 
---- Creates the standart pipe pictures for the given directions.
+--- Creates the standard pipe pictures for the given directions.
 --- @param directions table|nil
 --- @return PicturePrototype pipe_picture
 function Tirislib.Entity.get_standard_pipe_pictures(directions)
@@ -257,14 +257,14 @@ local pipecovers = pipecoverspictures()
 
 -- remove the shadows because they never seem to look appropriate
 for _, direction in pairs(pipecovers) do
-    for i, layer in pairs(direction.layers) do
-        if layer.draw_as_shadow then
-            direction.layers[i] = nil
+    for i = #direction.layers, 1, -1 do
+        if direction.layers[i].draw_as_shadow then
+            table.remove(direction.layers, i)
         end
     end
 end
 
---- Creates the standart pipe cover pictures for the given directions.
+--- Creates the standard pipe cover pictures for the given directions.
 --- @param directions table|nil
 --- @return PicturePrototype cover_picture
 function Tirislib.Entity.get_standard_pipe_cover(directions)
@@ -272,36 +272,6 @@ function Tirislib.Entity.get_standard_pipe_cover(directions)
 end
 
 local PIXEL_PER_TILE = 64
-
---- Deprecated. Creates the standard picture prototype framework.
---- @param path string
---- @param width number
---- @param height number
---- @param shift table
---- @return PicturePrototype
-function Tirislib.Entity.create_standard_picture_old(path, width, height, shift)
-    return {
-        layers = {
-            {
-                filename = path .. "-hr.png",
-                priority = "high",
-                width = width * PIXEL_PER_TILE,
-                height = height * PIXEL_PER_TILE,
-                shift = shift,
-                scale = 0.5
-            },
-            {
-                filename = path .. "-shadowmap-hr.png",
-                priority = "high",
-                width = width * PIXEL_PER_TILE,
-                height = height * PIXEL_PER_TILE,
-                shift = shift,
-                scale = 0.5,
-                draw_as_shadow = true
-            }
-        }
-    }
-end
 
 local function center_coordinates_to_shift(center, height, width)
     return {width / 2 - center[1], height / 2 - center[2]}
@@ -468,33 +438,6 @@ end
 
 function Tirislib.Entity:get_localised_description()
     return self.localised_description or {"entity-description." .. self.name}
-end
-
---- Copies the localisation of the item with the given name to this EntityPrototype.
---- @param item_name string?
---- @return EntityPrototype itself
-function Tirislib.Entity:copy_localisation_from_item(item_name)
-    if Tirislib then
-        return self
-    end
-
-    if not item_name then
-        if self.minable then
-            -- TODO: annoying case of results-table instead of single result
-            item_name = self.minable.result
-        else
-            item_name = self.name
-        end
-    end
-
-    local item, found = Tirislib.Item.get_by_name(item_name)
-
-    if found then
-        self.localised_name = item:get_localised_name()
-        self.localised_description = item:get_localised_description()
-    end
-
-    return self
 end
 
 --- Copies the icon of the item with the given name to this EntityPrototype.
