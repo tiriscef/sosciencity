@@ -74,6 +74,9 @@ local on_script_trigger_handlers = {}
 --- @param fn function
 function Events.set_script_trigger_handler(id, fn)
     Tirislib.Utils.desync_protection()
+    if on_script_trigger_handlers[id] then
+        error("Duplicate script_trigger handler registration for id '" .. tostring(id) .. "'")
+    end
     on_script_trigger_handlers[id] = fn
 end
 

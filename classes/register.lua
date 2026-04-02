@@ -15,7 +15,7 @@ Register = {}
 --[[
     Data this class stores in storage
     --------------------------------
-    storagee.register: table
+    storage.register: table
         [unit_number]: Entry
 
     storage.register_by_type: table
@@ -86,7 +86,9 @@ function Register.init()
                 force = "player"
             }
         ) do
-            Register.add(entity)
+            if entity.unit_number then
+                Register.add(entity)
+            end
         end
     end
 end
@@ -155,14 +157,21 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << entity event handlers >>
 
+local function set_handler(lookup, _type, fn, name)
+    Tirislib.Utils.desync_protection()
+    if lookup[_type] then
+        error("Duplicate " .. name .. " handler registration for type " .. tostring(_type))
+    end
+    lookup[_type] = fn
+end
+
 local on_creation_lookup = {}
 
 --- Sets the function that gets called when an entity of the given type gets created.
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_creation_handler(_type, fn)
-    Tirislib.Utils.desync_protection()
-    on_creation_lookup[_type] = fn
+    set_handler(on_creation_lookup, _type, fn, "creation")
 end
 
 local function on_creation(_type, entry, event)
@@ -180,8 +189,7 @@ local on_copy_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_copy_handler(_type, fn)
-    Tirislib.Utils.desync_protection()
-    on_copy_lookup[_type] = fn
+    set_handler(on_copy_lookup, _type, fn, "copy")
 end
 
 local function on_copy(_type, source, destination)
@@ -198,8 +206,7 @@ local update_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_updater(_type, fn)
-    Tirislib.Utils.desync_protection()
-    update_lookup[_type] = fn
+    set_handler(update_lookup, _type, fn, "updater")
 end
 
 local function on_update(entry, current_tick)
@@ -218,8 +225,7 @@ local on_destroyed_lookup = {}
 --- @param _type Type
 --- @param fn function
 function Register.set_entity_destruction_handler(_type, fn)
-    Tirislib.Utils.desync_protection()
-    on_destroyed_lookup[_type] = fn
+    set_handler(on_destroyed_lookup, _type, fn, "destruction")
 end
 
 local function on_destruction(_type, entry, cause, event)
@@ -242,6 +248,9 @@ function Register.set_settings_paste_handler(source_type, destination_type, fn)
     Tirislib.Utils.desync_protection()
 
     local tbl = get_subtbl(on_settings_paste_lookup, destination_type)
+    if tbl[source_type] then
+        error("Duplicate settings_paste handler registration for types " .. tostring(source_type) .. " -> " .. tostring(destination_type))
+    end
     tbl[source_type] = fn
 end
 
@@ -269,8 +278,7 @@ local blueprinted_lookup = {}
 --- @param _type Type
 --- @param fn function should return a table with the tags to store in the blueprint
 function Register.set_blueprinted_handler(_type, fn)
-    Tirislib.Utils.desync_protection()
-    blueprinted_lookup[_type] = fn
+    set_handler(blueprinted_lookup, _type, fn, "blueprinted")
 end
 
 --- Calls the event handler when a blueprint is being setup of an entry.
@@ -410,8 +418,11 @@ local remove_entry = Register.remove_entry
 
 --- Removes the given entity from the register.
 --- @param entity LuaEntity
+--- @param unit_number integer|nil
+--- @param cause DeconstructionCause|nil
 function Register.remove_entity(entity, unit_number, cause)
     unit_number = unit_number or entity.unit_number
+    cause = cause or DeconstructionCause.unknown
 
     local entry = register[unit_number]
     if entry then
@@ -431,7 +442,7 @@ function Register.change_type(entry, new_type)
     local new_entry = add_entity(entry[EK.entity], new_type)
     new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
 
-    Gui.DetailsView.rebuild_for_entry(entry)
+    Gui.DetailsView.rebuild_for_entry(new_entry)
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
@@ -452,18 +463,19 @@ local try_get = Register.try_get
 
 --- Returns the next valid entry or nil if the loop came to an end.
 local function register_next(unit_number)
-    local entry
-    unit_number, entry = next(register, unit_number)
+    while true do
+        local entry
+        unit_number, entry = next(register, unit_number)
 
-    if not entry then
-        return nil
-    end
+        if not entry then
+            return nil
+        end
 
-    if entry[EK.entity].valid then
-        return unit_number, entry
-    else
-        remove_entry(entry, DeconstructionCause.unknown)
-        return register_next(unit_number)
+        if entry[EK.entity].valid then
+            return unit_number, entry
+        else
+            remove_entry(entry, DeconstructionCause.unknown)
+        end
     end
 end
 Register.next = register_next
@@ -476,7 +488,10 @@ function Register.entity_update_cycle(current_tick)
     local number_of_checks = storage.updates_per_cycle
 
     if not current_entry then
-        index, current_entry = next_entry() -- begin a new loop at the start (nil as a key returns the first pair)
+        -- Begin a new loop from the start (nil as key returns the first pair).
+        -- This is safe even if last_index was just invalidated, because
+        -- remove_entry_from_register already advances last_index on removal.
+        index, current_entry = next_entry()
     end
 
     while index and count < number_of_checks do
@@ -494,17 +509,17 @@ local function nothing()
 end
 
 local function type_iterator(type_table, key)
-    key = next(type_table, key)
+    while true do
+        key = next(type_table, key)
 
-    if key == nil then
-        return nil, nil
-    end
+        if key == nil then
+            return nil, nil
+        end
 
-    local entry = try_get(key)
-    if entry then
-        return key, entry
-    else
-        return type_iterator(type_table, key)
+        local entry = try_get(key)
+        if entry then
+            return key, entry
+        end
     end
 end
 

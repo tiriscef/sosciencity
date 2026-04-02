@@ -43,6 +43,9 @@ local event_lookup = {}
 --- @param fn function
 function Scheduler.set_event(name, fn)
     Tirislib.Utils.desync_protection()
+    if event_lookup[name] then
+        error("Duplicate scheduler event registration for '" .. tostring(name) .. "'")
+    end
     event_lookup[name] = fn
 end
 

@@ -42,6 +42,10 @@ local content = {}
 function Gui.CityView.add_category(name, localised_name)
     Tirislib.Utils.desync_protection()
 
+    if Gui.CityView.get_category_definition(name) then
+        error("Duplicate city view category registration for '" .. tostring(name) .. "'")
+    end
+
     local index = #content + 1
     content[index] = {
         name = name,
