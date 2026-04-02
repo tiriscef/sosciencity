@@ -767,6 +767,9 @@ local numeric_confirmed_handlers = {}
 --- @param fn function(event, result)
 function Gui.Elements.NumericTextField.set_confirmed_handler(tag, fn)
     Tirislib.Utils.desync_protection()
+    if numeric_confirmed_handlers[tag] then
+        error("Handler already registered for tag: " .. tag)
+    end
     numeric_confirmed_handlers[tag] = fn
 end
 

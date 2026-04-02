@@ -97,6 +97,14 @@ end
 --- Unique prefix used for naming gui elements to avoid conflicts with other mods.
 Gui.unique_prefix_builder = "sosciencity-%s-%s"
 
+local function set_gui_handler(lookup, key, fn, name)
+    Tirislib.Utils.desync_protection()
+    if lookup[key] then
+        error("Duplicate " .. name .. " handler registration for tag '" .. tostring(key) .. "'")
+    end
+    lookup[key] = fn
+end
+
 local function look_for_event_handler_by_tag(event, lookup)
     local tag = event.element.tags.sosciencity_gui_event
 
@@ -118,8 +126,7 @@ local click_lookup_tag = {}
 --- @param tag string
 --- @param fn function
 function Gui.set_click_handler(tag, fn)
-    Tirislib.Utils.desync_protection()
-    click_lookup_tag[tag] = fn
+    set_gui_handler(click_lookup_tag, tag, fn, "click")
 end
 
 --- Event handler for Gui click events
@@ -135,8 +142,7 @@ local checked_state_lookup_tag = {}
 --- @param tag string
 --- @param fn function
 function Gui.set_checked_state_handler(tag, fn)
-    Tirislib.Utils.desync_protection()
-    checked_state_lookup_tag[tag] = fn
+    set_gui_handler(checked_state_lookup_tag, tag, fn, "checked_state")
 end
 
 --- Event handler for checkbox/radiobutton click events
@@ -152,8 +158,7 @@ local value_changed_lookup_tag = {}
 --- @param tag string
 --- @param fn function
 function Gui.set_value_changed_handler(tag, fn)
-    Tirislib.Utils.desync_protection()
-    value_changed_lookup_tag[tag] = fn
+    set_gui_handler(value_changed_lookup_tag, tag, fn, "value_changed")
 end
 
 --- Event handler for slider change events
@@ -169,8 +174,7 @@ local gui_confirmed_lookup_tag = {}
 --- @param tag string
 --- @param fn function
 function Gui.set_gui_confirmed_handler(tag, fn)
-    Tirislib.Utils.desync_protection()
-    gui_confirmed_lookup_tag[tag] = fn
+    set_gui_handler(gui_confirmed_lookup_tag, tag, fn, "gui_confirmed")
 end
 
 --- Event handler for confirmed guis
@@ -186,8 +190,7 @@ local text_changed_lookup_tag = {}
 --- @param tag string
 --- @param fn function
 function Gui.set_text_changed_handler(tag, fn)
-    Tirislib.Utils.desync_protection()
-    text_changed_lookup_tag[tag] = fn
+    set_gui_handler(text_changed_lookup_tag, tag, fn, "text_changed")
 end
 
 --- Event handler for text changed events
