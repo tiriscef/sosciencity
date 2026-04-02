@@ -279,10 +279,7 @@ function Subentities.remove_sprites(entry)
                 if render_obj then
                     render_obj.destroy()
                 end
-                return
-            end
-
-            if render.valid then
+            elseif render.valid then
                 render.destroy()
             end
         end

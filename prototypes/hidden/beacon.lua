@@ -100,13 +100,13 @@ Tirislib.Entity.create {
         height = 1
     },
     distribution_effectivity = 1,
+    beacon_counter = "same_type",
     module_slots = 41,
     allowed_effects = {
         "speed",
         "productivity"
     },
     collision_mask = {layers = {}},
-    --collision_mask = {}, TODO: check if this updated collision mask works as intended once I get the mod to run
     icon = "__sosciencity-graphics__/graphics/empty-caste.png",
     icon_size = 256,
     localised_name = {"entity-name.hidden-entity"},
