@@ -223,7 +223,7 @@ end
 --- Merges the right hand group into the left hand group. If keep_rh is falsy, then the right hand disease group object gets emptied.
 --- @param lh DiseaseGroup
 --- @param rh DiseaseGroup
---- @param keep_rh boolean
+--- @param keep_rh boolean?
 function DiseaseGroup.merge(lh, rh, keep_rh)
     for disease, count in pairs(rh) do
         lh[disease] = (lh[disease] or 0) + count
@@ -237,7 +237,7 @@ end
 --- Takes the given count of people from the given disease group and returns the disease group of the taken people.
 --- @param group DiseaseGroup
 --- @param to_take integer
---- @param total_count integer|nil
+--- @param total_count integer?
 function DiseaseGroup.take(group, to_take, total_count)
     total_count = total_count or Table.sum(group)
     to_take = min(to_take, total_count)
@@ -245,9 +245,14 @@ function DiseaseGroup.take(group, to_take, total_count)
     local ret = new_disease_group(0)
 
     while to_take > 0 do
+        local made_progress = false
         for disease, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
             local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
+
+            if current_take > 0 then
+                made_progress = true
+            end
 
             total_count = total_count - current_take
             to_take = to_take - current_take
@@ -262,6 +267,7 @@ function DiseaseGroup.take(group, to_take, total_count)
                 return ret
             end
         end
+        if not made_progress then break end
     end
 
     return ret
@@ -351,7 +357,7 @@ AgeGroup = {}
 
 --- Returns a new AgeGroup table with fixed ages.
 --- @param count integer
---- @param age integer|nil
+--- @param age integer?
 function AgeGroup.new(count, age)
     local ret = {}
 
@@ -406,9 +412,14 @@ function AgeGroup.take(group, to_take, total_count)
     local ret = {}
 
     while to_take > 0 do
+        local made_progress = false
         for age, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
             local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
+
+            if current_take > 0 then
+                made_progress = true
+            end
 
             total_count = total_count - current_take
             to_take = to_take - current_take
@@ -420,6 +431,7 @@ function AgeGroup.take(group, to_take, total_count)
                 return ret
             end
         end
+        if not made_progress then break end
     end
 
     return ret
@@ -484,10 +496,15 @@ function GenderGroup.take(group, to_take, total_count)
     local ret = GenderGroup.new()
 
     while to_take > 0 do
+        local made_progress = false
         for gender = 1, #group do
             local current_count = group[gender]
             local percentage_to_take = to_take / total_count
             local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
+
+            if current_take > 0 then
+                made_progress = true
+            end
 
             ret[gender] = ret[gender] + current_take
             group[gender] = group[gender] - current_take
@@ -499,6 +516,7 @@ function GenderGroup.take(group, to_take, total_count)
                 return ret
             end
         end
+        if not made_progress then break end
     end
 
     return ret
@@ -714,7 +732,7 @@ local function get_caste_bonus_multiplier(happiness)
 end
 
 function InhabitantGroup.get_power_usage(group)
-    return group[EK.inhabitants] * castes[EK.type].power_demand
+    return group[EK.inhabitants] * castes[group[EK.type]].power_demand
 end
 local get_power_usage = InhabitantGroup.get_power_usage
 
@@ -807,7 +825,7 @@ end
 local function update_caste_bonuses()
     local old_clockwork_bonus = caste_bonuses[Type.clockwork]
     local new_clockwork_bonus = get_clockwork_bonus()
-    caste_bonuses[Type.clockwork] = get_clockwork_bonus()
+    caste_bonuses[Type.clockwork] = new_clockwork_bonus
 
     if old_clockwork_bonus >= 0 and new_clockwork_bonus < 0 then
         Communication.warning(WarningType.insufficient_maintenance)
@@ -1116,7 +1134,7 @@ end
 --- Returns the number of inhabitants that were added.
 --- @param entry Entry
 --- @param group InhabitantGroup
---- @param silent boolean|nil
+--- @param silent boolean?
 local function try_add_to_house(entry, group, silent)
     local count_moving_in = min(group[EK.inhabitants], get_free_capacity(entry))
 
@@ -2039,10 +2057,10 @@ end
 
 function Inhabitants.migration_wave(immigration_port_details)
     local capacity = immigration_port_details.capacity
-    local order = Table.sequence(1, #immigration)
+    local order = Table.get_keyset(immigration)
     shuffle(order)
 
-    for i = 1, #immigration do
+    for i = 1, #order do
         local caste = order[i]
         local count_immigrated = min(floor(immigration[caste]), capacity)
 

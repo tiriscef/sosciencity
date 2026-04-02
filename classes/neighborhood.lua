@@ -152,11 +152,15 @@ local subscribe_to = Neighborhood.subscribe_to
 --- @param _type Type
 function Neighborhood.unsubscribe_to(entry, _type)
     -- delete neighbors
-    entry[EK.neighbors][_type] = nil
+    if entry[EK.neighbors] then
+        entry[EK.neighbors][_type] = nil
+    end
 
     -- delete subscriptions
-    local unit_number = entry[EK.unit_number]
-    subscriptions[_type][unit_number] = nil
+    if subscriptions[_type] then
+        local unit_number = entry[EK.unit_number]
+        subscriptions[_type][unit_number] = nil
+    end
 end
 
 --- Removes all the subscriptions of this entry. Must be called when an entry gets deconstructed.
@@ -247,19 +251,20 @@ local function nothing()
 end
 
 local function type_iterator(neighbor_table, key)
-    local supposed_type
-    key, supposed_type = next(neighbor_table, key)
+    while true do
+        local supposed_type
+        key, supposed_type = next(neighbor_table, key)
 
-    if key == nil then
-        return nil, nil
-    end
+        if key == nil then
+            return nil, nil
+        end
 
-    local entry = try_get(key)
-    if entry and entry[EK.type] == supposed_type then
-        return key, entry
-    else
-        neighbor_table[key] = nil
-        return type_iterator(neighbor_table, key)
+        local entry = try_get(key)
+        if entry and entry[EK.type] == supposed_type then
+            return key, entry
+        else
+            neighbor_table[key] = nil
+        end
     end
 end
 
