@@ -8,7 +8,7 @@ Tirislib.RecipeEntry = {}
 --- Sets the RecipeEntryPrototype's return amount to the given value.
 --- @param entry table
 --- @param min integer
---- @param max integer|nil
+--- @param max integer?
 function Tirislib.RecipeEntry.set_product_amount(entry, min, max)
     if not max then
         entry.amount = min
@@ -24,7 +24,7 @@ end
 --- Adds to the amount of this RecipeEntryPrototype.
 --- @param entry RecipeEntryPrototype
 --- @param min integer
---- @param max integer|nil
+--- @param max integer?
 function Tirislib.RecipeEntry.add_amount(entry, min, max)
     if not max or min == max then
         if entry.amount_min then
@@ -162,8 +162,8 @@ end
 --- Creates a ProductPrototype for the given product and with the given average yield.
 --- @param product ItemID|FluidID
 --- @param amount number
---- @param _type string|nil defaults to 'item'
---- @return RecipeEntryPrototype|nil
+--- @param _type string? defaults to 'item'
+--- @return RecipeEntryPrototype?
 function Tirislib.RecipeEntry.create_product_prototype(product, amount, _type)
     if amount > 0 then
         local ret = {type = _type or "item", name = product}
@@ -218,7 +218,7 @@ end
 --- Unified function for the get_by_name and for the get_from_prototype functions.
 --- @param name string|table
 --- @return RecipePrototype prototype
---- @return boolean|nil found
+--- @return boolean? found
 function Tirislib.Recipe.get(name)
     if type(name) == "string" then
         return Tirislib.Recipe.get_by_name(name)
@@ -410,7 +410,7 @@ end
 --- Returns the ProductPrototype for the specified result, if that recipe contains it.
 --- @param name string
 --- @param _type string
---- @return RecipeEntryPrototype|nil
+--- @return RecipeEntryPrototype?
 function Tirislib.Recipe:get_result(name, _type)
     for _, result in Tirislib.Recipe.iterate_results(self) do
         if result.name == name and result.type == _type then
@@ -420,7 +420,7 @@ function Tirislib.Recipe:get_result(name, _type)
 end
 
 --- Adds the given result to the recipe.
---- @param result RecipeEntryPrototype|nil
+--- @param result RecipeEntryPrototype?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_result(result, suppress_merge)
     if not result then
@@ -459,7 +459,7 @@ end
 --- Adds a newly constructed RecipeEntryPrototype to the recipe.
 --- @param result string
 --- @param amount number
---- @param _type string|nil
+--- @param _type string?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_new_result(result, amount, _type, suppress_merge)
     Tirislib.Recipe.add_result(
@@ -482,7 +482,7 @@ end
 --- Returns the IngredientPrototype for the specified ingredient, if that recipe contains it.
 --- @param name string
 --- @param _type string
---- @return RecipeEntryPrototype|nil
+--- @return RecipeEntryPrototype?
 function Tirislib.Recipe:get_ingredient(name, _type)
     for _, ingredient in Tirislib.Recipe.iterate_ingredients(self) do
         if ingredient.name == name and ingredient.type == _type then
@@ -492,7 +492,7 @@ function Tirislib.Recipe:get_ingredient(name, _type)
 end
 
 --- Adds the given ingredient to the recipe.
---- @param ingredient RecipeEntryPrototype|nil
+--- @param ingredient RecipeEntryPrototype?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_ingredient(ingredient)
     if not ingredient then
@@ -513,7 +513,7 @@ function Tirislib.Recipe:add_ingredient(ingredient)
 end
 
 --- Adds the given ingredients to the recipe.
---- @param ingredients table|nil of RecipeEntryPrototypes
+--- @param ingredients table? of RecipeEntryPrototypes
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_ingredient_range(ingredients)
     if not ingredients then
@@ -530,7 +530,7 @@ end
 --- Adds a newly constructed RecipeEntryPrototype to the recipe.
 --- @param ingredient string
 --- @param amount number
---- @param _type string|nil
+--- @param _type string?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:add_new_ingredient(ingredient, amount, _type)
     Tirislib.Recipe.add_ingredient(self, {type = _type or "item", name = ingredient, amount = amount})
@@ -540,7 +540,7 @@ end
 
 --- Removes the ingredient with the given name and type.
 --- @param name string
---- @param _type string|nil defaults to 'item'
+--- @param _type string? defaults to 'item'
 --- @return RecipePrototype itself
 function Tirislib.Recipe:remove_ingredient(name, _type)
     _type = _type or "item"
@@ -557,7 +557,7 @@ end
 
 --- Removes the results with the given name and type.
 --- @param name string
---- @param _type string|nil defaults to 'item'
+--- @param _type string? defaults to 'item'
 --- @return RecipePrototype itself
 function Tirislib.Recipe:remove_result(name, _type)
     _type = _type or "item"
@@ -575,9 +575,9 @@ end
 --- Replaces the specified ingredient.
 --- @param name string
 --- @param replacement_name string
---- @param _type string|nil defaults to 'item'
---- @param replacement_type string|nil defaults to 'item'
---- @param amount_fn function|nil defaults to identity
+--- @param _type string? defaults to 'item'
+--- @param replacement_type string? defaults to 'item'
+--- @param amount_fn function? defaults to identity
 --- @return RecipePrototype itself
 function Tirislib.Recipe:replace_ingredient(name, replacement_name, _type, replacement_type, amount_fn)
     _type = _type or "item"
@@ -599,9 +599,9 @@ end
 --- Replaces the specified ingredient.
 --- @param result_name string
 --- @param replacement_name string
---- @param result_type string|nil defaults to 'item'
---- @param replacement_type string|nil defaults to 'item'
---- @param amount_fn function|nil defaults to identity
+--- @param result_type string? defaults to 'item'
+--- @param replacement_type string? defaults to 'item'
+--- @param amount_fn function? defaults to identity
 --- @return RecipePrototype itself
 function Tirislib.Recipe:replace_result(result_name, replacement_name, result_type, replacement_type, amount_fn)
     result_type = result_type or "item"
@@ -746,7 +746,7 @@ end
 
 --- Checks if the recipe has the result with the given name and type.
 --- @param name string
---- @param _type string|nil defaults to 'item'
+--- @param _type string? defaults to 'item'
 --- @return boolean
 function Tirislib.Recipe:has_result(name, _type)
     _type = _type or "item"
@@ -761,7 +761,7 @@ end
 
 --- Returns the average yield of the result with the given name and type.
 --- @param name string
---- @param _type string|nil defaults to 'item'
+--- @param _type string? defaults to 'item'
 --- @return RecipePrototype itself
 function Tirislib.Recipe:get_result_count(name, _type)
     _type = _type or "item"
@@ -777,7 +777,7 @@ end
 
 --- Checks if the recipe has the ingredient with the given name and type.
 --- @param name string
---- @param _type string|nil defaults to 'item'
+--- @param _type string? defaults to 'item'
 --- @return boolean
 function Tirislib.Recipe:has_ingredient(name, _type)
     _type = _type or "item"
@@ -792,7 +792,7 @@ end
 
 --- Returns the count of the ingredient with the given name and type.
 --- @param name string
---- @param _type string|nil
+--- @param _type string?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:get_ingredient_count(name, _type)
     _type = _type or "item"
@@ -820,7 +820,7 @@ end
 --- @param _type string
 --- @param pairing_name string
 --- @param pairing_type string
---- @param amount_fn function defaults to identity
+--- @param amount_fn function? defaults to identity
 --- @return RecipePrototype itself
 function Tirislib.Recipe:pair_result_with_ingredient(name, _type, pairing_name, pairing_type, amount_fn)
     local result_amount = Tirislib.Recipe.get_result_count(self, name, _type)
@@ -846,8 +846,8 @@ end
 --- @param _type string
 --- @param pairing_name string
 --- @param pairing_type string
---- @param amount_fn function|nil defaults to identity
---- @param probability number|nil
+--- @param amount_fn function? defaults to identity
+--- @param probability number?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:pair_result_with_result(name, _type, pairing_name, pairing_type, amount_fn, probability)
     local result_amount = Tirislib.Recipe.get_result_count(self, name, _type)
@@ -876,8 +876,8 @@ end
 --- @param _type string
 --- @param pairing_name string
 --- @param pairing_type string
---- @param amount_fn function|nil defaults to identity
---- @param probability number|nil
+--- @param amount_fn function? defaults to identity
+--- @param probability number?
 --- @return RecipePrototype itself
 function Tirislib.Recipe:pair_ingredient_with_result(name, _type, pairing_name, pairing_type, amount_fn, probability)
     local ingredient_amount = Tirislib.Recipe.get_ingredient_count(self, name, _type)
@@ -906,7 +906,7 @@ end
 --- @param _type string
 --- @param pairing_name string
 --- @param pairing_type string
---- @param amount_fn function|nil defaults to identity
+--- @param amount_fn function? defaults to identity
 --- @return RecipePrototype itself
 function Tirislib.Recipe:pair_ingredient_with_ingredient(name, _type, pairing_name, pairing_type, amount_fn)
     local ingredient_amount = Tirislib.Recipe.get_ingredient_count(self, name, _type)
