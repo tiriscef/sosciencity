@@ -1276,7 +1276,7 @@ local function update_upbringing_station(entry)
             classes[#classes] = nil
         else
             most_recent_class = max(most_recent_class, tick_of_creation)
-            students = students + Table.array_sum(class[2])
+            students = students + Table.sum(class[2])
         end
     end
 

@@ -132,7 +132,7 @@ local unlocking_condition_check_fns = {
         return storage.population[condition.caste] >= condition.count
     end,
     [UnlockCondition.population] = function(condition)
-        return Tirislib.Tables.array_sum(storage.population) >= condition.count
+        return Tirislib.Arrays.sum(storage.population) >= condition.count
     end
 }
 

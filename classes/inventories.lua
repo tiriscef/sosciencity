@@ -27,9 +27,9 @@ Inventories = {}
 -- local often used globals for great performance gains
 
 local Table = Tirislib.Tables
+local Array = Tirislib.Arrays
 local Utils = Tirislib.Utils
 
-local sort_by_key = Table.insertion_sort_by_key
 
 local castes = Castes.values
 local garbage_values = ItemConstants.garbage_values
@@ -703,7 +703,7 @@ local function add_diet_effects(entry, diet, caste, hunger_satisfaction)
     local carbohydrates = 0
     local proteins = 0
     local taste_quality = 0
-    local taste_counts = Table.new_array(taste_category_count, 0)
+    local taste_counts = Array.new(taste_category_count, 0)
     local luxury = 0
     local favorite_taste = caste.favorite_taste
     local least_favored_taste = caste.least_favored_taste
@@ -820,7 +820,7 @@ function Inventories.evaluate_water(entry, delta_ticks, happiness_factors, healt
         end
     end
 
-    sort_by_key(distributers, EK.water_quality)
+    table.sort(distributers, function(a, b) return a[EK.water_quality] > b[EK.water_quality] end)
 
     local water_to_consume = castes[entry[EK.type]].water_demand * entry[EK.inhabitants] * delta_ticks
     local satisfaction, quality

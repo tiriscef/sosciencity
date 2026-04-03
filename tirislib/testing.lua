@@ -103,7 +103,7 @@ local function log_failed_assert(results, message)
 
     results.failed_asserts[#results.failed_asserts + 1] = {
         test_case = results.current_test,
-        error_message = string.format("%s, line %d: %s", info.source, info.currentline, message)
+        error_message = string.format("%s, line %d:\n%s", info.source, info.currentline, message)
     }
 end
 
@@ -113,9 +113,9 @@ local separator_line = "-------------------------------------------"
 --- @param results table The results context
 --- @return string summary The formatted test results
 local function get_logged_results(results)
-    local failed_test_count = #results.failed_tests
+    local crashed_test_count = #results.failed_tests
     local failed_assert_count = #results.failed_asserts
-    local all_passed = failed_test_count == 0 and failed_assert_count == 0
+    local all_passed = crashed_test_count == 0 and failed_assert_count == 0
 
     local parts = {}
     local function add(s)
@@ -127,7 +127,20 @@ local function get_logged_results(results)
     if all_passed then
         add(string.format("ALL PASSED: %d tests, %d asserts", results.executed_tests, results.executed_asserts))
     else
-        local passed_tests = results.executed_tests - failed_test_count
+        -- A test fails if it crashed OR had at least one failed assert
+        local failed_test_names = {}
+        for _, ft in pairs(results.failed_tests) do
+            failed_test_names[ft.name] = true
+        end
+        for _, fa in pairs(results.failed_asserts) do
+            failed_test_names[fa.test_case] = true
+        end
+        local total_failed_tests = 0
+        for _ in pairs(failed_test_names) do
+            total_failed_tests = total_failed_tests + 1
+        end
+
+        local passed_tests = results.executed_tests - total_failed_tests
         local passed_asserts = results.executed_asserts - failed_assert_count
         add(string.format(
             "FAILED: %d/%d tests passed, %d/%d asserts passed",
@@ -138,7 +151,7 @@ local function get_logged_results(results)
     add(separator_line)
 
     -- crashed tests
-    if failed_test_count > 0 then
+    if crashed_test_count > 0 then
         add("")
         add("Crashed tests:")
         for _, failed_test in pairs(results.failed_tests) do

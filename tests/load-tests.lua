@@ -1,4 +1,8 @@
 -- Stage-independent tests (run in both data stage and control stage)
 require("tests.testing")
 require("tests.utils")
+require("tests.string")
+require("tests.tables")
+require("tests.arrays")
+require("tests.locales")
 require("tests.lazy-luaq")
