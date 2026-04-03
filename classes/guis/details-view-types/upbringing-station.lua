@@ -18,6 +18,7 @@ local get_building_details = Buildings.get
 local format = string.format
 local display_percentage = Tirislib.Locales.display_percentage
 local Table = Tirislib.Tables
+local Array = Tirislib.Arrays
 local Luaq_from = Tirislib.Luaq.from
 local Datalist = Gui.Elements.Datalist
 
@@ -51,7 +52,7 @@ local function update_classes_flow(entry, classes_flow)
 
     for index, class in pairs(classes) do
         local percentage = (current_tick - class[1]) / Entity.upbringing_time
-        local count = Table.array_sum(class[2])
+        local count = Array.sum(class[2])
         classes_flow.add {
             name = tostring(index),
             type = "label",

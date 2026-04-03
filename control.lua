@@ -9,48 +9,7 @@ require("tirislib.init")
 ---------------------------------------------------------------------------------------------------
 -- << debug stuff >>
 
-DEBUG = false
-
-if script.active_mods["sosciencity-debug"] then
-    DEBUG = true
-
-    require("tests.load-tests")
-    require("tests.controlstage.load-tests")
-
-    commands.add_command(
-        "sosciencity-tests",
-        "",
-        function(input)
-            local results
-            local group = input.parameter
-            if group then
-                results = Tirislib.Testing.run_group_suite(group, true)
-            else
-                results = Tirislib.Testing.run_all(true)
-            end
-
-            game.print(results)
-            log(results)
-        end
-    )
-
-    commands.add_command(
-        "sosciencity-tests-debug",
-        "",
-        function(input)
-            local results
-            local group = input.parameter
-            if group then
-                results = Tirislib.Testing.run_group_suite(group, false)
-            else
-                results = Tirislib.Testing.run_all(false)
-            end
-
-            game.print(results)
-            log(results)
-        end
-    )
-end
+DEBUG = script.active_mods["sosciencity-debug"] ~= nil
 
 ---------------------------------------------------------------------------------------------------
 -- << Events >>
@@ -102,6 +61,45 @@ require("classes.inhabitants")
 require("classes.entity")
 require("classes.handcrafting")
 require("classes.gui")
+
+if DEBUG then
+    require("tests.load-tests")
+    require("tests.controlstage.load-tests")
+
+    commands.add_command(
+        "sosciencity-tests",
+        "",
+        function(input)
+            local results
+            local group = input.parameter
+            if group then
+                results = Tirislib.Testing.run_group_suite(group, true)
+            else
+                results = Tirislib.Testing.run_all(true)
+            end
+
+            game.print(results)
+            log(results)
+        end
+    )
+
+    commands.add_command(
+        "sosciencity-tests-debug",
+        "",
+        function(input)
+            local results
+            local group = input.parameter
+            if group then
+                results = Tirislib.Testing.run_group_suite(group, false)
+            else
+                results = Tirislib.Testing.run_all(false)
+            end
+
+            game.print(results)
+            log(results)
+        end
+    )
+end
 
 --[[
     Data this script stores in storage
@@ -405,7 +403,7 @@ local function on_tile_update()
 end
 
 local train_types =
-    Tirislib.Tables.array_to_lookup {
+    Tirislib.Arrays.to_lookup {
     "locomotive",
     "artillery-wagon",
     "cargo-wagon",

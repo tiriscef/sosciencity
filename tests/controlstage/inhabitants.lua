@@ -111,7 +111,7 @@ Tirislib.Testing.add_test_case(
     "DiseaseGroup.take extracts proportional sample",
     "inhabitants",
     function()
-        local group = DiseaseGroup.new(8)
+        local group = DiseaseGroup.new(10)
         DiseaseGroup.make_sick(group, 1, 2)
         -- total: 8 healthy + 2 sick = 10
 

@@ -106,7 +106,8 @@ local remove_common_sprite = Subentities.remove_common_sprite
 
 local set_binary_techs = Technologies.set_binary_techs
 
-local Table = Tirislib.Tables
+local Tables = Tirislib.Tables
+local Arrays = Tirislib.Arrays
 local Utils = Tirislib.Utils
 
 local floor = math.floor
@@ -116,18 +117,18 @@ local round = Utils.round
 local max = math.max
 local min = math.min
 local map_range = Utils.map_range
-local array_sum = Table.array_sum
-local array_product = Table.array_product
+local array_sum = Arrays.sum
+local array_product = Arrays.product
 local coin_flips = Utils.coin_flips
 local dice_rolls = Utils.dice_rolls
-local occurence_probability = Utils.occurence_probability
-local shuffle = Table.shuffle
+local occurence_probability = Utils.occurrence_probability
+local shuffle = Arrays.shuffle
 local weighted_average = Utils.weighted_average
 local random = math.random
 local update_progress = Utils.update_progress
 
-local table_copy = Table.copy
-local table_multiply = Table.multiply
+local table_copy = Tables.copy
+local table_multiply = Tables.multiply
 
 local Luaq_from = Tirislib.Luaq.from
 
@@ -216,7 +217,7 @@ end
 local new_disease_group = DiseaseGroup.new
 
 local function empty_disease_group(group)
-    Table.empty(group)
+    Tables.empty(group)
     group[HEALTHY] = 0
 end
 
@@ -239,7 +240,7 @@ end
 --- @param to_take integer
 --- @param total_count integer?
 function DiseaseGroup.take(group, to_take, total_count)
-    total_count = total_count or Table.sum(group)
+    total_count = total_count or Tables.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = new_disease_group(0)
@@ -401,12 +402,12 @@ function AgeGroup.merge(lh, rh, keep_rh)
     end
 
     if not keep_rh then
-        Table.empty(rh)
+        Tables.empty(rh)
     end
 end
 
 function AgeGroup.take(group, to_take, total_count)
-    total_count = total_count or Table.sum(group)
+    total_count = total_count or Tables.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = {}
@@ -450,8 +451,8 @@ function AgeGroup.subtract(lh, rh)
 end
 
 function AgeGroup.shift(group, time)
-    local copy = Table.copy(group)
-    Table.empty(group)
+    local copy = Tables.copy(group)
+    Tables.empty(group)
 
     for age, count in pairs(copy) do
         group[age + time] = count
@@ -490,7 +491,7 @@ function GenderGroup.merge(lh, rh, keep_rh)
 end
 
 function GenderGroup.take(group, to_take, total_count)
-    total_count = total_count or Table.sum(group)
+    total_count = total_count or Tables.sum(group)
     to_take = min(to_take, total_count)
 
     local ret = GenderGroup.new()
@@ -755,7 +756,7 @@ end
 
 --- Returns the total number of inhabitants.
 function Inhabitants.get_population_count()
-    return Table.sum(population)
+    return Tables.sum(population)
 end
 
 --- Gets the current Clockwork caste bonus.
@@ -789,7 +790,7 @@ end
 
 --- Gets the current Ember caste bonus.
 local function get_ember_bonus()
-    local non_ember_population = Table.sum(population) - population[Type.ember]
+    local non_ember_population = Tables.sum(population) - population[Type.ember]
     if non_ember_population > 0 then
         return floor_to_step((3 * max(0, caste_points[Type.ember]) / non_ember_population) ^ 0.6, 0.1)
     else
@@ -813,7 +814,7 @@ local function get_aurora_bonus()
 end
 
 local function get_plasma_bonus()
-    local non_plasma_population = Table.sum(population) - population[Type.plasma]
+    local non_plasma_population = Tables.sum(population) - population[Type.plasma]
     if non_plasma_population > 0 then
         return floor_to_step((max(0, caste_points[Type.plasma]) / non_plasma_population) ^ 0.5, 0.1)
     else
@@ -1358,7 +1359,7 @@ local function build_social_environment(entry)
         end
     end
 
-    entry[EK.social_environment] = Table.get_keyset(in_reach)
+    entry[EK.social_environment] = Tables.get_keyset(in_reach)
 end
 
 local function get_social_value(environment)
@@ -1718,7 +1719,7 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
 
     -- treat disease cases in hospitals
     local hospitals = Neighborhood.get_by_type(entry, Type.hospital)
-    Table.merge_arrays(hospitals, Neighborhood.get_by_type(entry, Type.improvised_hospital))
+    Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.improvised_hospital))
 
     local grouped = Luaq_from(disease_group):where(not_healthy):group(is_recoverable):to_table()
     treat_diseases(entry, hospitals, grouped[false], disease_group, new_diseases)
@@ -1774,7 +1775,7 @@ local function update_blood_donations(entry, delta_ticks)
 
     if donations > 0 then
         local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
-        Table.merge_arrays(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
+        Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
 
         for _, hospital in pairs(hospitals) do
             if hospital[EK.workhours] >= hospital[EK.blood_donation_threshold] then
@@ -2057,7 +2058,7 @@ end
 
 function Inhabitants.migration_wave(immigration_port_details)
     local capacity = immigration_port_details.capacity
-    local order = Table.get_keyset(immigration)
+    local order = Tables.get_keyset(immigration)
     shuffle(order)
 
     for i = 1, #order do
@@ -2162,14 +2163,14 @@ function Inhabitants.create_house(entry)
 
     entry[EK.last_age_shift] = game.tick
 
-    entry[EK.happiness_summands] = Table.new_array(Table.count(HappinessSummand), 0.)
-    entry[EK.happiness_factors] = Table.new_array(Table.count(HappinessFactor), 1.)
+    entry[EK.happiness_summands] = Arrays.new(Tables.count(HappinessSummand), 0.)
+    entry[EK.happiness_factors] = Arrays.new(Tables.count(HappinessFactor), 1.)
 
-    entry[EK.health_summands] = Table.new_array(Table.count(HealthSummand), 0.)
-    entry[EK.health_factors] = Table.new_array(Table.count(HealthFactor), 1.)
+    entry[EK.health_summands] = Arrays.new(Tables.count(HealthSummand), 0.)
+    entry[EK.health_factors] = Arrays.new(Tables.count(HealthFactor), 1.)
 
-    entry[EK.sanity_summands] = Table.new_array(Table.count(SanitySummand), 0.)
-    entry[EK.sanity_factors] = Table.new_array(Table.count(SanityFactor), 1.)
+    entry[EK.sanity_summands] = Arrays.new(Tables.count(SanitySummand), 0.)
+    entry[EK.sanity_factors] = Arrays.new(Tables.count(SanityFactor), 1.)
 
     entry[EK.emigration_trend] = 0
     entry[EK.garbage_progress] = 0
@@ -2206,7 +2207,7 @@ end
 function Inhabitants.copy_house(source, destination)
     try_add_to_house(destination, source, true)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
-    destination[EK.disease_progress] = Table.copy(source[EK.disease_progress])
+    destination[EK.disease_progress] = Tables.copy(source[EK.disease_progress])
     destination[EK.housing_priority] = source[EK.housing_priority] or 0
     update_housing_census(destination)
 end
@@ -2299,7 +2300,7 @@ end
 Register.set_entity_updater(Type.empty_house, update_empty_house)
 
 local function create_empty_house(entry, event)
-    local tags = Table.get_subtbl_recursive_passive(event, "tags", "sosciencity")
+    local tags = Tables.get_subtbl_recursive_passive(event, "tags", "sosciencity")
 
     if tags == nil then
         return

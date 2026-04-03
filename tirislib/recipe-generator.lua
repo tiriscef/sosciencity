@@ -471,7 +471,7 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 local arrays = {"ingredients", "byproducts", "themes", "result_themes"}
-arrays = Tirislib.Tables.array_to_lookup(arrays)
+arrays = Tirislib.Arrays.to_lookup(arrays)
 
 --- Merges the right hand recipe details into the left hand recipe details.
 --- @param lh table

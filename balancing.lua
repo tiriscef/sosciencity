@@ -77,7 +77,7 @@ local function write_files()
     )
 
     local animal_foods =
-        Tirislib.Tables.array_to_lookup {
+        Tirislib.Arrays.to_lookup {
         "bird-food",
         "fish-food",
         "carnivore-food",
