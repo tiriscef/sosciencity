@@ -416,9 +416,9 @@ end
             [cause]: count
 
         disease-recovery <- healthcare
-            [true]: treated diseases
+            [true]: naturally recovered diseases
                 [disease_id]: count
-            [false]: naturally recovered diseases
+            [false]: treated diseases
                 [disease_id]: count
 
         disease-death <- healthcare

@@ -7,9 +7,34 @@ local DeconstructionCause = require("enums.deconstruction-cause")
 require("tirislib.init")
 
 ---------------------------------------------------------------------------------------------------
--- << debug stuff >>
+-- << development feature flags >>
 
 DEBUG = script.active_mods["sosciencity-debug"] ~= nil
+BALANCING = script.active_mods["sosciencity-balancing"] ~= nil
+
+if BALANCING then
+    BalancingData = {
+        scripted_items = {}, -- item/fluid name → unlock condition ("always" or tech_name)
+        scripted_techs = {}, -- tech_name → human-readable description of unlock condition
+        register_scripted_item = function(name, unlock_condition)
+            BalancingData.scripted_items[name] = unlock_condition or "always"
+        end,
+        register_scripted_tech = function(tech_name, description)
+            BalancingData.scripted_techs[tech_name] = description
+        end
+    }
+
+    BalancingData.register_scripted_item("garbage", "upbringing")
+    BalancingData.register_scripted_item("food-leftovers", "upbringing")
+    BalancingData.register_scripted_item("humus", "composting-silo")
+    BalancingData.register_scripted_item("necrofall", "composting-silo")
+    BalancingData.register_scripted_item("medical-report", "medbay")
+else
+    BalancingData = {
+        register_scripted_item = function() end,
+        register_scripted_tech = function() end
+    }
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << Events >>
@@ -99,6 +124,10 @@ if DEBUG then
             log(results)
         end
     )
+end
+
+if BALANCING then
+    require("balancing")
 end
 
 --[[
@@ -534,6 +563,7 @@ script.on_event(defines.events.on_gui_checked_state_changed, Gui.on_gui_checked_
 script.on_event(defines.events.on_gui_value_changed, Gui.on_gui_value_changed)
 script.on_event(defines.events.on_gui_confirmed, Gui.on_gui_confirmed)
 script.on_event(defines.events.on_gui_text_changed, Gui.on_gui_text_changed)
+script.on_event(defines.events.on_gui_elem_changed, Gui.on_gui_elem_changed)
 
 -- research
 script.on_event(defines.events.on_research_finished, on_research_finished)
@@ -557,10 +587,3 @@ script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
 
 -- player creates a blueprint
 script.on_event(defines.events.on_player_setup_blueprint, on_player_setup_blueprint)
-
----------------------------------------------------------------------------------------------------
--- << balancing stuff >>
-
-if script.active_mods["sosciencity-balancing"] then
-    require("balancing")
-end

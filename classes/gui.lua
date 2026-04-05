@@ -53,11 +53,13 @@ function Gui.register_element(element, context, key, player_id)
         by_context = {}
         storage.gui_elements[context] = by_context
     end
+
     local by_key = by_context[key]
     if not by_key then
         by_key = {}
         by_context[key] = by_key
     end
+
     by_key[player_id] = element
 end
 
@@ -70,7 +72,24 @@ function Gui.get_elements(context, key)
     if not by_context then
         return {}
     end
+
     return by_context[key] or {}
+end
+
+--- Returns the registered element for a specific player. Use this for per-player GUIs
+--- (as opposed to shared entity views where all watching players need updating).
+--- @param context any
+--- @param key string
+--- @param player_id integer
+--- @return LuaGuiElement|nil
+function Gui.get_element(context, key, player_id)
+    local by_context = storage.gui_elements[context]
+    if not by_context then return nil end
+
+    local by_key = by_context[key]
+    if not by_key then return nil end
+
+    return by_key[player_id]
 end
 
 --- Removes all registered elements for the given player.
@@ -180,6 +199,22 @@ end
 --- Event handler for confirmed guis
 function Gui.on_gui_confirmed(event)
     look_for_event_handler_by_tag(event, gui_confirmed_lookup_tag)
+end
+
+--- Lookup for elem changed event handlers by tag.
+--- [tag]: function
+local elem_changed_lookup_tag = {}
+
+--- Sets the 'on_gui_elem_changed' event handler for gui elements with the given 'sosciencity_gui_event'-tag.
+--- @param tag string
+--- @param fn function
+function Gui.set_elem_changed_handler(tag, fn)
+    set_gui_handler(elem_changed_lookup_tag, tag, fn, "elem_changed")
+end
+
+--- Event handler for choose-elem-button change events
+function Gui.on_gui_elem_changed(event)
+    look_for_event_handler_by_tag(event, elem_changed_lookup_tag)
 end
 
 --- Lookup for text changed event handlers by tag.

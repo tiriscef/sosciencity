@@ -634,6 +634,18 @@ function Gui.Elements.Label.heading_3(container, caption, name)
     }
 end
 
+function Gui.Elements.Label.heading_1_compact(container, caption, name)
+    return container.add {type = "label", name = name, caption = caption, style = "sosciencity_heading_1_compact"}
+end
+
+function Gui.Elements.Label.heading_2_compact(container, caption, name)
+    return container.add {type = "label", name = name, caption = caption, style = "sosciencity_heading_2_compact"}
+end
+
+function Gui.Elements.Label.heading_3_compact(container, caption, name)
+    return container.add {type = "label", name = name, caption = caption, style = "sosciencity_heading_3_compact"}
+end
+
 --- Creates a generic multi-line 'paragraph' label.
 --- @param container LuaGuiElement
 --- @param caption locale
@@ -902,3 +914,247 @@ function Gui.Elements.Flow.horizontal_right(container, name)
         style = "sosciencity_horizontal_right_flow"
     }
 end
+
+---------------------------------------------------------------------------------------------------
+-- << CollapsibleSection >>
+---------------------------------------------------------------------------------------------------
+
+Gui.Elements.CollapsibleSection = {}
+
+local function create_collapsible_section(container, caption, options, style)
+    options = options or {}
+    local collapsed = options.collapsed or false
+
+    local section_flow = container.add {
+        type = "flow",
+        direction = "vertical"
+    }
+
+    section_flow.add {
+        type = "button",
+        name = "heading",
+        caption = {"", collapsed and "▶ " or "▼ ", caption},
+        elem_tooltip = options.elem_tooltip,
+        tooltip = options.tooltip,
+        tags = {
+            sosciencity_gui_event = "collapsible_section_toggle",
+            collapsed = collapsed
+        },
+        style = style
+    }
+
+    return section_flow.add {
+        type = "flow",
+        name = "content",
+        direction = "vertical",
+        visible = not collapsed
+    }
+end
+
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param options table? { collapsed: bool, elem_tooltip: ElemID?, tooltip: locale? }
+--- @return LuaGuiElement content_flow
+function Gui.Elements.CollapsibleSection.heading_1(container, caption, options)
+    return create_collapsible_section(container, caption, options, "sosciencity_heading_1_button")
+end
+
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param options table? { collapsed: bool, elem_tooltip: ElemID?, tooltip: locale? }
+--- @return LuaGuiElement content_flow
+function Gui.Elements.CollapsibleSection.heading_2(container, caption, options)
+    return create_collapsible_section(container, caption, options, "sosciencity_heading_2_button")
+end
+
+--- @param container LuaGuiElement
+--- @param caption locale
+--- @param options table? { collapsed: bool, elem_tooltip: ElemID?, tooltip: locale? }
+--- @return LuaGuiElement content_flow
+function Gui.Elements.CollapsibleSection.heading_3(container, caption, options)
+    return create_collapsible_section(container, caption, options, "sosciencity_heading_3_button")
+end
+
+function Gui.Elements.CollapsibleSection.heading_1_compact(container, caption, options)
+    return create_collapsible_section(container, caption, options, "sosciencity_heading_1_button_compact")
+end
+
+function Gui.Elements.CollapsibleSection.heading_2_compact(container, caption, options)
+    return create_collapsible_section(container, caption, options, "sosciencity_heading_2_button_compact")
+end
+
+function Gui.Elements.CollapsibleSection.heading_3_compact(container, caption, options)
+    return create_collapsible_section(container, caption, options, "sosciencity_heading_3_button_compact")
+end
+
+Gui.set_click_handler(
+    "collapsible_section_toggle",
+    function(event)
+        local button = event.element
+        local tags = button.tags
+        local now_collapsed = not tags.collapsed
+
+        tags.collapsed = now_collapsed
+        button.tags = tags
+
+        -- Swap the indicator (index 2 in the {"", indicator, original_caption} structure)
+        local caption = button.caption
+        caption[2] = now_collapsed and "▶ " or "▼ "
+        button.caption = caption
+
+        -- heading and content are siblings inside section_flow
+        button.parent.content.visible = not now_collapsed
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << MessageBox >>
+---------------------------------------------------------------------------------------------------
+
+--- A modal dialog shown on the player's screen with a message and one or more buttons.
+--- Buttons may carry roles:
+---   "confirm" → green style, Escape triggers it if it also has "cancel"
+---   "cancel"  → red style, Escape always triggers it
+--- A button with both roles is rendered green (confirm trumps cancel visually).
+Gui.Elements.MessageBox = {}
+
+local MESSAGEBOX_FRAME_NAME = "sosciencity_messagebox"
+
+--- Lookup for button handlers by tag.
+local messagebox_button_handlers = {}
+
+--- Registers a handler called when a MessageBox button with the given tag is clicked or
+--- triggered by keyboard. Call at load time (subject to desync protection).
+--- @param tag string
+--- @param fn function(event)
+function Gui.Elements.MessageBox.set_button_handler(tag, fn)
+    Tirislib.Utils.desync_protection()
+    if messagebox_button_handlers[tag] then
+        error("Handler already registered for messagebox button tag: " .. tag)
+    end
+    messagebox_button_handlers[tag] = fn
+end
+
+local function messagebox_has_role(roles, role)
+    if not roles then return false end
+    for _, r in pairs(roles) do
+        if r == role then return true end
+    end
+    return false
+end
+
+local function messagebox_button_style(roles)
+    -- confirm trumps cancel when both are present
+    if messagebox_has_role(roles, "confirm") then
+        return "confirm_button"
+    elseif messagebox_has_role(roles, "cancel") then
+        return "back_button"
+    else
+        return "dialog_button"
+    end
+end
+
+local function messagebox_invoke_handler(tag, event)
+    if not tag then return end
+    local handler = messagebox_button_handlers[tag]
+    if handler then
+        handler(event)
+    end
+end
+
+local function messagebox_close(player)
+    local frame = player.gui.screen[MESSAGEBOX_FRAME_NAME]
+    if frame and frame.valid then
+        frame.destroy()
+    end
+end
+
+--- Shows a message box to the given player, closing any existing one first.
+--- @param player_index integer
+--- @param options table
+---   message: locale (required)
+---   title: locale (optional)
+---   buttons: array of button specs:
+---     caption: locale (required)
+---     roles: string[]? — subset of {"confirm", "cancel"}
+---     tag: string? — key for a handler registered via set_button_handler
+---     style: string? — Factorio button style override
+function Gui.Elements.MessageBox.show(player_index, options)
+    local player = game.get_player(player_index)
+    messagebox_close(player)
+
+    local buttons = options.buttons
+    local cancel_tag = nil
+
+    for _, btn in pairs(buttons) do
+        if messagebox_has_role(btn.roles, "cancel") then
+            if cancel_tag ~= nil then
+                error("MessageBox: only one button may have the 'cancel' role")
+            end
+            cancel_tag = btn.tag or false
+        end
+    end
+
+    local frame = player.gui.screen.add {
+        type = "frame",
+        name = MESSAGEBOX_FRAME_NAME,
+        caption = options.title,
+        direction = "vertical",
+        tags = {cancel_tag = cancel_tag}
+    }
+    frame.auto_center = true
+
+    local content_flow = frame.add {
+        type = "flow",
+        direction = "vertical",
+        style = "sosciencity_messagebox_content_flow"
+    }
+
+    content_flow.add {
+        type = "label",
+        caption = options.message,
+        style = "sosciencity_paragraph"
+    }
+
+    local button_flow = content_flow.add {
+        type = "flow",
+        direction = "horizontal",
+        style = "sosciencity_messagebox_button_flow"
+    }
+
+    for _, btn in pairs(buttons) do
+        button_flow.add {
+            type = "button",
+            caption = btn.caption,
+            style = btn.style or messagebox_button_style(btn.roles),
+            tags = {
+                sosciencity_gui_event = "messagebox_button",
+                messagebox_tag = btn.tag,
+            }
+        }
+    end
+
+    player.opened = frame
+end
+
+Gui.set_click_handler(
+    "messagebox_button",
+    function(event)
+        local tag = event.element.tags.messagebox_tag
+        local player = game.get_player(event.player_index)
+        messagebox_close(player)
+        messagebox_invoke_handler(tag, event)
+    end
+)
+
+Gui.add_gui_closed_handler(
+    function(player, event)
+        local element = event.element
+        if not element or not element.valid then return end
+        if element.name ~= MESSAGEBOX_FRAME_NAME then return end
+
+        local cancel_tag = element.tags.cancel_tag
+        element.destroy()
+        messagebox_invoke_handler(cancel_tag, event)
+    end
+)
