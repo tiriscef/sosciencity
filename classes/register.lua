@@ -24,7 +24,7 @@ Register = {}
     storage.entry_counts:
         [type]: int (total number)
 
-    storage.last_index: int|nil (unit_number of the entry the last update cycle stopped on)
+    storage.last_index: int? (unit_number of the entry the last update cycle stopped on)
 ]]
 -- local often used globals for almost non-existant performance gains
 
@@ -367,7 +367,7 @@ end
 
 --- Adds the given entity to the register. Optionally the type can be specified.
 --- @param entity LuaEntity
---- @param _type Type|nil
+--- @param _type Type?
 --- @param event table?
 function Register.add(entity, _type, event)
     _type = _type or get_entity_type(entity)
@@ -418,8 +418,8 @@ local remove_entry = Register.remove_entry
 
 --- Removes the given entity from the register.
 --- @param entity LuaEntity
---- @param unit_number integer|nil
---- @param cause DeconstructionCause|nil
+--- @param unit_number integer?
+--- @param cause DeconstructionCause?
 function Register.remove_entity(entity, unit_number, cause)
     unit_number = unit_number or entity.unit_number
     cause = cause or DeconstructionCause.unknown
@@ -447,7 +447,7 @@ end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
 --- @param unit_number integer
---- @return Entry|nil
+--- @return Entry?
 function Register.try_get(unit_number)
     local entry = register[unit_number]
 

@@ -204,6 +204,109 @@ style.sosciencity_heading_3 = {
     font_color = {255, 230, 192}
 }
 
+-- Visually identical to their label counterparts but as button_styles, enabling click events.
+-- Used for collapsible section headings or other cases where we need buttons that look like labels.
+style.sosciencity_heading_1_button = {
+    type = "button_style",
+    font = "heading-1",
+    default_font_color = {255, 230, 192},
+    hovered_font_color = {255, 255, 255},
+    clicked_font_color = {255, 255, 255},
+    left_margin = 30,
+    bottom_margin = 10,
+    horizontal_align = "left",
+    horizontally_stretchable = "on",
+    default_graphical_set = {},
+    hovered_graphical_set = {},
+    clicked_graphical_set = {},
+    disabled_graphical_set = {},
+    selected_graphical_set = {},
+    selected_hovered_graphical_set = {},
+    selected_clicked_graphical_set = {},
+}
+
+style.sosciencity_heading_2_button = {
+    type = "button_style",
+    font = "heading-2",
+    default_font_color = {255, 230, 192},
+    hovered_font_color = {255, 255, 255},
+    clicked_font_color = {255, 255, 255},
+    left_margin = 15,
+    top_margin = 20,
+    bottom_margin = 10,
+    horizontal_align = "left",
+    horizontally_stretchable = "on",
+    default_graphical_set = {},
+    hovered_graphical_set = {},
+    clicked_graphical_set = {},
+    disabled_graphical_set = {},
+    selected_graphical_set = {},
+    selected_hovered_graphical_set = {},
+    selected_clicked_graphical_set = {},
+}
+
+style.sosciencity_heading_3_button = {
+    type = "button_style",
+    font = "heading-3",
+    default_font_color = {255, 230, 192},
+    hovered_font_color = {255, 255, 255},
+    clicked_font_color = {255, 255, 255},
+    left_margin = 15,
+    top_margin = 10,
+    bottom_margin = 5,
+    horizontal_align = "left",
+    horizontally_stretchable = "on",
+    default_graphical_set = {},
+    hovered_graphical_set = {},
+    clicked_graphical_set = {},
+    disabled_graphical_set = {},
+    selected_graphical_set = {},
+    selected_hovered_graphical_set = {},
+    selected_clicked_graphical_set = {},
+}
+
+-- Compact heading variants: same look, tighter margins for dense GUI panels.
+style.sosciencity_heading_1_compact = {
+    type = "label_style",
+    parent = "sosciencity_heading_1",
+    bottom_margin = 2,
+}
+style.sosciencity_heading_2_compact = {
+    type = "label_style",
+    parent = "sosciencity_heading_2",
+    top_margin = 4,
+    bottom_margin = 2,
+}
+style.sosciencity_heading_3_compact = {
+    type = "label_style",
+    parent = "sosciencity_heading_3",
+    top_margin = 2,
+    bottom_margin = 2,
+}
+style.sosciencity_heading_1_button_compact = {
+    type = "button_style",
+    parent = "sosciencity_heading_1_button",
+    bottom_margin = 2,
+}
+style.sosciencity_heading_2_button_compact = {
+    type = "button_style",
+    parent = "sosciencity_heading_2_button",
+    top_margin = 4,
+    bottom_margin = 2,
+}
+style.sosciencity_heading_3_button_compact = {
+    type = "button_style",
+    parent = "sosciencity_heading_3_button",
+    top_margin = 2,
+    bottom_margin = 2,
+}
+-- Tighter cell spacing for slot-button grids.
+style.sosciencity_slot_grid = {
+    type = "table_style",
+    horizontal_spacing = 2,
+    vertical_spacing = 2,
+}
+
 style.sosciencity_paragraph = {
     type = "label_style",
     single_line = false
@@ -305,4 +408,19 @@ style.sosciencity_calculation_table_right_head = {
     type = "label_style",
     parent = "sosciencity_calculation_table_right",
     font = "default-bold"
+}
+
+style.sosciencity_messagebox_content_flow = {
+    type = "vertical_flow_style",
+    padding = 12,
+    vertical_spacing = 8,
+    minimal_width = 300
+}
+
+style.sosciencity_messagebox_button_flow = {
+    type = "horizontal_flow_style",
+    horizontal_align = "right",
+    top_margin = 8,
+    horizontal_spacing = 8,
+    horizontally_stretchable = "on"
 }
