@@ -233,6 +233,22 @@ function Gui.on_gui_text_changed(event)
     look_for_event_handler_by_tag(event, text_changed_lookup_tag)
 end
 
+--- Lookup for selection state changed event handlers by tag.
+--- [tag]: function
+local selection_state_lookup_tag = {}
+
+--- Sets the 'on_gui_selection_state_changed' event handler for gui elements with the given 'sosciencity_gui_event'-tag.
+--- @param tag string
+--- @param fn function
+function Gui.set_selection_state_changed_handler(tag, fn)
+    set_gui_handler(selection_state_lookup_tag, tag, fn, "selection_state_changed")
+end
+
+--- Event handler for drop-down/list-box selection change events
+function Gui.on_gui_selection_state_changed(event)
+    look_for_event_handler_by_tag(event, selection_state_lookup_tag)
+end
+
 --- Array of functions to be called on the on_gui_closed-event.
 local gui_closed_handlers = {}
 
