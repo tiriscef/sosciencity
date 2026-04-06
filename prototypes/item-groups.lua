@@ -105,18 +105,6 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-art",
-        group = "sosciencity-production",
-        order = "abd"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-environmental-studies",
-        group = "sosciencity-production",
-        order = "abdb"
-    },
-    {
-        type = "item-subgroup",
         name = "sosciencity-biology-materials",
         group = "sosciencity-production",
         order = "abf"
@@ -274,15 +262,45 @@ Tirislib.Prototype.batch_create {
     -- idea items/recipes in the vanilla intermediate tab
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas",
+        name = "sosciencity-ideas-per-hand",
         group = "intermediate-products",
         order = "ha"
     },
     {
         type = "item-subgroup",
-        name = "sosciencity-ideas-per-hand",
+        name = "sosciencity-ember-studies",
         group = "intermediate-products",
         order = "hb"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-orchid-studies",
+        group = "intermediate-products",
+        order = "hc"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-clockwork-studies",
+        group = "intermediate-products",
+        order = "hd"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-foundry-studies",
+        group = "intermediate-products",
+        order = "he"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-gleam-studies",
+        group = "intermediate-products",
+        order = "hf"
+    },
+    {
+        type = "item-subgroup",
+        name = "sosciencity-gunfire-studies",
+        group = "intermediate-products",
+        order = "hg"
     },
     -- virtual signals in the vanilla signals tab
     {

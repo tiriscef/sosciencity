@@ -5,10 +5,10 @@ end
 
 local default_values = {
     DEBUG = false,
-    clockwork_pack = "automation-science-pack",
+    clockwork_pack = "chemical-science-pack",
     orchid_pack = "logistic-science-pack",
     gunfire_pack = "military-science-pack",
-    ember_pack = "chemical-science-pack",
+    ember_pack = "automation-science-pack",
     foundry_pack = "production-science-pack",
     gleam_pack = "utility-science-pack",
     aurora_pack = "space-science-pack",

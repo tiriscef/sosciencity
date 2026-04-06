@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 -- << base class for all prototypes >>
+--- @class BasePrototype
 Tirislib.BasePrototype = {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
