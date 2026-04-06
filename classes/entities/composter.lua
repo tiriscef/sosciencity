@@ -11,7 +11,6 @@ local get_chest_inventory = Inventories.get_chest_inventory
 local floor = math.floor
 local min = math.min
 local Utils = Tirislib.Utils
-local Table = Tirislib.Tables
 
 ---------------------------------------------------------------------------------------------------
 -- << composter >>
@@ -51,7 +50,7 @@ end
 Entity.analyze_composter_inventory = analyze_composter_inventory
 
 local function compostify_items(inventory, count, compostable_items, entry, mold_amount)
-    Table.shuffle(compostable_items)
+    Tirislib.Arrays.shuffle(compostable_items)
 
     local to_remove = count
     for i = 1, #compostable_items do

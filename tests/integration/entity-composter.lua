@@ -37,10 +37,7 @@ Tirislib.Testing.add_test_case(
         local inventory = Inventories.get_chest_inventory(entry)
         inventory.insert {name = "wood", count = 10}
 
-        -- run an update cycle with a small delta
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(entry, game.tick + 100)
 
         -- progress should have increased (wood is compostable)
         Assert.greater_than(entry[EK.composting_progress], 0, "composting progress should increase")
@@ -59,9 +56,7 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_and_register(test_surface, "test-composter", {0, 0})
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(entry, game.tick + 100)
 
         Assert.equals(entry[EK.composting_progress], 0, "composting progress should remain 0")
     end,
@@ -82,9 +77,7 @@ Tirislib.Testing.add_test_case(
         local inventory = Inventories.get_chest_inventory(entry)
         inventory.insert {name = "iron-plate", count = 50}
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(entry, game.tick + 100)
 
         Assert.equals(entry[EK.composting_progress], 0, "composting progress should remain 0")
     end,
@@ -109,9 +102,7 @@ Tirislib.Testing.add_test_case(
         -- with 100 wood (1 type): progress_factor = 100 * 1 / 240000 = 1/2400
         -- need delta_ticks = 2400 to reach progress = 1
         -- use a large delta to ensure at least one item is consumed
-        local tick = game.tick + 5000
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(entry, game.tick + 5000)
 
         -- wood has compost_value = 4, so humus should increase
         Assert.greater_than(entry[EK.humus], 0, "humus should have been produced")
@@ -139,9 +130,7 @@ Tirislib.Testing.add_test_case(
         -- manually set humus on the composter
         composter[EK.humus] = 100
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(output, game.tick + 100)
 
         -- output should have pulled humus
         local output_inventory = Inventories.get_chest_inventory(output)
@@ -166,9 +155,7 @@ Tirislib.Testing.add_test_case(
 
         -- humus starts at 0
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(output, game.tick + 100)
 
         local output_inventory = Inventories.get_chest_inventory(output)
         Assert.equals(output_inventory.get_item_count("humus"), 0, "output should have no humus")
@@ -192,9 +179,7 @@ Tirislib.Testing.add_test_case(
 
         composter[EK.humus] = 100
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(output, game.tick + 100)
 
         local output_inventory = Inventories.get_chest_inventory(output)
         Assert.equals(output_inventory.get_item_count("humus"), 0, "output should have no humus")
@@ -219,9 +204,7 @@ Tirislib.Testing.add_test_case(
         composter1[EK.humus] = 50
         composter2[EK.humus] = 30
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(output, game.tick + 100)
 
         local output_inventory = Inventories.get_chest_inventory(output)
         local humus_in_output = output_inventory.get_item_count("humus")
@@ -249,9 +232,7 @@ Tirislib.Testing.add_test_case(
         -- set fractional humus — floor(0.5) = 0, so nothing should transfer
         composter[EK.humus] = 0.5
 
-        local tick = game.tick + 100
-        storage.updates_per_cycle = 10
-        Register.entity_update_cycle(tick)
+        Register.update_entry(output, game.tick + 100)
 
         local output_inventory = Inventories.get_chest_inventory(output)
         Assert.equals(output_inventory.get_item_count("humus"), 0, "no transfer for fractional humus")
