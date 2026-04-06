@@ -480,6 +480,16 @@ local function register_next(unit_number)
 end
 Register.next = register_next
 
+--- Updates a single entry: runs custom building logic, calls the type-specific updater,
+--- and advances last_update. Use this for targeted updates in tests instead of entity_update_cycle.
+--- @param entry Entry
+--- @param current_tick integer
+function Register.update_entry(entry, current_tick)
+    update_custom_building(entry)
+    on_update(entry, current_tick)
+    entry[EK.last_update] = current_tick
+end
+
 function Register.entity_update_cycle(current_tick)
     local next_entry = Register.next
     local count = 0
