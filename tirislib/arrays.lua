@@ -31,7 +31,6 @@ function Tirislib.Arrays.to_lookup(array)
 
     return ret
 end
-local to_lookup = Tirislib.Arrays.to_lookup
 
 --- Shuffles the elements of the given array.
 --- @param tbl array

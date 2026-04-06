@@ -62,7 +62,7 @@ end
 
 local function garbagify(inventory, to_garbagify, items, stored_garbage)
     local item_names = Table.get_keyset(items)
-    Table.shuffle(item_names)
+    Tirislib.Arrays.shuffle(item_names)
 
     for _, item_name in pairs(item_names) do
         local garbagified = inventory.remove {name = item_name, count = to_garbagify}

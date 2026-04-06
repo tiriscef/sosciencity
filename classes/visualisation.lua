@@ -89,14 +89,16 @@ local function highlight_range(player_id, entry, building_details, created_highl
     }
 
     -- border
+    -- width / 64: compensate for line width drawn inward (64 pixels per world unit)
     local width = range > 30 and 16 or 8
+    local inset = width / 64
     created_highlights[#created_highlights + 1] =
         rendering.draw_rectangle {
         color = range_border_highlight_colors[entry[EK.type]],
         width = width,
         filled = false,
-        left_top = {x - range + width / 64, y - range + width / 64},
-        right_bottom = {x + range - width / 64, y + range - width / 64},
+        left_top = {x - range + inset, y - range + inset},
+        right_bottom = {x + range - inset, y + range - inset},
         surface = surface,
         players = {player_id}
     }
@@ -180,12 +182,13 @@ local function create_neighbor_highlights(players, entry, created_highlights)
     local right_bottom = bounding_box.right_bottom
 
     local size = max(get_box_size(bounding_box))
+    local big = size > 3
 
     local surface = entity.surface
 
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
-        sprite = size > 3 and "highlight-left-top-big" or "highlight-left-top",
+        sprite = big and "highlight-left-top-big" or "highlight-left-top",
         tint = tint,
         surface = surface,
         players = players,
@@ -193,31 +196,32 @@ local function create_neighbor_highlights(players, entry, created_highlights)
     }
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
-        sprite = size > 3 and "highlight-right-bottom-big" or "highlight-right-bottom",
+        sprite = big and "highlight-right-bottom-big" or "highlight-right-bottom",
         tint = tint,
         surface = surface,
         players = players,
         target = right_bottom
     }
 
-    -- convert left_top to left_bottom and right_bottom to right_top
-    left_top.y, right_bottom.y = right_bottom.y, left_top.y
+    -- swap y coordinates to get left_bottom and right_top
+    local left_bottom = {x = left_top.x, y = right_bottom.y}
+    local right_top = {x = right_bottom.x, y = left_top.y}
 
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
-        sprite = size > 3 and "highlight-left-bottom-big" or "highlight-left-bottom",
+        sprite = big and "highlight-left-bottom-big" or "highlight-left-bottom",
         tint = tint,
         surface = surface,
         players = players,
-        target = left_top
+        target = left_bottom
     }
     created_highlights[#created_highlights + 1] =
         rendering.draw_sprite {
-        sprite = size > 3 and "highlight-right-top-big" or "highlight-right-top",
+        sprite = big and "highlight-right-top-big" or "highlight-right-top",
         tint = tint,
         surface = surface,
         players = players,
-        target = right_bottom
+        target = right_top
     }
 end
 
