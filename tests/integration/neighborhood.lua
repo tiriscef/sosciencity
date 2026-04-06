@@ -9,16 +9,16 @@ local test_surface
 -- test-market has Type.market with range 42, subscribes to all caste types bidirectionally
 -- test-dumpster has Type.dumpster with range 42, subscribes to all caste types bidirectionally
 -- test-water-distributer has Type.water_distributer with range 42, subscribes to all caste types (to_neighbor)
--- improvised-hut has Type.empty_house, subscribes to market/water_distributer/dumpster/etc.
+-- test-house has Type.empty_house, subscribes to market/water_distributer/dumpster/etc.
 -- When both subscribe to each other bidirectionally, placing either one should establish the connection.
 
 Tirislib.Testing.add_test_case(
     "Nearby entities with mutual subscriptions become neighbors",
     "integration|integration.neighborhood",
     function()
-        -- improvised-hut subscribes to market (bidirectional), market subscribes to all castes (bidirectional)
-        -- empty_house also subscribes to market bidirectionally
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        -- test-house subscribes to market (bidirectional), market subscribes to all castes (bidirectional)
+        -- test-house also subscribes to market bidirectionally
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market = Helpers.create_and_register(test_surface, "test-market", {5, 0})
 
         -- house should see market as a neighbor
@@ -34,7 +34,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -43,7 +43,7 @@ Tirislib.Testing.add_test_case(
     "integration|integration.neighborhood",
     function()
         -- test-market has range 42, place house far away
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market = Helpers.create_and_register(test_surface, "test-market", {80, 0})
 
         local house_market_count = Neighborhood.get_neighbor_count(house, Type.market)
@@ -53,7 +53,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -61,7 +61,7 @@ Tirislib.Testing.add_test_case(
     "Multiple neighbors of same type are all discovered",
     "integration|integration.neighborhood",
     function()
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market1 = Helpers.create_and_register(test_surface, "test-market", {5, 0})
         local market2 = Helpers.create_and_register(test_surface, "test-market", {-5, 0})
 
@@ -72,7 +72,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -80,7 +80,7 @@ Tirislib.Testing.add_test_case(
     "Removing a neighbor is reflected in neighbor count (lazy validation)",
     "integration|integration.neighborhood",
     function()
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market = Helpers.create_and_register(test_surface, "test-market", {5, 0})
 
         Assert.equals(Neighborhood.get_neighbor_count(house, Type.market), 1)
@@ -95,7 +95,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -105,7 +105,7 @@ Tirislib.Testing.add_test_case(
     function()
         -- Place the house first, then the market
         -- The market's establish_new_neighbor should notify the house's subscription
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
 
         Assert.equals(Neighborhood.get_neighbor_count(house, Type.market), 0, "no markets yet")
 
@@ -118,7 +118,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -126,26 +126,19 @@ Tirislib.Testing.add_test_case(
     "Entities on different surfaces do not become neighbors",
     "integration|integration.neighborhood",
     function()
-        local surface2_name = "sosciencity-integration-test-2"
-        if game.surfaces[surface2_name] then
-            game.delete_surface(surface2_name)
-        end
-        local surface2 = game.create_surface(surface2_name, {width = 200, height = 200})
-        surface2.generate_with_lab_tiles{min = {-100, -100}, max = {100, 100}}
+        local surface2 = Helpers.create_test_surface("sosciencity-integration-test-2")
 
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market = Helpers.create_and_register(surface2, "test-market", {5, 0})
 
         Assert.equals(Neighborhood.get_neighbor_count(house, Type.market), 0,
             "entities on different surfaces should not be neighbors")
-
-        game.delete_surface(surface2_name)
     end,
     function()
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -153,7 +146,7 @@ Tirislib.Testing.add_test_case(
     "iterate_type returns all valid neighbors",
     "integration|integration.neighborhood",
     function()
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market1 = Helpers.create_and_register(test_surface, "test-market", {5, 0})
         local market2 = Helpers.create_and_register(test_surface, "test-market", {-5, 0})
 
@@ -169,7 +162,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -177,7 +170,7 @@ Tirislib.Testing.add_test_case(
     "Neighborhood.get_by_type returns entry objects",
     "integration|integration.neighborhood",
     function()
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market = Helpers.create_and_register(test_surface, "test-market", {5, 0})
 
         local neighbors = Neighborhood.get_by_type(house, Type.market)
@@ -188,7 +181,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -196,8 +189,8 @@ Tirislib.Testing.add_test_case(
     "Multiple subscription types work independently",
     "integration|integration.neighborhood",
     function()
-        -- improvised-hut subscribes to market, water_distributer, dumpster, etc.
-        local house = Helpers.create_and_register(test_surface, "improvised-hut", {0, 0})
+        -- houses subscribe to market, water_distributer, dumpster, etc.
+        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local market = Helpers.create_and_register(test_surface, "test-market", {5, 0})
         local dumpster = Helpers.create_and_register(test_surface, "test-dumpster", {-5, 0})
 
@@ -213,6 +206,6 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )

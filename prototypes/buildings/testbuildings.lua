@@ -1,27 +1,29 @@
 local function create_test_container(name)
+    local full_name = "test-" .. name
+
     Tirislib.Item.create {
         type = "item",
-        name = "test-" .. name,
+        name = full_name,
         icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
         icon_size = 64,
         subgroup = "sosciencity-infrastructure",
         order = "aab",
-        place_result = "test-" .. name,
+        place_result = full_name,
         stack_size = Sosciencity_Config.building_stacksize,
-        localised_name = "test-" .. name
+        localised_name = full_name
     }
 
     Tirislib.RecipeGenerator.create {
-        product = "test-" .. name
+        product = full_name
     }
 
     Tirislib.Entity.create {
         type = "container",
-        name = "test-" .. name,
+        name = full_name,
         icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
         icon_size = 64,
         flags = {"placeable-neutral", "player-creation"},
-        minable = {mining_time = 0.5, result = "test-" .. name},
+        minable = {mining_time = 0.5, result = full_name},
         max_health = 500,
         corpse = "small-remnants",
         inventory_size = 64,
@@ -39,8 +41,10 @@ local function create_test_container(name)
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points,
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13,
-        localised_name = "test-" .. name
+        localised_name = full_name
     }:set_size(3, 3)
+
+    Sosciencity_Config.add_eei(full_name)
 end
 
 create_test_container("composter")
