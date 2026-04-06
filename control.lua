@@ -100,7 +100,7 @@ if DEBUG then
             if group then
                 results = Tirislib.Testing.run_group_suite(group, true)
             else
-                results = Tirislib.Testing.run_all(true)
+                results = Tirislib.Testing.run_all_except_group("integration", true)
             end
 
             game.print(results)
@@ -117,7 +117,26 @@ if DEBUG then
             if group then
                 results = Tirislib.Testing.run_group_suite(group, false)
             else
-                results = Tirislib.Testing.run_all(false)
+                results = Tirislib.Testing.run_all_except_group("integration", false)
+            end
+
+            game.print(results)
+            log(results)
+        end
+    )
+
+    require("tests.integration.load-tests")
+
+    commands.add_command(
+        "sosciencity-integration-tests",
+        "",
+        function(input)
+            local results
+            local group = input.parameter
+            if group then
+                results = Tirislib.Testing.run_group_suite(group, true)
+            else
+                results = Tirislib.Testing.run_group_suite("integration", true)
             end
 
             game.print(results)

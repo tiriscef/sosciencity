@@ -52,6 +52,8 @@ create_test_container("pharmacy")
 create_test_container("psych-ward")
 create_test_container("upbringing-station")
 create_test_container("egg-collector")
+create_test_container("dumpster")
+create_test_container("water-distributer")
 
 local function create_test_assembling_machine(name, categories)
     Tirislib.Item.create {
