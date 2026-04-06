@@ -1,3 +1,109 @@
+---------------------------------------------------------------------------------------------------
+-- << items >>
+
+local gathering_tool_items = {
+    {
+        name = "trap",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    },
+    {
+        name = "trap-cage",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    },
+    {
+        name = "bucket",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    },
+    {
+        name = "simple-fishtrap",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    },
+    {
+        name = "fishing-net",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    },
+    {
+        name = "harpoon",
+        distinctions = {subgroup = "sosciencity-gathering"}
+    }
+}
+
+Tirislib.Item.batch_create(
+    gathering_tool_items,
+    {subgroup = "sosciencity-materials", stack_size = 200}
+)
+
+---------------------------------------------------------------------------------------------------
+-- << recipes >>
+
+Tirislib.RecipeGenerator.create {
+    product = "trap",
+    themes = {
+        {"mechanism", 2}
+    },
+    energy_required = 0.8,
+    allow_productivity = true,
+    unlock = "hunting-fishing"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "trap-cage",
+    themes = {
+        {"plating", 2},
+        {"grating", 10}
+    },
+    energy_required = 0.8,
+    allow_productivity = true,
+    unlock = "hunting-fishing"
+}
+
+--[[Tirislib.RecipeGenerator.create {
+    product = "bucket",
+    themes = {
+        {"handle", 1},
+        {"plating", 1}
+    },
+    energy_required = 0.8,
+    unlock = "clockwork-caste"
+}]]
+
+Tirislib.RecipeGenerator.create {
+    product = "simple-fishtrap",
+    ingredients = {
+        {type = "item", name = "gingil-hemp", amount = 5},
+        {type = "item", name = "rope", amount = 1}
+    },
+    energy_required = 1.5,
+    allow_productivity = true,
+    unlock = "hunting-fishing"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "fishing-net",
+    ingredients = {
+        {type = "item", name = "rope", amount = 5},
+        {type = "item", name = "yarn", amount = 1},
+        {type = "item", name = "lumber", amount = 2}
+    },
+    energy_required = 1,
+    allow_productivity = true,
+    unlock = "advanced-fishing"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "harpoon",
+    ingredients = {
+        {type = "item", name = "rope", amount = 1}
+    },
+    themes = {{"handle", 1}, {"mechanism", 2}},
+    energy_required = 1,
+    allow_productivity = true,
+    unlock = "advanced-fishing"
+}
+
+---------------------------------------------------------------------------------------------------
+-- << hunting/gathering/fishing recipes >>
+
 local function create_hunting_gathering_recipe(details)
     Tirislib.RecipeGenerator.merge_details(
         details,

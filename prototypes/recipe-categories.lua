@@ -85,6 +85,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-experimental-workshop"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-farming-annual"
     },
     {
@@ -153,6 +157,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-psychology-institute"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-phyto-gene-lab"
     },
     {
@@ -173,7 +181,19 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-social-observatory"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-sorting-machine"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-tech-institute"
+    },
+    {
+        type = "recipe-category",
+        name = "sosciencity-tinkering-workshop"
     },
     {
         type = "recipe-category",

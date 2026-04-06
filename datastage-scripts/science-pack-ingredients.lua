@@ -13,15 +13,15 @@ end
 
 --- Science pack ingredients
 local sp_ingredients = {
-    [Sosciencity_Config.clockwork_pack] = {
+    [Sosciencity_Config.ember_pack] = {
         result_type = "item",
-        ingredient = "sketchbook",
+        ingredient = "artistic-insight",
         ingredient_type = "item",
         amount_fn = identity
     },
     [Sosciencity_Config.orchid_pack] = {
         result_type = "item",
-        ingredient = "botanical-study",
+        ingredient = "environmental-study",
         ingredient_type = "item",
         amount_fn = identity
     },
@@ -31,7 +31,7 @@ local sp_ingredients = {
         ingredient_type = "item",
         amount_fn = identity
     },
-    [Sosciencity_Config.ember_pack] = {
+    [Sosciencity_Config.clockwork_pack] = {
         result_type = "item",
         ingredient = "invention",
         ingredient_type = "item",
@@ -39,13 +39,13 @@ local sp_ingredients = {
     },
     [Sosciencity_Config.foundry_pack] = {
         result_type = "item",
-        ingredient = "complex-scientific-data",
+        ingredient = "scientific-theory",
         ingredient_type = "item",
         amount_fn = identity
     },
     [Sosciencity_Config.gleam_pack] = {
         result_type = "item",
-        ingredient = "published-paper",
+        ingredient = "metastudy",
         ingredient_type = "item",
         amount_fn = identity
     },
@@ -102,4 +102,4 @@ for result_name, details in pairs(launchable_item_ingredients) do
     )
 end
 
-all_recipes:pair_ingredient_with_result("complex-scientific-data", "item", "empty-hard-drive", "item", identity)
+--all_recipes:pair_ingredient_with_result("complex-scientific-data", "item", "empty-hard-drive", "item", identity)

@@ -134,6 +134,16 @@ Building.values = {
             disease_frequency = 0.1 / Time.minute
         }
     },
+    ["experimental-workshop"] = {
+        type = Type.manufactory,
+        range = range_by_foot,
+        workforce = {
+            count = 8,
+            castes = {Type.foundry},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 / Time.minute
+        }
+    },
     ["farm"] = {
         type = Type.farm,
         open_environment = true,
@@ -357,6 +367,16 @@ Building.values = {
         type = Type.psych_ward,
         range = 7
     },
+    ["psychology-institute"] = {
+        type = Type.manufactory,
+        range = range_by_foot,
+        workforce = {
+            count = 8,
+            castes = {Type.gleam},
+            disease_category = DiseaseCategory.office_work,
+            disease_frequency = 0.05 / Time.minute
+        }
+    },
     ["robo-pruning-station"] = {
         type = Type.pruning_station,
         speed = 120 / Time.minute,
@@ -367,9 +387,39 @@ Building.values = {
         range = 10.5,
         water_tiles = 45
     },
+    ["social-observatory"] = {
+        type = Type.manufactory,
+        range = range_by_foot,
+        workforce = {
+            count = 8,
+            castes = {Type.gleam},
+            disease_category = DiseaseCategory.office_work,
+            disease_frequency = 0.05 / Time.minute
+        }
+    },
     ["storage-cellar"] = {
         type = Type.cold_storage,
         spoil_slowdown = 0.6
+    },
+    ["tech-institute"] = {
+        type = Type.manufactory,
+        range = range_by_foot,
+        workforce = {
+            count = 8,
+            castes = {Type.foundry},
+            disease_category = DiseaseCategory.office_work,
+            disease_frequency = 0.05 / Time.minute
+        }
+    },
+    ["tinkering-workshop"] = {
+        type = Type.manufactory,
+        range = range_by_foot,
+        workforce = {
+            count = 8,
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 / Time.minute
+        }
     },
     ["trash-site"] = {
         type = Type.dumpster,
