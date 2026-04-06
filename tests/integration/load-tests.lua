@@ -2,3 +2,5 @@
 require("tests.integration.register")
 require("tests.integration.neighborhood")
 require("tests.integration.subentities")
+require("tests.integration.inventories")
+require("tests.integration.entity-composter")
