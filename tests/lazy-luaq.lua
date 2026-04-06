@@ -96,6 +96,50 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+Tirislib.Testing.add_test_case(
+    "from_keyset yields the keys of a lookup table as values",
+    "lib.lazy-luaq",
+    function()
+        local set = {apple = true, banana = true, cherry = true}
+        local result = LazyLuaq.from_keyset(set):to_lookup()
+        Assert.equals(result, set)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "from_keyset handles an empty table",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from_keyset({}):to_array()
+        Assert.equals(result, {})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "from_keyset works with where",
+    "lib.lazy-luaq",
+    function()
+        local before = {a = true, b = true}
+        local after  = {a = true, b = true, c = true, d = true}
+        local result = LazyLuaq.from_keyset(after)
+            :where(function(name) return not before[name] end)
+            :to_lookup()
+        Assert.equals(result, {c = true, d = true})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "from_keyset works with select",
+    "lib.lazy-luaq",
+    function()
+        local set = {foo = true, bar = true}
+        local result = LazyLuaq.from_keyset(set)
+            :select(function(name) return name .. "!" end)
+            :to_lookup()
+        Assert.equals(result, {["foo!"] = true, ["bar!"] = true})
+    end
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << terminal operations >>
 

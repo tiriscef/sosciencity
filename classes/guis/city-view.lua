@@ -355,3 +355,7 @@ require("classes.guis.city-view-pages.report-pages")
 require("classes.guis.city-view-pages.data-pages")
 require("classes.guis.city-view-pages.caste-pages")
 require("classes.guis.city-view-pages.howto-pages")
+
+if BALANCING then
+    require("classes.guis.city-view-pages.balancing-pages")
+end

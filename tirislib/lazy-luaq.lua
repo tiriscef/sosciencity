@@ -121,6 +121,42 @@ function LazyLuaq.from(tbl)
     return ret
 end
 
+local function from_keyset_move_next(self)
+    if self.stop then return end
+    local key = next(self.content, self.last_index)
+    self.last_index = key
+    if key == nil then
+        self.stop = true
+        return
+    end
+    self.seq = self.seq + 1
+    return self.seq, key
+end
+
+local function from_keyset_reset(self)
+    self.stop = false
+    self.last_index = nil
+    self.seq = 0
+end
+
+--- Creates a LazyLuaqQuery that iterates over the keys of a lookup table (keyset).
+--- Unlike from(), which yields (key, value), from_keyset() yields (i, key),
+--- so callbacks receive the key as their first argument. Useful for sets like {[name]=true}.
+--- @param tbl table
+--- @return LazyLuaqQuery
+function LazyLuaq.from_keyset(tbl)
+    local ret = {
+        content = tbl,
+        is_content_iterator = true,
+        stop = false,
+        seq = 0,
+        move_next = from_keyset_move_next,
+        reset = from_keyset_reset
+    }
+    setmetatable(ret, LazyLuaq)
+    return ret
+end
+
 local function move_next_range(self)
     local count = self.last_index or 0
     local value = self.start_value + count * self.step
