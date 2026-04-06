@@ -262,6 +262,25 @@ function Tirislib.Testing.run_all(suppress_exceptions)
     return string.format("Running all tests\n%s", get_logged_results(results)), results
 end
 
+--- Runs all test cases except those belonging to the given group.
+--- @param excluded_group string The group name to exclude
+--- @param suppress_exceptions boolean Whether to catch errors via xpcall
+--- @return string summary The formatted test results
+--- @return table results The structured results context
+function Tirislib.Testing.run_all_except_group(excluded_group, suppress_exceptions)
+    local results = new_results()
+    active_results = results
+
+    for _, test_case in pairs(tests) do
+        if not test_case.groups[excluded_group] then
+            run_test(test_case, results, suppress_exceptions)
+        end
+    end
+
+    active_results = nil
+    return string.format("Running all tests (excluding '%s')\n%s", excluded_group, get_logged_results(results)), results
+end
+
 --- Runs a function in an isolated results context.
 --- Useful for meta-testing: the function can call asserts and even fail,
 --- without affecting the outer test run's results.
