@@ -26,7 +26,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -45,7 +45,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -63,7 +63,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -87,7 +87,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -108,7 +108,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -131,7 +131,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -154,7 +154,7 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
 
@@ -181,6 +181,6 @@ Tirislib.Testing.add_test_case(
         test_surface = Helpers.create_test_surface()
     end,
     function()
-        Helpers.destroy_test_surface()
+        Helpers.clean_up()
     end
 )
