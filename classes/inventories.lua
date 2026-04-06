@@ -387,7 +387,7 @@ end
 --- @return table eggs with (item_name, count)-pairs
 function Inventories.remove_eggs(entry, max_count)
     local eggs = Table.get_keyset(Biology.egg_data)
-    Table.shuffle(eggs)
+    Tirislib.Arrays.shuffle(eggs)
 
     local count = 0
     local inventory = get_chest_inventory(entry)
@@ -644,7 +644,7 @@ end
 local function consume_food(entry, inventories, amount, diet)
     local items = Table.copy(diet)
     local to_consume = amount
-    Table.shuffle(items)
+    Tirislib.Arrays.shuffle(items)
 
     for i = 1, #items do
         to_consume = to_consume - consume_specific_food(entry, inventories, to_consume, items[i])
