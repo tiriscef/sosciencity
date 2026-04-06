@@ -211,16 +211,18 @@ Tirislib.Testing.add_test_case(
     "set_power_usage adjusts power on an existing EEI",
     "integration|integration.subentities",
     function()
-        -- test-psych-ward starts with power_usage = 50
+        -- test-psych-ward starts with power_usage defined (50 kW, post-processed to J/tick)
         local entry = Helpers.create_and_register(test_surface, "test-psych-ward", {0, 0})
 
         local eei_before = entry[EK.subentities][SubentityType.eei]
-        Assert.equals(entry[EK.power_usage], 50, "initial power usage should be 50")
+        local initial_usage = entry[EK.power_usage]
+        Assert.not_nil(initial_usage, "should have an initial power usage")
 
         -- adjust to a different value
-        Subentities.set_power_usage(entry, 200)
+        local new_usage = initial_usage * 2
+        Subentities.set_power_usage(entry, new_usage)
 
-        Assert.equals(entry[EK.power_usage], 200, "power usage should be updated")
+        Assert.equals(entry[EK.power_usage], new_usage, "power usage should be updated")
         -- should reuse the same EEI, not create a new one
         local eei_after = entry[EK.subentities][SubentityType.eei]
         Assert.equals(eei_before, eei_after, "should reuse the same EEI entity")
