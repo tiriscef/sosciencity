@@ -834,6 +834,95 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "then_by adds secondary sort level",
+    "lib.lazy-luaq",
+    function()
+        local data = {
+            {name = "banana", category = "fruit"},
+            {name = "apple", category = "fruit"},
+            {name = "carrot", category = "vegetable"},
+            {name = "broccoli", category = "vegetable"}
+        }
+        local result = LazyLuaq.from(data)
+            :order_by(function(v) return v.category end)
+            :then_by(function(v) return v.name end)
+            :select(function(v) return v.name end)
+            :to_array()
+        Assert.equals(result, {"apple", "banana", "broccoli", "carrot"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "then_by_descending adds secondary descending sort level",
+    "lib.lazy-luaq",
+    function()
+        local data = {
+            {name = "banana", category = "fruit"},
+            {name = "apple", category = "fruit"},
+            {name = "carrot", category = "vegetable"},
+            {name = "broccoli", category = "vegetable"}
+        }
+        local result = LazyLuaq.from(data)
+            :order_by(function(v) return v.category end)
+            :then_by_descending(function(v) return v.name end)
+            :select(function(v) return v.name end)
+            :to_array()
+        Assert.equals(result, {"banana", "apple", "carrot", "broccoli"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "then_by chains multiple levels",
+    "lib.lazy-luaq",
+    function()
+        local data = {
+            {a = 2, b = 1, c = "z"},
+            {a = 1, b = 2, c = "y"},
+            {a = 1, b = 1, c = "x"},
+            {a = 2, b = 1, c = "w"},
+            {a = 1, b = 1, c = "v"}
+        }
+        local result = LazyLuaq.from(data)
+            :order_by(function(v) return v.a end)
+            :then_by(function(v) return v.b end)
+            :then_by(function(v) return v.c end)
+            :select(function(v) return v.c end)
+            :to_array()
+        Assert.equals(result, {"v", "x", "y", "w", "z"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "order_by_descending with then_by mixes directions",
+    "lib.lazy-luaq",
+    function()
+        local data = {
+            {name = "a", priority = 1},
+            {name = "c", priority = 2},
+            {name = "b", priority = 2},
+            {name = "d", priority = 1}
+        }
+        local result = LazyLuaq.from(data)
+            :order_by_descending(function(v) return v.priority end)
+            :then_by(function(v) return v.name end)
+            :select(function(v) return v.name end)
+            :to_array()
+        Assert.equals(result, {"b", "c", "a", "d"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "then_by errors when called without order_by",
+    "lib.lazy-luaq",
+    function()
+        local ok = pcall(function()
+            LazyLuaq.from({1, 2, 3}):then_by(function(v) return v end)
+        end)
+        Assert.equals(ok, false)
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "partial_sort returns top n ascending",
     "lib.lazy-luaq",
     function()

@@ -1596,10 +1596,153 @@ function LazyLuaq:pairwise(selector)
     return ret
 end
 
+-- Materializes the upstream content and performs a single sort using all accumulated sort levels.
+-- Called on the first move_next of an ordered query.
+local function ordered_do_sort(self)
+    local array = {}
+    for _, value in self.upstream:iterate() do
+        array[#array + 1] = value
+    end
+
+    -- Compute keys for every sort level at once
+    local all_keys = {}
+    for l, level in pairs(self.sort_levels) do
+        local keys = {}
+        for i, value in pairs(array) do
+            keys[i] = level.selector(value)
+        end
+        all_keys[l] = keys
+    end
+
+    -- Build an index array and sort that, so duplicate values don't collide
+    local indices = {}
+    for i = 1, #array do
+        indices[i] = i
+    end
+
+    local levels = self.sort_levels
+    table.sort(indices, function(a, b)
+        for l, level in pairs(levels) do
+            local ka, kb = all_keys[l][a], all_keys[l][b]
+            if ka ~= kb then
+                if level.comparator then
+                    if level.comparator(ka, kb) then return true end
+                    if level.comparator(kb, ka) then return false end
+                elseif level.descending then
+                    return ka > kb
+                else
+                    return ka < kb
+                end
+            end
+        end
+        return false
+    end)
+
+    local sorted = {}
+    for i = 1, #indices do
+        sorted[i] = array[indices[i]]
+    end
+
+    self.materialized = sorted
+end
+
+local function ordered_move_next(self)
+    if not self._materialized then
+        ordered_do_sort(self)
+    end
+    self._index = self._index + 1
+    if self._index <= #self._materialized then
+        return self._index, self._materialized[self._index]
+    end
+end
+
+local function ordered_reset(self)
+    self._index = 0
+    self._materialized = nil
+end
+
+local function create_ordered_query(upstream, sort_levels)
+    local query = {
+        is_ordered_query = true,
+        sort_levels = sort_levels,
+        upstream = upstream,
+        materialized = nil,
+        index = 0,
+        is_content_iterator = true,
+        move_next = ordered_move_next,
+        reset = ordered_reset
+    }
+    setmetatable(query, LazyLuaq)
+    return query
+end
+
+--- Sorts the sequence in ascending order using the keys of the given selector function.<br>
+--- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
+--- @param selector function
+--- @param comparator function?
+--- @return LazyLuaqQuery
+function LazyLuaq:order_by(selector, comparator)
+    return create_ordered_query(self, {{ selector = selector, comparator = comparator, descending = false }})
+end
+
+--- Sorts the sequence in descending order.
+--- @return LazyLuaqQuery
+function LazyLuaq:order_descending()
+    local array = self:to_array()
+
+    table.sort(
+        array,
+        function(a, b)
+            return a > b
+        end
+    )
+
+    return LazyLuaq.from(array)
+end
+
+--- Sorts the sequence in descending order using the keys of the given selector function.<br>
+--- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:order_by_descending(selector)
+    return create_ordered_query(self, {{ selector = selector, descending = true }})
+end
+
+--- Adds a secondary ascending sort level to an ordered query. Can only be called after order_by or order_by_descending.
+--- @param selector function
+--- @param comparator function?
+--- @return LazyLuaqQuery
+function LazyLuaq:then_by(selector, comparator)
+    assert(self.is_ordered_query, "then_by can only be called after order_by, order_by_descending, then_by, or then_by_descending")
+
+    local levels = {}
+    for i, level in ipairs(self._sort_levels) do
+        levels[i] = level
+    end
+    levels[#levels + 1] = { selector = selector, comparator = comparator, descending = false }
+
+    return create_ordered_query(self._upstream, levels)
+end
+
+--- Adds a secondary descending sort level to an ordered query. Can only be called after order_by or order_by_descending.
+--- @param selector function
+--- @return LazyLuaqQuery
+function LazyLuaq:then_by_descending(selector)
+    assert(self.is_ordered_query, "then_by_descending can only be called after order_by, order_by_descending, then_by, or then_by_descending")
+
+    local levels = {}
+    for i, level in ipairs(self.sort_levels) do
+        levels[i] = level
+    end
+    levels[#levels + 1] = { selector = selector, descending = true }
+
+    return create_ordered_query(self.upstream, levels)
+end
+
 ---------------------------------------------------------------------------------------------------
 --- Functions returning new iterators
 --- -> Execution is immediate
----
+
 local function pair_table(value, index)
     return {value, index}
 end
@@ -1625,96 +1768,6 @@ function LazyLuaq:order(comparator)
     table.sort(array, comparator)
 
     return LazyLuaq.from(array)
-end
-
---- Sorts the sequence in ascending order using the keys of the given selector function.
---- @param selector function
---- @param comparator function?
---- @return LazyLuaqQuery
-function LazyLuaq:order_by(selector, comparator)
-    local array = {}
-    local keys = {}
-    for index, value in self:iterate() do
-        local i = #array + 1
-        array[i] = value
-        keys[i] = selector(value, index)
-    end
-
-    -- Build an index array and sort that, so duplicate values don't collide
-    local indices = {}
-    for i = 1, #array do
-        indices[i] = i
-    end
-
-    if comparator then
-        table.sort(
-            indices,
-            function(a, b)
-                return comparator(keys[a], keys[b])
-            end
-        )
-    else
-        table.sort(
-            indices,
-            function(a, b)
-                return keys[a] < keys[b]
-            end
-        )
-    end
-
-    local sorted = {}
-    for i = 1, #indices do
-        sorted[i] = array[indices[i]]
-    end
-
-    return LazyLuaq.from(sorted)
-end
-
---- Sorts the sequence in descending order.
---- @return LazyLuaqQuery
-function LazyLuaq:order_descending()
-    local array = self:to_array()
-
-    table.sort(
-        array,
-        function(a, b)
-            return a > b
-        end
-    )
-
-    return LazyLuaq.from(array)
-end
-
---- Sorts the sequence in descending order using the keys of the given selector function.
---- @param selector function
---- @return LazyLuaqQuery
-function LazyLuaq:order_by_descending(selector)
-    local array = {}
-    local keys = {}
-    for index, value in self:iterate() do
-        local i = #array + 1
-        array[i] = value
-        keys[i] = selector(value, index)
-    end
-
-    local indices = {}
-    for i = 1, #array do
-        indices[i] = i
-    end
-
-    table.sort(
-        indices,
-        function(a, b)
-            return keys[a] > keys[b]
-        end
-    )
-
-    local sorted = {}
-    for i = 1, #indices do
-        sorted[i] = array[indices[i]]
-    end
-
-    return LazyLuaq.from(sorted)
 end
 
 --- Sorts the sequence in ascending order and only returns up to the given count of top elements.<br>
