@@ -74,4 +74,32 @@ function Helpers.destroy_entry(entry)
     end
 end
 
+--- Creates a test-house, assigns it to a caste, and populates it with healthy inhabitants.
+--- Properly updates population tracking and official_inhabitants.
+--- @param surface LuaSurface
+--- @param position table {x, y}
+--- @param caste Type caste id (must be researched in storage.technologies)
+--- @param count integer number of inhabitants
+--- @return Entry the populated house entry
+function Helpers.create_inhabited_house(surface, position, caste, count)
+    local entry = Helpers.create_and_register(surface, "test-house", position)
+    Inhabitants.try_allow_for_caste(entry, caste, false)
+    if count > 0 then
+        local group = InhabitantGroup.new(caste, count)
+        InhabitantGroup.merge(entry, group)
+        -- sync census fields that update_housing_census would normally set
+        storage.population[caste] = (storage.population[caste] or 0) + count
+        entry[EK.official_inhabitants] = count
+    end
+    return entry
+end
+
+--- Resets inhabitants-related global state to a clean baseline.
+--- Mirrors what happens on a new game. Tests that need specific tech levels
+--- or population counts should set them after calling this.
+function Helpers.reset_inhabitants_state()
+    Inhabitants.init()
+    Inhabitants.load()
+end
+
 return Helpers
