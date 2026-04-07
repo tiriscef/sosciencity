@@ -20,7 +20,7 @@ local set_binary_techs = Technologies.set_binary_techs
 --- @param caste_id Type
 --- @return boolean
 function Inhabitants.caste_is_researched(caste_id)
-    return storage.technologies[castes[caste_id].tech_name]
+    return storage.technologies[castes[caste_id].tech_name] and true or false
 end
 
 --- Returns the level of the efficiency technology for the given caste.

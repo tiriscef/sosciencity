@@ -2,13 +2,14 @@
 -- << items >>
 
 local gleam_items = {
-    {name = "published-paper"},
+    {name = "metastudy", use_placeholder_icon = true},
+    {name = "study-design", use_placeholder_icon = true},
     {name = "survey", use_placeholder_icon = true}
 }
 
 Tirislib.Item.batch_create(
     gleam_items,
-    {subgroup = "sosciencity-gleam-studies", stack_size = 100}
+    {subgroup = "sosciencity-gleam-studies", stack_size = 50}
 )
 
 ---------------------------------------------------------------------------------------------------
@@ -17,7 +18,7 @@ Tirislib.Item.batch_create(
 -- Gleam HQ
 
 Tirislib.RecipeGenerator.create {
-    product = "published-paper",
+    product = "metastudy",
     product_amount = 4,
     category = "sosciencity-caste-gleam",
     energy_required = 2,

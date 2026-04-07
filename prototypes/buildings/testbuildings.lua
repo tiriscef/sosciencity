@@ -57,7 +57,59 @@ create_test_container("psych-ward")
 create_test_container("upbringing-station")
 create_test_container("egg-collector")
 create_test_container("dumpster")
-create_test_container("water-distributer")
+-- test-water-distributer must be a storage-tank so it can hold fluid for entity.remove_fluid
+Tirislib.Item.create {
+    type = "item",
+    name = "test-water-distributer",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon_size = 64,
+    subgroup = "sosciencity-infrastructure",
+    order = "aab",
+    place_result = "test-water-distributer",
+    stack_size = Sosciencity_Config.building_stacksize,
+    localised_name = "test-water-distributer"
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "test-water-distributer"
+}
+
+Tirislib.Entity.create {
+    type = "storage-tank",
+    name = "test-water-distributer",
+    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "player-creation"},
+    minable = {mining_time = 0.5, result = "test-water-distributer"},
+    max_health = 500,
+    corpse = "small-remnants",
+    fluid_box = {
+        volume = 10000,
+        pipe_covers = pipecoverspictures(),
+        pipe_connections = {
+            {position = {0, -1}, direction = defines.direction.north},
+            {position = {1,  0}, direction = defines.direction.east},
+            {position = {0,  1}, direction = defines.direction.south},
+            {position = {-1, 0}, direction = defines.direction.west}
+        }
+    },
+    pictures = {
+        picture = {
+            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+            width = 192,
+            height = 192,
+            scale = 0.5
+        },
+        fluid_background = Tirislib.Entity.get_empty_sprite(),
+        window_background = Tirislib.Entity.get_empty_sprite(),
+        flow_sprite = Tirislib.Entity.get_empty_sprite(),
+        gas_flow = Tirislib.Entity.get_empty_animation()
+    },
+    flow_length_in_ticks = 60,
+    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    localised_name = "test-water-distributer",
+    window_bounding_box = Tirislib.Entity.get_selection_box(0, 0),
+}:set_size(3, 3)
 
 local function create_test_assembling_machine(name, categories)
     Tirislib.Item.create {

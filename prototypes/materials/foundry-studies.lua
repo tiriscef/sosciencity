@@ -2,6 +2,7 @@
 -- << items >>
 
 local foundry_items = {
+    {name = "scientific-theory", use_placeholder_icon = true},
     {name = "complex-scientific-data"},
     {name = "experimental-data", use_placeholder_icon = true},
     {name = "computing-model", use_placeholder_icon = true}
@@ -9,7 +10,7 @@ local foundry_items = {
 
 Tirislib.Item.batch_create(
     foundry_items,
-    {subgroup = "sosciencity-foundry-studies", stack_size = 100}
+    {subgroup = "sosciencity-foundry-studies", stack_size = 50}
 )
 
 ---------------------------------------------------------------------------------------------------

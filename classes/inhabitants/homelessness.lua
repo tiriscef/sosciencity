@@ -83,10 +83,9 @@ local function try_occupy_empty_housing()
 
         -- try to distribute the inhabitants
         for _, current_house in pairs(empty_houses) do
-            if Inhabitants.try_allow_for_caste(current_house, caste_id, false) then
-                -- Inhabitants.try_allow_for_caste registers the house with a new entry
-                -- so we need to try_get the new one
-                try_add_to_house(try_get(current_house[EK.unit_number]), group)
+            local new_entry = Inhabitants.try_allow_for_caste(current_house, caste_id, true)
+            if new_entry then
+                try_add_to_house(new_entry, group)
             end
 
             if group[EK.inhabitants] == 0 then

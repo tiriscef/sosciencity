@@ -3,6 +3,10 @@ local Type = require("enums.type")
 local HappinessSummand = require("enums.happiness-summand")
 local SanitySummand = require("enums.sanity-summand")
 
+local Castes = require("constants.castes")
+local Housing = require("constants.housing")
+local Time = require("constants.time")
+
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
 
@@ -27,11 +31,9 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
 
-        -- set happiness far from where it should converge to
         entry[EK.happiness] = 0
 
-        local nominal = Inhabitants.get_nominal_happiness(entry)
-        Register.update_entry(entry, game.tick + 100)
+        Inhabitants.update_happiness(entry, 10, 100)
 
         -- happiness should have moved toward nominal (increased from 0)
         Assert.greater_than(entry[EK.happiness], 0, "happiness should have increased from 0")
@@ -48,7 +50,7 @@ Tirislib.Testing.add_test_case(
 
         entry[EK.health] = 0
 
-        Register.update_entry(entry, game.tick + 100)
+        Inhabitants.update_health(entry, 10, 100)
 
         Assert.greater_than(entry[EK.health], 0, "health should have increased from 0")
     end,
@@ -64,7 +66,7 @@ Tirislib.Testing.add_test_case(
 
         entry[EK.sanity] = 0
 
-        Register.update_entry(entry, game.tick + 100)
+        Inhabitants.update_sanity(entry, 10, 100)
 
         Assert.greater_than(entry[EK.sanity], 0, "sanity should have increased from 0")
     end,
@@ -181,7 +183,6 @@ Tirislib.Testing.add_test_case(
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
-        local Time = require("constants.time")
 
         -- set last_age_shift far in the past (more than a week ago)
         entry[EK.last_age_shift] = game.tick - 2 * Time.nauvis_week
@@ -229,13 +230,13 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
 
-        local caste = require("constants.castes").values[Type.clockwork]
+        local caste = Castes.values[Type.clockwork]
         Inhabitants.evaluate_housing(entry, entry[EK.happiness_summands], entry[EK.sanity_summands], caste)
 
-        -- test-house has comfort=10
-        Assert.equals(entry[EK.happiness_summands][HappinessSummand.housing], 10,
+        local comfort = Housing.values["test-house"].comfort
+        Assert.equals(entry[EK.happiness_summands][HappinessSummand.housing], comfort,
             "housing comfort summand should match test-house comfort value")
-        Assert.equals(entry[EK.sanity_summands][SanitySummand.housing], 10,
+        Assert.equals(entry[EK.sanity_summands][SanitySummand.housing], comfort,
             "sanity housing summand should match test-house comfort value")
     end,
     setup,

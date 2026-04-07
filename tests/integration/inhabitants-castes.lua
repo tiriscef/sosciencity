@@ -1,5 +1,6 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
+local Castes = require("constants.castes")
 
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
@@ -69,7 +70,7 @@ Tirislib.Testing.add_test_case(
     function()
         -- save and set known values
         local saved = {}
-        for _, caste in pairs(require("constants.castes").all) do
+        for _, caste in pairs(Castes.all) do
             saved[caste.type] = storage.population[caste.type]
             storage.population[caste.type] = 0
         end

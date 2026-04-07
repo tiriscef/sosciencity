@@ -249,7 +249,8 @@ function Register.set_settings_paste_handler(source_type, destination_type, fn)
 
     local tbl = get_subtbl(on_settings_paste_lookup, destination_type)
     if tbl[source_type] then
-        error("Duplicate settings_paste handler registration for types " .. tostring(source_type) .. " -> " .. tostring(destination_type))
+        error("Duplicate settings_paste handler registration for types " ..
+            tostring(source_type) .. " -> " .. tostring(destination_type))
     end
     tbl[source_type] = fn
 end
@@ -386,6 +387,7 @@ function Register.add(entity, _type, event)
 
     return entry
 end
+
 local add_entity = Register.add
 
 --- Adds the given destination entity to the register with the same type as the source entry and copies the relevant entry data.
@@ -399,11 +401,37 @@ function Register.clone(source, destination)
     on_copy(_type, source, destination_entry)
 end
 
+local stale_entry_metatable = {
+    __index = function(_, k)
+        error("Accessed stale entry (key: " .. tostring(k) .. ").")
+    end,
+    __newindex = function(_, k)
+        error("Wrote to stale entry (key: " .. tostring(k) .. ").")
+    end
+}
+
+--- Invalidates an entry as a precaution to make code that still uses it fail more directly.
+--- @param entry Entry
+local function invalidate_entry(entry)
+    for key in pairs(entry) do
+        entry[key] = nil
+    end
+    setmetatable(entry, stale_entry_metatable)
+end
+
+--- Checks if the given entry is stale.
+--- @param entry Entry
+--- @return boolean is_stale
+function Register.is_stale(entry)
+    return getmetatable(entry) == stale_entry_metatable
+end
+
 --- Removes the given entry from the register.
 --- @param entry Entry
 --- @param cause DeconstructionCause
 --- @param event table?
-function Register.remove_entry(entry, cause, event)
+--- @param keep_valid boolean? if invalidation should be ommitted
+function Register.remove_entry(entry, cause, event, keep_valid)
     local _type = entry[EK.type]
 
     destroy_custom_building(entry)
@@ -413,6 +441,10 @@ function Register.remove_entry(entry, cause, event)
     remove_notifications(entry)
 
     remove_entry_from_register(entry)
+
+    if not keep_valid then
+        invalidate_entry(entry)
+    end
 end
 local remove_entry = Register.remove_entry
 
@@ -434,7 +466,7 @@ end
 --- @param entry Entry
 --- @param new_type Type
 function Register.change_type(entry, new_type)
-    remove_entry(entry, DeconstructionCause.type_change)
+    remove_entry(entry, DeconstructionCause.type_change, nil, true)
 
     -- remove the sprites explicitly, because normally they get destroyed when the entity is destroyed
     Subentities.remove_sprites(entry)
@@ -443,6 +475,8 @@ function Register.change_type(entry, new_type)
     new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
 
     Gui.DetailsView.rebuild_for_entry(new_entry)
+    invalidate_entry(entry)
+    return new_entry
 end
 
 --- Tries to get the entry with the given unit_number if exists and is still valid.
