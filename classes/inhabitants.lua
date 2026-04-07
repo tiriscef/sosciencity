@@ -2117,6 +2117,35 @@ function Inhabitants.update(current_tick)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << debug-only exposure of local functions for integration testing >>
+
+if DEBUG then
+    Inhabitants.update_housing_census = update_housing_census
+    Inhabitants.remove_housing_census = remove_housing_census
+    Inhabitants.update_free_space_status = update_free_space_status
+    Inhabitants.update_caste_bonuses = update_caste_bonuses
+    Inhabitants.evaluate_housing = evaluate_housing
+    Inhabitants.evaluate_sosciety = evaluate_sosciety
+    Inhabitants.evaluate_neighborhood = evaluate_neighborhood
+    Inhabitants.evaluate_social_environment = evaluate_social_environment
+    Inhabitants.update_emigration = update_emigration
+    Inhabitants.update_garbage_output = update_garbage_output
+    Inhabitants.update_ages = update_ages
+    Inhabitants.update_diseases = update_diseases
+    Inhabitants.set_custom_status = set_custom_status
+    Inhabitants.try_add_to_house = try_add_to_house
+    Inhabitants.distribute = distribute
+    Inhabitants.build_social_environment = build_social_environment
+    Inhabitants.get_nominal_value = get_nominal_value
+    Inhabitants.try_house_homeless = try_house_homeless
+    Inhabitants.try_occupy_empty_housing = try_occupy_empty_housing
+    Inhabitants.add_to_homeless_pool = add_to_homeless_pool
+    Inhabitants.update_homelessness = update_homelessness
+    Inhabitants.unemploy_inhabitants = unemploy_inhabitants
+    Inhabitants.unemploy_all_inhabitants = unemploy_all_inhabitants
+end
+
+---------------------------------------------------------------------------------------------------
 -- << housing life cycle and event handlers >>
 
 --- Changes the type of the entry to the given caste if it makes sense. Returns true if it did so.
