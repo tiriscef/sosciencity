@@ -1,5 +1,8 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
+local DeconstructionCause = require("enums.deconstruction-cause")
+
+local Housing = require("constants.housing")
 
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
@@ -23,12 +26,12 @@ Tirislib.Testing.add_test_case(
     "distribute fills houses by descending priority",
     "integration|integration.inhabitants",
     function()
-        local low_priority = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(low_priority, Type.clockwork, false)
+        local low_priority = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
         low_priority[EK.housing_priority] = 0
 
-        local high_priority = Helpers.create_and_register(test_surface, "test-house", {10, 0})
-        Inhabitants.try_allow_for_caste(high_priority, Type.clockwork, false)
+        local high_priority = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {10, 0}), Type.clockwork, false)
         high_priority[EK.housing_priority] = 10
 
         -- distribute 5 inhabitants — should go to high priority first
@@ -47,16 +50,16 @@ Tirislib.Testing.add_test_case(
     "integration|integration.inhabitants",
     function()
         -- test-house has room_count=200, clockwork needs 1 room each -> capacity 200
-        local high_priority = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(high_priority, Type.clockwork, false)
+        local high_priority = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
         high_priority[EK.housing_priority] = 10
 
-        local low_priority = Helpers.create_and_register(test_surface, "test-house", {10, 0})
-        Inhabitants.try_allow_for_caste(low_priority, Type.clockwork, false)
+        local low_priority = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {10, 0}), Type.clockwork, false)
         low_priority[EK.housing_priority] = 0
 
         -- fill the high priority house to capacity first
-        local fill_group = InhabitantGroup.new(Type.clockwork, 200)
+        local fill_group = InhabitantGroup.new(Type.clockwork, Housing.get_capacity(high_priority))
         InhabitantGroup.merge(high_priority, fill_group)
         Inhabitants.update_free_space_status(high_priority)
 
@@ -77,21 +80,24 @@ Tirislib.Testing.add_test_case(
     "try_add_to_house respects capacity",
     "integration|integration.inhabitants",
     function()
-        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(house, Type.clockwork, false)
+        local house = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
+
+        local capacity = Housing.get_capacity(house)
+        local free_space = 2
 
         -- fill to near capacity
-        local fill = InhabitantGroup.new(Type.clockwork, 198)
+        local fill = InhabitantGroup.new(Type.clockwork, capacity - free_space)
         InhabitantGroup.merge(house, fill)
         Inhabitants.update_free_space_status(house)
 
-        -- try to add 10 more — only 2 should fit (capacity 200)
+        -- try to add 10 more — only free_space should fit
         local group = InhabitantGroup.new(Type.clockwork, 10)
         local added = Inhabitants.try_add_to_house(house, group, true)
 
-        Assert.equals(added, 2, "should only add up to capacity")
-        Assert.equals(house[EK.inhabitants], 200, "house should be at capacity")
-        Assert.equals(group[EK.inhabitants], 8, "remaining group should have 8 left")
+        Assert.equals(added, free_space, "should only add up to capacity")
+        Assert.equals(house[EK.inhabitants], capacity, "house should be at capacity")
+        Assert.equals(group[EK.inhabitants], 10 - free_space, "remaining group should have " .. (10 - free_space) .. " left")
     end,
     setup,
     teardown
@@ -105,8 +111,8 @@ Tirislib.Testing.add_test_case(
     "integration|integration.inhabitants",
     function()
         -- create a free clockwork house
-        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(house, Type.clockwork, false)
+        local house = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
 
         -- add inhabitants to the homeless pool
         local group = InhabitantGroup.new(Type.clockwork, 5)
@@ -146,6 +152,7 @@ Tirislib.Testing.add_test_case(
         -- create an empty (unassigned) house and make it liveable
         local empty_house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         empty_house[EK.is_liveable] = true
+        local unit_number = empty_house[EK.unit_number]
 
         -- put some homeless clockwork inhabitants
         storage.homeless[Type.clockwork][EK.inhabitants] = 5
@@ -155,10 +162,8 @@ Tirislib.Testing.add_test_case(
 
         Inhabitants.try_occupy_empty_housing()
 
-        -- the empty house should have been converted to clockwork and populated
-        -- (try_occupy_empty_housing calls try_allow_for_caste which changes the type)
-        -- We need to re-get the entry since change_type creates a new one
-        local new_entry = Register.try_get(empty_house[EK.unit_number])
+        -- try_occupy_empty_housing calls try_allow_for_caste which invalidates empty_house
+        local new_entry = Register.try_get(unit_number)
         if new_entry then
             Assert.unequal(new_entry[EK.type], Type.empty_house,
                 "house should no longer be empty_house")
@@ -202,8 +207,6 @@ Tirislib.Testing.add_test_case(
     "Removing a mined house sends inhabitants to homeless pool",
     "integration|integration.inhabitants",
     function()
-        local DeconstructionCause = require("enums.deconstruction-cause")
-
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
 
         local homeless_before = storage.homeless[Type.clockwork][EK.inhabitants]
@@ -221,8 +224,6 @@ Tirislib.Testing.add_test_case(
     "Removing a house decreases population count",
     "integration|integration.inhabitants",
     function()
-        local DeconstructionCause = require("enums.deconstruction-cause")
-
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
         Inhabitants.update_housing_census(house)
 
@@ -244,11 +245,10 @@ Tirislib.Testing.add_test_case(
     "House is tracked as free when it has capacity",
     "integration|integration.inhabitants",
     function()
-        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(house, Type.clockwork, false)
+        local house = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
 
-        local unit_number = house[EK.unit_number]
-        Assert.not_nil(storage.free_houses[false][Type.clockwork][unit_number],
+        Assert.not_nil(storage.free_houses[false][Type.clockwork][house[EK.unit_number]],
             "empty house should be tracked as free")
     end,
     setup,
@@ -259,16 +259,15 @@ Tirislib.Testing.add_test_case(
     "Full house is removed from free tracking",
     "integration|integration.inhabitants",
     function()
-        local house = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(house, Type.clockwork, false)
+        local house = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
 
         -- fill to capacity
-        local group = InhabitantGroup.new(Type.clockwork, 200)
+        local group = InhabitantGroup.new(Type.clockwork, Housing.get_capacity(house))
         InhabitantGroup.merge(house, group)
         Inhabitants.update_free_space_status(house)
 
-        local unit_number = house[EK.unit_number]
-        Assert.is_nil(storage.free_houses[false][Type.clockwork][unit_number],
+        Assert.is_nil(storage.free_houses[false][Type.clockwork][house[EK.unit_number]],
             "full house should not be tracked as free")
     end,
     setup,

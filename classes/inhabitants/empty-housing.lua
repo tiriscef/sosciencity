@@ -61,12 +61,11 @@ local function create_empty_house(entry, event)
 
     local caste = tags.caste
     if caste then
-        local success = Inhabitants.try_allow_for_caste(entry, caste, true)
+        local new_entry = Inhabitants.try_allow_for_caste(entry, caste, true)
 
-        if success then
-            entry = try_get(entry[EK.unit_number])
+        if new_entry then
             local priority = tags.priority
-            entry[EK.housing_priority] = priority
+            new_entry[EK.housing_priority] = priority
         end
     end
 end

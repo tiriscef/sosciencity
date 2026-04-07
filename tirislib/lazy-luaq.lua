@@ -1647,18 +1647,18 @@ local function ordered_do_sort(self)
 end
 
 local function ordered_move_next(self)
-    if not self._materialized then
+    if not self.materialized then
         ordered_do_sort(self)
     end
-    self._index = self._index + 1
-    if self._index <= #self._materialized then
-        return self._index, self._materialized[self._index]
+    self.index = self.index + 1
+    if self.index <= #self.materialized then
+        return self.index, self.materialized[self.index]
     end
 end
 
 local function ordered_reset(self)
-    self._index = 0
-    self._materialized = nil
+    self.index = 0
+    self.materialized = nil
 end
 
 local function create_ordered_query(upstream, sort_levels)
@@ -1716,12 +1716,12 @@ function LazyLuaq:then_by(selector, comparator)
     assert(self.is_ordered_query, "then_by can only be called after order_by, order_by_descending, then_by, or then_by_descending")
 
     local levels = {}
-    for i, level in ipairs(self._sort_levels) do
+    for i, level in pairs(self.sort_levels) do
         levels[i] = level
     end
     levels[#levels + 1] = { selector = selector, comparator = comparator, descending = false }
 
-    return create_ordered_query(self._upstream, levels)
+    return create_ordered_query(self.upstream, levels)
 end
 
 --- Adds a secondary descending sort level to an ordered query. Can only be called after order_by or order_by_descending.
@@ -1731,7 +1731,7 @@ function LazyLuaq:then_by_descending(selector)
     assert(self.is_ordered_query, "then_by_descending can only be called after order_by, order_by_descending, then_by, or then_by_descending")
 
     local levels = {}
-    for i, level in ipairs(self.sort_levels) do
+    for i, level in pairs(self.sort_levels) do
         levels[i] = level
     end
     levels[#levels + 1] = { selector = selector, descending = true }

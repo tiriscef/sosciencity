@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
 local Helpers = require("tests.integration.helpers")
@@ -8,11 +9,21 @@ local Assert = Tirislib.Testing.Assert
 
 local test_surface
 
+local function setup()
+    test_surface = Helpers.create_test_surface()
+    Helpers.reset_inhabitants_state()
+    storage.technologies["upbringing"] = 1
+end
+
+local function teardown()
+    Helpers.clean_up()
+end
+
 Tirislib.Testing.add_test_case(
     "create_house initializes InhabitantGroup fields",
     "integration|integration.inhabitants",
     function()
-        local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
+        local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0}, Type.clockwork)
 
         Assert.equals(entry[EK.inhabitants], 0, "inhabitants should be 0")
         Assert.not_nil(entry[EK.diseases], "diseases should exist")
@@ -23,142 +34,88 @@ Tirislib.Testing.add_test_case(
         Assert.not_nil(entry[EK.health_summands], "health_summands should exist")
         Assert.not_nil(entry[EK.sanity_summands], "sanity_summands should exist")
     end,
-    function()
-        test_surface = Helpers.create_test_surface()
-    end,
-    function()
-        Helpers.clean_up()
-    end
+    setup,
+    teardown
 )
 
 Tirislib.Testing.add_test_case(
     "try_allow_for_caste converts empty house to caste housing",
     "integration|integration.inhabitants",
     function()
-        local original = storage.technologies["upbringing"]
-        storage.technologies["upbringing"] = 1
-
         local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         Assert.equals(entry[EK.type], Type.empty_house, "house should start as empty_house")
 
-        local result = Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
+        local new_entry = Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
 
-        Assert.is_true(result and true or false, "try_allow_for_caste should return true")
-        Assert.equals(entry[EK.type], Type.clockwork, "house type should be clockwork")
-
-        storage.technologies["upbringing"] = original
+        Assert.not_nil(new_entry, "try_allow_for_caste should return new entry on success")
+        Assert.equals(new_entry[EK.type], Type.clockwork, "house type should be clockwork")
     end,
-    function()
-        test_surface = Helpers.create_test_surface()
-    end,
-    function()
-        Helpers.clean_up()
-    end
+    setup,
+    teardown
 )
 
 Tirislib.Testing.add_test_case(
     "try_allow_for_caste fails when caste is not researched",
     "integration|integration.inhabitants",
     function()
-        local original = storage.technologies["upbringing"]
         storage.technologies["upbringing"] = nil
 
         local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
         local result = Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
 
-        Assert.is_false(result, "try_allow_for_caste should return false")
+        Assert.is_nil(result, "try_allow_for_caste should return nil")
         Assert.equals(entry[EK.type], Type.empty_house, "house type should remain empty_house")
-
-        storage.technologies["upbringing"] = original
     end,
-    function()
-        test_surface = Helpers.create_test_surface()
-    end,
-    function()
-        Helpers.clean_up()
-    end
+    setup,
+    teardown
 )
 
 Tirislib.Testing.add_test_case(
     "add_to_city distributes inhabitants to free caste house",
     "integration|integration.inhabitants",
     function()
-        local original_tech = storage.technologies["upbringing"]
-        storage.technologies["upbringing"] = 1
-        local original_pop = storage.population[Type.clockwork]
-
         local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
+        local house = Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
 
-        local count_before = entry[EK.inhabitants]
-        local pop_before = storage.population[Type.clockwork] or 0
+        local count_before = house[EK.inhabitants]
 
         local group = InhabitantGroup.new(Type.clockwork, 5)
         Inhabitants.add_to_city(group)
 
-        Assert.greater_than(entry[EK.inhabitants], count_before, "house should have gained inhabitants")
-
-        storage.technologies["upbringing"] = original_tech
-        storage.population[Type.clockwork] = original_pop
+        Assert.greater_than(house[EK.inhabitants], count_before, "house should have gained inhabitants")
     end,
-    function()
-        test_surface = Helpers.create_test_surface()
-    end,
-    function()
-        Helpers.clean_up()
-    end
+    setup,
+    teardown
 )
 
 Tirislib.Testing.add_test_case(
     "add_to_city sends overflow to homeless pool",
     "integration|integration.inhabitants",
     function()
-        local original_tech = storage.technologies["upbringing"]
-        storage.technologies["upbringing"] = 1
-        local original_homeless = storage.homeless[Type.clockwork][EK.inhabitants]
-
         local group = InhabitantGroup.new(Type.clockwork, 10)
         Inhabitants.add_to_city(group)
 
         Assert.greater_than(
             storage.homeless[Type.clockwork][EK.inhabitants],
-            original_homeless,
+            0,
             "homeless pool should have increased"
         )
-
-        -- restore homeless count
-        storage.homeless[Type.clockwork][EK.inhabitants] = original_homeless
-        storage.technologies["upbringing"] = original_tech
     end,
-    function()
-        test_surface = Helpers.create_test_surface()
-    end,
-    function()
-        Helpers.clean_up()
-    end
+    setup,
+    teardown
 )
 
 Tirislib.Testing.add_test_case(
     "House capacity depends on caste room requirements",
     "integration|integration.inhabitants",
     function()
-        local original_tech = storage.technologies["upbringing"]
-        storage.technologies["upbringing"] = 1
-
         local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
-        Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
+        local house = Inhabitants.try_allow_for_caste(entry, Type.clockwork, false)
 
-        local capacity = Housing.get_capacity(entry)
-        -- test-house has room_count=200, clockwork has required_room_count=1
-        -- capacity = floor(200 / 1) = 200
-        Assert.equals(capacity, 200, "capacity should be floor(room_count / required_room_count)")
-
-        storage.technologies["upbringing"] = original_tech
+        local expected_capacity = math.floor(
+            Housing.values["test-house"].room_count / Castes.values[Type.clockwork].required_room_count)
+        Assert.equals(Housing.get_capacity(house), expected_capacity, "capacity should be floor(room_count / required_room_count)")
     end,
-    function()
-        test_surface = Helpers.create_test_surface()
-    end,
-    function()
-        Helpers.clean_up()
-    end
+    setup,
+    teardown
 )

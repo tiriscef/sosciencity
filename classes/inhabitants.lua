@@ -634,31 +634,19 @@ function InhabitantGroup.merge_partially(lh, rh, count)
     InhabitantGroup.merge(lh, InhabitantGroup.take(rh, count))
 end
 
--- update_happiness, update_health, update_sanity moved to classes/inhabitants/housing-update.lua
-
--- get_caste_bonus_multiplier moved to classes/inhabitants/castes.lua
-local get_caste_bonus_multiplier -- set after castes.lua is loaded
-
 function InhabitantGroup.get_power_usage(group)
     return group[EK.inhabitants] * castes[group[EK.type]].power_demand
 end
-local get_power_usage = InhabitantGroup.get_power_usage
 
 -- caste research, bonus calculations, and update_caste_bonuses
 -- moved to classes/inhabitants/castes.lua
 local is_researched -- set after castes.lua is loaded
 local update_caste_bonuses -- set after castes.lua is loaded
 
--- workforce functions moved to classes/inhabitants/workforce.lua
-local get_employable_count -- set after workforce.lua is loaded
-local unemploy_all_inhabitants -- set after workforce.lua is loaded
-
 -- nominal value functions moved to classes/inhabitants/housing-update.lua
 
--- housing space management, homelessness, and city interface
--- moved to classes/inhabitants/homelessness.lua
-local add_to_homeless_pool -- set after homelessness.lua is loaded
-local update_homelessness -- set after homelessness.lua is loaded
+local add_to_homeless_pool
+local update_homelessness
 
 ---------------------------------------------------------------------------------------------------
 -- << immigration >>
@@ -677,8 +665,7 @@ function Inhabitants.migration_wave(immigration_port_details)
 
         local immigrants = InhabitantGroup.new_immigrant_group(caste, count_immigrated)
 
-        distribute_inhabitants(immigrants)
-        add_to_homeless_pool(immigrants)
+        Inhabitants.add_to_city(immigrants)
     end
 end
 
@@ -735,18 +722,25 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         entry[EK.type] == Type.empty_house and is_researched(caste_id) and
             Housing.allowes_caste(get_housing_details(entry), caste_id)
      then
-        Register.change_type(entry, caste_id)
+        local new_entry = Register.change_type(entry, caste_id)
 
         if loud then
-            Communication.caste_allowed_in(entry, caste_id)
+            Communication.caste_allowed_in(new_entry, caste_id)
         end
-        return true
+        return new_entry
     else
         if loud then
             Communication.caste_not_allowed_in(entry, caste_id)
         end
-        return false
+        return nil
     end
+end
+
+--- Adds new inhabitants to the city. First tries to distribute to free houses, then adds the rest to the homeless pool.
+--- @param group InhabitantGroup
+function Inhabitants.add_to_city(group)
+    Inhabitants.distribute(group, false)
+    add_to_homeless_pool(group)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -768,12 +762,5 @@ update_caste_bonuses = Inhabitants.update_caste_bonuses
 build_social_environment = Inhabitants.build_social_environment
 add_to_homeless_pool = Inhabitants.add_to_homeless_pool
 update_homelessness = Inhabitants.update_homelessness
-
---- Adds new inhabitants to the city. First tries to distribute to free houses, then adds the rest to the homeless pool.
---- @param group InhabitantGroup
-function Inhabitants.add_to_city(group)
-    Inhabitants.distribute(group, false)
-    add_to_homeless_pool(group)
-end
 
 return Inhabitants

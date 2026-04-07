@@ -56,6 +56,7 @@ local function update_happiness(group, target, delta_ticks)
     local current = group[EK.happiness]
     group[EK.happiness] = current + (target - current) * (1 - 0.9995 ^ delta_ticks)
 end
+Inhabitants.update_happiness = update_happiness
 
 --- Reduces the difference between nominal and current health. (~98% after 10 minutes.)
 --- @param group Entry
@@ -65,6 +66,7 @@ local function update_health(group, target, delta_ticks)
     local current = group[EK.health]
     group[EK.health] = current + (target - current) * (1 - 0.9999 ^ delta_ticks)
 end
+Inhabitants.update_health = update_health
 
 --- Reduces the difference between nominal and current sanity. (~98% after 20 minutes.)
 --- @param group Entry
@@ -74,6 +76,7 @@ local function update_sanity(group, target, delta_ticks)
     local current = group[EK.sanity]
     group[EK.sanity] = current + (target - current) * (1 - 0.99995 ^ delta_ticks)
 end
+Inhabitants.update_sanity = update_sanity
 
 ---------------------------------------------------------------------------------------------------
 -- << nominal value >>

@@ -33,13 +33,17 @@ end
 --- Removes all entries created during this test from the register and destroys their entities.
 function Helpers.clean_up()
     for _, entry in pairs(tracked_entries) do
-        if Register.try_get(entry[EK.unit_number]) then
+        if Register.is_stale(entry) then goto continue end
+
+        local entity = entry[EK.entity]
+        local unit_number = entry[EK.unit_number]
+        if Register.try_get(unit_number) then
             Register.remove_entry(entry, DeconstructionCause.unknown)
         end
-        local entity = entry[EK.entity]
         if entity and entity.valid then
             entity.destroy()
         end
+        ::continue::
     end
     tracked_entries = {}
 end
@@ -48,8 +52,9 @@ end
 --- @param surface LuaSurface
 --- @param name string entity prototype name
 --- @param position table {x, y}
+--- @param _type Type? entry type to register the entity as
 --- @return Entry
-function Helpers.create_and_register(surface, name, position)
+function Helpers.create_and_register(surface, name, position, _type)
     local entity = surface.create_entity {
         name = name,
         position = position,
@@ -57,7 +62,7 @@ function Helpers.create_and_register(surface, name, position)
     }
     assert(entity, "Failed to create entity '" .. name .. "' at {" .. position[1] .. ", " .. position[2] .. "}")
 
-    local entry = Register.add(entity)
+    local entry = Register.add(entity, _type)
     assert(entry, "Failed to register entity '" .. name .. "'")
 
     tracked_entries[#tracked_entries + 1] = entry
@@ -67,8 +72,8 @@ end
 --- Removes an entry from the register and destroys the entity.
 --- @param entry Entry
 function Helpers.destroy_entry(entry)
-    Register.remove_entry(entry, DeconstructionCause.unknown)
     local entity = entry[EK.entity]
+    Register.remove_entry(entry, DeconstructionCause.unknown)
     if entity and entity.valid then
         entity.destroy()
     end
@@ -83,15 +88,18 @@ end
 --- @return Entry the populated house entry
 function Helpers.create_inhabited_house(surface, position, caste, count)
     local entry = Helpers.create_and_register(surface, "test-house", position)
-    Inhabitants.try_allow_for_caste(entry, caste, false)
+    local inhabited = Inhabitants.try_allow_for_caste(entry, caste, false)
+    assert(inhabited, "create_inhabited_house: try_allow_for_caste failed for caste " .. tostring(caste))
+    tracked_entries[#tracked_entries] = inhabited
+
     if count > 0 then
         local group = InhabitantGroup.new(caste, count)
-        InhabitantGroup.merge(entry, group)
+        InhabitantGroup.merge(inhabited, group)
         -- sync census fields that update_housing_census would normally set
         storage.population[caste] = (storage.population[caste] or 0) + count
-        entry[EK.official_inhabitants] = count
+        inhabited[EK.official_inhabitants] = count
     end
-    return entry
+    return inhabited
 end
 
 --- Resets inhabitants-related global state to a clean baseline.
