@@ -252,44 +252,10 @@ Gui.DetailsView.register_type(Type.automatic_farm, {creater = create_farm, updat
 ---------------------------------------------------------------------------------------------------
 -- << fishing hut >>
 
-local function update_fishery_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
-
-    local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
-
-    local building_details = get_building_details(entry)
-    Datalist.set_kv_pair_value(
-        building_data,
-        "water-tiles",
-        {
-            "sosciencity.value-with-unit",
-            {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles},
-            {"sosciencity.tiles"}
-        }
-    )
-
-    local competition_performance, near_count = Entity.get_fishing_competition(entry)
-    Datalist.set_kv_pair_value(
-        building_data,
-        "competition",
-        {"sosciencity.show-fishing-competition", near_count, display_percentage(competition_performance)}
-    )
-end
-
-local function create_fishery_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
-
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
-    local building_data = general.building
-
-    Datalist.add_kv_pair(building_data, "water-tiles", {"sosciencity.water"})
-    Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
-
-    update_fishery_details(container, entry)
-end
-
-Gui.DetailsView.register_type(Type.fishery, {creater = create_fishery_details, updater = update_fishery_details})
+Gui.DetailsView.register_type(
+    Type.fishery,
+    {creater = Gui.DetailsView.create_general, updater = Gui.DetailsView.update_general}
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << hunting hut >>

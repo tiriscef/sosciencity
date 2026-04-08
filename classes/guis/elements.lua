@@ -916,6 +916,207 @@ function Gui.Elements.Flow.horizontal_right(container, name)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << PerformanceReport >>
+---------------------------------------------------------------------------------------------------
+
+--- Reusable GUI component that renders a standardised performance breakdown.
+--- Entity update functions populate an entry's performance_report (EK.performance_report),
+--- and this component renders it grouped by dimension with pre-computed results.
+Gui.Elements.PerformanceReport = {}
+
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
+local EK_report = require("enums.entry-key").performance_report
+local PK = require("enums.performance-key")
+local PerfEffects = require("constants.performance-effects")
+
+local ceil = math.ceil
+local floor = math.floor
+
+local effect_labels = PerfEffects.labels
+local effect_descriptions = PerfEffects.descriptions
+local dimension_labels = PerfEffects.dimension_labels
+
+-- ordered list of dimensions to render
+local dimension_order = {Dim.speed, Dim.productivity}
+
+local function format_ratio(value)
+    local pct = ceil(value * 100)
+    if pct >= 100 then
+        return "[color=0,1,0]" .. pct .. "%[/color]"
+    elseif pct >= 50 then
+        return "[color=0.9,0.8,0]" .. pct .. "%[/color]"
+    else
+        return "[color=1,0,0]" .. pct .. "%[/color]"
+    end
+end
+
+local function format_flat(value)
+    local v = floor(value)
+    if v > 0 then
+        return "[color=0,1,0]+" .. v .. "%[/color]"
+    elseif v < 0 then
+        return "[color=1,0,0]" .. v .. "%[/color]"
+    else
+        return "[color=0.8,0.8,0.8]0%[/color]"
+    end
+end
+
+local format_by_combination = {
+    [Comb.bottleneck] = format_ratio,
+    [Comb.multiplier] = function(value) return "×" .. format_ratio(value) end,
+    [Comb.flat] = format_flat
+}
+
+local function render_effect(tbl, effect, is_limiting)
+    local effect_id = effect[PK.effect]
+    local label = effect_labels[effect_id]
+    local description = effect_descriptions[effect_id]
+    local format_fn = format_by_combination[effect[PK.combination]]
+
+    local key_label = tbl.add {
+        type = "label",
+        caption = label,
+        tooltip = description
+    }
+    key_label.style.font = "default-semibold"
+    key_label.style.left_padding = 8
+
+    local value_text = format_fn(effect[PK.value])
+    if is_limiting then
+        value_text = value_text .. " [color=1,0.6,0]◄[/color]"
+    end
+    tbl.add {
+        type = "label",
+        caption = value_text,
+        tooltip = description
+    }
+
+    local detail = effect[PK.detail]
+    if detail then
+        local detail_label = tbl.add {
+            type = "label",
+            caption = detail
+        }
+        local detail_style = detail_label.style
+        detail_style.font = "default-small"
+        detail_style.font_color = {0.7, 0.7, 0.7}
+        detail_style.left_padding = 16
+        tbl.add {type = "empty-widget"}
+    end
+end
+
+--- Creates the performance report GUI elements inside the given container.
+--- @param container LuaGuiElement
+--- @param name string? unique name for this report within the parent
+function Gui.Elements.PerformanceReport.create(container, name)
+    return container.add {
+        type = "flow",
+        name = name or "performance-report",
+        direction = "vertical"
+    }
+end
+
+--- Updates (rebuilds) the performance report from the entry's report data.
+--- @param report_flow LuaGuiElement the flow created by PerformanceReport.create
+--- @param entry Entry
+function Gui.Elements.PerformanceReport.update(report_flow, entry)
+    report_flow.clear()
+
+    local report = entry[EK_report]
+    if not report then
+        return
+    end
+
+    local effects = report[PK.effects]
+    local results = report[PK.results]
+    if not effects or not results then
+        return
+    end
+
+    -- Group effects into: by_dimension[dimension_id][group_number] = effect[]
+    local by_dimension = {}
+    for _, eff in pairs(effects) do
+        local dim = eff[PK.dimension]
+        if not by_dimension[dim] then
+            by_dimension[dim] = {}
+        end
+
+        local group = eff[PK.group] or 1
+        if not by_dimension[dim][group] then
+            by_dimension[dim][group] = {}
+        end
+
+        local group_effects = by_dimension[dim][group]
+        group_effects[#group_effects + 1] = eff
+    end
+
+    -- For each group that has multiple bottleneck effects, find the lowest one.
+    -- Uses effect table identity as key to avoid mutating stored data.
+    -- limiting_effects[effect_table] = true for the effect(s) with the lowest value.
+    local limiting_effects = {}
+    for _, groups in pairs(by_dimension) do
+        for _, group_effects in pairs(groups) do
+            local bottleneck_min = nil
+            local bottleneck_count = 0
+
+            for _, eff in pairs(group_effects) do
+                if eff[PK.combination] == Comb.bottleneck then
+                    bottleneck_count = bottleneck_count + 1
+                    local val = eff[PK.value]
+                    if not bottleneck_min or val < bottleneck_min then
+                        bottleneck_min = val
+                    end
+                end
+            end
+
+            if bottleneck_count > 1 then
+                for _, eff in pairs(group_effects) do
+                    if eff[PK.combination] == Comb.bottleneck and eff[PK.value] <= bottleneck_min then
+                        limiting_effects[eff] = true
+                    end
+                end
+            end
+        end
+    end
+
+    -- render each dimension in order
+    for _, dim in pairs(dimension_order) do
+        local result = results[dim]
+        if result and by_dimension[dim] then
+            local dim_label = dimension_labels[dim]
+            local format_fn = (dim == Dim.productivity) and format_flat or format_ratio
+
+            local header = report_flow.add {
+                type = "label",
+                caption = {"", dim_label, "  ", format_fn(result)}
+            }
+            header.style.font = "default-bold"
+
+            local effects_table = report_flow.add {
+                type = "table",
+                column_count = 2,
+                style = "sosciencity_datalist"
+            }
+
+            -- render groups in order
+            local groups = by_dimension[dim]
+            local group_numbers = {}
+            for grp in pairs(groups) do
+                group_numbers[#group_numbers + 1] = grp
+            end
+            table.sort(group_numbers)
+
+            for _, grp in pairs(group_numbers) do
+                for _, eff in pairs(groups[grp]) do
+                    render_effect(effects_table, eff, limiting_effects[eff])
+                end
+            end
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << CollapsibleSection >>
 ---------------------------------------------------------------------------------------------------
 

@@ -1,4 +1,8 @@
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
 local EK = require("enums.entry-key")
+local PE = require("enums.performance-effect")
+local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
@@ -46,6 +50,43 @@ local function update_social_observatory(entry)
     local productivity = bonus_castes * building_details.caste_bonus
 
     set_crafting_machine_performance(entry, performance, productivity)
+
+    -- performance report for GUI
+    entry[EK.performance_report] = {
+        [PK.effects] = {
+            {
+                [PK.effect] = PE.workforce,
+                [PK.value] = worker_performance,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.bottleneck
+            },
+            {
+                [PK.effect] = PE.nearby_population,
+                [PK.value] = population_performance,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.bottleneck,
+                [PK.detail] = {"sosciencity.show-nearby-population", total_population}
+            },
+            {
+                [PK.effect] = PE.observatory_competition,
+                [PK.value] = competition,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.multiplier,
+                [PK.detail] = {"sosciencity.show-observatory-competition", observatory_count}
+            },
+            {
+                [PK.effect] = PE.caste_diversity,
+                [PK.value] = productivity,
+                [PK.dimension] = Dim.productivity,
+                [PK.combination] = Comb.flat,
+                [PK.detail] = {"sosciencity.show-caste-diversity", unique_castes, building_details.min_castes}
+            }
+        },
+        [PK.results] = {
+            [Dim.speed] = performance,
+            [Dim.productivity] = productivity
+        }
+    }
 end
 Register.set_entity_updater(Type.social_observatory, update_social_observatory)
 
@@ -53,5 +94,6 @@ Register.set_entity_creation_handler(
     Type.social_observatory,
     function(entry)
         entry[EK.performance] = 1
+        entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
     end
 )
