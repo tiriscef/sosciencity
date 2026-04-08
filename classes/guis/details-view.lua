@@ -25,9 +25,13 @@ local get_building_details = Buildings.get
 local type_definitions = Types.definitions
 
 local ceil = math.ceil
-local format = string.format
+local floor = math.floor
+local min = math.min
+local max = math.max
 local round = Tirislib.Utils.round
 local round_to_step = Tirislib.Utils.round_to_step
+local tonumber = tonumber
+local tostring = tostring
 
 local Luaq_from = Tirislib.Luaq.from
 
@@ -53,6 +57,11 @@ end
 
 Gui.DetailsView.set_title = set_details_view_title
 Gui.DetailsView.get_or_create_tabbed_pane = get_or_create_tabbed_pane
+
+-- Per-player flag: true while the player is typing in the staff target textfield.
+-- Prevents the tick-based update from overwriting their input.
+-- TODO: test if such a pattern can cause desyncs
+local editing_staff_target = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << general building details >>
@@ -106,7 +115,11 @@ local function update_general_building_details(container, entry, player_id)
             {"sosciencity.show-staff", entry[EK.worker_count], target_count}
         )
 
-        building_data[format(Gui.unique_prefix_builder, "general", "staff-target")].slider_value = target_count
+        building_data["staff-target"].slider_value = target_count
+
+        if not editing_staff_target[player_id] then
+            building_data["staff-target-input"].text = tostring(target_count)
+        end
 
         local staff_performance = Inhabitants.evaluate_workforce(entry)
         Datalist.set_kv_pair_value(
@@ -183,7 +196,7 @@ local function create_general_building_details(container, entry, player_id)
 
         flow.add {
             type = "checkbox",
-            name = format(Gui.unique_prefix_builder, "general", "notification"),
+            name = "notification",
             state = Communication.check_subscription(entry, player_id),
             tooltip = {"sosciencity.explain-notify-me"},
             tags = {sosciencity_gui_event = "notification_checkbox"}
@@ -229,17 +242,29 @@ local function create_general_building_details(container, entry, player_id)
     if worker_specification then
         Datalist.add_kv_pair(building_data, "staff", {"sosciencity.staff"})
 
-        -- TODO: extract this as a function
-        Datalist.add_key_label(building_data, "staff-target", "")
+        Datalist.add_key_label(building_data, "staff-target-label", {"sosciencity.target-staff"})
+        local staff_input = building_data.add {
+            type = "textfield",
+            name = "staff-target-input",
+            numeric = true,
+            allow_negative = false,
+            text = tostring(entry[EK.target_worker_count]),
+            tags = {sosciencity_gui_event = "staff_target_input"}
+        }
+        staff_input.style.width = 60
+
+        Datalist.add_key_label(building_data, "staff-target-slider-label", "")
         building_data.add {
             type = "slider",
-            name = format(Gui.unique_prefix_builder, "general", "staff-target"),
+            name = "staff-target",
             minimum_value = 0,
             maximum_value = worker_specification.count,
             value = entry[EK.target_worker_count],
             value_step = 1,
             tags = {sosciencity_gui_event = "staff_target_slider"}
         }
+
+        editing_staff_target[player_id] = nil
 
         Datalist.add_kv_pair(building_data, "staff-performance")
 
@@ -277,7 +302,52 @@ Gui.set_value_changed_handler(
     "staff_target_slider",
     function(event)
         local entry = Register.try_get(storage.details_view[event.player_index])
-        entry[EK.target_worker_count] = event.element.slider_value
+        local value = event.element.slider_value
+        entry[EK.target_worker_count] = value
+
+        -- sync the textfield
+        local building_data = event.element.parent
+        local input = building_data["staff-target-input"]
+        if input then
+            input.text = tostring(value)
+        end
+        editing_staff_target[event.player_index] = nil
+    end
+)
+
+Gui.set_gui_confirmed_handler(
+    "staff_target_input",
+    function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+
+        local workforce = get_building_details(entry).workforce
+        local value = tonumber(event.element.text)
+        if not value then
+            -- reset to current value if the input is invalid
+            event.element.text = tostring(entry[EK.target_worker_count])
+            return
+        end
+
+        value = max(0, min(floor(value), workforce.count))
+
+        entry[EK.target_worker_count] = value
+        event.element.text = tostring(value)
+
+        -- sync the slider
+        local building_data = event.element.parent
+        local slider = building_data["staff-target"]
+        if slider then
+            slider.slider_value = value
+        end
+        editing_staff_target[event.player_index] = nil
+    end
+)
+
+Gui.set_text_changed_handler(
+    "staff_target_input",
+    function(event)
+        editing_staff_target[event.player_index] = true
     end
 )
 
