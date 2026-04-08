@@ -203,6 +203,19 @@ function Inhabitants.update_workforce(manufactory, workforce)
     end
 end
 
+--- Returns a percentage on how satisfied the given building's need for workers is.
+--- @param manufactory Entry
+--- @return number ratio between 0 and 1+
+function Inhabitants.evaluate_workforce(manufactory)
+    local workforce = get_building_details(manufactory).workforce
+
+    if not workforce then
+        return 1
+    end
+
+    return manufactory[EK.worker_count] / workforce.count
+end
+
 --- Translates a happiness value to a working performance.
 --- @param happiness number
 --- @return number
@@ -214,27 +227,34 @@ local function get_work_coefficient(happiness)
     end
 end
 
---- Returns a percentage on how satisfied the given building's need for workers is.
+--- Returns a multiplier representing how worker happiness affects this building's performance.
+--- The happiness_weight field on the WorkforceDefinition controls how much the building profits from happiness.
 --- @param manufactory Entry
---- @return number ratio between 0 and 1+
-function Inhabitants.evaluate_workforce(manufactory)
+--- @return number multiplier around 1
+function Inhabitants.evaluate_worker_happiness(manufactory)
     local workforce = get_building_details(manufactory).workforce
-
-    if not workforce then
+    if not workforce or not workforce.happiness_weight then
         return 1
     end
 
-    local worker_equivalents = 0
+    local workers = manufactory[EK.workers]
+    local total_workers = 0
+    local weighted_coefficient = 0
 
-    for unit_number, worker_count in pairs(manufactory[EK.workers]) do
+    for unit_number, worker_count in pairs(workers) do
         local house = try_get(unit_number)
-
         if house then
-            worker_equivalents = worker_equivalents + worker_count * get_work_coefficient(house[EK.happiness])
+            total_workers = total_workers + worker_count
+            weighted_coefficient = weighted_coefficient + worker_count * get_work_coefficient(house[EK.happiness])
         end
     end
 
-    return worker_equivalents / workforce.count
+    if total_workers == 0 then
+        return 1
+    end
+
+    local raw = weighted_coefficient / total_workers
+    return 1 + (raw - 1) * workforce.happiness_weight
 end
 
 --- Returns the count of employed workers this building has.

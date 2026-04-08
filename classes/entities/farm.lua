@@ -8,6 +8,7 @@ local Time = require("constants.time")
 
 local get_building_details = Buildings.get
 local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local multiply_percentages = Entity.multiply_percentages
 local has_power = Subentities.has_power
@@ -81,7 +82,7 @@ local function update_farm(entry, delta_ticks)
     local species_name = get_species(recipe)
 
     local productivity = Entity.caste_bonuses[Type.orchid]
-    local performance = evaluate_workforce(entry)
+    local performance = evaluate_workforce(entry) * evaluate_worker_happiness(entry)
 
     if species_name ~= entry[EK.species] then
         entry[EK.species] = species_name
@@ -223,7 +224,7 @@ Register.set_entity_updater(
     function(entry, delta_ticks)
         local building_details = get_building_details(entry)
 
-        local performance = Inhabitants.evaluate_workforce(entry)
+        local performance = Inhabitants.evaluate_workforce(entry) * Inhabitants.evaluate_worker_happiness(entry)
         entry[EK.performance] = performance
 
         entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
@@ -285,7 +286,7 @@ Register.set_entity_updater(
     Type.pruning_station,
     function(entry, delta_ticks)
         local building_details = get_building_details(entry)
-        local performance = Inhabitants.evaluate_workforce(entry) * (has_power(entry) and 1 or 0)
+        local performance = Inhabitants.evaluate_workforce(entry) * Inhabitants.evaluate_worker_happiness(entry) * (has_power(entry) and 1 or 0)
         entry[EK.performance] = performance
         entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
     end

@@ -1,10 +1,15 @@
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
 local EK = require("enums.entry-key")
+local PE = require("enums.performance-effect")
+local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
 
 local get_building_details = Buildings.get
 local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local Utils = Tirislib.Utils
 local min = math.min
@@ -30,26 +35,62 @@ local function get_hunting_competition(entry)
 end
 Entity.get_hunting_competition = get_hunting_competition
 
-local function get_hunting_hut_performance(entry)
+local function update_hunting_hut(entry)
     local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
 
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)
     entry[EK.tree_count] = tree_count
     local forest_performance = tree_count / building_details.tree_count
 
-    local neighborhood_performance = get_hunting_competition(entry)
+    local competition, near_count = get_hunting_competition(entry)
 
-    return min(worker_performance, forest_performance) * neighborhood_performance
-end
-
-local function update_hunting_hut(entry)
-    local performance = get_hunting_hut_performance(entry)
+    local performance = min(worker_performance, forest_performance) * competition * worker_happiness
     set_crafting_machine_performance(entry, performance)
+
+    entry[EK.performance_report] = {
+        [PK.effects] = {
+            {
+                [PK.effect] = PE.workforce,
+                [PK.value] = worker_performance,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.bottleneck
+            },
+            {
+                [PK.effect] = PE.trees,
+                [PK.value] = forest_performance,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.bottleneck,
+                [PK.detail] = {
+                    "sosciencity.value-with-unit",
+                    {"sosciencity.fraction", tree_count, building_details.tree_count},
+                    {"sosciencity.trees"}
+                }
+            },
+            {
+                [PK.effect] = PE.hunting_competition,
+                [PK.value] = competition,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.multiplier,
+                [PK.detail] = {"sosciencity.show-hunting-competition-count", near_count}
+            },
+            {
+                [PK.effect] = PE.worker_happiness,
+                [PK.value] = worker_happiness,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.multiplier
+            }
+        },
+        [PK.results] = {
+            [Dim.speed] = performance
+        }
+    }
 end
 Register.set_entity_updater(Type.hunting_hut, update_hunting_hut)
 
 local function create_hunting_hut(entry)
     entry[EK.performance] = 1
+    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
 end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)

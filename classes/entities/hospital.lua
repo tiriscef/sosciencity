@@ -8,6 +8,7 @@ local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
 local has_power = Subentities.has_power
 local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local Table = Tirislib.Tables
 
 --- Returns the LuaInventory of the given hospital and all hospital complement buildings connected to it.
@@ -26,7 +27,7 @@ function Entity.get_hospital_inventories(entry)
 end
 
 local function update_hospital(entry, delta_ticks)
-    local performance = evaluate_workforce(entry)
+    local performance = evaluate_workforce(entry) * evaluate_worker_happiness(entry)
 
     if not has_power(entry) then
         performance = 0

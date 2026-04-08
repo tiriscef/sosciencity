@@ -13,7 +13,10 @@ PerformanceEffects.labels = {
     [PE.waterwell_competition] = {"sosciencity.competition"},
     [PE.maintenance] = {"sosciencity.maintenance"},
     [PE.water_tiles] = {"sosciencity.water"},
-    [PE.fishing_competition] = {"sosciencity.competition"}
+    [PE.fishing_competition] = {"sosciencity.competition"},
+    [PE.worker_happiness] = {"sosciencity.worker-happiness"},
+    [PE.trees] = {"sosciencity.trees"},
+    [PE.hunting_competition] = {"sosciencity.competition"}
 }
 
 PerformanceEffects.descriptions = {
@@ -24,7 +27,10 @@ PerformanceEffects.descriptions = {
     [PE.waterwell_competition] = {"sosciencity.describe-waterwell-competition"},
     [PE.maintenance] = {"sosciencity.describe-maintenance"},
     [PE.water_tiles] = {"sosciencity.describe-water-tiles"},
-    [PE.fishing_competition] = {"sosciencity.describe-fishing-competition"}
+    [PE.fishing_competition] = {"sosciencity.describe-fishing-competition"},
+    [PE.worker_happiness] = {"sosciencity.describe-worker-happiness"},
+    [PE.trees] = {"sosciencity.describe-trees"},
+    [PE.hunting_competition] = {"sosciencity.describe-hunting-competition"}
 }
 
 PerformanceEffects.dimension_labels = {
