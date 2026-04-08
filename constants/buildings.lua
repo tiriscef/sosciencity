@@ -388,14 +388,17 @@ Building.values = {
         water_tiles = 45
     },
     ["social-observatory"] = {
-        type = Type.manufactory,
+        type = Type.social_observatory,
         range = range_by_foot,
         workforce = {
             count = 8,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
             disease_frequency = 0.05 / Time.minute
-        }
+        },
+        target_population = 200,
+        min_castes = 3,
+        caste_bonus = 10
     },
     ["storage-cellar"] = {
         type = Type.cold_storage,
