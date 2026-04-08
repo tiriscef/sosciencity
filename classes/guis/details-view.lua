@@ -142,6 +142,11 @@ local function update_general_building_details(container, entry, player_id)
                 {"sosciencity.display-bad-maintenance", clockwork_value}
         )
     end
+
+    local report_flow = tab["performance-report"]
+    if report_flow then
+        Gui.Elements.PerformanceReport.update(report_flow, entry)
+    end
 end
 
 local function create_general_building_details(container, entry, player_id)
@@ -254,6 +259,12 @@ local function create_general_building_details(container, entry, player_id)
         Datalist.add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
     end
 
+    if entry[EK.performance_report] then
+        Gui.Elements.Utils.separator_line(tab)
+        Gui.Elements.Label.header_label(tab, "header-performance", {"sosciencity.performance-breakdown"})
+        Gui.Elements.PerformanceReport.create(tab, "performance-report")
+    end
+
     update_general_building_details(container, entry, player_id)
 
     return tabbed_pane
@@ -303,6 +314,7 @@ Gui.DetailsView.register_type(Type.egg_collector, generic_spec)
 Gui.DetailsView.register_type(Type.pharmacy, generic_spec)
 Gui.DetailsView.register_type(Type.psych_ward, generic_spec)
 Gui.DetailsView.register_type(Type.manufactory, generic_spec)
+Gui.DetailsView.register_type(Type.social_observatory, generic_spec)
 Gui.DetailsView.register_type(Type.nightclub, generic_spec)
 
 ---------------------------------------------------------------------------------------------------

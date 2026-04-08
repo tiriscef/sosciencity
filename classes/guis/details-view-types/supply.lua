@@ -31,14 +31,6 @@ local function update_waterwell_details(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
-    local competition_performance = Entity.get_waterwell_competition_performance(entry)
-    Datalist.set_kv_pair_value(
-        building_data,
-        "competition",
-        {"sosciencity.show-waterwell-competition", near_count, Tirislib.Locales.display_percentage(competition_performance)}
-    )
-
     Datalist.set_kv_pair_visibility(building_data, "module", not entry[EK.active])
 end
 
@@ -48,7 +40,6 @@ local function create_waterwell_details(container, entry, player_id)
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
     Datalist.add_kv_pair(
         building_data,
         "module",
