@@ -307,6 +307,22 @@ Types.definitions = {
         localised_description = {"sosciencity.explain-manufactory"},
         is_civil = true
     },
+    [Type.social_observatory] = {
+        localised_name = {"item-name.social-observatory"},
+        localised_description = {"sosciencity.explain-social-observatory"},
+        subscriptions = {
+            [Type.clockwork] = ConnectionType.from_neighbor,
+            [Type.orchid] = ConnectionType.from_neighbor,
+            [Type.gunfire] = ConnectionType.from_neighbor,
+            [Type.ember] = ConnectionType.from_neighbor,
+            [Type.foundry] = ConnectionType.from_neighbor,
+            [Type.gleam] = ConnectionType.from_neighbor,
+            [Type.aurora] = ConnectionType.from_neighbor,
+            [Type.plasma] = ConnectionType.from_neighbor,
+            [Type.social_observatory] = ConnectionType.bidirectional
+        },
+        is_civil = true
+    },
     [Type.assembling_machine] = {
         localised_name = {"sosciencity.machine"},
         localised_description = {"sosciencity.explain-machine"}

@@ -51,6 +51,7 @@ Type.automatic_farm = 1105
 Type.animal_farm = 1106
 Type.waterwell = 1107
 Type.salt_pond = 1108
+Type.social_observatory = 1109
 
 -- misc container types
 

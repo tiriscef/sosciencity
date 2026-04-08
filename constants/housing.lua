@@ -107,6 +107,11 @@ Housing.values = {
         room_count = 200,
         comfort = 10,
         qualities = {}
+    },
+    ["test-house-2"] = {
+        room_count = 10,
+        comfort = 0,
+        qualities = {"compact", "simple", "cheap", "copy-paste"}
     }
 }
 local houses = Housing.values
