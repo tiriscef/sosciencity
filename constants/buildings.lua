@@ -23,6 +23,7 @@ local Building = {}
 --- @field castes Type[] array of casteIDs that can work in this building
 --- @field disease_category DiseaseCategory the category of diseases that this work can cause
 --- @field disease_frequency number the frequency with which diseases are caused by this work (as progress per worker per tick)
+--- @field happiness_weight number how much worker happiness affects this building's performance (0 = none, 1 = full effect)
 
 --- The standard range for connections where the huwans are supposed to walk to the entity.
 local range_by_foot = 50
@@ -54,7 +55,8 @@ Building.values = {
             count = 8,
             castes = {Type.clockwork, Type.gleam, Type.foundry},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["atelier"] = {
@@ -63,7 +65,8 @@ Building.values = {
             count = 8,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["bloomhouse"] = {
@@ -72,7 +75,8 @@ Building.values = {
             count = 2,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         },
         accepts_plant_care = true
     },
@@ -86,7 +90,8 @@ Building.values = {
             count = 20,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.2 / Time.minute
+            disease_frequency = 0.2 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["clockwork-mines"] = {
@@ -95,7 +100,8 @@ Building.values = {
             count = 10,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.2 / Time.minute
+            disease_frequency = 0.2 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["clockwork-quarry"] = {
@@ -104,7 +110,8 @@ Building.values = {
             count = 10,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["composting-silo"] = {
@@ -131,7 +138,8 @@ Building.values = {
             count = 20,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["experimental-workshop"] = {
@@ -141,7 +149,8 @@ Building.values = {
             count = 8,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["farm"] = {
@@ -163,7 +172,8 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.fishing_hut,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["foundry-hq"] = {
@@ -173,7 +183,8 @@ Building.values = {
             count = 20,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["gene-clinic"] = {
@@ -187,7 +198,8 @@ Building.values = {
             count = 20,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["greenhouse"] = {
@@ -205,7 +217,8 @@ Building.values = {
             count = 10,
             castes = {Type.gunfire},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.2 / Time.minute
+            disease_frequency = 0.2 / Time.minute,
+            happiness_weight = 1
         },
         subentities = {
             SubentityType.turret_gunfire_hq1,
@@ -228,7 +241,8 @@ Building.values = {
             count = 10,
             castes = {Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         },
         power_usage = 100
     },
@@ -240,7 +254,8 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.hunting_hut,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["huwanities-faculty"] = {
@@ -250,7 +265,8 @@ Building.values = {
             count = 10,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute
+            disease_frequency = 0.01 / Time.minute,
+            happiness_weight = 1
         },
         result_caste = Type.gleam
     },
@@ -279,7 +295,8 @@ Building.values = {
             count = 5,
             castes = {Type.orchid, Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         },
         power_usage = 50
     },
@@ -290,7 +307,8 @@ Building.values = {
             count = 10,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute
+            disease_frequency = 0.01 / Time.minute,
+            happiness_weight = 1
         },
         result_caste = Type.plasma
     },
@@ -301,7 +319,8 @@ Building.values = {
             count = 10,
             castes = {Type.ember, Type.orchid, Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute
+            disease_frequency = 0.01 / Time.minute,
+            happiness_weight = 1
         },
         result_caste = Type.gunfire
     },
@@ -316,7 +335,8 @@ Building.values = {
             count = 10,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute
+            disease_frequency = 0.01 / Time.minute,
+            happiness_weight = 1
         },
         result_caste = Type.foundry
     },
@@ -336,7 +356,8 @@ Building.values = {
             count = 10,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["orchid-hq"] = {
@@ -346,7 +367,8 @@ Building.values = {
             count = 20,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.05 / Time.minute
+            disease_frequency = 0.05 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["orchid-paradise"] = {
@@ -356,7 +378,8 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.05 / Time.minute
+            disease_frequency = 0.05 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["pharmacy"] = {
@@ -374,7 +397,8 @@ Building.values = {
             count = 8,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.05 / Time.minute
+            disease_frequency = 0.05 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["robo-pruning-station"] = {
@@ -394,7 +418,8 @@ Building.values = {
             count = 8,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.05 / Time.minute
+            disease_frequency = 0.05 / Time.minute,
+            happiness_weight = 1
         },
         target_population = 200,
         min_castes = 3,
@@ -411,7 +436,8 @@ Building.values = {
             count = 8,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.05 / Time.minute
+            disease_frequency = 0.05 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["tinkering-workshop"] = {
@@ -421,7 +447,8 @@ Building.values = {
             count = 8,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["trash-site"] = {
@@ -467,7 +494,8 @@ Building.values = {
             count = 20,
             castes = {Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         },
         power_usage = 50
     },
@@ -488,7 +516,8 @@ Building.values = {
             count = 20,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.fishing_hut,
-            disease_frequency = 0.1 / Time.minute
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
         }
     },
     ["test-composter"] = {

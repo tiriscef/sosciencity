@@ -19,5 +19,11 @@ PE.maintenance = 6
 PE.water_tiles = 7
 --- competition from nearby fisheries
 PE.fishing_competition = 8
+--- worker happiness multiplier
+PE.worker_happiness = 9
+--- tree availability for hunting
+PE.trees = 10
+--- competition from nearby hunting huts
+PE.hunting_competition = 11
 
 return PE

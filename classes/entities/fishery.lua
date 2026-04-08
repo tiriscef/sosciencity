@@ -9,6 +9,7 @@ local Buildings = require("constants.buildings")
 
 local get_building_details = Buildings.get
 local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local Utils = Tirislib.Utils
 local min = math.min
@@ -38,6 +39,7 @@ Entity.get_fishing_competition = get_fishing_competition
 
 local function update_fishery(entry)
     local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
 
     local building_details = get_building_details(entry)
     local water_tiles = get_water_tiles(entry, building_details)
@@ -45,7 +47,7 @@ local function update_fishery(entry)
 
     local competition, near_count = get_fishing_competition(entry)
 
-    local performance = min(worker_performance, water_performance) * competition
+    local performance = min(worker_performance, water_performance) * competition * worker_happiness
     set_crafting_machine_performance(entry, performance)
 
     entry[EK.performance_report] = {
@@ -73,6 +75,12 @@ local function update_fishery(entry)
                 [PK.dimension] = Dim.speed,
                 [PK.combination] = Comb.multiplier,
                 [PK.detail] = {"sosciencity.show-fishing-competition-count", near_count}
+            },
+            {
+                [PK.effect] = PE.worker_happiness,
+                [PK.value] = worker_happiness,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.multiplier
             }
         },
         [PK.results] = {

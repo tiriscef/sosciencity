@@ -12,6 +12,7 @@ local min = math.min
 local max = math.max
 
 local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local get_building_details = Buildings.get
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 
@@ -33,12 +34,13 @@ local function update_social_observatory(entry)
 
     -- workforce performance
     local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
 
     -- competition penalty (soft, waterwell-style)
     local observatory_count = Neighborhood.get_neighbor_count(entry, Type.social_observatory)
     local competition = (observatory_count + 1) ^ (-0.35)
 
-    local performance = min(worker_performance, population_performance) * competition
+    local performance = min(worker_performance, population_performance) * competition * worker_happiness
 
     -- caste diversity productivity bonus
     local unique_castes = houses:distinct_by(
@@ -73,6 +75,12 @@ local function update_social_observatory(entry)
                 [PK.dimension] = Dim.speed,
                 [PK.combination] = Comb.multiplier,
                 [PK.detail] = {"sosciencity.show-observatory-competition", observatory_count}
+            },
+            {
+                [PK.effect] = PE.worker_happiness,
+                [PK.value] = worker_happiness,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.multiplier
             },
             {
                 [PK.effect] = PE.caste_diversity,
