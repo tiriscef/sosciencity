@@ -91,6 +91,33 @@ local function add_caste_infos(container, caste_id)
             tooltip = {"housing-quality-description." .. quality}
         }
     end
+
+    Gui.Elements.Utils.separator_line(container)
+    Gui.Elements.Label.heading_2(container, {"sosciencity.strike"})
+
+    local strike_data = Gui.Elements.Datalist.create(container, "strike-infos")
+    Gui.Elements.Datalist.add_kv_pair(
+        strike_data,
+        "thresholds",
+        {"sosciencity.strike"},
+        {"sosciencity.show-strike-thresholds", caste.strike_begin_threshold, caste.full_strike_threshold}
+    )
+    if caste.full_strike_worker_fraction > 0 then
+        Gui.Elements.Datalist.add_kv_pair(
+            strike_data,
+            "min-workers",
+            {"sosciencity.min-strike-workers"},
+            {"sosciencity.show-min-strike-workers", caste.full_strike_worker_fraction * 100}
+        )
+    end
+    Gui.Elements.Datalist.add_kv_pair(
+        strike_data,
+        "caste-penalty",
+        {"sosciencity.strike-caste-penalty"},
+        caste.full_strike_point_multiplier > 0
+            and {"sosciencity.show-strike-caste-penalty", caste.full_strike_point_multiplier * 100}
+            or {"sosciencity.no-caste-bonus-at-full-strike"}
+    )
 end
 
 for _, caste in pairs(Castes.all) do

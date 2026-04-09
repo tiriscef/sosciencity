@@ -16,7 +16,7 @@ Generally: The higher these metrics are, the better. Values over 10 are generall
 
 - Happiness is kind of your most important metric as it's tied with the productivity of your inhabitants. The happier your huwans are, the more caste points they provide and the more they get done when working at a building.
 
-- If the happiness drops below a caste-specific threshold (5 for most of the early game castes), the inhabitants get fed up with your city and begin to leave. 
+- If the happiness drops below a caste-specific threshold, the inhabitants get fed up and go on strike. Striking huwans refuse to work in factories and stop contributing to their caste bonus. The lower happiness falls, the more severe the strike gets.
 
 
 ###Health
