@@ -336,6 +336,31 @@ local function show_inhabitants(player_id, entry, created_highlights)
         only_in_alt_mode = true,
         scale = 1.5
     }
+
+    -- strike
+    local strike_level = entry[EK.strike_level]
+    if strike_level > 0 then
+        local text, color
+        if strike_level >= 1 then
+            text = {"sosciencity.on-full-strike"}
+            color = Color.red
+        else
+            text = {"sosciencity.strike-level", math.floor(strike_level * 100)}
+            color = Color.orange
+        end
+        created_highlights[#created_highlights + 1] =
+            rendering.draw_text {
+            text = text,
+            target = {entity = entity, offset = {0, 2.5}},
+            surface = entity.surface,
+            players = players,
+            color = color,
+            alignment = "center",
+            vertical_alignment = "middle",
+            only_in_alt_mode = true,
+            scale = 2
+        }
+    end
 end
 
 function Visualisation.create_mouseover_highlights(player_id, entity)

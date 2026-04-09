@@ -138,6 +138,18 @@ local function update_occupations_list(flow, entry)
     )
     Datalist.set_kv_pair_tooltip(occupations_list, "unoccupied", {"sosciencity.explain-unemployed"})
 
+    local strike_level = entry[EK.strike_level]
+    if strike_level > 0 then
+        local healthy = entry[EK.diseases][DiseaseGroup.HEALTHY]
+        local caste = castes[entry[EK.type]]
+        local willing = floor(healthy * (1 - strike_level * (1 - caste.full_strike_worker_fraction)))
+        local striking = healthy - willing
+        if striking > 0 then
+            Datalist.add_operand_entry(occupations_list, "striking", {"sosciencity.striking"}, striking)
+            Datalist.set_kv_pair_tooltip(occupations_list, "striking", {"sosciencity.explain-striking"})
+        end
+    end
+
     local employments = entry[EK.employments]
     for building_number, count in pairs(employments) do
         local building = Register.try_get(building_number)
@@ -215,6 +227,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     -- the annoying edge case of no inhabitants inside the house
     if inhabitants == 0 then
         Datalist.set_kv_pair_value(general_list, "happiness", "-")
+        Datalist.set_kv_pair_visibility(general_list, "strike", false)
         Datalist.set_kv_pair_value(general_list, "health", "-")
         Datalist.set_kv_pair_value(general_list, "sanity", "-")
         Datalist.set_kv_pair_value(general_list, "calorific-demand", "-")
@@ -233,6 +246,16 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "happiness",
         Locale.convergence(entry[EK.happiness], Inhabitants.get_nominal_happiness(entry))
     )
+    local strike_level = entry[EK.strike_level]
+    if strike_level >= 1 then
+        Datalist.set_kv_pair_value(general_list, "strike", {"sosciencity.show-strike-full"})
+        Datalist.set_kv_pair_visibility(general_list, "strike", true)
+    elseif strike_level > 0 then
+        Datalist.set_kv_pair_value(general_list, "strike", {"sosciencity.show-strike-partial", floor(strike_level * 100)})
+        Datalist.set_kv_pair_visibility(general_list, "strike", true)
+    else
+        Datalist.set_kv_pair_visibility(general_list, "strike", false)
+    end
     Datalist.set_kv_pair_value(
         general_list,
         "health",
@@ -357,6 +380,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
 
     Datalist.add_kv_pair(general_list, "inhabitants", {"sosciencity.inhabitants"})
     Datalist.add_kv_pair(general_list, "happiness", {"sosciencity.happiness"})
+    Datalist.add_kv_pair(general_list, "strike", {"sosciencity.strike"})
     Datalist.add_kv_pair(general_list, "health", {"sosciencity.health"})
     Datalist.add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
     Datalist.add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})

@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
+local WarningType = require("enums.warning-type")
 
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
@@ -146,6 +147,7 @@ local function update_strike_level(entry, happiness, caste)
     entry[EK.strike_level] = new_level
 
     if new_level > 0 then
+        Communication.warning(WarningType.on_strike, entry[EK.type])
         local willing = floor(entry[EK.diseases][HEALTHY] * (1 - new_level * (1 - caste.full_strike_worker_fraction)))
         local excess = entry[EK.employed] - willing
         if excess > 0 then
@@ -226,6 +228,7 @@ Inhabitants.remove_housing_census = remove_housing_census
 local function set_custom_status(entry)
     local inhabitants = entry[EK.inhabitants]
     local capacity = Housing.get_capacity(entry)
+    local strike_level = entry[EK.strike_level]
 
     local diode, locale_key
     if inhabitants == 0 then
@@ -239,16 +242,24 @@ local function set_custom_status(entry)
         locale_key = "sosciencity-custom-status.inhabited-house"
     end
 
+    local label = {
+        locale_key,
+        inhabitants,
+        capacity,
+        Utils.round_to_step(entry[EK.happiness], 0.1),
+        Utils.round_to_step(entry[EK.health], 0.1),
+        Utils.round_to_step(entry[EK.sanity], 0.1)
+    }
+
+    if strike_level >= 1 then
+        Tirislib.Locales.append(label, {"sosciencity-custom-status.on-full-strike"})
+    elseif strike_level > 0 then
+        Tirislib.Locales.append(label, {"sosciencity-custom-status.on-strike", floor(strike_level * 100)})
+    end
+
     entry[EK.entity].custom_status = {
         diode = diode,
-        label = {
-            locale_key,
-            inhabitants,
-            capacity,
-            Utils.round_to_step(entry[EK.happiness], 0.1),
-            Utils.round_to_step(entry[EK.health], 0.1),
-            Utils.round_to_step(entry[EK.sanity], 0.1)
-        }
+        label = label
     }
 end
 Inhabitants.set_custom_status = set_custom_status

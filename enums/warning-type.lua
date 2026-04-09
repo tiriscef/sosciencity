@@ -10,5 +10,6 @@ WarningType.insufficient_food_variety = 6
 WarningType.insufficient_workers = 7
 WarningType.homelessness = 8
 WarningType.badly_insufficient_maintenance = 9
+WarningType.on_strike = 10
 
 return WarningType
