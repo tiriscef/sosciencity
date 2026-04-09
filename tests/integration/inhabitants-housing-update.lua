@@ -137,39 +137,60 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << emigration >>
+-- << strike >>
 
 Tirislib.Testing.add_test_case(
-    "Emigration trend increases when happiness is very low",
+    "Strike level is 0 when happiness is above strike_begin_threshold",
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
+        local caste = Castes.values[Type.clockwork]
 
-        -- force happiness to 0 — well below any emigration threshold
-        entry[EK.happiness] = 0
+        entry[EK.happiness] = caste.strike_begin_threshold + 1
 
         Register.update_entry(entry, game.tick + 100)
 
-        Assert.greater_than(entry[EK.emigration_trend], 0,
-            "emigration trend should increase with zero happiness")
+        Assert.equals(entry[EK.strike_level], 0,
+            "strike level should be 0 when happiness is above the begin threshold")
     end,
     setup,
     teardown
 )
 
 Tirislib.Testing.add_test_case(
-    "No emigration trend when happiness is high",
+    "Strike level is 1 when happiness is below full_strike_threshold",
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
+        local caste = Castes.values[Type.clockwork]
 
-        -- force happiness well above any emigration threshold
-        entry[EK.happiness] = 50
+        entry[EK.happiness] = caste.full_strike_threshold - 1
 
         Register.update_entry(entry, game.tick + 100)
 
-        Assert.equals(entry[EK.emigration_trend], 0,
-            "emigration trend should be 0 when happiness is high")
+        Assert.equals(entry[EK.strike_level], 1,
+            "strike level should be 1 when happiness is below the full strike threshold")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Strike level interpolates between thresholds",
+    "integration|integration.inhabitants",
+    function()
+        local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
+        local caste = Castes.values[Type.clockwork]
+
+        local midpoint = (caste.strike_begin_threshold + caste.full_strike_threshold) / 2
+        entry[EK.happiness] = midpoint
+
+        Register.update_entry(entry, game.tick + 100)
+
+        Assert.greater_than(entry[EK.strike_level], 0,
+            "strike level should be > 0 between thresholds")
+        Assert.less_than(entry[EK.strike_level], 1,
+            "strike level should be < 1 between thresholds")
     end,
     setup,
     teardown

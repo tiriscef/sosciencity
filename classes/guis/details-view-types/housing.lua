@@ -201,22 +201,15 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
 
     local capacity = Housing.get_capacity(entry)
-    local emigration = Inhabitants.get_emigration_trend(nominal_happiness, caste, Time.minute)
-    local display_emigration = inhabitants > 0 and emigration > 0
-
     Datalist.set_kv_pair_value(
         general_list,
         "inhabitants",
-        {
-            "",
-            {"sosciencity.show-inhabitants", inhabitants, capacity},
-            display_emigration and {"sosciencity.migration", Locale.migration(-emigration)} or ""
-        }
+        {"sosciencity.show-inhabitants", inhabitants, capacity}
     )
     Datalist.set_datalist_value_tooltip(
         general_list,
         "inhabitants",
-        (entry[EK.emigration_trend] > 0) and {"sosciencity.negative-trend"} or ""
+        (entry[EK.strike_level] > 0) and {"sosciencity.on-strike"} or ""
     )
 
     -- the annoying edge case of no inhabitants inside the house

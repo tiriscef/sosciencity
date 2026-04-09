@@ -3,6 +3,9 @@ local RenderingType = require("enums.rendering-type")
 local WarningType = require("enums.warning-type")
 
 local Buildings = require("constants.buildings")
+local Castes = require("constants.castes")
+
+local castes = Castes.values
 
 local get_building_details = Buildings.get
 local try_get = Register.try_get
@@ -10,6 +13,8 @@ local add_common_sprite = Subentities.add_common_sprite
 local remove_common_sprite = Subentities.remove_common_sprite
 local Utils = Tirislib.Utils
 local min = math.min
+local max = math.max
+local floor = math.floor
 local HEALTHY = DiseaseGroup.HEALTHY
 
 ---------------------------------------------------------------------------------------------------
@@ -23,7 +28,10 @@ local HEALTHY = DiseaseGroup.HEALTHY
 --- @param entry Entry with inhabitants
 --- @return integer
 function Inhabitants.get_employable_count(entry)
-    return entry[EK.diseases][HEALTHY] - entry[EK.employed]
+    local caste = castes[entry[EK.type]]
+    local healthy = entry[EK.diseases][HEALTHY]
+    local willing = floor(healthy * (1 - entry[EK.strike_level] * (1 - caste.full_strike_worker_fraction)))
+    return max(0, willing - entry[EK.employed])
 end
 local get_employable_count = Inhabitants.get_employable_count
 

@@ -103,8 +103,8 @@ EK.sanity = 213
 EK.sanity_summands = 214
 --- array with multiplying sanity influences
 EK.sanity_factors = 215
---- the trend toward the next emigrating inhabitant
-EK.emigration_trend = 216
+--- the strike level from 0 to 1
+EK.strike_level = 216
 --- the progress toward the next produced garbage item
 EK.garbage_progress = 218
 --- the count of inhabitants that are employed

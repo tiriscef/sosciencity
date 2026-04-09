@@ -656,20 +656,16 @@ end
 
 local taste_category_count = Table.count(Taste)
 
-local function add_diet_effects(entry, diet, caste, hunger_satisfaction)
+local function add_diet_effects(entry, diet, caste)
     local happiness = entry[EK.happiness_summands]
     local happiness_factors = entry[EK.happiness_factors]
     local health = entry[EK.health_summands]
     local health_factors = entry[EK.health_factors]
     local sanity = entry[EK.sanity_summands]
 
-    if hunger_satisfaction < 0.5 then
-        happiness_factors[HappinessFactor.hunger] = 0.
-        health_factors[HealthFactor.hunger] = 0.
-    else
-        happiness_factors[HappinessFactor.hunger] = 1.
-        health_factors[HealthFactor.hunger] = 1.
-    end
+    local has_food = #diet > 0
+    happiness_factors[HappinessFactor.hunger] = has_food and 1. or Biology.starvation.happiness_factor
+    health_factors[HealthFactor.hunger] = has_food and 1. or Biology.starvation.health_factor
 
     -- handle the annoying edge case of no food at all
     if #diet == 0 then
@@ -746,8 +742,8 @@ local function add_diet_effects(entry, diet, caste, hunger_satisfaction)
     end
 
     -- add calculation summands
-    happiness[HappinessSummand.taste] = (1 - caste.desire_for_luxury) * taste_quality * hunger_satisfaction
-    happiness[HappinessSummand.food_luxury] = caste.desire_for_luxury * luxury * hunger_satisfaction
+    happiness[HappinessSummand.taste] = (1 - caste.desire_for_luxury) * taste_quality
+    happiness[HappinessSummand.food_luxury] = caste.desire_for_luxury * luxury
 
     local variety = table_size(groups) - caste.minimum_food_count
     happiness[HappinessSummand.food_variety] = (variety > 0) and (variety * 0.5) or 0
@@ -757,10 +753,10 @@ local function add_diet_effects(entry, diet, caste, hunger_satisfaction)
         Communication.warning(WarningType.insufficient_food_variety, entry)
     end
 
-    health[HealthSummand.nutrients] = get_nutrient_healthiness(fat, carbohydrates, proteins) * hunger_satisfaction
-    health[HealthSummand.food] = intrinsic_healthiness * hunger_satisfaction
+    health[HealthSummand.nutrients] = get_nutrient_healthiness(fat, carbohydrates, proteins)
+    health[HealthSummand.food] = intrinsic_healthiness
 
-    sanity[SanitySummand.taste] = taste_quality * hunger_satisfaction * 0.5
+    sanity[SanitySummand.taste] = taste_quality * 0.5
     sanity[SanitySummand.favorite_taste] = (dominant_taste == favorite_taste) and 4 or 0
     sanity[SanitySummand.disliked_taste] = (dominant_taste == least_favored_taste) and -4 or 0
     sanity[SanitySummand.single_food] = (#diet == 1) and -3 or 0
@@ -775,17 +771,16 @@ function Inventories.evaluate_diet(entry, delta_ticks)
     local inventories = get_food_providers(entry)
     local diet = get_diet(inventories)
 
-    local hunger_satisfaction = 0
     if #diet > 0 then
         local to_consume = caste.calorific_demand * delta_ticks * entry[EK.inhabitants]
-        hunger_satisfaction = consume_food(entry, inventories, to_consume, diet)
+        consume_food(entry, inventories, to_consume, diet)
 
         Subentities.remove_common_sprite(entry, RenderingType.food_warning)
     else
         Subentities.add_common_sprite(entry, RenderingType.food_warning)
     end
 
-    add_diet_effects(entry, diet, caste, hunger_satisfaction)
+    add_diet_effects(entry, diet, caste)
 end
 
 return Inventories

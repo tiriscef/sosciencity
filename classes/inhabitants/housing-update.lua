@@ -1,5 +1,4 @@
 local EK = require("enums.entry-key")
-local EmigrationCause = require("enums.emigration-cause")
 local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
 
@@ -29,7 +28,7 @@ local evaluate_social_environment
 local update_diseases
 local update_blood_donations
 local update_free_space_status
-local get_employable_count
+local unemploy_inhabitants
 local get_caste_bonus_multiplier
 
 function Inhabitants.load_housing_update()
@@ -41,7 +40,7 @@ function Inhabitants.load_housing_update()
     update_diseases = Inhabitants.update_diseases
     update_blood_donations = Inhabitants.update_blood_donations
     update_free_space_status = Inhabitants.update_free_space_status
-    get_employable_count = Inhabitants.get_employable_count
+    unemploy_inhabitants = Inhabitants.unemploy_inhabitants
     get_caste_bonus_multiplier = Inhabitants.get_caste_bonus_multiplier
 end
 
@@ -128,48 +127,32 @@ end
 Inhabitants.update_ages = update_ages
 
 ---------------------------------------------------------------------------------------------------
--- << emigration >>
+-- << strike >>
 
---- Returns the trend toward the next inhabitant emigrating, based on happiness relative to the caste's threshold.
---- @param nominal_happiness number current happiness value
---- @param caste table caste definition from Castes.values
---- @param delta_ticks integer ticks since last update
---- @return number trend increment (0 when happy enough)
-function Inhabitants.get_emigration_trend(nominal_happiness, caste, delta_ticks)
-    return map_range(nominal_happiness, 0, caste.emigration_threshold, caste.emigration_coefficient, 0) * delta_ticks
-end
-local get_emigration_trend = Inhabitants.get_emigration_trend
-
---- Processes emigration for a housing entry. Accumulates trend and removes inhabitants when it exceeds 1.
+--- Computes and stores the current strike level for a housing entry, and fires workers who are no longer willing.
+--- Strike level 0 means no strike, 1 means full strike.
 --- @param entry Entry
 --- @param happiness number current happiness
---- @param caste_id Type
---- @param delta_ticks integer
-local function update_emigration(entry, happiness, caste_id, delta_ticks)
-    local emigration_trend = get_emigration_trend(happiness, castes[caste_id], delta_ticks)
-
-    -- reset the trend value if the people are happy or if the house is empty
-    if emigration_trend == 0 or entry[EK.inhabitants] == 0 then
-        entry[EK.emigration_trend] = 0
-        return
+--- @param caste table caste definition from Castes.values
+local function update_strike_level(entry, happiness, caste)
+    local new_level
+    if happiness >= caste.strike_begin_threshold then
+        new_level = 0
+    elseif happiness <= caste.full_strike_threshold then
+        new_level = 1
+    else
+        new_level = map_range(happiness, caste.strike_begin_threshold, caste.full_strike_threshold, 0, 1)
     end
+    entry[EK.strike_level] = new_level
 
-    local trend = entry[EK.emigration_trend] + emigration_trend
-
-    if trend > 1 then
-        local emigrating = floor(trend)
-
-        if emigrating > 0 then
-            trend = trend - emigrating
-            local emigrants = InhabitantGroup.take(entry, emigrating)
-            Communication.report_emigration(emigrants[EK.inhabitants], EmigrationCause.unhappy)
-            Communication.create_flying_text(entry, {"sosciencity.inhabitants-emigrated", emigrating})
+    if new_level > 0 then
+        local willing = floor(entry[EK.diseases][HEALTHY] * (1 - new_level * (1 - caste.full_strike_worker_fraction)))
+        local excess = entry[EK.employed] - willing
+        if excess > 0 then
+            unemploy_inhabitants(entry, excess)
         end
     end
-
-    entry[EK.emigration_trend] = trend
 end
-Inhabitants.update_emigration = update_emigration
 
 ---------------------------------------------------------------------------------------------------
 -- << garbage >>
@@ -213,15 +196,16 @@ local function update_housing_census(entry)
         set_power_usage(entry, InhabitantGroup.get_power_usage(entry))
     end
 
-    local efficiency = 1 + 0.1 * storage.technologies[castes[caste_id].efficiency_tech]
-    local manpower = get_employable_count(entry)
+    local caste = castes[caste_id]
+    local efficiency = 1 + 0.1 * storage.technologies[caste.efficiency_tech]
+    local manpower = entry[EK.diseases][HEALTHY]
     for disease, count in pairs(entry[EK.diseases]) do
         if disease ~= HEALTHY then
             manpower = manpower + count * disease_values[disease].work_effectivity
         end
     end
 
-    local points = manpower * get_caste_bonus_multiplier(entry[EK.happiness]) * efficiency
+    local points = manpower * get_caste_bonus_multiplier(entry[EK.happiness], entry[EK.strike_level], caste) * efficiency
     storage.caste_points[caste_id] = storage.caste_points[caste_id] - entry[EK.caste_points] + points
     entry[EK.caste_points] = points
 end
@@ -319,7 +303,7 @@ local function update_house(entry, delta_ticks)
     update_happiness(entry, nominal_happiness, delta_ticks)
 
     update_ages(entry)
-    update_emigration(entry, entry[EK.happiness], caste_id, delta_ticks)
+    update_strike_level(entry, entry[EK.happiness], caste)
     update_housing_census(entry)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)

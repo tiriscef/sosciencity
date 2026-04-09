@@ -69,7 +69,7 @@ function Inhabitants.create_house(entry)
     entry[EK.sanity_summands] = Arrays.new(Tables.count(SanitySummand), 0.)
     entry[EK.sanity_factors] = Arrays.new(Tables.count(SanityFactor), 1.)
 
-    entry[EK.emigration_trend] = 0
+    entry[EK.strike_level] = 0
     entry[EK.garbage_progress] = 0
 
     local progresses = {}
