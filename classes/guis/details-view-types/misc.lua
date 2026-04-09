@@ -41,11 +41,7 @@ local function update_immigration_port_details(container, entry, player_id)
         Datalist.set_kv_pair_value(
             immigrants_list,
             key,
-            {
-                "",
-                floor(immigrants),
-                {"sosciencity.migration", Locale.migration(castes[caste].emigration_coefficient * Time.minute)}
-            }
+            floor(immigrants)
         )
         Datalist.set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
     end

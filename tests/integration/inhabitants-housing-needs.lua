@@ -4,6 +4,7 @@ local HealthFactor = require("enums.health-factor")
 local HealthSummand = require("enums.health-summand")
 local Type = require("enums.type")
 
+local Biology = require("constants.biology")
 local Castes = require("constants.castes")
 local DrinkingWater = require("constants.drinking-water")
 local Time = require("constants.time")
@@ -84,23 +85,20 @@ Tirislib.Testing.add_test_case(
 -- << partial satisfaction >>
 
 Tirislib.Testing.add_test_case(
-    "evaluate_water sets partial satisfaction when water supply is insufficient",
+    "evaluate_water treats partial water supply as satisfied (binary)",
     "integration|integration.inhabitants",
     function()
         local house = Inhabitants.try_allow_for_caste(
             Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
         house[EK.inhabitants] = 10
 
-        local supplied = 10
-        -- need inhabitants * water_demand * delta_ticks, only supplied available
-        create_water_distributer({5, 0}, "drinkable-water", supplied)
+        -- supply less than needed — any nonzero satisfaction counts as "has water"
+        create_water_distributer({5, 0}, "drinkable-water", 10)
 
         local hf, htf, _ = run_evaluate_water(house, Time.minute)
 
-        local water_demand = Castes.values[Type.clockwork].water_demand
-        local expected_satisfaction = supplied / (10 * water_demand * Time.minute)
-        Assert.equals(hf[HappinessFactor.thirst], expected_satisfaction, "happiness factor should be supplied/needed")
-        Assert.equals(htf[HealthFactor.thirst], expected_satisfaction, "health factor should be supplied/needed")
+        Assert.equals(hf[HappinessFactor.thirst], 1, "partial water supply should still give factor 1 (binary)")
+        Assert.equals(htf[HealthFactor.thirst], 1, "partial water supply should still give factor 1 (binary)")
     end,
     setup,
     teardown
@@ -121,8 +119,8 @@ Tirislib.Testing.add_test_case(
 
         local hf, htf, hs = run_evaluate_water(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.thirst], 0, "happiness factor should be 0 with no water")
-        Assert.equals(htf[HealthFactor.thirst], 0, "health factor should be 0 with no water")
+        Assert.equals(hf[HappinessFactor.thirst], Biology.dehydration.happiness_factor, "happiness factor should be dehydration floor with no water")
+        Assert.equals(htf[HealthFactor.thirst], Biology.dehydration.health_factor, "health factor should be dehydration floor with no water")
         Assert.equals(hs[HealthSummand.water], 0, "health summand should be 0 with no water")
     end,
     setup,
@@ -142,8 +140,8 @@ Tirislib.Testing.add_test_case(
 
         local hf, htf, _ = run_evaluate_water(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.thirst], 0, "dry distributer should not count as water supply")
-        Assert.equals(htf[HealthFactor.thirst], 0, "dry distributer should not count as water supply")
+        Assert.equals(hf[HappinessFactor.thirst], Biology.dehydration.happiness_factor, "dry distributer should not count as water supply")
+        Assert.equals(htf[HealthFactor.thirst], Biology.dehydration.health_factor, "dry distributer should not count as water supply")
     end,
     setup,
     teardown
@@ -182,8 +180,8 @@ Tirislib.Testing.add_test_case(
 
         local hf, htf, hs = run_evaluate_water(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.thirst], 0, "empty house should report zero satisfaction with no water")
-        Assert.equals(htf[HealthFactor.thirst], 0, "empty house should report zero satisfaction with no water")
+        Assert.equals(hf[HappinessFactor.thirst], Biology.dehydration.happiness_factor, "empty house with no water should return dehydration floor")
+        Assert.equals(htf[HealthFactor.thirst], Biology.dehydration.health_factor, "empty house with no water should return dehydration floor")
         Assert.equals(hs[HealthSummand.water], 0, "health summand should be 0 with no water")
     end,
     setup,

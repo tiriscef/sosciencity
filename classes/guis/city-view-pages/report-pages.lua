@@ -25,7 +25,7 @@ Gui.CityView.add_page {
         Gui.Elements.Label.heading_3(container, {"city-view.overview"})
 
         local immigration_sum = Tirislib.Tables.sum(storage.current_reports.immigration)
-        local emigration_sum = Tirislib.Tables.sum(storage.current_reports.emigration)
+        local loss_sum = Tirislib.Tables.sum(storage.current_reports.loss)
         local death_sum = Tirislib.Tables.sum(storage.current_reports.death)
         Gui.Elements.CalculationTable.create {
             container = container,
@@ -33,18 +33,18 @@ Gui.CityView.add_page {
                 {
                     values = {
                         immigration_sum,
-                        emigration_sum,
+                        loss_sum,
                         death_sum
                     },
                     left_lookup = {
                         {"city-view.immigration"},
-                        {"city-view.emigration"},
+                        {"city-view.loss"},
                         {"city-view.death"}
                     },
                     right_content = Tirislib.Utils.identity
                 },
                 {
-                    values = {immigration_sum - emigration_sum - death_sum},
+                    values = {immigration_sum - loss_sum - death_sum},
                     left_lookup = {{"city-view.sum"}},
                     right_content = Tirislib.Utils.identity,
                     left_style = "sosciencity_calculation_table_left_head",
@@ -69,20 +69,20 @@ Gui.CityView.add_page {
             Gui.Elements.Label.paragraph(container, {"city-view.no-reported-immigration"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.emigration-by-cause"})
-        if emigration_sum > 0 then
+        Gui.Elements.Label.heading_3(container, {"city-view.loss-by-cause"})
+        if loss_sum > 0 then
             Gui.Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
-                        values = storage.current_reports.emigration,
-                        left_content = Locale.emigration_cause,
+                        values = storage.current_reports.loss,
+                        left_content = Locale.loss_cause,
                         right_content = Tirislib.Utils.identity
                     }
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-emigration"})
+            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-loss"})
         end
 
         Gui.Elements.Label.heading_3(container, {"city-view.deaths-by-cause"})

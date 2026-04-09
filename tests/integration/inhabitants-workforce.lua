@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 local Buildings = require("constants.buildings")
+local Castes = require("constants.castes")
 
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
@@ -162,6 +163,124 @@ Tirislib.Testing.add_test_case(
 
         storage.technologies["plasma-caste"] = original_plasma
         storage.technologies["upbringing"] = original_upbringing
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << strike >>
+
+Tirislib.Testing.add_test_case(
+    "get_employable_count returns 0 for fully striking Ember house",
+    "integration|integration.inhabitants",
+    function()
+        local original_tech = storage.technologies["upbringing"]
+        storage.technologies["upbringing"] = 1
+
+        -- Ember has full_strike_worker_fraction = 0, so no one works at full strike
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.ember, 10)
+        house[EK.strike_level] = 1
+
+        Assert.equals(Inhabitants.get_employable_count(house), 0,
+            "fully striking Ember house should have 0 employable inhabitants")
+
+        storage.technologies["upbringing"] = original_tech
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "get_employable_count keeps minimum fraction for fully striking Orchid house",
+    "integration|integration.inhabitants",
+    function()
+        local original_tech = storage.technologies["upbringing"]
+        storage.technologies["upbringing"] = 1
+
+        -- Orchid has full_strike_worker_fraction = 0.2, so 20% still work at full strike
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.orchid, 10)
+        house[EK.strike_level] = 1
+
+        local employable = Inhabitants.get_employable_count(house)
+        Assert.greater_than(employable, 0, "fully striking Orchid house should still have some willing workers")
+        Assert.less_than(employable, 10, "fully striking Orchid house should not have all inhabitants willing")
+
+        storage.technologies["upbringing"] = original_tech
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Employed Ember workers are fully fired when house goes on full strike",
+    "integration|integration.inhabitants",
+    function()
+        local original_tech = storage.technologies["upbringing"]
+        storage.technologies["upbringing"] = 1
+
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.ember, 10)
+        local manufactory = Helpers.create_and_register(test_surface, "test-ember-manufactory", {5, 0})
+        local workforce = Buildings.get(manufactory).workforce
+
+        Inhabitants.update_workforce(manufactory, workforce)
+        Assert.greater_than(manufactory[EK.worker_count], 0, "should have hired workers before strike")
+
+        -- force happiness below full_strike_threshold (Ember: 2) and run update
+        local caste = Castes.values[Type.ember]
+        house[EK.happiness] = caste.full_strike_threshold - 1
+        Register.update_entry(house, game.tick + 100)
+
+        Assert.equals(house[EK.strike_level], 1, "strike level should be 1 at full strike")
+        Assert.equals(manufactory[EK.worker_count], 0, "building should lose all Ember workers at full strike")
+        Assert.equals(house[EK.employed], 0, "house employed count should be 0 after full Ember strike")
+
+        storage.technologies["upbringing"] = original_tech
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Orchid minimum fraction workers remain employed during full strike",
+    "integration|integration.inhabitants",
+    function()
+        local original_tech = storage.technologies["upbringing"]
+        storage.technologies["upbringing"] = 1
+
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.orchid, 10)
+        local manufactory = Helpers.create_and_register(test_surface, "test-orchid-manufactory", {5, 0})
+        local workforce = Buildings.get(manufactory).workforce
+
+        Inhabitants.update_workforce(manufactory, workforce)
+        Assert.greater_than(manufactory[EK.worker_count], 0, "should have hired workers before strike")
+
+        -- force happiness below full_strike_threshold (Orchid: 1) and run update
+        local caste = Castes.values[Type.orchid]
+        house[EK.happiness] = caste.full_strike_threshold - 1
+        Register.update_entry(house, game.tick + 100)
+
+        Assert.equals(house[EK.strike_level], 1, "strike level should be 1 at full strike")
+        Assert.greater_than(manufactory[EK.worker_count], 0, "building should keep some Orchid workers (min fraction)")
+        Assert.greater_than(house[EK.employed], 0, "house should still have some employed at Orchid min fraction")
+
+        storage.technologies["upbringing"] = original_tech
     end,
     function()
         test_surface = Helpers.create_test_surface()

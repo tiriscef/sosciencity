@@ -37,11 +37,19 @@ function Inhabitants.get_population_count(pop)
     return Tables.sum(pop or storage.population)
 end
 
---- Converts happiness to the caste bonus point multiplier.
+--- Converts happiness and strike level to the caste bonus point multiplier.
+--- Above the strike threshold, happiness contributes 0.1 per point.
+--- Below it, the multiplier drops sharply and scales with how settled the strike is.
 --- @param happiness number
+--- @param strike_level number 0 (no strike) to 1 (full strike)
+--- @param caste table
 --- @return number
-local function get_caste_bonus_multiplier(happiness)
-    return happiness * 0.1
+local function get_caste_bonus_multiplier(happiness, strike_level, caste)
+    if happiness >= caste.strike_begin_threshold then
+        return 1 + (happiness - caste.strike_begin_threshold) * 0.1
+    else
+        return strike_level * caste.full_strike_point_multiplier
+    end
 end
 Inhabitants.get_caste_bonus_multiplier = get_caste_bonus_multiplier
 

@@ -138,7 +138,7 @@ function Communication.init()
     }]]
     storage.reports = {
         ["immigration"] = {},
-        ["emigration"] = {},
+        ["loss"] = {},
         ["death"] = {},
         ["diseases"] = {},
         ["disease-cause"] = {},
@@ -428,8 +428,8 @@ end
     XXX
     The following report interface functions feature rather ugly code dublications. But I don't have a good idea how to simplify this code at the moment.
 ]]
-function Communication.report_emigration(count, cause)
-    local current_report = get_subtbl(reports, "emigration")
+function Communication.report_loss(count, cause)
+    local current_report = get_subtbl(reports, "loss")
     current_report[cause] = (current_report[cause] or 0) + count
 
     reported_event_counts.census = reported_event_counts.census + 1
@@ -496,18 +496,18 @@ end
 local function census_report()
     local speaker = pick_speaker("census-immigration")
 
-    local emigration = sum(get_subtbl(reports, "emigration"))
+    local loss = sum(get_subtbl(reports, "loss"))
     local death = sum(get_subtbl(reports, "death"))
-    local pure_emigration = emigration - death
+    local pure_loss = loss - death
 
     say_random_variant("report-begin", speaker, {"report-name.census"})
 
     say_random_variant("census-immigration", speaker, sum(get_subtbl(reports, "immigration")))
-    say_random_variant("census-emigration", speaker, emigration, death, pure_emigration)
+    say_random_variant("census-loss", speaker, loss, death, pure_loss)
 
     say_random_variant("report-end", speaker)
 
-    publish_reports("immigration", "emigration", "death")
+    publish_reports("immigration", "loss", "death")
 end
 
 local function healthcare_report()
@@ -582,10 +582,7 @@ local warn_fns = {
     [WarningType.insufficient_maintenance] = function()
         say_random_variant("warning-insufficient-maintenance")
     end,
-    [WarningType.emigration] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-emigration"}, {"alert.emigration"})
-    end,
-    [WarningType.insufficient_food_variety] = function(entry)
+[WarningType.insufficient_food_variety] = function(entry)
         alert(entry, {type = "virtual", name = "alert-not-enough-foods"}, {"alert.not-enough-foods"})
     end,
     [WarningType.insufficient_workers] = function(entry)

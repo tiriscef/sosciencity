@@ -136,11 +136,11 @@ function Locale.immigration_cause(cause)
     return immigration_cause_locales[cause]
 end
 
-local EmigrationCause = require("enums.emigration-cause")
-local emigration_cause_locales = build_locale_lookup(EmigrationCause, "emigration-cause")
+local LossCause = require("enums.loss-cause")
+local loss_cause_locales = build_locale_lookup(LossCause, "loss-cause")
 
-function Locale.emigration_cause(cause)
-    return emigration_cause_locales[cause]
+function Locale.loss_cause(cause)
+    return loss_cause_locales[cause]
 end
 
 local DeathCause = require("enums.death-cause")

@@ -6,6 +6,7 @@ local RenderingType = require("enums.rendering-type")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
+local Biology = require("constants.biology")
 local Castes = require("constants.castes")
 
 local castes = Castes.values
@@ -86,7 +87,8 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
         end
     end
 
-    happiness_factors[HappinessFactor.thirst] = satisfaction
-    health_factors[HealthFactor.thirst] = satisfaction
+    local has_water = satisfaction > 0
+    happiness_factors[HappinessFactor.thirst] = has_water and 1. or Biology.dehydration.happiness_factor
+    health_factors[HealthFactor.thirst] = has_water and 1. or Biology.dehydration.health_factor
     health_summands[HealthSummand.water] = quality
 end

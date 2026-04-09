@@ -540,6 +540,26 @@ Building.values = {
     ["test-egg-collector"] = {
         type = Type.egg_collector,
         range = 42
+    },
+    ["test-ember-manufactory"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 10,
+            castes = {Type.ember},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
+        }
+    },
+    ["test-orchid-manufactory"] = {
+        type = Type.manufactory,
+        workforce = {
+            count = 10,
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency = 0.1 / Time.minute,
+            happiness_weight = 1
+        }
     }
 }
 local buildings = Building.values

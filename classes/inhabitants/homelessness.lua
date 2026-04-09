@@ -1,5 +1,5 @@
 local EK = require("enums.entry-key")
-local EmigrationCause = require("enums.emigration-cause")
+local LossCause = require("enums.loss-cause")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
@@ -151,7 +151,7 @@ end
 Inhabitants.add_to_homeless_pool = add_to_homeless_pool
 
 --- Main homelessness update: tries to house homeless, occupy empty houses, create improvised huts.
---- Applies negative effects (happiness/health/sanity decay, emigration) to remaining homeless.
+--- Applies negative effects (happiness/health/sanity decay, disappearance) to remaining homeless.
 local function update_homelessness()
     -- try to house the homeless people
     try_house_homeless()
@@ -176,10 +176,10 @@ local function update_homelessness()
         local current_sanity = homeless_group[EK.sanity]
         homeless_group[EK.sanity] = current_sanity + (0 - current_sanity) * (1 - 0.99995 ^ 1800)
 
-        local emigrating = ceil(count * 0.05)
-        if emigrating > 0 then
-            local emigrated = InhabitantGroup.take(homeless_group, emigrating)
-            Communication.report_emigration(emigrated[EK.inhabitants], EmigrationCause.homeless)
+        local disappearing = ceil(count * 0.05)
+        if disappearing > 0 then
+            local lost = InhabitantGroup.take(homeless_group, disappearing)
+            Communication.report_loss(lost[EK.inhabitants], LossCause.homeless)
         end
     end
 end

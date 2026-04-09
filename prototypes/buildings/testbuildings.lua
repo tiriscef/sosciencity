@@ -169,3 +169,6 @@ local function create_test_assembling_machine(name, categories)
 end
 
 create_test_assembling_machine("gene-lab", {"sosciencity-reproductive-gene-lab"})
+
+create_test_container("ember-manufactory")
+create_test_container("orchid-manufactory")

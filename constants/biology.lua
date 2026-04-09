@@ -435,6 +435,16 @@ Biology.egg_data = {
 Biology.blood_donation_workload = 10
 Biology.blood_donation_item = "blood-bag"
 
+Biology.starvation = {
+    happiness_factor = 0.5,
+    health_factor = 0.5
+}
+
+Biology.dehydration = {
+    happiness_factor = 0.5,
+    health_factor = 0.5
+}
+
 -- create the lookup table
 local species_lookup = {}
 for _, family in pairs({"flora"}) do

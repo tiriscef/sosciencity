@@ -9,6 +9,41 @@ local Time = require("constants.time")
 --- Use Castes.all for iterating all enabled castes.
 local Castes = {}
 
+--- @class CasteDefinition
+--- @field name string internal name
+--- @field localised_name LocalisedString
+--- @field localised_name_short LocalisedString
+--- @field enabled boolean whether this caste is active in the game
+--- @field order integer display order
+--- @field breedable boolean can reproduce naturally via upbringing stations
+--- @field tech_name string technology required to unlock this caste
+--- @field efficiency_tech string technology that improves this caste's efficiency bonus
+--- @field fear_resilience number multiplier on fear malus (0 = full effect, 1 = immune)
+--- @field calorific_demand number kcal per day (converted to kcal/tick in postprocessing)
+--- @field power_demand number kW (converted to J/tick in postprocessing)
+--- @field power_bonus number happiness summand when power is sufficient
+--- @field no_power_malus number happiness summand when power is insufficient (negative)
+--- @field garbage_coefficient number garbage items produced per inhabitant per tick
+--- @field water_demand number fluid units consumed per inhabitant per tick
+--- @field favored_taste Taste preferred taste category (bonus to taste quality and luxury)
+--- @field least_favored_taste Taste disliked taste category (penalty to taste quality and luxury)
+--- @field desire_for_luxury number weight on luxury food happiness (0 = none, 1 = full)
+--- @field minimum_food_count integer minimum distinct foods needed to avoid variety penalty
+--- @field required_room_count number room requirement for housing comfort calculation
+--- @field minimum_comfort number minimum housing comfort level before a penalty applies
+--- @field social_coefficient number multiplier on social environment happiness contribution
+--- @field innate_sanity number baseline sanity summand independent of other factors
+--- @field strike_begin_threshold number happiness below this level starts a strike
+--- @field full_strike_threshold number happiness below this causes a full strike
+--- @field full_strike_point_multiplier number caste point multiplier at full strike (see get_caste_bonus_multiplier)
+--- @field full_strike_worker_fraction number minimum fraction of workers willing to work even at full strike
+--- @field immigration_genders table<Gender, number> gender weight distribution for arriving immigrants
+--- @field housing_preferences table<string, number> preference modifiers keyed by housing tag
+--- @field accident_disease_resilience number multiplier reducing accident disease probability
+--- @field health_disease_resilience number multiplier reducing health disease probability
+--- @field sanity_disease_resilience number multiplier reducing sanity disease probability
+--- @field type Type set in postprocessing from the table key
+
 Castes.values = {
     [Type.clockwork] = {
         name = "clockwork",
@@ -34,8 +69,10 @@ Castes.values = {
         minimum_comfort = 0,
         social_coefficient = 1,
         innate_sanity = 10,
-        emigration_threshold = 5,
-        emigration_coefficient = 0.1 / Time.minute,
+        strike_begin_threshold = 5,
+        full_strike_threshold = 2,
+        full_strike_point_multiplier = 0.5,
+        full_strike_worker_fraction = 0.1,
         immigration_genders = {
             [Gender.agender] = 50,
             [Gender.fale] = 25,
@@ -80,8 +117,10 @@ Castes.values = {
         minimum_comfort = 0,
         social_coefficient = 1,
         innate_sanity = 10,
-        emigration_threshold = 5,
-        emigration_coefficient = 0.1 / Time.minute,
+        strike_begin_threshold = 3,
+        full_strike_threshold = 1,
+        full_strike_point_multiplier = 0.5,
+        full_strike_worker_fraction = 0.2,
         immigration_genders = {
             [Gender.agender] = 15,
             [Gender.fale] = 5,
@@ -124,8 +163,10 @@ Castes.values = {
         minimum_comfort = 0,
         social_coefficient = 0.5,
         innate_sanity = 10,
-        emigration_threshold = 5,
-        emigration_coefficient = 0.3 / Time.minute,
+        strike_begin_threshold = 5,
+        full_strike_threshold = 2,
+        full_strike_point_multiplier = 0.5,
+        full_strike_worker_fraction = 0,
         immigration_genders = {
             [Gender.agender] = 91,
             [Gender.fale] = 3,
@@ -172,8 +213,10 @@ Castes.values = {
         minimum_comfort = 0,
         social_coefficient = 2,
         innate_sanity = 10,
-        emigration_threshold = 5,
-        emigration_coefficient = 0.1 / Time.minute,
+        strike_begin_threshold = 5,
+        full_strike_threshold = 2,
+        full_strike_point_multiplier = 0.0,
+        full_strike_worker_fraction = 0,
         immigration_genders = {
             [Gender.agender] = 5,
             [Gender.fale] = 35,
@@ -213,8 +256,10 @@ Castes.values = {
         minimum_comfort = 6,
         social_coefficient = 0.8,
         innate_sanity = 10,
-        emigration_threshold = 10,
-        emigration_coefficient = 1 / Time.minute,
+        strike_begin_threshold = 8,
+        full_strike_threshold = 4,
+        full_strike_point_multiplier = 0,
+        full_strike_worker_fraction = 0,
         immigration_genders = {
             [Gender.agender] = 10,
             [Gender.fale] = 30,
@@ -258,8 +303,10 @@ Castes.values = {
         minimum_comfort = 7,
         social_coefficient = 1.5,
         innate_sanity = 10,
-        emigration_threshold = 10,
-        emigration_coefficient = 1 / Time.minute,
+        strike_begin_threshold = 9,
+        full_strike_threshold = 4,
+        full_strike_point_multiplier = 0,
+        full_strike_worker_fraction = 0,
         immigration_genders = {
             [Gender.agender] = 10,
             [Gender.fale] = 30,
@@ -301,8 +348,10 @@ Castes.values = {
         minimum_comfort = 9,
         social_coefficient = 5,
         innate_sanity = 10,
-        emigration_threshold = 15,
-        emigration_coefficient = 0.8 / Time.minute,
+        strike_begin_threshold = 10,
+        full_strike_threshold = 5,
+        full_strike_point_multiplier = 0,
+        full_strike_worker_fraction = 0,
         immigration_genders = {
             [Gender.agender] = 25,
             [Gender.fale] = 25,
@@ -350,8 +399,10 @@ Castes.values = {
         minimum_comfort = 3,
         social_coefficient = 1.2,
         innate_sanity = 10,
-        emigration_threshold = 7,
-        emigration_coefficient = 0.5 / Time.minute,
+        strike_begin_threshold = 6,
+        full_strike_threshold = 3,
+        full_strike_point_multiplier = 0,
+        full_strike_worker_fraction = 0.2,
         immigration_genders = {
             [Gender.agender] = 10,
             [Gender.fale] = 40,
