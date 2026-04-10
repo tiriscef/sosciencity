@@ -3,8 +3,26 @@ local Taste = require("enums.taste")
 --- Things that people like (and need) to eat.
 local Food = {}
 
+--- @class FoodDefinition
+--- @field name string internal item name
+--- @field localised_name LocalisedString
+--- @field localised_description LocalisedString
+--- @field fat number kcal per 100g from fat (converted from g/100g in postprocessing)
+--- @field carbohydrates number kcal per 100g from carbohydrates (converted from g/100g in postprocessing)
+--- @field proteins number kcal per 100g from proteins (converted from g/100g in postprocessing)
+--- @field calories number total kcal per item (fat + carbohydrates + proteins) * 10 * item_weight
+--- @field density number kcal per 100g independent of portion size; used to weight item consumption rate
+--- @field healthiness number intrinsic health quality of this food (1–9)
+--- @field food_category string broad category (meat, egg, fruit, vegetable, legume, processed, alien-*, seed, etc.)
+--- @field taste_category Taste taste profile of this food
+--- @field taste_quality number how pleasant this food is to eat (1–10)
+--- @field luxury number how prestigious or special this food is (1–10)
+--- @field item_weight number kg per item; scales total calories per item — does not affect relative item consumption rate between foods
+--- @field group string variety group; foods sharing a group count as one for variety purposes
+--- @field max_spoil table<string, number> spoil ticks per quality level (set at runtime from prototype data)
+
 --fat, carbohydrates and proteins are in g per 100g
---portion_size is in kg
+--item_weight is in kg
 Food.values = {
     ["mammal-meat"] = {
         fat = 15,
@@ -15,7 +33,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 7,
         luxury = 7,
-        portion_size = 1,
+        item_weight = 1,
         group = "meat"
     },
     ["bird-meat"] = {
@@ -27,7 +45,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 5,
         luxury = 6,
-        portion_size = 1,
+        item_weight = 1,
         group = "bird-meat"
     },
     ["biter-meat"] = {
@@ -39,7 +57,7 @@ Food.values = {
         taste_category = Taste.salty,
         taste_quality = 3,
         luxury = 4,
-        portion_size = 1,
+        item_weight = 1,
         group = "biter-meat"
     },
     ["fermented-biter-meat"] = {
@@ -51,7 +69,7 @@ Food.values = {
         taste_category = Taste.acidic,
         taste_quality = 5,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "biter-meat"
     },
     ["insect-meat"] = {
@@ -63,7 +81,7 @@ Food.values = {
         taste_category = Taste.soily,
         taste_quality = 4,
         luxury = 3,
-        portion_size = 1,
+        item_weight = 1,
         group = "insect-meat"
     },
     ["fish-meat"] = {
@@ -75,7 +93,7 @@ Food.values = {
         taste_category = Taste.salty,
         taste_quality = 7,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "fish-meat"
     },
     ["offal"] = {
@@ -87,7 +105,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 3,
         luxury = 6,
-        portion_size = 1,
+        item_weight = 1,
         group = "offal"
     },
     ["nan-egg"] = {
@@ -99,7 +117,7 @@ Food.values = {
         taste_category = Taste.sulfuric,
         taste_quality = 6,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "egg"
     },
     ["primal-egg"] = {
@@ -111,7 +129,7 @@ Food.values = {
         taste_category = Taste.sulfuric,
         taste_quality = 4,
         luxury = 3,
-        portion_size = 1,
+        item_weight = 1,
         group = "egg"
     },
     ["bone-egg"] = {
@@ -123,7 +141,7 @@ Food.values = {
         taste_category = Taste.sulfuric,
         taste_quality = 5,
         luxury = 3,
-        portion_size = 1,
+        item_weight = 1,
         group = "egg"
     },
     ["wild-edible-plants"] = {
@@ -135,7 +153,7 @@ Food.values = {
         taste_category = Taste.varying,
         taste_quality = 3,
         luxury = 1,
-        portion_size = 2.2,
+        item_weight = 2.2,
         group = "plant-mix"
     },
     ["wild-fungi"] = {
@@ -147,7 +165,7 @@ Food.values = {
         taste_category = Taste.varying,
         taste_quality = 5,
         luxury = 1,
-        portion_size = 3.8,
+        item_weight = 3.8,
         group = "fungi-mix"
     },
     ["wild-algae"] = {
@@ -159,7 +177,7 @@ Food.values = {
         taste_category = Taste.varying,
         taste_quality = 4,
         luxury = 1,
-        portion_size = 2,
+        item_weight = 2,
         group = "algae-mix"
     },
     ["unnamed-fruit"] = {
@@ -171,7 +189,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 2,
         luxury = 1,
-        portion_size = 1,
+        item_weight = 1,
         group = "unnamed-fruit"
     },
     ["weird-berry"] = {
@@ -183,7 +201,7 @@ Food.values = {
         taste_category = Taste.soily,
         taste_quality = 5,
         luxury = 1,
-        portion_size = 1,
+        item_weight = 1,
         group = "weird-berry"
     },
     ["brutal-pumpkin"] = {
@@ -195,7 +213,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 4,
         luxury = 2,
-        portion_size = 5,
+        item_weight = 5,
         group = "brutal-pumpkin"
     },
     ["ortrot"] = {
@@ -207,7 +225,7 @@ Food.values = {
         taste_category = Taste.weirdly_chemical,
         taste_quality = 2,
         luxury = 2,
-        portion_size = 1,
+        item_weight = 1,
         group = "ortrot"
     },
     ["apple"] = {
@@ -219,7 +237,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "apple"
     },
     ["blue-grapes"] = {
@@ -231,7 +249,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "grapes"
     },
     ["orange"] = {
@@ -243,7 +261,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 7,
-        portion_size = 1,
+        item_weight = 1,
         group = "orange"
     },
     ["lemon"] = {
@@ -255,7 +273,7 @@ Food.values = {
         taste_category = Taste.acidic,
         taste_quality = 7,
         luxury = 7,
-        portion_size = 1,
+        item_weight = 1,
         group = "lemon"
     },
     ["zetorn"] = {
@@ -267,7 +285,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 4,
         luxury = 3,
-        portion_size = 1,
+        item_weight = 1,
         group = "zetorn"
     },
     ["cherry"] = {
@@ -279,7 +297,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 4,
-        portion_size = 1,
+        item_weight = 1,
         group = "cherry"
     },
     ["olive"] = {
@@ -291,7 +309,7 @@ Food.values = {
         taste_category = Taste.salty,
         taste_quality = 7,
         luxury = 6,
-        portion_size = 1,
+        item_weight = 1,
         group = "olive"
     },
     ["bell-pepper"] = {
@@ -303,7 +321,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 7,
         luxury = 4,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "bell-pepper"
     },
     ["potato"] = {
@@ -315,7 +333,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 3,
         luxury = 3,
-        portion_size = 1,
+        item_weight = 1,
         group = "potato"
     },
     ["sesame"] = {
@@ -327,7 +345,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 7,
-        portion_size = 0.2,
+        item_weight = 0.2,
         group = "sesame"
     },
     ["tomato"] = {
@@ -339,7 +357,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "tomato"
     },
     ["eggplant"] = {
@@ -351,7 +369,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "eggplant"
     },
     ["fawoxylas"] = {
@@ -363,7 +381,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 6,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "fawoxylas"
     },
     ["avocado"] = {
@@ -375,7 +393,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 8,
         luxury = 8,
-        portion_size = 1,
+        item_weight = 1,
         group = "avocado"
     },
     ["chickpea"] = {
@@ -387,7 +405,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 5,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "chickpea"
     },
     ["hummus"] = {
@@ -399,7 +417,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 10,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "hummus"
     },
     ["dried-solfaen"] = {
@@ -411,7 +429,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 2,
         luxury = 1,
-        portion_size = 2,
+        item_weight = 2,
         group = "algae"
     },
     ["razha-bean"] = {
@@ -423,7 +441,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 5,
         luxury = 3,
-        portion_size = 1,
+        item_weight = 1,
         group = "razha-bean"
     },
     ["tofu"] = {
@@ -435,7 +453,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 6,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "processed-razha"
     },
     ["yuba"] = {
@@ -447,7 +465,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 5,
         luxury = 4,
-        portion_size = 0.2,
+        item_weight = 0.2,
         group = "processed-razha"
     },
     ["liontooth"] = {
@@ -459,7 +477,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 4,
         luxury = 1,
-        portion_size = 2,
+        item_weight = 2,
         group = "liontooth"
     },
     ["manok"] = {
@@ -471,7 +489,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 5,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "manok"
     },
     ["tello-fruit"] = {
@@ -483,7 +501,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 1,
         luxury = 1,
-        portion_size = 1,
+        item_weight = 1,
         group = "tello"
     },
     ["sugar-beet"] = {
@@ -495,7 +513,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 4,
         luxury = 2,
-        portion_size = 1,
+        item_weight = 1,
         group = "sugar-beet"
     },
     ["bread"] = {
@@ -507,7 +525,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 7,
         luxury = 5,
-        portion_size = 1,
+        item_weight = 1,
         group = "bread"
     },
     ["queen-algae"] = {
@@ -519,7 +537,7 @@ Food.values = {
         taste_category = Taste.fruity,
         taste_quality = 5,
         luxury = 1,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "algae"
     },
     ["endower-flower"] = {
@@ -531,7 +549,7 @@ Food.values = {
         taste_category = Taste.acidic,
         taste_quality = 3,
         luxury = 3,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "endower-flower"
     },
     ["pyrifera"] = {
@@ -543,7 +561,7 @@ Food.values = {
         taste_category = Taste.neutral,
         taste_quality = 3,
         luxury = 2,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "algae"
     },
     ["pocelial"] = {
@@ -555,7 +573,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 6,
         luxury = 5,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "pocelial"
     },
     ["red-hatty"] = {
@@ -567,7 +585,7 @@ Food.values = {
         taste_category = Taste.spicy,
         taste_quality = 6,
         luxury = 4,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "red-hatty"
     },
     ["birdsnake"] = {
@@ -579,7 +597,7 @@ Food.values = {
         taste_category = Taste.salty,
         taste_quality = 4,
         luxury = 7,
-        portion_size = 2.5,
+        item_weight = 2.5,
         group = "birdsnake"
     },
     ["potluck"] = {
@@ -591,7 +609,7 @@ Food.values = {
         taste_category = Taste.umami,
         taste_quality = 7,
         luxury = 7,
-        portion_size = 1,
+        item_weight = 1,
         group = "potluck"
     }
 }
@@ -611,7 +629,11 @@ for name, food in pairs(Food.values) do
 
     -- calories specifies the calorific value of one item
     -- the magic 10 is just to get from 100g to 1kg
-    food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.portion_size
+    food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.item_weight
+
+    -- density is kcal per 100g, independent of portion size
+    -- used to weight consumption so that item consumption rate is inversely proportional to portion size
+    food.density = food.calories / food.item_weight
 end
 
 Food.emergency_ration_calories = 1000

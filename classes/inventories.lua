@@ -639,20 +639,37 @@ local function consume_specific_food(entry, inventories, amount, item_name)
 end
 
 --- Tries to consume the given amount of calories. Returns the percentage of the amount that was consumed.
+--- One food is chosen at random, weighted by caloric density (kcal per 100g), and all needed calories
+--- are drawn from it. If it runs out, another food is picked from those remaining, again weighted by
+--- density. This averages to density-proportional consumption across updates while making only one
+--- API call in the common case.
+--- @param entry Entry housing entry (used for garbage production side-effect)
+--- @param inventories table[] array of inventories to consume from
+--- @param amount number calories to consume
+--- @param diet string[] food item names available in the diet
+--- @return number satisfaction fraction of calories actually consumed (0–1)
 local function consume_food(entry, inventories, amount, diet)
-    local items = Table.copy(diet)
-    local to_consume = amount
-    Tirislib.Arrays.shuffle(items)
+    local diet_foods = {}
+    for _, item_name in pairs(diet) do
+        diet_foods[item_name] = food_values[item_name]
+    end
 
-    for i = 1, #items do
-        to_consume = to_consume - consume_specific_food(entry, inventories, to_consume, items[i])
-        if to_consume < 0.001 then
-            return 1 -- 100% was consumed
+    local remaining = amount
+
+    while remaining > 0.001 and next(diet_foods) ~= nil do
+        local item_name, food = Table.pick_random_subtable_weighted_by_key(diet_foods, "density")
+        local to_request = remaining
+        local consumed = consume_specific_food(entry, inventories, to_request, food.name)
+        remaining = remaining - consumed
+
+        if consumed < to_request - 0.001 then
+            diet_foods[item_name] = nil
         end
     end
 
-    return (amount - to_consume) / amount
+    return (amount - remaining) / amount
 end
+Inventories.consume_food = consume_food
 
 local taste_category_count = Table.count(Taste)
 
