@@ -224,18 +224,18 @@ Tirislib.Testing.add_test_case(
 -- << fear >>
 
 Tirislib.Testing.add_test_case(
-    "Fear creates a happiness malus",
+    "Fear creates a sanity malus",
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
 
-        -- set fear to a significant value
-        storage.fear = -20
+        -- set fear to a significant value within the valid range
+        storage.fear = 5
 
         Register.update_entry(entry, game.tick + 100)
 
-        -- the fear happiness summand should be negative
-        Assert.less_than(entry[EK.happiness_summands][HappinessSummand.fear], 0,
+        -- the fear sanity summand should be negative
+        Assert.less_than(entry[EK.sanity_summands][SanitySummand.fear], 0,
             "fear summand should be negative when fear is present")
     end,
     setup,

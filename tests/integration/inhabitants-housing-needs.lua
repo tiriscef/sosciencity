@@ -73,8 +73,8 @@ Tirislib.Testing.add_test_case(
 
         local hf, htf, hs = run_evaluate_water(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.thirst], 1, "happiness factor should be 1 with enough water")
-        Assert.equals(htf[HealthFactor.thirst], 1, "health factor should be 1 with enough water")
+        Assert.is_nil(hf[HappinessFactor.thirst], "happiness factor should be absent (neutral) with enough water")
+        Assert.is_nil(htf[HealthFactor.thirst], "health factor should be absent (neutral) with enough water")
         Assert.equals(hs[HealthSummand.water], DrinkingWater.values["drinkable-water"].healthiness, "health summand should equal water healthiness")
     end,
     setup,
@@ -97,8 +97,8 @@ Tirislib.Testing.add_test_case(
 
         local hf, htf, _ = run_evaluate_water(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.thirst], 1, "partial water supply should still give factor 1 (binary)")
-        Assert.equals(htf[HealthFactor.thirst], 1, "partial water supply should still give factor 1 (binary)")
+        Assert.is_nil(hf[HappinessFactor.thirst], "happiness factor should be absent (neutral) when water is available")
+        Assert.is_nil(htf[HealthFactor.thirst], "health factor should be absent (neutral) when water is available")
     end,
     setup,
     teardown
@@ -121,7 +121,7 @@ Tirislib.Testing.add_test_case(
 
         Assert.equals(hf[HappinessFactor.thirst], Biology.dehydration.happiness_factor, "happiness factor should be dehydration floor with no water")
         Assert.equals(htf[HealthFactor.thirst], Biology.dehydration.health_factor, "health factor should be dehydration floor with no water")
-        Assert.equals(hs[HealthSummand.water], 0, "health summand should be 0 with no water")
+        Assert.is_nil(hs[HealthSummand.water], "health summand should be absent when water quality is 0")
     end,
     setup,
     teardown
@@ -163,8 +163,8 @@ Tirislib.Testing.add_test_case(
 
         local hf, htf, hs = run_evaluate_water(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.thirst], 1, "empty house should report full satisfaction when water is available")
-        Assert.equals(htf[HealthFactor.thirst], 1, "empty house should report full satisfaction when water is available")
+        Assert.is_nil(hf[HappinessFactor.thirst], "happiness factor should be absent (neutral) when water is available")
+        Assert.is_nil(htf[HealthFactor.thirst], "health factor should be absent (neutral) when water is available")
         Assert.equals(hs[HealthSummand.water], DrinkingWater.values["clean-water"].healthiness, "health summand should reflect clean-water healthiness")
     end,
     setup,
@@ -182,7 +182,7 @@ Tirislib.Testing.add_test_case(
 
         Assert.equals(hf[HappinessFactor.thirst], Biology.dehydration.happiness_factor, "empty house with no water should return dehydration floor")
         Assert.equals(htf[HealthFactor.thirst], Biology.dehydration.health_factor, "empty house with no water should return dehydration floor")
-        Assert.equals(hs[HealthSummand.water], 0, "health summand should be 0 with no water")
+        Assert.is_nil(hs[HealthSummand.water], "health summand should be absent when water quality is 0")
     end,
     setup,
     teardown

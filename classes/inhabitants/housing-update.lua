@@ -11,7 +11,7 @@ local Time = require("constants.time")
 local castes = Castes.values
 local disease_values = Diseases.values
 local Utils = Tirislib.Utils
-local Arrays = Tirislib.Arrays
+local Tables = Tirislib.Tables
 local map_range = Utils.map_range
 local set_power_usage = Subentities.set_power_usage
 local HEALTHY = DiseaseGroup.HEALTHY
@@ -86,7 +86,7 @@ Inhabitants.update_sanity = update_sanity
 --- @param factors number[] array of multiplicative factors (1.0 = neutral)
 --- @return number nominal value, clamped to >= 0
 local function get_nominal_value(influences, factors)
-    return max(0, Arrays.sum(influences) * Arrays.product(factors))
+    return max(0, Tables.sum(influences) * Tables.product(factors))
 end
 Inhabitants.get_nominal_value = get_nominal_value
 
@@ -274,14 +274,19 @@ local function update_house(entry, delta_ticks)
     local caste_id = entry[EK.type]
     local caste = castes[caste_id]
 
-    local happiness_summands = entry[EK.happiness_summands]
-    local happiness_factors = entry[EK.happiness_factors]
+    local happiness_summands = {}
+    local happiness_factors = {}
+    local health_summands = {}
+    local health_factors = {}
+    local sanity_summands = {}
+    local sanity_factors = {}
 
-    local health_summands = entry[EK.health_summands]
-    local health_factors = entry[EK.health_factors]
-
-    local sanity_summands = entry[EK.sanity_summands]
-    local sanity_factors = entry[EK.sanity_factors]
+    entry[EK.happiness_summands] = happiness_summands
+    entry[EK.happiness_factors] = happiness_factors
+    entry[EK.health_summands] = health_summands
+    entry[EK.health_factors] = health_factors
+    entry[EK.sanity_summands] = sanity_summands
+    entry[EK.sanity_factors] = sanity_factors
 
     local inhabitants = entry[EK.inhabitants]
 
@@ -298,16 +303,26 @@ local function update_house(entry, delta_ticks)
     update_health(entry, nominal_health, delta_ticks)
 
     local new_health = entry[EK.health]
-    happiness_summands[HappinessSummand.health] = (inhabitants > 0 and new_health > 10) and (new_health - 10) ^ 0.5 or 0
-    happiness_factors[HappinessFactor.bad_health] = (inhabitants > 0) and map_range(new_health, 0, 10, 0, 1) ^ 0.5 or 1
+    if inhabitants > 0 then
+        if new_health > 10 then
+            happiness_summands[HappinessSummand.health] = (new_health - 10) ^ 0.5
+        elseif new_health < 10 then
+            happiness_factors[HappinessFactor.bad_health] = map_range(new_health, 0, 10, 0, 1) ^ 0.5
+        end
+    end
 
     -- update sanity
     local nominal_sanity = get_nominal_value(sanity_summands, sanity_factors)
     update_sanity(entry, nominal_sanity, delta_ticks)
 
     local new_sanity = entry[EK.sanity]
-    happiness_summands[HappinessSummand.sanity] = (inhabitants > 0 and new_sanity > 10) and (new_sanity - 10) ^ 0.5 or 0
-    happiness_factors[HappinessFactor.bad_sanity] = (inhabitants > 0) and map_range(new_sanity, 0, 10, 0, 1) ^ 0.5 or 1
+    if inhabitants > 0 then
+        if new_sanity > 10 then
+            happiness_summands[HappinessSummand.sanity] = (new_sanity - 10) ^ 0.5
+        elseif new_sanity < 10 then
+            happiness_factors[HappinessFactor.bad_sanity] = map_range(new_sanity, 0, 10, 0, 1) ^ 0.5
+        end
+    end
 
     -- update happiness
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)

@@ -70,9 +70,7 @@ local function evaluate_housing(entry, happiness_summands, sanity_summands, cast
 
     if has_power(entry) then
         happiness_summands[HappinessSummand.power] = caste.power_bonus
-        happiness_summands[HappinessSummand.no_power] = 0
     else
-        happiness_summands[HappinessSummand.power] = 0
         happiness_summands[HappinessSummand.no_power] = caste.no_power_malus
     end
 end
@@ -82,17 +80,19 @@ Inhabitants.evaluate_housing = evaluate_housing
 -- << society evaluation >>
 
 local function evaluate_sosciety(happiness_summands, health_summands, sanity_summands, caste)
-    happiness_summands[HappinessSummand.ember] = storage.caste_bonuses[Type.ember]
-    health_summands[HealthSummand.plasma] = storage.caste_bonuses[Type.plasma]
+    local ember_bonus = storage.caste_bonuses[Type.ember]
+    if ember_bonus ~= 0 then
+        happiness_summands[HappinessSummand.ember] = ember_bonus
+    end
 
-    local fear_malus = storage.fear * caste.fear_resilience
-    happiness_summands[HappinessSummand.fear] = fear_malus
-    if fear_malus > 5 then
-        health_summands[HealthSummand.fear] = fear_malus / 2
-        sanity_summands[SanitySummand.fear] = fear_malus / 2
-    else
-        health_summands[HealthSummand.fear] = 0
-        sanity_summands[SanitySummand.fear] = 0
+    local plasma_bonus = storage.caste_bonuses[Type.plasma]
+    if plasma_bonus ~= 0 then
+        health_summands[HealthSummand.plasma] = plasma_bonus
+    end
+
+    local fear_malus = -storage.fear * caste.fear_susceptibility
+    if fear_malus ~= 0 then
+        sanity_summands[SanitySummand.fear] = fear_malus
     end
 
     sanity_summands[SanitySummand.innate] = caste.innate_sanity
@@ -107,7 +107,9 @@ local function evaluate_neighborhood(entry, happiness_summands, health_summands)
     for _, nightclub in Neighborhood.iterate_type(entry, Type.nightclub) do
         nightclub_bonus = max(nightclub_bonus, nightclub[EK.performance])
     end
-    happiness_summands[HappinessSummand.nightclub] = nightclub_bonus
+    if nightclub_bonus ~= 0 then
+        happiness_summands[HappinessSummand.nightclub] = nightclub_bonus
+    end
 
     local animal_farm_count = 0
     for _, animal_farm in Neighborhood.iterate_type(entry, Type.animal_farm) do
@@ -115,8 +117,10 @@ local function evaluate_neighborhood(entry, happiness_summands, health_summands)
             animal_farm_count = animal_farm_count + 1
         end
     end
-    happiness_summands[HappinessSummand.gross_industry] = -1 * animal_farm_count ^ 0.5
-    health_summands[HealthSummand.gross_industry] = -2 * animal_farm_count ^ 0.7
+    if animal_farm_count > 0 then
+        happiness_summands[HappinessSummand.gross_industry] = -1 * animal_farm_count ^ 0.5
+        health_summands[HealthSummand.gross_industry] = -2 * animal_farm_count ^ 0.7
+    end
 end
 Inhabitants.evaluate_neighborhood = evaluate_neighborhood
 

@@ -663,26 +663,9 @@ local function add_diet_effects(entry, diet, caste)
     local health_factors = entry[EK.health_factors]
     local sanity = entry[EK.sanity_summands]
 
-    local has_food = #diet > 0
-    happiness_factors[HappinessFactor.hunger] = has_food and 1. or Biology.starvation.happiness_factor
-    health_factors[HealthFactor.hunger] = has_food and 1. or Biology.starvation.health_factor
-
-    -- handle the annoying edge case of no food at all
     if #diet == 0 then
-        happiness[HappinessSummand.taste] = 0.
-        happiness[HappinessSummand.food_luxury] = 0.
-        happiness[HappinessSummand.food_variety] = 0.
-        happiness_factors[HappinessFactor.not_enough_food_variety] = 1.
-
-        health[HealthSummand.nutrients] = 0
-        health[HealthSummand.food] = 0
-
-        sanity[SanitySummand.taste] = 0
-        sanity[SanitySummand.favorite_taste] = 0
-        sanity[SanitySummand.disliked_taste] = 0
-        sanity[SanitySummand.single_food] = 0
-        sanity[SanitySummand.no_variety] = 0
-        sanity[SanitySummand.just_neutral] = 0
+        happiness_factors[HappinessFactor.hunger] = Biology.starvation.happiness_factor
+        health_factors[HealthFactor.hunger] = Biology.starvation.health_factor
 
         if entry[EK.inhabitants] > 0 then
             Communication.warning(WarningType.no_food, entry)
@@ -746,10 +729,12 @@ local function add_diet_effects(entry, diet, caste)
     happiness[HappinessSummand.food_luxury] = caste.desire_for_luxury * luxury
 
     local variety = table_size(groups) - caste.minimum_food_count
-    happiness[HappinessSummand.food_variety] = (variety > 0) and (variety * 0.5) or 0
+    if variety > 0 then
+        happiness[HappinessSummand.food_variety] = variety * 0.5
+    end
 
-    happiness_factors[HappinessFactor.not_enough_food_variety] = (variety < 0) and 0.6 or 1.
     if variety < 0 then
+        happiness_factors[HappinessFactor.not_enough_food_variety] = 0.6
         Communication.warning(WarningType.insufficient_food_variety, entry)
     end
 
@@ -757,12 +742,20 @@ local function add_diet_effects(entry, diet, caste)
     health[HealthSummand.food] = intrinsic_healthiness
 
     sanity[SanitySummand.taste] = taste_quality * 0.5
-    sanity[SanitySummand.favorite_taste] = (dominant_taste == favorite_taste) and 4 or 0
-    sanity[SanitySummand.disliked_taste] = (dominant_taste == least_favored_taste) and -4 or 0
-    sanity[SanitySummand.single_food] = (#diet == 1) and -3 or 0
-    sanity[SanitySummand.no_variety] =
-        (taste_counts[dominant_taste] == #diet and dominant_taste ~= Taste.varying) and -3 or 0
-    sanity[SanitySummand.just_neutral] = (taste_counts[Taste.neutral] == #diet) and -3 or 0
+    if dominant_taste == favorite_taste then
+        sanity[SanitySummand.favorite_taste] = 4
+    elseif dominant_taste == least_favored_taste then
+        sanity[SanitySummand.disliked_taste] = -4
+    end
+    if #diet == 1 then
+        sanity[SanitySummand.single_food] = -3
+    end
+    if taste_counts[dominant_taste] == #diet and dominant_taste ~= Taste.varying then
+        sanity[SanitySummand.no_variety] = -3
+    end
+    if taste_counts[Taste.neutral] == #diet then
+        sanity[SanitySummand.just_neutral] = -3
+    end
 end
 
 --- Evaluates the available diet for the given housing entry and consumes the needed calories.

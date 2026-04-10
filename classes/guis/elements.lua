@@ -318,7 +318,7 @@ function Gui.Elements.Datalist.update_operand_entries(
     for name, id in pairs(summand_enums) do
         local value = summands[id]
 
-        if value ~= 0 then
+        if value ~= nil and value ~= 0 then
             set_kv_pair_value(data_list, name, Locale.summand(value))
             set_kv_pair_visibility(data_list, name, true)
         else
@@ -329,7 +329,7 @@ function Gui.Elements.Datalist.update_operand_entries(
     for name, id in pairs(factor_enums) do
         local value = factors[id]
 
-        if value ~= 1. then
+        if value ~= nil and value ~= 1. then
             set_kv_pair_value(data_list, name, Locale.factor(value))
             set_kv_pair_visibility(data_list, name, true)
         else

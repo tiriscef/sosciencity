@@ -11,7 +11,6 @@ HappinessSummand.food_luxury = 6
 HappinessSummand.food_variety = 7
 HappinessSummand.no_power = 8
 HappinessSummand.power = 9
-HappinessSummand.fear = 10
 HappinessSummand.ember = 11
 HappinessSummand.garbage = 12
 HappinessSummand.gross_industry = 13

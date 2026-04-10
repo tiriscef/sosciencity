@@ -53,6 +53,12 @@ local function add_caste_infos(container, caste_id)
         {"sosciencity.water"},
         {"sosciencity.show-water-demand", caste.water_demand * Time.minute}
     )
+    Gui.Elements.Datalist.add_kv_pair(
+        caste_data,
+        "fear-susceptibility",
+        {"sosciencity.fear-susceptibility"},
+        {"sosciencity.show-fear-susceptibility", caste.fear_susceptibility * 100}
+    )
 
     local housing_flow = Gui.Elements.Datalist.add_kv_flow(caste_data, "housing-qualities", {"sosciencity.housing"})
     housing_flow.add {
