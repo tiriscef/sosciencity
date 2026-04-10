@@ -18,7 +18,7 @@ local Castes = {}
 --- @field breedable boolean can reproduce naturally via upbringing stations
 --- @field tech_name string technology required to unlock this caste
 --- @field efficiency_tech string technology that improves this caste's efficiency bonus
---- @field fear_resilience number multiplier on fear malus (0 = full effect, 1 = immune)
+--- @field fear_susceptibility number multiplier on fear sanity malus (0 = immune, 1 = full effect)
 --- @field calorific_demand number kcal per day (converted to kcal/tick in postprocessing)
 --- @field power_demand number kW (converted to J/tick in postprocessing)
 --- @field power_bonus number happiness summand when power is sufficient
@@ -54,7 +54,7 @@ Castes.values = {
         breedable = true,
         tech_name = "upbringing",
         efficiency_tech = "clockwork-caste-efficiency",
-        fear_resilience = 0.5,
+        fear_susceptibility = 0.7,
         calorific_demand = 3200, -- in kcal per day
         power_demand = 12, -- in kW
         power_bonus = 2,
@@ -102,7 +102,7 @@ Castes.values = {
         breedable = true,
         tech_name = "upbringing",
         efficiency_tech = "orchid-caste-efficiency",
-        fear_resilience = 1,
+        fear_susceptibility = 1,
         calorific_demand = 2800,
         power_demand = 10,
         power_bonus = 2,
@@ -148,7 +148,7 @@ Castes.values = {
         breedable = false,
         tech_name = "gunfire-caste",
         efficiency_tech = "gunfire-caste-efficiency",
-        fear_resilience = 0,
+        fear_susceptibility = 0.4,
         calorific_demand = 3680,
         power_demand = 2,
         power_bonus = 2,
@@ -198,7 +198,7 @@ Castes.values = {
         breedable = true,
         tech_name = "upbringing",
         efficiency_tech = "ember-caste-efficiency",
-        fear_resilience = 1.2,
+        fear_susceptibility = 1,
         calorific_demand = 2000,
         power_demand = 10,
         power_bonus = 2,
@@ -241,7 +241,7 @@ Castes.values = {
         breedable = false,
         tech_name = "foundry-caste",
         efficiency_tech = "foundry-caste-efficiency",
-        fear_resilience = 0.7,
+        fear_susceptibility = 1,
         calorific_demand = 2240,
         power_demand = 10,
         power_bonus = 2,
@@ -288,7 +288,7 @@ Castes.values = {
         breedable = false,
         tech_name = "gleam-caste",
         efficiency_tech = "gleam-caste-efficiency",
-        fear_resilience = 1,
+        fear_susceptibility = 1,
         calorific_demand = 2160,
         power_demand = 10,
         power_bonus = 2,
@@ -333,7 +333,7 @@ Castes.values = {
         breedable = false,
         tech_name = "aurora-caste",
         efficiency_tech = "aurora-caste-efficiency",
-        fear_resilience = 2,
+        fear_susceptibility = 1,
         calorific_demand = 2000,
         power_demand = 35,
         power_bonus = 2,
@@ -384,7 +384,7 @@ Castes.values = {
         breedable = false,
         tech_name = "plasma-caste",
         efficiency_tech = "plasma-caste-efficiency",
-        fear_resilience = 1,
+        fear_susceptibility = 0.4,
         calorific_demand = 2400,
         power_demand = 6,
         power_bonus = 2,

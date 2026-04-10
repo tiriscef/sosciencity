@@ -672,30 +672,32 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << fear >>
 
+local FEAR_CAP = 10
+
 --- Lowers the population's fear over time. Assumes an update rate of 10 ticks.
---- The fear level decreases after 2 minutes without a tragic event and the rate is affected by the time since the event.
---- A fear level of 10 will decrease to 0 after 12.5 minutes.
+--- Fear decreases after 2 minutes without a tragic event; the rate is proportional to the time since the last event.
+--- A fear level of 10 will decrease to 0 after roughly 15 minutes.
 function Inhabitants.ease_fear(current_tick)
-    local coefficient = 1e-7
+    local coefficient = 8e-8
     local time_since_last_event = current_tick - (storage.last_fear_event or 0)
 
-    if time_since_last_event > 7200 then -- 2 minutes
+    if time_since_last_event > Time.nauvis_day then -- 2 minutes
         storage.fear = max(0, storage.fear - time_since_last_event * coefficient)
     end
 end
 
 --- Adds fear after a civil building got destroyed.
+--- Fear approaches the cap of 10 with diminishing returns: each event closes 10% of the remaining gap.
 function Inhabitants.add_fear()
     storage.last_fear_event = game.tick
-    storage.fear = storage.fear + 0.25
+    storage.fear = FEAR_CAP - (FEAR_CAP - storage.fear) * 0.9
 end
 
 --- Adds fear after an inhabited house was destroyed.
+--- Closes 15% of the remaining gap to the cap (larger shock than a generic building).
 function Inhabitants.add_casualty_fear(destroyed_house)
-    Inhabitants.add_fear()
-
-    local casualties = destroyed_house[EK.inhabitants]
-    storage.fear = storage.fear + 0.05 * casualties
+    storage.last_fear_event = game.tick
+    storage.fear = FEAR_CAP - (FEAR_CAP - storage.fear) * 0.85
     Communication.report_death(destroyed_house[EK.inhabitants], DeathCause.killed)
 end
 

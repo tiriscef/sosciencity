@@ -13,7 +13,6 @@ local Housing = require("constants.housing")
 
 local get_housing_details = Housing.get
 local get_capacity = Housing.get_capacity
-local Arrays = Tirislib.Arrays
 local Tables = Tirislib.Tables
 local random = math.random
 
@@ -60,14 +59,14 @@ function Inhabitants.create_house(entry)
 
     entry[EK.last_age_shift] = game.tick
 
-    entry[EK.happiness_summands] = Arrays.new(Tables.count(HappinessSummand), 0.)
-    entry[EK.happiness_factors] = Arrays.new(Tables.count(HappinessFactor), 1.)
+    entry[EK.happiness_summands] = {}
+    entry[EK.happiness_factors] = {}
 
-    entry[EK.health_summands] = Arrays.new(Tables.count(HealthSummand), 0.)
-    entry[EK.health_factors] = Arrays.new(Tables.count(HealthFactor), 1.)
+    entry[EK.health_summands] = {}
+    entry[EK.health_factors] = {}
 
-    entry[EK.sanity_summands] = Arrays.new(Tables.count(SanitySummand), 0.)
-    entry[EK.sanity_factors] = Arrays.new(Tables.count(SanityFactor), 1.)
+    entry[EK.sanity_summands] = {}
+    entry[EK.sanity_factors] = {}
 
     entry[EK.strike_level] = 0
     entry[EK.garbage_progress] = 0

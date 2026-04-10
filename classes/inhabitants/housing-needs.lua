@@ -88,9 +88,13 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
     end
 
     local has_water = satisfaction > 0
-    happiness_factors[HappinessFactor.thirst] = has_water and 1. or Biology.dehydration.happiness_factor
-    health_factors[HealthFactor.thirst] = has_water and 1. or Biology.dehydration.health_factor
-    health_summands[HealthSummand.water] = quality
+    if not has_water then
+        happiness_factors[HappinessFactor.thirst] = Biology.dehydration.happiness_factor
+        health_factors[HealthFactor.thirst] = Biology.dehydration.health_factor
+    end
+    if quality ~= 0 then
+        health_summands[HealthSummand.water] = quality
+    end
 
     entry[EK.has_water] = satisfaction >= 0.9
 end
