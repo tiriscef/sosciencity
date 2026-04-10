@@ -270,7 +270,15 @@ function Tirislib.RecipeGenerator.create(details)
     Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
     Tirislib.RecipeGenerator.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
 
-    recipe:add_unlock(details.unlock)
+    -- unlock (accepts a single string or a table of strings)
+    local unlock = details.unlock
+    if type(unlock) == "table" then
+        for _, tech in pairs(unlock) do
+            recipe:add_unlock(tech)
+        end
+    else
+        recipe:add_unlock(unlock)
+    end
 
     local category = details.category or get_standard_category(recipe)
     recipe:set_field("category", category)
@@ -402,7 +410,7 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
     -- separate theme entries from real entries
     local real_ingredients, ingredient_theme_entries = separate_themes(prototype.ingredients)
     local real_results, result_theme_entries = separate_themes(prototype.results)
-    prototype.ingredients = real_ingredients
+    prototype.ingredients = real_ingredients or {}
     prototype.results = real_results or {}
 
     -- find product and derive missing fields
@@ -446,8 +454,12 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
         recipe:transform_result_entries(function(e) Tirislib.RecipeEntry.transform_amount(e, math.floor) end)
     end
 
-    -- unlock
-    if unlock then
+    -- unlock (accepts a single string or a table of strings)
+    if type(unlock) == "table" then
+        for _, tech in pairs(unlock) do
+            recipe:add_unlock(tech)
+        end
+    elseif unlock then
         recipe:add_unlock(unlock)
     end
 

@@ -10,6 +10,10 @@ local medicine_items = {
         sprite_variations = {name = "medical-report", count = 3, include_icon = true}
     },
     {
+        name = "surgery-instruments",
+        use_placeholder_icon = true
+    },
+    {
         name = "activated-carbon",
         sprite_variations = {name = "activated-carbon", count = 3, include_icon = true}
     },
@@ -56,6 +60,18 @@ local medicine_items = {
     {
         name = "huwan-hormones",
         use_placeholder_icon = true
+    },
+    {
+        name = "antiemetics",
+        use_placeholder_icon = true
+    },
+    {
+        name = "antitoxin",
+        use_placeholder_icon = true
+    },
+    {
+        name = "antivirals",
+        use_placeholder_icon = true
     }
 }
 
@@ -63,6 +79,34 @@ Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", s
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
+
+-- TODO: early game handcrafting recipe for surgery instruments, then a medical assembler one
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    ingredients = {
+        {theme = "plating", amount = 1},
+        {theme = "plating2", amount = 1},
+    },
+    results = {
+        {name = "surgery-instruments", amount = 1}
+    },
+    energy_required = 5
+}
+
+Tirislib.RecipeGenerator.create {
+    product = "surgery-instruments",
+    themes = {
+        {"plating", 1},
+        {"plating2", 1}
+    },
+    ingredients = {
+        {type = "fluid", name = "steam", amount = 200}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 5,
+    allow_productivity = true,
+    unlock = "medbay"
+}
 
 Tirislib.RecipeGenerator.create {
     name = "activated-carbon-from-sawdust",
