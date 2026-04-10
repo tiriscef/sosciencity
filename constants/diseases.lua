@@ -97,8 +97,9 @@ Diseases.values = {
     [5] = {
         name = "biter-bite",
         cure_items = {
-            ["bandage"] = 1,
-            ["antibiotics"] = 1
+            ["bandage"] = 2,
+            ["antibiotics"] = 1,
+            ["antitoxin"] = 1
         },
         curing_workload = 1,
         lethality = 0.1,
@@ -127,7 +128,7 @@ Diseases.values = {
     [1000] = {
         name = "depression",
         cure_items = {
-            ["psychotropics"] = 1
+            ["psychotropics"] = 4
         },
         curing_workload = 15,
         curing_facility = Type.psych_ward,
@@ -138,7 +139,7 @@ Diseases.values = {
     [1001] = {
         name = "schizophrenia",
         cure_items = {
-            ["psychotropics"] = 1
+            ["psychotropics"] = 10
         },
         curing_workload = 15,
         curing_facility = Type.psych_ward,
@@ -149,7 +150,7 @@ Diseases.values = {
     [1002] = {
         name = "reality-loss",
         cure_items = {
-            ["psychotropics"] = 1
+            ["psychotropics"] = 2
         },
         curing_workload = 10,
         curing_facility = Type.psych_ward,
@@ -187,7 +188,7 @@ Diseases.values = {
     [2001] = {
         name = "yeast-infection",
         cure_items = {
-            ["antimycotics"] = 1
+            ["antimycotics"] = 2
         },
         curing_workload = 2,
         natural_recovery = 3 * Time.nauvis_day,
@@ -199,7 +200,7 @@ Diseases.values = {
     [2002] = {
         name = "riverhorse-like-flu",
         cure_items = {
-            ["antibiotics"] = 1
+            ["antibiotics"] = 2
         },
         curing_workload = 1,
         lethality = 0.01,
@@ -222,8 +223,8 @@ Diseases.values = {
     [2004] = {
         name = "diarrhea",
         cure_items = {
-            ["isotonic-saline-solution"] = 1,
-            ["activated-carbon"] = 1
+            ["isotonic-saline-solution"] = 3,
+            ["activated-carbon"] = 3
         },
         curing_workload = 1,
         natural_recovery = 2 * Time.nauvis_day,
@@ -354,25 +355,42 @@ Diseases.values = {
     },
     -- 9000+: primarily malnutrition
     [9000] = {
-        name = "kwashiorkor",
+        name = "malnutrition",
         cure_items = {
-            ["vitamine-supplements"] = 1,
             ["nutritional-supplements"] = 1
         },
-        curing_workload = 3,
-        lethality = 0.9,
-        natural_recovery = 3 * Time.nauvis_day,
-        work_effectivity = 0,
+        curing_workload = 1,
+        lethality = 0.1,
+        natural_recovery = 5 * Time.nauvis_day,
+        escalation = "severe-malnutrition",
+        escalation_probability = 0.7,
+        work_effectivity = 0.5,
         reports_per_treatment = 1
     },
     [9001] = {
-        name = "marasmus",
+        name = "severe-malnutrition",
         cure_items = {
-            ["sosciencity-emergency-ration"] = 1
+            ["nutritional-supplements"] = 1,
+            ["vitamine-supplements"] = 1
         },
         curing_workload = 3,
-        lethality = 0.9,
-        natural_recovery = 3 * Time.nauvis_day,
+        lethality = 0.5,
+        natural_recovery = 5 * Time.nauvis_day,
+        escalation = "extreme-malnutrition",
+        escalation_probability = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [9002] = {
+        name = "extreme-malnutrition",
+        cure_items = {
+            ["nutritional-supplements"] = 2,
+            ["vitamine-supplements"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 5,
+        lethality = 1,
+        natural_recovery = 5 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -419,9 +437,80 @@ Diseases.values = {
         reports_per_treatment = 1
     },
     -- 11000+: primarily food poisoning
-
+    [11000] = {
+        name = "food-poisoning",
+        cure_items = {
+            ["activated-carbon"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "diarrhea",
+        escalation_probability = 0.5,
+        work_effectivity = 0.4,
+        reports_per_treatment = 1
+    },
+    [11001] = {
+        name = "salmonella",
+        cure_items = {
+            ["antibiotics"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.15,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [11002] = {
+        name = "botulism",
+        cure_items = {
+            ["antitoxin"] = 1,
+            ["antibiotics"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.4,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [11003] = {
+        name = "listeriosis",
+        cure_items = {
+            ["antibiotics"] = 2
+        },
+        curing_workload = 3,
+        lethality = 0.25,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [11004] = {
+        name = "hepatitis-a",
+        cure_items = {
+            ["antivirals"] = 2
+        },
+        curing_workload = 5,
+        lethality = 0.1,
+        natural_recovery = 5 * Time.nauvis_day,
+        work_effectivity = 0.2,
+        reports_per_treatment = 1
+    },
     -- 12000+: primarily polluted water
-
+    [12000] = {
+        name = "water-poisoning",
+        cure_items = {
+            ["activated-carbon"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "diarrhea",
+        escalation_probability = 0.5,
+        work_effectivity = 0.4,
+        reports_per_treatment = 1
+    },
     -- 20000+: primarily hard work accident group
 
     -- 21000+: primarily office work accident group
@@ -429,8 +518,56 @@ Diseases.values = {
     -- 22000+: primarily moderate work accident group
 
     -- 30000+: fishing hut accident group
-
-    -- 31000+: hunting gut accident group
+    [30000] = {
+        name = "nausea",
+        cure_items = {
+            ["antiemetics"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 1 * Time.nauvis_day,
+        work_effectivity = 0.25,
+        reports_per_treatment = 0.25
+    },
+    -- 31000+: hunting hut accident group
+    [31000] = {
+        name = "animal-scratch",
+        cure_items = {
+            ["bandage"] = 1,
+            ["antibiotics"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 3 * Time.nauvis_day,
+        work_effectivity = 0.5,
+        reports_per_treatment = 0.5
+    },
+    [31001] = {
+        name = "sunburn",
+        cure_items = {
+            ["bandage"] = 1,
+            ["analgesics"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "skin-cancer",
+        escalation_probability = 0.05,
+        work_effectivity = 0.75,
+        reports_per_treatment = 0.5
+    },
+    -- 40000+: cancers
+    [40000] = {
+        name = "skin-cancer",
+        cure_items = {
+            -- the idea is: it's a local surgery, so no chemo
+            ["surgery-instruments"] = 1,
+            ["potent-analgesics"] = 1,
+            ["bandage"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.8,
+        natural_recovery = 10 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    }
 }
 
 local function get_disease_id(disease_name)
@@ -461,8 +598,7 @@ Diseases.categories = {
         ["schizophrenia"] = 50,
         ["reality-loss"] = 100,
         ["factorio-addiction"] = 100,
-        ["burnout"] = 100,
-        ["exhaustion"] = 200
+        ["burnout"] = 100
     },
     [DiseaseCategory.accident] = {
         ["limb-loss"] = 100,
@@ -471,8 +607,7 @@ Diseases.categories = {
         ["deep-cuts"] = 300,
         ["biter-bite"] = 50,
         ["joint-dislocation"] = 400,
-        ["hematoma"] = 400,
-        ["exhaustion"] = 200
+        ["hematoma"] = 400
     },
     [DiseaseCategory.birth_defect] = {
         ["lack-of-purple-blood-cells"] = 600,
@@ -485,12 +620,13 @@ Diseases.categories = {
     [DiseaseCategory.zoonosis] = {
         ["real-riverhorse-flu"] = 100
     },
-    [DiseaseCategory.infection] = {},
-    [DiseaseCategory.escalation] = {},
-    [DiseaseCategory.complication] = {},
+    [DiseaseCategory.infection] = {},    -- filled automatically
+    [DiseaseCategory.escalation] = {},   -- filled automatically
+    [DiseaseCategory.complication] = {}, -- filled automatically
     [DiseaseCategory.malnutrition] = {
-        ["kwashiorkor"] = 100,
-        ["marasmus"] = 100
+        ["malnutrition"] = 300,
+        ["severe-malnutrition"] = 100,
+        ["extreme-malnutrition"] = 10
     },
     [DiseaseCategory.dehydration] = {
         ["dehydration"] = 300,
@@ -498,79 +634,84 @@ Diseases.categories = {
         ["extreme-dehydration"] = 10
     },
     [DiseaseCategory.food_poisoning] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["diarrhea"] = 100
     },
     [DiseaseCategory.water_poisoning] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["diarrhea"] = 100
     },
     [DiseaseCategory.hard_work] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["limb-loss"] = 100,
+        ["broken-bone"] = 150,
+        ["burnt-skin"] = 300,
+        ["deep-cuts"] = 300,
+        ["biter-bite"] = 50,
+        ["joint-dislocation"] = 400,
+        ["hematoma"] = 400,
+        ["exhaustion"] = 400
     },
     [DiseaseCategory.office_work] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["rare-cold"] = 100,
+        ["burnt-skin"] = 200,
+        ["hematoma"] = 200,
+        ["exhaustion"] = 400,
+        ["depression"] = 50,
+        ["burnout"] = 50
     },
     [DiseaseCategory.moderate_work] = {
         ["limb-loss"] = 100 -- TODO: placeholder
     },
     [DiseaseCategory.fishing_hut] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["nausea"] = 100
     },
     [DiseaseCategory.hunting_hut] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["biter-bite"] = 50,
+        ["broken-bone"] = 200,
+        ["joint-dislocation"] = 400,
+        ["limb-loss"] = 50
     }
 }
 
 -- automatically fill the complication category
-Diseases.categories[DiseaseCategory.complication] =
-    Tirislib.LazyLuaq.from(Diseases.values):choose(
-    function(disease)
-        return disease.complication ~= nil, disease.complication
-    end
-):to_dictionary(
-    function()
-        return 1
-    end,
-    Tirislib.Utils.identity
-)
+Diseases.categories[DiseaseCategory.complication] = Tirislib.LazyLuaq.from(Diseases.values)
+    :choose(
+        function(disease)
+            return disease.complication ~= nil, disease.complication
+        end
+    )
+    :to_lookup(1)
 
 -- automatically fill the escalation category
-Diseases.categories[DiseaseCategory.escalation] =
-    Tirislib.LazyLuaq.from(Diseases.values):choose(
-    function(disease)
-        return disease.escalation ~= nil, disease.escalation
-    end
-):to_dictionary(
-    function()
-        return 1
-    end,
-    Tirislib.Utils.identity
-)
+Diseases.categories[DiseaseCategory.escalation] = Tirislib.LazyLuaq.from(Diseases.values)
+    :choose(
+        function(disease)
+            return disease.escalation ~= nil, disease.escalation
+        end
+    )
+    :to_lookup(1)
 
 -- automatically fill the infection category
-Diseases.categories[DiseaseCategory.infection] =
-    Tirislib.LazyLuaq.from(Diseases.values):choose(
-    function(disease)
-        return disease.contagiousness ~= nil, disease.name
-    end
-):to_dictionary(
-    function()
-        return 1
-    end,
-    Tirislib.Utils.identity
-)
+Diseases.categories[DiseaseCategory.infection] = Tirislib.LazyLuaq.from(Diseases.values)
+    :choose(
+        function(disease)
+            return disease.contagiousness ~= nil, disease.name
+        end
+    )
+    :to_lookup(1)
 
 -- exchange the disease-name-keys with their corresponding DiseaseIDs
-Diseases.categories =
-    Tirislib.LazyLuaq.from(Diseases.categories):select(
-    function(category)
-        return Tirislib.LazyLuaq.from(category):to_dictionary(
-            Tirislib.Utils.identity,
-            function(_, key)
-                return get_disease_id(key)
-            end
-        )
-    end
-):to_table()
+Diseases.categories = Tirislib.LazyLuaq.from(Diseases.categories)
+    :select(
+        function(category)
+            return Tirislib.LazyLuaq.from(category)
+                :to_dictionary(
+                    Tirislib.Utils.identity,
+                    function(_, key)
+                        return get_disease_id(key)
+                    end
+                )
+        end
+    )
+    :to_table()
 
 --- table with (disease category, diseased cause)-pairs
 Diseases.disease_causes = {
@@ -580,7 +721,7 @@ Diseases.disease_causes = {
     [DiseaseCategory.birth_defect] = DiseasedCause.birth,
     [DiseaseCategory.zoonosis] = DiseasedCause.zoonosis,
     [DiseaseCategory.malnutrition] = DiseasedCause.malnutrition,
-    [DiseaseCategory.dehydration] = DiseaseCategory.dehydration,
+    [DiseaseCategory.dehydration] = DiseasedCause.dehydration,
     [DiseaseCategory.food_poisoning] = DiseasedCause.food_poisoning,
     [DiseaseCategory.water_poisoning] = DiseasedCause.water_poisoning,
     [DiseaseCategory.hard_work] = DiseasedCause.workplace_accident,
@@ -637,13 +778,15 @@ do
 
     local function get_localised_properties(disease)
         local points = {
-            disease.natural_recovery and
-                {
-                    "sosciencity.natural-recovery",
-                    Tirislib.Locales.display_ingame_time(disease.natural_recovery),
-                    Tirislib.Locales.display_time(math.ceil(disease.natural_recovery / 3600) * 3600)
-                } or
-                {"sosciencity.no-natural-recovery"}
+            disease.natural_recovery
+            and
+            {
+                "sosciencity.natural-recovery",
+                Tirislib.Locales.display_ingame_time(disease.natural_recovery),
+                Tirislib.Locales.display_time(math.ceil(disease.natural_recovery / 3600) * 3600)
+            }
+            or
+            {"sosciencity.no-natural-recovery"}
         }
 
         if disease.lethality and disease.complication_lethality then
