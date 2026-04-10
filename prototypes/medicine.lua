@@ -88,7 +88,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "plating2", amount = 1},
     },
     results = {
-        {name = "surgery-instruments", amount = 1}
+        {type = "item", name = "surgery-instruments", amount = 1}
     },
     energy_required = 5
 }
