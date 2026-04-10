@@ -145,6 +145,24 @@ function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
     return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) / 5000000
 end
 
+--- Returns the disease progress for malnutrition.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_malnutrition_disease_progress(entry, delta_ticks)
+    if entry[EK.has_food] then return 0 end
+    return entry[EK.inhabitants] * delta_ticks / 100000
+end
+
+--- Returns the disease progress for dehydration.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_dehydration_disease_progress(entry, delta_ticks)
+    if entry[EK.has_water] then return 0 end
+    return entry[EK.inhabitants] * delta_ticks / 100000
+end
+
 --- Returns the disease progress from workplace accidents of the given category.
 --- @param entry Entry
 --- @param delta_ticks integer
@@ -197,7 +215,9 @@ Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.office_work] = Inhabitants.get_office_accident_progress,
     [DiseaseCategory.moderate_work] = Inhabitants.get_moderate_work_accident_progress,
     [DiseaseCategory.fishing_hut] = Inhabitants.get_fishing_hut_accident_progress,
-    [DiseaseCategory.hunting_hut] = Inhabitants.get_hunting_hut_accident_progress
+    [DiseaseCategory.hunting_hut] = Inhabitants.get_hunting_hut_accident_progress,
+    [DiseaseCategory.malnutrition] = Inhabitants.get_malnutrition_disease_progress,
+    [DiseaseCategory.dehydration] = Inhabitants.get_dehydration_disease_progress
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 
