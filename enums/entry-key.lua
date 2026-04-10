@@ -133,6 +133,10 @@ EK.ga_conceptions = 230
 EK.blood_donation_progress = 231
 --- the priority with which inhabitants will move into this house
 EK.housing_priority = 232
+--- does this house have enough food?
+EK.has_food = 233
+--- does this house have enough water?
+EK.has_water = 234
 
 -- water distributer
 
