@@ -18,7 +18,7 @@ local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor
 local max = math.max
 
-local evaluate_diet = Inventories.evaluate_diet
+local evaluate_diet
 
 -- cross-submodule references, set during load
 local evaluate_housing
@@ -33,6 +33,7 @@ local unemploy_inhabitants
 local get_caste_bonus_multiplier
 
 function Inhabitants.load_housing_update()
+    evaluate_diet = Inhabitants.evaluate_diet
     evaluate_housing = Inhabitants.evaluate_housing
     evaluate_water = Inhabitants.evaluate_water
     evaluate_sosciety = Inhabitants.evaluate_sosciety

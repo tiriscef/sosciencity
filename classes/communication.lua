@@ -583,8 +583,8 @@ local warn_fns = {
     [WarningType.insufficient_maintenance] = function()
         say_random_variant("warning-insufficient-maintenance")
     end,
-[WarningType.insufficient_food_variety] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-not-enough-foods"}, {"alert.not-enough-foods"})
+    [WarningType.food_distress] = function(entry)
+        alert(entry, {type = "virtual", name = "alert-food-distress"}, {"alert.food-distress"})
     end,
     [WarningType.insufficient_workers] = function(entry)
         alert(entry, {type = "virtual", name = "alert-not-enough-workers"}, {"alert.not-enough-workers"})

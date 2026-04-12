@@ -16,7 +16,6 @@ local test_surface
 
 local function setup()
     test_surface = Helpers.create_test_surface()
-    Helpers.reset_inhabitants_state()
     storage.technologies["upbringing"] = 1
 end
 
@@ -92,7 +91,7 @@ Tirislib.Testing.add_test_case(
             Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
         house[EK.inhabitants] = 10
 
-        -- supply less than needed — any nonzero satisfaction counts as "has water"
+        -- supply less than needed - any nonzero satisfaction counts as "has water"
         create_water_distributer({5, 0}, "drinkable-water", 10)
 
         local hf, htf, _ = run_evaluate_water(house, Time.minute)

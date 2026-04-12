@@ -15,11 +15,14 @@ local SanityFactor = require("enums.sanity-factor")
 local Castes = require("constants.castes")
 local Color = require("constants.color")
 local Diseases = require("constants.diseases")
+local Food = require("constants.food")
 local Housing = require("constants.housing")
 local Time = require("constants.time")
 
 local castes = Castes.values
 local diseases = Diseases.values
+local food_values = Food.values
+local required_nutrition_tags = Food.required_nutrition_tags
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
@@ -619,10 +622,91 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     update_housing_detailed_info_tab(tabbed_pane, entry)
 end
 
+local function update_housing_diet_tab(tabbed_pane, entry)
+    local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "diet")
+    local info = Inhabitants.get_diet_info(entry)
+
+    -- status label
+    local status = flow["diet-status"]
+    if info.no_food then
+        status.caption = {"sosciencity.diet-no-food"}
+        status.style.font_color = Color.red
+        status.visible = true
+    elseif info.is_distress then
+        status.caption = {"sosciencity.diet-distress"}
+        status.style.font_color = Color.orange
+        status.visible = true
+    else
+        status.visible = false
+    end
+
+    -- current diet list
+    local diet_items = flow["diet-items"]
+    diet_items.clear()
+    for _, item_name in pairs(info.diet) do
+        local label = diet_items.add {
+            type = "label",
+            caption = {"", format("[item=%s] ", item_name), food_values[item_name].localised_name},
+            elem_tooltip = {type = "item", name = item_name}
+        }
+        if info.favored_set[item_name] then
+            label.style.font_color = Color.green
+        elseif info.disliked_set[item_name] then
+            label.style.font_color = Color.red
+        end
+    end
+
+    -- nutrition tag coverage
+    local nutrition_flow = flow["diet-nutrition"]
+    for _, tag in pairs(required_nutrition_tags) do
+        local label = nutrition_flow[tostring(tag)]
+        local covered = info.covered_tags[tag]
+        label.caption = {"", covered and "✓ " or "✗ ", Locale.nutrition_tag(tag)}
+        label.style.font_color = covered and Color.green or Color.red
+    end
+end
+
+local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "diet", {"sosciencity.diet"})
+
+    local caste = castes[caste_id]
+
+    -- static: eating style info
+    local info_list = Datalist.create(flow, "diet-caste-info")
+    Datalist.add_kv_pair(info_list, "eating-behavior", {"sosciencity.eating-behavior"}, Locale.eating_behavior(caste.eating_behavior))
+    Datalist.add_kv_pair(info_list, "favored-taste", {"sosciencity.diet-favored-taste"}, Locale.taste_category(caste.favored_taste))
+    Datalist.get_kv_value_element(info_list, "favored-taste").style.font_color = Color.green
+    Datalist.add_kv_pair(info_list, "disliked-taste", {"sosciencity.diet-disliked-taste"}, Locale.taste_category(caste.least_favored_taste))
+    Datalist.get_kv_value_element(info_list, "disliked-taste").style.font_color = Color.red
+
+    Gui.Elements.Utils.separator_line(flow)
+
+    -- dynamic: status warning
+    local status = flow.add {type = "label", name = "diet-status"}
+    status.style.single_line = false
+    status.visible = false
+
+    -- dynamic: current diet
+    Gui.Elements.Label.header_label(flow, "diet-current-header", {"sosciencity.diet-current"})
+    flow.add {type = "flow", name = "diet-items", direction = "vertical"}
+
+    Gui.Elements.Utils.separator_line(flow)
+
+    -- dynamic: nutrition tag coverage
+    Gui.Elements.Label.header_label(flow, "diet-nutrition-header", {"sosciencity.diet-nutrition"})
+    local nutrition_flow = flow.add {type = "flow", name = "diet-nutrition", direction = "vertical"}
+    for _, tag in pairs(required_nutrition_tags) do
+        nutrition_flow.add {type = "label", name = tostring(tag)}
+    end
+
+    update_housing_diet_tab(tabbed_pane, entry)
+end
+
 local function update_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     update_housing_general_info_tab(tabbed_pane, entry)
     update_housing_detailed_info_tab(tabbed_pane, entry)
+    update_housing_diet_tab(tabbed_pane, entry)
 end
 
 local function create_housing_details(container, entry, player_id)
@@ -634,6 +718,7 @@ local function create_housing_details(container, entry, player_id)
     local caste_id = entry[EK.type]
     add_housing_general_info_tab(tabbed_pane, entry, caste_id, player_id)
     add_housing_detailed_info_tab(tabbed_pane, entry)
+    add_housing_diet_tab(tabbed_pane, entry, caste_id)
 end
 
 Gui.DetailsView.register_type(Type.empty_house, {

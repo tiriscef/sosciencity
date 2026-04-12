@@ -1,3 +1,4 @@
+local NutritionTag = require("enums.nutrition-tag")
 local Taste = require("enums.taste")
 
 --- Things that people like (and need) to eat.
@@ -11,18 +12,18 @@ local Food = {}
 --- @field carbohydrates number kcal per 100g from carbohydrates (converted from g/100g in postprocessing)
 --- @field proteins number kcal per 100g from proteins (converted from g/100g in postprocessing)
 --- @field calories number total kcal per item (fat + carbohydrates + proteins) * 10 * item_weight
---- @field density number kcal per 100g independent of portion size; used to weight item consumption rate
---- @field healthiness number intrinsic health quality of this food (1–9)
+--- @field density number kcal per 100g independent of item_weight; used to weight item consumption rate
+--- @field healthiness number intrinsic health quality of this food (1–10)
 --- @field food_category string broad category (meat, egg, fruit, vegetable, legume, processed, alien-*, seed, etc.)
 --- @field taste_category Taste taste profile of this food
---- @field taste_quality number how pleasant this food is to eat (1–10)
---- @field luxury number how prestigious or special this food is (1–10)
+--- @field appeal number overall desirability of this food (combining former taste quality and luxury) (1–10)
+--- @field nutrition_tags table<NutritionTag, true> nutritional role flags
 --- @field item_weight number kg per item; scales total calories per item — does not affect relative item consumption rate between foods
 --- @field group string variety group; foods sharing a group count as one for variety purposes
 --- @field max_spoil table<string, number> spoil ticks per quality level (set at runtime from prototype data)
 
---fat, carbohydrates and proteins are in g per 100g
---item_weight is in kg
+-- fat, carbohydrates and proteins are in g per 100g
+-- item_weight is in kg
 Food.values = {
     ["mammal-meat"] = {
         fat = 15,
@@ -31,8 +32,8 @@ Food.values = {
         healthiness = 4,
         food_category = "meat",
         taste_category = Taste.umami,
-        taste_quality = 7,
-        luxury = 7,
+        appeal = 7,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "meat"
     },
@@ -43,8 +44,8 @@ Food.values = {
         healthiness = 6,
         food_category = "meat",
         taste_category = Taste.neutral,
-        taste_quality = 5,
-        luxury = 6,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "bird-meat"
     },
@@ -55,8 +56,8 @@ Food.values = {
         healthiness = 1,
         food_category = "meat",
         taste_category = Taste.salty,
-        taste_quality = 3,
-        luxury = 4,
+        appeal = 4,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "biter-meat"
     },
@@ -67,8 +68,8 @@ Food.values = {
         healthiness = 5,
         food_category = "meat",
         taste_category = Taste.acidic,
-        taste_quality = 5,
-        luxury = 5,
+        appeal = 5,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "biter-meat"
     },
@@ -79,8 +80,8 @@ Food.values = {
         healthiness = 6,
         food_category = "meat",
         taste_category = Taste.soily,
-        taste_quality = 4,
-        luxury = 3,
+        appeal = 4,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "insect-meat"
     },
@@ -91,8 +92,8 @@ Food.values = {
         healthiness = 3,
         food_category = "meat",
         taste_category = Taste.salty,
-        taste_quality = 7,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "fish-meat"
     },
@@ -103,8 +104,8 @@ Food.values = {
         healthiness = 7,
         food_category = "meat",
         taste_category = Taste.umami,
-        taste_quality = 3,
-        luxury = 6,
+        appeal = 5,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "offal"
     },
@@ -115,8 +116,8 @@ Food.values = {
         healthiness = 5,
         food_category = "egg",
         taste_category = Taste.sulfuric,
-        taste_quality = 6,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "egg"
     },
@@ -127,8 +128,8 @@ Food.values = {
         healthiness = 6,
         food_category = "egg",
         taste_category = Taste.sulfuric,
-        taste_quality = 4,
-        luxury = 3,
+        appeal = 4,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "egg"
     },
@@ -139,8 +140,8 @@ Food.values = {
         healthiness = 5,
         food_category = "egg",
         taste_category = Taste.sulfuric,
-        taste_quality = 5,
-        luxury = 3,
+        appeal = 4,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "egg"
     },
@@ -151,8 +152,8 @@ Food.values = {
         healthiness = 4,
         food_category = "alien-fruit",
         taste_category = Taste.varying,
-        taste_quality = 3,
-        luxury = 1,
+        appeal = 2,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 2.2,
         group = "plant-mix"
     },
@@ -163,8 +164,8 @@ Food.values = {
         healthiness = 4,
         food_category = "alien-fungus",
         taste_category = Taste.varying,
-        taste_quality = 5,
-        luxury = 1,
+        appeal = 3,
+        nutrition_tags = {},
         item_weight = 3.8,
         group = "fungi-mix"
     },
@@ -175,8 +176,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-algae",
         taste_category = Taste.varying,
-        taste_quality = 4,
-        luxury = 1,
+        appeal = 3,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 2,
         group = "algae-mix"
     },
@@ -187,8 +188,8 @@ Food.values = {
         healthiness = 8,
         food_category = "alien-fruit",
         taste_category = Taste.neutral,
-        taste_quality = 2,
-        luxury = 1,
+        appeal = 2,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "unnamed-fruit"
     },
@@ -199,8 +200,8 @@ Food.values = {
         healthiness = 2,
         food_category = "alien-fruit",
         taste_category = Taste.soily,
-        taste_quality = 5,
-        luxury = 1,
+        appeal = 3,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "weird-berry"
     },
@@ -211,8 +212,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-vegetable",
         taste_category = Taste.umami,
-        taste_quality = 4,
-        luxury = 2,
+        appeal = 3,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 5,
         group = "brutal-pumpkin"
     },
@@ -223,8 +224,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-fruit",
         taste_category = Taste.weirdly_chemical,
-        taste_quality = 2,
-        luxury = 2,
+        appeal = 2,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "ortrot"
     },
@@ -235,8 +236,8 @@ Food.values = {
         healthiness = 6,
         food_category = "fruit",
         taste_category = Taste.fruity,
-        taste_quality = 7,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "apple"
     },
@@ -247,8 +248,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-fruit",
         taste_category = Taste.fruity,
-        taste_quality = 7,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "grapes"
     },
@@ -259,8 +260,8 @@ Food.values = {
         healthiness = 6,
         food_category = "fruit",
         taste_category = Taste.fruity,
-        taste_quality = 7,
-        luxury = 7,
+        appeal = 7,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "orange"
     },
@@ -271,8 +272,8 @@ Food.values = {
         healthiness = 6,
         food_category = "fruit",
         taste_category = Taste.acidic,
-        taste_quality = 7,
-        luxury = 7,
+        appeal = 7,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "lemon"
     },
@@ -283,8 +284,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-fruit",
         taste_category = Taste.fruity,
-        taste_quality = 4,
-        luxury = 3,
+        appeal = 4,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "zetorn"
     },
@@ -295,8 +296,8 @@ Food.values = {
         healthiness = 7,
         food_category = "fruit",
         taste_category = Taste.fruity,
-        taste_quality = 7,
-        luxury = 4,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "cherry"
     },
@@ -307,8 +308,8 @@ Food.values = {
         healthiness = 7,
         food_category = "fruit",
         taste_category = Taste.salty,
-        taste_quality = 7,
-        luxury = 6,
+        appeal = 7,
+        nutrition_tags = {[NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "olive"
     },
@@ -319,8 +320,8 @@ Food.values = {
         healthiness = 6,
         food_category = "vegetable",
         taste_category = Taste.spicy,
-        taste_quality = 7,
-        luxury = 4,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 2.5,
         group = "bell-pepper"
     },
@@ -331,8 +332,8 @@ Food.values = {
         healthiness = 5,
         food_category = "vegetable",
         taste_category = Taste.umami,
-        taste_quality = 3,
-        luxury = 3,
+        appeal = 3,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "potato"
     },
@@ -343,8 +344,8 @@ Food.values = {
         healthiness = 7,
         food_category = "seed",
         taste_category = Taste.umami,
-        taste_quality = 6,
-        luxury = 7,
+        appeal = 7,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true, [NutritionTag.carb_rich] = true},
         item_weight = 0.2,
         group = "sesame"
     },
@@ -355,8 +356,8 @@ Food.values = {
         healthiness = 5,
         food_category = "vegetable",
         taste_category = Taste.umami,
-        taste_quality = 6,
-        luxury = 4,
+        appeal = 5,
+        nutrition_tags = {},
         item_weight = 2.5,
         group = "tomato"
     },
@@ -367,8 +368,8 @@ Food.values = {
         healthiness = 6,
         food_category = "vegetable",
         taste_category = Taste.umami,
-        taste_quality = 6,
-        luxury = 4,
+        appeal = 5,
+        nutrition_tags = {},
         item_weight = 2.5,
         group = "eggplant"
     },
@@ -379,8 +380,8 @@ Food.values = {
         healthiness = 7,
         food_category = "alien-fungus",
         taste_category = Taste.umami,
-        taste_quality = 6,
-        luxury = 6,
+        appeal = 6,
+        nutrition_tags = {},
         item_weight = 2.5,
         group = "fawoxylas"
     },
@@ -391,8 +392,8 @@ Food.values = {
         healthiness = 8,
         food_category = "vegetable",
         taste_category = Taste.neutral,
-        taste_quality = 8,
-        luxury = 8,
+        appeal = 8,
+        nutrition_tags = {[NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "avocado"
     },
@@ -403,8 +404,8 @@ Food.values = {
         healthiness = 7,
         food_category = "legume",
         taste_category = Taste.umami,
-        taste_quality = 5,
-        luxury = 5,
+        appeal = 5,
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "chickpea"
     },
@@ -415,8 +416,8 @@ Food.values = {
         healthiness = 9,
         food_category = "processed",
         taste_category = Taste.spicy,
-        taste_quality = 10,
-        luxury = 5,
+        appeal = 8,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true, [NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "hummus"
     },
@@ -427,8 +428,8 @@ Food.values = {
         healthiness = 7,
         food_category = "processed",
         taste_category = Taste.neutral,
-        taste_quality = 2,
-        luxury = 1,
+        appeal = 2,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 2,
         group = "algae"
     },
@@ -439,8 +440,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-legume",
         taste_category = Taste.umami,
-        taste_quality = 5,
-        luxury = 3,
+        appeal = 4,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "razha-bean"
     },
@@ -451,8 +452,8 @@ Food.values = {
         healthiness = 7,
         food_category = "processed",
         taste_category = Taste.neutral,
-        taste_quality = 6,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1,
         group = "processed-razha"
     },
@@ -463,8 +464,8 @@ Food.values = {
         healthiness = 7,
         food_category = "processed",
         taste_category = Taste.umami,
-        taste_quality = 5,
-        luxury = 4,
+        appeal = 5,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 0.2,
         group = "processed-razha"
     },
@@ -475,8 +476,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-vegetable",
         taste_category = Taste.spicy,
-        taste_quality = 4,
-        luxury = 1,
+        appeal = 3,
+        nutrition_tags = {},
         item_weight = 2,
         group = "liontooth"
     },
@@ -487,8 +488,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-vegetable",
         taste_category = Taste.umami,
-        taste_quality = 5,
-        luxury = 5,
+        appeal = 5,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "manok"
     },
@@ -499,8 +500,8 @@ Food.values = {
         healthiness = 2,
         food_category = "alien-vegetable",
         taste_category = Taste.fruity,
-        taste_quality = 1,
-        luxury = 1,
+        appeal = 1,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "tello"
     },
@@ -511,8 +512,8 @@ Food.values = {
         healthiness = 4,
         food_category = "vegetable",
         taste_category = Taste.fruity,
-        taste_quality = 4,
-        luxury = 2,
+        appeal = 3,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "sugar-beet"
     },
@@ -523,8 +524,8 @@ Food.values = {
         healthiness = 4,
         food_category = "processed",
         taste_category = Taste.fruity,
-        taste_quality = 7,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "bread"
     },
@@ -535,8 +536,8 @@ Food.values = {
         healthiness = 7,
         food_category = "alien-algae",
         taste_category = Taste.fruity,
-        taste_quality = 5,
-        luxury = 1,
+        appeal = 3,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
         item_weight = 2.5,
         group = "algae"
     },
@@ -547,8 +548,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-underwater-plant",
         taste_category = Taste.acidic,
-        taste_quality = 3,
-        luxury = 3,
+        appeal = 3,
+        nutrition_tags = {},
         item_weight = 2.5,
         group = "endower-flower"
     },
@@ -559,8 +560,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-algae",
         taste_category = Taste.neutral,
-        taste_quality = 3,
-        luxury = 2,
+        appeal = 3,
+        nutrition_tags = {},
         item_weight = 2.5,
         group = "algae"
     },
@@ -571,8 +572,8 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-fungus",
         taste_category = Taste.umami,
-        taste_quality = 6,
-        luxury = 5,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 2.5,
         group = "pocelial"
     },
@@ -583,8 +584,8 @@ Food.values = {
         healthiness = 4,
         food_category = "alien-fungus",
         taste_category = Taste.spicy,
-        taste_quality = 6,
-        luxury = 4,
+        appeal = 5,
+        nutrition_tags = {},
         item_weight = 2.5,
         group = "red-hatty"
     },
@@ -595,8 +596,8 @@ Food.values = {
         healthiness = 8,
         food_category = "alien-fungus",
         taste_category = Taste.salty,
-        taste_quality = 4,
-        luxury = 7,
+        appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 2.5,
         group = "birdsnake"
     },
@@ -607,34 +608,108 @@ Food.values = {
         healthiness = 8,
         food_category = "processed",
         taste_category = Taste.umami,
-        taste_quality = 7,
-        luxury = 7,
+        appeal = 7,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true, [NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "potluck"
+    },
+
+    -- Test food items. Prototypes are only created when sosciencity-debug is active, but the
+    -- constants are always present so the diet tests can reference stable, fixed values.
+    ["test-food-fruity-carb"] = {
+        fat = 5, carbohydrates = 20, proteins = 10,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.fruity, appeal = 6,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        item_weight = 1, group = "test-food-a"
+    },
+    ["test-food-fruity-fat"] = {
+        fat = 20, carbohydrates = 5, proteins = 10,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.fruity, appeal = 6,
+        nutrition_tags = {[NutritionTag.fat_rich] = true},
+        item_weight = 1, group = "test-food-b"
+    },
+    ["test-food-neutral-protein-fat"] = {
+        fat = 15, carbohydrates = 5, proteins = 20,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.neutral, appeal = 7,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
+        item_weight = 1, group = "test-food-c"
+    },
+    ["test-food-neutral-carb"] = {
+        fat = 5, carbohydrates = 20, proteins = 5,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.neutral, appeal = 5,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        item_weight = 1, group = "test-food-d"
+    },
+    ["test-food-salty-protein"] = {
+        fat = 5, carbohydrates = 5, proteins = 20,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.salty, appeal = 6,
+        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        item_weight = 1, group = "test-food-e"
+    },
+    ["test-food-spicy-alltags"] = {
+        fat = 20, carbohydrates = 28, proteins = 16,
+        healthiness = 9, food_category = "processed",
+        taste_category = Taste.spicy, appeal = 8,
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true, [NutritionTag.carb_rich] = true},
+        item_weight = 1, group = "test-food-f"
+    },
+    ["test-food-umami-carb"] = {
+        fat = 5, carbohydrates = 20, proteins = 5,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.umami, appeal = 5,
+        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        item_weight = 1, group = "test-food-g"
+    },
+    ["test-food-umami-notag"] = {
+        fat = 5, carbohydrates = 5, proteins = 5,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.umami, appeal = 5,
+        nutrition_tags = {},
+        item_weight = 1, group = "test-food-h"
     }
 }
 
-local energy_density_fat = 9 -- kcal per g
-local energy_density_carbohydrates = 4
-local energy_density_proteins = 3.7
+--- Energy density of fat contents in kcal per g
+Food.energy_density_fat = 9
+--- Energy density of carbohydrate contents in kcal per g
+Food.energy_density_carbohydrates = 4
+--- Energy density of protein contents in kcal per g
+Food.energy_density_proteins = 3.7
 
 -- values postprocessing
-for name, food in pairs(Food.values) do
-    food.name = name
+for name, food_definition in pairs(Food.values) do
+    food_definition.name = name
 
     -- convert nutrients from g per 100g to kcal per 100g
-    food.fat = food.fat * energy_density_fat
-    food.carbohydrates = food.carbohydrates * energy_density_carbohydrates
-    food.proteins = food.proteins * energy_density_proteins
+    food_definition.fat = food_definition.fat * Food.energy_density_fat
+    food_definition.carbohydrates = food_definition.carbohydrates * Food.energy_density_carbohydrates
+    food_definition.proteins = food_definition.proteins * Food.energy_density_proteins
 
     -- calories specifies the calorific value of one item
     -- the magic 10 is just to get from 100g to 1kg
-    food.calories = (food.fat + food.carbohydrates + food.proteins) * 10 * food.item_weight
+    food_definition.calories = (food_definition.fat + food_definition.carbohydrates + food_definition.proteins) * 10 * food_definition.item_weight
 
-    -- density is kcal per 100g, independent of portion size
-    -- used to weight consumption so that item consumption rate is inversely proportional to portion size
-    food.density = food.calories / food.item_weight
+    -- density is kcal per 100g, independent of item_weight
+    -- used to weight consumption so that item consumption rate is inversely proportional to item_weight
+    food_definition.density = food_definition.calories / food_definition.item_weight
 end
+
+--- The set of nutrition tags that contribute to health when covered by the diet.
+--- Order determines display and iteration order.
+Food.required_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich}
+
+--- Health effect per nutrition tag. bonus applies when the tag is covered by the diet, malus when it is missing.
+--- @type table<NutritionTag, {bonus: number, malus: number}>
+Food.nutrition_tag_effects = {
+    [NutritionTag.protein_rich] = {bonus = 1, malus = -2},
+    [NutritionTag.fat_rich]     = {bonus = 1, malus = -2},
+    [NutritionTag.carb_rich]    = {bonus = 1, malus = -2},
+}
 
 Food.emergency_ration_calories = 1000
 Food.food_leftovers_chance = 0.125
