@@ -49,7 +49,7 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "virtual-signal",
-        name = "alert-not-enough-foods",
+        name = "alert-food-distress",
         icon = "__sosciencity-graphics__/graphics/utility/alert-not-enough-foods.png",
         icon_size = 64,
         subgroup = "sosciencity-alerts",

@@ -30,39 +30,21 @@ Gui.Elements.SortableList.linked["food"] = {
             end
         },
         {
-            name = "fat",
-            localised_name = {"sosciencity.fat"},
+            name = "nutrition",
+            localised_name = {"sosciencity.nutrition"},
             content = function(entry)
-                return string.format("%.0f%%", 100 * entry.fat / (entry.fat + entry.carbohydrates + entry.proteins))
+                local query = Tirislib.LazyLuaq.from_keyset(entry.nutrition_tags)
+
+                if query:count() == 0 then
+                    return {"nutrition-tag.none"}
+                end
+
+                local localised_tags = query:select(Locale.nutrition_tag):to_array()
+
+                return Tirislib.Locales.create_enumeration(localised_tags, " · ")
             end,
             order = function(entry)
-                return entry.fat / (entry.fat + entry.carbohydrates + entry.proteins)
-            end
-        },
-        {
-            name = "carbohydrates",
-            localised_name = {"sosciencity.carbohydrates"},
-            content = function(entry)
-                return string.format(
-                    "%.0f%%",
-                    100 * entry.carbohydrates / (entry.fat + entry.carbohydrates + entry.proteins)
-                )
-            end,
-            order = function(entry)
-                return entry.carbohydrates / (entry.fat + entry.carbohydrates + entry.proteins)
-            end
-        },
-        {
-            name = "proteins",
-            localised_name = {"sosciencity.proteins"},
-            content = function(entry)
-                return string.format(
-                    "%.0f%%",
-                    100 * entry.proteins / (entry.fat + entry.carbohydrates + entry.proteins)
-                )
-            end,
-            order = function(entry)
-                return entry.proteins / (entry.fat + entry.carbohydrates + entry.proteins)
+                return Tirislib.Tables.count(entry.nutrition_tags)
             end
         },
         {
@@ -76,23 +58,13 @@ Gui.Elements.SortableList.linked["food"] = {
             end
         },
         {
-            name = "luxury",
-            localised_name = {"sosciencity.luxury"},
+            name = "appeal",
+            localised_name = {"sosciencity.appeal"},
             content = function(entry)
-                return entry.luxury
+                return entry.appeal
             end,
             order = function(entry)
-                return entry.luxury
-            end
-        },
-        {
-            name = "taste",
-            localised_name = {"sosciencity.tastiness"},
-            content = function(entry)
-                return entry.taste_quality
-            end,
-            order = function(entry)
-                return entry.taste_quality
+                return entry.appeal
             end
         },
         {

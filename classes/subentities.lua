@@ -195,6 +195,9 @@ function Subentities.add_common_sprite(entry, render_type)
     )
 end
 
+--- Removes a common sprite from this entity (if one exists, otherwise the call does nothing).
+--- @param entry Entry
+--- @param render_type RenderingType
 function Subentities.remove_common_sprite(entry, render_type)
     local attached_renders = get_subtbl(entry, EK.attached_renderings)
     local render = attached_renders[render_type]

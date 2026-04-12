@@ -65,18 +65,17 @@ Being homeless is a tough fortune. Over time these huwans will leave your city a
 
 ##Food
 
-Your inhabitants need something to eat. You can provide them food either by placing it inside their home or in a nearby [item=market-hall]. What your inhabitants get to eat has several effects on their happiness, health and sanity. 
+Your inhabitants need something to eat. You can provide them food either by placing it inside their home or in a nearby [item=market-hall]. Every caste has an **eating behavior** - minimalist, mixed or foodie - that determines which foods they include in their diet and how they prioritize taste versus variety.
 
-- **Castes:** Every caste has a taste that they like and one that they dislike. Food that matches that will make them happier.
-- **Happiness:** The Taste quality and Luxury of the foods provided affect Happiness. How important both categories are depends on the Caste.
-- **Variety:** Providing many different kinds of food makes people has a positive effect on Happiness.
-- **Healthiness:** You are what you eat, so the Healthiness values of the provided foods affect the Health of your people.
-- **Nutrients:** The macronutrients of the foods also affect Health. An optimal diet consists of 20% protein, 50% carbohydrates and 30% fat. The closer the food mix comes to that, the better.
-- **Sanity:** Usually there is no effect on Sanity. But if you provide e.g. just neutral-tasting food or just food whose taste the caste hates - that will mess with your inhabitant's psyche.
+- **Taste:** Each caste favors one taste and dislikes another. Eating favored food boosts happiness; eating disliked food hurts it. Having any favored food at all gives a small sanity boost. If the diet becomes dominated by disliked foods, sanity suffers too.
+- **Appeal:** Food has an appeal value independent of taste. The average of the three most appealing foods in the diet is granted as a happiness bonus. 
+- **Nutrition Tags:** Foods can be for example be protein-rich, fat-rich or carb-rich. Covering nutrition tags gives a health bonus; missing tags lead to a health malus.
+- **Variety:** Each caste expects a minimum number of different foods. Going below that causes a happiness malus per missing food. Exceeding it gives a small bonus per extra food.
+- **Food Distress:** If no food matching the caste's normal eating behavior is available - but some food exists - your inhabitants fall back to whatever is on hand. All taste effects are suppressed and a harsh happiness penalty applies instead.
 
 Better make sure that your food supply is steady and sufficient, as having nothing to eat will make your inhabitants freak out quickly.
 
-*Note from the mod author: I'm unsatisfied with the current, overcomplicated state of the food system. A rework of these mechanics is planned.*
+[linked-page=how-tos/food]
 
 
 ##Water

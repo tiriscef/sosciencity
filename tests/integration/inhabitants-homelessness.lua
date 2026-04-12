@@ -11,7 +11,6 @@ local test_surface
 
 local function setup()
     test_surface = Helpers.create_test_surface()
-    Helpers.reset_inhabitants_state()
     storage.technologies["upbringing"] = 1
 end
 
@@ -34,7 +33,7 @@ Tirislib.Testing.add_test_case(
             Helpers.create_and_register(test_surface, "test-house", {10, 0}), Type.clockwork, false)
         high_priority[EK.housing_priority] = 10
 
-        -- distribute 5 inhabitants — should go to high priority first
+        -- distribute 5 inhabitants - should go to high priority first
         local group = InhabitantGroup.new(Type.clockwork, 5)
         Inhabitants.distribute(group, false)
 
@@ -63,7 +62,7 @@ Tirislib.Testing.add_test_case(
         InhabitantGroup.merge(high_priority, fill_group)
         Inhabitants.update_free_space_status(high_priority)
 
-        -- now distribute 10 more — should go to low priority
+        -- now distribute 10 more - should go to low priority
         local overflow = InhabitantGroup.new(Type.clockwork, 10)
         Inhabitants.distribute(overflow, false)
 
@@ -91,7 +90,7 @@ Tirislib.Testing.add_test_case(
         InhabitantGroup.merge(house, fill)
         Inhabitants.update_free_space_status(house)
 
-        -- try to add 10 more — only free_space should fit
+        -- try to add 10 more - only free_space should fit
         local group = InhabitantGroup.new(Type.clockwork, 10)
         local added = Inhabitants.try_add_to_house(house, group, true)
 
@@ -131,7 +130,7 @@ Tirislib.Testing.add_test_case(
     "Homeless inhabitants stay homeless when no free houses exist",
     "integration|integration.inhabitants",
     function()
-        -- no houses created — nowhere to go
+        -- no houses created - nowhere to go
         local group = InhabitantGroup.new(Type.clockwork, 5)
         Inhabitants.add_to_homeless_pool(group)
 

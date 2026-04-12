@@ -2,9 +2,18 @@ local Food = require("constants.food")
 local Time = require("constants.time")
 local Locale = require("classes.locale")
 
-local function percentage(numerator, denominator)
-    return string.format("%.0f", 100. * numerator / denominator) .. "%"
+local function make_nutrition_string(nutrition_tags)
+    local query = Tirislib.LazyLuaq.from_keyset(nutrition_tags)
+
+    if query:count() == 0 then
+        return {"nutrition-tag.none"}
+    end
+
+    local localised_tags = query:select(Locale.nutrition_tag):to_array()
+
+    return Tirislib.Locales.create_enumeration(localised_tags, " · ")
 end
+
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 
@@ -255,11 +264,8 @@ local foods = {
 for _, food in pairs(foods) do
     local food_details = Food.values[food.name]
 
-    local calories = food_details.fat + food_details.carbohydrates + food_details.proteins
-
-    local taste = food_details.taste_quality
+    local appeal = food_details.appeal
     local health = food_details.healthiness
-    local luxury = food_details.luxury
 
     local distinctions = Tirislib.Tables.get_subtbl(food, "distinctions")
 
@@ -269,22 +275,18 @@ for _, food in pairs(foods) do
     distinctions.infinite = false
     distinctions.localised_description = {
         "sosciencity-util.foods",
-        {"item-description." .. food.name},
-        {"food-category." .. food_details.food_category},
-        {"food-group." .. food_details.group},
-        Locale.taste_category(food_details.taste_category),
-        {"color-scale." .. taste, {"taste-scale." .. taste}},
-        {"description.sos-details", tostring(food_details.taste_quality)},
-        {"color-scale." .. health, {"health-scale." .. health}},
-        {"description.sos-details", tostring(food_details.healthiness)},
-        {"color-scale." .. luxury, {"luxury-scale." .. luxury}},
-        {"description.sos-details", tostring(food_details.luxury)},
-        tostring(food_details.fat),
-        {"description.sos-details", percentage(food_details.fat, calories)},
-        tostring(food_details.carbohydrates),
-        {"description.sos-details", percentage(food_details.carbohydrates, calories)},
-        tostring(food_details.proteins),
-        {"description.sos-details", percentage(food_details.proteins, calories)}
+        {"item-description." .. food.name}, -- 1: description
+        {"food-category." .. food_details.food_category}, -- 2: category
+        {"food-group." .. food_details.group}, -- 3: group
+        Locale.taste_category(food_details.taste_category), -- 4: taste
+        {"color-scale." .. appeal, {"taste-scale." .. appeal}}, -- 5: colored appeal label
+        {"description.sos-details", tostring(appeal)}, -- 6: appeal value
+        {"color-scale." .. health, {"health-scale." .. health}}, -- 7: colored health label
+        {"description.sos-details", tostring(health)}, -- 8: health value
+        make_nutrition_string(food_details.nutrition_tags), -- 9: nutrition tags
+        tostring(Tirislib.Utils.round_to_step(food_details.fat / Food.energy_density_fat, 0.1)), -- 10: fat g/100g
+        tostring(Tirislib.Utils.round_to_step(food_details.carbohydrates / Food.energy_density_carbohydrates, 0.1)), -- 11: carbs g/100g
+        tostring(Tirislib.Utils.round_to_step(food_details.proteins / Food.energy_density_proteins, 0.1)) -- 12: protein g/100g
     }
 end
 
@@ -363,3 +365,43 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-kitchen-for-all"
 }
+
+---------------------------------------------------------------------------------------------------
+-- << test food items >>
+
+if Sosciencity_Config.DEBUG then
+    local test_food_names = {
+        "test-food-fruity-carb",
+        "test-food-fruity-fat",
+        "test-food-neutral-protein-fat",
+        "test-food-neutral-carb",
+        "test-food-salty-protein",
+        "test-food-spicy-alltags",
+        "test-food-umami-carb",
+        "test-food-umami-notag"
+    }
+
+    local test_food_items = {}
+    for _, name in pairs(test_food_names) do
+        local food_details = Food.values[name]
+        test_food_items[#test_food_items + 1] = {
+            name = name,
+            use_placeholder_icon = true,
+            distinctions = {
+                durability = food_details.calories,
+                durability_description_key = "description.food-key",
+                durability_description_value = "description.food-value",
+                infinite = false,
+                localised_name = name,
+                localised_description = {""}
+            }
+        }
+    end
+
+    Tirislib.Item.batch_create(test_food_items, {
+        type = "tool",
+        subgroup = "sosciencity-food",
+        icon = "__sosciencity-graphics__/graphics/icon/placeholder.png",
+        icon_size = 64
+    })
+end

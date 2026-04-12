@@ -31,9 +31,14 @@ local function add_caste_infos(container, caste_id)
     )
     Gui.Elements.Datalist.add_kv_pair(
         caste_data,
-        "luxury",
-        {"sosciencity.luxury"},
-        {"sosciencity.show-luxury-needs", 100 * caste.desire_for_luxury, 100 * (1 - caste.desire_for_luxury)}
+        "eating-behavior",
+        {"sosciencity.eating-behavior"},
+        {
+            "sosciencity.show-eating-behavior",
+            Locale.eating_behavior(caste.eating_behavior),
+            caste.happiness_per_favored_food,
+            caste.happiness_per_disliked_food
+        }
     )
     Gui.Elements.Datalist.add_kv_pair(
         caste_data,

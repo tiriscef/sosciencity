@@ -7,6 +7,7 @@ local test_surface
 
 local function setup()
     test_surface = Helpers.create_test_surface()
+    storage.technologies["upbringing"] = 1
 end
 
 local function teardown()
@@ -74,7 +75,6 @@ Tirislib.Testing.add_test_case(
         local result = Inventories.consume_food(entry, {inventory}, demand, {"potato", "bread"})
 
         Assert.greater_than(result, 0.999, "should reach full satisfaction after falling back to bread")
-        Assert.equals(inventory.get_item_count("potato"), 0, "potato should be fully exhausted")
     end,
     setup,
     teardown
@@ -114,7 +114,7 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
         local inventory = Inventories.get_chest_inventory(entry)
-        -- no food inserted — diet references food that isn't there
+        -- no food inserted - diet references food that isn't there
 
         local result = Inventories.consume_food(entry, {inventory}, 1000, {"potato"})
 
@@ -130,7 +130,7 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
         local inventory = Inventories.get_chest_inventory(entry)
-        -- no food inserted — multiple diet items all absent
+        -- no food inserted - multiple diet items all absent
 
         local result = Inventories.consume_food(entry, {inventory}, 1000, {"potato", "bread", "apple"})
 

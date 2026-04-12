@@ -88,6 +88,19 @@ function Tirislib.Tables.get_keyset(tbl)
 end
 local get_keyset = Tirislib.Tables.get_keyset
 
+--- Returns a table with the elements of the given array as keys.
+--- @param tbl table
+--- @return table
+function Tirislib.Tables.to_lookup(tbl)
+    local ret = {}
+
+    for _, value in pairs(tbl) do
+        ret[value] = true
+    end
+
+    return ret
+end
+
 --- Clones the table, nested tables will be referenced.
 --- @param tbl table
 --- @return table

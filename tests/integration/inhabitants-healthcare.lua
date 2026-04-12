@@ -10,7 +10,6 @@ local HEALTHY = DiseaseGroup.HEALTHY
 
 local function setup()
     test_surface = Helpers.create_test_surface()
-    Helpers.reset_inhabitants_state()
     storage.technologies["upbringing"] = 1
 end
 

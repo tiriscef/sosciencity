@@ -2,7 +2,7 @@
 --- @enum HappinessFactor
 local HappinessFactor = {}
 
-HappinessFactor.not_enough_food_variety = 1
+HappinessFactor.food_distress = 1
 HappinessFactor.hunger = 2
 HappinessFactor.thirst = 3
 HappinessFactor.bad_health = 4

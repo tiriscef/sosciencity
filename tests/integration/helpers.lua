@@ -27,6 +27,7 @@ function Helpers.create_test_surface(name)
     end
 
     tracked_entries = {}
+    Helpers.reset_inhabitants_state()
     return surface
 end
 

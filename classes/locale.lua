@@ -177,4 +177,23 @@ function Locale.taste_category(category)
     return taste_category_locales[category]
 end
 
+local NutritionTag = require("enums.nutrition-tag")
+local nutrition_tag_locales = build_locale_lookup(NutritionTag, "nutrition-tag")
+
+function Locale.nutrition_tag(tag)
+    return nutrition_tag_locales[tag]
+end
+
+local EatingBehavior = require("enums.eating-behavior")
+local eating_behavior_locales = build_locale_lookup(EatingBehavior, "eating-behavior")
+local eating_behavior_description_locales = build_locale_lookup(EatingBehavior, "eating-behavior-description")
+
+function Locale.eating_behavior(behavior)
+    return eating_behavior_locales[behavior]
+end
+
+function Locale.eating_behavior_description(behavior)
+    return eating_behavior_description_locales[behavior]
+end
+
 return Locale
