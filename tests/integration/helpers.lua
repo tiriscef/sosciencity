@@ -5,8 +5,8 @@ local Helpers = {}
 
 local default_surface_name = "sosciencity-integration-test"
 
--- Entries created during the current test, for cleanup
-local tracked_entries = {}
+-- Surfaces created during the test run, for final teardown
+local test_surfaces = {}
 
 --- Returns a test surface with lab tiles, creating it on first call per name.
 --- Note: Factorio defers surface deletion (and clear()) to a future tick, so we cannot
@@ -23,30 +23,47 @@ function Helpers.create_test_surface(name)
     if not surface then
         surface = game.create_surface(name)
         surface.generate_with_lab_tiles = true
-        surface.build_checkerboard({{-100, -100}, {100, 100}})
+        surface.build_checkerboard({ { -100, -100 }, { 100, 100 } })
+        test_surfaces[name] = surface
     end
 
-    tracked_entries = {}
     Helpers.reset_inhabitants_state()
     return surface
 end
 
 --- Removes all entries created during this test from the register and destroys their entities.
+--- Clears the surface afterward to catch any sub-entities.
 function Helpers.clean_up()
-    for _, entry in pairs(tracked_entries) do
-        if Register.is_stale(entry) then goto continue end
-
+    -- Just remove everything in the register.
+    for _, entry in pairs(storage.register) do
         local entity = entry[EK.entity]
-        local unit_number = entry[EK.unit_number]
-        if Register.try_get(unit_number) then
-            Register.remove_entry(entry, DeconstructionCause.unknown)
-        end
+        Register.remove_entry(entry, DeconstructionCause.unknown)
         if entity and entity.valid then
             entity.destroy()
         end
-        ::continue::
     end
-    tracked_entries = {}
+
+    -- Safety net: destroy any entities that slipped through (sub-entities, etc.).
+    -- Factorio defers surface.clear() to the next tick so it doesn't interfere
+    -- with surface reuse within the same test run.
+    for _, surface in pairs(test_surfaces) do
+        if surface.valid then
+            surface.clear()
+        end
+    end
+
+    Helpers.reset_inhabitants_state()
+end
+
+--- Deletes all test surfaces. Call this at the end of a full test run so
+--- the surfaces do not persist in the save and their entities stop generating alerts.
+function Helpers.delete_test_surfaces()
+    for name, surface in pairs(test_surfaces) do
+        if surface.valid then
+            game.delete_surface(surface)
+        end
+        test_surfaces[name] = nil
+    end
 end
 
 --- Creates an entity on the given surface and registers it.
@@ -66,7 +83,6 @@ function Helpers.create_and_register(surface, name, position, _type)
     local entry = Register.add(entity, _type)
     assert(entry, "Failed to register entity '" .. name .. "'")
 
-    tracked_entries[#tracked_entries + 1] = entry
     return entry
 end
 
@@ -91,7 +107,6 @@ function Helpers.create_inhabited_house(surface, position, caste, count)
     local entry = Helpers.create_and_register(surface, "test-house", position)
     local inhabited = Inhabitants.try_allow_for_caste(entry, caste, false)
     assert(inhabited, "create_inhabited_house: try_allow_for_caste failed for caste " .. tostring(caste))
-    tracked_entries[#tracked_entries] = inhabited
 
     if count > 0 then
         local group = InhabitantGroup.new(caste, count)

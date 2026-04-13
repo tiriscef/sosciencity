@@ -127,6 +127,7 @@ if DEBUG then
     )
 
     require("tests.integration.load-tests")
+    local IntegrationHelpers = require("tests.integration.helpers")
 
     commands.add_command(
         "sosciencity-integration-tests",
@@ -142,6 +143,8 @@ if DEBUG then
 
             game.print(results)
             log(results)
+
+            IntegrationHelpers.delete_test_surfaces()
         end
     )
 end
