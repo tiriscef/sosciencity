@@ -201,7 +201,7 @@ local function update_cycle()
 
     update_gui()
 
-    update_statistics()
+    update_statistics(current_tick)
     update_communication(current_tick)
 
     storage.last_update = current_tick
