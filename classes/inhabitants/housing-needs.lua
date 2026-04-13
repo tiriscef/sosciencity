@@ -18,17 +18,25 @@ local food_values = Food.values
 local required_nutrition_tags = Food.required_nutrition_tags
 local nutrition_tag_effects = Food.nutrition_tag_effects
 local log_fluid = Statistics.log_fluid
+local assembling_machine_output = defines.inventory.crafter_output
 
 ---------------------------------------------------------------------------------------------------
 -- << diet >>
 
---- Returns a list of inventories relevant to the diet: house chest + active neighboring markets.
+--- Returns a list of inventories relevant to the diet: house chest + active neighboring markets
+--- + output inventories of active neighboring kitchens.
 local function get_food_providers(entry)
     local inventories = {Inventories.get_chest_inventory(entry)}
 
     for _, market_entry in Neighborhood.iterate_type(entry, Type.market) do
         if Entity.is_active(market_entry) then
             inventories[#inventories + 1] = Inventories.get_chest_inventory(market_entry)
+        end
+    end
+
+    for _, kitchen_entry in Neighborhood.iterate_type(entry, Type.kitchen_for_all) do
+        if Entity.is_active(kitchen_entry) then
+            inventories[#inventories + 1] = kitchen_entry[EK.entity].get_inventory(assembling_machine_output)
         end
     end
 
