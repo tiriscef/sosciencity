@@ -541,6 +541,11 @@ Building.values = {
         type = Type.egg_collector,
         range = 42
     },
+    ["test-kitchen-for-all"] = {
+        type = Type.kitchen_for_all,
+        range = 42,
+        inhabitant_count = 0
+    },
     ["test-ember-manufactory"] = {
         type = Type.manufactory,
         workforce = {
