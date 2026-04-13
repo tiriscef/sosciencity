@@ -25,6 +25,11 @@ local art_material_items = {
     {
         name = "military-grade-crayons",
         distinctions = {subgroup = "sosciencity-art-materials"}
+    },
+    {
+        name = "musical-instruments",
+        use_placeholder_icon = true,
+        distinctions = {subgroup = "sosciencity-art-materials"}
     }
 }
 
@@ -71,6 +76,17 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "dye", amount = 1}
     }
     --unlock = "ember-caste"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    category = "sosciencity-tinkering-workshop",
+    results = {{type = "item", name = "musical-instruments", amount = 1}},
+    ingredients = {
+        {type = "item", name = "lumber", amount = 5},
+        {type = "item", name = "copper-plate", amount = 5},
+        {type = "item", name = "rope", amount = 2}
+    },
+    unlock = "clockwork-caste"
 }
 
 Tirislib.RecipeGenerator.create {
