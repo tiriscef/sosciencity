@@ -42,29 +42,31 @@ local function type_count(...)
     return total
 end
 
---- Adds a trend indicator cell (▲/▼/─) to a table element.
---- @param tbl LuaGuiElement the table to add the cell to
+--- Adds a label with a trend indicator (▲/▼).
+--- @param container LuaGuiElement the table to add the cell to
 --- @param delta number the change value
 --- @param style string? optional label style
-local function add_trend_cell(tbl, delta, style)
-    local arrow, color
+local function add_population_cell_with_trend(container, population, delta, style)
+    local caption = tostring(population)
+    local color
     if delta > 0 then
-        arrow = "▲"
+        caption = "▲ " .. caption
         color = Color.green
     elseif delta < 0 then
-        arrow = "▼"
+        arrow = "▼ " .. caption
         color = Color.red
-    else
-        arrow = "─"
-        color = Color.white
     end
-    local label = tbl.add {
+
+    local label = container.add {
         type = "label",
-        caption = arrow,
+        caption = caption,
         tooltip = {"city-view.trend-tooltip", delta},
         style = style
     }
-    label.style.font_color = color
+
+    if color then
+        label.style.font_color = color
+    end
 end
 
 --- Adds a building count row to a datalist if the count is > 0.
@@ -108,7 +110,7 @@ Gui.CityView.add_page {
 
         local pop_table = container.add {
             type = "table",
-            column_count = 5,
+            column_count = 4,
             style = "sosciencity_calculation_table"
         }
 
@@ -122,7 +124,6 @@ Gui.CityView.add_page {
         end
         add_head_cell("")
         add_head_cell({"sosciencity.population"})
-        add_head_cell("")
         add_head_cell({"sosciencity.capacity"})
         add_head_cell({"city-view.homeless"})
 
@@ -142,15 +143,14 @@ Gui.CityView.add_page {
             local homeless_raw = storage.homeless[caste_id] and storage.homeless[caste_id][EK.inhabitants] or 0
 
             pop_table.add {type = "label", caption = Locale.caste(caste_id), style = "sosciencity_calculation_table_left"}
-            pop_table.add {type = "label", caption = tostring(pop)}
 
             -- trend indicator
             if has_snapshot then
                 local old_pop = snapshot[caste_id] or 0
-                add_trend_cell(pop_table, pop - old_pop)
+                add_population_cell_with_trend(pop_table, pop, pop - old_pop)
                 total_old_pop = total_old_pop + old_pop
             else
-                pop_table.add {type = "label", caption = ""}
+                add_population_cell_with_trend(pop_table, pop, 0)
             end
 
             pop_table.add {type = "label", caption = {"city-view.housing-display", capacity, improvised}}
@@ -164,12 +164,11 @@ Gui.CityView.add_page {
 
         -- total row
         pop_table.add {type = "label", caption = {"city-view.total"}, style = "sosciencity_calculation_table_left_head"}
-        pop_table.add {type = "label", caption = tostring(total_pop), style = "sosciencity_calculation_table_right_head"}
 
         if has_snapshot and #researched_castes > 0 then
-            add_trend_cell(pop_table, total_pop - total_old_pop, "sosciencity_calculation_table_right_head")
+            add_population_cell_with_trend(pop_table, total_pop, total_pop - total_old_pop, "sosciencity_calculation_table_right_head")
         else
-            pop_table.add {type = "label", caption = "", style = "sosciencity_calculation_table_right_head"}
+            add_population_cell_with_trend(pop_table, total_pop, 0, "sosciencity_calculation_table_right_head")
         end
 
         pop_table.add {type = "label", caption = {"city-view.housing-display", total_housing, total_improvised}, style = "sosciencity_calculation_table_right_head"}
