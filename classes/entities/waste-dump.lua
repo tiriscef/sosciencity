@@ -9,7 +9,7 @@ local Time = require("constants.time")
 
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
-local log_item = Communication.log_item
+local log_item = Statistics.log_item
 local Table = Tirislib.Tables
 local floor = math.floor
 local min = math.min

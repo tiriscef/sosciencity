@@ -79,6 +79,7 @@ require("classes.register")
 require("classes.technologies")
 require("classes.subentities")
 require("classes.neighborhood")
+require("classes.statistics")
 require("classes.communication")
 require("classes.visualisation")
 require("classes.inventories")
@@ -179,6 +180,7 @@ local on_technology_finished = Technologies.finished
 local update_inhabitants = Inhabitants.update
 local update_gui = Gui.update_guis
 local update_scheduler = Scheduler.update
+local update_statistics = Statistics.update
 local update_communication = Communication.update
 local update_technologies = Technologies.update
 
@@ -199,6 +201,7 @@ local function update_cycle()
 
     update_gui()
 
+    update_statistics()
     update_communication(current_tick)
 
     storage.last_update = current_tick
@@ -229,6 +232,7 @@ local function on_load()
     Inventories.load()
     Inhabitants.load()
     Gui.load()
+    Statistics.load()
     Communication.load()
     Visualisation.load()
     Entity.load()
@@ -248,6 +252,7 @@ local function init()
     Inventories.init()
     Inhabitants.init()
     Gui.init()
+    Statistics.init()
     Communication.init()
     Visualisation.init()
     Entity.init()
