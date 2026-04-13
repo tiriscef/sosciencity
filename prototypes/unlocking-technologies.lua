@@ -1,38 +1,29 @@
 local Unlocks = require("constants.unlocks")
 
-Tirislib.Item.create {
-    name = "sosciencity-research-blocker",
-    type = "tool",
-    icon = "__core__/graphics/cancel.png",
-    icon_size = 64,
-    stack_size = 50,
-    durability = 1,
-    hidden = true,
-    is_hack = true
+local mine_entity_triggers = {
+    ["boofish"] = "fishwhirl",
+    ["fupper"] = "fishwhirl",
 }
 
 for tech_name, item_name in pairs(Unlocks.by_item_acquisition) do
     local item = Tirislib.Item.get_by_name(item_name)
     local localised_name = item:get_localised_name()
 
+    local research_trigger
+    if mine_entity_triggers[item_name] then
+        research_trigger = {type = "mine-entity", entity = mine_entity_triggers[item_name]}
+    else
+        research_trigger = {type = "craft-item", item = item_name, count = 1}
+    end
+
     Tirislib.Technology.create {
         name = tech_name,
         icon = Tirislib.String.insert(item.icon, "-hr", -5),
         icon_size = 128,
         effects = {},
-        unit = {
-            count = 1,
-            time = 1,
-            ingredients = {
-                {"automation-science-pack", 1}
-                --{"sosciencity-research-blocker", 1} TODO: Look into possibilities to use ReseachTrigger instead
-            }
-        },
+        research_trigger = research_trigger,
         upgrade = false,
-        enabled = false,
-        visible_when_disabled = true,
         localised_name = localised_name,
         localised_description = {"", {"sosciencity-util.unlock-condition"}, "\n [img=tooltip-category-debug] ", {"sosciencity-util.acquisition", localised_name}},
-        is_hack = true
     }
 end
