@@ -35,9 +35,7 @@ local function get_food_providers(entry)
     end
 
     for _, kitchen_entry in Neighborhood.iterate_type(entry, Type.kitchen_for_all) do
-        if Entity.is_active(kitchen_entry) then
-            inventories[#inventories + 1] = kitchen_entry[EK.entity].get_inventory(assembling_machine_output)
-        end
+        inventories[#inventories + 1] = kitchen_entry[EK.entity].get_inventory(assembling_machine_output)
     end
 
     return inventories

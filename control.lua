@@ -422,6 +422,8 @@ local function on_configuration_change()
         -- TODO: remove this after some updates maybe
         storage.active_machine_count = storage.active_machine_count or 0
     end
+
+    Statistics.migrate()
 end
 
 local function on_player_created(event)
