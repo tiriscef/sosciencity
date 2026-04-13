@@ -177,7 +177,6 @@ local add_to_register = Register.add
 local update_entities = Register.entity_update_cycle
 local on_settings_pasted = Register.on_settings_pasted
 
-local unlock_on_mined_entity = Technologies.on_mined_entity
 local on_technology_finished = Technologies.finished
 
 local update_inhabitants = Inhabitants.update
@@ -358,7 +357,6 @@ local function on_entity_mined(event)
         remove_entry(entry, DeconstructionCause.mined, event)
     end
 
-    unlock_on_mined_entity(event.buffer)
 end
 
 local function on_entity_settings_pasted(event)
@@ -497,14 +495,6 @@ local function on_player_queued_craft(event)
     on_handcrafting_queue(player_id, name, count)
 end
 
-local function on_cheat_mode_enabled()
-    Technologies.on_cheat_mode_enabled()
-end
-
-local function on_cheat_mode_disabled()
-    Technologies.on_cheat_mode_disabled()
-end
-
 local function on_script_trigger(event)
     local fn = on_script_trigger_handlers[event.effect_id]
 
@@ -607,10 +597,6 @@ script.on_event(defines.events.on_player_died, on_player_died)
 -- player crafts
 script.on_event(defines.events.on_player_crafted_item, on_player_crafted)
 script.on_event(defines.events.on_pre_player_crafted_item, on_player_queued_craft)
-
--- cheat mode
-script.on_event(defines.events.on_player_cheat_mode_enabled, on_cheat_mode_enabled)
-script.on_event(defines.events.on_player_cheat_mode_disabled, on_cheat_mode_disabled)
 
 -- trigger events
 script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)

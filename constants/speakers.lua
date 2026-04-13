@@ -5,7 +5,6 @@ local standard_delay = 3 * Time.second
 local Speakers = {}
 
 Speakers["tiriscef."] = {
-    ["acquisition-unlock"] = 1,
     ["b"] = 138,
     ["roadkill"] = 8,
     ["report-begin"] = 2,
