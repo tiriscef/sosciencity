@@ -219,7 +219,7 @@ Gui.CityView.add_page {
 
 Gui.CityView.add_page {
     name = "fear",
-    category = "how-tos",  -- TODO: verify category
+    category = "how-tos",
     localised_name = {"city-view.fear-text1"},
     creator = function(container)
         -- BEGIN GENERATED: fear
@@ -258,7 +258,7 @@ Gui.CityView.add_page {
 
 Gui.CityView.add_page {
     name = "strike",
-    category = "how-tos",  -- TODO: verify category
+    category = "how-tos",
     localised_name = {"city-view.strike-text1"},
     creator = function(container)
         -- BEGIN GENERATED: strike
@@ -301,7 +301,7 @@ Gui.CityView.add_page {
 
 Gui.CityView.add_page {
     name = "food",
-    category = "how-tos",  -- TODO: verify category
+    category = "how-tos",
     localised_name = {"city-view.food-text1"},
     creator = function(container)
         -- BEGIN GENERATED: food

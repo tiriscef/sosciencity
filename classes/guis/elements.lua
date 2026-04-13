@@ -883,6 +883,44 @@ function Gui.Elements.Button.page_link(container, category_name, page_name)
     return flow
 end
 
+--- Creates a button that when clicked opens the technology GUI for the given technology.
+--- @param container LuaGuiElement
+--- @param technology_name string
+--- @return LuaGuiElement flow
+function Gui.Elements.Button.technology_link(container, technology_name)
+    local flow =
+        container.add {
+        type = "flow",
+        direction = "horizontal",
+        style = "sosciencity_page_link_flow"
+    }
+
+    local proto = prototypes.technology[technology_name]
+    if not proto then
+        error("Invalid technology name: " .. technology_name)
+    end
+
+    flow.add {
+        type = "button",
+        caption = {"city-view.technology-link", proto.localised_name},
+        elem_tooltip = {type = "technology", name = technology_name},
+        tags = {
+            technology = technology_name,
+            sosciencity_gui_event = "open_technology"
+        }
+    }
+
+    return flow
+end
+
+Gui.set_click_handler(
+    "open_technology",
+    function(event)
+        local player = game.get_player(event.player_index)
+        player.open_technology_gui(event.element.tags.technology)
+    end
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << Flows >>
 ---------------------------------------------------------------------------------------------------

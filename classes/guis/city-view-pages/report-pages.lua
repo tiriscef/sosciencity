@@ -1,11 +1,397 @@
+local Castes = require("constants.castes")
+local Color = require("constants.color")
+local Types = require("constants.types")
+local EK = require("enums.entry-key")
+local Type = require("enums.type")
+
+local HEALTHY = DiseaseGroup.HEALTHY
+local floor = math.floor
+local log = math.log
+
+--- Rounds a number to 1-2 significant digits for an "estimate" display.
+local function approximate(n)
+    if n <= 0 then return 0 end
+    if n < 10 then return n end
+    local magnitude = 10 ^ floor(log(n, 10))
+    return floor(n / magnitude + 0.5) * magnitude
+end
+
+--- Iterates all inhabited houses and returns aggregate stats.
+local function compute_housing_stats()
+    local sick = 0
+    local employed = 0
+    local striking = 0
+    for _, caste in pairs(Castes.all) do
+        for _, entry in Register.iterate_type(caste.type) do
+            sick = sick + entry[EK.inhabitants] - entry[EK.diseases][HEALTHY]
+            employed = employed + (entry[EK.employed] or 0)
+            if entry[EK.strike_level] > 0 then
+                striking = striking + 1
+            end
+        end
+    end
+    return sick, employed, striking
+end
+
+--- Returns a type count, or the sum of counts for multiple types.
+local function type_count(...)
+    local total = 0
+    for i = 1, select("#", ...) do
+        total = total + Register.get_type_count(select(i, ...))
+    end
+    return total
+end
+
+--- Adds a trend indicator cell (▲/▼/─) to a table element.
+--- @param tbl LuaGuiElement the table to add the cell to
+--- @param delta number the change value
+--- @param style string? optional label style
+local function add_trend_cell(tbl, delta, style)
+    local arrow, color
+    if delta > 0 then
+        arrow = "▲"
+        color = Color.green
+    elseif delta < 0 then
+        arrow = "▼"
+        color = Color.red
+    else
+        arrow = "─"
+        color = Color.white
+    end
+    local label = tbl.add {
+        type = "label",
+        caption = arrow,
+        tooltip = {"city-view.trend-tooltip", delta},
+        style = style
+    }
+    label.style.font_color = color
+end
+
+--- Adds a building count row to a datalist if the count is > 0.
+local function add_building_row(datalist, key, type_id, count)
+    if count > 0 then
+        local def = Types.definitions[type_id]
+        Gui.Elements.Datalist.add_kv_pair(
+            datalist,
+            key,
+            def and def.localised_name or key,
+            tostring(count)
+        )
+    end
+end
+
 Gui.CityView.add_category("statistics", {"city-view.statistics"})
 
 Gui.CityView.add_page {
     name = "overview",
     category = "statistics",
-    localised_name = {"sosciencity.overview"},
+    localised_name = {"city-view.overview"},
     creator = function(container)
-        -- TODO
+        Gui.Elements.Label.heading_1(container, {"city-view.overview"})
+        Gui.Elements.Label.paragraph(container, {"city-view.overview-intro"})
+
+        -- collect researched castes
+        local researched_castes = {}
+        for _, caste in pairs(Castes.all) do
+            if Inhabitants.caste_is_researched(caste.type) then
+                researched_castes[#researched_castes + 1] = caste
+            end
+        end
+
+        -----------------------------------------------------------------------
+        -- Section 1: Population & Housing
+        -----------------------------------------------------------------------
+        Gui.Elements.Label.heading_2(container, {"city-view.population-and-housing"})
+
+        -- population snapshot from ~1 hour ago for trend indicators
+        local snapshot = Statistics.get_population_snapshot("fine", 60)
+
+        local pop_table = container.add {
+            type = "table",
+            column_count = 5,
+            style = "sosciencity_calculation_table"
+        }
+
+        -- header row
+        local function add_head_cell(caption)
+            pop_table.add {
+                type = "label",
+                caption = caption,
+                style = "sosciencity_calculation_table_left_head"
+            }
+        end
+        add_head_cell("")
+        add_head_cell({"sosciencity.population"})
+        add_head_cell("")
+        add_head_cell({"sosciencity.capacity"})
+        add_head_cell({"city-view.homeless"})
+
+        local total_pop = 0
+        local total_housing = 0
+        local total_improvised = 0
+        local total_homeless = 0
+        local total_old_pop = 0
+        local has_snapshot = snapshot ~= nil
+
+        for _, caste in pairs(researched_castes) do
+            local caste_id = caste.type
+            local pop = storage.population[caste_id]
+            local official = storage.housing_capacity[caste_id][false]
+            local improvised = storage.housing_capacity[caste_id][true]
+            local capacity = official + improvised
+            local homeless_raw = storage.homeless[caste_id] and storage.homeless[caste_id][EK.inhabitants] or 0
+
+            pop_table.add {type = "label", caption = Locale.caste(caste_id), style = "sosciencity_calculation_table_left"}
+            pop_table.add {type = "label", caption = tostring(pop)}
+
+            -- trend indicator
+            if has_snapshot then
+                local old_pop = snapshot[caste_id] or 0
+                add_trend_cell(pop_table, pop - old_pop)
+                total_old_pop = total_old_pop + old_pop
+            else
+                pop_table.add {type = "label", caption = ""}
+            end
+
+            pop_table.add {type = "label", caption = {"city-view.housing-display", capacity, improvised}}
+            pop_table.add {type = "label", caption = {"city-view.homeless-estimate", approximate(homeless_raw)}}
+
+            total_pop = total_pop + pop
+            total_housing = total_housing + capacity
+            total_improvised = total_improvised + improvised
+            total_homeless = total_homeless + homeless_raw
+        end
+
+        -- total row
+        pop_table.add {type = "label", caption = {"city-view.total"}, style = "sosciencity_calculation_table_left_head"}
+        pop_table.add {type = "label", caption = tostring(total_pop), style = "sosciencity_calculation_table_right_head"}
+
+        if has_snapshot and #researched_castes > 0 then
+            add_trend_cell(pop_table, total_pop - total_old_pop, "sosciencity_calculation_table_right_head")
+        else
+            pop_table.add {type = "label", caption = "", style = "sosciencity_calculation_table_right_head"}
+        end
+
+        pop_table.add {type = "label", caption = {"city-view.housing-display", total_housing, total_improvised}, style = "sosciencity_calculation_table_right_head"}
+        pop_table.add {type = "label", caption = {"city-view.homeless-estimate", approximate(total_homeless)}, style = "sosciencity_calculation_table_right_head"}
+
+        if #researched_castes == 0 then
+            Gui.Elements.Label.paragraph(container, {"city-view.no-castes-researched"})
+            Gui.Elements.Button.technology_link(container, "upbringing")
+        end
+
+        -----------------------------------------------------------------------
+        -- Section 2: Caste Bonuses
+        -----------------------------------------------------------------------
+        if #researched_castes > 0 then
+            Gui.Elements.Label.heading_2(container, {"city-view.caste-bonuses"})
+
+            local bonus_table = container.add {
+                type = "table",
+                column_count = 3,
+                style = "sosciencity_calculation_table"
+            }
+
+            -- header row
+            bonus_table.add {type = "label", caption = "", style = "sosciencity_calculation_table_left_head"}
+            bonus_table.add {type = "label", caption = {"city-view.bonus"}, style = "sosciencity_calculation_table_left_head"}
+            bonus_table.add {type = "label", caption = {"city-view.points"}, style = "sosciencity_calculation_table_left_head"}
+
+            for _, caste in pairs(researched_castes) do
+                local caste_id = caste.type
+                local bonus_value = storage.caste_bonuses[caste_id]
+                local points = storage.caste_points[caste_id]
+
+                bonus_table.add {
+                    type = "label",
+                    caption = {"caste-bonus." .. caste.name},
+                    style = "sosciencity_calculation_table_left"
+                }
+
+                local bonus_label = bonus_table.add {
+                    type = "label",
+                    caption = {"caste-bonus.show-" .. caste.name, bonus_value}
+                }
+                bonus_label.style.font_color =
+                    (bonus_value > 0 and Color.green) or (bonus_value < 0 and Color.red) or Color.white
+
+                bonus_table.add {
+                    type = "label",
+                    caption = tostring(floor(points))
+                }
+            end
+        end
+
+        -----------------------------------------------------------------------
+        -- Section 3: City Health
+        -----------------------------------------------------------------------
+        local sick, employed, striking = compute_housing_stats()
+
+        local health_content = Gui.Elements.CollapsibleSection.heading_2(
+            container,
+            {"city-view.city-health"}
+        )
+
+        local health_data = Gui.Elements.Datalist.create(health_content)
+        Gui.Elements.Datalist.add_kv_pair(
+            health_data, "fear",
+            {"city-view.fear-level"},
+            {"city-view.display-fear", string.format("%.1f", storage.fear)}
+        )
+        Gui.Elements.Datalist.add_kv_pair(
+            health_data, "sick",
+            {"city-view.sick-inhabitants"},
+            tostring(sick)
+        )
+        Gui.Elements.Datalist.add_kv_pair(
+            health_data, "striking",
+            {"city-view.striking-houses"},
+            tostring(striking)
+        )
+
+        Gui.Elements.Button.page_link(health_content, "statistics", "census-report")
+        Gui.Elements.Button.page_link(health_content, "statistics", "healthcare-report")
+
+        -----------------------------------------------------------------------
+        -- Section 4: Workforce
+        -----------------------------------------------------------------------
+        local workforce_content = Gui.Elements.CollapsibleSection.heading_2(
+            container,
+            {"city-view.workforce"}
+        )
+
+        local workforce_data = Gui.Elements.Datalist.create(workforce_content)
+        Gui.Elements.Datalist.add_kv_pair(
+            workforce_data,
+            "employed",
+            {"city-view.employed"},
+            tostring(employed)
+        )
+        Gui.Elements.Datalist.add_kv_pair(
+            workforce_data,
+            "manufactories",
+            Types.definitions[Type.manufactory].localised_name,
+            tostring(Register.get_type_count(Type.manufactory))
+        )
+
+        -----------------------------------------------------------------------
+        -- Section 5: Infrastructure
+        -----------------------------------------------------------------------
+        local infra_content = Gui.Elements.CollapsibleSection.heading_2(
+            container,
+            {"city-view.infrastructure"},
+            {collapsed = true}
+        )
+
+        -- Factories
+        Gui.Elements.Label.heading_3(infra_content, {"city-view.factories"})
+        local factory_data = Gui.Elements.Datalist.create(infra_content, "factories")
+        Gui.Elements.Datalist.add_kv_pair(
+            factory_data, "machines",
+            {"sosciencity.machines"},
+            {"city-view.active-of-total", storage.active_machine_count, Register.get_machine_count()}
+        )
+        local lab_count = Register.get_type_count(Type.lab)
+        if lab_count > 0 then
+            add_building_row(factory_data, "labs", Type.lab, lab_count)
+        end
+        local turret_count = Register.get_type_count(Type.turret)
+        if turret_count > 0 then
+            add_building_row(factory_data, "turrets", Type.turret, turret_count)
+        end
+
+        -- Healthcare
+        local healthcare_types = {
+            Type.hospital, Type.improvised_hospital, Type.pharmacy,
+            Type.psych_ward, Type.intensive_care_unit, Type.gene_clinic
+        }
+        local has_healthcare = false
+        for _, t in pairs(healthcare_types) do
+            if Register.get_type_count(t) > 0 then
+                has_healthcare = true
+                break
+            end
+        end
+        if has_healthcare then
+            Gui.Elements.Label.heading_3(infra_content, {"city-view.healthcare-buildings"})
+            local hc_data = Gui.Elements.Datalist.create(infra_content, "healthcare")
+            for _, t in pairs(healthcare_types) do
+                add_building_row(hc_data, "hc-" .. t, t, Register.get_type_count(t))
+            end
+        end
+
+        -- Civil
+        local civil_types = {
+            Type.market,
+            Type.water_distributer,
+            Type.dumpster,
+            Type.kitchen_for_all,
+            Type.nightclub
+        }
+        local has_civil = false
+        for _, t in pairs(civil_types) do
+            if Register.get_type_count(t) > 0 then
+                has_civil = true
+                break
+            end
+        end
+        if has_civil then
+            Gui.Elements.Label.heading_3(infra_content, {"city-view.civil-buildings"})
+            local civil_data = Gui.Elements.Datalist.create(infra_content, "civil")
+            for _, t in pairs(civil_types) do
+                add_building_row(civil_data, "civil-" .. t, t, Register.get_type_count(t))
+            end
+        end
+
+        -- Production
+        local farm_count = type_count(Type.farm, Type.automatic_farm)
+        local production_entries = {
+            {key = "manufactory", type_id = Type.manufactory, count = Register.get_type_count(Type.manufactory)},
+            {key = "farms", type_id = Type.farm, count = farm_count, label = {"city-view.farms"}},
+            {key = "animal-farm", type_id = Type.animal_farm, count = Register.get_type_count(Type.animal_farm)},
+            {key = "fishery", type_id = Type.fishery, count = Register.get_type_count(Type.fishery)},
+            {key = "hunting-hut", type_id = Type.hunting_hut, count = Register.get_type_count(Type.hunting_hut)},
+            {key = "waterwell", type_id = Type.waterwell, count = Register.get_type_count(Type.waterwell)},
+            {key = "salt-pond", type_id = Type.salt_pond, count = Register.get_type_count(Type.salt_pond)}
+        }
+        local has_production = false
+        for _, entry in pairs(production_entries) do
+            if entry.count > 0 then
+                has_production = true
+                break
+            end
+        end
+        if has_production then
+            Gui.Elements.Label.heading_3(infra_content, {"city-view.production-buildings"})
+            local prod_data = Gui.Elements.Datalist.create(infra_content, "production")
+            for _, entry in pairs(production_entries) do
+                if entry.count > 0 then
+                    local label = entry.label or Types.definitions[entry.type_id].localised_name
+                    Gui.Elements.Datalist.add_kv_pair(prod_data, entry.key, label, tostring(entry.count))
+                end
+            end
+        end
+
+        -- Other
+        local other_types = {
+            Type.composter,
+            Type.cold_storage,
+            Type.waste_dump
+        }
+        local has_other = false
+        for _, t in pairs(other_types) do
+            if Register.get_type_count(t) > 0 then
+                has_other = true
+                break
+            end
+        end
+        if has_other then
+            Gui.Elements.Label.heading_3(infra_content, {"city-view.other-buildings"})
+            local other_data = Gui.Elements.Datalist.create(infra_content, "other")
+            for _, t in pairs(other_types) do
+                add_building_row(other_data, "other-" .. t, t, Register.get_type_count(t))
+            end
+        end
     end
 }
 

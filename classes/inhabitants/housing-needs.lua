@@ -39,11 +39,13 @@ end
 local function get_available_foods(inventories)
     local combined = Inventories.get_combined_contents(inventories)
     local foods = {}
+
     for item_name in pairs(combined) do
         if food_values[item_name] then
             foods[#foods + 1] = item_name
         end
     end
+
     return foods
 end
 
