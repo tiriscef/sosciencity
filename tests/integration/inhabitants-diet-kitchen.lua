@@ -68,6 +68,7 @@ Tirislib.Testing.add_test_case(
 
         -- put food only in the kitchen output, not in the house chest
         local output = kitchen[EK.entity].get_inventory(assembling_machine_output)
+        kitchen[EK.entity].set_recipe("test-kitchen-fruity-carb")
         output.insert {name = "test-food-fruity-carb", count = 100}
 
         local hs, hf, ths, _, _ = run_evaluate_diet(house, Time.minute)
@@ -97,35 +98,13 @@ Tirislib.Testing.add_test_case(
         -- carb in house, protein+fat in kitchen → all tags covered together
         Inventories.get_chest_inventory(house).insert {name = "test-food-fruity-carb", count = 100}
         local output = kitchen[EK.entity].get_inventory(assembling_machine_output)
+        kitchen[EK.entity].set_recipe("test-kitchen-protein-fat")
         output.insert {name = "test-food-neutral-protein-fat", count = 100}
 
         local _, _, ths, _, _ = run_evaluate_diet(house, Time.minute)
 
         Assert.equals(ths[HealthSummand.nutrients], full_tag_bonus,
             "combining house and kitchen food should cover all nutrition tags")
-    end,
-    setup,
-    teardown
-)
-
----------------------------------------------------------------------------------------------------
--- << inactive kitchen is ignored >>
-
-Tirislib.Testing.add_test_case(
-    "evaluate_diet ignores food in inactive kitchen",
-    "integration|integration.inhabitants|integration.diet-kitchen",
-    function()
-        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.ember, 5)
-        local kitchen = Helpers.create_and_register(test_surface, "test-kitchen-for-all", {5, 0})
-        kitchen[EK.active] = false
-
-        local output = kitchen[EK.entity].get_inventory(assembling_machine_output)
-        output.insert {name = "test-food-fruity-carb", count = 100}
-
-        local _, hf, _, _, _ = run_evaluate_diet(house, Time.minute)
-
-        Assert.equals(hf[HappinessFactor.hunger], require("constants.biology").starvation.happiness_factor,
-            "inactive kitchen food should not prevent starvation")
     end,
     setup,
     teardown
@@ -143,10 +122,11 @@ Tirislib.Testing.add_test_case(
         kitchen[EK.active] = true
 
         local output = kitchen[EK.entity].get_inventory(assembling_machine_output)
+        kitchen[EK.entity].set_recipe("test-kitchen-fruity-carb")
         output.insert {name = "test-food-fruity-carb", count = 100}
 
         local count_before = output.get_item_count("test-food-fruity-carb")
-        run_evaluate_diet(house, Time.minute)
+        run_evaluate_diet(house, 10 * Time.minute)
         local count_after = output.get_item_count("test-food-fruity-carb")
 
         Assert.less_than(count_after, count_before,

@@ -404,4 +404,17 @@ if Sosciencity_Config.DEBUG then
         icon = "__sosciencity-graphics__/graphics/icon/placeholder.png",
         icon_size = 64
     })
+
+    -- Test kitchen-for-all recipes so integration tests can call set_recipe() to
+    -- open the output inventory slots before inserting test food items.
+    Tirislib.RecipeGenerator.create {
+        name = "test-kitchen-fruity-carb",
+        product = "test-food-fruity-carb",
+        category = "sosciencity-kitchen-for-all"
+    }
+    Tirislib.RecipeGenerator.create {
+        name = "test-kitchen-protein-fat",
+        product = "test-food-neutral-protein-fat",
+        category = "sosciencity-kitchen-for-all"
+    }
 end

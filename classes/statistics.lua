@@ -93,6 +93,11 @@ end
 
 function Statistics.load()
     storage = _ENV.storage
+    set_locals()
+end
+
+function Statistics.migrate()
+    storage = _ENV.storage
 
     if not storage.population_history then
         init_population_history()
@@ -105,8 +110,6 @@ function Statistics.load()
             buffer.index = 2
         end
     end
-
-    set_locals()
 end
 
 ---------------------------------------------------------------------------------------------------
