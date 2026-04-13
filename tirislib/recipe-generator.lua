@@ -202,6 +202,7 @@ local function get_standard_category(recipe)
 end
 
 --- Creates a dynamic recipe.<br>
+--- **Deprecated**, I want to migrate to the prototype-based `create_from_prototype` method instead.<br>
 --- **product:** name of the main product<br>
 --- **product_type:** type of the main product (defaults to "item")<br>
 --- **product_amount:** amount of the main product (defaults to 1)<br>
