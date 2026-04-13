@@ -17,7 +17,7 @@ local castes = Castes.values
 local food_values = Food.values
 local required_nutrition_tags = Food.required_nutrition_tags
 local nutrition_tag_effects = Food.nutrition_tag_effects
-local log_fluid = Communication.log_fluid
+local log_fluid = Statistics.log_fluid
 
 ---------------------------------------------------------------------------------------------------
 -- << diet >>

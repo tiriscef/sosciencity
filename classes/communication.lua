@@ -9,22 +9,17 @@ local Speakers = require("constants.speakers")
 local Time = require("constants.time")
 
 --- Static class for all the functions that tell the player something through various means.
---- Communication is very important in a relationship.
+--- Flying texts, speaker messages, reports, warnings, informations, notifications.
 Communication = {}
 
 --[[
     Data this class stores in storage
     --------------------------------
-    storage.(fluid/item)_(consumption/production): table
-        [name]: amount consumed/produced
-
     storage.past_banter: array of recent lines said (up to 8)
 
     storage.past_banter_index: int
 
     storage.(tiriscef): bool (if they are enabled)
-
-    storage.logs: table
 
     storage.reports: table
         [name]: table
@@ -54,13 +49,6 @@ Communication = {}
 
 local storage
 
-local fluid_statistics
-local fluid_consumption
-local fluid_production
-local item_statistics
-local item_consumption
-local item_production
-
 --local logs
 local reports
 local current_reports
@@ -81,7 +69,6 @@ local Table = Tirislib.Tables
 local speakers
 local allowed_speakers
 
-local floor = math.floor
 local random = math.random
 local pick_random_subtable_weighted_by_key = Table.pick_random_subtable_weighted_by_key
 local plan_event_in = Scheduler.plan_event_in
@@ -104,11 +91,6 @@ local function generate_speakers_list()
 end
 
 local function set_locals()
-    fluid_consumption = storage.fluid_consumption
-    fluid_production = storage.fluid_production
-    item_consumption = storage.item_consumption
-    item_production = storage.item_production
-
     --logs = storage.logs
     reports = storage.reports
     current_reports = storage.current_reports
@@ -128,14 +110,6 @@ end
 function Communication.init()
     storage = _ENV.storage
 
-    storage.fluid_consumption = {}
-    storage.fluid_production = {}
-    storage.item_consumption = {}
-    storage.item_production = {}
-
-    --[[storage.logs = {
-        population = {}
-    }]]
     storage.reports = {
         ["immigration"] = {},
         ["loss"] = {},
@@ -205,86 +179,6 @@ function Communication.create_flying_text(entry, text)
     }
 end
 local create_flying_text = Communication.create_flying_text
-
---------------------------------------------------------------------------------------------------
--- << production and consumption statistics >>
--- we collect all the produced/consumed stuff and log them collectively
--- this reduces the amount of API calls and avoids the problem that the statistics log only integer numbers
-
---- Adds the given item to the production or consumption statistics.
---- @param item string
---- @param amount number
-function Communication.log_item(item, amount)
-    if amount > 0 then
-        item_production[item] = (item_production[item] or 0) + amount
-    else
-        item_consumption[item] = (item_consumption[item] or 0) - amount
-    end
-end
-
---- Adds the given items to the production or consumption statistics.
---- @param items table
-function Communication.log_items(items)
-    for item, amount in pairs(items) do
-        if amount > 0 then
-            item_production[item] = (item_production[item] or 0) + amount
-        else
-            item_consumption[item] = (item_consumption[item] or 0) - amount
-        end
-    end
-end
-
---- Adds the given fluid to the production or consumption statistics.
---- @param fluid string
---- @param amount number
-function Communication.log_fluid(fluid, amount)
-    if amount > 0 then
-        fluid_production[fluid] = (fluid_production[fluid] or 0) + amount
-    else
-        fluid_consumption[fluid] = (fluid_consumption[fluid] or 0) - amount
-    end
-end
-
---- Adds the given fluids to the production or consumption statistics.
---- @param fluids table
-function Communication.log_fluids(fluids)
-    for fluid, amount in pairs(fluids) do
-        if amount > 0 then
-            fluid_production[fluid] = (fluid_production[fluid] or 0) + amount
-        else
-            fluid_consumption[fluid] = (fluid_consumption[fluid] or 0) - amount
-        end
-    end
-end
-
-local function flush_log(list, statistic, multiplier)
-    for name, amount in pairs(list) do
-        local amount_to_log = floor(amount)
-
-        if amount_to_log > 0 then
-            statistic.on_flow(name, amount_to_log * multiplier)
-
-            local new_amount = amount - amount_to_log
-            if new_amount == 0 then
-                list[name] = nil
-            else
-                list[name] = new_amount
-            end
-        end
-    end
-end
-
-local function flush_logs()
-    if item_statistics == nil then
-        item_statistics = game.forces.player.get_item_production_statistics("nauvis")
-        fluid_statistics = game.forces.player.get_fluid_production_statistics("nauvis")
-    end
-
-    flush_log(item_consumption, item_statistics, -1)
-    flush_log(item_production, item_statistics, 1)
-    flush_log(fluid_consumption, fluid_statistics, -1)
-    flush_log(fluid_production, fluid_statistics, 1)
-end
 
 ---------------------------------------------------------------------------------------------------
 -- << speakers >>
@@ -740,8 +634,6 @@ end
 -- << general >>
 
 function Communication.update(current_tick)
-    flush_logs()
-
     if current_tick % (20 * Time.minute) == (5 * Time.minute) then -- every 20 minutes, first time after 5 minutes
         useless_banter()
         return

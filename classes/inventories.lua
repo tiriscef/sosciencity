@@ -20,8 +20,8 @@ local Utils = Tirislib.Utils
 
 local garbage_values = ItemConstants.garbage_values
 
-local log_item = Communication.log_item
-local log_items = Communication.log_items
+local log_item = Statistics.log_item
+local log_items = Statistics.log_items
 
 local all_neighbors_of_type = Neighborhood.iterate_type
 local get_neighbors_of_type = Neighborhood.get_by_type
