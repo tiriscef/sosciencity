@@ -16,7 +16,7 @@ Tirislib.RecipeGenerator.create {
     themes = {{"building", 1}},
     default_theme_level = 1,
     ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
-    unlock = "orchid-caste"
+    unlock = "orchid-paradise"
 }
 
 Tirislib.Entity.create {
