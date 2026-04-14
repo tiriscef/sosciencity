@@ -273,11 +273,11 @@ local function update_hunting_hut_details(container, entry, player_id)
         {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count}
     )
 
-    local competition_performance, near_count = Entity.get_hunting_competition(entry)
+    local competition_performance, same_count, other_count = Entity.get_hunting_competition(entry)
     Datalist.set_kv_pair_value(
         building_data,
         "competition",
-        {"sosciencity.show-hunting-competition", near_count, display_percentage(competition_performance)}
+        {"sosciencity.show-hunting-competition", same_count, other_count, display_percentage(competition_performance)}
     )
 end
 
