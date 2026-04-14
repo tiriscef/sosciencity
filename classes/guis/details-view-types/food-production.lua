@@ -260,40 +260,10 @@ Gui.DetailsView.register_type(
 ---------------------------------------------------------------------------------------------------
 -- << hunting hut >>
 
-local function update_hunting_hut_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
-
-    local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
-
-    local building_details = get_building_details(entry)
-    Datalist.set_kv_pair_value(
-        building_data,
-        "tree-count",
-        {"sosciencity.fraction", entry[EK.tree_count], building_details.tree_count}
-    )
-
-    local competition_performance, same_count, other_count = Entity.get_hunting_competition(entry)
-    Datalist.set_kv_pair_value(
-        building_data,
-        "competition",
-        {"sosciencity.show-hunting-competition", same_count, other_count, display_percentage(competition_performance)}
-    )
-end
-
-local function create_hunting_hut_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
-
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
-    local building_data = general.building
-
-    Datalist.add_kv_pair(building_data, "tree-count", {"sosciencity.tree-count"})
-    Datalist.add_kv_pair(building_data, "competition", {"sosciencity.competition"})
-
-    update_hunting_hut_details(container, entry)
-end
-
-Gui.DetailsView.register_type(Type.hunting_hut, {creater = create_hunting_hut_details, updater = update_hunting_hut_details})
+Gui.DetailsView.register_type(
+    Type.hunting_hut,
+    {creater = Gui.DetailsView.create_general, updater = Gui.DetailsView.update_general}
+)
 
 ---------------------------------------------------------------------------------------------------
 -- << salt pond >>
