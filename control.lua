@@ -87,6 +87,7 @@ require("classes.inhabitants")
 require("classes.entity")
 require("classes.handcrafting")
 require("classes.gui")
+require("classes.tree-planting")
 
 if DEBUG then
     require("tests.load-tests")
@@ -277,6 +278,12 @@ local function on_entity_built(event)
     local entity = event.entity
 
     if not entity or not entity.valid then
+        return
+    end
+
+    -- Tree sapling marker: immediately swap for a random natural tree
+    if entity.name == "sosciencity-tree-sapling" then
+        TreePlanting.on_sapling_placed(entity, event)
         return
     end
 
@@ -603,3 +610,7 @@ script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
 
 -- player creates a blueprint
 script.on_event(defines.events.on_player_setup_blueprint, on_player_setup_blueprint)
+
+-- forestry selection tool
+script.on_event(defines.events.on_player_selected_area, TreePlanting.on_area_selected)
+script.on_event(defines.events.on_player_alt_selected_area, TreePlanting.on_area_selected)
