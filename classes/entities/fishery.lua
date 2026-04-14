@@ -31,9 +31,28 @@ local function get_water_tiles(entry, building_details)
 end
 Entity.get_water_tiles = get_water_tiles
 
+local different_recipe_weight = 0.3
+
 local function get_fishing_competition(entry)
-    local count = Neighborhood.get_neighbor_count(entry, Type.fishery)
-    return (count + 1) ^ (-0.35), count
+    local recipe = entry[EK.entity].get_recipe()
+    local recipe_name = recipe and recipe.name
+
+    local same_count = 0
+    local other_count = 0
+
+    for _, neighbor_entry in Neighborhood.iterate_type(entry, Type.fishery) do
+        local neighbor_recipe = neighbor_entry[EK.entity].get_recipe()
+        if neighbor_recipe then
+            if recipe_name and neighbor_recipe.name == recipe_name then
+                same_count = same_count + 1
+            else
+                other_count = other_count + 1
+            end
+        end
+    end
+
+    local effective_count = same_count + different_recipe_weight * other_count
+    return (effective_count + 1) ^ (-0.35), same_count, other_count
 end
 Entity.get_fishing_competition = get_fishing_competition
 
@@ -45,7 +64,7 @@ local function update_fishery(entry)
     local water_tiles = get_water_tiles(entry, building_details)
     local water_performance = water_tiles / building_details.water_tiles
 
-    local competition, near_count = get_fishing_competition(entry)
+    local competition, same_count, other_count = get_fishing_competition(entry)
 
     local performance = min(worker_performance, water_performance) * competition * worker_happiness
     set_crafting_machine_performance(entry, performance)
@@ -74,7 +93,7 @@ local function update_fishery(entry)
                 [PK.value] = competition,
                 [PK.dimension] = Dim.speed,
                 [PK.combination] = Comb.multiplier,
-                [PK.detail] = {"sosciencity.show-fishing-competition-count", near_count}
+                [PK.detail] = {"sosciencity.show-fishing-competition-count", same_count, other_count}
             },
             {
                 [PK.effect] = PE.worker_happiness,

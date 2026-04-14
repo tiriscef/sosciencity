@@ -9,7 +9,6 @@ local Castes = require("constants.castes")
 local DrinkingWater = require("constants.drinking-water")
 local Time = require("constants.time")
 
-local Entity = Entity
 local Gui = Gui
 local Inventories = Inventories
 local Neighborhood = Neighborhood
