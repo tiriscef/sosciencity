@@ -1136,3 +1136,91 @@ Tirislib.Entity.create {
     },
     render_layer = "transport-belt"
 }:set_size(1.8, 1.8):copy_icon_from_item("necrofall")
+
+---------------------------------------------------------------------------------------------------
+-- << tree planting >>
+
+-- Invisible marker entity: placed by the tree-sapling item, swapped for a real tree
+-- by the tree-planting class in the control stage.
+Tirislib.Entity.create {
+    type = "simple-entity-with-owner",
+    name = "sosciencity-tree-sapling",
+    icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
+    icon_size = 64,
+    flags = {"placeable-neutral", "player-creation", "not-on-map"},
+    render_layer = "object",
+    collision_box = {{-0.7, -0.7}, {0.7, 0.7}},
+    selection_box = {{-0.7, -0.7}, {0.7, 0.7}},
+    collision_mask = {
+        layers = {
+            object = true,
+            water_tile = true,
+            is_object = true
+        }
+    },
+    picture = {
+        filename = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
+        width = 64,
+        height = 64,
+        scale = 0.5
+    },
+    max_health = 1
+}
+
+Tirislib.Item.create {
+    type = "item",
+    name = "tree-sapling",
+    icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
+    icon_size = 64,
+    subgroup = "sosciencity-saplings",
+    order = "zzz",
+    place_result = "sosciencity-tree-sapling",
+    stack_size = 50
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "tree-sapling", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "leafage", amount = 10},
+        {type = "item", name = "humus", amount = 10}
+    },
+    category = "sosciencity-bloomhouse-annual",
+    energy_required = 20,
+    subgroup = "sosciencity-flora-bloomhouse",
+    unlock = "indoor-growing"
+}
+
+Tirislib.Prototype.create {
+    type = "selection-tool",
+    name = "forestry-selection-tool",
+    icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
+    icon_size = 64,
+    flags = {"not-stackable", "spawnable"},
+    subgroup = "sosciencity-saplings",
+    order = "zzza",
+    stack_size = 1,
+    select = {
+        border_color = {0.2, 0.8, 0.2},
+        mode = {"any-tile"},
+        cursor_box_type = "entity"
+    },
+    alt_select = {
+        border_color = {0.1, 0.6, 0.1},
+        mode = {"any-tile"},
+        cursor_box_type = "entity"
+    }
+}
+
+Tirislib.Prototype.create {
+    type = "shortcut",
+    name = "sosciencity-forestry-tool",
+    action = "spawn-item",
+    item_to_spawn = "forestry-selection-tool",
+    icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
+    icon_size = 64,
+    small_icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
+    small_icon_size = 64,
+    technology_to_unlock = "indoor-growing"
+}
