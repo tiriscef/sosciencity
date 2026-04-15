@@ -12,13 +12,18 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "intensive-care-unit",
-    themes = {{"building", 20}, {"piping", 100}, {"electronics", 50}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "intensive-care-unit", amount = 1}
+    },
     ingredients = {
+        {theme = "building", amount = 20},
+        {theme = "piping", amount = 100},
+        {theme = "electronics", amount = 50},
         {type = "item", name = "bed", amount = 120},
         {type = "item", name = "architectural-concept", amount = 1}
     },
+    name = "bed",
     default_theme_level = 3,
     unlock = "intensive-care"
 }

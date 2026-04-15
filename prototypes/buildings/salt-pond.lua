@@ -10,12 +10,17 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "salt-pond",
-    themes = {{"piping", 5}, {"machine", 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "salt-pond", amount = 1}
+    },
+    ingredients = {
+        {theme = "piping", amount = 5},
+        {theme = "machine", amount = 1}
+    },
     default_theme_level = 1,
-    unlock = "fermentation"
-}:add_unlock("medbay")
+    unlock = {"fermentation", "medbay"}
+}
 Sosciencity_Config.remove_quality_multipliers("salt-pond")
 
 local sprite_width = 14

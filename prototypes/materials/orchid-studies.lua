@@ -3,9 +3,9 @@
 
 local orchid_items = {
     {name = "environmental-study", use_placeholder_icon = true},
-    {name = "botanical-study",     sprite_variations = {name = "botanical-study", count = 4}},
-    {name = "zoological-study",         use_placeholder_icon = true},
-    {name = "soil-study",          use_placeholder_icon = true},
+    {name = "botanical-study", sprite_variations = {name = "botanical-study", count = 4}},
+    {name = "zoological-study", use_placeholder_icon = true},
+    {name = "soil-study", use_placeholder_icon = true},
     {name = "microorganism-study", use_placeholder_icon = true}
 }
 
@@ -19,8 +19,7 @@ Tirislib.Item.batch_create(
 
 -- Handcraft
 
-Tirislib.Recipe.create {
-    type = "recipe",
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "botanical-study-handcraft",
     category = "sosciencity-handcrafting",
     enabled = false,
@@ -36,14 +35,16 @@ Tirislib.Recipe.create {
     icon_size = 64,
     subgroup = "sosciencity-ideas-per-hand",
     order = "00001",
-    main_product = ""
-}:add_unlock("orchid-caste")
+    main_product = "",
+    unlock = "orchid-caste"
+}
 
 -- Orchid Paradise
 
-Tirislib.RecipeGenerator.create {
-    product = "botanical-study",
-    product_amount = 4,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "botanical-study", amount = 4}
+    },
     category = "sosciencity-orchid-paradise",
     energy_required = 2,
     ingredients = {
@@ -56,9 +57,10 @@ Tirislib.RecipeGenerator.create {
 
 -- Orchid HQ
 
-Tirislib.RecipeGenerator.create {
-    product = "environmental-study",
-    product_amount = 4,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "environmental-study", amount = 4}
+    },
     category = "sosciencity-caste-orchid",
     energy_required = 2,
     ingredients = {

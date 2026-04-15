@@ -10,13 +10,17 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "robo-pruning-station",
-    themes = {{"machine", 1}, {"robo_parts", 20}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "robo-pruning-station", amount = 1}
+    },
     ingredients = {
+        {theme = "machine", amount = 1},
+        {theme = "robo_parts", amount = 20},
         {type = "item", name = "silo", amount = 2},
         {type = "item", name = "architectural-concept", amount = 1}
     },
+    name = "silo",
     default_theme_level = 3,
     unlock = "robo-plant-care"
 }

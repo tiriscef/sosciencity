@@ -93,192 +93,223 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 5
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "surgery-instruments",
-    themes = {
-        {"plating", 1},
-        {"plating2", 1}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "surgery-instruments", amount = 1}
     },
     ingredients = {
+        {theme = "plating", amount = 1},
+        {theme = "plating2", amount = 1},
         {type = "fluid", name = "steam", amount = 200}
     },
+    name = "steam",
     category = "sosciencity-pharma",
     energy_required = 5,
     allow_productivity = true,
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create {
-    name = "activated-carbon-from-sawdust",
-    product = "activated-carbon",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "activated-carbon", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "sawdust", amount = 10},
         {type = "item", name = "salt", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    do_index_fluid_ingredients = true,
+    name = "activated-carbon-from-sawdust",
     category = "sosciencity-pharma",
     energy_required = 5,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "activated-carbon-filtering"
 }
 
-Tirislib.RecipeGenerator.create {
-    name = "activated-carbon-from-sugar",
-    product = "activated-carbon",
-    product_amount = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "activated-carbon", amount = 2}
+    },
     ingredients = {
         {type = "item", name = "sugar", amount = 10},
         {type = "item", name = "salt", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    do_index_fluid_ingredients = true,
+    name = "activated-carbon-from-sugar",
     category = "sosciencity-pharma",
     energy_required = 5,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "food-processing"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "artificial-limb",
-    themes = {
-        {"framework", 2},
-        {"wiring", 1},
-        {"electronics", 1}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "artificial-limb", amount = 1}
+    },
+    ingredients = {
+        {theme = "framework", amount = 2},
+        {theme = "wiring", amount = 1},
+        {theme = "electronics", amount = 1}
     },
     category = "sosciencity-pharma",
-    default_theme_level = 1,
     energy_required = 10,
+    default_theme_level = 1,
     allow_productivity = true,
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "artificial-heart",
-    themes = {
-        {"casing", 1},
-        {"wiring", 2},
-        {"electronics", 1},
-        {"battery", 1}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "artificial-heart", amount = 1}
+    },
+    ingredients = {
+        {theme = "casing", amount = 1},
+        {theme = "wiring", amount = 2},
+        {theme = "electronics", amount = 1},
+        {theme = "battery", amount = 1}
     },
     category = "sosciencity-pharma",
-    default_theme_level = 4,
     energy_required = 20,
+    default_theme_level = 4,
     allow_productivity = true,
     unlock = "intensive-care"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "bandage",
-    product_amount = 15,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bandage", amount = 15}
+    },
     ingredients = {
         {type = "item", name = "cloth", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    do_index_fluid_ingredients = true,
+    name = "cloth",
     category = "sosciencity-pharma",
     energy_required = 10,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "isotonic-saline-solution",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "isotonic-saline-solution", amount = 1}
+    },
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "item", name = "salt", amount = 1}
     },
-    do_index_fluid_ingredients = true,
+    name = "clean-water",
     category = "sosciencity-pharma",
     energy_required = 2,
+    do_index_fluid_ingredients = true,
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "psychotropics",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "psychotropics", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "phytofall-blossom", amount = 2},
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    do_index_fluid_ingredients = true,
+    name = "phytofall-blossom",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "psychiatry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "analgesics",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "analgesics", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "gingil-hemp", amount = 1},
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    do_index_fluid_ingredients = true,
+    name = "gingil-hemp",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "potent-analgesics",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "potent-analgesics", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "necrofall", amount = 1},
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    do_index_fluid_ingredients = true,
+    name = "necrofall",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "intensive-care"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "anesthetics",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "anesthetics", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "necrofall", amount = 5},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    do_index_fluid_ingredients = true,
+    name = "necrofall",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "intensive-care"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "antibiotics",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "antibiotics", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "amylum", amount = 1},
         {type = "item", name = "sugar", amount = 3},
         {type = "fluid", name = "flinnum", amount = 10}
     },
-    do_index_fluid_ingredients = true,
+    name = "amylum",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "hospital"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "antimycotics",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "antimycotics", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "zetorn", amount = 5},
         {type = "fluid", name = "ethanol", amount = 10},
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "fluid", name = "fatty-oil", amount = 10}
     },
-    do_index_fluid_ingredients = true,
+    name = "zetorn",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "hospital"
 }
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "donate-blood",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -419,36 +450,38 @@ Tirislib.Item.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create {
-    product = "sosciencity-emergency-ration",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sosciencity-emergency-ration", amount = 1}
+    },
     name = "sosciencity-emergency-ration",
-    category = "sosciencity-handcrafting",
-    localised_description = {
-        "recipe-description.sosciencity-emergency-ration",
-        tostring(Food.emergency_ration_calories)
-    }
+    category = "sosciencity-handcrafting"
 }
 
 -- TODO: emergency ration needs a non-handcrafting recipe because I want to use it as a medicine item
 
-Tirislib.RecipeGenerator.create {
-    product = "sosciencity-medical-kit",
-    product_amount = 1,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sosciencity-medical-kit", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "blood-bag", amount = 1},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
+    name = "blood-bag",
     category = "sosciencity-pharma"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sosciencity-medical-kit",
-    product_amount = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sosciencity-medical-kit", amount = 5}
+    },
     ingredients = {
         {type = "item", name = "blood-bag", amount = 1},
         {type = "item", name = "analgesics", amount = 1},
         {type = "item", name = "bandage", amount = 5}
     },
+    name = "blood-bag",
     category = "sosciencity-pharma",
     unlock = "medbay"
 }

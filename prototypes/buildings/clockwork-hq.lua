@@ -10,11 +10,18 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "clockwork-hq",
-    themes = {{"building", 10}, {"gear_wheel", 10}, {"furnace", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "clockwork-hq", amount = 1}
+    },
+    ingredients = {
+        {theme = "building", amount = 10},
+        {theme = "gear_wheel", amount = 10},
+        {theme = "furnace", amount = 10},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
+    name = "architectural-concept",
     default_theme_level = 2,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "clockwork-caste"
 }
 Sosciencity_Config.remove_quality_multipliers("clockwork-hq")

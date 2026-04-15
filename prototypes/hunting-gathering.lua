@@ -36,66 +36,82 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create {
-    product = "trap",
-    themes = {
-        {"mechanism", 2}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "trap", amount = 1}
+    },
+    ingredients = {
+        {theme = "mechanism", amount = 2}
     },
     energy_required = 0.8,
     allow_productivity = true,
     unlock = "hunting-fishing"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "trap-cage",
-    themes = {
-        {"plating", 2},
-        {"grating", 10}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "trap-cage", amount = 1}
+    },
+    ingredients = {
+        {theme = "plating", amount = 2},
+        {theme = "grating", amount = 10}
     },
     energy_required = 0.8,
     allow_productivity = true,
     unlock = "hunting-fishing"
 }
 
---[[Tirislib.RecipeGenerator.create {
-    product = "bucket",
-    themes = {
-        {"handle", 1},
-        {"plating", 1}
+--[[Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bucket", amount = 1}
+    },
+    ingredients = {
+        {theme = "handle", amount = 1},
+        {theme = "plating", amount = 1}
     },
     energy_required = 0.8,
     unlock = "clockwork-caste"
 }]]
 
-Tirislib.RecipeGenerator.create {
-    product = "simple-fishtrap",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "simple-fishtrap", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "gingil-hemp", amount = 5},
         {type = "item", name = "rope", amount = 1}
     },
+    name = "gingil-hemp",
     energy_required = 1.5,
     allow_productivity = true,
     unlock = "hunting-fishing"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fishing-net",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "fishing-net", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "rope", amount = 5},
         {type = "item", name = "yarn", amount = 1},
         {type = "item", name = "lumber", amount = 2}
     },
+    name = "rope",
     energy_required = 1,
     allow_productivity = true,
     unlock = "advanced-fishing"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "harpoon",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "harpoon", amount = 1}
+    },
     ingredients = {
+        {theme = "handle", amount = 1},
+        {theme = "mechanism", amount = 2},
         {type = "item", name = "rope", amount = 1}
     },
-    themes = {{"handle", 1}, {"mechanism", 2}},
+    name = "rope",
     energy_required = 1,
     allow_productivity = true,
     unlock = "advanced-fishing"
@@ -105,18 +121,13 @@ Tirislib.RecipeGenerator.create {
 -- << hunting/gathering/fishing recipes >>
 
 local function create_hunting_gathering_recipe(details)
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            energy_required = 4,
-            allow_decomposition = false,
-            always_show_made_in = true,
-            main_product = "",
-            subgroup = "sosciencity-gathering"
-        }
-    )
+    details.energy_required = details.energy_required or 4
+    details.allow_decomposition = details.allow_decomposition or false
+    details.always_show_made_in = details.always_show_made_in or true
+    details.main_product = details.main_product or ""
+    details.subgroup = details.subgroup or "sosciencity-gathering"
 
-    return Tirislib.Recipe.create(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details)
 end
 
 create_hunting_gathering_recipe {
@@ -228,8 +239,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "phytofall-blossom", amount = 2},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000595"
-}:add_unlock("orchid-caste")
+    order = "000595",
+    unlock = "orchid-caste"
+}
 
 create_hunting_gathering_recipe {
     name = "hunting-with-trap",
@@ -252,8 +264,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "caddle", amount = 1, probability = 0.5},
         {type = "item", name = "biter-meat", amount_min = 0, amount_max = 20}
     },
-    order = "000655"
-}:add_catalyst("trap", "item", 2, 0.85):add_unlock("hunting-fishing")
+    order = "000655",
+    unlock = "hunting-fishing"
+}:add_catalyst("trap", "item", 2, 0.85)
 
 create_hunting_gathering_recipe {
     name = "hunting-with-trap-cage",
@@ -278,8 +291,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "cabar", amount = 4, probability = 0.5},
         {type = "item", name = "caddle", amount = 1, probability = 0.5}
     },
-    order = "000656"
-}:add_catalyst("trap-cage", "item", 2, 0.85):add_unlock("hunting-fishing")
+    order = "000656",
+    unlock = "hunting-fishing"
+}:add_catalyst("trap-cage", "item", 2, 0.85)
 
 create_hunting_gathering_recipe {
     name = "fishing-with-simple-fishtrap",
@@ -300,8 +314,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "boofish", amount_min = 1, amount_max = 2},
         {type = "item", name = "fupper", amount_min = 0, amount_max = 1}
     },
-    order = "000755"
-}:add_catalyst("simple-fishtrap", "item", 1, 0.9):add_unlock("hunting-fishing")
+    order = "000755",
+    unlock = "hunting-fishing"
+}:add_catalyst("simple-fishtrap", "item", 1, 0.9)
 
 create_hunting_gathering_recipe {
     name = "fishing-with-fishing-net",
@@ -326,8 +341,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.08}
     },
-    order = "000756"
-}:add_catalyst("fishing-net", "item", 1, 0.95):add_unlock("advanced-fishing")
+    order = "000756",
+    unlock = "advanced-fishing"
+}:add_catalyst("fishing-net", "item", 1, 0.95)
 
 create_hunting_gathering_recipe {
     name = "fishing-with-harpoon",
@@ -351,5 +367,6 @@ create_hunting_gathering_recipe {
         {type = "item", name = "ultra-squibbel", amount_min = 1, amount_max = 3},
         {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.4}
     },
-    order = "000757"
-}:add_catalyst("harpoon", "item", 1, 0.85):add_unlock("advanced-fishing")
+    order = "000757",
+    unlock = "advanced-fishing"
+}:add_catalyst("harpoon", "item", 1, 0.85)

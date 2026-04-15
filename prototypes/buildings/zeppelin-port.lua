@@ -10,10 +10,16 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
---[[Tirislib.RecipeGenerator.create {
-    product = "zeppelin-port",
-    themes = {{"building", 3}, {"fabric", 50}, {"rope", 20}, {"framework", 10}},
-    default_theme_level = 0
+--[[Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "zeppelin-port", amount = 1}
+    },
+    ingredients = {
+        {theme = "building", amount = 3},
+        {theme = "fabric", amount = 50},
+        {theme = "rope", amount = 20},
+        {theme = "framework", amount = 10}
+    }
 }]]
 
 Tirislib.Entity.create {

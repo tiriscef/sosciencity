@@ -247,14 +247,25 @@ end
 local function create_slaughter_recipe(animal, index)
     local item = Tirislib.Item.get_by_name(animal.name)
 
+    local meat = get_meat_type(animal)
+    local results = {
+        {type = "item", name = meat, amount = get_meat_amount(animal)},
+        {type = "item", name = "offal", amount = get_offal_amount(animal)},
+        {type = "item", name = "slaughter-waste", amount = get_slaughter_waste_amount(animal)}
+    }
+    if animal.slaughter_byproducts then
+        Tirislib.Tables.merge(results, animal.slaughter_byproducts)
+    end
+
     local recipe =
-        Tirislib.Recipe.create {
+        Tirislib.RecipeGenerator.create_from_prototype {
         name = "slaughter-" .. animal.name,
         category = "sosciencity-slaughter",
         energy_required = get_required_energy_slaughter(animal),
         ingredients = {
             {type = "item", name = animal.name, amount = 1}
         },
+        results = results,
         icons = {
             {icon = item.icon},
             {
@@ -269,21 +280,9 @@ local function create_slaughter_recipe(animal, index)
         main_product = "",
         order = string.format("%03d", index),
         localised_name = {"recipe-name.slaughter", item:get_localised_name()},
-        localised_description = {"recipe-description.slaughter"}
+        localised_description = {"recipe-description.slaughter"},
+        unlock = animal.unlock
     }
-
-    local meat = get_meat_type(animal)
-    recipe:add_new_result(meat, get_meat_amount(animal))
-    recipe:add_new_result("offal", get_offal_amount(animal))
-    recipe:add_new_result("slaughter-waste", get_slaughter_waste_amount(animal))
-
-    if animal.slaughter_byproducts then
-        recipe:add_result_range(animal.slaughter_byproducts)
-    end
-
-    if animal.unlock then
-        recipe:add_unlock(animal.unlock)
-    end
 
     animal_calorie_values[animal.name] =
         Tirislib.Luaq.from(recipe.results):select(
@@ -348,36 +347,56 @@ local function add_food(recipe, animal)
 end
 
 local function create_husbandry_recipe(details)
-    local animal = get_animal_definition(details.product)
-    local animal_item = Tirislib.Item.get_by_name(details.product)
+    local product_name = details.product
+    local animal = get_animal_definition(product_name)
+    local animal_item = Tirislib.Item.get_by_name(product_name)
     local item = Tirislib.Item.get_by_name(animal_item.name)
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = Tirislib.Prototype.get_unique_name("sos-husbandry-" .. animal_item.name, "recipe"),
-            product = details.old_animal or details.keeping_animal,
-            category = is_water_animal(animal) and "sosciencity-water-animal-farming" or "sosciencity-animal-farming",
-            energy_required = 30,
-            localised_name = {
-                details.style == "breeding" and "recipe-name.animal-breeding" or "recipe-name.animal-keeping",
-                animal_item:get_localised_name()
-            },
-            localised_description = "",
-            icons = {
-                {icon = item.icon},
-                {
-                    icon = details.style == "breeding" and "__sosciencity-graphics__/graphics/icon/breeding.png" or
-                        "__sosciencity-graphics__/graphics/icon/keeping.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            unlock = animal.unlock
-        }
-    )
+    local result = {type = "item", name = product_name}
+    if details.product_min and details.product_max then
+        result.amount_min = details.product_min
+        result.amount_max = details.product_max
+    elseif details.product_amount then
+        result.amount = details.product_amount
+    else
+        result.amount = 1
+    end
 
-    local recipe = Tirislib.RecipeGenerator.create(details)
+    local results = {result}
+    if details.byproducts then
+        result.product = true
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
+
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
+
+    local prototype = {
+        name = details.name or Tirislib.Prototype.get_unique_name("sos-husbandry-" .. animal_item.name, "recipe"),
+        results = results,
+        ingredients = ingredients,
+        category = details.category or (is_water_animal(animal) and "sosciencity-water-animal-farming" or "sosciencity-animal-farming"),
+        energy_required = details.energy_required or 30,
+        localised_name = details.localised_name or {
+            details.style == "breeding" and "recipe-name.animal-breeding" or "recipe-name.animal-keeping",
+            animal_item:get_localised_name()
+        },
+        localised_description = details.localised_description or "",
+        icons = details.icons or {
+            {icon = item.icon},
+            {
+                icon = details.style == "breeding" and "__sosciencity-graphics__/graphics/icon/breeding.png" or
+                    "__sosciencity-graphics__/graphics/icon/keeping.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        unlock = details.unlock or animal.unlock
+    }
+
+    local recipe = Tirislib.RecipeGenerator.create_from_prototype(prototype)
     add_food(recipe, animal)
     return recipe
 end

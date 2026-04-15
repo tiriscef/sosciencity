@@ -10,9 +10,9 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "groundwater-pump",
-    themes = {{"boring", 1}, {"piping", 5}, {"machine", 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {{type = "item", name = "groundwater-pump", amount = 1}},
+    ingredients = {{"boring", 1}, {"piping", 5}, {"machine", 1}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }

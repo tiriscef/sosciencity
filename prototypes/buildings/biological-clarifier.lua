@@ -10,9 +10,16 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "biological-clarifier",
-    themes = {{"piping", 40}, {"tank", 4}, {"machine", 2}, {"pump", 5}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "biological-clarifier", amount = 1}
+    },
+    ingredients = {
+        {theme = "piping", amount = 40},
+        {theme = "tank", amount = 4},
+        {theme = "machine", amount = 2},
+        {theme = "pump", amount = 5}
+    },
     default_theme_level = 4,
     unlock = "drinking-water-treatment"
 }

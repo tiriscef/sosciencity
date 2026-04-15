@@ -10,11 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fishing-hut",
-    themes = {{"building", 3}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {{type = "item", name = "fishing-hut", amount = 1}},
+    ingredients = {
+        {"building", 3},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 0,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "infrastructure-1"
 }
 Sosciencity_Config.remove_quality_multipliers("fishing-hut")

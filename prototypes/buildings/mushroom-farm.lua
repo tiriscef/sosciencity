@@ -10,9 +10,15 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "mushroom-farm",
-    themes = {{"piping", 30}, {"machine", 2}, {"soil", 30}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "mushroom-farm", amount = 1}
+    },
+    ingredients = {
+        {theme = "piping", amount = 30},
+        {theme = "machine", amount = 2},
+        {theme = "soil", amount = 30}
+    },
     default_theme_level = 1,
     unlock = "mushroom-farming"
 }

@@ -18,13 +18,15 @@ Tirislib.Item.batch_create(
 
 -- Foundry HQ
 
-Tirislib.RecipeGenerator.create {
-    product = "complex-scientific-data",
-    product_amount = 4,
-    category = "sosciencity-caste-foundry",
-    energy_required = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "complex-scientific-data", amount = 4}
+    },
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 4}
     },
+    name = "empty-hard-drive",
+    category = "sosciencity-caste-foundry",
+    energy_required = 2,
     unlock = "foundry-caste"
 }

@@ -10,13 +10,18 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "bloomhouse",
-    themes = {{"piping", 20}, {"soil", 50}, {"machine", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bloomhouse", amount = 1}
+    },
     ingredients = {
+        {theme = "piping", amount = 20},
+        {theme = "soil", amount = 50},
+        {theme = "machine", amount = 2},
         {type = "item", name = "window", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
+    name = "window",
     default_theme_level = 2,
     unlock = "indoor-growing"
 }

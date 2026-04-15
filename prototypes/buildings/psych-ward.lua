@@ -12,10 +12,16 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "psych-ward",
-    themes = {{"building", 10}, {"furnishing", 5, 5}},
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "psych-ward", amount = 1}
+    },
+    ingredients = {
+        {theme = "building", amount = 10},
+        {theme = "furnishing", amount = 5, level = 5},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
+    name = "architectural-concept",
     default_theme_level = 2,
     unlock = "psychiatry"
 }

@@ -12,9 +12,14 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "cold-storage-warehouse",
-    themes = {{"building", 2}, {"machine", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "cold-storage-warehouse", amount = 1}
+    },
+    ingredients = {
+        {theme = "building", amount = 2},
+        {theme = "machine", amount = 2}
+    },
     unlock = "food-processing"
 }
 

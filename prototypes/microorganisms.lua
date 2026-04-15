@@ -48,60 +48,78 @@ Tirislib.Fluid.batch_create(
 )
 
 local function create_enrichment_recipe(details)
-    local product = Tirislib.Fluid.get_by_name(details.product)
+    local product_name = details.product
+    local product = Tirislib.Fluid.get_by_name(product_name)
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            product_amount = 10,
-            energy_required = 4,
-            localised_name = {"recipe-name.enrichment", product:get_localised_name()},
-            localised_description = {"recipe-description.enrichment", product:get_localised_name()},
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/enrichment.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            do_index_fluid_ingredients = true,
-            do_index_fluid_results = true
-        }
-    )
+    local result = {type = "fluid", name = product_name, amount = details.product_amount or 10}
+    if details.product_probability then
+        result.probability = details.product_probability
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
+
+    local prototype = {
+        results = {result},
+        ingredients = ingredients,
+        energy_required = details.energy_required or 4,
+        category = details.category,
+        localised_name = details.localised_name or {"recipe-name.enrichment", product:get_localised_name()},
+        localised_description = details.localised_description or {"recipe-description.enrichment", product:get_localised_name()},
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/enrichment.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        do_index_fluid_ingredients = true,
+        do_index_fluid_results = true,
+        unlock = details.unlock
+    }
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 local function create_pure_culture_recipe(details)
-    local product = Tirislib.Fluid.get_by_name(details.product)
+    local product_name = details.product
+    local product = Tirislib.Fluid.get_by_name(product_name)
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            product_amount = 100,
-            energy_required = 4,
-            localised_name = {"recipe-name.pure-culture", product:get_localised_name()},
-            localised_description = {"recipe-description.pure-culture", product:get_localised_name()},
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/pure-culture.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            ingredients = {
-                {type = "fluid", name = product.name, amount = 10}
-            },
-            do_index_fluid_ingredients = true,
-            do_index_fluid_results = true
-        }
-    )
+    local ingredients = {
+        {type = "fluid", name = product_name, amount = 10}
+    }
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        results = {
+            {type = "fluid", name = product_name, amount = details.product_amount or 100}
+        },
+        ingredients = ingredients,
+        energy_required = details.energy_required or 4,
+        category = details.category,
+        localised_name = details.localised_name or {"recipe-name.pure-culture", product:get_localised_name()},
+        localised_description = details.localised_description or {"recipe-description.pure-culture", product:get_localised_name()},
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/pure-culture.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        do_index_fluid_ingredients = true,
+        do_index_fluid_results = true,
+        unlock = details.unlock
+    }
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 create_enrichment_recipe {

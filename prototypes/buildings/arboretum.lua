@@ -10,9 +10,15 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "arboretum",
-    themes = {{"soil", 20}, {"tank", 1}, {"piping", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "arboretum", amount = 1}
+    },
+    ingredients = {
+        {theme = "soil", amount = 20},
+        {theme = "tank", amount = 1},
+        {theme = "piping", amount = 10}
+    },
     default_theme_level = 0,
     unlock = "open-environment-farming"
 }

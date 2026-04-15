@@ -10,10 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "architectural-office",
-    themes = {{"building", 5}, {"lamp", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "architectural-office", amount = 1}
+    },
     ingredients = {
+        {theme = "building", amount = 5},
+        {theme = "lamp", amount = 10},
         {type = "item", name = "furniture", amount = 40},
         {type = "item", name = "architectural-concept", amount = 1}
     },

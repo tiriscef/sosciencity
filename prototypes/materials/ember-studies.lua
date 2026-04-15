@@ -21,8 +21,7 @@ Tirislib.Item.batch_create(
 
 -- Handcraft
 
-Tirislib.Recipe.create {
-    type = "recipe",
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "brainstorm",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -35,8 +34,9 @@ Tirislib.Recipe.create {
     icon_size = 64,
     subgroup = "sosciencity-ideas-per-hand",
     order = "00000",
-    main_product = ""
-}:add_unlock("automation-science-pack")
+    main_product = "",
+    unlock = "automation-science-pack"
+}
 
 -- Atelier
 
