@@ -10,11 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "foundry-hq",
-    themes = {{"building", 20}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {{type = "item", name = "foundry-hq", amount = 1}},
+    ingredients = {
+        {"building", 20},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 3,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "foundry-caste"
 }
 Sosciencity_Config.remove_quality_multipliers("foundry-hq")

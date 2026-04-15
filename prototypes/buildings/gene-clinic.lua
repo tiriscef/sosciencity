@@ -12,10 +12,12 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "gene-clinic",
-    themes = {{"building", 2}, {"machine", 2}}, -- TODO actual themes
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {{type = "item", name = "gene-clinic", amount = 1}},
+    ingredients = {
+        {"building", 2}, {"machine", 2}, -- TODO actual themes
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 4,
     unlock = "in-situ-gene-editing"
 }

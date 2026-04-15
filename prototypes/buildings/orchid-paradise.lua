@@ -11,11 +11,16 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "orchid-paradise",
-    themes = {{"building", 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "orchid-paradise", amount = 1}
+    },
+    ingredients = {
+        {theme = "building", amount = 1},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
+    name = "architectural-concept",
     default_theme_level = 1,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "orchid-paradise"
 }
 

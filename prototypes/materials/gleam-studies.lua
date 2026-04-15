@@ -17,13 +17,15 @@ Tirislib.Item.batch_create(
 
 -- Gleam HQ
 
-Tirislib.RecipeGenerator.create {
-    product = "metastudy",
-    product_amount = 4,
-    category = "sosciencity-caste-gleam",
-    energy_required = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "metastudy", amount = 4}
+    },
     ingredients = {
         {type = "item", name = "complex-scientific-data", amount = 2}
     },
+    name = "complex-scientific-data",
+    category = "sosciencity-caste-gleam",
+    energy_required = 2,
     unlock = "gleam-caste"
 }

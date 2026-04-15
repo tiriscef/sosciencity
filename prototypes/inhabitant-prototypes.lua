@@ -111,14 +111,21 @@ local items = {
 
 Tirislib.Item.batch_create(items, {subgroup = "sosciencity-inhabitants", stack_size = 10})
 
-Tirislib.RecipeGenerator.create {
-    product = "hehe",
-    themes = {{"plating", 2}, {"plating2", 4}, {"glass", 2}, {"wiring", 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "hehe", amount = 1}
+    },
+    ingredients = {
+        {theme = "plating", amount = 2},
+        {theme = "plating2", amount = 4},
+        {theme = "glass", amount = 2},
+        {theme = "wiring", amount = 1}
+    },
     energy_required = 1,
     unlock = "upbringing"
 }
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "lay-egg",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -134,20 +141,23 @@ Tirislib.Recipe.create {
     icon_size = 64,
     subgroup = "sosciencity-inhabitants",
     main_product = "",
-    localised_description = {"recipe-description.lay-egg", tostring(Biology.egg_calories)}
-}:add_unlock("upbringing")
+    localised_description = {"recipe-description.lay-egg", tostring(Biology.egg_calories)},
+    unlock = "upbringing"
+}
 
 -- TODO: ovosynthesis recipe
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
-    Tirislib.RecipeGenerator.create {
-        product = egg,
-        energy_required = 120,
+    Tirislib.RecipeGenerator.create_from_prototype {
+        results = {
+            {type = "item", name = egg, amount = 1}
+        },
         ingredients = {
+            {theme = "genetic_neogenesis", amount = 1},
             {type = "item", name = "blood-bag", amount = 1},
             {type = "item", name = "huwan-genome", amount = 1}
         },
-        themes = {{"genetic_neogenesis", 1}},
+        energy_required = 120,
         category = "sosciencity-reproductive-gene-lab",
         localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index)}},
         unlock = "huwan-genetic-neogenesis"

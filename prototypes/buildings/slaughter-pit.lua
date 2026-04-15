@@ -10,9 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "slaughter-pit",
-    themes = {{"machine", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "slaughter-pit", amount = 1}
+    },
+    ingredients = {
+        {theme = "machine", amount = 2}
+    },
     default_theme_level = 1,
     unlock = "hunting-fishing"
 }

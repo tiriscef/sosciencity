@@ -19,41 +19,41 @@ Tirislib.Fluid.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create {
-    product = "sugar-medium",
-    product_type = "fluid",
-    product_amount = 100,
-    energy_required = 3.2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "sugar-medium", amount = 100}
+    },
     ingredients = {
         {type = "item", name = "blue-grapes", amount = 10},
         {type = "fluid", name = "drinkable-water", amount = 100}
     },
-    category = Tirislib.RecipeGenerator.category_alias.dissolving,
+    name = "blue-grapes",
+    energy_required = 3.2,
     unlock = "fermentation"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sugar-medium",
-    product_type = "fluid",
-    product_amount = 100,
-    energy_required = 0.8,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "sugar-medium", amount = 100}
+    },
     ingredients = {
         {type = "item", name = "sugar", amount = 5},
         {type = "fluid", name = "clean-water", amount = 100}
     },
-    category = Tirislib.RecipeGenerator.category_alias.dissolving,
+    name = "sugar",
+    energy_required = 0.8,
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sugar-medium",
-    product_type = "fluid",
-    product_amount = 100,
-    energy_required = 0.8,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "sugar-medium", amount = 100}
+    },
     ingredients = {
         {type = "item", name = "molasses", amount = 5},
         {type = "fluid", name = "clean-water", amount = 100}
     },
-    category = Tirislib.RecipeGenerator.category_alias.dissolving,
+    name = "molasses",
+    energy_required = 0.8,
     unlock = "basic-biotechnology"
 }

@@ -59,207 +59,232 @@ local function add_general_growing_attributes(details, plant_details)
 end
 
 local function create_annual_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
-    local plant_details = Biology.flora[product.name]
-
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
+    local plant_details = Biology.flora[product_name]
+    local mult = details.output_multiplier or 1
     local energy_required = 200 / plant_details.growth_coefficient
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = "farming-annual-" .. product.name,
-            product_min = 0,
-            product_max = 100 * (details.output_multiplier or 1),
-            energy_required = energy_required,
-            ingredients = {
-                {type = "item", name = product.name, amount = 10 * (details.output_multiplier or 1)}
-            },
-            byproducts = {
-                {
-                    type = "item",
-                    name = product.name,
-                    amount_min = 0,
-                    amount_max = 100 * (details.output_multiplier or 1),
-                    probability = details.product_probability
-                },
-                {type = "item", name = "leafage", amount_min = 1, amount_max = 40}
-            },
-            localised_name = {"recipe-name.annual", product:get_localised_name()},
-            localised_description = {
-                "recipe-description.annual",
-                product:get_localised_name()
-            },
-            category = "sosciencity-farming-annual",
-            subgroup = "sosciencity-flora",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            unlock = "open-environment-farming"
-        }
-    )
+    local results = {
+        {type = "item", name = product_name, amount_min = 0, amount_max = 100 * mult, product = true},
+        {type = "item", name = product_name, amount_min = 0, amount_max = 100 * mult, probability = details.product_probability},
+        {type = "item", name = "leafage", amount_min = 1, amount_max = 40}
+    }
+    if details.byproducts then
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
 
-    add_general_growing_attributes(details, plant_details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
+    ingredients[#ingredients + 1] = {type = "item", name = product_name, amount = 10 * mult}
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        name = details.name or ("farming-annual-" .. product_name),
+        results = results,
+        ingredients = ingredients,
+        energy_required = details.energy_required or energy_required,
+        localised_name = details.localised_name or {"recipe-name.annual", product:get_localised_name()},
+        localised_description = details.localised_description or {
+            "recipe-description.annual",
+            product:get_localised_name()
+        },
+        category = details.category or "sosciencity-farming-annual",
+        subgroup = details.subgroup or "sosciencity-flora",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        unlock = details.unlock or "open-environment-farming"
+    }
+
+    add_general_growing_attributes(prototype, plant_details)
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 local function create_perennial_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
-    local plant_details = Biology.flora[product.name]
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
+    local plant_details = Biology.flora[product_name]
+    local mult = details.output_multiplier or 1
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = "farming-perennial-" .. product.name,
-            product_min = 5 * (details.output_multiplier or 1),
-            product_max = 10 * (details.output_multiplier or 1),
-            energy_required = 25,
-            byproducts = {{type = "item", name = "leafage", amount = 1}},
-            localised_name = {"recipe-name.perennial", product:get_localised_name()},
-            localised_description = {
-                "recipe-description.perennial",
-                product:get_localised_name()
-            },
-            category = "sosciencity-farming-perennial",
-            subgroup = "sosciencity-flora-perennial",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            unlock = "open-environment-farming"
-        }
-    )
+    local results = {
+        {type = "item", name = product_name, amount_min = 5 * mult, amount_max = 10 * mult, product = true},
+        {type = "item", name = "leafage", amount = 1}
+    }
+    if details.byproducts then
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
 
-    add_general_growing_attributes(details, plant_details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        name = details.name or ("farming-perennial-" .. product_name),
+        results = results,
+        ingredients = ingredients,
+        energy_required = details.energy_required or 25,
+        localised_name = details.localised_name or {"recipe-name.perennial", product:get_localised_name()},
+        localised_description = details.localised_description or {
+            "recipe-description.perennial",
+            product:get_localised_name()
+        },
+        category = details.category or "sosciencity-farming-perennial",
+        subgroup = details.subgroup or "sosciencity-flora-perennial",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        unlock = details.unlock or "open-environment-farming"
+    }
+
+    add_general_growing_attributes(prototype, plant_details)
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 local function create_annual_bloomhouse_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
-    local plant_details = Biology.flora[product.name]
-
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
+    local plant_details = Biology.flora[product_name]
+    local mult = details.output_multiplier or 1
     local energy_required = 200 / plant_details.growth_coefficient
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = "farming-annual-bloomhouse-" .. product.name,
-            product_min = 50 * (details.output_multiplier or 1),
-            product_max = 100 * (details.output_multiplier or 1),
-            energy_required = energy_required,
-            ingredients = {
-                {type = "item", name = product.name, amount = 10},
-                {type = "item", name = "pot", amount = 20}
-            },
-            byproducts = {
-                {
-                    type = "item",
-                    name = product.name,
-                    amount_min = 50 * (details.output_multiplier or 1),
-                    amount_max = 100 * (details.output_multiplier or 1),
-                    probability = details.product_probability
-                },
-                {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
-                {type = "item", name = "pot", amount_min = 19, amount_max = 20}
-            },
-            localised_name = {"recipe-name.annual-bloomhouse", product:get_localised_name()},
-            localised_description = {
-                "recipe-description.annual-bloomhouse",
-                product:get_localised_name()
-            },
-            category = "sosciencity-bloomhouse-annual",
-            subgroup = "sosciencity-flora-bloomhouse",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            unlock = "indoor-growing"
-        }
-    )
+    local results = {
+        {type = "item", name = product_name, amount_min = 50 * mult, amount_max = 100 * mult, product = true},
+        {type = "item", name = product_name, amount_min = 50 * mult, amount_max = 100 * mult, probability = details.product_probability},
+        {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
+        {type = "item", name = "pot", amount_min = 19, amount_max = 20}
+    }
+    if details.byproducts then
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
 
-    add_general_growing_attributes(details, plant_details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
+    ingredients[#ingredients + 1] = {type = "item", name = product_name, amount = 10}
+    ingredients[#ingredients + 1] = {type = "item", name = "pot", amount = 20}
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        name = details.name or ("farming-annual-bloomhouse-" .. product_name),
+        results = results,
+        ingredients = ingredients,
+        energy_required = details.energy_required or energy_required,
+        localised_name = details.localised_name or {"recipe-name.annual-bloomhouse", product:get_localised_name()},
+        localised_description = details.localised_description or {
+            "recipe-description.annual-bloomhouse",
+            product:get_localised_name()
+        },
+        category = details.category or "sosciencity-bloomhouse-annual",
+        subgroup = details.subgroup or "sosciencity-flora-bloomhouse",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        unlock = details.unlock or "indoor-growing"
+    }
+
+    add_general_growing_attributes(prototype, plant_details)
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 local function create_identification_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            product_amount = 1,
-            energy_required = 8,
-            localised_name = {"recipe-name.flora-identification", product:get_localised_name()},
-            localised_description = {"recipe-description.flora-identification", product:get_localised_name()},
-            category = "sosciencity-caste-ember",
-            subgroup = "sosciencity-neogenesis-recipes",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64
-        }
-    )
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        results = {
+            {type = "item", name = product_name, amount = details.product_amount or 1}
+        },
+        ingredients = ingredients,
+        energy_required = details.energy_required or 8,
+        localised_name = details.localised_name or {"recipe-name.flora-identification", product:get_localised_name()},
+        localised_description = details.localised_description or {"recipe-description.flora-identification", product:get_localised_name()},
+        category = details.category or "sosciencity-caste-ember",
+        subgroup = details.subgroup or "sosciencity-neogenesis-recipes",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        unlock = details.unlock
+    }
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 local function create_neogenesis_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            product_amount = 1,
-            energy_required = 10,
-            themes = {{"genetic_neogenesis", 1}},
-            ingredients = {
-                {type = "item", name = "chloroplasts", amount = 1},
-                {type = "item", name = "plant-genome", amount = 1}
-            },
-            byproducts = {
-                {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.99}
-            },
-            localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
-            localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
-            category = "sosciencity-phyto-gene-lab",
-            subgroup = "sosciencity-neogenesis-recipes",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            unlock = "genetic-neogenesis"
-        }
-    )
+    local results = {
+        {type = "item", name = product_name, amount = details.product_amount or 1, product = true},
+        {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.99}
+    }
+    if details.byproducts then
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
+    ingredients[#ingredients + 1] = {theme = "genetic_neogenesis", amount = 1}
+    ingredients[#ingredients + 1] = {type = "item", name = "chloroplasts", amount = 1}
+    ingredients[#ingredients + 1] = {type = "item", name = "plant-genome", amount = 1}
+
+    local prototype = {
+        results = results,
+        ingredients = ingredients,
+        energy_required = details.energy_required or 10,
+        localised_name = details.localised_name or {"recipe-name.neogenesis", product:get_localised_name()},
+        localised_description = details.localised_description or {"recipe-description.neogenesis", product:get_localised_name()},
+        category = details.category or "sosciencity-phyto-gene-lab",
+        subgroup = details.subgroup or "sosciencity-neogenesis-recipes",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        unlock = details.unlock or "genetic-neogenesis"
+    }
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 -- apple
@@ -618,51 +643,57 @@ create_identification_recipe {
 -- << mushroom >>
 
 local function create_mushroom_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
-    local plant_details = Biology.flora[product.name]
-
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
+    local plant_details = Biology.flora[product_name]
+    local mult = details.output_multiplier or 1
     local energy_required = 30 / plant_details.growth_coefficient
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = "farming-mushroom-" .. product.name,
-            product_min = 40 * (details.output_multiplier or 1),
-            product_max = 60 * (details.output_multiplier or 1),
-            product_probability = details.product_probability,
-            energy_required = energy_required,
-            byproducts = {
-                {
-                    type = "item",
-                    name = product.name,
-                    amount_min = 40 * (details.output_multiplier or 1),
-                    amount_max = 60 * (details.output_multiplier or 1),
-                    probability = details.product_probability
-                }
-            },
-            localised_name = {"recipe-name.farm-mushroom", product:get_localised_name()},
-            localised_description = {
-                "recipe-description.annual",
-                product:get_localised_name()
-            },
-            category = "sosciencity-mushroom-farm",
-            subgroup = "sosciencity-mushrooms",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            unlock = "basic-biotechnology"
-        }
-    )
+    local results = {
+        {type = "item", name = product_name, amount_min = 40 * mult, amount_max = 60 * mult, product = true},
+        {type = "item", name = product_name, amount_min = 40 * mult, amount_max = 60 * mult, probability = details.product_probability}
+    }
+    if details.byproducts then
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
 
-    add_general_growing_attributes(details, plant_details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
+    if details.themes then
+        for _, theme in pairs(details.themes) do
+            ingredients[#ingredients + 1] = {theme = theme[1], amount = theme[2], level = theme[3]}
+        end
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        name = details.name or ("farming-mushroom-" .. product_name),
+        results = results,
+        ingredients = ingredients,
+        energy_required = details.energy_required or energy_required,
+        localised_name = details.localised_name or {"recipe-name.farm-mushroom", product:get_localised_name()},
+        localised_description = details.localised_description or {
+            "recipe-description.annual",
+            product:get_localised_name()
+        },
+        category = details.category or "sosciencity-mushroom-farm",
+        subgroup = details.subgroup or "sosciencity-mushrooms",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        unlock = details.unlock or "basic-biotechnology"
+    }
+
+    add_general_growing_attributes(prototype, plant_details)
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 -- fawoxylas
@@ -709,52 +740,54 @@ create_mushroom_recipe {
 -- << algae >>
 
 local function create_algae_recipe(details)
-    local product = Tirislib.Item.get_by_name(details.product)
-    local plant_details = Biology.flora[product.name]
-
+    local product_name = details.product
+    local product = Tirislib.Item.get_by_name(product_name)
+    local plant_details = Biology.flora[product_name]
+    local mult = details.output_multiplier or 1
     local energy_required = 120 / plant_details.growth_coefficient
 
-    Tirislib.RecipeGenerator.merge_details(
-        details,
-        {
-            name = "farming-algae-" .. product.name,
-            product_min = 20 * (details.output_multiplier or 1),
-            product_max = 40 * (details.output_multiplier or 1),
-            energy_required = energy_required,
-            byproducts = {
-                {
-                    type = "item",
-                    name = product.name,
-                    amount_min = 20 * (details.output_multiplier or 1),
-                    amount_max = 40 * (details.output_multiplier or 1),
-                    probability = details.product_probability
-                }
-            },
-            localised_name = {"recipe-name.farm-algae", product:get_localised_name()},
-            localised_description = {
-                "recipe-description.farm-algae",
-                product:get_localised_name()
-            },
-            category = "sosciencity-algae-farm",
-            subgroup = "sosciencity-algae",
-            icons = {
-                {icon = product.icon},
-                {
-                    icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                    scale = 0.3,
-                    shift = {-8, -8}
-                }
-            },
-            icon_size = 64,
-            do_index_fluid_ingredients = true,
-            do_index_fluid_results = true,
-            unlock = "basic-biotechnology"
-        }
-    )
+    local results = {
+        {type = "item", name = product_name, amount_min = 20 * mult, amount_max = 40 * mult, product = true},
+        {type = "item", name = product_name, amount_min = 20 * mult, amount_max = 40 * mult, probability = details.product_probability}
+    }
+    if details.byproducts then
+        Tirislib.Tables.merge(results, details.byproducts)
+    end
 
-    add_general_growing_attributes(details, plant_details)
+    local ingredients = {}
+    if details.ingredients then
+        Tirislib.Tables.merge(ingredients, details.ingredients)
+    end
 
-    return Tirislib.RecipeGenerator.create(details)
+    local prototype = {
+        name = details.name or ("farming-algae-" .. product_name),
+        results = results,
+        ingredients = ingredients,
+        energy_required = details.energy_required or energy_required,
+        localised_name = details.localised_name or {"recipe-name.farm-algae", product:get_localised_name()},
+        localised_description = details.localised_description or {
+            "recipe-description.farm-algae",
+            product:get_localised_name()
+        },
+        category = details.category or "sosciencity-algae-farm",
+        subgroup = details.subgroup or "sosciencity-algae",
+        icons = details.icons or {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = details.icon_size or 64,
+        do_index_fluid_ingredients = true,
+        do_index_fluid_results = true,
+        unlock = details.unlock or "basic-biotechnology"
+    }
+
+    add_general_growing_attributes(prototype, plant_details)
+
+    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
 end
 
 -- endower flower
@@ -782,7 +815,7 @@ create_algae_recipe {
 ---------------------------------------------------------------------------------------------------
 -- << mix sorting recipes >>
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "sort-edible-plants",
     energy_required = 4,
     category = "sosciencity-sorting-machine",
@@ -809,10 +842,11 @@ Tirislib.Recipe.create {
     main_product = "",
     order = "00001",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-edible-plants"}},
-    localised_description = {"recipe-description.flora-sorting"}
-}:add_unlock("open-environment-farming")
+    localised_description = {"recipe-description.flora-sorting"},
+    unlock = "open-environment-farming"
+}
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "sort-fungi",
     energy_required = 4,
     category = "sosciencity-sorting-machine",
@@ -839,10 +873,11 @@ Tirislib.Recipe.create {
     main_product = "",
     order = "00002",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-fungi"}},
-    localised_description = {"recipe-description.flora-sorting"}
-}:add_unlock("mushroom-farming")
+    localised_description = {"recipe-description.flora-sorting"},
+    unlock = "mushroom-farming"
+}
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "sort-algae",
     energy_required = 4,
     category = "sosciencity-sorting-machine",
@@ -868,26 +903,26 @@ Tirislib.Recipe.create {
     main_product = "",
     order = "00003",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-algae"}},
-    localised_description = {"recipe-description.flora-sorting"}
-}:add_unlock("algae-farming")
+    localised_description = {"recipe-description.flora-sorting"},
+    unlock = "algae-farming"
+}
 
 ---------------------------------------------------------------------------------------------------
 -- << processing recipes >>
 
 for _, item in pairs(flora_items) do
     if item.wood then
-        Tirislib.RecipeGenerator.create {
-            product = "lumber",
-            product_amount = 3,
-            category = "sosciencity-wood-processing",
+                Tirislib.RecipeGenerator.create_from_prototype {
+            results = {
+                {type = "item", name = "lumber", amount = 3, product = true},
+                {type = "item", name = "sawdust", amount = 1}
+            },
             ingredients = {
                 {type = "item", name = item.name, amount = 1}
             },
-            byproducts = {
-                {type = "item", name = "sawdust", amount = 1}
-            },
-            allow_productivity = true,
-            unlock = item.unlock
+            name = "sawdust",
+            category = "sosciencity-wood-processing",
+            allow_productivity = true
         }
     end
 end
@@ -968,87 +1003,101 @@ Tirislib.Item.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create {
-    product = "apple-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "apple-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "ortrot-sapling", amount = 1},
         {type = "item", name = "apple", amount = 10}
     },
+    name = "ortrot-sapling",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 2,
-    unlock = Unlocks.get_tech_name("apple")
+    default_theme_level = 2
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "avocado-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "avocado-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "avocado", amount = 10}
     },
+    name = "pot",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 1,
-    unlock = Unlocks.get_tech_name("avocado")
+    default_theme_level = 1
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "cherry-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "cherry-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "cherry", amount = 10}
     },
+    name = "pot",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 1,
-    unlock = Unlocks.get_tech_name("cherry")
+    default_theme_level = 1
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "lemon-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "lemon-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "zetorn-sapling", amount = 1},
         {type = "item", name = "lemon", amount = 10}
     },
+    name = "zetorn-sapling",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 2,
-    unlock = Unlocks.get_tech_name("lemon")
+    default_theme_level = 2
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "orange-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "orange-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "zetorn-sapling", amount = 1},
         {type = "item", name = "orange", amount = 10}
     },
+    name = "zetorn-sapling",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 2,
-    unlock = Unlocks.get_tech_name("orange")
+    default_theme_level = 2
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "ortrot-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "ortrot-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "ortrot", amount = 10}
     },
+    name = "pot",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 0,
     unlock = "explore-alien-flora-2"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "zetorn-sapling",
-    themes = {{"soil", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "zetorn-sapling", amount = 1}
+    },
     ingredients = {
+        {theme = "soil", amount = 10},
         {type = "item", name = "pot", amount = 1},
         {type = "item", name = "zetorn", amount = 10}
     },
+    name = "pot",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 0,
     unlock = "explore-alien-flora-1"
 }
 
@@ -1184,7 +1233,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     ingredients = {
         {type = "item", name = "leafage", amount = 10},
-        {type = "item", name = "humus", amount = 10}
+        {type = "item", name = "humus", amount = 10},
+        {type = "item", name = "pot", amount = 1}
     },
     category = "sosciencity-bloomhouse-annual",
     energy_required = 20,

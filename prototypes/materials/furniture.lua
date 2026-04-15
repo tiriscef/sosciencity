@@ -60,110 +60,139 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create {
-    product = "window",
-    themes = {{"glass", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "window", amount = 1}
+    },
     ingredients = {
+        {theme = "glass", amount = 2},
         {type = "item", name = "lumber", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
-    }
+    },
+    name = "lumber"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "bed",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bed", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "plemnemm-cotton", amount = 10},
         {type = "item", name = "screw-set", amount = 1}
-    }
+    },
+    name = "lumber"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "carpet",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "carpet", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "yarn", amount = 1}
-    }
+    },
+    name = "cloth"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "furniture",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "furniture", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "screw-set", amount = 1}
-    }
+    },
+    name = "lumber"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "kitchen-furniture",
-    themes = {{"piping", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "kitchen-furniture", amount = 1}
+    },
     ingredients = {
+        {theme = "piping", amount = 2},
         {type = "item", name = "furniture", amount = 2},
         {type = "item", name = "refrigerator", amount = 1},
         {type = "item", name = "stove", amount = 1}
-    }
+    },
+    name = "furniture"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "bathroom-furniture",
-    themes = {{"piping", 2}, {"plating2", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bathroom-furniture", amount = 1}
+    },
     ingredients = {
+        {theme = "piping", amount = 2},
+        {theme = "plating2", amount = 2},
         {type = "item", name = "ceramic", amount = 3}
-    }
+    },
+    name = "ceramic"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "curtain",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "curtain", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "yarn", amount = 1}
-    }
+    },
+    name = "cloth"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sofa",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sofa", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "yarn", amount = 1},
         {type = "item", name = "plemnemm-cotton", amount = 10},
         {type = "item", name = "screw-set", amount = 2}
-    }
+    },
+    name = "lumber"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "stove",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "stove", amount = 1}
+    },
     ingredients = {
+        {theme = "wiring", amount = 5, level = 0},
+        {theme = "casing", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
     },
-    themes = {
-        {"wiring", 5, 0},
-        {"casing", 1}
-    },
+    name = "screw-set",
     default_theme_level = 2
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "refrigerator",
-    themes = {
-        {"electronics", 1},
-        {"casing", 1},
-        {"cooling_fluid", 20}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "refrigerator", amount = 1}
     },
-    default_theme_level = 2,
-    category = "crafting-with-fluid"
+    ingredients = {
+        {theme = "electronics", amount = 1},
+        {theme = "casing", amount = 1},
+        {theme = "cooling_fluid", amount = 20}
+    },
+    category = "crafting-with-fluid",
+    default_theme_level = 2
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "air-conditioner",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "air-conditioner", amount = 1}
+    },
     ingredients = {
+        {theme = "electronics", amount = 1},
+        {theme = "casing", amount = 1},
         {type = "item", name = "screw-set", amount = 1},
         {type = "item", name = "filter", amount = 2}
     },
-    themes = {
-        {"electronics", 1},
-        {"casing", 1}
-    },
+    name = "screw-set",
     default_theme_level = 3
 }

@@ -10,14 +10,19 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "orchid-food-factory",
-    themes = {{"building", 10}, {"machine", 20}, {"piping", 50}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "orchid-food-factory", amount = 1}
+    },
     ingredients = {
+        {theme = "building", amount = 10},
+        {theme = "machine", amount = 20},
+        {theme = "piping", amount = 50},
         {type = "item", name = "groundwater-pump", amount = 1},
         {type = "item", name = "silo", amount = 2},
         {type = "item", name = "architectural-concept", amount = 1}
     },
+    name = "groundwater-pump",
     default_theme_level = 2,
     unlock = "food-processing"
 }

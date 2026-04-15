@@ -10,11 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "gunfire-hq",
-    themes = {{"building", 20}, {"housing_sheltered", 20}, {"gun_turret", 4}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {{type = "item", name = "gunfire-hq", amount = 1}},
+    ingredients = {
+        {"building", 20}, {"housing_sheltered", 20}, {"gun_turret", 4},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
     default_theme_level = 2,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
     unlock = "gunfire-caste"
 }
 Sosciencity_Config.remove_quality_multipliers("gunfire-hq")

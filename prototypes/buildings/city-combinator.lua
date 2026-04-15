@@ -10,9 +10,14 @@ Tirislib.Item.create {
     stack_size = 50
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "city-combinator",
-    themes = {{"electronics", 5}, {"wiring", 5}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "city-combinator", amount = 1}
+    },
+    ingredients = {
+        {theme = "electronics", amount = 5},
+        {theme = "wiring", amount = 5}
+    },
     default_theme_level = 2,
     unlock = "infrastructure-2"
 }

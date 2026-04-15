@@ -295,75 +295,83 @@ Tirislib.Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"}
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create {
-    product = "fermented-biter-meat",
-    product_amount = 10,
-    energy_required = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "fermented-biter-meat", amount = 10}
+    },
     ingredients = {
         {type = "item", name = "biter-meat", amount = 10},
         {type = "item", name = "salt", amount = 2}
     },
+    name = "biter-meat",
     category = "sosciencity-fermentation-tank",
+    energy_required = 5,
     unlock = "fermentation"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "hummus",
-    product_amount = 20,
-    energy_required = 3,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "hummus", amount = 20}
+    },
     ingredients = {
         {type = "item", name = "chickpea", amount = 20},
         {type = "item", name = "sesame", amount = 10}
     },
-    category = Tirislib.RecipeGenerator.category_alias.food_processing,
+    name = "chickpea",
+    energy_required = 3,
     unlock = "hummus"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "dried-solfaen",
-    product_amount = 5,
-    energy_required = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "dried-solfaen", amount = 5}
+    },
     ingredients = {
         {type = "fluid", name = "solfaen", amount = 100}
     },
-    category = Tirislib.RecipeGenerator.category_alias.drying,
+    name = "solfaen",
+    energy_required = 5,
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "tofu",
-    product_amount = 30,
-    energy_required = 5,
-    byproducts = {{type = "item", name = "yuba", amount = 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "tofu", amount = 30, product = true},
+        {type = "item", name = "yuba", amount = 10}
+    },
     ingredients = {
         {type = "fluid", name = "soy-milk", amount = 200}
     },
-    category = Tirislib.RecipeGenerator.category_alias.food_processing,
+    name = "yuba",
+    energy_required = 5,
     unlock = "soy-products"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "bread",
-    product_min = 10,
-    product_max = 20,
-    energy_required = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bread", amount_min = 10, amount_max = 20}
+    },
     ingredients = {
         {type = "item", name = "flour", amount = 10},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
-    category = Tirislib.RecipeGenerator.category_alias.food_processing,
+    name = "flour",
+    energy_required = 2,
     unlock = "food-processing"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "potluck",
-    energy_required = 3,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "potluck", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 1},
         {type = "item", name = "wild-fungi", amount = 1},
         {type = "item", name = "wild-algae", amount = 1}
     },
-    category = "sosciencity-kitchen-for-all"
+    name = "wild-edible-plants",
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -407,14 +415,18 @@ if Sosciencity_Config.DEBUG then
 
     -- Test kitchen-for-all recipes so integration tests can call set_recipe() to
     -- open the output inventory slots before inserting test food items.
-    Tirislib.RecipeGenerator.create {
+        Tirislib.RecipeGenerator.create_from_prototype {
+        results = {
+            {type = "item", name = "test-food-fruity-carb", amount = 1}
+        },
         name = "test-kitchen-fruity-carb",
-        product = "test-food-fruity-carb",
         category = "sosciencity-kitchen-for-all"
     }
-    Tirislib.RecipeGenerator.create {
+        Tirislib.RecipeGenerator.create_from_prototype {
+        results = {
+            {type = "item", name = "test-food-neutral-protein-fat", amount = 1}
+        },
         name = "test-kitchen-protein-fat",
-        product = "test-food-neutral-protein-fat",
         category = "sosciencity-kitchen-for-all"
     }
 end

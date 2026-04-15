@@ -10,9 +10,15 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sosciencity-bioreactor",
-    themes = {{"machine", 2}, {"piping", 20}, {"tank", 3}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sosciencity-bioreactor", amount = 1}
+    },
+    ingredients = {
+        {theme = "machine", amount = 2},
+        {theme = "piping", amount = 20},
+        {theme = "tank", amount = 3}
+    },
     default_theme_level = 2,
     unlock = "basic-biotechnology"
 }

@@ -13,8 +13,10 @@ local function create_test_container(name)
         localised_name = full_name
     }
 
-    Tirislib.RecipeGenerator.create {
-        product = full_name
+    Tirislib.RecipeGenerator.create_from_prototype {
+        results = {
+            {type = "item", name = full_name, amount = 1}
+        }
     }
 
     Tirislib.Entity.create {
@@ -70,8 +72,10 @@ Tirislib.Item.create {
     localised_name = "test-water-distributer"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "test-water-distributer"
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "test-water-distributer", amount = 1}
+    }
 }
 
 Tirislib.Entity.create {
@@ -124,8 +128,10 @@ local function create_test_assembling_machine(name, categories)
         localised_name = "test-" .. name
     }
 
-    Tirislib.RecipeGenerator.create {
-        product = "test-" .. name
+        Tirislib.RecipeGenerator.create_from_prototype {
+        results = {
+            {type = "item", name = "test-", amount = 1}
+        }
     }
 
     Tirislib.Entity.create {

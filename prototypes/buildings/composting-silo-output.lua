@@ -10,9 +10,14 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "composting-silo-output",
-    themes = {{"plating", 10}, {"framework", 5}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "composting-silo-output", amount = 1}
+    },
+    ingredients = {
+        {theme = "plating", amount = 10},
+        {theme = "framework", amount = 5}
+    },
     default_theme_level = 1,
     unlock = "composting-silo"
 }

@@ -12,78 +12,102 @@ Tirislib.Item.batch_create(animal_food_items, {subgroup = "sosciencity-animal-fo
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create {
-    product = "bird-food",
-    product_amount = 2,
-    ingredients = {{type = "item", name = "hardcorn-punk", amount = 4}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bird-food", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "hardcorn-punk", amount = 4}
+    },
+    name = "hardcorn-punk",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "bird-food",
-    product_amount = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "bird-food", amount = 2}
+    },
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 2},
         {type = "item", name = "slaughter-waste", amount = 2}
     },
+    name = "hardcorn-punk",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fish-food",
-    product_amount = 2,
-    ingredients = {{type = "item", name = "dried-solfaen", amount = 4}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "fish-food", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "dried-solfaen", amount = 4}
+    },
+    name = "dried-solfaen",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fish-food",
-    product_amount = 4,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "fish-food", amount = 4}
+    },
     ingredients = {
         {type = "item", name = "queen-algae", amount = 3},
         {type = "item", name = "pyrifera", amount = 3}
     },
+    name = "queen-algae",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "carnivore-food",
-    product_amount = 2,
-    ingredients = {{type = "item", name = "slaughter-waste", amount = 3}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "carnivore-food", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "slaughter-waste", amount = 3}
+    },
+    name = "slaughter-waste",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "carnivore-food",
-    product_amount = 2,
-    ingredients = {{type = "item", name = "offal", amount = 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "carnivore-food", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "offal", amount = 2}
+    },
+    name = "offal",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "herbivore-food",
-    product_amount = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "herbivore-food", amount = 2}
+    },
     ingredients = {
         {type = "item", name = "leafage", amount = 2},
         {type = "item", name = "razha-bean", amount = 2}
     },
+    name = "leafage",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "herbivore-food",
-    product_amount = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "herbivore-food", amount = 2}
+    },
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 2},
         {type = "item", name = "razha-bean", amount = 2}
     },
+    name = "hardcorn-punk",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }

@@ -35,7 +35,7 @@ local garbage_items = {
 
 Tirislib.Item.batch_create(garbage_items, {subgroup = "sosciencity-garbage", stack_size = 200})
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "burn-garbage",
     emissions_multiplier = 2.5,
     energy_required = 0.8,
@@ -43,15 +43,16 @@ Tirislib.Recipe.create {
     ingredients = {
         {type = "item", name = "garbage", amount = 1}
     },
-    subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-2"):copy_icon_from_item("garbage"):add_icon_layer(
+    subgroup = "sosciencity-garbage",
+    unlock = "infrastructure-2"
+}:copy_icon_from_item("garbage"):add_icon_layer(
     "__sosciencity-graphics__/graphics/utility/flame.png",
     "topleft",
     0.25,
     {a = 0.7, r = 1, g = 1, b = 1}
 )
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "burn-food-leftovers",
     emissions_multiplier = 1.5,
     energy_required = 1.6,
@@ -59,15 +60,16 @@ Tirislib.Recipe.create {
     ingredients = {
         {type = "item", name = "food-leftovers", amount = 1}
     },
-    subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-2"):copy_icon_from_item("food-leftovers"):add_icon_layer(
+    subgroup = "sosciencity-garbage",
+    unlock = "infrastructure-2"
+}:copy_icon_from_item("food-leftovers"):add_icon_layer(
     "__sosciencity-graphics__/graphics/utility/flame.png",
     "topleft",
     0.25,
     {a = 0.7, r = 1, g = 1, b = 1}
 )
 
-Tirislib.Recipe.create {
+Tirislib.RecipeGenerator.create_from_prototype {
     name = "burn-slaughter-waste",
     emissions_multiplier = 1.5,
     energy_required = 1.6,
@@ -75,8 +77,9 @@ Tirislib.Recipe.create {
     ingredients = {
         {type = "item", name = "slaughter-waste", amount = 1}
     },
-    subgroup = "sosciencity-garbage"
-}:add_unlock("infrastructure-2"):copy_icon_from_item("slaughter-waste"):add_icon_layer(
+    subgroup = "sosciencity-garbage",
+    unlock = "infrastructure-2"
+}:copy_icon_from_item("slaughter-waste"):add_icon_layer(
     "__sosciencity-graphics__/graphics/utility/flame.png",
     "topleft",
     0.25,

@@ -41,41 +41,52 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create {
-    product = "dye",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "dye", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "wild-flowers", amount = 10}
     },
+    name = "wild-flowers",
     unlock = "ember-caste"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "dye",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "dye", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "chromafall", amount = 2}
     },
+    name = "chromafall",
     unlock = "orchid-caste"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "dye",
-    product_amount = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "dye", amount = 5}
+    },
     ingredients = {
         {type = "fluid", name = "water", amount = 10},
         {type = "item", name = "ferrous-sulfate", amount = 1},
         {type = "item", name = "chromafall", amount = 2}
     },
+    name = "water",
     category = "chemistry",
     unlock = "clockwork-caste"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "crayons",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "crayons", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "dye", amount = 1}
-    }
-    --unlock = "ember-caste"
+    },
+    name = "wax",
+    unlock = "ember-caste"
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -89,38 +100,45 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-caste"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "military-grade-crayons",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "military-grade-crayons", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "crayons", amount = 1},
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "sugar", amount = 1}
     },
+    name = "crayons",
     unlock = "gunfire-caste"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "paper",
-    product_amount = 1,
-    energy_required = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "paper", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
+    name = "lumber",
+    energy_required = 5,
     allow_productivity = true,
     unlock = "automation-science-pack"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "paper",
-    product_amount = 10,
-    energy_required = 5,
-    category = "chemistry",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "paper", amount = 10}
+    },
     ingredients = {
+        {theme = "paper_production", amount = 1},
         {type = "item", name = "sawdust", amount = 5},
         {type = "item", name = "gingil-hemp", amount = 5}
     },
-    themes = {{"paper_production", 1}},
+    name = "sawdust",
+    category = "chemistry",
+    energy_required = 5,
     allow_productivity = true,
-    unlock = "clockwork-caste"
-}:add_unlock("gunfire-caste")
+    unlock = {"clockwork-caste", "gunfire-caste"}
+}

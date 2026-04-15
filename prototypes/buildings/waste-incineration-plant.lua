@@ -10,9 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "waste-incineration-plant",
-    themes = {{"machine", 10}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "waste-incineration-plant", amount = 1}
+    },
+    ingredients = {
+        {theme = "machine", amount = 10}
+    },
     default_theme_level = 4,
     unlock = "infrastructure-4"
 }

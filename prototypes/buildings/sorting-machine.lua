@@ -10,9 +10,13 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sorting-machine",
-    themes = {{"machine", 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sorting-machine", amount = 1}
+    },
+    ingredients = {
+        {theme = "machine", amount = 2}
+    },
     default_theme_level = 1,
     unlock = "open-environment-farming"
 }

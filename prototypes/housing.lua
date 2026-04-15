@@ -390,14 +390,14 @@ local quality_effect_on_recipe = {
     end,
     compact = function(details, house, tech_level)
         -- decrease the "building" theme amount
-        details.themes[1][2] = details.themes[1][2] * 0.8
+        details.ingredients[1].amount = details.ingredients[1].amount * 0.8
     end,
     decorated = function(details, house, tech_level)
-        table.insert(details.themes, {"furnishing_decorated", house.room_count, tech_level})
+        table.insert(details.ingredients, {theme = "furnishing_decorated", amount = house.room_count, level = tech_level})
     end,
     simple = function(details, house, tech_level)
         -- change the normal "furnishing" theme to the simple one
-        details.themes[2][1] = "simple_furnishing"
+        details.ingredients[2].theme = "simple_furnishing"
     end,
     individualistic = function(details, house, tech_level)
         details.energy_required = details.energy_required * 3
@@ -406,13 +406,13 @@ local quality_effect_on_recipe = {
         details.energy_required = details.energy_required / 2
     end,
     pompous = function(details, house, tech_level)
-        details.themes[1][1] = "pompous_building"
+        details.ingredients[1].theme = "pompous_building"
     end,
     cheap = function(details, house, tech_level)
-        details.themes[1][1] = "cheap_building"
+        details.ingredients[1].theme = "cheap_building"
     end,
     tall = function(details, house, tech_level)
-        table.insert(details.themes, {"tall_building_structure", house.room_count, tech_level})
+        table.insert(details.ingredients, {theme = "tall_building_structure", amount = house.room_count, level = tech_level})
     end,
     low = function(details, house, tech_level)
         -- no idea
@@ -421,24 +421,25 @@ local quality_effect_on_recipe = {
 
 local function create_recipe(house_name, house, details)
     local tech_level = details.tech_level
-    local ingredient_themes = {
-        {"building", house.room_count * 0.5, tech_level},
-        {"furnishing", house.room_count, house.comfort}
-    }
 
     local recipe_details = {
-        product = house_name,
-        themes = ingredient_themes,
+        results = {
+            {type = "item", name = house_name, amount = 1}
+        },
+        ingredients = {
+            {theme = "building", amount = house.room_count * 0.5, level = tech_level},
+            {theme = "furnishing", amount = house.room_count, level = house.comfort},
+            {type = "item", name = "architectural-concept", amount = 1}
+        },
         unlock = unlocks[tech_level],
-        energy_required = house.room_count / 5,
-        ingredients = {{type = "item", name = "architectural-concept", amount = 1}}
+        energy_required = house.room_count / 5
     }
 
     for _, quality in pairs(house.qualities) do
         quality_effect_on_recipe[quality](recipe_details, house, tech_level)
     end
 
-    Tirislib.RecipeGenerator.create(recipe_details)
+    Tirislib.RecipeGenerator.create_from_prototype(recipe_details)
 end
 
 local function create_entity(house_name, house, details)

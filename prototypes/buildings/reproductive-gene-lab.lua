@@ -10,12 +10,17 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "reproductive-gene-lab",
-    themes = {{"machine", 10}, {"piping", 200}, {"glass", 100}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "reproductive-gene-lab", amount = 1}
+    },
     ingredients = {
+        {theme = "machine", amount = 10},
+        {theme = "piping", amount = 200},
+        {theme = "glass", amount = 100},
         {type = "item", name = "hehe", amount = 90}
     },
+    name = "hehe",
     default_theme_level = 3,
     unlock = "huwan-genetic-neogenesis"
 }

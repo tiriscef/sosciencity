@@ -5,5 +5,5 @@ Tirislib.Recipe.copy("landfill", "garbage-to-landfill"):add_result {
 }:add_ingredient {
     type = "item",
     name = "garbage",
-    amount = 20
+    amount = 50
 }:add_unlock("landfill")

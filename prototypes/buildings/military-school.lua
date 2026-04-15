@@ -12,11 +12,15 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "military-school",
-    themes = {{"building", 1}},
-    default_theme_level = 0,
-    ingredients = {{type = "item", name = "architectural-concept", amount = 1}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "military-school", amount = 1}
+    },
+    ingredients = {
+        {theme = "building", amount = 1},
+        {type = "item", name = "architectural-concept", amount = 1}
+    },
+    name = "architectural-concept",
     unlock = "gunfire-caste"
 }
 

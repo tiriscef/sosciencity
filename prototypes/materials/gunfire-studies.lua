@@ -11,15 +11,17 @@ Tirislib.Item.batch_create(
 
 -- Gunfire HQ
 
-Tirislib.RecipeGenerator.create {
-    product = "strategic-considerations",
-    product_amount = 4,
-    category = "sosciencity-caste-gunfire",
-    energy_required = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "strategic-considerations", amount = 4}
+    },
     ingredients = {
         {type = "item", name = "sketch", amount = 4},
         {type = "item", name = "paper", amount = 4},
         {type = "item", name = "military-grade-crayons", amount = 4}
     },
+    name = "sketch",
+    category = "sosciencity-caste-gunfire",
+    energy_required = 2,
     unlock = "gunfire-caste"
 }

@@ -113,209 +113,221 @@ Tirislib.Fluid.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create {
-    product = "salt",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "salt", amount = 5}
+    },
     name = "salty-water-evaporation",
-    product_amount = 5,
-    energy_required = 4,
     category = "sosciencity-salt-pond",
-    unlock = "fermentation"
-}:add_unlock("medbay")
+    energy_required = 4,
+    unlock = {"fermentation", "medbay"}
+}
 
-Tirislib.RecipeGenerator.create {
-    product = "flour",
-    product_amount = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "flour", amount = 5}
+    },
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.milling,
+    name = "hardcorn-punk",
     energy_required = 1,
     unlock = "food-processing"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sugar",
-    product_amount = 1,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sugar", amount = 1, product = true},
+        {type = "item", name = "molasses", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "tello-fruit", amount = 2}
     },
-    byproducts = {
-        {type = "item", name = "molasses", amount = 1}
-    },
+    name = "tello-fruit",
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sugar",
-    product_amount = 3,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sugar", amount = 3, product = true},
+        {type = "item", name = "molasses", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "sugar-beet", amount = 2}
     },
-    byproducts = {
-        {type = "item", name = "molasses", amount = 1}
-    },
+    name = "sugar-beet",
     category = "chemistry",
     energy_required = 1.6,
-    allow_productivity = true,
-    unlock = Unlocks.get_tech_name("sugar-beet")
+    allow_productivity = true
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "sugar",
-    product_amount = 3,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "sugar", amount = 3, product = true},
+        {type = "item", name = "molasses", amount = 2}
+    },
     ingredients = {
         {type = "item", name = "sugar-cane", amount = 2}
     },
-    byproducts = {
-        {type = "item", name = "molasses", amount = 2}
-    },
+    name = "sugar-cane",
     category = "chemistry",
     energy_required = 1.6,
-    allow_productivity = true,
-    unlock = Unlocks.get_tech_name("sugar-cane")
+    allow_productivity = true
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "amylum",
-    product_min = 2,
-    product_max = 6,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "amylum", amount_min = 2, amount_max = 6}
+    },
     ingredients = {
         {type = "item", name = "flour", amount = 5},
         {type = "fluid", name = "clean-water", amount = 80}
     },
-    do_index_fluid_ingredients = true,
+    name = "flour",
     category = "sosciencity-pharma",
     energy_required = 4,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "agarose",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "agarose", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "dried-solfaen", amount = 1},
         {type = "fluid", name = "steam", amount = 10}
     },
+    name = "dried-solfaen",
     category = "chemistry",
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fatty-oil",
-    product_type = "fluid",
-    product_amount = 20,
-    energy_required = 1.6,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "fatty-oil", amount = 20}
+    },
     ingredients = {
         {type = "item", name = "weird-berry", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    name = "weird-berry",
+    energy_required = 1.6,
     unlock = "explore-alien-flora-1"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fatty-oil",
-    product_type = "fluid",
-    product_amount = 30,
-    energy_required = 1.6,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "fatty-oil", amount = 30}
+    },
     ingredients = {
         {type = "item", name = "avocado", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
-    unlock = Unlocks.get_tech_name("avocado")
+    name = "avocado",
+    energy_required = 1.6
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fatty-oil",
-    product_type = "fluid",
-    product_amount = 30,
-    energy_required = 1.6,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "fatty-oil", amount = 30}
+    },
     ingredients = {
         {type = "item", name = "olive", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
-    unlock = Unlocks.get_tech_name("olive")
+    name = "olive",
+    energy_required = 1.6
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "fatty-oil",
-    product_type = "fluid",
-    product_amount = 30,
-    energy_required = 1.6,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "fluid", name = "fatty-oil", amount = 30}
+    },
     ingredients = {
         {type = "item", name = "sesame", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    name = "sesame",
+    energy_required = 1.6,
     unlock = "hummus"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "solid-fat",
-    energy_required = 1.6,
-    themes = {
-        {"hydrogen", 10}
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "solid-fat", amount = 1}
     },
     ingredients = {
+        {theme = "hydrogen", amount = 10},
         {type = "fluid", name = "fatty-oil", amount = 10}
     },
+    name = "fatty-oil",
     category = "chemistry",
+    energy_required = 1.6,
     unlock = "food-processing"
 }:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.5)
 
-Tirislib.RecipeGenerator.create {
-    product = "proteins",
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "proteins", amount = 1}
+    },
     ingredients = {
         {type = "item", name = "razha-bean", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
+    name = "razha-bean",
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "soy-milk",
-    product_amount = 50,
-    energy_required = 2,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "soy-milk", amount = 50}
+    },
     ingredients = {
         {type = "item", name = "razha-bean", amount = 5},
         {type = "fluid", name = "clean-water", amount = 50}
     },
-    category = Tirislib.RecipeGenerator.category_alias.fluid_mixing,
+    name = "razha-bean",
+    energy_required = 2,
     unlock = "soy-products"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "ethanol",
-    product_amount = 50,
-    energy_required = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "ethanol", amount = 50}
+    },
     ingredients = {
         {type = "item", name = "blue-grapes", amount = 10},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
+    name = "blue-grapes",
     category = "sosciencity-fermentation-tank",
+    energy_required = 5,
     unlock = "fermentation"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "ethanol",
-    product_amount = 50,
-    energy_required = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "ethanol", amount = 50}
+    },
     ingredients = {
         {type = "item", name = "sugar", amount = 2},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
+    name = "sugar",
     category = "sosciencity-fermentation-tank",
+    energy_required = 5,
     unlock = "basic-biotechnology"
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "pemtenn-extract",
-    product_amount = 10,
-    energy_required = 5,
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "pemtenn-extract", amount = 10}
+    },
     ingredients = {
         {type = "fluid", name = "pemtenn", amount = 100}
     },
-    category = Tirislib.RecipeGenerator.category_alias.drying,
+    name = "pemtenn",
+    energy_required = 5,
     unlock = "fermentation"
 }

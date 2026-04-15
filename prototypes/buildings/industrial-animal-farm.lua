@@ -10,10 +10,17 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "industrial-animal-farm",
-    themes = {{"piping", 20}, {"building", 10}, {"lamp", 40}},
-    ingredients = {{type = "item", name = "silo", amount = 2}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "industrial-animal-farm", amount = 1}
+    },
+    ingredients = {
+        {theme = "piping", amount = 20},
+        {theme = "building", amount = 10},
+        {theme = "lamp", amount = 40},
+        {type = "item", name = "silo", amount = 2}
+    },
+    name = "silo",
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }

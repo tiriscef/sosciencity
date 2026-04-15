@@ -10,12 +10,16 @@ Tirislib.Item.create {
     pictures = Sosciencity_Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create {
-    product = "nightclub",
-    themes = {{"building", 7.5}, {"electronics", 10}, {"lamp", 20}},
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "nightclub", amount = 1}
+    },
     ingredients = {
+        {theme = "electronics", amount = 10},
+        {theme = "lamp", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
+    name = "architectural-concept",
     default_theme_level = 2,
     unlock = "infrastructure-2"
 }
