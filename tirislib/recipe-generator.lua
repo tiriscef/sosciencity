@@ -140,7 +140,8 @@ function Tirislib.RecipeGenerator.add_result_theme_range(recipe, themes, default
     end
 end
 
-local function get_product_prototype(product_name, product_type)
+--- Finds the product prototype. Returns nil if not found (no error).
+local function find_product_prototype(product_name, product_type)
     local product, found
 
     if product_type then -- explicitly set
@@ -162,7 +163,13 @@ local function get_product_prototype(product_name, product_type)
         end
     end
 
-    if not found then
+    return found and product or nil
+end
+
+local function get_product_prototype(product_name, product_type)
+    local product = find_product_prototype(product_name, product_type)
+
+    if not product then
         error(
             "Tirislib RecipeGenerator was told to create a recipe for a non-existant product. A task it's unable to complete. The product's name is: " ..
                 tostring(product_name)
@@ -304,6 +311,44 @@ end
 
 -- << prototype-based creation >>
 
+---------------------------------------------------------------------------------------------------
+-- << EmmyLua type definitions >>
+
+--- An ingredient entry that expands to the concrete items/fluids defined for a theme at a given
+--- technology level. Theme entries are interleaved with regular IngredientPrototypes in the
+--- `ingredients` array of an ExtendedRecipePrototype and are removed before the recipe is created.
+---@class ThemeEntry
+---@field theme string Name of the ingredient theme (e.g. `"metal"`, `"piping"`).
+---@field amount number Multiplier applied to every ingredient in the theme expansion.
+---@field level? number Technology level override. Falls back to `ExtendedRecipePrototype.default_theme_level`, then 0.
+
+--- A regular Factorio ResultPrototype that may additionally carry a `product` marker used by the
+--- RecipeGenerator to identify which result drives name, subgroup, order, and icon derivation.
+--- Exactly one entry per prototype should be marked; if none are marked the first result is used.
+--- The flag is stripped before the underlying recipe is created.
+---@class ProductResultEntry : data.ProductPrototype
+---@field product? true Marks this entry as the product for field derivation. Stripped before recipe creation.
+
+--- A complete or partial Factorio RecipePrototype that `create_from_prototype` and
+--- `merge_prototypes` accept. All standard recipe fields are valid. In addition:
+---
+--- - `ingredients` and `results` may contain `ThemeIngredientEntry` objects alongside regular
+---   entries; those are expanded and removed before the recipe prototype is submitted.
+--- - One entry in `results` may be marked with `product = true` to identify the main product for
+---   field derivation (name, subgroup, order, icon, localisation). Falls back to `results[1]`.
+--- - `unlock`, `default_theme_level`, `do_index_fluid_ingredients`, and
+---   `do_index_fluid_results` are extra keys consumed by `create_from_prototype` and never
+---   forwarded to the underlying Factorio prototype.
+---@class ExtendedRecipePrototype : data.RecipePrototype
+---@field ingredients? (data.IngredientPrototype | ThemeEntry)[] Regular ingredient entries and/or inline theme expansions.
+---@field results? (ProductResultEntry | ThemeEntry)[] Result entries (with optional `product` marker) and/or inline theme expansions.
+---@field unlock? string | string[] Technology name(s) that unlock the recipe. Accepts a single string or an array.
+---@field default_theme_level? number Fallback technology level used when a theme entry omits its own `level`. Defaults to 0.
+---@field do_index_fluid_ingredients? boolean When true, fluid ingredient entries receive an explicit `fluidbox_index` after creation.
+---@field do_index_fluid_results? boolean When true, fluid result entries receive an explicit `fluidbox_index` after creation.
+
+---------------------------------------------------------------------------------------------------
+
 --- Separates theme entries from real entries in an array.
 --- Theme entries are identified by having a `theme` key.
 local function separate_themes(entries)
@@ -342,20 +387,43 @@ local function find_product_entry(results)
     return results[1]
 end
 
+--- Returns the product entry from a recipe prototype without modifying it.
+--- The product is the result marked with `product = true`, or the first result if none are marked.
+--- Useful in prototype-building wrapper functions that need to identify the product
+--- from the prototype's `results` array without consuming or altering it.
+---@param prototype ExtendedRecipePrototype
+---@return ProductResultEntry | nil
+function Tirislib.RecipeGenerator.get_product_entry(prototype)
+    local results = prototype.results
+    if not results or #results == 0 then
+        return nil
+    end
+
+    for _, entry in pairs(results) do
+        if entry.product then
+            return entry
+        end
+    end
+
+    return results[1]
+end
+
 --- Derives recipe fields from the product's item/fluid prototype where not already set.
 local function derive_fields_from_product(prototype, product_entry)
     if not product_entry then
         return
     end
 
-    local product = get_product_prototype(product_entry.name, product_entry.type)
+    local product = find_product_prototype(product_entry.name, product_entry.type)
 
-    prototype.name = prototype.name or Tirislib.Prototype.get_unique_name(product.name, "recipe")
-    prototype.subgroup = prototype.subgroup or product.subgroup
-    prototype.order = prototype.order or product.order
+    if product then
+        prototype.name = prototype.name or Tirislib.Prototype.get_unique_name(product.name, "recipe")
+        prototype.subgroup = prototype.subgroup or product.subgroup
+        prototype.order = prototype.order or product.order
 
-    if prototype.always_show_products == nil then
-        prototype.always_show_products = (product.place_result == nil)
+        if prototype.always_show_products == nil then
+            prototype.always_show_products = (product.place_result == nil)
+        end
     end
 
     -- localisation and icon derivation
@@ -363,19 +431,30 @@ local function derive_fields_from_product(prototype, product_entry)
     local caller_set_name = prototype.localised_name ~= nil
 
     if has_custom_identity then
-        prototype.localised_name = prototype.localised_name or product:get_localised_name()
-        prototype.localised_description = prototype.localised_description or product:get_localised_description()
+        if product then
+            prototype.localised_name = prototype.localised_name or product:get_localised_name()
+            prototype.localised_description = prototype.localised_description or product:get_localised_description()
+        end
 
         if caller_set_name and prototype.show_amount_in_title == nil then
             prototype.show_amount_in_title = false
         end
 
         if not prototype.icon and not prototype.icons then
-            prototype.icon = product.icon
-            prototype.icons = product.icons
-            prototype.icon_size = prototype.icon_size or product.icon_size or 64
+            if product then
+                prototype.icon = product.icon
+                prototype.icons = product.icons
+                prototype.icon_size = prototype.icon_size or product.icon_size or 64
+            end
         end
     else
+        if not product then
+            error(
+                "Tirislib RecipeGenerator couldn't derive the identity for recipe from product '" ..
+                    tostring(product_entry.name) ..
+                    "'. The product prototype doesn't exist and no custom identity was provided."
+            )
+        end
         prototype.main_product = product.name
         prototype.localised_name = product:get_localised_name()
     end
@@ -397,6 +476,8 @@ end
 --- The product is used to derive name, subgroup, order, localisation, and icon where not explicitly set.<br>
 --- If no entry is marked, the first result is used as the product.<br>
 --- The product is optional if all derived fields are provided explicitly.
+--- @param prototype ExtendedRecipePrototype
+--- @return data.RecipePrototype
 function Tirislib.RecipeGenerator.create_from_prototype(prototype)
     -- consume and nil extra keys
     local unlock = prototype.unlock
@@ -507,10 +588,11 @@ end
 local prototype_arrays = {ingredients = true, results = true}
 
 --- Merges the right hand recipe prototype into the left hand recipe prototype.<br>
---- Array fields (`ingredients`, `results`) are concatenated. This includes inline theme entries.<br>
---- All other fields are set passively (only if not already present in lh).
---- @param lh table
---- @param rh table
+--- Array fields (`ingredients`, `results`) are concatenated (lh entries come first).<br>
+--- This includes inline theme entries in both arrays.<br>
+--- All other fields are set passively: a field already present in lh is never overwritten.
+--- @param lh ExtendedRecipePrototype Prototype to merge into. Fields already set here take priority.
+--- @param rh ExtendedRecipePrototype Prototype supplying defaults. Its arrays are appended to lh's arrays.
 function Tirislib.RecipeGenerator.merge_prototypes(lh, rh)
     if not lh or not rh then
         return

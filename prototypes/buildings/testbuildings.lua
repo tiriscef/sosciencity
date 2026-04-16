@@ -59,6 +59,7 @@ create_test_container("psych-ward")
 create_test_container("upbringing-station")
 create_test_container("egg-collector")
 create_test_container("dumpster")
+
 -- test-water-distributer must be a storage-tank so it can hold fluid for entity.remove_fluid
 Tirislib.Item.create {
     type = "item",
@@ -128,9 +129,9 @@ local function create_test_assembling_machine(name, categories)
         localised_name = "test-" .. name
     }
 
-        Tirislib.RecipeGenerator.create_from_prototype {
+    Tirislib.RecipeGenerator.create_from_prototype {
         results = {
-            {type = "item", name = "test-", amount = 1}
+            {type = "item", name = "test-" .. name, amount = 1}
         }
     }
 

@@ -13,7 +13,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "foundry-hq", amount = 1}},
     ingredients = {
-        {"building", 20},
+        {theme = "building", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 3,

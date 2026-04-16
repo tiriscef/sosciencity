@@ -15,7 +15,7 @@ local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "drying-unit", amount = 1}},
-    ingredients = {{"machine", 2}, {"piping", 8}},
+    ingredients = {{theme = "machine", amount = 2}, {theme = "piping", amount = 8}},
     default_theme_level = 1,
     unlock = "fermentation"
 }

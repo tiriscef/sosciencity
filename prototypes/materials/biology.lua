@@ -130,7 +130,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 5}
     },
-    name = "hardcorn-punk",
+    category = Tirislib.RecipeGenerator.category_alias.milling,
     energy_required = 1,
     unlock = "food-processing"
 }
@@ -143,7 +143,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "tello-fruit", amount = 2}
     },
-    name = "tello-fruit",
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
@@ -158,7 +157,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "sugar-beet", amount = 2}
     },
-    name = "sugar-beet",
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true
@@ -172,7 +170,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "sugar-cane", amount = 2}
     },
-    name = "sugar-cane",
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true
@@ -186,7 +183,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "flour", amount = 5},
         {type = "fluid", name = "clean-water", amount = 80}
     },
-    name = "flour",
     category = "sosciencity-pharma",
     energy_required = 4,
     allow_productivity = true,
@@ -202,7 +198,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "dried-solfaen", amount = 1},
         {type = "fluid", name = "steam", amount = 10}
     },
-    name = "dried-solfaen",
     category = "chemistry",
     unlock = "basic-biotechnology"
 }
@@ -214,7 +209,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "weird-berry", amount = 5}
     },
-    name = "weird-berry",
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
     unlock = "explore-alien-flora-1"
 }
@@ -226,7 +221,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "avocado", amount = 5}
     },
-    name = "avocado",
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6
 }
 
@@ -237,7 +232,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "olive", amount = 5}
     },
-    name = "olive",
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6
 }
 
@@ -248,7 +243,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "sesame", amount = 5}
     },
-    name = "sesame",
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
     unlock = "hummus"
 }
@@ -261,7 +256,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "hydrogen", amount = 10},
         {type = "fluid", name = "fatty-oil", amount = 10}
     },
-    name = "fatty-oil",
     category = "chemistry",
     energy_required = 1.6,
     unlock = "food-processing"
@@ -275,32 +269,30 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "razha-bean", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    name = "razha-bean",
     unlock = "basic-biotechnology"
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
-        {type = "item", name = "soy-milk", amount = 50}
+        {type = "fluid", name = "soy-milk", amount = 50}
     },
     ingredients = {
         {type = "item", name = "razha-bean", amount = 5},
         {type = "fluid", name = "clean-water", amount = 50}
     },
-    name = "razha-bean",
+    category = Tirislib.RecipeGenerator.category_alias.fluid_mixing,
     energy_required = 2,
     unlock = "soy-products"
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
-        {type = "item", name = "ethanol", amount = 50}
+        {type = "fluid", name = "ethanol", amount = 50}
     },
     ingredients = {
         {type = "item", name = "blue-grapes", amount = 10},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
-    name = "blue-grapes",
     category = "sosciencity-fermentation-tank",
     energy_required = 5,
     unlock = "fermentation"
@@ -308,13 +300,12 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
-        {type = "item", name = "ethanol", amount = 50}
+        {type = "fluid", name = "ethanol", amount = 50}
     },
     ingredients = {
         {type = "item", name = "sugar", amount = 2},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
-    name = "sugar",
     category = "sosciencity-fermentation-tank",
     energy_required = 5,
     unlock = "basic-biotechnology"
@@ -327,7 +318,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "fluid", name = "pemtenn", amount = 100}
     },
-    name = "pemtenn",
+    category = Tirislib.RecipeGenerator.category_alias.drying,
     energy_required = 5,
     unlock = "fermentation"
 }

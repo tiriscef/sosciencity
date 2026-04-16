@@ -48,27 +48,13 @@ Tirislib.Fluid.batch_create(
 )
 
 local function create_enrichment_recipe(details)
-    local product_name = details.product
-    local product = Tirislib.Fluid.get_by_name(product_name)
+    local product = Tirislib.Fluid.get_by_name(Tirislib.RecipeGenerator.get_product_entry(details).name)
 
-    local result = {type = "fluid", name = product_name, amount = details.product_amount or 10}
-    if details.product_probability then
-        result.probability = details.product_probability
-    end
-
-    local ingredients = {}
-    if details.ingredients then
-        Tirislib.Tables.merge(ingredients, details.ingredients)
-    end
-
-    local prototype = {
-        results = {result},
-        ingredients = ingredients,
-        energy_required = details.energy_required or 4,
-        category = details.category,
-        localised_name = details.localised_name or {"recipe-name.enrichment", product:get_localised_name()},
-        localised_description = details.localised_description or {"recipe-description.enrichment", product:get_localised_name()},
-        icons = details.icons or {
+    Tirislib.RecipeGenerator.merge_prototypes(details, {
+        energy_required = 4,
+        localised_name = {"recipe-name.enrichment", product:get_localised_name()},
+        localised_description = {"recipe-description.enrichment", product:get_localised_name()},
+        icons = {
             {icon = product.icon},
             {
                 icon = "__sosciencity-graphics__/graphics/icon/enrichment.png",
@@ -76,36 +62,23 @@ local function create_enrichment_recipe(details)
                 shift = {-8, -8}
             }
         },
-        icon_size = details.icon_size or 64,
+        icon_size = 64,
         do_index_fluid_ingredients = true,
-        do_index_fluid_results = true,
-        unlock = details.unlock
-    }
+        do_index_fluid_results = true
+    })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
+    return Tirislib.RecipeGenerator.create_from_prototype(details)
 end
 
 local function create_pure_culture_recipe(details)
-    local product_name = details.product
-    local product = Tirislib.Fluid.get_by_name(product_name)
+    local product = Tirislib.Fluid.get_by_name(Tirislib.RecipeGenerator.get_product_entry(details).name)
 
-    local ingredients = {
-        {type = "fluid", name = product_name, amount = 10}
-    }
-    if details.ingredients then
-        Tirislib.Tables.merge(ingredients, details.ingredients)
-    end
-
-    local prototype = {
-        results = {
-            {type = "fluid", name = product_name, amount = details.product_amount or 100}
-        },
-        ingredients = ingredients,
-        energy_required = details.energy_required or 4,
-        category = details.category,
-        localised_name = details.localised_name or {"recipe-name.pure-culture", product:get_localised_name()},
-        localised_description = details.localised_description or {"recipe-description.pure-culture", product:get_localised_name()},
-        icons = details.icons or {
+    Tirislib.RecipeGenerator.merge_prototypes(details, {
+        ingredients = {{type = "fluid", name = product.name, amount = 10}},
+        energy_required = 4,
+        localised_name = {"recipe-name.pure-culture", product:get_localised_name()},
+        localised_description = {"recipe-description.pure-culture", product:get_localised_name()},
+        icons = {
             {icon = product.icon},
             {
                 icon = "__sosciencity-graphics__/graphics/icon/pure-culture.png",
@@ -113,18 +86,16 @@ local function create_pure_culture_recipe(details)
                 shift = {-8, -8}
             }
         },
-        icon_size = details.icon_size or 64,
+        icon_size = 64,
         do_index_fluid_ingredients = true,
-        do_index_fluid_results = true,
-        unlock = details.unlock
-    }
+        do_index_fluid_results = true
+    })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(prototype)
+    return Tirislib.RecipeGenerator.create_from_prototype(details)
 end
 
 create_enrichment_recipe {
-    product = "mynellia",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "mynellia", amount = 10}},
     ingredients = {
         {type = "fluid", name = "water", amount = 10}
     },
@@ -133,8 +104,7 @@ create_enrichment_recipe {
 }
 
 create_pure_culture_recipe {
-    product = "mynellia",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "mynellia", amount = 100}},
     ingredients = {
         {type = "fluid", name = "water", amount = 90}
     },
@@ -143,9 +113,7 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    product = "solfaen",
-    product_type = "fluid",
-    product_probability = 0.2,
+    results = {{type = "fluid", name = "solfaen", amount = 10, probability = 0.2}},
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10}
     },
@@ -154,8 +122,7 @@ create_enrichment_recipe {
 }
 
 create_pure_culture_recipe {
-    product = "solfaen",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "solfaen", amount = 100}},
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 90}
     },
@@ -164,8 +131,7 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    product = "pemtenn",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "pemtenn", amount = 10}},
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "item", name = "blue-grapes", amount = 2}
@@ -175,8 +141,7 @@ create_enrichment_recipe {
 }
 
 create_pure_culture_recipe {
-    product = "pemtenn",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "pemtenn", amount = 100}},
     ingredients = {
         {type = "fluid", name = "sugar-medium", amount = 90}
     },
@@ -185,9 +150,7 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    product = "flinnum",
-    product_type = "fluid",
-    product_probability = 0.2,
+    results = {{type = "fluid", name = "flinnum", amount = 10, probability = 0.2}},
     ingredients = {
         {type = "fluid", name = "sugar-medium", amount = 10},
         {type = "item", name = "mold", amount = 2}
@@ -197,8 +160,7 @@ create_enrichment_recipe {
 }
 
 create_pure_culture_recipe {
-    product = "flinnum",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "flinnum", amount = 100}},
     ingredients = {
         {type = "fluid", name = "sugar-medium", amount = 90}
     },
@@ -207,11 +169,9 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    product = "fiicorum",
-    product_type = "fluid",
-    product_probability = 0.2,
-    themes = {{"soil", 2}},
+    results = {{type = "fluid", name = "fiicorum", amount = 10, probability = 0.2}},
     ingredients = {
+        {theme = "soil", amount = 2},
         {type = "fluid", name = "sugar-medium", amount = 10},
         {type = "fluid", name = "steam", amount = 50},
         {type = "item", name = "pemtenn-extract", amount = 1},
@@ -222,8 +182,7 @@ create_enrichment_recipe {
 }
 
 create_pure_culture_recipe {
-    product = "fiicorum",
-    product_type = "fluid",
+    results = {{type = "fluid", name = "fiicorum", amount = 100}},
     ingredients = {
         {type = "fluid", name = "sugar-medium", amount = 90},
         {type = "fluid", name = "steam", amount = 50},

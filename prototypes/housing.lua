@@ -293,8 +293,35 @@ if Sosciencity_Config.DEBUG then
         },
         width = 5,
         height = 3,
-        tech_level = 0,
-        main_entity = "test-house"
+        tech_level = 0
+    }
+
+    housing_prototype_details["test-house-2"] = {
+        picture = {
+            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+            priority = "high",
+            width = 192,
+            height = 192,
+            scale = 0.5
+        },
+        icon = "placeholder",
+        width = 3,
+        height = 3,
+        tech_level = 0
+    }
+
+    housing_prototype_details["test-house-3"] = {
+        picture = {
+            filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
+            priority = "high",
+            width = 192,
+            height = 192,
+            scale = 0.5
+        },
+        icon = "placeholder",
+        width = 3,
+        height = 3,
+        tech_level = 0
     }
 end
 
@@ -376,17 +403,17 @@ end
 
 local quality_effect_on_recipe = {
     sheltered = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_sheltered", house.room_count, tech_level})
+        table.insert(details.ingredients, {theme = "housing_sheltered", amount = house.room_count, level = tech_level})
     end,
     green = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_green", house.room_count, tech_level})
+        table.insert(details.ingredients, {theme = "housing_green", amount = house.room_count, level = tech_level})
     end,
     technical = function(details, house, tech_level)
-        table.insert(details.themes, {"housing_technical", house.room_count, tech_level})
+        table.insert(details.ingredients, {theme = "housing_technical", amount = house.room_count, level = tech_level})
     end,
     spacey = function(details, house, tech_level)
         -- increase the "building" theme amount
-        details.themes[1][2] = details.themes[1][2] * 1.25
+        details.ingredients[1].amount = details.ingredients[1].amount * 1.25
     end,
     compact = function(details, house, tech_level)
         -- decrease the "building" theme amount
