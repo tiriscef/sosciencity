@@ -112,6 +112,11 @@ Housing.values = {
         room_count = 10,
         comfort = 0,
         qualities = {"compact", "simple", "cheap", "copy-paste"}
+    },
+    ["test-house-3"] = {
+        room_count = 20,
+        comfort = 3,
+        qualities = {}
     }
 }
 local houses = Housing.values
@@ -153,7 +158,7 @@ end
 --- @return boolean
 function Housing.allowes_caste(house, caste_id)
     local caste = castes[caste_id]
-    return (house.comfort >= caste.minimum_comfort) and (house.room_count >= caste.required_room_count)
+    return house.room_count >= caste.required_room_count
 end
 
 -- values postprocessing

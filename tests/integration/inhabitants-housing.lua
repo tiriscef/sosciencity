@@ -105,6 +105,23 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "try_allow_for_caste succeeds for a house below caste minimum comfort",
+    "integration|integration.inhabitants",
+    function()
+        -- test-house-3 has comfort=3, foundry minimum_comfort=6: previously blocked, now allowed
+        storage.technologies["foundry-caste"] = 1
+        local entry = Helpers.create_and_register(test_surface, "test-house-3", {0, 0})
+
+        local result = Inhabitants.try_allow_for_caste(entry, Type.foundry, false)
+
+        Assert.not_nil(result, "should succeed despite comfort being below caste minimum")
+        Assert.equals(result[EK.type], Type.foundry, "house type should be foundry")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
     "House capacity depends on caste room requirements",
     "integration|integration.inhabitants",
     function()
