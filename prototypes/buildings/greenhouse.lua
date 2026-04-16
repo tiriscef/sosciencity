@@ -13,7 +13,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "greenhouse", amount = 1}},
     ingredients = {
-        {"plating", 50}, {"piping", 40}, {"lamp", 40}, {"soil", 100},
+        {theme = "plating", amount = 50}, {theme = "piping", amount = 40}, {theme = "lamp", amount = 40}, {theme = "soil", amount = 100},
         {type = "item", name = "window", amount = 50}
     },
     default_theme_level = 3,

@@ -12,7 +12,7 @@ Tirislib.Item.create {
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "groundwater-pump", amount = 1}},
-    ingredients = {{"boring", 1}, {"piping", 5}, {"machine", 1}},
+    ingredients = {{theme = "boring", amount = 1}, {theme = "piping", amount = 5}, {theme = "machine", amount = 1}},
     default_theme_level = 1,
     unlock = "infrastructure-1"
 }

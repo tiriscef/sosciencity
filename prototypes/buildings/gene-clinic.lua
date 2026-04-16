@@ -15,7 +15,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "gene-clinic", amount = 1}},
     ingredients = {
-        {"building", 2}, {"machine", 2}, -- TODO actual themes
+        {theme = "building", amount = 2}, {theme = "machine", amount = 2}, -- TODO actual themes
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 4,

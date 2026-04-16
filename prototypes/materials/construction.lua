@@ -183,7 +183,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "iron-plate", amount = 2}
     },
     name = "lumber",
-    category = "sosciencity-clockwork-workshop"
+    category = "sosciencity-tinkering-workshop"
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -196,7 +196,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "steel-plate", amount = 2}
     },
     name = "steel-plate",
-    category = "sosciencity-clockwork-workshop",
+    category = "sosciencity-tinkering-workshop",
     default_theme_level = 3
 }
 

@@ -13,7 +13,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "electric-water-heater", amount = 1}},
     ingredients = {
-        {"plating", 10}, {"piping", 10}, {"wiring", 10},
+        {theme = "plating", amount = 10}, {theme = "piping", amount = 10}, {theme = "wiring", amount = 10},
         {type = "item", name = "burner-water-heater", amount = 1}
     },
     unlock = "infrastructure-3",

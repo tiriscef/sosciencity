@@ -13,7 +13,7 @@ Tirislib.Item.create {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "egg-collecting-station", amount = 1}},
     ingredients = {
-        {"plating", 20}, {"framework", 20}, {"brick", 20},
+        {theme = "plating", amount = 20}, {theme = "framework", amount = 20}, {theme = "brick", amount = 20},
         {type = "item", name = "hehe", amount = 72},
         {type = "item", name = "architectural-concept", amount = 1}
     },
