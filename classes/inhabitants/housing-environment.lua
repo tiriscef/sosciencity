@@ -1,6 +1,7 @@
 local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
 local Gender = require("enums.gender")
+local HappinessFactor = require("enums.happiness-factor")
 local HappinessSummand = require("enums.happiness-summand")
 local HealthSummand = require("enums.health-summand")
 local SanitySummand = require("enums.sanity-summand")
@@ -55,10 +56,15 @@ Inhabitants.evaluate_housing_qualities = evaluate_housing_qualities
 
 --- Evaluates the effect of the housing on its inhabitants.
 --- @param entry Entry
-local function evaluate_housing(entry, happiness_summands, sanity_summands, caste)
+local function evaluate_housing(entry, happiness_summands, sanity_summands, happiness_factors, caste)
     local housing = get_housing_details(entry)
     happiness_summands[HappinessSummand.housing] = housing.comfort
     sanity_summands[SanitySummand.housing] = housing.comfort
+
+    local minimum_comfort = caste.minimum_comfort
+    if minimum_comfort > 0 and housing.comfort < minimum_comfort then
+        happiness_factors[HappinessFactor.comfort_malus] = housing.comfort / minimum_comfort
+    end
 
     happiness_summands[HappinessSummand.suitable_housing] = evaluate_housing_qualities(housing, caste)
 

@@ -293,7 +293,7 @@ local function update_house(entry, delta_ticks)
 
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
-    evaluate_housing(entry, happiness_summands, sanity_summands, caste)
+    evaluate_housing(entry, happiness_summands, sanity_summands, happiness_factors, caste)
     evaluate_water(entry, delta_ticks, happiness_factors, health_factors, health_summands)
     evaluate_sosciety(happiness_summands, health_summands, sanity_summands, caste)
     evaluate_neighborhood(entry, happiness_summands, health_summands)

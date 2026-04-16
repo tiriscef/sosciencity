@@ -63,19 +63,23 @@ local function add_caste_chooser_tab(tabbed_pane, house_details)
             }
         button.style.width = 150
 
-        if Housing.allowes_caste(house_details, caste.type) then
+        local has_room = house_details.room_count >= caste.required_room_count
+        local has_comfort = house_details.comfort >= caste.minimum_comfort
+
+        if not has_room then
+            button.tooltip = {"sosciencity.not-enough-room"}
+        elseif not has_comfort then
+            button.style.font_color = Color.orange
+            button.tooltip = {"sosciencity.comfort-warning", house_details.comfort, caste.minimum_comfort}
+        else
             button.tooltip = {
                 "sosciencity.move-in",
                 Locale.integer_summand(
                     Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort
                 )
             }
-        elseif caste.required_room_count > house_details.room_count then
-            button.tooltip = {"sosciencity.not-enough-room"}
-        else
-            button.tooltip = {"sosciencity.not-enough-comfort"}
         end
-        button.enabled = Housing.allowes_caste(house_details, caste.type)
+        button.enabled = has_room
         at_least_one = true
 
         ::continue::
