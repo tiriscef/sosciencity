@@ -21,7 +21,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "gear_wheel", amount = 5},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     default_theme_level = 2,
     unlock = "clockwork-caste"
 }

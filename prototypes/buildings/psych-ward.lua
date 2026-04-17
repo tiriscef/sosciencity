@@ -21,7 +21,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "furnishing", amount = 5, level = 5},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     default_theme_level = 2,
     unlock = "psychiatry"
 }

@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "chest", amount = 5, level = 1},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     unlock = "infrastructure-1"
 }
 

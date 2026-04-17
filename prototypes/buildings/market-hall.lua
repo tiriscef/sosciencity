@@ -19,7 +19,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "glass", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     unlock = "infrastructure-1"
 }
 

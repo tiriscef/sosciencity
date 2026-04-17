@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "furnace", amount = 10},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     default_theme_level = 2,
     unlock = "clockwork-caste"
 }

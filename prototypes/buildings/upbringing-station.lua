@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "hehe", amount = 25},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "hehe",
     unlock = "upbringing"
 }
 

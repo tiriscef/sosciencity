@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "bed", amount = 10},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "cloth",
     default_theme_level = 1,
     unlock = "medbay"
 }
