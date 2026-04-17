@@ -19,7 +19,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "soil", amount = 50},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     default_theme_level = 1,
     unlock = "orchid-caste"
 }

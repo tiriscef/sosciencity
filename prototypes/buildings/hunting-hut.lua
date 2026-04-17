@@ -18,7 +18,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "building", amount = 3},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "architectural-concept",
     unlock = "infrastructure-1"
 }
 Sosciencity_Config.remove_quality_multipliers("hunting-hut")
