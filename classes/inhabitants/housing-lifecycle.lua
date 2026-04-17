@@ -43,10 +43,10 @@ local function on_setting_paste_to_inhabited(source, destination)
 end
 
 local function on_settings_paste_to_empty(source, destination)
-    local success = Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
+    local assigned_house = Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
 
-    if success then
-        on_setting_paste_to_inhabited(source, destination)
+    if assigned_house then
+        on_setting_paste_to_inhabited(source, assigned_house)
     end
 end
 
