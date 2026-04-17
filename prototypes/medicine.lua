@@ -102,7 +102,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "plating2", amount = 1},
         {type = "fluid", name = "steam", amount = 200}
     },
-    name = "steam",
     category = "sosciencity-pharma",
     energy_required = 5,
     allow_productivity = true,

@@ -258,6 +258,18 @@ local function set_custom_status(entry)
         Tirislib.Locales.append(label, {"sosciencity-custom-status.on-strike", floor(strike_level * 100)})
     end
 
+    local current_comfort = entry[EK.current_comfort] or 0
+    local max_comfort = Housing.get(entry).max_comfort
+    Tirislib.Locales.append(
+        label,
+        {
+            "sosciencity-custom-status.comfort-status",
+            {"color-scale." .. current_comfort, {"comfort-scale." .. current_comfort}},
+            current_comfort,
+            max_comfort
+        }
+    )
+
     entry[EK.entity].custom_status = {
         diode = diode,
         label = label
