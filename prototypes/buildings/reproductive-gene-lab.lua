@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "glass", amount = 100},
         {type = "item", name = "hehe", amount = 90}
     },
-    name = "hehe",
     default_theme_level = 3,
     unlock = "huwan-genetic-neogenesis"
 }

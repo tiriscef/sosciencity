@@ -724,7 +724,9 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
         entry[EK.type] == Type.empty_house and is_researched(caste_id) and
             Housing.allowes_caste(get_housing_details(entry), caste_id)
      then
+        local saved_comfort = entry[EK.current_comfort]
         local new_entry = Register.change_type(entry, caste_id)
+        new_entry[EK.current_comfort] = saved_comfort
 
         if loud then
             Communication.caste_allowed_in(new_entry, caste_id)

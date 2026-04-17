@@ -1,10 +1,14 @@
-local EK = require("enums.entry-key")
-local DeconstructionCause = require("enums.deconstruction-cause")
-
 ---------------------------------------------------------------------------------------------------
 -- << helper functions >>
 
 require("tirislib.init")
+
+---------------------------------------------------------------------------------------------------
+-- << enums, constants >>
+
+local EK = require("enums.entry-key")
+local DeconstructionCause = require("enums.deconstruction-cause")
+local Housing = require("constants.housing")
 
 ---------------------------------------------------------------------------------------------------
 -- << development feature flags >>
@@ -429,6 +433,17 @@ local function on_configuration_change()
         -- don't know why, but the migration script doesn't activate for some saves
         -- TODO: remove this after some updates maybe
         storage.active_machine_count = storage.active_machine_count or 0
+
+        -- Phase 1 of housing comfort rework: set current_comfort from old fixed comfort values
+        if old_version and Tirislib.Utils.version_is_smaller_than(old_version, "0.2.2") then
+            local housing_values = Housing.values
+            for _, entry in pairs(storage.register) do
+                local house = housing_values[entry[EK.name]]
+                if house then
+                    entry[EK.current_comfort] = house.comfort
+                end
+            end
+        end
     end
 
     Statistics.migrate()

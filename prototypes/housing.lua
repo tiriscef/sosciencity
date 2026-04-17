@@ -367,8 +367,8 @@ local function get_localised_description(house_name, house)
         {
             "sosciencity-util.housing",
             tostring(house.room_count),
-            {"color-scale." .. house.comfort, {"comfort-scale." .. house.comfort}},
-            {"description.sos-details", tostring(house.comfort)},
+            {"color-scale." .. house.max_comfort, {"comfort-scale." .. house.max_comfort}},
+            {"description.sos-details", tostring(house.max_comfort)},
             get_localised_qualities(house)
         },
         "\n\n",
@@ -423,8 +423,7 @@ local quality_effect_on_recipe = {
         table.insert(details.ingredients, {theme = "furnishing_decorated", amount = house.room_count, level = tech_level})
     end,
     simple = function(details, house, tech_level)
-        -- change the normal "furnishing" theme to the simple one
-        details.ingredients[2].theme = "simple_furnishing"
+        -- furnishing is no longer part of the base recipe (handled by runtime upgrades)
     end,
     individualistic = function(details, house, tech_level)
         details.energy_required = details.energy_required * 3
@@ -455,7 +454,6 @@ local function create_recipe(house_name, house, details)
         },
         ingredients = {
             {theme = "building", amount = house.room_count * 0.5, level = tech_level},
-            {theme = "furnishing", amount = house.room_count, level = house.comfort},
             {type = "item", name = "architectural-concept", amount = 1}
         },
         unlock = unlocks[tech_level],

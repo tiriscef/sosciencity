@@ -58,12 +58,13 @@ Inhabitants.evaluate_housing_qualities = evaluate_housing_qualities
 --- @param entry Entry
 local function evaluate_housing(entry, happiness_summands, sanity_summands, happiness_factors, caste)
     local housing = get_housing_details(entry)
-    happiness_summands[HappinessSummand.housing] = housing.comfort
-    sanity_summands[SanitySummand.housing] = housing.comfort
+    local current_comfort = entry[EK.current_comfort] or 0
+    happiness_summands[HappinessSummand.housing] = current_comfort
+    sanity_summands[SanitySummand.housing] = current_comfort
 
     local minimum_comfort = caste.minimum_comfort
-    if minimum_comfort > 0 and housing.comfort < minimum_comfort then
-        happiness_factors[HappinessFactor.comfort_malus] = housing.comfort / minimum_comfort
+    if minimum_comfort > 0 and current_comfort < minimum_comfort then
+        happiness_factors[HappinessFactor.comfort_malus] = current_comfort / minimum_comfort
     end
 
     happiness_summands[HappinessSummand.suitable_housing] = evaluate_housing_qualities(housing, caste)

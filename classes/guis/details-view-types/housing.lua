@@ -38,12 +38,14 @@ local Datalist = Gui.Elements.Datalist
 ---------------------------------------------------------------------------------------------------
 -- << empty houses >>
 
-local function add_caste_chooser_tab(tabbed_pane, house_details)
+local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
     local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
 
     flow.style.horizontal_align = "center"
     flow.style.vertical_align = "center"
     flow.style.vertical_spacing = 6
+
+    local current_comfort = entry[EK.current_comfort] or 0
 
     local at_least_one = false
     for _, caste in pairs(Castes.all) do
@@ -64,18 +66,22 @@ local function add_caste_chooser_tab(tabbed_pane, house_details)
         button.style.width = 150
 
         local has_room = house_details.room_count >= caste.required_room_count
-        local has_comfort = house_details.comfort >= caste.minimum_comfort
+        local has_comfort = current_comfort >= caste.minimum_comfort
+        local can_reach_comfort = house_details.max_comfort >= caste.minimum_comfort
 
         if not has_room then
             button.tooltip = {"sosciencity.not-enough-room"}
+        elseif not has_comfort and not can_reach_comfort then
+            button.style.font_color = Color.red
+            button.tooltip = {"sosciencity.comfort-max-warning", house_details.max_comfort, caste.minimum_comfort}
         elseif not has_comfort then
             button.style.font_color = Color.orange
-            button.tooltip = {"sosciencity.comfort-warning", house_details.comfort, caste.minimum_comfort}
+            button.tooltip = {"sosciencity.comfort-warning", current_comfort, caste.minimum_comfort}
         else
             button.tooltip = {
                 "sosciencity.move-in",
                 Locale.integer_summand(
-                    Inhabitants.evaluate_housing_qualities(house_details, caste) + house_details.comfort
+                    Inhabitants.evaluate_housing_qualities(house_details, caste) + current_comfort
                 )
             }
         end
@@ -101,12 +107,132 @@ Gui.set_click_handler(
     end
 )
 
-local function add_empty_house_info_tab(tabbed_pane, house_details)
+Gui.set_click_handler(
+    "upgrade_house",
+    function(event)
+        local tags = event.element.tags
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then
+            return
+        end
+
+        local house_details = Housing.get(entry)
+        local current_comfort = entry[EK.current_comfort] or 0
+        if current_comfort >= house_details.max_comfort then
+            return
+        end
+
+        local next_level = current_comfort + 1
+        local cost = Housing.get_upgrade_cost(house_details, next_level)
+        local player = game.players[event.player_index]
+        local inventory = player.get_main_inventory()
+
+        -- check inventory
+        local missing = {}
+        if cost then
+            for _, item in pairs(cost) do
+                local have = inventory.get_item_count(item.name)
+                if have < item.count then
+                    missing[#missing + 1] = display_item_stack(item.name, item.count - have)
+                end
+            end
+        end
+
+        if #missing > 0 then
+            local missing_str = {""}
+            for i, m in pairs(missing) do
+                if i > 1 then
+                    missing_str[#missing_str + 1] = ", "
+                end
+                missing_str[#missing_str + 1] = m
+            end
+            player.create_local_flying_text {
+                text = {"sosciencity.upgrade-comfort-missing", missing_str},
+                create_at_cursor = true
+            }
+            return
+        end
+
+        -- deduct items
+        if cost then
+            for _, item in pairs(cost) do
+                inventory.remove({name = item.name, count = item.count})
+            end
+        end
+
+        entry[EK.current_comfort] = next_level
+        Inhabitants.social_environment_change()
+        Gui.DetailsView.rebuild_for_entry(entry)
+    end
+)
+
+local function build_upgrade_cost_string(cost)
+    local parts = {""}
+    for i, item in pairs(cost) do
+        if i > 1 then
+            parts[#parts + 1] = ", "
+        end
+        parts[#parts + 1] = display_item_stack(item.name, item.count)
+    end
+    return parts
+end
+
+local function update_upgrade_section(flow, entry, house_details)
+    local current_comfort = entry[EK.current_comfort] or 0
+    local max_comfort = house_details.max_comfort
+
+    local button = flow["upgrade-button"]
+    local at_max = current_comfort >= max_comfort
+
+    button.visible = not at_max
+    flow["upgrade-maxed-label"].visible = at_max
+
+    if at_max then
+        return
+    end
+
+    local next_level = current_comfort + 1
+    button.caption = {"sosciencity.upgrade-comfort", current_comfort, next_level}
+
+    local cost = Housing.get_upgrade_cost(house_details, next_level)
+    if cost and #cost > 0 then
+        button.tooltip = {"sosciencity.upgrade-comfort-cost", build_upgrade_cost_string(cost)}
+    else
+        button.tooltip = ""
+    end
+end
+
+local function add_upgrade_section(flow, entry, house_details)
+    local upgrade_flow = flow.add {type = "flow", name = "upgrade-section", direction = "vertical"}
+    upgrade_flow.style.vertical_spacing = 4
+
+    upgrade_flow.add {
+        type = "button",
+        name = "upgrade-button",
+        style = "sosciencity_heading_2_button",
+        mouse_button_filter = {"left"},
+        tags = {sosciencity_gui_event = "upgrade_house", unit_number = entry[EK.unit_number]}
+    }
+    upgrade_flow.add {
+        type = "label",
+        name = "upgrade-maxed-label",
+        caption = {"sosciencity.upgrade-comfort-maxed", house_details.max_comfort}
+    }
+
+    update_upgrade_section(upgrade_flow, entry, house_details)
+end
+
+local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
     local flow = Gui.Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"})
 
     local data_list = Datalist.create(flow, "house-infos")
     Datalist.add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
-    Datalist.add_kv_pair(data_list, "comfort", {"sosciencity.comfort"}, Locale.comfort(house_details.comfort))
+    Datalist.add_kv_pair(
+        data_list,
+        "comfort",
+        {"sosciencity.comfort"},
+        {"sosciencity.show-comfort", entry[EK.current_comfort] or 0, house_details.max_comfort}
+    )
 
     local qualities_flow = Datalist.add_kv_flow(data_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(house_details.qualities) do
@@ -117,6 +243,23 @@ local function add_empty_house_info_tab(tabbed_pane, house_details)
             tooltip = {"housing-quality-description." .. quality}
         }
     end
+
+    Gui.Elements.Utils.separator_line(flow)
+    add_upgrade_section(flow, entry, house_details)
+end
+
+local function update_empty_housing_details(container, entry)
+    local tabbed_pane = container.tabpane
+    local house_details = Housing.get(entry)
+
+    -- refresh comfort display in info tab
+    local info_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "house-info")
+    Datalist.set_kv_pair_value(
+        info_flow["house-infos"],
+        "comfort",
+        {"sosciencity.show-comfort", entry[EK.current_comfort] or 0, house_details.max_comfort}
+    )
+    update_upgrade_section(info_flow["upgrade-section"], entry, house_details)
 end
 
 local function create_empty_housing_details(container, entry)
@@ -125,8 +268,8 @@ local function create_empty_housing_details(container, entry)
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
 
     local house_details = Housing.get(entry)
-    add_caste_chooser_tab(tabbed_pane, house_details)
-    add_empty_house_info_tab(tabbed_pane, house_details)
+    add_caste_chooser_tab(tabbed_pane, entry, house_details)
+    add_empty_house_info_tab(tabbed_pane, entry, house_details)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -218,6 +361,14 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local caste = castes[entry[EK.type]]
     local inhabitants = entry[EK.inhabitants]
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
+
+    local housing_details = Housing.get(entry)
+    Datalist.set_kv_pair_value(
+        general_list,
+        "comfort",
+        {"sosciencity.show-comfort", entry[EK.current_comfort] or 0, housing_details.max_comfort}
+    )
+    update_upgrade_section(flow["upgrade-section"], entry, housing_details)
 
     local capacity = Housing.get_capacity(entry)
     Datalist.set_kv_pair_value(
@@ -412,6 +563,8 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     local caste = castes[caste_id]
     local housing_details = Housing.get(entry)
 
+    Datalist.add_kv_pair(general_list, "comfort", {"sosciencity.comfort"})
+
     local qualities_flow = Datalist.add_kv_flow(general_list, "qualities", {"sosciencity.qualities"})
     for _, quality in pairs(housing_details.qualities) do
         local assessment = caste.housing_preferences[quality]
@@ -470,6 +623,8 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     end
 
     Gui.Elements.Utils.separator_line(flow)
+    add_upgrade_section(flow, entry, housing_details)
+    Gui.Elements.Utils.separator_line(flow)
 
     -- the kickout_button only gets added if the house is built by the player
     -- this also avoids that the player can repurpose the hut
@@ -496,7 +651,9 @@ Gui.set_click_handler(
         local button = event.element
         local entry = Register.try_get(storage.details_view[event.player_index])
         if Gui.Elements.Utils.is_confirmed(button) then
-            Register.change_type(entry, Type.empty_house)
+            local saved_comfort = entry[EK.current_comfort]
+            local new_entry = Register.change_type(entry, Type.empty_house)
+            new_entry[EK.current_comfort] = saved_comfort
         end
     end
 )
@@ -726,7 +883,8 @@ local function create_housing_details(container, entry, player_id)
 end
 
 Gui.DetailsView.register_type(Type.empty_house, {
-    creater = create_empty_housing_details
+    creater = create_empty_housing_details,
+    updater = update_empty_housing_details
 })
 for _, caste in pairs(Castes.all) do
     Gui.DetailsView.register_type(caste.type, {

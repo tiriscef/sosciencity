@@ -246,10 +246,11 @@ Tirislib.Testing.add_test_case(
 -- << evaluate_housing >>
 
 Tirislib.Testing.add_test_case(
-    "evaluate_housing sets comfort summand from housing definition",
+    "evaluate_housing sets comfort summand from current_comfort",
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
+        entry[EK.current_comfort] = 7
 
         local happiness_summands = {}
         local sanity_summands = {}
@@ -257,51 +258,52 @@ Tirislib.Testing.add_test_case(
         local caste = Castes.values[Type.clockwork]
         Inhabitants.evaluate_housing(entry, happiness_summands, sanity_summands, happiness_factors, caste)
 
-        local comfort = Housing.values["test-house"].comfort
-        Assert.equals(happiness_summands[HappinessSummand.housing], comfort,
-            "housing comfort summand should match test-house comfort value")
-        Assert.equals(sanity_summands[SanitySummand.housing], comfort,
-            "sanity housing summand should match test-house comfort value")
+        Assert.equals(happiness_summands[HappinessSummand.housing], 7,
+            "housing comfort summand should match current_comfort")
+        Assert.equals(sanity_summands[SanitySummand.housing], 7,
+            "sanity housing summand should match current_comfort")
         Assert.is_nil(happiness_factors[HappinessFactor.comfort_malus],
-            "no comfort_malus for a house at or above caste minimum")
+            "no comfort_malus for clockwork (minimum_comfort=0)")
     end,
     setup,
     teardown
 )
 
 Tirislib.Testing.add_test_case(
-    "evaluate_housing sets comfort_malus factor when comfort is below caste minimum",
+    "evaluate_housing sets comfort_malus factor when current_comfort is below caste minimum",
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_and_register(test_surface, "test-house-3", {0, 0}, Type.foundry)
+        entry[EK.current_comfort] = 3
 
         local happiness_factors = {}
         local caste = Castes.values[Type.foundry]
         Inhabitants.evaluate_housing(entry, {}, {}, happiness_factors, caste)
 
-        local expected_factor = Housing.values["test-house-3"].comfort / caste.minimum_comfort
+        local expected_factor = 3 / caste.minimum_comfort
         Assert.not_nil(happiness_factors[HappinessFactor.comfort_malus],
-            "comfort_malus should be set when comfort < minimum_comfort")
+            "comfort_malus should be set when current_comfort < minimum_comfort")
         Assert.equals(happiness_factors[HappinessFactor.comfort_malus], expected_factor,
-            "comfort_malus factor should be comfort / minimum_comfort")
+            "comfort_malus factor should be current_comfort / minimum_comfort")
     end,
     setup,
     teardown
 )
 
 Tirislib.Testing.add_test_case(
-    "evaluate_housing does not set comfort_malus when comfort exactly meets minimum",
+    "evaluate_housing does not set comfort_malus when current_comfort exactly meets minimum",
     "integration|integration.inhabitants",
     function()
-        -- test-house-3 has comfort=3, plasma minimum_comfort=3: exactly meets, no malus
+        -- plasma minimum_comfort=3; set current_comfort=3 to exactly meet it
         local entry = Helpers.create_and_register(test_surface, "test-house-3", {0, 0}, Type.plasma)
+        entry[EK.current_comfort] = 3
 
         local happiness_factors = {}
         local caste = Castes.values[Type.plasma]
         Inhabitants.evaluate_housing(entry, {}, {}, happiness_factors, caste)
 
         Assert.is_nil(happiness_factors[HappinessFactor.comfort_malus],
-            "no comfort_malus when comfort equals minimum_comfort")
+            "no comfort_malus when current_comfort equals minimum_comfort")
     end,
     setup,
     teardown
@@ -313,6 +315,7 @@ Tirislib.Testing.add_test_case(
     function()
         -- clockwork minimum_comfort=0: condition minimum_comfort > 0 is false, no malus regardless
         local entry = Helpers.create_and_register(test_surface, "test-house-3", {0, 0}, Type.clockwork)
+        entry[EK.current_comfort] = 0
 
         local happiness_factors = {}
         local caste = Castes.values[Type.clockwork]
@@ -332,13 +335,14 @@ Tirislib.Testing.add_test_case(
         storage.technologies["foundry-caste"] = 1
         local entry = Helpers.create_and_register(test_surface, "test-house-3", {0, 0})
         local housed = Inhabitants.try_allow_for_caste(entry, Type.foundry, false)
+        housed[EK.current_comfort] = 3
 
         local group = InhabitantGroup.new(Type.foundry, 1)
         InhabitantGroup.merge(housed, group)
 
         Register.update_entry(housed, game.tick + 100)
 
-        local expected_factor = Housing.values["test-house-3"].comfort / Castes.values[Type.foundry].minimum_comfort
+        local expected_factor = 3 / Castes.values[Type.foundry].minimum_comfort
         Assert.equals(housed[EK.happiness_factors][HappinessFactor.comfort_malus], expected_factor,
             "comfort_malus factor should be set after a full housing update")
     end,

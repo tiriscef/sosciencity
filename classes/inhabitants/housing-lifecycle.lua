@@ -87,12 +87,14 @@ function Inhabitants.create_house(entry)
 
     entry[EK.housing_priority] = 0
 
+    local housing_details = get_housing_details(entry)
+    entry[EK.current_comfort] = housing_details.starting_comfort
+
     update_free_space_status(entry)
 
     Inhabitants.social_environment_change()
     build_social_environment(entry)
 
-    local housing_details = get_housing_details(entry)
     storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
         storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] + get_capacity(entry)
 end
@@ -105,30 +107,37 @@ function Inhabitants.copy_house(source, destination)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Tables.copy(source[EK.disease_progress])
     destination[EK.housing_priority] = source[EK.housing_priority] or 0
+    destination[EK.current_comfort] = source[EK.current_comfort] or get_housing_details(source).starting_comfort
     update_housing_census(destination)
 end
 
 --- Destruction-Handler for houses.
 --- @param entry Entry
 --- @param cause DeconstructionCause
-function Inhabitants.remove_house(entry, cause)
+--- @param event table?
+function Inhabitants.remove_house(entry, cause, event)
     Inhabitants.unemploy_all_inhabitants(entry)
     remove_housing_census(entry)
 
     local unit_number = entry[EK.unit_number]
     local caste_id = entry[EK.type]
-    local improvised = get_housing_details(entry).is_improvised
-    storage.free_houses[improvised][caste_id][unit_number] = nil
+    local housing_details = get_housing_details(entry)
+    storage.free_houses[housing_details.is_improvised][caste_id][unit_number] = nil
 
     if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
     elseif cause == DeconstructionCause.mined then
         add_to_homeless_pool(entry)
+        local buffer = event and event.buffer
+        if buffer then
+            for _, item in pairs(Housing.get_total_refund(housing_details, entry[EK.current_comfort] or 0)) do
+                buffer.insert({name = item.name, count = item.count})
+            end
+        end
     end
 
     Inhabitants.social_environment_change()
 
-    local housing_details = get_housing_details(entry)
     storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] =
         storage.housing_capacity[entry[EK.type]][housing_details.is_improvised] - get_capacity(entry)
 end
@@ -139,17 +148,15 @@ end
 function Inhabitants.blueprint_house(entry)
     return {
         caste = entry[EK.type],
-        priority = entry[EK.housing_priority]
+        priority = entry[EK.housing_priority],
+        current_comfort = entry[EK.current_comfort]
     }
 end
-
--- Register event handlers for all inhabited housing types.
-local update_house_wrapper = function(entry, delta_ticks) Inhabitants.update_house(entry, delta_ticks) end
 
 for _, caste in pairs(Castes.all) do
     Register.set_entity_creation_handler(caste.type, Inhabitants.create_house)
     Register.set_entity_copy_handler(caste.type, Inhabitants.copy_house)
-    Register.set_entity_updater(caste.type, update_house_wrapper)
+    Register.set_entity_updater(caste.type, Inhabitants.update_house)
     Register.set_entity_destruction_handler(caste.type, Inhabitants.remove_house)
     Register.set_settings_paste_handler(caste.type, caste.type, on_setting_paste_to_inhabited)
     Register.set_settings_paste_handler(caste.type, Type.empty_house, on_settings_paste_to_empty)

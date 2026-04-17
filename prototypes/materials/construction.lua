@@ -357,7 +357,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "fluid", name = "steam", amount = 600}
     },
-    name = "steam",
     category = "sosciencity-clockwork-quarry",
     energy_required = 5
 }

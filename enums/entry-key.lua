@@ -137,6 +137,8 @@ EK.housing_priority = 232
 EK.has_food = 233
 --- does this house have enough water?
 EK.has_water = 234
+--- the current comfort level of this house
+EK.current_comfort = 235
 
 -- water distributer
 
