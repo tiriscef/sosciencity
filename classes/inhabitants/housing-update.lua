@@ -137,6 +137,12 @@ Inhabitants.update_ages = update_ages
 --- @param happiness number current happiness
 --- @param caste table caste definition from Castes.values
 local function update_strike_level(entry, happiness, caste)
+    -- empty houses shouldn't 'strike' so we return early
+    if entry[EK.inhabitants] == 0 then
+        entry[EK.strike_level] = 0
+        return
+    end
+
     local new_level
     if happiness >= caste.strike_begin_threshold then
         new_level = 0
@@ -229,46 +235,46 @@ Inhabitants.remove_housing_census = remove_housing_census
 local function set_custom_status(entry)
     local inhabitants = entry[EK.inhabitants]
     local capacity = Housing.get_capacity(entry)
-    local strike_level = entry[EK.strike_level]
-
-    local diode, locale_key
-    if inhabitants == 0 then
-        diode = defines.entity_status_diode.red
-        locale_key = "sosciencity-custom-status.empty-house"
-    elseif inhabitants == capacity then
-        diode = defines.entity_status_diode.green
-        locale_key = "sosciencity-custom-status.full-house"
-    else
-        diode = defines.entity_status_diode.yellow
-        locale_key = "sosciencity-custom-status.inhabited-house"
-    end
-
-    local label = {
-        locale_key,
-        inhabitants,
-        capacity,
-        Utils.round_to_step(entry[EK.happiness], 0.1),
-        Utils.round_to_step(entry[EK.health], 0.1),
-        Utils.round_to_step(entry[EK.sanity], 0.1)
-    }
-
-    if strike_level >= 1 then
-        Tirislib.Locales.append(label, {"sosciencity-custom-status.on-full-strike"})
-    elseif strike_level > 0 then
-        Tirislib.Locales.append(label, {"sosciencity-custom-status.on-strike", floor(strike_level * 100)})
-    end
 
     local current_comfort = entry[EK.current_comfort] or 0
     local max_comfort = Housing.get(entry).max_comfort
-    Tirislib.Locales.append(
-        label,
-        {
-            "sosciencity-custom-status.comfort-status",
-            {"color-scale." .. current_comfort, {"comfort-scale." .. current_comfort}},
-            current_comfort,
-            max_comfort
+    local comfort_append = {
+        "sosciencity-custom-status.comfort-status",
+        {"color-scale." .. current_comfort, {"comfort-scale." .. current_comfort}},
+        current_comfort,
+        max_comfort
+    }
+
+    local diode, label
+    if inhabitants == 0 then
+        diode = defines.entity_status_diode.red
+        label = {"sosciencity-custom-status.empty-house", inhabitants, capacity}
+    else
+        local locale_key
+        if inhabitants == capacity then
+            diode = defines.entity_status_diode.green
+            locale_key = "sosciencity-custom-status.full-house"
+        else
+            diode = defines.entity_status_diode.yellow
+            locale_key = "sosciencity-custom-status.inhabited-house"
+        end
+        label = {
+            locale_key,
+            inhabitants,
+            capacity,
+            Utils.round_to_step(entry[EK.happiness], 0.1),
+            Utils.round_to_step(entry[EK.health], 0.1),
+            Utils.round_to_step(entry[EK.sanity], 0.1)
         }
-    )
+        local strike_level = entry[EK.strike_level]
+        if strike_level >= 1 then
+            Tirislib.Locales.append(label, {"sosciencity-custom-status.on-full-strike"})
+        elseif strike_level > 0 then
+            Tirislib.Locales.append(label, {"sosciencity-custom-status.on-strike", floor(strike_level * 100)})
+        end
+    end
+
+    Tirislib.Locales.append(label, comfort_append)
 
     entry[EK.entity].custom_status = {
         diode = diode,
