@@ -347,6 +347,14 @@ style.sosciencity_sortable_list_head = {
     tooltip = "sosciencity.sort-by-this-column"
 }
 
+style.sosciencity_small_button = {
+    type = "button_style",
+    size = 20,
+    padding = 0,
+    horizontally_stretchable = "off",
+    vertically_stretchable = "off",
+}
+
 style.sosciencity_sortable_list_row = {
     type = "label_style",
     left_margin = 2,

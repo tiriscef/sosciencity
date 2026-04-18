@@ -27,6 +27,7 @@ function Gui.init()
     set_locals()
     storage.details_view = {}
     storage.gui_elements = {}
+    storage.placement_settings = {}
 
     for _, player in pairs(game.players) do
         Gui.create_guis(player)

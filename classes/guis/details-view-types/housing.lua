@@ -221,7 +221,7 @@ local function add_upgrade_section(flow, entry, house_details)
         type = "button",
         name = "automation-decrease",
         caption = "◄",
-        style = "sosciencity_sortable_list_head",
+        style = "sosciencity_small_button",
         mouse_button_filter = {"left"},
         tags = {sosciencity_gui_event = "set_target_comfort", unit_number = unit_number, delta = -1}
     }
@@ -230,7 +230,7 @@ local function add_upgrade_section(flow, entry, house_details)
         type = "button",
         name = "automation-increase",
         caption = "►",
-        style = "sosciencity_sortable_list_head",
+        style = "sosciencity_small_button",
         mouse_button_filter = {"left"},
         tags = {sosciencity_gui_event = "set_target_comfort", unit_number = unit_number, delta = 1}
     }
