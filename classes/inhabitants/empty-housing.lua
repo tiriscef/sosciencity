@@ -43,6 +43,7 @@ local function update_empty_house(entry)
     end
 
     entry[EK.is_liveable] = has_water and has_food
+    Inhabitants.try_auto_upgrade(entry)
 
     local current_comfort = entry[EK.current_comfort] or 0
     local max_comfort = Housing.get(entry).max_comfort
@@ -72,6 +73,7 @@ Register.set_entity_updater(Type.empty_house, update_empty_house)
 local function create_empty_house(entry, event)
     local house_details = Housing.get(entry)
     entry[EK.current_comfort] = house_details.starting_comfort
+    entry[EK.target_comfort] = house_details.starting_comfort
 
     local tags = Tables.get_subtbl_recursive_passive(event, "tags", "sosciencity")
 
@@ -79,13 +81,16 @@ local function create_empty_house(entry, event)
         return
     end
 
+    entry[EK.target_comfort] = tags.target_comfort or house_details.starting_comfort
+
     local caste = tags.caste
     if caste then
         local new_entry = Inhabitants.try_allow_for_caste(entry, caste, true)
 
         if new_entry then
             new_entry[EK.housing_priority] = tags.priority
-            -- current_comfort is carried over by try_allow_for_caste
+            -- current_comfort and target_comfort are carried over by try_allow_for_caste
+            new_entry[EK.target_comfort] = tags.target_comfort or new_entry[EK.current_comfort]
         end
     end
 end
@@ -111,7 +116,8 @@ end
 --- @return table tags
 local function blueprint_empty_house(entry)
     return {
-        current_comfort = entry[EK.current_comfort]
+        current_comfort = entry[EK.current_comfort],
+        target_comfort = entry[EK.target_comfort]
     }
 end
 

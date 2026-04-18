@@ -725,8 +725,12 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
             Housing.allowes_caste(get_housing_details(entry), caste_id)
      then
         local saved_comfort = entry[EK.current_comfort]
+        local saved_target = entry[EK.target_comfort]
+        local entity = entry[EK.entity]
+        ItemRequests.cancel(entity, entity.get_inventory(defines.inventory.chest), entry, EK.upgrade_slots)
         local new_entry = Register.change_type(entry, caste_id)
         new_entry[EK.current_comfort] = saved_comfort
+        new_entry[EK.target_comfort] = saved_target
 
         if loud then
             Communication.caste_allowed_in(new_entry, caste_id)
@@ -759,6 +763,7 @@ require("classes.inhabitants.housing-management")
 require("classes.inhabitants.homelessness")
 require("classes.inhabitants.housing-update")
 require("classes.inhabitants.housing-lifecycle")
+require("classes.inhabitants.housing-upgrades")
 require("classes.inhabitants.empty-housing")
 
 is_researched = Inhabitants.caste_is_researched

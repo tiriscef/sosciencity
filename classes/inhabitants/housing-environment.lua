@@ -134,7 +134,7 @@ Inhabitants.evaluate_neighborhood = evaluate_neighborhood
 ---------------------------------------------------------------------------------------------------
 -- << social environment >>
 
---- Needs to be called when there is a change of any type that affects the social environment.
+--- Needs to be called when there is a potential change in neighborhood connections that affects the social environment.
 function Inhabitants.social_environment_change()
     storage.last_social_change = game.tick
 end

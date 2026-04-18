@@ -1,11 +1,5 @@
 local DeconstructionCause = require("enums.deconstruction-cause")
 local EK = require("enums.entry-key")
-local HappinessSummand = require("enums.happiness-summand")
-local HappinessFactor = require("enums.happiness-factor")
-local HealthSummand = require("enums.health-summand")
-local HealthFactor = require("enums.health-factor")
-local SanitySummand = require("enums.sanity-summand")
-local SanityFactor = require("enums.sanity-factor")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
@@ -38,16 +32,58 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabited house event handlers >>
 
-local function on_setting_paste_to_inhabited(source, destination)
-    destination[EK.housing_priority] = source[EK.housing_priority] or 0
+local function get_player(event)
+    return event and event.player_index and game.players[event.player_index]
 end
 
-local function on_settings_paste_to_empty(source, destination)
+local function clamp_target_comfort(target, house_details)
+    return math.min(target or 0, house_details.max_comfort)
+end
+
+local function try_upgrade_to_target(entry, player)
+    if not player then return end
+    while (entry[EK.current_comfort] or 0) < (entry[EK.target_comfort] or 0) do
+        if Inhabitants.try_manual_upgrade(entry, player) then return end
+    end
+end
+
+local function on_setting_paste_to_inhabited(source, destination, event)
+    destination[EK.housing_priority] = source[EK.housing_priority] or 0
+    destination[EK.target_comfort] = clamp_target_comfort(
+        source[EK.target_comfort],
+        get_housing_details(destination)
+    )
+    try_upgrade_to_target(destination, get_player(event))
+end
+
+local function on_settings_paste_to_empty(source, destination, event)
     local assigned_house = Inhabitants.try_allow_for_caste(destination, source[EK.type], true)
 
     if assigned_house then
-        on_setting_paste_to_inhabited(source, assigned_house)
+        on_setting_paste_to_inhabited(source, assigned_house, event)
+    else
+        destination[EK.target_comfort] = clamp_target_comfort(
+            source[EK.target_comfort],
+            get_housing_details(destination)
+        )
+        try_upgrade_to_target(destination, get_player(event))
     end
+end
+
+local function on_settings_paste_empty_to_empty(source, destination, event)
+    destination[EK.target_comfort] = clamp_target_comfort(
+        source[EK.target_comfort],
+        get_housing_details(destination)
+    )
+    try_upgrade_to_target(destination, get_player(event))
+end
+
+local function on_settings_paste_empty_to_inhabited(source, destination, event)
+    destination[EK.target_comfort] = clamp_target_comfort(
+        source[EK.target_comfort],
+        get_housing_details(destination)
+    )
+    try_upgrade_to_target(destination, get_player(event))
 end
 
 --- Creation-Handler for houses.
@@ -89,6 +125,7 @@ function Inhabitants.create_house(entry)
 
     local housing_details = get_housing_details(entry)
     entry[EK.current_comfort] = housing_details.starting_comfort
+    entry[EK.target_comfort] = housing_details.starting_comfort
 
     update_free_space_status(entry)
 
@@ -108,6 +145,7 @@ function Inhabitants.copy_house(source, destination)
     destination[EK.disease_progress] = Tables.copy(source[EK.disease_progress])
     destination[EK.housing_priority] = source[EK.housing_priority] or 0
     destination[EK.current_comfort] = source[EK.current_comfort] or get_housing_details(source).starting_comfort
+    destination[EK.target_comfort] = source[EK.target_comfort] or destination[EK.current_comfort]
     update_housing_census(destination)
 end
 
@@ -149,9 +187,12 @@ function Inhabitants.blueprint_house(entry)
     return {
         caste = entry[EK.type],
         priority = entry[EK.housing_priority],
-        current_comfort = entry[EK.current_comfort]
+        current_comfort = entry[EK.current_comfort],
+        target_comfort = entry[EK.target_comfort]
     }
 end
+
+Register.set_settings_paste_handler(Type.empty_house, Type.empty_house, on_settings_paste_empty_to_empty)
 
 for _, caste in pairs(Castes.all) do
     Register.set_entity_creation_handler(caste.type, Inhabitants.create_house)
@@ -160,5 +201,6 @@ for _, caste in pairs(Castes.all) do
     Register.set_entity_destruction_handler(caste.type, Inhabitants.remove_house)
     Register.set_settings_paste_handler(caste.type, caste.type, on_setting_paste_to_inhabited)
     Register.set_settings_paste_handler(caste.type, Type.empty_house, on_settings_paste_to_empty)
+    Register.set_settings_paste_handler(Type.empty_house, caste.type, on_settings_paste_empty_to_inhabited)
     Register.set_blueprinted_handler(caste.type, Inhabitants.blueprint_house)
 end

@@ -139,6 +139,10 @@ EK.has_food = 233
 EK.has_water = 234
 --- the current comfort level of this house
 EK.current_comfort = 235
+--- the target comfort level for automatic logistics delivery
+EK.target_comfort = 236
+--- array of slot indices where upgrade filters are placed in the chest
+EK.upgrade_slots = 237
 
 -- water distributer
 
