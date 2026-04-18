@@ -20,7 +20,14 @@ Technologies = {}
 -- local often used globals for humongous performance gains
 
 local tracked_techs = {
-    ["transfusion-medicine"] = true
+    ["transfusion-medicine"] = true,
+    ["architecture-1"] = true,
+    ["architecture-2"] = true,
+    ["architecture-3"] = true,
+    ["architecture-4"] = true,
+    ["architecture-5"] = true,
+    ["architecture-6"] = true,
+    ["architecture-7"] = true,
 }
 
 local tracked_multi_level_techs = {

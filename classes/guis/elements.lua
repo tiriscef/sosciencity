@@ -1247,6 +1247,86 @@ Gui.set_click_handler(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << IntStepper >>
+---------------------------------------------------------------------------------------------------
+
+--- A reusable ◄ [value] ► control for stepping an integer within a bounded range.
+--- The caller registers the event handler separately via Gui.set_click_handler(event_tag, ...).
+--- Both buttons carry `delta = -1` / `delta = 1` plus any extra_tags in their tags table.
+Gui.Elements.IntStepper = {}
+
+--- Creates an IntStepper inside parent.
+--- options:
+---   event_tag     string   sosciencity_gui_event for both buttons (required)
+---   extra_tags    table?   merged into button tags alongside delta
+---   value         integer  initial value
+---   min           integer  decrease button disabled when value == min
+---   max           integer  increase button disabled when value == max
+---   tooltip       locale?  applied to both buttons and the label
+--- @return LuaGuiElement the stepper flow
+function Gui.Elements.IntStepper.create(parent, name, options)
+    local flow = parent.add {
+        type = "flow",
+        name = name,
+        direction = "horizontal",
+        style = "sosciencity_horizontal_center_flow"
+    }
+    flow.style.vertical_align = "center"
+
+    local extra = options.extra_tags or {}
+    local decrease_tags = {sosciencity_gui_event = options.event_tag, delta = -1}
+    local increase_tags = {sosciencity_gui_event = options.event_tag, delta = 1}
+    for k, v in pairs(extra) do
+        decrease_tags[k] = v
+        increase_tags[k] = v
+    end
+
+    flow.add {
+        type = "sprite-button",
+        name = "decrease",
+        sprite = "utility/backward_arrow_black",
+        style = "sosciencity_small_button",
+        mouse_button_filter = {"left"},
+        tooltip = options.tooltip,
+        tags = decrease_tags,
+        enabled = options.value > options.min
+    }
+
+    local val_label = flow.add {
+        type = "label",
+        name = "val",
+        caption = options.value,
+        tooltip = options.tooltip
+    }
+    val_label.style.minimal_width = 16
+    val_label.style.horizontal_align = "center"
+
+    flow.add {
+        type = "sprite-button",
+        name = "increase",
+        sprite = "utility/forward_arrow_black",
+        style = "sosciencity_small_button",
+        mouse_button_filter = {"left"},
+        tooltip = options.tooltip,
+        tags = increase_tags,
+        enabled = options.value < options.max
+    }
+
+    return flow
+end
+
+--- Updates an existing IntStepper: caption and button enabled states.
+--- @param flow LuaGuiElement the flow returned by IntStepper.create
+--- @param value integer current value
+--- @param min integer lower bound
+--- @param max integer upper bound
+function Gui.Elements.IntStepper.update(flow, value, min, max)
+    flow["decrease"].enabled = value > min
+    flow["val"].caption = value
+    flow["increase"].enabled = value < max
+end
+
+---------------------------------------------------------------------------------------------------
 -- << MessageBox >>
 ---------------------------------------------------------------------------------------------------
 

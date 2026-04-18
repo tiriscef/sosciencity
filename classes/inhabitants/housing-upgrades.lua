@@ -67,6 +67,10 @@ function Inhabitants.try_manual_upgrade(entry, player)
     if current_comfort >= max_comfort then return end
 
     local next_level = current_comfort + 1
+    if not Housing.is_level_unlocked(next_level) then
+        return {"sosciencity.upgrade-comfort-locked", {"technology-name." .. Housing.required_tech[next_level]}}
+    end
+
     local cost = Housing.get_upgrade_cost(house_details, next_level)
     if not cost then
         cancel_upgrade_proxy(entry)
@@ -137,6 +141,11 @@ function Inhabitants.try_auto_upgrade(entry)
     end
 
     local next_level = current + 1
+    if not Housing.is_level_unlocked(next_level) then
+        cancel_upgrade_proxy(entry)
+        return
+    end
+
     local cost = get_cost(entry, next_level)
 
     if not cost then

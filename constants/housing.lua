@@ -50,6 +50,42 @@ Housing.furniture_costs = {
     },
 }
 
+-- Maps comfort level → required architecture technology name.
+Housing.required_tech = {
+    [1]  = "architecture-1",
+    [2]  = "architecture-1",
+    [3]  = "architecture-2",
+    [4]  = "architecture-2",
+    [5]  = "architecture-3",
+    [6]  = "architecture-3",
+    [7]  = "architecture-4",
+    [8]  = "architecture-5",
+    [9]  = "architecture-6",
+    [10] = "architecture-7",
+}
+
+-- Highest comfort level defined by furniture_costs.
+Housing.max_level = Tirislib.LazyLuaq.from_keyset(Housing.required_tech):max()
+
+--- Returns true if the given comfort level is unlocked (uses cached research state from storage).
+--- @param level integer
+--- @return boolean
+function Housing.is_level_unlocked(level)
+    local tech = Housing.required_tech[level]
+    return tech == nil or storage.technologies[tech]
+end
+
+--- Returns the highest comfort level currently unlocked.
+--- @return integer
+function Housing.get_max_unlocked_level()
+    for level = Housing.max_level, 1, -1 do
+        if Housing.is_level_unlocked(level) then
+            return level
+        end
+    end
+    return 0
+end
+
 Housing.values = {
     ["improvised-hut"] = {
         room_count = 4,
