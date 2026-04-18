@@ -6,7 +6,7 @@ Gui.CityInfo = {}
     --------------------------------
     storage.placement_settings: table
         [player_index]: table
-            target_comfort: integer (0–10) — comfort target applied to newly placed houses
+            target_comfort: integer — comfort target applied to newly placed houses
             auto_assign_caste: integer|nil — Type enum value of the caste to auto-assign, or nil for none
 ]]
 
@@ -92,45 +92,14 @@ local function create_advanced_placement_section(flow, player_index)
 
     advanced_flow.add {type = "label", caption = {"sosciencity.placement-target-comfort"}}
 
-    local comfort_row = advanced_flow.add {
-        type = "flow",
-        name = "comfort_row",
-        direction = "horizontal",
-        style = "sosciencity_horizontal_center_flow"
-    }
-
-    local comfort_tooltip = {"sosciencity.placement-comfort-tooltip"}
-
-    comfort_row.add {
-        type = "button",
-        name = "comfort_minus",
-        caption = "◄",
-        style = "sosciencity_small_button",
-        mouse_button_filter = {"left"},
-        tooltip = comfort_tooltip,
-        tags = {sosciencity_gui_event = "placement_adjust_comfort", delta = -1}
-    }
-
-    local val_label = comfort_row.add {
-        type = "label",
-        name = "comfort_value",
-        caption = comfort_value,
-        tooltip = comfort_tooltip
-    }
-    val_label.style.minimal_width = 16
-    val_label.style.horizontal_align = "center"
-
-    comfort_row.add {
-        type = "button",
-        name = "comfort_plus",
-        caption = "►",
-        style = "sosciencity_small_button",
-        mouse_button_filter = {"left"},
-        tooltip = comfort_tooltip,
-        tags = {sosciencity_gui_event = "placement_adjust_comfort", delta = 1}
-    }
-
-    Gui.register_element(val_label, "city-info-placement", "comfort-value", player_index)
+    local stepper = Gui.Elements.IntStepper.create(advanced_flow, "comfort_row", {
+        event_tag = "placement_adjust_comfort",
+        tooltip = {"sosciencity.placement-comfort-tooltip"},
+        value = comfort_value,
+        min = 0,
+        max = Housing.max_level
+    })
+    Gui.register_element(stepper, "city-info-placement", "comfort-stepper", player_index)
 end
 
 --- Creates the general frame with city-wide stats and the advanced placement section.
@@ -536,9 +505,9 @@ function Gui.CityInfo.set_placement_mode(player, active)
 
     local settings = storage.placement_settings[player.index]
     if active and settings then
-        local val_label = Gui.get_element("city-info-placement", "comfort-value", player.index)
-        if val_label and val_label.valid then
-            val_label.caption = settings.target_comfort
+        local stepper = Gui.get_element("city-info-placement", "comfort-stepper", player.index)
+        if stepper and stepper.valid then
+            Gui.Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
         end
     end
 
@@ -575,10 +544,10 @@ Gui.set_click_handler(
         if not settings then
             return
         end
-        settings.target_comfort = max(0, min(settings.target_comfort + event.element.tags.delta, 10))
-        local label = Gui.get_element("city-info-placement", "comfort-value", player_index)
-        if label and label.valid then
-            label.caption = settings.target_comfort
+        settings.target_comfort = max(0, min(settings.target_comfort + event.element.tags.delta, Housing.max_level))
+        local stepper = Gui.get_element("city-info-placement", "comfort-stepper", player_index)
+        if stepper and stepper.valid then
+            Gui.Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
         end
     end
 )

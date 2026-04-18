@@ -167,7 +167,11 @@ local function update_upgrade_section(flow, entry, house_details)
     end
 
     local next_level = current + 1
-    flow["upgrade-button"].caption = {"sosciencity.upgrade-comfort", current, next_level}
+    local is_locked = not Housing.is_level_unlocked(next_level)
+    local upgrade_btn = flow["upgrade-button"]
+    upgrade_btn.caption = {"sosciencity.upgrade-comfort", current, next_level}
+    upgrade_btn.enabled = not is_locked
+    upgrade_btn.tooltip = is_locked and {"sosciencity.upgrade-comfort-locked", {"technology-name." .. Housing.required_tech[next_level]}} or ""
 
     -- update per-item progress labels
     local progress_flow = flow["item-progress-flow"]
@@ -185,10 +189,7 @@ local function update_upgrade_section(flow, entry, house_details)
     end
 
     -- update automation row
-    local auto_flow = flow["automation-flow"]
-    auto_flow["automation-decrease"].enabled = target > current
-    auto_flow["automation-target-label"].caption = target
-    auto_flow["automation-increase"].enabled = target < max_comfort
+    Gui.Elements.IntStepper.update(flow["automation-flow"]["stepper"], target, current, max_comfort)
 end
 
 local function add_upgrade_section(flow, entry, house_details)
@@ -217,23 +218,13 @@ local function add_upgrade_section(flow, entry, house_details)
     local auto_flow = upgrade_flow.add {type = "flow", name = "automation-flow", direction = "horizontal"}
     auto_flow.style.vertical_align = "center"
     auto_flow.add {type = "label", caption = {"sosciencity.auto-deliver-target"}}
-    auto_flow.add {
-        type = "button",
-        name = "automation-decrease",
-        caption = "◄",
-        style = "sosciencity_small_button",
-        mouse_button_filter = {"left"},
-        tags = {sosciencity_gui_event = "set_target_comfort", unit_number = unit_number, delta = -1}
-    }
-    auto_flow.add {type = "label", name = "automation-target-label"}
-    auto_flow.add {
-        type = "button",
-        name = "automation-increase",
-        caption = "►",
-        style = "sosciencity_small_button",
-        mouse_button_filter = {"left"},
-        tags = {sosciencity_gui_event = "set_target_comfort", unit_number = unit_number, delta = 1}
-    }
+    Gui.Elements.IntStepper.create(auto_flow, "stepper", {
+        event_tag = "set_target_comfort",
+        extra_tags = {unit_number = unit_number},
+        value = 0,
+        min = 0,
+        max = 0
+    })
 
     update_upgrade_section(upgrade_flow, entry, house_details)
 end

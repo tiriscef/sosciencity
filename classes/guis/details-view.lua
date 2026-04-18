@@ -483,7 +483,10 @@ function Gui.DetailsView.open(player, unit_number)
     local player_id = player.index
     local nested = details_view.nested
 
-    Gui.unregister_player(player_id)
+    local previous = storage.details_view[player_id]
+    if previous then
+        Gui.unregister_context(previous)
+    end
     nested.clear()
     creater(nested, entry, player_id)
     details_view.visible = true
@@ -494,7 +497,10 @@ end
 --- @param player LuaPlayer
 function Gui.DetailsView.close(player)
     local details_view = get_details_view(player)
-    Gui.unregister_player(player.index)
+    local previous = storage.details_view[player.index]
+    if previous then
+        Gui.unregister_context(previous)
+    end
     details_view.visible = false
     storage.details_view[player.index] = nil
     details_view.caption = nil
