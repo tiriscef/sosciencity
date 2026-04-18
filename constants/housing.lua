@@ -10,13 +10,19 @@ local Housing = {}
 -- Per-level cost per room to upgrade from (level-1) to level.
 -- Multiply by room_count and ceil to get actual item amounts.
 Housing.furniture_costs = {
-    [1]  = {{name = "furniture", amount = 0.5}},
-    [2]  = {{name = "furniture", amount = 1}},
+    [1]  = {
+        {name = "furniture", amount = 0.5}
+    },
+    [2]  = {
+        {name = "furniture", amount = 1}
+    },
     [3]  = {
         {name = "bed",       amount = 1},
         {name = "furniture", amount = 1.5}
     },
-    [4]  = {{name = "furniture", amount = 1}},
+    [4]  = {
+        {name = "furniture", amount = 1}
+    },
     [5]  = {
         {name = "curtain", amount = 1},
         {name = "stove",   amount = 0.5}
@@ -26,7 +32,9 @@ Housing.furniture_costs = {
         {name = "carpet",          amount = 1},
         {name = "air-conditioner", amount = 1 / 3}
     },
-    [7]  = {{name = "refrigerator", amount = 0.5}},
+    [7]  = {
+        {name = "refrigerator", amount = 0.5}
+    },
     [8]  = {
         {name = "furniture",       amount = 1},
         {name = "air-conditioner", amount = 1 / 6}
@@ -35,7 +43,8 @@ Housing.furniture_costs = {
         {name = "furniture",       amount = 1},
         {name = "air-conditioner", amount = 1 / 6}
     },
-    [10] = {{name = "bed",     amount = 2},
+    [10] = {
+        {name = "bed",             amount = 2},
         {name = "furniture",       amount = 1},
         {name = "air-conditioner", amount = 1 / 3}
     },

@@ -116,107 +116,123 @@ Gui.set_click_handler(
             return
         end
 
-        local house_details = Housing.get(entry)
-        local current_comfort = entry[EK.current_comfort] or 0
-        if current_comfort >= house_details.max_comfort then
-            return
-        end
-
-        local next_level = current_comfort + 1
-        local cost = Housing.get_upgrade_cost(house_details, next_level)
         local player = game.players[event.player_index]
-        local inventory = player.get_main_inventory()
-
-        -- check inventory
-        local missing = {}
-        if cost then
-            for _, item in pairs(cost) do
-                local have = inventory.get_item_count(item.name)
-                if have < item.count then
-                    missing[#missing + 1] = display_item_stack(item.name, item.count - have)
-                end
-            end
-        end
-
-        if #missing > 0 then
-            local missing_str = {""}
-            for i, m in pairs(missing) do
-                if i > 1 then
-                    missing_str[#missing_str + 1] = ", "
-                end
-                missing_str[#missing_str + 1] = m
-            end
-            player.create_local_flying_text {
-                text = {"sosciencity.upgrade-comfort-missing", missing_str},
-                create_at_cursor = true
-            }
+        local missing = Inhabitants.try_manual_upgrade(entry, player)
+        if missing then
+            player.create_local_flying_text {text = missing, create_at_cursor = true}
             return
         end
 
-        -- deduct items
-        if cost then
-            for _, item in pairs(cost) do
-                inventory.remove({name = item.name, count = item.count})
-            end
-        end
-
-        entry[EK.current_comfort] = next_level
-        Inhabitants.social_environment_change()
-        Gui.DetailsView.rebuild_for_entry(entry)
+        Gui.DetailsView.update_for_entry(entry)
     end
 )
 
-local function build_upgrade_cost_string(cost)
-    local parts = {""}
-    for i, item in pairs(cost) do
-        if i > 1 then
-            parts[#parts + 1] = ", "
+Gui.set_click_handler(
+    "set_target_comfort",
+    function(event)
+        local tags = event.element.tags
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then
+            return
         end
-        parts[#parts + 1] = display_item_stack(item.name, item.count)
+
+        local house_details = Housing.get(entry)
+        local current = entry[EK.current_comfort] or 0
+        local target = entry[EK.target_comfort] or current
+        local new_target = math.max(current, math.min(house_details.max_comfort, target + tags.delta))
+
+        if new_target == target then
+            return
+        end
+
+        entry[EK.target_comfort] = new_target
+
+        Gui.DetailsView.update_for_entry(entry)
     end
-    return parts
-end
+)
 
 local function update_upgrade_section(flow, entry, house_details)
-    local current_comfort = entry[EK.current_comfort] or 0
+    local current = entry[EK.current_comfort] or 0
+    local target = entry[EK.target_comfort] or current
     local max_comfort = house_details.max_comfort
+    local at_max = current >= max_comfort
 
-    local button = flow["upgrade-button"]
-    local at_max = current_comfort >= max_comfort
-
-    button.visible = not at_max
+    flow["upgrade-button"].visible = not at_max
     flow["upgrade-maxed-label"].visible = at_max
+    flow["item-progress-flow"].visible = not at_max
+    flow["automation-flow"].visible = not at_max
 
     if at_max then
         return
     end
 
-    local next_level = current_comfort + 1
-    button.caption = {"sosciencity.upgrade-comfort", current_comfort, next_level}
+    local next_level = current + 1
+    flow["upgrade-button"].caption = {"sosciencity.upgrade-comfort", current, next_level}
 
-    local cost = Housing.get_upgrade_cost(house_details, next_level)
-    if cost and #cost > 0 then
-        button.tooltip = {"sosciencity.upgrade-comfort-cost", build_upgrade_cost_string(cost)}
-    else
-        button.tooltip = ""
+    -- update per-item progress labels
+    local progress_flow = flow["item-progress-flow"]
+    progress_flow.clear()
+    local progress = Inhabitants.get_upgrade_progress(entry)
+    if progress then
+        for _, p in pairs(progress) do
+            progress_flow.add {
+                type = "label",
+                caption = {"sosciencity.upgrade-item-progress",
+                    format("[item=%s]", p.name), p.in_chest, p.required},
+                elem_tooltip = {type = "item", name = p.name}
+            }
+        end
     end
+
+    -- update automation row
+    local auto_flow = flow["automation-flow"]
+    auto_flow["automation-decrease"].enabled = target > current
+    auto_flow["automation-target-label"].caption = target
+    auto_flow["automation-increase"].enabled = target < max_comfort
 end
 
 local function add_upgrade_section(flow, entry, house_details)
     local upgrade_flow = flow.add {type = "flow", name = "upgrade-section", direction = "vertical"}
     upgrade_flow.style.vertical_spacing = 4
 
+    local unit_number = entry[EK.unit_number]
+
     upgrade_flow.add {
         type = "button",
         name = "upgrade-button",
         style = "sosciencity_heading_2_button",
         mouse_button_filter = {"left"},
-        tags = {sosciencity_gui_event = "upgrade_house", unit_number = entry[EK.unit_number]}
+        tags = {sosciencity_gui_event = "upgrade_house", unit_number = unit_number}
     }
     upgrade_flow.add {
         type = "label",
         name = "upgrade-maxed-label",
         caption = {"sosciencity.upgrade-comfort-maxed", house_details.max_comfort}
+    }
+
+    -- per-item delivery progress
+    upgrade_flow.add {type = "flow", name = "item-progress-flow", direction = "horizontal"}
+
+    -- automation target row
+    local auto_flow = upgrade_flow.add {type = "flow", name = "automation-flow", direction = "horizontal"}
+    auto_flow.style.vertical_align = "center"
+    auto_flow.add {type = "label", caption = {"sosciencity.auto-deliver-target"}}
+    auto_flow.add {
+        type = "button",
+        name = "automation-decrease",
+        caption = "◄",
+        style = "sosciencity_sortable_list_head",
+        mouse_button_filter = {"left"},
+        tags = {sosciencity_gui_event = "set_target_comfort", unit_number = unit_number, delta = -1}
+    }
+    auto_flow.add {type = "label", name = "automation-target-label"}
+    auto_flow.add {
+        type = "button",
+        name = "automation-increase",
+        caption = "►",
+        style = "sosciencity_sortable_list_head",
+        mouse_button_filter = {"left"},
+        tags = {sosciencity_gui_event = "set_target_comfort", unit_number = unit_number, delta = 1}
     }
 
     update_upgrade_section(upgrade_flow, entry, house_details)
@@ -652,8 +668,10 @@ Gui.set_click_handler(
         local entry = Register.try_get(storage.details_view[event.player_index])
         if Gui.Elements.Utils.is_confirmed(button) then
             local saved_comfort = entry[EK.current_comfort]
+            local saved_target = entry[EK.target_comfort]
             local new_entry = Register.change_type(entry, Type.empty_house)
             new_entry[EK.current_comfort] = saved_comfort
+            new_entry[EK.target_comfort] = saved_target
         end
     end
 )

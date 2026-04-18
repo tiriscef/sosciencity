@@ -337,7 +337,7 @@ local unlocks = {
 }
 
 local function get_inventory_size(house)
-    return 5 * math.ceil(1 + math.log(house.room_count, 10))
+    return 10 * math.ceil(1 + math.log(house.room_count, 10))
 end
 
 local function get_order(house)
@@ -482,6 +482,7 @@ local function create_entity(house_name, house, details)
         open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65},
         close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7},
         inventory_size = get_inventory_size(house),
+        inventory_type = "with_filters_and_bar",
         vehicle_impact_sound = {
             filename = "__base__/sound/car-metal-impact.ogg",
             volume = 0.65
@@ -490,7 +491,6 @@ local function create_entity(house_name, house, details)
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
         circuit_wire_max_distance = 13,
-        enable_inventory_bar = false,
         localised_name = {"entity-name." .. details.main_entity},
         localised_description = get_localised_description(house_name, house)
     }:set_size(details.width, details.height)

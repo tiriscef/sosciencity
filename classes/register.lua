@@ -256,11 +256,13 @@ function Register.set_settings_paste_handler(source_type, destination_type, fn)
 end
 
 --- Calls the event handler when the player pastes the settings of one entity to another - if there is a handler.
+--- Handlers receive (source, destination, event) — event is the raw Factorio event table.
 --- @param source_type Type
 --- @param source Entry
 --- @param destination_type Type
 --- @param destination Entry
-function Register.on_settings_pasted(source_type, source, destination_type, destination)
+--- @param event table
+function Register.on_settings_pasted(source_type, source, destination_type, destination, event)
     paste_custom_building_settings(source, destination)
 
     local tbl = on_settings_paste_lookup[destination_type]
@@ -268,7 +270,7 @@ function Register.on_settings_pasted(source_type, source, destination_type, dest
     if tbl then
         local fn = tbl[source_type]
         if fn then
-            fn(source, destination)
+            fn(source, destination, event)
         end
     end
 end

@@ -61,6 +61,7 @@ local warning_params
 local warning_ticks
 
 local notifications
+local temporary_texts
 
 local castes = Castes.values
 
@@ -103,6 +104,7 @@ local function set_locals()
     warning_params = storage.warning_params
 
     notifications = storage.notifications
+    temporary_texts = storage.temporary_texts
 
     generate_speakers_list()
 end
@@ -145,6 +147,7 @@ function Communication.init()
     storage.warning_params = {}
 
     storage.notifications = {}
+    storage.temporary_texts = {}
 
     set_locals()
 end
@@ -162,13 +165,18 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << flying texts >>
 
---- Creates a temporary text at the entry's entity's position. Not actually flying anymore, was removed with factorio 2.
+--- Creates a temporary static text at the entry's entity's position, replacing any existing one for that entry.
 --- @param entry Entry
 --- @param text locale
-function Communication.create_flying_text(entry, text)
-    local entity = entry[EK.entity]
+function Communication.create_temporary_text(entry, text)
+    local unit_number = entry[EK.unit_number]
+    local existing = temporary_texts[unit_number]
+    if existing and existing.valid then
+        existing.destroy()
+    end
 
-    rendering.draw_text {
+    local entity = entry[EK.entity]
+    temporary_texts[unit_number] = rendering.draw_text {
         text = text,
         surface = entity.surface,
         target = {entity = entity, offset = {0, -1.5}},
@@ -178,7 +186,25 @@ function Communication.create_flying_text(entry, text)
         alignment = "center"
     }
 end
-local create_flying_text = Communication.create_flying_text
+
+local create_temporary_text = Communication.create_temporary_text
+
+--- Creates an upward-flying text at the entry's entity's position, visible to all connected players.
+--- @param entry Entry
+--- @param text locale
+function Communication.create_flying_text(entry, text)
+    local entity = entry[EK.entity]
+    local position = entity.position
+
+    for _, player in pairs(game.connected_players) do
+        player.create_local_flying_text {
+            text = text,
+            position = position,
+            surface = entity.surface,
+            time_to_live = 3 * Time.second
+        }
+    end
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << speakers >>
@@ -252,6 +278,7 @@ function Communication.useless_banter()
 
     say(speaker_name, "b" .. line)
 end
+
 local useless_banter = Communication.useless_banter
 
 ---------------------------------------------------------------------------------------------------
@@ -261,7 +288,7 @@ local useless_banter = Communication.useless_banter
 function Communication.caste_allowed_in(entry, caste_id)
     local caste = castes[caste_id]
 
-    create_flying_text(
+    create_temporary_text(
         entry,
         {
             "sosciencity.set-caste",
@@ -274,7 +301,7 @@ end
 function Communication.caste_not_allowed_in(entry, caste_id)
     local caste = castes[caste_id]
 
-    create_flying_text(
+    create_temporary_text(
         entry,
         {
             "sosciencity.set-caste-denied",
@@ -575,6 +602,7 @@ end
 function Communication.remove_notifications(entry)
     local unit_number = entry[EK.unit_number]
     notifications[unit_number] = nil
+    temporary_texts[unit_number] = nil
 end
 
 --- Subscribes or unsubscribes the given player for notifications of the given entry.

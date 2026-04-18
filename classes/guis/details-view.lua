@@ -515,6 +515,24 @@ function Gui.DetailsView.rebuild_for_entry(entry)
     end
 end
 
+--- Calls the updater for all open detail views showing the given entry, without rebuilding.
+--- Preserves scroll position and selected tab.
+--- @param entry Entry
+function Gui.DetailsView.update_for_entry(entry)
+    local unit_number = entry[EK.unit_number]
+
+    for player_id, viewed_unit_number in pairs(storage.details_view) do
+        if unit_number == viewed_unit_number then
+            local player = game.get_player(player_id)
+            local gui_spec = type_gui_specifications[entry[EK.type]]
+            local updater = gui_spec and gui_spec.updater
+            if updater then
+                updater(get_nested_details_view(player), entry, player_id)
+            end
+        end
+    end
+end
+
 --- Destroys the city info gui.
 --- @param player LuaPlayer
 function Gui.DetailsView.destroy(player)

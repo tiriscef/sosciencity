@@ -86,6 +86,7 @@ require("classes.neighborhood")
 require("classes.statistics")
 require("classes.communication")
 require("classes.visualisation")
+require("classes.item-requests")
 require("classes.inventories")
 require("classes.inhabitants")
 require("classes.entity")
@@ -388,7 +389,7 @@ local function on_entity_settings_pasted(event)
     local source_type = source_entry[EK.type]
     local destination_type = destination_entry[EK.type]
 
-    on_settings_pasted(source_type, source_entry, destination_type, destination_entry)
+    on_settings_pasted(source_type, source_entry, destination_type, destination_entry, event)
 end
 
 local function on_configuration_change()
@@ -422,7 +423,7 @@ local function on_configuration_change()
         local old_register = Tirislib.Tables.copy(storage.register)
 
         for _, entry in pairs(old_register) do
-            Register.remove_entry(entry, DeconstructionCause.mod_update)
+            Register.remove_entry(entry, DeconstructionCause.mod_update, nil, true)
             if entry[EK.entity].valid then
                 Register.clone(entry, entry[EK.entity])
             end
@@ -441,6 +442,15 @@ local function on_configuration_change()
                 local house = housing_values[entry[EK.name]]
                 if house then
                     entry[EK.current_comfort] = house.comfort
+                end
+            end
+        end
+
+        -- Phase 2: initialise target_comfort for existing saves
+        if old_version and Tirislib.Utils.version_is_smaller_than(old_version, "0.2.3") then
+            for _, entry in pairs(storage.register) do
+                if Housing.values[entry[EK.name]] then
+                    entry[EK.target_comfort] = entry[EK.current_comfort] or 0
                 end
             end
         end
