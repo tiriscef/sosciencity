@@ -286,6 +286,15 @@ local function on_entity_built(event)
         return
     end
 
+    -- If more handlers for ghosts or specific entity names arise, 
+    -- then we should add a handler-register pattern to the Register class for those.
+    -- For now these 2 are fine I guess.
+
+    if entity.type == "entity-ghost" then
+        Inhabitants.on_house_ghost_placed(entity, event)
+        return
+    end
+
     -- Tree sapling marker: immediately swap for a random natural tree
     if entity.name == "sosciencity-tree-sapling" then
         TreePlanting.on_sapling_placed(entity, event)
@@ -434,6 +443,7 @@ local function on_configuration_change()
         -- don't know why, but the migration script doesn't activate for some saves
         -- TODO: remove this after some updates maybe
         storage.active_machine_count = storage.active_machine_count or 0
+        storage.placement_settings = storage.placement_settings or {}
 
         -- Phase 1 of housing comfort rework: set current_comfort from old fixed comfort values
         if old_version and Tirislib.Utils.version_is_smaller_than(old_version, "0.2.2") then
@@ -575,9 +585,10 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, update_settings)
 script.on_nth_tick(10, update_cycle)
 
 -- placement
--- filter out ghosts because Sosciencity has nothing to do with them
+-- on_built_entity handles both real entities and house ghosts (tag injection)
+script.on_event(defines.events.on_built_entity, on_entity_built)
+-- robots and scripts only ever place real entities, so filter out ghosts for them
 local filter = {{filter = "ghost", invert = true}}
-script.on_event(defines.events.on_built_entity, on_entity_built, filter)
 script.on_event(defines.events.on_robot_built_entity, on_entity_built, filter)
 script.on_event(defines.events.script_raised_built, on_entity_built, filter)
 script.on_event(defines.events.script_raised_revive, on_entity_built, filter)
@@ -605,6 +616,23 @@ script.on_configuration_changed(on_configuration_change)
 
 -- player creation
 script.on_event(defines.events.on_player_created, on_player_created)
+
+-- advanced placement mode: show/hide CityInfo placement controls when holding a house item
+local function on_cursor_stack_changed(event)
+    local player = game.players[event.player_index]
+    local cursor = player.cursor_stack
+    local holding_house = cursor and cursor.valid_for_read and Housing.values[cursor.name]
+
+    if holding_house then
+        if not storage.placement_settings[event.player_index] then
+            storage.placement_settings[event.player_index] = {target_comfort = 0, auto_assign_caste = nil}
+        end
+        Gui.CityInfo.set_placement_mode(player, true)
+    else
+        Gui.CityInfo.set_placement_mode(player, false)
+    end
+end
+script.on_event(defines.events.on_player_cursor_stack_changed, on_cursor_stack_changed)
 
 -- gui events
 script.on_event(defines.events.on_gui_opened, Gui.on_gui_opened)

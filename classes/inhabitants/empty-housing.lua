@@ -68,6 +68,8 @@ end
 Register.set_entity_updater(Type.empty_house, update_empty_house)
 
 --- Creation handler for empty houses. Restores caste, priority, and comfort from blueprint tags if present.
+--- Player placement settings (from CityInfo advanced placement mode) are applied as defaults,
+--- with blueprint tags taking priority.
 --- @param entry Entry
 --- @param event table?
 local function create_empty_house(entry, event)
@@ -75,23 +77,39 @@ local function create_empty_house(entry, event)
     entry[EK.current_comfort] = house_details.starting_comfort
     entry[EK.target_comfort] = house_details.starting_comfort
 
+    -- Apply player placement settings as initial defaults (blueprint overrides below)
+    local player_index = event and event.player_index
+    local settings = player_index and storage.placement_settings and storage.placement_settings[player_index]
+    if settings then
+        entry[EK.target_comfort] = math.min(settings.target_comfort, house_details.max_comfort)
+    end
+
     local tags = Tables.get_subtbl_recursive_passive(event, "tags", "sosciencity")
 
     if tags == nil then
+        if settings and settings.auto_assign_caste then
+            Inhabitants.try_allow_for_caste(entry, settings.auto_assign_caste, false)
+        end
         return
     end
 
-    entry[EK.target_comfort] = tags.target_comfort or house_details.starting_comfort
+    -- Blueprint comfort wins over player setting
+    if tags.target_comfort ~= nil then
+        entry[EK.target_comfort] = tags.target_comfort
+    end
 
     local caste = tags.caste
     if caste then
+        -- Blueprint caste wins
         local new_entry = Inhabitants.try_allow_for_caste(entry, caste, true)
-
         if new_entry then
             new_entry[EK.housing_priority] = tags.priority
             -- current_comfort and target_comfort are carried over by try_allow_for_caste
-            new_entry[EK.target_comfort] = tags.target_comfort or new_entry[EK.current_comfort]
+            new_entry[EK.target_comfort] = tags.target_comfort ~= nil and tags.target_comfort or new_entry[EK.current_comfort]
         end
+    elseif settings and settings.auto_assign_caste then
+        -- No blueprint caste; player setting applies
+        Inhabitants.try_allow_for_caste(entry, settings.auto_assign_caste, false)
     end
 end
 
@@ -119,6 +137,44 @@ local function blueprint_empty_house(entry)
         current_comfort = entry[EK.current_comfort],
         target_comfort = entry[EK.target_comfort]
     }
+end
+
+--- Ghost placement handler. Called when a player places a house ghost while in advanced placement
+--- mode. Writes the player's placement settings into the ghost's tags so construction robots pick
+--- them up when building it. Skips if the ghost already has sosciencity tags (placed from blueprint).
+--- @param entity LuaEntity the ghost entity
+--- @param event table on_built_entity event
+function Inhabitants.on_house_ghost_placed(entity, event)
+    if not Housing.values[entity.ghost_name] then
+        return
+    end
+
+    local existing = entity.tags
+    if existing and existing.sosciencity then
+        return
+    end
+
+    local player_index = event.player_index
+    if not player_index then
+        return
+    end
+
+    local player = game.players[player_index]
+    local cursor = player.cursor_stack
+    if not (cursor and cursor.valid_for_read and Housing.values[cursor.name]) then
+        return
+    end
+
+    local settings = storage.placement_settings and storage.placement_settings[player_index]
+    if not settings then
+        return
+    end
+
+    local new_tags = {target_comfort = settings.target_comfort}
+    if settings.auto_assign_caste then
+        new_tags.caste = settings.auto_assign_caste
+    end
+    entity.tags = {sosciencity = new_tags}
 end
 
 Register.set_entity_creation_handler(Type.empty_house, create_empty_house)
