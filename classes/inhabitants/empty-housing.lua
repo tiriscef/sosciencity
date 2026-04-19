@@ -103,7 +103,7 @@ local function create_empty_house(entry, event)
         -- Blueprint caste wins
         local new_entry = Inhabitants.try_allow_for_caste(entry, caste, true)
         if new_entry then
-            new_entry[EK.housing_priority] = tags.priority
+            new_entry[EK.housing_priority] = tags.priority or 0
             -- current_comfort and target_comfort are carried over by try_allow_for_caste
             new_entry[EK.target_comfort] = tags.target_comfort ~= nil and tags.target_comfort or new_entry[EK.current_comfort]
         end

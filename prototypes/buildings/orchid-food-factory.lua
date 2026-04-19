@@ -22,7 +22,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "silo", amount = 2},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "groundwater-pump",
     default_theme_level = 2,
     unlock = "food-processing"
 }
