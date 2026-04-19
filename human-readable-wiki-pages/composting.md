@@ -8,9 +8,9 @@ Where do I start. You know plants, right? Like trees, or flowers. You see. They 
 
 The answer ist Composting! You take plant parts you don't need, like [item=leafage]. And you just pile them up. There are bacteria in the ground which will eat the stuff and turn it into [item=humus] - that's a smart word for 'soil with a lot of nutrients'. It's kind of a cycle. Soil turns into plant, plant turns back into soil.
 
-First, you build a [item=composting-silo]. Those Clockwork guys engineered that to provide a good environment for your ground bacteria. You throw it aaaalll in there. And on the bottom of your huge plant-pile, the bacteria party starts.
+First, you build a [entity=composting-silo]. Those Clockwork guys engineered that to provide a good environment for your ground bacteria. You throw it aaaalll in there. And on the bottom of your huge plant-pile, the bacteria party starts.
 
-But now the [item=humus] is there right at the bottom. A bit inconvenient. For that they designed a [item=composting-silo-output]. You need to place it anywhere near your silo and it will get you the humus with some underground machinery or something like that. I don't know how that works, haha. Just glad it does!
+But now the [item=humus] is there right at the bottom. A bit inconvenient. For that they designed a [entity=composting-silo-output]. You need to place it anywhere near your silo and it will get you the humus with some underground machinery or something like that. I don't know how that works, haha. Just glad it does!
 
 We have a catalogue with all the items that can be composted somewhere in the dayda-tab. It's also mentioned in the tooltips.
 

@@ -5,7 +5,7 @@ There are 2 ways in which huwans can be useful for you and your factory: they ca
 
 ##Factory Work
 
-Some buildings need a workforce to function properly, like for example the [item=ember-hq]. The tooltip of these manufactories tell you how many workers of which castes are required. You need to place these near the homes of potential workers, because huwans don't like to commute long distances. The highlighted range when placing a building with workforce shows you which houses are close enough to work there. Manufactories employ their required amount of huwans automatically. You can limit how many they should employ in their GUI.
+Some buildings need a workforce to function properly, like for example the [entity=ember-hq]. The tooltip of these manufactories tell you how many workers of which castes are required. You need to place these near the homes of potential workers, because huwans don't like to commute long distances. The highlighted range when placing a building with workforce shows you which houses are close enough to work there. Manufactories employ their required amount of huwans automatically. You can limit how many they should employ in their GUI.
 
 The performance of manufactories depends on how many workers are working there and how happy they are.
 
