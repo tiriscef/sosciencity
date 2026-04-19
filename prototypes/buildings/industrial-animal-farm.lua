@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "lamp", amount = 40},
         {type = "item", name = "silo", amount = 2}
     },
-    name = "silo",
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }
