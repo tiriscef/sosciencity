@@ -196,6 +196,18 @@ function Locale.eating_behavior_description(behavior)
     return eating_behavior_description_locales[behavior]
 end
 
+local HousingTrait = require("enums.housing-trait")
+local housing_trait_locales = build_locale_lookup(HousingTrait, "housing-trait")
+local housing_trait_description_locales = build_locale_lookup(HousingTrait, "housing-trait-description")
+
+function Locale.housing_trait(trait)
+    return housing_trait_locales[trait]
+end
+
+function Locale.housing_trait_description(trait)
+    return housing_trait_description_locales[trait]
+end
+
 function Locale.prototype_name(name, _type)
     return prototypes[_type][name].localised_name
 end

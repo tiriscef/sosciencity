@@ -1,5 +1,6 @@
 local EatingBehavior = require("enums.eating-behavior")
 local Gender = require("enums.gender")
+local HousingTrait = require("enums.housing-trait")
 local Taste = require("enums.taste")
 local Type = require("enums.type")
 
@@ -44,7 +45,7 @@ local Castes = {}
 --- @field full_strike_point_multiplier number caste point multiplier at full strike (see get_caste_bonus_multiplier)
 --- @field full_strike_worker_fraction number minimum fraction of workers willing to work even at full strike
 --- @field immigration_genders table<Gender, number> gender weight distribution for arriving immigrants
---- @field housing_preferences table<string, number> preference modifiers keyed by housing tag
+--- @field housing_preferences table<HousingTrait, number> preference modifiers keyed by housing trait
 --- @field accident_disease_resilience number multiplier reducing accident disease probability
 --- @field health_disease_resilience number multiplier reducing health disease probability
 --- @field sanity_disease_resilience number multiplier reducing sanity disease probability
@@ -93,14 +94,14 @@ Castes.values = {
             [Gender.ga] = 20
         },
         housing_preferences = {
-            ["sheltered"] = 1,
-            ["technical"] = 3,
-            ["compact"] = 1,
-            ["simple"] = 2,
-            ["cheap"] = 2,
-            ["decorated"] = -1,
-            ["green"] = -1,
-            ["pompous"] = -1
+            [HousingTrait.sheltered] = 1,
+            [HousingTrait.technical] = 3,
+            [HousingTrait.compact] = 1,
+            [HousingTrait.simple] = 2,
+            [HousingTrait.cheap] = 2,
+            [HousingTrait.decorated] = -1,
+            [HousingTrait.green] = -1,
+            [HousingTrait.pompous] = -1
         },
         accident_disease_resilience = 0.7,
         health_disease_resilience = 0.65,
@@ -146,12 +147,12 @@ Castes.values = {
             [Gender.ga] = 20
         },
         housing_preferences = {
-            ["green"] = 3,
-            ["spacey"] = 3,
-            ["low"] = 2,
-            ["sheltered"] = -1,
-            ["technical"] = -3,
-            ["compact"] = -1
+            [HousingTrait.green] = 3,
+            [HousingTrait.spacey] = 3,
+            [HousingTrait.low] = 2,
+            [HousingTrait.sheltered] = -1,
+            [HousingTrait.technical] = -3,
+            [HousingTrait.compact] = -1
         },
         accident_disease_resilience = 0.35,
         health_disease_resilience = 0.2,
@@ -197,16 +198,16 @@ Castes.values = {
             [Gender.ga] = 3
         },
         housing_preferences = {
-            ["sheltered"] = 2.5,
-            ["compact"] = 1,
-            ["simple"] = 1,
-            ["copy-paste"] = 1,
-            ["cheap"] = 1,
-            ["low"] = 1,
-            ["spacey"] = -1,
-            ["individualistic"] = -2,
-            ["pompous"] = -1,
-            ["tall"] = -1
+            [HousingTrait.sheltered] = 2.5,
+            [HousingTrait.compact] = 1,
+            [HousingTrait.simple] = 1,
+            [HousingTrait.copy_paste] = 1,
+            [HousingTrait.cheap] = 1,
+            [HousingTrait.low] = 1,
+            [HousingTrait.spacey] = -1,
+            [HousingTrait.individualistic] = -2,
+            [HousingTrait.pompous] = -1,
+            [HousingTrait.tall] = -1
         },
         accident_disease_resilience = 1,
         health_disease_resilience = 0.2,
@@ -252,9 +253,9 @@ Castes.values = {
             [Gender.ga] = 45
         },
         housing_preferences = {
-            ["decorated"] = 2.5,
-            ["tall"] = 3,
-            ["simple"] = -2
+            [HousingTrait.decorated] = 2.5,
+            [HousingTrait.tall] = 3,
+            [HousingTrait.simple] = -2
         },
         accident_disease_resilience = 0.1,
         health_disease_resilience = 0.8,
@@ -300,13 +301,13 @@ Castes.values = {
             [Gender.ga] = 30
         },
         housing_preferences = {
-            ["technical"] = 2,
-            ["spacey"] = 1,
-            ["simple"] = 1,
-            ["copy-paste"] = 1,
-            ["green"] = -2,
-            ["individualistic"] = -1,
-            ["low"] = -2
+            [HousingTrait.technical] = 2,
+            [HousingTrait.spacey] = 1,
+            [HousingTrait.simple] = 1,
+            [HousingTrait.copy_paste] = 1,
+            [HousingTrait.green] = -2,
+            [HousingTrait.individualistic] = -1,
+            [HousingTrait.low] = -2
         },
         accident_disease_resilience = 0.5,
         health_disease_resilience = 1,
@@ -352,11 +353,11 @@ Castes.values = {
             [Gender.ga] = 30
         },
         housing_preferences = {
-            ["spacey"] = 1,
-            ["individualistic"] = 1,
-            ["pompous"] = 3,
-            ["technical"] = -2,
-            ["cheap"] = -3
+            [HousingTrait.spacey] = 1,
+            [HousingTrait.individualistic] = 1,
+            [HousingTrait.pompous] = 3,
+            [HousingTrait.technical] = -2,
+            [HousingTrait.cheap] = -3
         },
         accident_disease_resilience = 0.2,
         health_disease_resilience = 2,
@@ -402,17 +403,17 @@ Castes.values = {
             [Gender.ga] = 25
         },
         housing_preferences = {
-            ["green"] = 1,
-            ["spacey"] = 1,
-            ["decorated"] = 1,
-            ["individualistic"] = 1,
-            ["pompous"] = 1,
-            ["sheltered"] = -2,
-            ["technical"] = -2,
-            ["compact"] = -2,
-            ["simple"] = -2,
-            ["copy-paste"] = -2,
-            ["cheap"] = -5
+            [HousingTrait.green] = 1,
+            [HousingTrait.spacey] = 1,
+            [HousingTrait.decorated] = 1,
+            [HousingTrait.individualistic] = 1,
+            [HousingTrait.pompous] = 1,
+            [HousingTrait.sheltered] = -2,
+            [HousingTrait.technical] = -2,
+            [HousingTrait.compact] = -2,
+            [HousingTrait.simple] = -2,
+            [HousingTrait.copy_paste] = -2,
+            [HousingTrait.cheap] = -5
         },
         accident_disease_resilience = 0.2,
         health_disease_resilience = 1.5,
@@ -458,13 +459,13 @@ Castes.values = {
             [Gender.ga] = 30
         },
         housing_preferences = {
-            ["green"] = 1,
-            ["compact"] = 1,
-            ["decorated"] = 2,
-            ["individualistic"] = 2,
-            ["sheltered"] = -1,
-            ["simple"] = -1,
-            ["cheap"] = -3
+            [HousingTrait.green] = 1,
+            [HousingTrait.compact] = 1,
+            [HousingTrait.decorated] = 2,
+            [HousingTrait.individualistic] = 2,
+            [HousingTrait.sheltered] = -1,
+            [HousingTrait.simple] = -1,
+            [HousingTrait.cheap] = -3
         },
         accident_disease_resilience = 0.2,
         health_disease_resilience = 0.2,

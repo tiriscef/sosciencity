@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local HousingTrait = require("enums.housing-trait")
 
 local Castes = require("constants.castes")
 
@@ -92,7 +93,7 @@ Housing.values = {
         max_comfort = 1,
         is_improvised = true,
         one_room_per_inhabitant = true,
-        qualities = {"cheap", "individualistic", "low"},
+        traits = {HousingTrait.cheap, HousingTrait.individualistic, HousingTrait.low},
         alternatives = {"improvised-hut-2"}
     },
     --[[["improvised-hut-2"] = {
@@ -109,133 +110,133 @@ Housing.values = {
         comfort = 5,
         starting_comfort = 0,
         max_comfort = 8,
-        qualities = {"cheap", "simple", "copy-paste"}
+        traits = {HousingTrait.cheap, HousingTrait.simple, HousingTrait.copy_paste}
     },]]
     ["khrushchyovka"] = {
         room_count = 40,
         comfort = 4,
         starting_comfort = 0,
         max_comfort = 6,
-        qualities = {"compact", "simple", "copy-paste", "cheap", "tall"}
+        traits = {HousingTrait.compact, HousingTrait.simple, HousingTrait.copy_paste, HousingTrait.cheap, HousingTrait.tall}
     },
     ["sheltered-house"] = {
         room_count = 48,
         comfort = 6,
         starting_comfort = 0,
         max_comfort = 7,
-        qualities = {"sheltered", "compact", "simple", "low"}
+        traits = {HousingTrait.sheltered, HousingTrait.compact, HousingTrait.simple, HousingTrait.low}
     },
     ["small-prefabricated-house"] = {
         room_count = 25,
         comfort = 5,
         starting_comfort = 0,
         max_comfort = 8,
-        qualities = {"compact", "simple", "copy-paste", "cheap"}
+        traits = {HousingTrait.compact, HousingTrait.simple, HousingTrait.copy_paste, HousingTrait.cheap}
     },
     ["bunkerhouse"] = {
         room_count = 24,
         comfort = 4,
         starting_comfort = 0,
         max_comfort = 7,
-        qualities = {"sheltered", "compact", "simple", "low"}
+        traits = {HousingTrait.sheltered, HousingTrait.compact, HousingTrait.simple, HousingTrait.low}
     },
     ["huwanic-mansion"] = {
         room_count = 50,
         comfort = 8,
         starting_comfort = 0,
         max_comfort = 10,
-        qualities = {"spacey", "decorated", "individualistic", "pompous", "tall"}
+        traits = {HousingTrait.spacey, HousingTrait.decorated, HousingTrait.individualistic, HousingTrait.pompous, HousingTrait.tall}
     },
     ["house5"] = {
         room_count = 180,
         comfort = 8,
         starting_comfort = 0,
         max_comfort = 10,
-        qualities = {"spacey", "individualistic", "tall"}
+        traits = {HousingTrait.spacey, HousingTrait.individualistic, HousingTrait.tall}
     },
     ["house1"] = {
         room_count = 12,
         comfort = 3,
         starting_comfort = 0,
         max_comfort = 6,
-        qualities = {"spacey", "technical", "individualistic", "tall"}
+        traits = {HousingTrait.spacey, HousingTrait.technical, HousingTrait.individualistic, HousingTrait.tall}
     },
     ["big-living-container"] = {
         room_count = 24,
         comfort = 1,
         starting_comfort = 0,
         max_comfort = 4,
-        qualities = {"compact", "simple", "cheap"}
+        traits = {HousingTrait.compact, HousingTrait.simple, HousingTrait.cheap}
     },
     ["living-container"] = {
         room_count = 6,
         comfort = 0,
         starting_comfort = 0,
         max_comfort = 3,
-        qualities = {"compact", "simple", "cheap", "low", "copy-paste"}
+        traits = {HousingTrait.compact, HousingTrait.simple, HousingTrait.cheap, HousingTrait.low, HousingTrait.copy_paste}
     },
     ["barrack-container"] = {
         room_count = 40,
         comfort = 3,
         starting_comfort = 0,
         max_comfort = 6,
-        qualities = {"compact", "simple", "copy-paste"}
+        traits = {HousingTrait.compact, HousingTrait.simple, HousingTrait.copy_paste}
     },
     ["balcony-house"] = {
         room_count = 24,
         comfort = 7,
         starting_comfort = 0,
         max_comfort = 10,
-        qualities = {"spacey", "low", "individualistic"}
+        traits = {HousingTrait.spacey, HousingTrait.low, HousingTrait.individualistic}
     },
     ["octopus-complex"] = {
         room_count = 210,
         comfort = 9,
         starting_comfort = 0,
         max_comfort = 10,
-        qualities = {"low", "technical", "compact"}
+        traits = {HousingTrait.low, HousingTrait.technical, HousingTrait.compact}
     },
     ["spring-house"] = {
         room_count = 15,
         comfort = 3,
         starting_comfort = 0,
         max_comfort = 6,
-        qualities = {"low", "green"}
+        traits = {HousingTrait.low, HousingTrait.green}
     },
     ["summer-house"] = {
         room_count = 30,
         comfort = 5,
         starting_comfort = 0,
         max_comfort = 8,
-        qualities = {"low", "green", "spacey"}
+        traits = {HousingTrait.low, HousingTrait.green, HousingTrait.spacey}
     },
     ["barrack"] = {
         room_count = 40,
         comfort = 4,
         starting_comfort = 0,
         max_comfort = 6,
-        qualities = {"copy-paste", "cheap", "compact", "simple", "low"}
+        traits = {HousingTrait.copy_paste, HousingTrait.cheap, HousingTrait.compact, HousingTrait.simple, HousingTrait.low}
     },
     ["test-house"] = {
         room_count = 200,
         comfort = 10,
         starting_comfort = 0,
         max_comfort = 10,
-        qualities = {}
+        traits = {}
     },
     ["test-house-2"] = {
         room_count = 10,
         comfort = 0,
         starting_comfort = 0,
         max_comfort = 3,
-        qualities = {"compact", "simple", "cheap", "copy-paste"}
+        traits = {HousingTrait.compact, HousingTrait.simple, HousingTrait.cheap, HousingTrait.copy_paste}
     },
     ["test-house-3"] = {
         room_count = 20,
         comfort = 3,
         starting_comfort = 0,
         max_comfort = 6,
-        qualities = {}
+        traits = {}
     }
 }
 local houses = Housing.values
@@ -333,7 +334,7 @@ do
             end
         end
 
-        table.sort(house.qualities)
+        table.sort(house.traits)
 
         house.is_improvised = house.is_improvised or false
     end

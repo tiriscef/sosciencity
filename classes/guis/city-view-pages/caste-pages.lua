@@ -65,7 +65,7 @@ local function add_caste_infos(container, caste_id)
         {"sosciencity.show-fear-susceptibility", caste.fear_susceptibility * 100}
     )
 
-    local housing_flow = Gui.Elements.Datalist.add_kv_flow(caste_data, "housing-qualities", {"sosciencity.housing"})
+    local housing_flow = Gui.Elements.Datalist.add_kv_flow(caste_data, "housing-traits", {"sosciencity.housing"})
     housing_flow.add {
             type = "label",
             name = "comfort",
@@ -75,31 +75,26 @@ local function add_caste_infos(container, caste_id)
     local prefered_flow =
         housing_flow.add {
         type = "flow",
-        name = "prefered-qualities",
+        name = "prefered-traits",
         direction = "vertical"
     }
-    Gui.Elements.Datalist.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-qualities"})
+    Gui.Elements.Datalist.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-traits"})
     local disliked_flow =
         housing_flow.add {
         type = "flow",
-        name = "disliked-qualities",
+        name = "disliked-traits",
         direction = "vertical"
     }
-    Gui.Elements.Datalist.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-qualities"})
+    Gui.Elements.Datalist.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-traits"})
 
-    for quality, assessment in pairs(caste.housing_preferences) do
-        local quality_flow
-        if assessment > 0 then
-            quality_flow = prefered_flow
-        else
-            quality_flow = disliked_flow
-        end
+    for trait, assessment in pairs(caste.housing_preferences) do
+        local trait_flow = assessment > 0 and prefered_flow or disliked_flow
 
-        quality_flow.add {
+        trait_flow.add {
             type = "label",
-            name = quality,
-            caption = {"", {"housing-quality." .. quality}, string.format(" (%+.1f)", assessment)},
-            tooltip = {"housing-quality-description." .. quality}
+            name = tostring(trait),
+            caption = {"", Locale.housing_trait(trait), string.format(" (%+.1f)", assessment)},
+            tooltip = Locale.housing_trait_description(trait)
         }
     end
 

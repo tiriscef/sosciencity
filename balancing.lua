@@ -170,8 +170,8 @@ local function write_files()
                 if housing.is_improvised or Housing.allowes_caste(housing, caste_id) then
                     local quality_assessment = 0
                     local preferences = caste.housing_preferences
-                    for _, quality in pairs(housing.qualities) do
-                        quality_assessment = quality_assessment + (preferences[quality] or 0)
+                    for _, trait in pairs(housing.traits) do
+                        quality_assessment = quality_assessment + (preferences[trait] or 0)
                     end
 
                     local capacity = Housing.get_capacity {[EK.type] = caste_id, [EK.name] = name}

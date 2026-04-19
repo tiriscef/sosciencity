@@ -39,7 +39,7 @@ Get their happiness back up above the 'strike begins' threshold. Strikes resolve
 
 - Food supply problems (too little variety, wrong taste, no food at all)
 - Water supply problems
-- Poor housing comfort or mismatched housing qualities
+- Poor housing comfort or mismatched housing traits
 - Low health or sanity dragging happiness down through their respective multipliers
 
 Check the Details tab of the affected house for a breakdown of what is pulling happiness down.

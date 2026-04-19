@@ -74,9 +74,9 @@ local function try_occupy_empty_housing()
                 local housing_details1 = get_housing_details(house1)
                 local housing_details2 = get_housing_details(house2)
 
-                return Inhabitants.evaluate_housing_qualities(housing_details1, castes[caste_id]) +
+                return Inhabitants.evaluate_housing_traits(housing_details1, castes[caste_id]) +
                     housing_details1.comfort >
-                    Inhabitants.evaluate_housing_qualities(housing_details2, castes[caste_id]) +
+                    Inhabitants.evaluate_housing_traits(housing_details2, castes[caste_id]) +
                         housing_details2.comfort
             end
         )
