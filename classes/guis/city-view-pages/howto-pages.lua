@@ -81,50 +81,134 @@ Gui.CityView.add_page {
             }
         )
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text25"})
-        Gui.Elements.Label.heading_3(container, {"city-view.huwans101-text26"})
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text27"})
+        Gui.Elements.Button.page_link(container, "how-tos", "housing")
+        Gui.Elements.Label.heading_3(container, {"city-view.huwans101-text27"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text28"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text29"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text30"})
-        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text31"})
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text32"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text31"})
+        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text32"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text33"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.huwans101-text33"},
                 {"city-view.huwans101-text34"},
                 {"city-view.huwans101-text35"},
                 {"city-view.huwans101-text36"},
-                {"city-view.huwans101-text37"}
+                {"city-view.huwans101-text37"},
+                {"city-view.huwans101-text38"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text38"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text39"})
         Gui.Elements.Button.page_link(container, "how-tos", "food")
-        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text40"})
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text41"})
+        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text41"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text42"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text43"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text44"})
-        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text45"})
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text46"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text45"})
+        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text46"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text47"})
-        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text48"})
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text49"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text48"})
+        Gui.Elements.Label.heading_2(container, {"city-view.huwans101-text49"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text50"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.huwans101-text50"},
                 {"city-view.huwans101-text51"},
                 {"city-view.huwans101-text52"},
                 {"city-view.huwans101-text53"},
                 {"city-view.huwans101-text54"},
-                {"city-view.huwans101-text55"}
+                {"city-view.huwans101-text55"},
+                {"city-view.huwans101-text56"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text56"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text57"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text58"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text59"})
+        Gui.Elements.Button.page_link(container, "data", "diseases")
         -- END GENERATED: huwans101
+    end
+}
+
+Gui.CityView.add_page {
+    name = "housing",
+    category = "how-tos",
+    localised_name = {"city-view.housing-text1"},
+    creator = function(container)
+        -- BEGIN GENERATED: housing
+        Gui.Elements.Label.heading_1(container, {"city-view.housing-text1"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text2"})
+        Gui.Elements.Label.heading_2(container, {"city-view.housing-text3"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text4"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.housing-text5"},
+                {"city-view.housing-text6"},
+                {"city-view.housing-text7"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text8"})
+        Gui.Elements.Label.heading_2(container, {"city-view.housing-text9"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text10"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text11"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text12"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.housing-text13"},
+                {"city-view.housing-text14"},
+                {"city-view.housing-text15"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text16"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text17"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text18"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text19"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.housing-text20"},
+                {"city-view.housing-text21"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text22"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text23"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text24"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text25"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.housing-text26"},
+                {"city-view.housing-text27"}
+            }
+        )
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text28"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text29"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.housing-text30"},
+                {"city-view.housing-text31"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text32"})
+        Gui.Elements.Label.heading_2(container, {"city-view.housing-text33"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text34"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text35"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text36"})
+        Gui.Elements.Label.heading_2(container, {"city-view.housing-text37"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text38"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text39"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text40"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text41"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text42"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text43"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text44"})
+        Gui.Elements.Label.heading_2(container, {"city-view.housing-text45"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text46"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text47"})
+        -- END GENERATED: housing
     end
 }
 

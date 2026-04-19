@@ -46,10 +46,12 @@ Everyone needs some kind of home with a roof on top. Homeless huwans won't be ab
 The houses you can build differ in 3 attributes:
 
 - **Room Count:** Simply how big the building is. This determines how many huwans can live inside. Most early game castes need one room per inhabitant, but the later ones are more demanding.
-- **Comfort:** Describes how well equipped and furnished the house is. This directly influences the inhabitant's happiness and sanity. The castes later in the game are again more demanding and won't move into a house that's not comfortable enough for them.
+- **Comfort:** Describes how well equipped and furnished the house is. This directly influences the inhabitant's happiness and sanity.
 - **Qualities:** Describes how the house looks and feels from inside. Every caste has their own ideas which qualities they like or despise. For example: people from the Clockwork Caste like houses with the 'technical' quality, but are less happy with a 'decorated' home.
 
 If you don't have enough housing space for the amount of huwans, the remaining ones will become homeless.
+
+[linked-page=how-tos/housing]
 
 
 ###Homelessness
@@ -65,7 +67,7 @@ Being homeless is a tough fortune. Over time these huwans will leave your city a
 
 ##Food
 
-Your inhabitants need something to eat. You can provide them food either by placing it inside their home or in a nearby [item=market-hall]. Every caste has an **eating behavior** - minimalist, mixed or foodie - that determines which foods they include in their diet and how they prioritize taste versus variety.
+Your inhabitants need something to eat. You can provide them food either by placing it inside their home or in a nearby [entity=market-hall]. Every caste has an **eating behavior** - minimalist, mixed or foodie - that determines which foods they include in their diet and how they prioritize taste versus variety.
 
 - **Taste:** Each caste favors one taste and dislikes another. Eating favored food boosts happiness; eating disliked food hurts it. Having any favored food at all gives a small sanity boost. If the diet becomes dominated by disliked foods, sanity suffers too.
 - **Appeal:** Food has an appeal value independent of taste. The average of the three most appealing foods in the diet is granted as a happiness bonus. 
@@ -80,9 +82,9 @@ Better make sure that your food supply is steady and sufficient, as having nothi
 
 ##Water
 
-Your inhabitants need drinkable water. You can provide that with a [item=water-tower] placed in range of their house. Better make sure that your water supply is steady and sufficient, as having nothing to drink will make your inhabitants freak out quickly.
+Your inhabitants need drinkable water. You can provide that with a [entity=water-tower] placed in range of their house. Better make sure that your water supply is steady and sufficient, as having nothing to drink will make your inhabitants freak out quickly.
 
-The normal water you get with a offshore pump is really unsafe to drink. You'll need to get clean groundwater with a [item=groundwater-pump] in the beginning. One such pump can provide water for around 120 huwans. Later on you can unlock more options to get drinkable water.
+The normal water you get with a offshore pump is really unsafe to drink. You'll need to get clean groundwater with a [entity=groundwater-pump] in the beginning. One such pump can provide water for around 120 huwans. Later on you can unlock more options to get drinkable water.
 
 If a house has access to multiple water towers with different kinds of drinking water, the huwans will consume water from the tower with the highest quality water first.
 
@@ -91,9 +93,9 @@ If a house has access to multiple water towers with different kinds of drinking 
 
 ##Garbage Collection
 
-Your huwans produce [item=garbage] and [item=food-leftovers] over time. Providing a [item=trash-site] nearby will make your inhabitants dispose garbage there. Without garbage collection, the garbage will end up in the homes of your huwans. This will make them unhappy and can even take a toll on their health.
+Your huwans produce [item=garbage] and [item=food-leftovers] over time. Providing a [entity=trash-site] nearby will make your inhabitants dispose garbage there. Without garbage collection, the garbage will end up in the homes of your huwans. This will make them unhappy and can even take a toll on their health.
 
-Getting rid of garbage isn't easy. In the beginning there aren't many more options than stuffing it into a [item=waste-dump] and forgetting about it. Over time you will unlock better methods to get rid of the trash.
+Getting rid of garbage isn't easy. In the beginning there aren't many more options than stuffing it into a [entity=waste-dump] and forgetting about it. Over time you will unlock better methods to get rid of the trash.
 
 
 ##Healthcare
@@ -112,3 +114,5 @@ Some of these diseases go away naturally after some time. But others don't. Some
 You can provide healthcare to your people by building med bays or hospitals. These cure all sick huwans living in range - if possible. By opening a hospital you can get an overview of all the untreated diseases in their range.
 
 Curing a disease takes some work by the healthcare workers (displayed as 'operations') and might need some medicine items that you can provide either inside the hospital building or in a pharmacy. Some diseases even require extra hospital facilities, which need to be placed next to the main hospital building.
+
+[linked-page=data/diseases]
