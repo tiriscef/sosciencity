@@ -69,6 +69,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-comfort-upgrade"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-clockwork-mines"
     },
     {

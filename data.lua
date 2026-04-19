@@ -30,6 +30,7 @@ require("prototypes.education")
 require("prototypes.hunting-gathering")
 
 require("prototypes.housing")
+require("prototypes.housing-upgrade-info")
 require("prototypes.buildings")
 require("prototypes.unlocking-technologies")
 

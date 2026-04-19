@@ -20,6 +20,12 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-comfort-upgrade-info",
+        group = "sosciencity-infrastructure",
+        order = "abb"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-hqs",
         group = "sosciencity-infrastructure",
         order = "aca"
