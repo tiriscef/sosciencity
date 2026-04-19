@@ -11,42 +11,40 @@ local Housing = {}
 -- Multiply by room_count and ceil to get actual item amounts.
 Housing.furniture_costs = {
     [1]  = {
-        {name = "furniture", amount = 0.5}
+        {name = "furniture", amount = 1}
     },
     [2]  = {
-        {name = "furniture", amount = 1}
+        {name = "furniture", amount = 3}
     },
     [3]  = {
         {name = "bed",       amount = 1},
-        {name = "furniture", amount = 1.5}
+        {name = "furniture", amount = 2}
     },
     [4]  = {
-        {name = "furniture", amount = 1}
+        {name = "bathroom-furniture", amount = 1}
     },
     [5]  = {
         {name = "curtain", amount = 1},
-        {name = "stove",   amount = 0.5}
+        {name = "carpet",  amount = 1}
     },
     [6]  = {
-        {name = "furniture",       amount = 1},
-        {name = "carpet",          amount = 1},
-        {name = "air-conditioner", amount = 1 / 3}
+        {name = "kitchen-furniture", amount = 1}
     },
     [7]  = {
-        {name = "refrigerator", amount = 0.5}
+        {name = "furniture", amount = 5},
+        {name = "sofa",      amount = 1}
     },
     [8]  = {
-        {name = "furniture",       amount = 1},
-        {name = "air-conditioner", amount = 1 / 6}
+        {name = "air-conditioner", amount = 1}
     },
     [9]  = {
-        {name = "furniture",       amount = 1},
-        {name = "air-conditioner", amount = 1 / 6}
+        {name = "bathroom-furniture", amount = 3},
+        {name = "kitchen-furniture",  amount = 3}
     },
     [10] = {
-        {name = "bed",             amount = 2},
-        {name = "furniture",       amount = 1},
-        {name = "air-conditioner", amount = 1 / 3}
+        {name = "bed",     amount = 1},
+        {name = "curtain", amount = 5},
+        {name = "carpet",  amount = 5}
     },
 }
 

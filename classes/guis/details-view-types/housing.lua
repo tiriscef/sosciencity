@@ -171,7 +171,7 @@ local function update_upgrade_section(flow, entry, house_details)
     local upgrade_btn = flow["upgrade-button"]
     upgrade_btn.caption = {"sosciencity.upgrade-comfort", current, next_level}
     upgrade_btn.enabled = not is_locked
-    upgrade_btn.tooltip = is_locked and {"sosciencity.upgrade-comfort-locked", {"technology-name." .. Housing.required_tech[next_level]}} or ""
+    upgrade_btn.tooltip = is_locked and {"sosciencity.upgrade-comfort-locked", Locale.prototype_name(Housing.required_tech[next_level], "technology")} or ""
 
     -- update per-item progress labels
     local progress_flow = flow["item-progress-flow"]

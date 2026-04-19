@@ -196,4 +196,12 @@ function Locale.eating_behavior_description(behavior)
     return eating_behavior_description_locales[behavior]
 end
 
+function Locale.prototype_name(name, _type)
+    return prototypes[_type][name].localised_name
+end
+
+function Locale.prototype_description(name, _type)
+    return prototypes[_type][name].localised_description
+end
+
 return Locale
