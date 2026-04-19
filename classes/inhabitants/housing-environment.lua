@@ -44,15 +44,15 @@ local function get_garbage_influence(entry)
     return max(get_garbage_value(entry) - 20, 0) * (-0.1)
 end
 
-local function evaluate_housing_qualities(house_details, caste_details)
-    local quality_assessment = 0
+local function evaluate_housing_traits(house_details, caste_details)
+    local trait_assessment = 0
     local preferences = caste_details.housing_preferences
-    for _, quality in pairs(house_details.qualities) do
-        quality_assessment = quality_assessment + (preferences[quality] or 0)
+    for _, trait in pairs(house_details.traits) do
+        trait_assessment = trait_assessment + (preferences[trait] or 0)
     end
-    return quality_assessment
+    return trait_assessment
 end
-Inhabitants.evaluate_housing_qualities = evaluate_housing_qualities
+Inhabitants.evaluate_housing_traits = evaluate_housing_traits
 
 --- Evaluates the effect of the housing on its inhabitants.
 --- @param entry Entry
@@ -67,7 +67,7 @@ local function evaluate_housing(entry, happiness_summands, sanity_summands, happ
         happiness_factors[HappinessFactor.comfort_malus] = current_comfort / minimum_comfort
     end
 
-    happiness_summands[HappinessSummand.suitable_housing] = evaluate_housing_qualities(housing, caste)
+    happiness_summands[HappinessSummand.suitable_housing] = evaluate_housing_traits(housing, caste)
 
     local garbage_influence = get_garbage_influence(entry)
     happiness_summands[HappinessSummand.garbage] = garbage_influence

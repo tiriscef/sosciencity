@@ -81,7 +81,7 @@ local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
             button.tooltip = {
                 "sosciencity.move-in",
                 Locale.integer_summand(
-                    Inhabitants.evaluate_housing_qualities(house_details, caste) + current_comfort
+                    Inhabitants.evaluate_housing_traits(house_details, caste) + current_comfort
                 )
             }
         end
@@ -241,13 +241,13 @@ local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
         {"sosciencity.show-comfort", entry[EK.current_comfort] or 0, house_details.max_comfort}
     )
 
-    local qualities_flow = Datalist.add_kv_flow(data_list, "qualities", {"sosciencity.qualities"})
-    for _, quality in pairs(house_details.qualities) do
-        qualities_flow.add {
+    local traits_flow = Datalist.add_kv_flow(data_list, "traits", {"sosciencity.traits"})
+    for _, trait in pairs(house_details.traits) do
+        traits_flow.add {
             type = "label",
-            name = quality,
-            caption = {"housing-quality." .. quality},
-            tooltip = {"housing-quality-description." .. quality}
+            name = tostring(trait),
+            caption = Locale.housing_trait(trait),
+            tooltip = Locale.housing_trait_description(trait)
         }
     end
 
@@ -572,24 +572,24 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
 
     Datalist.add_kv_pair(general_list, "comfort", {"sosciencity.comfort"})
 
-    local qualities_flow = Datalist.add_kv_flow(general_list, "qualities", {"sosciencity.qualities"})
-    for _, quality in pairs(housing_details.qualities) do
-        local assessment = caste.housing_preferences[quality]
+    local traits_flow = Datalist.add_kv_flow(general_list, "traits", {"sosciencity.traits"})
+    for _, trait in pairs(housing_details.traits) do
+        local assessment = caste.housing_preferences[trait]
 
         local caption =
-            assessment and {"", {"housing-quality." .. quality}, format(" (%+.1f)", assessment)} or
-            {"housing-quality." .. quality}
+            assessment and {"", Locale.housing_trait(trait), format(" (%+.1f)", assessment)} or
+            Locale.housing_trait(trait)
 
-        local quality_text =
-            qualities_flow.add {
+        local trait_text =
+            traits_flow.add {
             type = "label",
-            name = quality,
+            name = tostring(trait),
             caption = caption,
-            tooltip = {"housing-quality-description." .. quality}
+            tooltip = Locale.housing_trait_description(trait)
         }
 
         if assessment then
-            quality_text.style.font_color = assessment > 0 and Color.green or Color.red
+            trait_text.style.font_color = assessment > 0 and Color.green or Color.red
         end
     end
 

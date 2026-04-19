@@ -1,4 +1,6 @@
 local Housing = require("constants.housing")
+local HousingTrait = require("enums.housing-trait")
+local Locale = require("classes.locale")
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local housing_prototype_details = {
@@ -344,11 +346,11 @@ local function get_order(house)
     return string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
 end
 
-local function get_localised_qualities(house)
+local function get_localised_traits(house)
     local ret = {""}
 
-    for _, quality in pairs(house.qualities) do
-        ret[#ret + 1] = {"housing-quality." .. quality}
+    for _, trait in pairs(house.traits) do
+        ret[#ret + 1] = Locale.housing_trait(trait)
         ret[#ret + 1] = "  "
     end
 
@@ -369,7 +371,7 @@ local function get_localised_description(house_name, house)
             tostring(house.room_count),
             {"color-scale." .. house.max_comfort, {"comfort-scale." .. house.max_comfort}},
             {"description.sos-details", tostring(house.max_comfort)},
-            get_localised_qualities(house)
+            get_localised_traits(house)
         },
         "\n\n",
         {
@@ -401,46 +403,46 @@ local function create_item(house_name, house, details)
     Tirislib.Tables.set_fields(item_prototype, details.distinctions)
 end
 
-local quality_effect_on_recipe = {
-    sheltered = function(details, house, tech_level)
+local trait_effect_on_recipe = {
+    [HousingTrait.sheltered] = function(details, house, tech_level)
         table.insert(details.ingredients, {theme = "housing_sheltered", amount = house.room_count, level = tech_level})
     end,
-    green = function(details, house, tech_level)
+    [HousingTrait.green] = function(details, house, tech_level)
         table.insert(details.ingredients, {theme = "housing_green", amount = house.room_count, level = tech_level})
     end,
-    technical = function(details, house, tech_level)
+    [HousingTrait.technical] = function(details, house, tech_level)
         table.insert(details.ingredients, {theme = "housing_technical", amount = house.room_count, level = tech_level})
     end,
-    spacey = function(details, house, tech_level)
+    [HousingTrait.spacey] = function(details, house, tech_level)
         -- increase the "building" theme amount
         details.ingredients[1].amount = details.ingredients[1].amount * 1.25
     end,
-    compact = function(details, house, tech_level)
+    [HousingTrait.compact] = function(details, house, tech_level)
         -- decrease the "building" theme amount
         details.ingredients[1].amount = details.ingredients[1].amount * 0.8
     end,
-    decorated = function(details, house, tech_level)
+    [HousingTrait.decorated] = function(details, house, tech_level)
         table.insert(details.ingredients, {theme = "furnishing_decorated", amount = house.room_count, level = tech_level})
     end,
-    simple = function(details, house, tech_level)
+    [HousingTrait.simple] = function(details, house, tech_level)
         -- furnishing is no longer part of the base recipe (handled by runtime upgrades)
     end,
-    individualistic = function(details, house, tech_level)
+    [HousingTrait.individualistic] = function(details, house, tech_level)
         details.energy_required = details.energy_required * 3
     end,
-    ["copy-paste"] = function(details, house, tech_level)
+    [HousingTrait.copy_paste] = function(details, house, tech_level)
         details.energy_required = details.energy_required / 2
     end,
-    pompous = function(details, house, tech_level)
+    [HousingTrait.pompous] = function(details, house, tech_level)
         details.ingredients[1].theme = "pompous_building"
     end,
-    cheap = function(details, house, tech_level)
+    [HousingTrait.cheap] = function(details, house, tech_level)
         details.ingredients[1].theme = "cheap_building"
     end,
-    tall = function(details, house, tech_level)
+    [HousingTrait.tall] = function(details, house, tech_level)
         table.insert(details.ingredients, {theme = "tall_building_structure", amount = house.room_count, level = tech_level})
     end,
-    low = function(details, house, tech_level)
+    [HousingTrait.low] = function(details, house, tech_level)
         -- no idea
     end
 }
@@ -460,8 +462,8 @@ local function create_recipe(house_name, house, details)
         energy_required = house.room_count / 5
     }
 
-    for _, quality in pairs(house.qualities) do
-        quality_effect_on_recipe[quality](recipe_details, house, tech_level)
+    for _, trait in pairs(house.traits) do
+        trait_effect_on_recipe[trait](recipe_details, house, tech_level)
     end
 
     Tirislib.RecipeGenerator.create_from_prototype(recipe_details)

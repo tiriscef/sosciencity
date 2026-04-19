@@ -47,7 +47,7 @@ The houses you can build differ in 3 attributes:
 
 - **Room Count:** Simply how big the building is. This determines how many huwans can live inside. Most early game castes need one room per inhabitant, but the later ones are more demanding.
 - **Comfort:** Describes how well equipped and furnished the house is. This directly influences the inhabitant's happiness and sanity.
-- **Qualities:** Describes how the house looks and feels from inside. Every caste has their own ideas which qualities they like or despise. For example: people from the Clockwork Caste like houses with the 'technical' quality, but are less happy with a 'decorated' home.
+- **Traits:** Describes how the house looks and feels from inside. Every caste has their own ideas which traits they like or despise. For example: people from the Clockwork Caste like houses with the 'technical' tag, but are less happy with a 'decorated' home.
 
 If you don't have enough housing space for the amount of huwans, the remaining ones will become homeless.
 
