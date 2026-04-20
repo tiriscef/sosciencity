@@ -15,7 +15,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "tiriscefing-willow-barrel", amount = 10},
         {type = "item", name = "hardcorn-punk", amount = 20}
     },
-    name = "clean-water",
     category = "sosciencity-fermentation-tank",
     energy_required = 20,
     unlock = "fermentation"

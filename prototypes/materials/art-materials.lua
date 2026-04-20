@@ -4,12 +4,10 @@
 local art_material_items = {
     {
         name = "paper",
-        distinctions = {subgroup = "sosciencity-art-materials"},
         sprite_variations = {name = "paper-pile", count = 4}
     },
     {
         name = "dye",
-        distinctions = {subgroup = "sosciencity-art-materials"},
         sprite_variations = {name = "dye", count = 3, include_icon = true}
     },
     {
@@ -19,23 +17,20 @@ local art_material_items = {
     },
     {
         name = "crayons",
-        distinctions = {subgroup = "sosciencity-art-materials"},
         sprite_variations = {name = "crayons", count = 4}
     },
     {
-        name = "military-grade-crayons",
-        distinctions = {subgroup = "sosciencity-art-materials"}
+        name = "military-grade-crayons"
     },
     {
         name = "musical-instruments",
-        use_placeholder_icon = true,
-        distinctions = {subgroup = "sosciencity-art-materials"}
+        use_placeholder_icon = true
     }
 }
 
 Tirislib.Item.batch_create(
     art_material_items,
-    {subgroup = "sosciencity-materials", stack_size = 200}
+    {subgroup = "sosciencity-art-materials", stack_size = 200}
 )
 
 ---------------------------------------------------------------------------------------------------

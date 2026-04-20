@@ -70,7 +70,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "sediment", amount = 1},
         {type = "fluid", name = "water", amount = 600}
     },
-    name = "water",
     category = "sosciencity-sedimentation-clarifier",
     energy_required = 10,
     unlock = "drinking-water-treatment"
@@ -84,7 +83,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "fluid", name = "mechanically-cleaned-water", amount = 600}
     },
-    name = "mechanically-cleaned-water",
     category = "sosciencity-biological-clarifier",
     energy_required = 10,
     unlock = "drinking-water-treatment"
@@ -98,7 +96,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "biologically-cleaned-water", amount = 600},
         {type = "item", name = "ferrous-sulfate", amount = 1}
     },
-    name = "biologically-cleaned-water",
     category = "sosciencity-chemical-clarifier",
     energy_required = 20,
     unlock = "drinking-water-treatment"
@@ -113,7 +110,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "clean-water", amount = 70},
         {type = "item", name = "semipermeable-membrane", amount = 1}
     },
-    name = "clean-water",
     energy_required = 4,
     unlock = "genetic-neogenesis"
 }:add_catalyst("semipermeable-membrane", "item", 1, 0.8)

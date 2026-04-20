@@ -303,7 +303,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "biter-meat", amount = 10},
         {type = "item", name = "salt", amount = 2}
     },
-    name = "biter-meat",
     category = "sosciencity-fermentation-tank",
     energy_required = 5,
     unlock = "fermentation"
@@ -317,7 +316,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "chickpea", amount = 20},
         {type = "item", name = "sesame", amount = 10}
     },
-    name = "chickpea",
     energy_required = 3,
     unlock = "hummus"
 }
@@ -329,7 +327,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "fluid", name = "solfaen", amount = 100}
     },
-    name = "solfaen",
     energy_required = 5,
     unlock = "basic-biotechnology"
 }
@@ -342,7 +339,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "fluid", name = "soy-milk", amount = 200}
     },
-    name = "yuba",
     energy_required = 5,
     unlock = "soy-products"
 }
@@ -355,7 +351,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "flour", amount = 10},
         {type = "fluid", name = "pemtenn", amount = 10}
     },
-    name = "flour",
     energy_required = 2,
     unlock = "food-processing"
 }
@@ -369,7 +364,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "wild-fungi", amount = 1},
         {type = "item", name = "wild-algae", amount = 1}
     },
-    name = "wild-edible-plants",
     category = "sosciencity-kitchen-for-all",
     energy_required = 3
 }

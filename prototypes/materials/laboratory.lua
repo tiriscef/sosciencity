@@ -94,7 +94,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 1}
     },
-    name = "empty-hard-drive",
     category = "sosciencity-computing-center",
     energy_required = 10,
     unlock = "sosciencity-computing"
@@ -107,7 +106,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 1}
     },
-    name = "empty-hard-drive",
     category = "sosciencity-computing-center",
     energy_required = 20,
     unlock = "sosciencity-computing"
@@ -120,7 +118,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 1}
     },
-    name = "empty-hard-drive",
     category = "sosciencity-computing-center",
     energy_required = 30,
     unlock = "sosciencity-computing"
@@ -133,7 +130,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 1}
     },
-    name = "empty-hard-drive",
     category = "sosciencity-computing-center",
     energy_required = 40,
     unlock = "in-situ-gene-editing"
@@ -173,7 +169,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "glass-instruments", amount = 1},
         {type = "fluid", name = "ethanol", amount = 15}
     },
-    name = "pemtenn-extract",
     category = "chemistry",
     energy_required = 3.2,
     unlock = "genetic-neogenesis"
@@ -189,7 +184,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "glass-instruments", amount = 1},
         {type = "fluid", name = "flinnum", amount = 10}
     },
-    name = "solid-fat",
     category = "sosciencity-bioreactor",
     energy_required = 3.2,
     unlock = "genetic-neogenesis"
@@ -203,7 +197,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "glass-instruments", amount = 1},
         {type = "fluid", name = "mynellia", amount = 25}
     },
-    name = "glass-instruments",
     category = "chemistry",
     energy_required = 3.2,
     unlock = "genetic-neogenesis"
@@ -217,7 +210,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "glass-instruments", amount = 1},
         {type = "fluid", name = "pemtenn", amount = 25}
     },
-    name = "glass-instruments",
     category = "chemistry",
     energy_required = 3.2,
     unlock = "genetic-neogenesis"
@@ -232,7 +224,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "pemtenn", amount = 10},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    name = "glass-instruments",
     category = "chemistry",
     energy_required = 3.2,
     unlock = "genetic-neogenesis"
@@ -246,7 +237,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "fiicorum", amount = 10},
         {type = "item", name = "glass-instruments", amount = 1}
     },
-    name = "fiicorum",
     category = "chemistry",
     unlock = "genetic-neogenesis"
 }
@@ -263,7 +253,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "glass-instruments", amount = 1},
         {type = "item", name = "virus-genome", amount = 1}
     },
-    name = "proteins",
     category = "sosciencity-reproductive-gene-lab",
     unlock = "in-situ-gene-editing"
 }

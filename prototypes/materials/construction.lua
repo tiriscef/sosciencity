@@ -131,7 +131,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "wood", amount = 1}
     },
-    name = "wood",
     category = "sosciencity-wood-processing",
     allow_productivity = true
 }
@@ -143,7 +142,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "lumber", amount = 1}
     },
-    name = "lumber",
     category = "sosciencity-wood-processing",
     allow_productivity = true
 }
@@ -155,7 +153,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "tools", amount = 1}
     },
-    name = "tools",
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
     allow_productivity = true
@@ -168,7 +165,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "power-tools", amount = 1}
     },
-    name = "power-tools",
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
     allow_productivity = true
@@ -182,7 +178,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "iron-plate", amount = 2}
     },
-    name = "lumber",
     category = "sosciencity-tinkering-workshop"
 }
 
@@ -195,7 +190,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "battery", amount = 1},
         {type = "item", name = "steel-plate", amount = 2}
     },
-    name = "steel-plate",
     category = "sosciencity-tinkering-workshop",
     default_theme_level = 3
 }
@@ -207,7 +201,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "copper-plate", amount = 2}
     },
-    name = "copper-plate",
     allow_productivity = true,
     unlock = "architecture-1"
 }
@@ -219,7 +212,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "iron-plate", amount = 2}
     },
-    name = "iron-plate",
     allow_productivity = true,
     unlock = "architecture-1"
 }
@@ -246,7 +238,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "plemnemm-cotton", amount = 20},
         {type = "item", name = "lumber", amount = 1}
     },
-    name = "plemnemm-cotton",
     energy_required = 8,
     allow_productivity = true,
     unlock = "architecture-1"
@@ -259,7 +250,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "yarn", amount = 5}
     },
-    name = "yarn",
     energy_required = 8,
     allow_productivity = true,
     unlock = "architecture-1"
@@ -272,7 +262,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "gingil-hemp", amount = 20}
     },
-    name = "gingil-hemp",
     energy_required = 8,
     allow_productivity = true,
     unlock = {"hunting-fishing", "clockwork-caste"}
@@ -285,7 +274,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "ceramic", amount = 2}
     },
-    name = "ceramic",
     unlock = "indoor-growing"
 }
 
@@ -296,7 +284,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "stone", amount = 5}
     },
-    name = "stone",
     energy_required = 4,
     unlock = "infrastructure-1"
 }
@@ -320,7 +307,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "limestone", amount = 1},
         {type = "item", name = "soda", amount = 1}
     },
-    name = "sand",
     energy_required = 1.6,
     unlock = "infrastructure-1"
 }
@@ -332,7 +318,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "glass-mixture", amount = 1}
     },
-    name = "glass-mixture",
     category = "smelting",
     energy_required = 3.2
 }
@@ -344,7 +329,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "sand", amount = 1}
     },
-    name = "sand",
     category = "smelting",
     energy_required = 3.2,
     unlock = "infrastructure-1"
@@ -369,8 +353,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "clay-minerals", amount = 2},
         {type = "item", name = "limestone", amount = 1},
         {type = "fluid", name = "water", amount = 100}
-    },
-    name = "clay-minerals"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -380,7 +363,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "ceramic-mixture", amount = 1}
     },
-    name = "ceramic-mixture",
     category = "smelting"
 }
 
@@ -404,7 +386,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "mineral-mixture", amount = 1}
     },
-    name = "mineral-mixture",
     category = "smelting",
     energy_required = 3.2,
     unlock = "architecture-3"
@@ -417,7 +398,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "paper", amount = 2}
     },
-    name = "paper",
     category = "sosciencity-architecture",
     energy_required = 2,
     unlock = "infrastructure-1"
@@ -438,7 +418,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "pyrifera", amount = 5}
     },
-    name = "pyrifera",
     energy_required = 5
 }
 
@@ -450,7 +429,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "iron-plate", amount = 1},
         {type = "fluid", name = "sulfuric-acid", amount = 10}
     },
-    name = "iron-plate",
     category = "chemistry",
     energy_required = 1,
     allow_productivity = true,
@@ -466,7 +444,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "cloth", amount = 10},
         {type = "item", name = "glass", amount = 5}
     },
-    name = "cloth",
     unlock = "activated-carbon-filtering"
 }
 
@@ -478,6 +455,5 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "activated-carbon", amount = 15},
         {type = "item", name = "filter", amount = 1}
     },
-    name = "activated-carbon",
     unlock = "activated-carbon-filtering"
 }
