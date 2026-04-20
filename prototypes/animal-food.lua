@@ -19,7 +19,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 4}
     },
-    name = "hardcorn-punk",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -32,7 +31,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "hardcorn-punk", amount = 2},
         {type = "item", name = "slaughter-waste", amount = 2}
     },
-    name = "hardcorn-punk",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -44,7 +42,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "dried-solfaen", amount = 4}
     },
-    name = "dried-solfaen",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -57,7 +54,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "queen-algae", amount = 3},
         {type = "item", name = "pyrifera", amount = 3}
     },
-    name = "queen-algae",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -69,7 +65,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "slaughter-waste", amount = 3}
     },
-    name = "slaughter-waste",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -81,7 +76,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "offal", amount = 2}
     },
-    name = "offal",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -94,7 +88,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "leafage", amount = 2},
         {type = "item", name = "razha-bean", amount = 2}
     },
-    name = "leafage",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }
@@ -107,7 +100,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "hardcorn-punk", amount = 2},
         {type = "item", name = "razha-bean", amount = 2}
     },
-    name = "hardcorn-punk",
     allow_productivity = true,
     unlock = "animal-husbandry"
 }

@@ -24,7 +24,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "complex-scientific-data", amount = 2}
     },
-    name = "complex-scientific-data",
     category = "sosciencity-caste-gleam",
     energy_required = 2,
     unlock = "gleam-caste"

@@ -81,7 +81,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "gingil-hemp", amount = 5},
         {type = "item", name = "rope", amount = 1}
     },
-    name = "gingil-hemp",
     energy_required = 1.5,
     allow_productivity = true,
     unlock = "hunting-fishing"
@@ -96,7 +95,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "yarn", amount = 1},
         {type = "item", name = "lumber", amount = 2}
     },
-    name = "rope",
     energy_required = 1,
     allow_productivity = true,
     unlock = "advanced-fishing"
@@ -111,7 +109,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "mechanism", amount = 2},
         {type = "item", name = "rope", amount = 1}
     },
-    name = "rope",
     energy_required = 1,
     allow_productivity = true,
     unlock = "advanced-fishing"

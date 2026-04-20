@@ -20,15 +20,54 @@ Tirislib.Item.batch_create(
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
-        {type = "item", name = "invention", amount = 4}
+        {type = "item", name = "invention", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "paper", amount = 4},
+        {type = "item", name = "technical-drawing", amount = 1},
+        {type = "item", name = "contraption", amount = 1}
+    },
+    category = "sosciencity-caste-clockwork",
+    energy_required = 4,
+    unlock = "clockwork-caste"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "technical-drawing", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "paper", amount = 10},
+        {type = "item", name = "dye", amount = 1}
+    },
+    category = "sosciencity-architectural-office",
+    energy_required = 4,
+    unlock = "clockwork-caste"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "contraption", amount = 10}
+    },
+    ingredients = {
         {type = "item", name = "rope", amount = 5},
         {type = "item", name = "lumber", amount = 20},
-        {type = "item", name = "screw-set", amount = 20}
+        {type = "item", name = "screw-set", amount = 20},
+        {type = "item", name = "prototype-component", amount = 10}
     },
-    name = "paper",
+    category = "sosciencity-tinkering-workshop",
+    energy_required = 4,
+    unlock = "clockwork-caste"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "prototype-component", amount = 5}
+    },
+    ingredients = {
+        {theme = "plating", amount = 5},
+        {theme = "plating2", amount = 5},
+        {type = "item", name = "tools", amount = 1}
+    },
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
     unlock = "clockwork-caste"

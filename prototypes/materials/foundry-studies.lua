@@ -25,7 +25,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "empty-hard-drive", amount = 4}
     },
-    name = "empty-hard-drive",
     category = "sosciencity-caste-foundry",
     energy_required = 2,
     unlock = "foundry-caste"

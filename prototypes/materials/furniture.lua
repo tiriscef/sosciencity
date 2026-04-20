@@ -68,8 +68,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "glass", amount = 2},
         {type = "item", name = "lumber", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    name = "lumber"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -81,8 +80,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "plemnemm-cotton", amount = 10},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    name = "lumber"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -92,8 +90,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "yarn", amount = 1}
-    },
-    name = "cloth"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -103,8 +100,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "screw-set", amount = 1}
-    },
-    name = "lumber"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -116,8 +112,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "furniture", amount = 2},
         {type = "item", name = "refrigerator", amount = 1},
         {type = "item", name = "stove", amount = 1}
-    },
-    name = "furniture"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -128,8 +123,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "piping", amount = 2},
         {theme = "plating2", amount = 2},
         {type = "item", name = "ceramic", amount = 3}
-    },
-    name = "ceramic"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -139,8 +133,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
         {type = "item", name = "yarn", amount = 1}
-    },
-    name = "cloth"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -153,8 +146,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "yarn", amount = 1},
         {type = "item", name = "plemnemm-cotton", amount = 10},
         {type = "item", name = "screw-set", amount = 2}
-    },
-    name = "lumber"
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -166,7 +158,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {theme = "casing", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
     },
-    name = "screw-set",
     default_theme_level = 2
 }
 
@@ -193,6 +184,5 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "screw-set", amount = 1},
         {type = "item", name = "filter", amount = 2}
     },
-    name = "screw-set",
     default_theme_level = 3
 }

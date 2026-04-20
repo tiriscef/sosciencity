@@ -20,7 +20,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "paper", amount = 4},
         {type = "item", name = "military-grade-crayons", amount = 4}
     },
-    name = "sketch",
     category = "sosciencity-caste-gunfire",
     energy_required = 2,
     unlock = "gunfire-caste"
