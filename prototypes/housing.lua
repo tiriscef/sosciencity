@@ -408,10 +408,12 @@ local trait_effect_on_recipe = {
         table.insert(details.ingredients, {theme = "housing_sheltered", amount = house.room_count, level = tech_level})
     end,
     [HousingTrait.green] = function(details, house, tech_level)
-        table.insert(details.ingredients, {theme = "housing_green", amount = house.room_count, level = tech_level})
+        -- Not an architectural trait anymore
+        --table.insert(details.ingredients, {theme = "housing_green", amount = house.room_count, level = tech_level})
     end,
     [HousingTrait.technical] = function(details, house, tech_level)
-        table.insert(details.ingredients, {theme = "housing_technical", amount = house.room_count, level = tech_level})
+        -- Not an architectural trait anymore
+        --table.insert(details.ingredients, {theme = "housing_technical", amount = house.room_count, level = tech_level})
     end,
     [HousingTrait.spacey] = function(details, house, tech_level)
         -- increase the "building" theme amount
@@ -422,7 +424,8 @@ local trait_effect_on_recipe = {
         details.ingredients[1].amount = details.ingredients[1].amount * 0.8
     end,
     [HousingTrait.decorated] = function(details, house, tech_level)
-        table.insert(details.ingredients, {theme = "furnishing_decorated", amount = house.room_count, level = tech_level})
+        -- Not an architectural trait anymore
+        --table.insert(details.ingredients, {theme = "furnishing_decorated", amount = house.room_count, level = tech_level})
     end,
     [HousingTrait.simple] = function(details, house, tech_level)
         -- furnishing is no longer part of the base recipe (handled by runtime upgrades)

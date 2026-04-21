@@ -39,7 +39,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "paper", amount = 10},
         {type = "item", name = "dye", amount = 1}
     },
-    category = "sosciencity-architectural-office",
+    category = "sosciencity-architecture",
     energy_required = 4,
     unlock = "clockwork-caste"
 }

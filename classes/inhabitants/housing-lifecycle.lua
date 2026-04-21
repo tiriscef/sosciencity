@@ -171,6 +171,12 @@ function Inhabitants.remove_house(entry, cause, event)
             for _, item in pairs(Housing.get_total_refund(housing_details, entry[EK.current_comfort] or 0)) do
                 buffer.insert({name = item.name, count = item.count})
             end
+            local trait_upgrades = entry[EK.trait_upgrades]
+            if trait_upgrades then
+                for _, item in pairs(Housing.get_tag_refund(housing_details, trait_upgrades)) do
+                    buffer.insert({name = item.name, count = item.count})
+                end
+            end
         end
     end
 

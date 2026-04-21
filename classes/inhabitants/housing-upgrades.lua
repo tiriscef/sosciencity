@@ -68,7 +68,7 @@ function Inhabitants.try_manual_upgrade(entry, player)
 
     local next_level = current_comfort + 1
     if not Housing.is_level_unlocked(next_level) then
-        return {"sosciencity.upgrade-comfort-locked", {"technology-name." .. Housing.required_tech[next_level]}}
+        return {"sosciencity.upgrade-comfort-locked", Locale.prototype_name(Housing.required_tech[next_level], "technology")}
     end
 
     local cost = Housing.get_upgrade_cost(house_details, next_level)
@@ -126,6 +126,94 @@ function Inhabitants.try_manual_upgrade(entry, player)
     entry[EK.current_comfort] = next_level
     entry[EK.target_comfort] = math.min(math.max(entry[EK.target_comfort] or 0, next_level), max_comfort)
     Communication.create_temporary_text(entry, {"sosciencity.upgrade-comfort-done", next_level})
+end
+
+--- Returns per-item progress for a quality tag for GUI display: array of {name, required, in_chest}.
+--- @param entry Entry
+--- @param tag integer HousingTrait enum value
+--- @return table?
+function Inhabitants.get_tag_progress(entry, tag)
+    local cost = Housing.get_tag_cost(Housing.get(entry), tag)
+    if not cost then return nil end
+    local inventory = get_inventory(entry)
+    local result = {}
+    for _, item in pairs(cost) do
+        result[#result + 1] = {
+            name = item.name,
+            required = item.count,
+            in_chest = inventory.get_item_count(item.name)
+        }
+    end
+    return result
+end
+
+--- Attempts to add a quality tag using items from the player and chest inventories.
+--- Returns a localised error message if blocked, nil on success.
+--- @param entry Entry
+--- @param player LuaPlayer
+--- @param tag integer HousingTrait enum value
+--- @return LocalisedString?
+function Inhabitants.try_manual_add_tag(entry, player, tag)
+    local active_tags = entry[EK.trait_upgrades] or {}
+    if active_tags[tag] then return end
+
+    if not Housing.is_tag_unlocked(tag) then
+        return {"sosciencity.add-tag-locked", Locale.prototype_name(Housing.tag_required_tech[tag], "technology")}
+    end
+
+    local house_details = Housing.get(entry)
+    local cost = Housing.get_tag_cost(house_details, tag)
+
+    if not cost then
+        active_tags[tag] = true
+        entry[EK.trait_upgrades] = active_tags
+        return
+    end
+
+    local chest_inv = get_inventory(entry)
+    local player_inv = player.get_main_inventory()
+
+    local from_chest = {}
+    local from_player = {}
+    local missing = {}
+
+    for _, item in pairs(cost) do
+        local in_chest = chest_inv.get_item_count(item.name)
+        local take_chest = math.min(in_chest, item.count)
+        local need_player = item.count - take_chest
+
+        if take_chest > 0 then
+            from_chest[#from_chest + 1] = {name = item.name, count = take_chest}
+        end
+        if need_player > 0 then
+            local in_player = player_inv.get_item_count(item.name)
+            if in_player < need_player then
+                missing[#missing + 1] = display_item_stack(item.name, need_player - in_player)
+            else
+                from_player[#from_player + 1] = {name = item.name, count = need_player}
+            end
+        end
+    end
+
+    if #missing > 0 then
+        local missing_str = {""}
+        for i, m in pairs(missing) do
+            if i > 1 then missing_str[#missing_str + 1] = ", " end
+            missing_str[#missing_str + 1] = m
+        end
+        return {"sosciencity.add-tag-missing", missing_str}
+    end
+
+    for _, item in pairs(from_chest) do
+        chest_inv.remove({name = item.name, count = item.count})
+    end
+    for _, item in pairs(from_player) do
+        player_inv.remove({name = item.name, count = item.count})
+    end
+
+    active_tags[tag] = true
+    entry[EK.trait_upgrades] = active_tags
+    Communication.create_temporary_text(entry, {"sosciencity.add-tag-done"})
 end
 
 --- Checks chest inventory for required upgrade items and applies the upgrade if present.

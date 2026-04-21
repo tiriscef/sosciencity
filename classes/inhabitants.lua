@@ -726,11 +726,13 @@ function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
      then
         local saved_comfort = entry[EK.current_comfort]
         local saved_target = entry[EK.target_comfort]
+        local saved_tags = entry[EK.trait_upgrades]
         local entity = entry[EK.entity]
         ItemRequests.cancel(entity, entity.get_inventory(defines.inventory.chest), entry, EK.upgrade_slots)
         local new_entry = Register.change_type(entry, caste_id)
         new_entry[EK.current_comfort] = saved_comfort
         new_entry[EK.target_comfort] = saved_target
+        new_entry[EK.trait_upgrades] = saved_tags
 
         if loud then
             Communication.caste_allowed_in(new_entry, caste_id)

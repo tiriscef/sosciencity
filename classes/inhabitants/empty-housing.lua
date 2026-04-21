@@ -59,6 +59,17 @@ local function update_empty_house(entry)
             max_comfort
         }
     )
+
+    local trait_upgrades = entry[EK.trait_upgrades]
+    if trait_upgrades then
+        local trait_list = {""}
+        for tag in pairs(trait_upgrades) do
+            if #trait_list > 1 then trait_list[#trait_list + 1] = ", " end
+            trait_list[#trait_list + 1] = Locale.housing_trait(tag)
+        end
+        Tirislib.Locales.append(label, {"sosciencity-custom-status.traits-status", trait_list})
+    end
+
     entry[EK.entity].custom_status = {
         diode = defines.entity_status_diode.red,
         label = label
@@ -124,6 +135,12 @@ local function remove_empty_house(entry, cause, event)
             local house_details = Housing.get(entry)
             for _, item in pairs(Housing.get_total_refund(house_details, entry[EK.current_comfort] or 0)) do
                 buffer.insert({name = item.name, count = item.count})
+            end
+            local trait_upgrades = entry[EK.trait_upgrades]
+            if trait_upgrades then
+                for _, item in pairs(Housing.get_tag_refund(house_details, trait_upgrades)) do
+                    buffer.insert({name = item.name, count = item.count})
+                end
             end
         end
     end

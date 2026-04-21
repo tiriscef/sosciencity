@@ -35,17 +35,16 @@ local display_item_stack = Tirislib.Locales.display_item_stack
 local display_time = Tirislib.Locales.display_time
 local Datalist = Gui.Elements.Datalist
 
+local upgradeable_tags = Tirislib.Tables.get_keyset(Housing.tag_costs)
+
 ---------------------------------------------------------------------------------------------------
 -- << empty houses >>
 
-local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
-
-    flow.style.horizontal_align = "center"
-    flow.style.vertical_align = "center"
-    flow.style.vertical_spacing = 6
+local function fill_caste_chooser(flow, entry, house_details)
+    flow.clear()
 
     local current_comfort = entry[EK.current_comfort] or 0
+    local trait_upgrades = entry[EK.trait_upgrades]
 
     local at_least_one = false
     for _, caste in pairs(Castes.all) do
@@ -81,7 +80,7 @@ local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
             button.tooltip = {
                 "sosciencity.move-in",
                 Locale.integer_summand(
-                    Inhabitants.evaluate_housing_traits(house_details, caste) + current_comfort
+                    Inhabitants.evaluate_housing_traits(house_details, caste, trait_upgrades) + current_comfort
                 )
             }
         end
@@ -97,6 +96,14 @@ local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
             caption = {"sosciencity.no-castes-researched"}
         }
     end
+end
+
+local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
+    flow.style.horizontal_align = "center"
+    flow.style.vertical_align = "center"
+    flow.style.vertical_spacing = 6
+    fill_caste_chooser(flow, entry, house_details)
 end
 
 Gui.set_click_handler(
@@ -150,6 +157,99 @@ Gui.set_click_handler(
         Gui.DetailsView.update_for_entry(entry)
     end
 )
+
+Gui.set_click_handler(
+    "add_trait_tag",
+    function(event)
+        local tags = event.element.tags
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then return end
+
+        local player = game.players[event.player_index]
+        local missing = Inhabitants.try_manual_add_tag(entry, player, tags.tag)
+        if missing then
+            player.create_local_flying_text {text = missing, create_at_cursor = true}
+            return
+        end
+
+        Gui.DetailsView.update_for_entry(entry)
+    end
+)
+
+local function update_tag_section(section_flow, entry, tag)
+    local is_locked = not Housing.is_tag_unlocked(tag)
+
+    if is_locked then
+        section_flow.visible = false
+        return
+    end
+
+    section_flow.visible = true
+
+    local active_tags = entry[EK.trait_upgrades] or {}
+    local is_applied = active_tags[tag] ~= nil
+    local btn = section_flow["tag-button"]
+    local progress_flow = section_flow["item-progress-flow"]
+
+    if is_applied then
+        btn.caption = {"sosciencity.tag-applied", Locale.housing_trait(tag)}
+        btn.enabled = false
+        btn.tooltip = ""
+        progress_flow.visible = false
+    else
+        btn.caption = {"sosciencity.add-tag", Locale.housing_trait(tag)}
+        btn.enabled = true
+        btn.tooltip = ""
+        progress_flow.visible = true
+        progress_flow.clear()
+        local progress = Inhabitants.get_tag_progress(entry, tag)
+        if progress then
+            for _, p in pairs(progress) do
+                progress_flow.add {
+                    type = "label",
+                    caption = {"sosciencity.upgrade-item-progress",
+                        format("[item=%s]", p.name), p.in_chest, p.required},
+                    elem_tooltip = {type = "item", name = p.name}
+                }
+            end
+        end
+    end
+end
+
+local function add_tag_section(parent_flow, entry, tag)
+    local section_flow = parent_flow.add {
+        type = "flow",
+        name = "tag-section-" .. tag,
+        direction = "vertical"
+    }
+    section_flow.style.vertical_spacing = 4
+
+    section_flow.add {
+        type = "button",
+        name = "tag-button",
+        style = "sosciencity_heading_2_button",
+        mouse_button_filter = {"left"},
+        tags = {sosciencity_gui_event = "add_trait_tag", unit_number = entry[EK.unit_number], tag = tag}
+    }
+    section_flow.add {type = "flow", name = "item-progress-flow", direction = "horizontal"}
+
+    update_tag_section(section_flow, entry, tag)
+end
+
+local function add_tag_sections(parent_flow, entry)
+    for _, tag in pairs(upgradeable_tags) do
+        add_tag_section(parent_flow, entry, tag)
+    end
+end
+
+local function update_tag_sections(parent_flow, entry)
+    for _, tag in pairs(upgradeable_tags) do
+        local section = parent_flow["tag-section-" .. tag]
+        if section then
+            update_tag_section(section, entry, tag)
+        end
+    end
+end
 
 local function update_upgrade_section(flow, entry, house_details)
     local current = entry[EK.current_comfort] or 0
@@ -229,6 +329,39 @@ local function add_upgrade_section(flow, entry, house_details)
     update_upgrade_section(upgrade_flow, entry, house_details)
 end
 
+local function fill_traits_flow(traits_flow, housing_details, caste, trait_upgrades)
+    traits_flow.clear()
+    local preferences = caste and caste.housing_preferences
+    for _, trait in pairs(housing_details.traits) do
+        local assessment = preferences and preferences[trait]
+        local caption = assessment and {"", Locale.housing_trait(trait), format(" (%+.1f)", assessment)} or Locale.housing_trait(trait)
+        local label = traits_flow.add {
+            type = "label",
+            name = tostring(trait),
+            caption = caption,
+            tooltip = Locale.housing_trait_description(trait)
+        }
+        if assessment then
+            label.style.font_color = assessment > 0 and Color.green or Color.red
+        end
+    end
+    if trait_upgrades then
+        for tag in pairs(trait_upgrades) do
+            local assessment = preferences and preferences[tag]
+            local caption = assessment and {"", Locale.housing_trait(tag), format(" (%+.1f)", assessment)} or Locale.housing_trait(tag)
+            local label = traits_flow.add {
+                type = "label",
+                name = tostring(tag),
+                caption = caption,
+                tooltip = Locale.housing_trait_description(tag)
+            }
+            if assessment then
+                label.style.font_color = assessment > 0 and Color.green or Color.red
+            end
+        end
+    end
+end
+
 local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
     local flow = Gui.Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"})
 
@@ -242,31 +375,30 @@ local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
     )
 
     local traits_flow = Datalist.add_kv_flow(data_list, "traits", {"sosciencity.traits"})
-    for _, trait in pairs(house_details.traits) do
-        traits_flow.add {
-            type = "label",
-            name = tostring(trait),
-            caption = Locale.housing_trait(trait),
-            tooltip = Locale.housing_trait_description(trait)
-        }
-    end
+    fill_traits_flow(traits_flow, house_details, nil, entry[EK.trait_upgrades])
 
     Gui.Elements.Utils.separator_line(flow)
     add_upgrade_section(flow, entry, house_details)
+    add_tag_sections(flow, entry)
 end
 
 local function update_empty_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     local house_details = Housing.get(entry)
 
-    -- refresh comfort display in info tab
+    local caste_chooser_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "caste-chooser")
+    fill_caste_chooser(caste_chooser_flow, entry, house_details)
+
     local info_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "house-info")
+    local data_list = info_flow["house-infos"]
     Datalist.set_kv_pair_value(
-        info_flow["house-infos"],
+        data_list,
         "comfort",
         {"sosciencity.show-comfort", entry[EK.current_comfort] or 0, house_details.max_comfort}
     )
+    fill_traits_flow(Datalist.get_kv_value_element(data_list, "traits"), house_details, nil, entry[EK.trait_upgrades])
     update_upgrade_section(info_flow["upgrade-section"], entry, house_details)
+    update_tag_sections(info_flow, entry)
 end
 
 local function create_empty_housing_details(container, entry)
@@ -375,7 +507,9 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         "comfort",
         {"sosciencity.show-comfort", entry[EK.current_comfort] or 0, housing_details.max_comfort}
     )
+    fill_traits_flow(Datalist.get_kv_value_element(general_list, "traits"), housing_details, caste, entry[EK.trait_upgrades])
     update_upgrade_section(flow["upgrade-section"], entry, housing_details)
+    update_tag_sections(flow, entry)
 
     local capacity = Housing.get_capacity(entry)
     Datalist.set_kv_pair_value(
@@ -573,25 +707,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     Datalist.add_kv_pair(general_list, "comfort", {"sosciencity.comfort"})
 
     local traits_flow = Datalist.add_kv_flow(general_list, "traits", {"sosciencity.traits"})
-    for _, trait in pairs(housing_details.traits) do
-        local assessment = caste.housing_preferences[trait]
-
-        local caption =
-            assessment and {"", Locale.housing_trait(trait), format(" (%+.1f)", assessment)} or
-            Locale.housing_trait(trait)
-
-        local trait_text =
-            traits_flow.add {
-            type = "label",
-            name = tostring(trait),
-            caption = caption,
-            tooltip = Locale.housing_trait_description(trait)
-        }
-
-        if assessment then
-            trait_text.style.font_color = assessment > 0 and Color.green or Color.red
-        end
-    end
+    fill_traits_flow(traits_flow, housing_details, caste, entry[EK.trait_upgrades])
 
     local priority_flow = Gui.Elements.Flow.horizontal_right(flow, "priority_flow")
     priority_flow.style.vertical_align = "center"
@@ -631,6 +747,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
 
     Gui.Elements.Utils.separator_line(flow)
     add_upgrade_section(flow, entry, housing_details)
+    add_tag_sections(flow, entry)
     Gui.Elements.Utils.separator_line(flow)
 
     -- the kickout_button only gets added if the house is built by the player
@@ -660,9 +777,11 @@ Gui.set_click_handler(
         if Gui.Elements.Utils.is_confirmed(button) then
             local saved_comfort = entry[EK.current_comfort]
             local saved_target = entry[EK.target_comfort]
+            local saved_tags = entry[EK.trait_upgrades]
             local new_entry = Register.change_type(entry, Type.empty_house)
             new_entry[EK.current_comfort] = saved_comfort
             new_entry[EK.target_comfort] = saved_target
+            new_entry[EK.trait_upgrades] = saved_tags
         end
     end
 )
