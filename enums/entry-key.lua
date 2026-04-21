@@ -143,6 +143,8 @@ EK.current_comfort = 235
 EK.target_comfort = 236
 --- array of slot indices where upgrade filters are placed in the chest
 EK.upgrade_slots = 237
+--- lookup table of HousingTraits for upgraded quality tags
+EK.trait_upgrades = 238
 
 -- water distributer
 

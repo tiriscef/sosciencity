@@ -278,6 +278,16 @@ local function set_custom_status(entry)
 
     Tirislib.Locales.append(label, comfort_append)
 
+    local trait_upgrades = entry[EK.trait_upgrades]
+    if trait_upgrades then
+        local trait_list = {""}
+        for tag in pairs(trait_upgrades) do
+            if #trait_list > 1 then trait_list[#trait_list + 1] = ", " end
+            trait_list[#trait_list + 1] = Locale.housing_trait(tag)
+        end
+        Tirislib.Locales.append(label, {"sosciencity-custom-status.traits-status", trait_list})
+    end
+
     entry[EK.entity].custom_status = {
         diode = diode,
         label = label

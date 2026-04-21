@@ -44,11 +44,16 @@ local function get_garbage_influence(entry)
     return max(get_garbage_value(entry) - 20, 0) * (-0.1)
 end
 
-local function evaluate_housing_traits(house_details, caste_details)
+local function evaluate_housing_traits(house_details, caste_details, trait_upgrades)
     local trait_assessment = 0
     local preferences = caste_details.housing_preferences
     for _, trait in pairs(house_details.traits) do
         trait_assessment = trait_assessment + (preferences[trait] or 0)
+    end
+    if trait_upgrades then
+        for tag in pairs(trait_upgrades) do
+            trait_assessment = trait_assessment + (preferences[tag] or 0)
+        end
     end
     return trait_assessment
 end
@@ -67,7 +72,7 @@ local function evaluate_housing(entry, happiness_summands, sanity_summands, happ
         happiness_factors[HappinessFactor.comfort_malus] = current_comfort / minimum_comfort
     end
 
-    happiness_summands[HappinessSummand.suitable_housing] = evaluate_housing_traits(housing, caste)
+    happiness_summands[HappinessSummand.suitable_housing] = evaluate_housing_traits(housing, caste, entry[EK.trait_upgrades])
 
     local garbage_influence = get_garbage_influence(entry)
     happiness_summands[HappinessSummand.garbage] = garbage_influence

@@ -49,6 +49,27 @@ Housing.furniture_costs = {
     },
 }
 
+-- Per-room cost to add a quality tag (one-time). Keyed by HousingTrait enum value.
+Housing.tag_costs = {
+    [HousingTrait.green]     = {
+        {name = "phytofall-blossom", amount = 5}
+    },
+    [HousingTrait.technical] = {
+        {name = "advanced-circuit", amount = 2}
+    },
+    [HousingTrait.decorated] = {
+        {name = "painting", amount = 1},
+        {name = "statue",   amount = 1}
+    },
+}
+
+-- Maps quality tag → required architecture technology name.
+Housing.tag_required_tech = {
+    [HousingTrait.green]     = "architecture-3",
+    [HousingTrait.technical] = "architecture-3",
+    [HousingTrait.decorated] = "architecture-3",
+}
+
 -- Maps comfort level → required architecture technology name.
 Housing.required_tech = {
     [1]  = "architecture-1",
@@ -145,7 +166,7 @@ Housing.values = {
         comfort = 8,
         starting_comfort = 0,
         max_comfort = 10,
-        traits = {HousingTrait.spacey, HousingTrait.decorated, HousingTrait.individualistic, HousingTrait.pompous, HousingTrait.tall}
+        traits = {HousingTrait.spacey, HousingTrait.individualistic, HousingTrait.pompous, HousingTrait.tall}
     },
     ["house5"] = {
         room_count = 180,
@@ -159,7 +180,7 @@ Housing.values = {
         comfort = 3,
         starting_comfort = 0,
         max_comfort = 6,
-        traits = {HousingTrait.spacey, HousingTrait.technical, HousingTrait.individualistic, HousingTrait.tall}
+        traits = {HousingTrait.spacey, HousingTrait.individualistic, HousingTrait.tall}
     },
     ["big-living-container"] = {
         room_count = 24,
@@ -194,21 +215,21 @@ Housing.values = {
         comfort = 9,
         starting_comfort = 0,
         max_comfort = 10,
-        traits = {HousingTrait.low, HousingTrait.technical, HousingTrait.compact}
+        traits = {HousingTrait.low, HousingTrait.compact}
     },
     ["spring-house"] = {
         room_count = 15,
         comfort = 3,
         starting_comfort = 0,
         max_comfort = 6,
-        traits = {HousingTrait.low, HousingTrait.green}
+        traits = {HousingTrait.low}
     },
     ["summer-house"] = {
         room_count = 30,
         comfort = 5,
         starting_comfort = 0,
         max_comfort = 8,
-        traits = {HousingTrait.low, HousingTrait.green, HousingTrait.spacey}
+        traits = {HousingTrait.low, HousingTrait.spacey}
     },
     ["barrack"] = {
         room_count = 40,
@@ -281,6 +302,54 @@ end
 function Housing.allowes_caste(house, caste_id)
     local caste = castes[caste_id]
     return house.room_count >= caste.required_room_count
+end
+
+--- Returns true if the given quality tag is unlocked.
+--- @param tag integer HousingTrait enum value
+--- @return boolean
+function Housing.is_tag_unlocked(tag)
+    local tech = Housing.tag_required_tech[tag]
+    return tech == nil or storage.technologies[tech]
+end
+
+--- Returns the items required to add the given quality tag to a house,
+--- scaled by room_count and ceiling'd to integers.
+--- Returns nil if the tag has no defined cost (i.e. is not an upgradeable tag).
+--- @param house HouseDefinition
+--- @param tag integer HousingTrait enum value
+--- @return table? array of {name, count} pairs
+function Housing.get_tag_cost(house, tag)
+    local per_room = Housing.tag_costs[tag]
+    if not per_room then
+        return nil
+    end
+    local room_count = house.room_count
+    local result = {}
+    for _, entry in pairs(per_room) do
+        result[#result + 1] = {name = entry.name, count = math.ceil(entry.amount * room_count)}
+    end
+    return result
+end
+
+--- Returns the items to refund for a set of active quality tags on deconstruct.
+--- @param house HouseDefinition
+--- @param active_tags table HousingTrait → true map of applied tags
+--- @return table array of {name, count} pairs, merged across all active tags
+function Housing.get_tag_refund(house, active_tags)
+    local totals = {}
+    for tag in pairs(active_tags) do
+        local cost = Housing.get_tag_cost(house, tag)
+        if cost then
+            for _, item in pairs(cost) do
+                totals[item.name] = (totals[item.name] or 0) + item.count
+            end
+        end
+    end
+    local result = {}
+    for name, count in pairs(totals) do
+        result[#result + 1] = {name = name, count = count}
+    end
+    return result
 end
 
 --- Returns the items required to upgrade this house from (level-1) to level,
