@@ -31,7 +31,7 @@ local update_blood_donations
 local update_free_space_status
 local unemploy_inhabitants
 local get_caste_bonus_multiplier
-local try_auto_upgrade
+local try_auto_upgrades
 
 function Inhabitants.load_housing_update()
     evaluate_diet = Inhabitants.evaluate_diet
@@ -45,7 +45,7 @@ function Inhabitants.load_housing_update()
     update_free_space_status = Inhabitants.update_free_space_status
     unemploy_inhabitants = Inhabitants.unemploy_inhabitants
     get_caste_bonus_multiplier = Inhabitants.get_caste_bonus_multiplier
-    try_auto_upgrade = Inhabitants.try_auto_upgrade
+    try_auto_upgrades = Inhabitants.try_auto_upgrades
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -365,7 +365,7 @@ local function update_house(entry, delta_ticks)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)
     update_blood_donations(entry, delta_ticks)
-    try_auto_upgrade(entry)
+    try_auto_upgrades(entry)
 
     set_custom_status(entry)
 end

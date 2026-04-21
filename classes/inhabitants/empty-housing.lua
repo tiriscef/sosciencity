@@ -43,7 +43,7 @@ local function update_empty_house(entry)
     end
 
     entry[EK.is_liveable] = has_water and has_food
-    Inhabitants.try_auto_upgrade(entry)
+    Inhabitants.try_auto_upgrades(entry)
 
     local current_comfort = entry[EK.current_comfort] or 0
     local max_comfort = Housing.get(entry).max_comfort
@@ -93,20 +93,39 @@ local function create_empty_house(entry, event)
     local settings = player_index and storage.placement_settings and storage.placement_settings[player_index]
     if settings then
         entry[EK.target_comfort] = math.min(settings.target_comfort, house_details.max_comfort)
+        if settings.target_tags then
+            entry[EK.target_tags] = Tables.copy(settings.target_tags)
+        end
     end
 
     local tags = Tables.get_subtbl_recursive_passive(event, "tags", "sosciencity")
 
     if tags == nil then
+        local player = player_index and game.players[player_index]
         if settings and settings.auto_assign_caste then
-            Inhabitants.try_allow_for_caste(entry, settings.auto_assign_caste, false)
+            local inhabited = Inhabitants.try_allow_for_caste(entry, settings.auto_assign_caste, false)
+            Inhabitants.try_upgrade_to_target(inhabited or entry, player)
+        else
+            Inhabitants.try_upgrade_to_target(entry, player)
         end
         return
     end
 
-    -- Blueprint comfort wins over player setting
+    -- Blueprint values win over player settings
     if tags.target_comfort ~= nil then
         entry[EK.target_comfort] = tags.target_comfort
+    end
+    if tags.target_tags ~= nil then
+        entry[EK.target_tags] = Tables.copy(tags.target_tags)
+    end
+    -- Applied tags from the blueprint source become logistics targets on the new house
+    -- (items haven't been spent yet — logistics will deliver and apply them)
+    if tags.applied_tags ~= nil then
+        local target = entry[EK.target_tags] or {}
+        for tag in pairs(tags.applied_tags) do
+            target[tag] = true
+        end
+        entry[EK.target_tags] = target
     end
 
     local caste = tags.caste
@@ -152,7 +171,9 @@ end
 local function blueprint_empty_house(entry)
     return {
         current_comfort = entry[EK.current_comfort],
-        target_comfort = entry[EK.target_comfort]
+        target_comfort = entry[EK.target_comfort],
+        target_tags = entry[EK.target_tags],
+        applied_tags = entry[EK.trait_upgrades]
     }
 end
 
@@ -190,6 +211,9 @@ function Inhabitants.on_house_ghost_placed(entity, event)
     local new_tags = {target_comfort = settings.target_comfort}
     if settings.auto_assign_caste then
         new_tags.caste = settings.auto_assign_caste
+    end
+    if settings.target_tags then
+        new_tags.target_tags = settings.target_tags
     end
     entity.tags = {sosciencity = new_tags}
 end

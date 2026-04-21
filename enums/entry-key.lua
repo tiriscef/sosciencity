@@ -56,6 +56,11 @@ EK.productivity_bonus = 102
 --- if this entry's beacon has a penalty module
 EK.has_penalty_module = 103
 
+-- item requests
+
+--- item request proxy groups and slot tracking for logistics delivery
+EK.item_requests = 120
+
 -- general Custom Building related stuff
 
 --- performance of the custom building
@@ -141,10 +146,10 @@ EK.has_water = 234
 EK.current_comfort = 235
 --- the target comfort level for automatic logistics delivery
 EK.target_comfort = 236
---- array of slot indices where upgrade filters are placed in the chest
-EK.upgrade_slots = 237
 --- lookup table of HousingTraits for upgraded quality tags
-EK.trait_upgrades = 238
+EK.trait_upgrades = 237
+--- lookup table of HousingTraits queued for logistics delivery
+EK.target_tags = 238
 
 -- water distributer
 

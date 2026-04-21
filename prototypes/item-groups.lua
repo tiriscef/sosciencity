@@ -26,6 +26,12 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "item-subgroup",
+        name = "sosciencity-trait-upgrade-info",
+        group = "sosciencity-infrastructure",
+        order = "abc"
+    },
+    {
+        type = "item-subgroup",
         name = "sosciencity-hqs",
         group = "sosciencity-infrastructure",
         order = "aca"
