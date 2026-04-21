@@ -100,6 +100,20 @@ local function create_advanced_placement_section(flow, player_index)
         max = Housing.max_level
     })
     Gui.register_element(stepper, "city-info-placement", "comfort-stepper", player_index)
+
+    advanced_flow.add {type = "label", caption = {"sosciencity.placement-target-tags"}}
+
+    local target_tags = settings and settings.target_tags
+    for _, tag in pairs(Table.get_keyset(Housing.tag_costs)) do
+        local checkbox = advanced_flow.add {
+            type = "checkbox",
+            caption = Locale.housing_trait(tag),
+            state = target_tags and target_tags[tag] and true or false,
+            enabled = Housing.is_tag_unlocked(tag),
+            tags = {sosciencity_gui_event = "placement_tag_checkbox", tag = tag}
+        }
+        Gui.register_element(checkbox, "city-info-placement-tag", tag, player_index)
+    end
 end
 
 --- Creates the general frame with city-wide stats and the advanced placement section.
@@ -509,6 +523,13 @@ function Gui.CityInfo.set_placement_mode(player, active)
         if stepper and stepper.valid then
             Gui.Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
         end
+        for _, tag in pairs(Table.get_keyset(Housing.tag_costs)) do
+            local el = Gui.get_element("city-info-placement-tag", tag, player.index)
+            if el and el.valid then
+                el.state = settings.target_tags and settings.target_tags[tag] and true or false
+                el.enabled = Housing.is_tag_unlocked(tag)
+            end
+        end
     end
 
     for _, caste in pairs(Castes.all) do
@@ -549,6 +570,20 @@ Gui.set_click_handler(
         if stepper and stepper.valid then
             Gui.Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
         end
+    end
+)
+
+Gui.set_checked_state_handler(
+    "placement_tag_checkbox",
+    function(event)
+        local player_index = event.player_index
+        local settings = storage.placement_settings[player_index]
+        if not settings then return end
+
+        local tag = event.element.tags.tag
+        if not settings.target_tags then settings.target_tags = {} end
+        settings.target_tags[tag] = event.element.state and true or nil
+        if not next(settings.target_tags) then settings.target_tags = nil end
     end
 )
 

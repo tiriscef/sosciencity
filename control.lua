@@ -112,6 +112,7 @@ if DEBUG then
 
             game.print(results)
             log(results)
+            helpers.write_file("test-results.txt", results)
         end
     )
 
@@ -129,6 +130,7 @@ if DEBUG then
 
             game.print(results)
             log(results)
+            helpers.write_file("test-results.txt", results)
         end
     )
 
@@ -149,6 +151,7 @@ if DEBUG then
 
             game.print(results)
             log(results)
+            helpers.write_file("test-results.txt", results)
 
             IntegrationHelpers.delete_test_surfaces()
         end

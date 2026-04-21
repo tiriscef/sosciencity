@@ -176,6 +176,23 @@ Gui.set_click_handler(
     end
 )
 
+Gui.set_click_handler(
+    "toggle_request_trait_tag",
+    function(event)
+        local tags = event.element.tags
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then return end
+
+        local tag = tags.tag
+        if (entry[EK.target_tags] or {})[tag] then
+            Inhabitants.cancel_target_tag(entry, tag)
+        else
+            Inhabitants.try_request_tag(entry, tag)
+        end
+        Gui.DetailsView.update_for_entry(entry)
+    end
+)
+
 local function update_tag_section(section_flow, entry, tag)
     local is_locked = not Housing.is_tag_unlocked(tag)
 
@@ -188,18 +205,25 @@ local function update_tag_section(section_flow, entry, tag)
 
     local active_tags = entry[EK.trait_upgrades] or {}
     local is_applied = active_tags[tag] ~= nil
+    local is_targeted = not is_applied and (entry[EK.target_tags] or {})[tag] ~= nil
     local btn = section_flow["tag-button"]
+    local request_btn = section_flow["request-button"]
     local progress_flow = section_flow["item-progress-flow"]
 
     if is_applied then
         btn.caption = {"sosciencity.tag-applied", Locale.housing_trait(tag)}
         btn.enabled = false
         btn.tooltip = ""
+        request_btn.visible = false
         progress_flow.visible = false
     else
         btn.caption = {"sosciencity.add-tag", Locale.housing_trait(tag)}
         btn.enabled = true
         btn.tooltip = ""
+        request_btn.visible = true
+        request_btn.caption = is_targeted
+            and {"sosciencity.cancel-tag-request", Locale.housing_trait(tag)}
+            or  {"sosciencity.request-tag", Locale.housing_trait(tag)}
         progress_flow.visible = true
         progress_flow.clear()
         local progress = Inhabitants.get_tag_progress(entry, tag)
@@ -224,12 +248,20 @@ local function add_tag_section(parent_flow, entry, tag)
     }
     section_flow.style.vertical_spacing = 4
 
+    local unit_number = entry[EK.unit_number]
     section_flow.add {
         type = "button",
         name = "tag-button",
         style = "sosciencity_heading_2_button",
         mouse_button_filter = {"left"},
-        tags = {sosciencity_gui_event = "add_trait_tag", unit_number = entry[EK.unit_number], tag = tag}
+        tags = {sosciencity_gui_event = "add_trait_tag", unit_number = unit_number, tag = tag}
+    }
+    section_flow.add {
+        type = "button",
+        name = "request-button",
+        style = "sosciencity_heading_3_button",
+        mouse_button_filter = {"left"},
+        tags = {sosciencity_gui_event = "toggle_request_trait_tag", unit_number = unit_number, tag = tag}
     }
     section_flow.add {type = "flow", name = "item-progress-flow", direction = "horizontal"}
 

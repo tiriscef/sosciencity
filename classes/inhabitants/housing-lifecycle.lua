@@ -46,6 +46,7 @@ local function try_upgrade_to_target(entry, player)
         if Inhabitants.try_manual_upgrade(entry, player) then return end
     end
 end
+Inhabitants.try_upgrade_to_target = try_upgrade_to_target
 
 local function on_setting_paste_to_inhabited(source, destination, event)
     destination[EK.housing_priority] = source[EK.housing_priority] or 0
@@ -146,6 +147,8 @@ function Inhabitants.copy_house(source, destination)
     destination[EK.housing_priority] = source[EK.housing_priority] or 0
     destination[EK.current_comfort] = source[EK.current_comfort] or get_housing_details(source).starting_comfort
     destination[EK.target_comfort] = source[EK.target_comfort] or destination[EK.current_comfort]
+    destination[EK.trait_upgrades] = source[EK.trait_upgrades] and Tables.copy(source[EK.trait_upgrades])
+    destination[EK.target_tags] = source[EK.target_tags] and Tables.copy(source[EK.target_tags])
     update_housing_census(destination)
 end
 
@@ -194,7 +197,9 @@ function Inhabitants.blueprint_house(entry)
         caste = entry[EK.type],
         priority = entry[EK.housing_priority],
         current_comfort = entry[EK.current_comfort],
-        target_comfort = entry[EK.target_comfort]
+        target_comfort = entry[EK.target_comfort],
+        target_tags = entry[EK.target_tags],
+        applied_tags = entry[EK.trait_upgrades]
     }
 end
 
