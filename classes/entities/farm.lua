@@ -93,30 +93,26 @@ local function update_farm(entry, delta_ticks)
 
     if accepts_plant_care and recipe and entry[EK.humus_mode] then
         local humus_needed = delta_ticks * Entity.humus_fertilitation_consumption
-        local workhours_needed = delta_ticks * Entity.humus_fertilization_workhours
-
         local percentage_to_consume = 1
 
         for _, fertilization_station in Neighborhood.iterate_type(entry, Type.fertilization_station) do
-            local humus_available = fertilization_station[EK.humus_stored]
-            local workhours_available = fertilization_station[EK.workhours]
+            if fertilization_station[EK.active] then
+                local humus_available = fertilization_station[EK.humus_stored]
+                local percentage_available =
+                    min(
+                        percentage_to_consume,
+                        humus_available / humus_needed * percentage_to_consume
+                    )
 
-            local percentage_available =
-                min(
-                    percentage_to_consume,
-                    humus_available / humus_needed * percentage_to_consume,
-                    workhours_available / workhours_needed * percentage_to_consume
-                )
+                percentage_to_consume = percentage_to_consume - percentage_available
+                local consumed_humus = humus_needed * percentage_available
+                fertilization_station[EK.humus_stored] = humus_available - consumed_humus
 
-            percentage_to_consume = percentage_to_consume - percentage_available
-            local consumed_humus = humus_needed * percentage_available
-            fertilization_station[EK.humus_stored] = humus_available - consumed_humus
-            fertilization_station[EK.workhours] = workhours_available - workhours_needed * percentage_available
+                log_item("humus", -consumed_humus)
 
-            log_item("humus", -consumed_humus)
-
-            if percentage_to_consume < 0.0001 then
-                break
+                if percentage_to_consume < 0.0001 then
+                    break
+                end
             end
         end
 
@@ -229,14 +225,11 @@ Register.set_entity_updater(
     function(entry, delta_ticks)
         local building_details = get_building_details(entry)
 
-        local performance = Inhabitants.evaluate_workforce(entry) * Inhabitants.evaluate_worker_happiness(entry)
-        entry[EK.performance] = performance
-
-        entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
+        entry[EK.active] = has_power(entry)
 
         local humus_stored = entry[EK.humus_stored]
         local free_humus_capacity = building_details.humus_capacity - humus_stored
-        if free_humus_capacity >= 1 then
+        if free_humus_capacity >= 10 then
             local inventory = Inventories.get_chest_inventory(entry)
             entry[EK.humus_stored] =
                 humus_stored + inventory.remove {name = "humus", count = floor(free_humus_capacity)}
@@ -250,8 +243,6 @@ Register.set_entity_creation_handler(
         entry[EK.humus_stored] = 0
 
         --entry[EK.fertiliser_stored] = 0
-
-        entry[EK.workhours] = 0
     end
 )
 
@@ -279,8 +270,6 @@ Register.set_entity_copy_handler(
         destination[EK.humus_stored] = source[EK.humus_stored]
 
         --destination[EK.fertiliser_stored] = source[EK.fertiliser_stored]
-
-        destination[EK.workhours] = source[EK.workhours]
     end
 )
 

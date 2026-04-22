@@ -96,11 +96,6 @@ local function update_fertilization_station(container, entry, player_id)
 
     Datalist.set_kv_pair_value(
         building_data,
-        "workhours",
-        {"sosciencity.display-workhours", floor(entry[EK.workhours])}
-    )
-    Datalist.set_kv_pair_value(
-        building_data,
         "humus-stored",
         display_item_stack("humus", floor(entry[EK.humus_stored]))
     )
@@ -111,7 +106,6 @@ local function create_fertilization_station(container, entry, player_id)
 
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
-    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
     Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
 
     Datalist.add_kv_pair(

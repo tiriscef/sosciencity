@@ -161,8 +161,7 @@ Building.values = {
     ["fertilization-station"] = {
         type = Type.fertilization_station,
         range = 30,
-        speed = 60 / Time.minute,
-        humus_capacity = 1000
+        humus_capacity = 100 -- Keep that fairly small. The purpose is mainly to create a buffer for fractions of humus items and reducing the number of inventory API calls.
     },
     ["fishing-hut"] = {
         type = Type.fishery,
