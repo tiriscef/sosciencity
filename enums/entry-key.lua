@@ -246,4 +246,14 @@ EK.houses_animals = 1300
 
 EK.participating_inhabitants = 1400
 
+-- slot-based buildings
+
+--- array of claimed target unit_numbers for slot-based buildings
+EK.slots = 1500
+
+-- farms (slot-based claim fields)
+
+--- unit_number of the pruning station that has claimed this farm, or nil
+EK.pruned_by = 1501
+
 return EK

@@ -46,7 +46,11 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general >>
 
-local function is_in_range(neighbor, entry, range)
+--- Returns true if `neighbor` is within `range` of any corner of `entry`'s selection box.
+--- @param neighbor Entry
+--- @param entry Entry
+--- @param range number|"global"
+function Neighborhood.is_in_range(neighbor, entry, range)
     if range == "global" then
         return true
     end
@@ -68,6 +72,7 @@ local function is_in_range(neighbor, entry, range)
     return (distance(x, y, x1, y1) < range) or (distance(x, y, x1, y2) < range) or (distance(x, y, x2, y1) < range) or
         (distance(x, y, x2, y2) < range)
 end
+local is_in_range = Neighborhood.is_in_range
 
 local function connect_bidirectional(entry, neighbor)
     local building_details = get_building_details(entry)

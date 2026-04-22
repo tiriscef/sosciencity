@@ -128,25 +128,27 @@ local function update_farm(entry, delta_ticks)
     end
 
     if accepts_plant_care and recipe and entry[EK.pruning_mode] then
-        local workhours_needed = delta_ticks * Entity.pruning_workhours
-        local workhours_consumed = 0
+        local pruned_by_uid = entry[EK.pruned_by]
+        local is_pruned = false
 
-        for _, pruning_station in Neighborhood.iterate_type(entry, Type.pruning_station) do
-            local consumed = min(pruning_station[EK.workhours], workhours_needed - workhours_consumed)
-
-            pruning_station[EK.workhours] = pruning_station[EK.workhours] - consumed
-            workhours_consumed = workhours_consumed + consumed
-
-            if workhours_needed - workhours_consumed < 0.0001 then
-                break
+        if pruned_by_uid then
+            local station = Register.try_get(pruned_by_uid)
+            if station and station[EK.active] then
+                is_pruned = true
+            else
+                entry[EK.pruned_by] = nil
             end
         end
 
-        local pruning_bonus = map_range(workhours_consumed, 0, workhours_needed, 0, Entity.pruning_productivity)
+        local pruning_bonus = is_pruned and Entity.pruning_productivity or 0
         entry[EK.prune_bonus] = pruning_bonus
         productivity = multiply_percentages(productivity, pruning_bonus)
     else
         entry[EK.prune_bonus] = nil
+        -- release any dangling claim when pruning mode is off
+        if entry[EK.pruned_by] then
+            entry[EK.pruned_by] = nil
+        end
     end
 
     if species_name then
@@ -203,6 +205,9 @@ local function copy_farm(source, destination)
 
     destination[EK.humus_mode] = source[EK.humus_mode]
     destination[EK.pruning_mode] = source[EK.pruning_mode]
+
+    -- preserve claim back-reference; stations keep pointing at this farm because unit_number is stable
+    destination[EK.pruned_by] = source[EK.pruned_by]
 end
 Register.set_entity_copy_handler(Type.farm, copy_farm)
 Register.set_entity_copy_handler(Type.automatic_farm, copy_farm)
@@ -282,26 +287,87 @@ Register.set_entity_copy_handler(
 ---------------------------------------------------------------------------------------------------
 -- << pruning station >>
 
+local try_get = Register.try_get
+
+local function is_valid_prune_target(farm)
+    return farm[EK.entity].valid
+        and get_building_details(farm).accepts_plant_care
+        and farm[EK.pruning_mode]
+end
+
 Register.set_entity_updater(
     Type.pruning_station,
     function(entry, delta_ticks)
         local building_details = get_building_details(entry)
-        local performance = Inhabitants.evaluate_workforce(entry) * Inhabitants.evaluate_worker_happiness(entry) * (has_power(entry) and 1 or 0)
+        local performance = evaluate_workforce(entry) * evaluate_worker_happiness(entry) * (has_power(entry) and 1 or 0)
         entry[EK.performance] = performance
-        entry[EK.workhours] = entry[EK.workhours] + performance * delta_ticks * building_details.speed
+
+        local max_slots = building_details.slots
+        -- 10%-floor on performance damps tick-to-tick slot thrashing
+        local effective_slots = floor(max_slots * floor(performance * 10) / 10)
+
+        local slots = entry[EK.slots]
+        local unit_number = entry[EK.unit_number]
+        local neighbor_farms = (entry[EK.neighbors] and entry[EK.neighbors][Type.farm]) or {}
+
+        -- validate existing slots: release any whose target has become invalid or is no longer a neighbor
+        for i = #slots, 1, -1 do
+            local target_uid = slots[i]
+            local target = try_get(target_uid)
+            local still_ours = target
+                and neighbor_farms[target_uid]
+                and is_valid_prune_target(target)
+                and target[EK.pruned_by] == unit_number
+            if not still_ours then
+                if target and target[EK.pruned_by] == unit_number then
+                    target[EK.pruned_by] = nil
+                end
+                table.remove(slots, i)
+            end
+        end
+
+        -- shrink to effective_slots when performance drops; drop newest claims first so FIFO is preserved
+        while #slots > effective_slots do
+            local target_uid = slots[#slots]
+            slots[#slots] = nil
+            local target = try_get(target_uid)
+            if target and target[EK.pruned_by] == unit_number then
+                target[EK.pruned_by] = nil
+            end
+        end
+
+        -- claim free neighbor farms up to capacity
+        if #slots < effective_slots then
+            for _, farm in Neighborhood.iterate_type(entry, Type.farm) do
+                if #slots >= effective_slots then
+                    break
+                end
+                if is_valid_prune_target(farm) and not farm[EK.pruned_by] then
+                    slots[#slots + 1] = farm[EK.unit_number]
+                    farm[EK.pruned_by] = unit_number
+                end
+            end
+        end
+
+        entry[EK.active] = #slots > 0
     end
 )
 
 Register.set_entity_creation_handler(
     Type.pruning_station,
     function(entry)
-        entry[EK.workhours] = 0
+        entry[EK.slots] = {}
     end
 )
 
 Register.set_entity_copy_handler(
     Type.pruning_station,
     function(source, destination)
-        destination[EK.workhours] = source[EK.workhours]
+        -- unit_numbers are stable across Register.clone, so farm back-references to source.unit_number
+        -- remain valid for destination as well. When migrating from a pre-slot save, source[EK.slots]
+        -- is nil and the creation handler's empty-table default stays.
+        if source[EK.slots] then
+            destination[EK.slots] = Tirislib.Tables.copy(source[EK.slots])
+        end
     end
 )

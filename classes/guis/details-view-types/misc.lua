@@ -139,15 +139,6 @@ Gui.DetailsView.register_type(
 
 local function update_pruning_station(container, entry, player_id)
     Gui.DetailsView.update_general(container, entry, player_id)
-
-    local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
-
-    Datalist.set_kv_pair_value(
-        building_data,
-        "workhours",
-        {"sosciencity.display-workhours", floor(entry[EK.workhours])}
-    )
 end
 
 local function create_pruning_station(container, entry, player_id)
@@ -155,7 +146,6 @@ local function create_pruning_station(container, entry, player_id)
 
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
-    Datalist.add_kv_pair(building_data, "workhours", {"sosciencity.workhours"})
 
     Datalist.add_kv_pair(
         building_data,
