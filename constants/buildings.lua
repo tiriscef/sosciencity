@@ -404,7 +404,7 @@ Building.values = {
     ["robo-pruning-station"] = {
         type = Type.pruning_station,
         range = 30,
-        speed = 120 / Time.minute,
+        slots = 5,
         power_usage = 150
     },
     ["salt-pond"] = {
