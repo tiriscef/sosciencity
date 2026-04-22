@@ -15,7 +15,6 @@ local try_get = Register.try_get
 local Tables = Tirislib.Tables
 local Arrays = Tirislib.Arrays
 local Utils = Tirislib.Utils
-local Luaq_from = Tirislib.Luaq.from
 local coin_flips = Utils.coin_flips
 local occurence_probability = Utils.occurrence_probability
 local update_progress = Utils.update_progress
@@ -25,7 +24,6 @@ local HEALTHY = DiseaseGroup.HEALTHY
 local make_sick = DiseaseGroup.make_sick
 local make_sick_randomly = DiseaseGroup.make_sick_randomly
 local cure = DiseaseGroup.cure
-local not_healthy = DiseaseGroup.not_healthy
 local take_specific_inhabitants = InhabitantGroup.take_specific
 local floor = math.floor
 local min = math.min
@@ -256,74 +254,54 @@ local function has_facility(hospital, facility_type)
     return false
 end
 
-local function try_treat_disease(hospital, hospital_contents, inventories, disease_group, disease_id, count)
-    -- check if the player disallowed treating this disease
-    if hospital[EK.treatment_permissions][disease_id] == false then
-        return 0
-    end
+--- Treats one specific disease in a housing entry using one hospital slot's work budget for one tick.
+--- Called from the hospital updater once per claimed slot.
+--- @param hospital Entry
+--- @param housing Entry
+--- @param disease_id integer
+--- @param inventories LuaInventory[]
+--- @param available_work number work budget for this slot this tick
+--- @param statistics table hospital[EK.treated]
+function Inhabitants.treat_disease_slot(hospital, housing, disease_id, inventories, available_work, statistics)
+    local disease_group = housing[EK.diseases]
+    local count = disease_group[disease_id]
+    if not count or count == 0 then return end
+
+    if hospital[EK.treatment_permissions][disease_id] == false then return end
 
     local disease = disease_values[disease_id]
-    local necessary_facility = disease.curing_facility
+    if not disease.is_treatable then return end
+    if disease.curing_facility and not has_facility(hospital, disease.curing_facility) then return end
 
-    if necessary_facility and not has_facility(hospital, necessary_facility) then
-        return 0
-    end
-
-    local operations = hospital[EK.workhours]
     local workload_per_case = disease.curing_workload
     local items_per_case = disease.cure_items or {}
 
-    -- determine the number of treated cases
-    local to_treat = min(count, floor(operations / workload_per_case))
-
+    local contents = Inventories.get_combined_contents(inventories)
+    local to_treat = min(count, floor(available_work / workload_per_case))
     for item_name, item_count in pairs(items_per_case) do
-        to_treat = min(to_treat, floor((hospital_contents[item_name] or 0) / item_count))
+        to_treat = min(to_treat, floor((contents[item_name] or 0) / item_count))
     end
 
     if to_treat > 0 then
         to_treat = cure(disease_group, disease_id, to_treat)
 
-        -- consume operations and items
-        hospital[EK.workhours] = operations - to_treat * workload_per_case
-
         local items = table_copy(items_per_case)
         table_multiply(items, to_treat)
         Inventories.remove_item_range_from_inventory_range(inventories, items)
-    end
 
-    return to_treat
-end
-
-local function treat_diseases(entry, hospitals, diseases, disease_group, new_diseases)
-    if not diseases then
-        return
-    end
-
-    for disease_id, count in pairs(diseases) do
-        for _, hospital in pairs(hospitals) do
-            local inventories = Entity.get_hospital_inventories(hospital)
-            local contents = Inventories.get_combined_contents(inventories)
-
-            local treated = try_treat_disease(hospital, contents, inventories, disease_group, disease_id, count)
-
-            if treated > 0 then
-                local disease_data = disease_values[disease_id]
-                local reports_generated = Utils.coin_flips_overcrit(disease_data.reports_per_treatment, treated, 5)
-                if reports_generated > 0 then
-                    Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports_generated)
-                end
-
-                cure_side_effects(entry, disease_id, treated, true, new_diseases)
-                local statistics = hospital[EK.treated]
-                statistics[disease_id] = (statistics[disease_id] or 0) + treated
-                Communication.report_treatment(disease_id, treated)
-            end
-
-            count = count - treated
-            if count == 0 then
-                break
-            end
+        local reports = Utils.coin_flips_overcrit(disease.reports_per_treatment, to_treat, 5)
+        if reports > 0 then
+            Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports)
         end
+
+        local new_diseases = {}
+        cure_side_effects(housing, disease_id, to_treat, true, new_diseases)
+        for nd_id, nd_count in pairs(new_diseases) do
+            make_sick(disease_group, nd_id, nd_count)
+        end
+
+        statistics[disease_id] = (statistics[disease_id] or 0) + to_treat
+        Communication.report_treatment(disease_id, to_treat)
     end
 end
 
@@ -333,18 +311,24 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
         return
     end
 
-    -- A table with all the diseases which happen as a side effect of the treatments/recoveries.
-    -- They have to be added later to avoid problems with instantly treated-diseases and to avoid
-    -- mixing removing and adding keys to the DiseaseGroup (which can break the pairs-loop).
+    -- remove any claims from hospitals that are no longer active
+    local claims = entry[EK.treatment_claims]
+    if claims then
+        for disease_id, claimers in pairs(claims) do
+            for i = #claimers, 1, -1 do
+                local hospital = try_get(claimers[i])
+                if not hospital or not hospital[EK.active] then
+                    table.remove(claimers, i)
+                end
+            end
+            if #claimers == 0 then
+                claims[disease_id] = nil
+            end
+        end
+    end
+
+    -- hospital-side treatment is driven by the hospital updater; only natural recovery happens here
     local new_diseases = {}
-
-    -- treat disease cases in hospitals
-    local hospitals = Neighborhood.get_by_type(entry, Type.hospital)
-    Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.improvised_hospital))
-
-    local grouped = Luaq_from(disease_group):where(not_healthy):group(is_recoverable):to_table()
-    treat_diseases(entry, hospitals, grouped[false], disease_group, new_diseases)
-    treat_diseases(entry, hospitals, grouped[true], disease_group, new_diseases)
 
     for disease_id, count in pairs(disease_group) do
         if disease_id ~= HEALTHY then
@@ -416,21 +400,22 @@ local function update_blood_donations(entry, delta_ticks)
         Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
 
         for _, hospital in pairs(hospitals) do
-            if hospital[EK.workhours] >= hospital[EK.blood_donation_threshold] then
-                local max_donations = min(donations, floor(hospital[EK.workhours] / Biology.blood_donation_workload))
-                donations = donations - max_donations
+            if hospital[EK.active] then
+                local slots = hospital[EK.slots]
+                local free_slots = get_building_details(hospital).slots - #slots
+                if free_slots >= hospital[EK.blood_donation_threshold] then
+                    local actual_donations =
+                        Inventories.try_insert(
+                        Inventories.get_chest_inventory(hospital),
+                        Biology.blood_donation_item,
+                        donations
+                    )
+                    hospital[EK.blood_donations] = hospital[EK.blood_donations] + actual_donations
+                    donations = donations - actual_donations
 
-                local actual_donations =
-                    Inventories.try_insert(
-                    Inventories.get_chest_inventory(hospital),
-                    Biology.blood_donation_item,
-                    max_donations
-                )
-                hospital[EK.blood_donations] = hospital[EK.blood_donations] + actual_donations
-                hospital[EK.workhours] = hospital[EK.workhours] - actual_donations * Biology.blood_donation_workload
-
-                if donations < 1 then
-                    return
+                    if donations < 1 then
+                        return
+                    end
                 end
             end
         end
