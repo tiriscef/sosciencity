@@ -203,7 +203,7 @@ EK.necrofall_progress = 802
 EK.treated = 900
 --- table with treatment permissions for this hospital as (disease_id, boolean)-pairs
 EK.treatment_permissions = 901
---- The workhours threshold when this hospital will start to let people donate blood
+--- The free slot number threshold when this hospital will start to let people donate blood
 EK.blood_donation_threshold = 902
 --- The count of blood donations at this hospital
 EK.blood_donations = 903
@@ -255,5 +255,10 @@ EK.slots = 1500
 
 --- unit_number of the pruning station that has claimed this farm, or nil
 EK.pruned_by = 1501
+
+-- housing (slot-based claim fields)
+
+--- table of (disease_id → array of hospital_uids) currently treating that disease in this housing entry
+EK.treatment_claims = 1502
 
 return EK

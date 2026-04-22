@@ -149,6 +149,14 @@ function Inhabitants.copy_house(source, destination)
     destination[EK.target_comfort] = source[EK.target_comfort] or destination[EK.current_comfort]
     destination[EK.trait_upgrades] = source[EK.trait_upgrades] and Tables.copy(source[EK.trait_upgrades])
     destination[EK.target_tags] = source[EK.target_tags] and Tables.copy(source[EK.target_tags])
+    -- deep-copy treatment_claims so each housing entry owns its own claimer arrays
+    if type(source[EK.treatment_claims]) == "table" then
+        local claims_copy = {}
+        for disease_id, claimers in pairs(source[EK.treatment_claims]) do
+            claims_copy[disease_id] = Tables.copy(claimers)
+        end
+        destination[EK.treatment_claims] = claims_copy
+    end
     update_housing_census(destination)
 end
 

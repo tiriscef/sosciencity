@@ -76,21 +76,17 @@ Tirislib.Testing.add_test_case(
 -- << hospital >>
 
 Tirislib.Testing.add_test_case(
-    "Hospital accumulates workhours when staffed",
+    "Hospital claims slots for sick inhabitants",
     "integration|integration.inhabitants",
     function()
-        -- create hospital and a plasma house nearby to supply workforce
         local hospital_entry = Helpers.create_and_register(test_surface, "test-hospital", {0, 0})
-        Helpers.create_inhabited_house(test_surface, {3, 0}, Type.plasma, 20)
+        local house_entry = Helpers.create_inhabited_house(test_surface, {3, 0}, Type.plasma, 20)
 
-        -- fill the EEI energy buffer so the hospital has power
-        local eei = hospital_entry[EK.subentities][SubentityType.eei]
-        eei.energy = eei.electric_buffer_size
+        DiseaseGroup.make_sick(house_entry[EK.diseases], 1, 3)
 
-        -- hire workers
         Register.update_entry(hospital_entry, game.tick + 100)
 
-        Assert.greater_than(hospital_entry[EK.workhours], 0, "hospital should have accumulated workhours")
+        Assert.greater_than(#hospital_entry[EK.slots], 0, "hospital should have claimed slots for sick inhabitants")
     end,
     function()
         test_surface = Helpers.create_test_surface()

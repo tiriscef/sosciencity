@@ -8,8 +8,6 @@ local Types = require("constants.types")
 --- A disease is a particular abnormal condition that negatively affects the structure or function of all or part of an organism
 local Diseases = {}
 
-Diseases.not_curable = 1000000000
-
 --- the ID of a disease
 --- @alias DiseaseID integer
 
@@ -20,6 +18,7 @@ Diseases.not_curable = 1000000000
 --- @field localised_description locale
 --- @field cure_items table with (item name, count)-pairs
 --- @field curing_workload number
+--- @field is_treatable boolean false when no hospital can treat the disease (postprocessed to boolean; absent = true)
 --- @field curing_facility Type
 --- @field contagiousness number
 --- @field lethality number
@@ -48,9 +47,8 @@ Diseases.not_curable = 1000000000
 --- **complication_probability:** the probability of a complication<br>
 --- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured<br>
 --- **work_effectivity:** The percentage of the normal points the inhabitants provide<br>
+--- **is_treatable:** false when no hospital can treat the disease; absent means treatable<br>
 --- **reports_per_treatment:** The count of medical reports that a treatment of this disease produces<br>
---- \
---- *XXX lazy implementation: not-curable diseases have a curing_workload of 1 billion.*
 Diseases.values = {
     -- 1+: primarily accidents
     [1] = {
@@ -120,7 +118,7 @@ Diseases.values = {
     },
     [7] = {
         name = "hematoma",
-        curing_workload = Diseases.not_curable,
+        is_treatable = false,
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0.5
     },
@@ -233,7 +231,7 @@ Diseases.values = {
     },
     [2005] = {
         name = "exhaustion",
-        curing_workload = Diseases.not_curable,
+        is_treatable = false,
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
@@ -738,7 +736,7 @@ do
     end
 
     local function get_localised_cure(disease)
-        if disease.curing_workload == Diseases.not_curable then
+        if disease.is_treatable == false then
             return {"sosciencity.not-curable"}
         end
 
@@ -838,6 +836,9 @@ do
         disease.localised_name = {"disease-name." .. disease.name}
         disease.localised_description = get_localised_description(disease)
         disease.id = id
+
+        -- normalize is_treatable: absent or true → true, false → false
+        disease.is_treatable = disease.is_treatable ~= false
 
         -- convert recovery from ticks till recovery to progress per tick
         disease.natural_recovery = disease.natural_recovery and 1 / disease.natural_recovery or nil

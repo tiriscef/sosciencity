@@ -104,6 +104,9 @@ function ItemRequests.set_request(entity, inventory, entry, key, items)
     if (old == nil) ~= (items == nil) or not entity.item_request_proxy then
         rebuild(entity, inventory, entry)
     end
+    if not next(data.groups) then
+        entry[EK.item_requests] = nil
+    end
 end
 
 --- Destroys the proxy and clears all request data.

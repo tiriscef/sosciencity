@@ -5,10 +5,13 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 -- constants
+local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local TypeGroup = require("constants.type-groups")
 local type_definitions = require("constants.types").definitions
+
+local get_building_details = Buildings.get
 
 local diseases = Diseases.values
 local Entity = Entity
@@ -30,11 +33,13 @@ local function update_disease_catalogue(container, entry)
     local statistics = entry[EK.treated]
     local permissions = entry[EK.treatment_permissions]
 
-    for id in pairs(Diseases.values) do
+    for id, disease in pairs(Diseases.values) do
         data_list[tostring(id)].caption = statistics[id] or 0
 
-        data_list[format(Gui.unique_prefix_builder, "treatment-permission", tostring(id))].state =
-            permissions[id] == nil and true or permissions[id]
+        if disease.is_treatable then
+            data_list[format(Gui.unique_prefix_builder, "treatment-permission", tostring(id))].state =
+                permissions[id] == nil and true or permissions[id]
+        end
     end
 end
 
@@ -82,13 +87,17 @@ local function create_disease_catalogue(container)
             name = tostring(id)
         }
 
-        data_list.add {
-            type = "checkbox",
-            name = format(Gui.unique_prefix_builder, "treatment-permission", tostring(id)),
-            state = true,
-            tooltip = {"sosciencity.treatment-permission"},
-            tags = {sosciencity_gui_event = "treatment_permission_checkbox", disease_id = id}
-        }
+        if disease.is_treatable then
+            data_list.add {
+                type = "checkbox",
+                name = format(Gui.unique_prefix_builder, "treatment-permission", tostring(id)),
+                state = true,
+                tooltip = {"sosciencity.treatment-permission"},
+                tags = {sosciencity_gui_event = "treatment_permission_checkbox", disease_id = id}
+            }
+        else
+            data_list.add {type = "label", name = format(Gui.unique_prefix_builder, "treatment-permission", tostring(id))}
+        end
     end
 end
 
@@ -121,7 +130,8 @@ local function update_hospital_details(container, entry, player_id)
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Datalist.set_kv_pair_value(building_data, "capacity", {"sosciencity.show-operations", floor(entry[EK.workhours])})
+    local effective_slots = get_building_details(entry).slots
+    Datalist.set_kv_pair_value(building_data, "capacity", {"sosciencity.show-slots", #entry[EK.slots], effective_slots})
 
     local facility_flow = Datalist.get_kv_value_element(building_data, "facilities")
     facility_flow.clear()
@@ -184,8 +194,8 @@ local function create_hospital_details(container, entry, player_id)
         building_data,
         "blood-donation-threshold",
         format(Gui.unique_prefix_builder, "blood-donation-threshold", "hospital"),
-        {numeric = true},
-        {"sosciencity.threshold"}
+        {numeric = true, allow_decimal = false, allow_negative = false},
+        {"sosciencity.free-slots-threshold"}
     )
     textfield.text = tostring(entry[EK.blood_donation_threshold])
     textfield.tooltip = {"sosciencity.blood-donation-threshold"}
