@@ -220,7 +220,7 @@ local function create_farm(container, entry, player_id)
             building_data,
             "explain-pruning",
             "",
-            {"sosciencity.explain-pruning", Entity.pruning_workhours * Time.minute, Entity.pruning_productivity}
+            {"sosciencity.explain-pruning", Entity.pruning_productivity}
         )
         Datalist.add_kv_pair(building_data, "prune-bonus")
     end
