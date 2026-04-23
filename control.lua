@@ -431,6 +431,12 @@ local function on_configuration_change()
 
         Gui.reset_guis()
 
+        -- Initialise group-based update cycle storage (replaces storage.last_index).
+        storage.register_by_group = storage.register_by_group or {}
+        storage.last_index_per_group = storage.last_index_per_group or {}
+        storage.last_index = nil
+        Register.load()
+
         -- Rebuild entries
         local old_register = Tirislib.Tables.copy(storage.register)
 
