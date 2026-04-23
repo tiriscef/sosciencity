@@ -5,6 +5,7 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local TypeGroup = require("constants.type-groups")
 local Types = require("constants.types")
+local UpdateGroup = require("constants.update-groups")
 
 --- Static class that stores and manages entities in hopefully performant ways.
 Register = {}
@@ -21,17 +22,23 @@ Register = {}
     storage.register_by_type: table
         [type]: unit_number-lookup-table
 
+    storage.register_by_group: table
+        [update_group]: unit_number-lookup-table
+
     storage.entry_counts:
         [type]: int (total number)
 
-    storage.last_index: int? (unit_number of the entry the last update cycle stopped on)
+    storage.last_index_per_group: table
+        [update_group]: int? (unit_number of the entry the last update cycle stopped on)
 ]]
 -- local often used globals for almost non-existant performance gains
 
 local storage
 local register
 local register_by_type
+local register_by_group
 local entry_counts
+local last_index_per_group
 
 local fire_all_workers
 
@@ -57,7 +64,9 @@ local function set_locals()
     storage = _ENV.storage
     register = storage.register
     register_by_type = storage.register_by_type
+    register_by_group = storage.register_by_group
     entry_counts = storage.entry_counts
+    last_index_per_group = storage.last_index_per_group
 
     -- These systems are loaded after the register, so we local them during on_load
     fire_all_workers = Inhabitants.unemploy_all_workers
@@ -76,7 +85,9 @@ function Register.init()
     storage = _ENV.storage
     storage.register = {}
     storage.register_by_type = {}
+    storage.register_by_group = {}
     storage.entry_counts = {}
+    storage.last_index_per_group = {}
     set_locals()
 
     -- find and register all the machines that need to be registered
@@ -322,6 +333,13 @@ local function add_entry_to_register(entry)
     end
     register_by_type[_type][unit_number] = unit_number
 
+    -- by group
+    local group = UpdateGroup.type_assignment[_type] or UpdateGroup.default
+    if not register_by_group[group] then
+        register_by_group[group] = {}
+    end
+    register_by_group[group][unit_number] = unit_number
+
     -- type counts
     if not entry_counts[_type] then
         entry_counts[_type] = 0
@@ -333,10 +351,14 @@ local function remove_entry_from_register(entry)
     local _type = entry[EK.type]
     local unit_number = entry[EK.unit_number]
 
-    -- The last update cycle stopped at this entry.
-    -- We go to the next one, so the next cycle doesn't need to start from the first entry.
-    if storage.last_index == unit_number then
-        storage.last_index = next(register, unit_number)
+    -- Advance group cursor before removal so the next cycle resumes correctly.
+    local group = UpdateGroup.type_assignment[_type] or UpdateGroup.default
+    local group_table = register_by_group[group]
+    if group_table then
+        if last_index_per_group[group] == unit_number then
+            last_index_per_group[group] = next(group_table, unit_number)
+        end
+        group_table[unit_number] = nil
     end
 
     -- general
@@ -526,31 +548,6 @@ function Register.update_entry(entry, current_tick)
     entry[EK.last_update] = current_tick
 end
 
-function Register.entity_update_cycle(current_tick)
-    local next_entry = Register.next
-    local count = 0
-    local index = storage.last_index
-    local current_entry = try_get(index)
-    local number_of_checks = storage.updates_per_cycle
-
-    if not current_entry then
-        -- Begin a new loop from the start (nil as key returns the first pair).
-        -- This is safe even if last_index was just invalidated, because
-        -- remove_entry_from_register already advances last_index on removal.
-        index, current_entry = next_entry()
-    end
-
-    while index and count < number_of_checks do
-        update_custom_building(current_entry)
-        on_update(current_entry, current_tick)
-        current_entry[EK.last_update] = current_tick
-
-        index, current_entry = next_entry(index)
-        count = count + 1
-    end
-    storage.last_index = index
-end
-
 local function nothing()
 end
 
@@ -565,6 +562,38 @@ local function type_iterator(type_table, key)
         local entry = try_get(key)
         if entry then
             return key, entry
+        end
+    end
+end
+
+function Register.entity_update_cycle(current_tick)
+    local total = storage.updates_per_cycle
+    local definitions = UpdateGroup.definitions
+
+    for i = 1, #UpdateGroup.all do
+        local group = UpdateGroup.all[i]
+        local group_table = register_by_group[group]
+
+        if group_table then
+            local slice = math.ceil(total * definitions[group].slice_percent)
+            local index = last_index_per_group[group]
+            local current_entry = try_get(index)
+
+            if not current_entry then
+                index, current_entry = type_iterator(group_table, nil)
+            end
+
+            local count = 0
+            while index and count < slice do
+                update_custom_building(current_entry)
+                on_update(current_entry, current_tick)
+                current_entry[EK.last_update] = current_tick
+
+                index, current_entry = type_iterator(group_table, index)
+                count = count + 1
+            end
+
+            last_index_per_group[group] = index
         end
     end
 end
