@@ -5,6 +5,7 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 -- constants
+local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
@@ -139,15 +140,24 @@ local function update_treatment_slots(general, entry)
                 caption = {"sosciencity.slot-house", housing_type_details.localised_name, floor(pos.x), floor(pos.y)}
             }
 
-            local disease = diseases[slot.disease_id]
+            local workload, slot_caption, slot_tooltip
+            if slot.blood_donation then
+                workload = Biology.blood_donation_workload
+                slot_caption = {"sosciencity.blood-donation-slot"}
+            else
+                local disease = diseases[slot.disease_id]
+                workload = disease.curing_workload
+                slot_caption = disease.localised_name
+                slot_tooltip = disease.localised_description
+            end
+
             treatments.add {
                 type = "label",
                 name = "disease-" .. i,
-                caption = disease.localised_name,
-                tooltip = disease.localised_description
+                caption = slot_caption,
+                tooltip = slot_tooltip
             }
 
-            local workload = disease.curing_workload
             local progress = math.min((slot.work_done or 0) / workload, 1)
             local progressbar =
                 treatments.add {

@@ -3,7 +3,6 @@ local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
-local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
@@ -334,7 +333,8 @@ local function get_blood_donation_progress(entry, delta_ticks)
 end
 Inhabitants.get_blood_donation_progress = get_blood_donation_progress
 
---- Updates blood donations for a housing entry: accumulates progress and inserts blood items into nearby hospitals.
+--- Updates blood donations for a housing entry: accumulates progress and submits donation jobs to nearby hospitals.
+--- Each accepted donation occupies a hospital slot; the hospital handles item consumption and blood bag production.
 --- @param entry Entry
 --- @param delta_ticks integer
 local function update_blood_donations(entry, delta_ticks)
@@ -350,22 +350,10 @@ local function update_blood_donations(entry, delta_ticks)
         Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
 
         for _, hospital in pairs(hospitals) do
-            if hospital[EK.active] then
-                local slots = hospital[EK.slots]
-                local free_slots = get_building_details(hospital).slots - #slots
-                if free_slots >= hospital[EK.blood_donation_threshold] then
-                    local actual_donations =
-                        Inventories.try_insert(
-                        Inventories.get_chest_inventory(hospital),
-                        Biology.blood_donation_item,
-                        donations
-                    )
-                    hospital[EK.blood_donations] = hospital[EK.blood_donations] + actual_donations
-                    donations = donations - actual_donations
-
-                    if donations < 1 then
-                        return
-                    end
+            if Entity.try_blood_donation(hospital, entry) then
+                donations = donations - 1
+                if donations < 1 then
+                    return
                 end
             end
         end

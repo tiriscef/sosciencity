@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Biology = require("constants.biology")
 local Castes = require("constants.castes")
 local Buildings = require("constants.buildings")
 local Diseases = require("constants.diseases")
@@ -16,13 +17,10 @@ local apply_cure_side_effects = Inhabitants.apply_cure_side_effects
 local cure = DiseaseGroup.cure
 local try_get = Register.try_get
 local Table = Tirislib.Tables
-local table_copy = Table.copy
-local table_multiply = Table.multiply
 local Utils = Tirislib.Utils
 local coin_flips_overcrit = Utils.coin_flips_overcrit
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor
-local min = math.min
 
 --- Returns the LuaInventory of the given hospital and all hospital complement buildings connected to it.
 --- @param entry Entry hospital
@@ -66,63 +64,59 @@ local function has_facility(hospital, facility_type)
 end
 
 --- Treats one specific disease in a housing entry using one hospital slot's work budget for one tick.
---- Called from the hospital updater once per claimed slot. Accumulates this tick's work budget into
---- `slot.work_done` and cures cases once enough has accumulated to meet `disease.curing_workload`.
---- Excess progress is capped at one workload (bounded by the current claim — no cross-claim banking).
---- @param hospital Entry
+--- Cure items were consumed when the slot was claimed; this only accumulates work and cures.
 --- @param housing Entry
 --- @param slot table {uid, disease_id, work_done}
 --- @param inventories LuaInventory[]
 --- @param available_work number work budget for this slot this tick
 --- @param statistics table hospital[EK.treated]
-local function treat_disease_slot(hospital, housing, slot, inventories, available_work, statistics)
+local function treat_disease_slot(housing, slot, inventories, available_work, statistics)
     local disease_id = slot.disease_id
     local disease_group = housing[EK.diseases]
     local count = disease_group[disease_id]
     if not count or count == 0 then return end
 
-    if hospital[EK.treatment_permissions][disease_id] == false then return end
-
     local disease = disease_values[disease_id]
-    if not disease.is_treatable then return end
-    if disease.curing_facility and not has_facility(hospital, disease.curing_facility) then return end
-
-    local workload_per_case = disease.curing_workload
-    local items_per_case = disease.cure_items or {}
-
     local work_done = (slot.work_done or 0) + available_work
 
-    local contents = Inventories.get_combined_contents(inventories)
-    local to_treat = min(count, floor(work_done / workload_per_case))
-    for item_name, item_count in pairs(items_per_case) do
-        to_treat = min(to_treat, floor((contents[item_name] or 0) / item_count))
-    end
+    if work_done >= disease.curing_workload then
+        cure(disease_group, disease_id, 1)
 
-    if to_treat > 0 then
-        to_treat = cure(disease_group, disease_id, to_treat)
-
-        local items = table_copy(items_per_case)
-        table_multiply(items, to_treat)
-        Inventories.remove_item_range_from_inventory_range(inventories, items)
-
-        local reports = coin_flips_overcrit(disease.reports_per_treatment, to_treat, 5)
+        local reports = coin_flips_overcrit(disease.reports_per_treatment, 1, 5)
         if reports > 0 then
             Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports)
         end
 
-        apply_cure_side_effects(housing, disease_id, to_treat, true)
+        apply_cure_side_effects(housing, disease_id, 1, true)
+        statistics[disease_id] = (statistics[disease_id] or 0) + 1
+        Communication.report_treatment(disease_id, 1)
 
-        statistics[disease_id] = (statistics[disease_id] or 0) + to_treat
-        Communication.report_treatment(disease_id, to_treat)
-
-        work_done = work_done - to_treat * workload_per_case
+        work_done = work_done - disease.curing_workload
     end
 
-    -- cap at one workload so an item/case-limited slot can't bank unbounded progress
-    if work_done > workload_per_case then
-        work_done = workload_per_case
+    if work_done > disease.curing_workload then
+        work_done = disease.curing_workload
     end
     slot.work_done = work_done
+end
+
+--- Processes one in-progress blood donation slot.
+--- Medical instruments were consumed when the slot was accepted; this only accumulates work
+--- and produces the blood bag when done.
+--- @param hospital Entry
+--- @param slot table {uid, blood_donation, work_done}
+--- @param inventories LuaInventory[]
+--- @param available_work number
+local function process_blood_donation_slot(hospital, slot, inventories, available_work)
+    local work_done = (slot.work_done or 0) + available_work
+
+    if work_done >= Biology.blood_donation_workload then
+        Inventories.try_insert_into_inventory_range(inventories, Biology.blood_donation_item, 1)
+        hospital[EK.blood_donations] = hospital[EK.blood_donations] + 1
+        slot.done = true
+    else
+        slot.work_done = work_done
+    end
 end
 
 --- Writes a fake-tooltip custom_status showing bed occupancy.
@@ -165,26 +159,41 @@ local function update_hospital(entry, delta_ticks)
     local unit_number = entry[EK.unit_number]
     local slots = entry[EK.slots]
 
-    -- validate existing slots: release any whose disease is gone or back-reference is stale
+    -- validate existing slots: remove done/stale blood donation slots;
+    -- release disease slots whose target is gone, disease resolved, or treatment conditions changed
     for i = #slots, 1, -1 do
         local slot = slots[i]
-        local target = try_get(slot.uid)
-        local disease_count = target and target[EK.diseases][slot.disease_id]
-        local still_ours = false
-        if disease_count and disease_count > 0 then
-            local claimers = target[EK.treatment_claims] and target[EK.treatment_claims][slot.disease_id]
-            if claimers then
-                for _, uid in pairs(claimers) do
-                    if uid == unit_number then
-                        still_ours = true
-                        break
+        if slot.blood_donation then
+            if slot.done or not try_get(slot.uid) then
+                table.remove(slots, i)
+            end
+        else
+            local target = try_get(slot.uid)
+            local disease_count = target and target[EK.diseases][slot.disease_id]
+            local still_ours = false
+            if disease_count and disease_count > 0 then
+                local claimers = target[EK.treatment_claims] and target[EK.treatment_claims][slot.disease_id]
+                if claimers then
+                    for _, uid in pairs(claimers) do
+                        if uid == unit_number then
+                            still_ours = true
+                            break
+                        end
                     end
                 end
             end
-        end
-        if not still_ours then
-            if target then release_claim(target, slot.disease_id, unit_number) end
-            table.remove(slots, i)
+            if still_ours then
+                local disease = disease_values[slot.disease_id]
+                if entry[EK.treatment_permissions][slot.disease_id] == false then
+                    still_ours = false
+                elseif disease.curing_facility and not has_facility(entry, disease.curing_facility) then
+                    still_ours = false
+                end
+            end
+            if not still_ours then
+                if target then release_claim(target, slot.disease_id, unit_number) end
+                table.remove(slots, i)
+            end
         end
     end
 
@@ -192,50 +201,85 @@ local function update_hospital(entry, delta_ticks)
     while #slots > effective_slots do
         local slot = slots[#slots]
         slots[#slots] = nil
-        local target = try_get(slot.uid)
-        if target then release_claim(target, slot.disease_id, unit_number) end
-    end
-
-    -- claim new (housing, disease) pairs from the neighborhood
-    if #slots < effective_slots then
-        for _, caste in pairs(Castes.all) do
-            if #slots >= effective_slots then break end
-
-            for _, housing in Neighborhood.iterate_type(entry, caste.type) do
-                if #slots >= effective_slots then break end
-                local diseases = housing[EK.diseases]
-                local claims = housing[EK.treatment_claims]
-
-                for disease_id, count in pairs(diseases) do
-                    if #slots >= effective_slots then break end
-                    if disease_id == HEALTHY or count == 0 then goto next_disease end
-                    if not disease_values[disease_id].is_treatable then goto next_disease end
-                    local current_claims = (claims and claims[disease_id]) and #claims[disease_id] or 0
-                    if current_claims >= count then goto next_disease end
-
-                    if not claims then
-                        housing[EK.treatment_claims] = {}
-                        claims = housing[EK.treatment_claims]
-                    end
-                    claims[disease_id] = claims[disease_id] or {}
-                    claims[disease_id][#claims[disease_id] + 1] = unit_number
-                    slots[#slots + 1] = {uid = housing[EK.unit_number], disease_id = disease_id, work_done = 0}
-                    ::next_disease::
-                end
-            end
+        if not slot.blood_donation then
+            local target = try_get(slot.uid)
+            if target then release_claim(target, slot.disease_id, unit_number) end
         end
     end
 
-    -- treat each claimed (housing, disease) slot
-    if performance > 0 and #slots > 0 then
-        local work_per_slot = performance * delta_ticks * building_details.speed
+    if performance > 0 then
         local inventories = Entity.get_hospital_inventories(entry)
-        local statistics = entry[EK.treated]
 
-        for _, slot in pairs(slots) do
-            local housing = try_get(slot.uid)
-            if housing then
-                treat_disease_slot(entry, housing, slot, inventories, work_per_slot, statistics)
+        -- claim new (housing, disease) pairs with upfront cure-item consumption
+        if #slots < effective_slots then
+            local contents = Inventories.get_combined_contents(inventories)
+
+            for _, caste in pairs(Castes.all) do
+                if #slots >= effective_slots then break end
+
+                for _, housing in Neighborhood.iterate_type(entry, caste.type) do
+                    if #slots >= effective_slots then break end
+                    local diseases = housing[EK.diseases]
+                    local claims = housing[EK.treatment_claims]
+
+                    for disease_id, count in pairs(diseases) do
+                        if #slots >= effective_slots then break end
+                        if disease_id == HEALTHY or count == 0 then goto next_disease end
+
+                        local disease = disease_values[disease_id]
+                        if not disease.is_treatable then goto next_disease end
+                        if entry[EK.treatment_permissions][disease_id] == false then goto next_disease end
+                        if disease.curing_facility and not has_facility(entry, disease.curing_facility) then goto next_disease end
+
+                        local current_claims = (claims and claims[disease_id]) and #claims[disease_id] or 0
+                        if current_claims >= count then goto next_disease end
+
+                        local cure_items = disease.cure_items
+                        if cure_items and next(cure_items) then
+                            local can_afford = true
+                            for item_name, item_count in pairs(cure_items) do
+                                if (contents[item_name] or 0) < item_count then
+                                    can_afford = false
+                                    break
+                                end
+                            end
+                            if not can_afford then goto next_disease end
+
+                            Inventories.remove_item_range_from_inventory_range(inventories, cure_items)
+                            for item_name, item_count in pairs(cure_items) do
+                                contents[item_name] = (contents[item_name] or 0) - item_count
+                            end
+                        end
+
+                        if not claims then
+                            housing[EK.treatment_claims] = {}
+                            claims = housing[EK.treatment_claims]
+                        end
+                        claims[disease_id] = claims[disease_id] or {}
+                        claims[disease_id][#claims[disease_id] + 1] = unit_number
+                        slots[#slots + 1] = {uid = housing[EK.unit_number], disease_id = disease_id, work_done = 0}
+                        ::next_disease::
+                    end
+                end
+            end
+        end
+
+        -- treat each claimed slot
+        if #slots > 0 then
+            local work_per_slot = performance * delta_ticks * building_details.speed
+            local statistics = entry[EK.treated]
+
+            for _, slot in pairs(slots) do
+                if slot.blood_donation then
+                    if not slot.done then
+                        process_blood_donation_slot(entry, slot, inventories, work_per_slot)
+                    end
+                else
+                    local housing = try_get(slot.uid)
+                    if housing then
+                        treat_disease_slot(housing, slot, inventories, work_per_slot, statistics)
+                    end
+                end
             end
         end
     end
@@ -245,6 +289,30 @@ end
 
 Register.set_entity_updater(Type.hospital, update_hospital)
 Register.set_entity_updater(Type.improvised_hospital, update_hospital)
+
+--- Accepts a blood donation from a housing entry if the hospital has capacity and resources.
+--- Consumes one medical-instruments item upfront and claims a slot.
+--- Returns true if accepted, false if refused (inactive, at threshold, or missing items).
+--- @param hospital Entry
+--- @param housing Entry
+--- @return boolean
+function Entity.try_blood_donation(hospital, housing)
+    if not hospital[EK.active] then return false end
+
+    local free_slots = get_building_details(hospital).slots - #hospital[EK.slots]
+    if free_slots <= hospital[EK.blood_donation_threshold] then return false end
+
+    local inventories = Entity.get_hospital_inventories(hospital)
+    local contents = Inventories.get_combined_contents(inventories)
+    local cost = Biology.blood_donation_medical_instruments_cost
+
+    if (contents["medical-instruments"] or 0) < cost then return false end
+
+    Inventories.remove_item_range_from_inventory_range(inventories, {["medical-instruments"] = cost})
+    hospital[EK.slots][#hospital[EK.slots] + 1] = {uid = housing[EK.unit_number], blood_donation = true, work_done = 0}
+
+    return true
+end
 
 local function create_hospital(entry)
     entry[EK.slots] = {}
