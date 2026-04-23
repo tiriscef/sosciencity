@@ -758,6 +758,7 @@ Biology.egg_data = {
 
 Biology.blood_donation_workload = 10
 Biology.blood_donation_item = "blood-bag"
+Biology.blood_donation_medical_instruments_cost = 1
 
 Biology.starvation = {
     happiness_factor = 0.5,
