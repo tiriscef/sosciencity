@@ -37,7 +37,13 @@ end
 Entity.biomass_to_productivity = biomass_to_productivity
 
 Entity.pruning_productivity = 20 --%
-Entity.pruning_workhours = 5 / Time.minute
+
+--- Effective slot count for a pruning station at the given performance.
+--- Performance is floored to the nearest 10% to damp tick-to-tick slot thrashing;
+--- shared between the updater and the details GUI.
+function Entity.pruning_effective_slots(performance, max_slots)
+    return floor(max_slots * floor(performance * 10) / 10)
+end
 
 Entity.humus_fertilization_speed = 30 --%
 Entity.humus_fertilization_workhours = 1 / Time.minute
@@ -284,6 +290,37 @@ local function is_valid_prune_target(farm)
         and farm[EK.pruning_mode]
 end
 
+--- Writes a fake-tooltip custom_status showing pruning slot occupancy.
+--- @param entry Entry pruning station
+--- @param filled integer
+--- @param effective_slots integer slots currently usable given performance
+--- @param max_slots integer absolute capacity at 100% performance
+local function set_pruning_custom_status(entry, filled, effective_slots, max_slots)
+    local diode, header
+    if effective_slots == 0 then
+        diode = defines.entity_status_diode.red
+        header = "sosciencity-custom-status.pruning-inactive"
+    elseif filled == 0 then
+        diode = defines.entity_status_diode.yellow
+        header = "sosciencity-custom-status.pruning-idle"
+    else
+        diode = defines.entity_status_diode.green
+        header = "sosciencity-custom-status.pruning-pruning"
+    end
+
+    local label = {header}
+    if effective_slots < max_slots then
+        Tirislib.Locales.append(label, {"sosciencity-custom-status.pruning-slots-capped", filled, effective_slots, max_slots})
+    else
+        Tirislib.Locales.append(label, {"sosciencity-custom-status.pruning-slots", filled, effective_slots})
+    end
+
+    entry[EK.entity].custom_status = {
+        diode = diode,
+        label = label
+    }
+end
+
 Register.set_entity_updater(
     Type.pruning_station,
     function(entry, delta_ticks)
@@ -292,8 +329,7 @@ Register.set_entity_updater(
         entry[EK.performance] = performance
 
         local max_slots = building_details.slots
-        -- 10%-floor on performance damps tick-to-tick slot thrashing
-        local effective_slots = floor(max_slots * floor(performance * 10) / 10)
+        local effective_slots = Entity.pruning_effective_slots(performance, max_slots)
 
         local slots = entry[EK.slots]
         local unit_number = entry[EK.unit_number]
@@ -339,6 +375,8 @@ Register.set_entity_updater(
         end
 
         entry[EK.active] = #slots > 0
+
+        set_pruning_custom_status(entry, #slots, effective_slots, max_slots)
     end
 )
 

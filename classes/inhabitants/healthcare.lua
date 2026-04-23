@@ -12,21 +12,17 @@ local castes = Castes.values
 local disease_values = Diseases.values
 local get_building_details = Buildings.get
 local try_get = Register.try_get
-local Tables = Tirislib.Tables
 local Arrays = Tirislib.Arrays
 local Utils = Tirislib.Utils
 local coin_flips = Utils.coin_flips
 local occurence_probability = Utils.occurrence_probability
 local update_progress = Utils.update_progress
-local table_copy = Tables.copy
-local table_multiply = Tables.multiply
 local HEALTHY = DiseaseGroup.HEALTHY
 local make_sick = DiseaseGroup.make_sick
 local make_sick_randomly = DiseaseGroup.make_sick_randomly
 local cure = DiseaseGroup.cure
 local take_specific_inhabitants = InhabitantGroup.take_specific
 local floor = math.floor
-local min = math.min
 
 local unemploy_inhabitants -- set during load
 
@@ -244,64 +240,18 @@ local function is_recoverable(id)
     return disease_values[id].natural_recovery ~= nil
 end
 
-local function has_facility(hospital, facility_type)
-    for _, facility in Neighborhood.iterate_type(hospital, facility_type) do
-        if Entity.is_active(facility) then
-            return true
-        end
-    end
-
-    return false
-end
-
---- Treats one specific disease in a housing entry using one hospital slot's work budget for one tick.
---- Called from the hospital updater once per claimed slot.
---- @param hospital Entry
---- @param housing Entry
---- @param disease_id integer
---- @param inventories LuaInventory[]
---- @param available_work number work budget for this slot this tick
---- @param statistics table hospital[EK.treated]
-function Inhabitants.treat_disease_slot(hospital, housing, disease_id, inventories, available_work, statistics)
-    local disease_group = housing[EK.diseases]
-    local count = disease_group[disease_id]
-    if not count or count == 0 then return end
-
-    if hospital[EK.treatment_permissions][disease_id] == false then return end
-
-    local disease = disease_values[disease_id]
-    if not disease.is_treatable then return end
-    if disease.curing_facility and not has_facility(hospital, disease.curing_facility) then return end
-
-    local workload_per_case = disease.curing_workload
-    local items_per_case = disease.cure_items or {}
-
-    local contents = Inventories.get_combined_contents(inventories)
-    local to_treat = min(count, floor(available_work / workload_per_case))
-    for item_name, item_count in pairs(items_per_case) do
-        to_treat = min(to_treat, floor((contents[item_name] or 0) / item_count))
-    end
-
-    if to_treat > 0 then
-        to_treat = cure(disease_group, disease_id, to_treat)
-
-        local items = table_copy(items_per_case)
-        table_multiply(items, to_treat)
-        Inventories.remove_item_range_from_inventory_range(inventories, items)
-
-        local reports = Utils.coin_flips_overcrit(disease.reports_per_treatment, to_treat, 5)
-        if reports > 0 then
-            Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports)
-        end
-
-        local new_diseases = {}
-        cure_side_effects(housing, disease_id, to_treat, true, new_diseases)
-        for nd_id, nd_count in pairs(new_diseases) do
-            make_sick(disease_group, nd_id, nd_count)
-        end
-
-        statistics[disease_id] = (statistics[disease_id] or 0) + to_treat
-        Communication.report_treatment(disease_id, to_treat)
+--- Applies the side effects of cured cases (lethality, escalation, complication, special handlers)
+--- for a single disease and adds any resulting new diseases to the entry's disease group.
+--- @param entry Entry
+--- @param disease_id DiseaseID
+--- @param count integer
+--- @param cured boolean true if cured by treatment, false if naturally recovered
+function Inhabitants.apply_cure_side_effects(entry, disease_id, count, cured)
+    local new_diseases = {}
+    cure_side_effects(entry, disease_id, count, cured, new_diseases)
+    local disease_group = entry[EK.diseases]
+    for nd_id, nd_count in pairs(new_diseases) do
+        make_sick(disease_group, nd_id, nd_count)
     end
 end
 

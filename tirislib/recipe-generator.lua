@@ -326,8 +326,8 @@ end
 --- RecipeGenerator to identify which result drives name, subgroup, order, and icon derivation.
 --- Exactly one entry per prototype should be marked; if none are marked the first result is used.
 --- The flag is stripped before the underlying recipe is created.
----@class ProductResultEntry : data.ProductPrototype
----@field product? true Marks this entry as the product for field derivation. Stripped before recipe creation.
+--- @class ProductResultEntry : data.ItemProductPrototype
+--- @field product? true Marks this entry as the product for field derivation. Stripped before recipe creation.
 
 --- A complete or partial Factorio RecipePrototype that `create_from_prototype` and
 --- `merge_prototypes` accept. All standard recipe fields are valid. In addition:

@@ -123,6 +123,45 @@ local function find_all_neighborhood_diseases(entry)
     return ret
 end
 
+local function update_treatment_slots(general, entry)
+    local treatments = general.treatments
+    treatments.clear()
+
+    local slots = entry[EK.slots]
+    for i, slot in pairs(slots) do
+        local housing = Register.try_get(slot.uid)
+        if housing then
+            local housing_type_details = type_definitions[housing[EK.type]]
+            local pos = housing[EK.entity].position
+            treatments.add {
+                type = "label",
+                name = "house-" .. i,
+                caption = {"sosciencity.slot-house", housing_type_details.localised_name, floor(pos.x), floor(pos.y)}
+            }
+
+            local disease = diseases[slot.disease_id]
+            treatments.add {
+                type = "label",
+                name = "disease-" .. i,
+                caption = disease.localised_name,
+                tooltip = disease.localised_description
+            }
+
+            local workload = disease.curing_workload
+            local progress = math.min((slot.work_done or 0) / workload, 1)
+            local progressbar =
+                treatments.add {
+                type = "progressbar",
+                name = "progress-" .. i,
+                value = progress,
+                tooltip = {"sosciencity.slot-progress", floor(progress * 100), workload}
+            }
+            progressbar.style.horizontally_stretchable = true
+            progressbar.style.minimal_width = 100
+        end
+    end
+end
+
 local function update_hospital_details(container, entry, player_id)
     Gui.DetailsView.update_general(container, entry, player_id)
 
@@ -171,6 +210,7 @@ local function update_hospital_details(container, entry, player_id)
         end
     end
 
+    update_treatment_slots(general, entry)
     update_disease_catalogue(container, entry)
 end
 
@@ -205,6 +245,9 @@ local function create_hospital_details(container, entry, player_id)
 
     Gui.Elements.Label.header_label(general, "header-patients", {"sosciencity.patients"})
     Datalist.create(general, "patients")
+
+    Gui.Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
+    Datalist.create(general, "treatments", 3)
 
     create_disease_catalogue(container)
 
