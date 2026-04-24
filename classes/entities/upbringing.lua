@@ -80,6 +80,7 @@ local function finish_class(entry, class, mode)
         }
     )
 end
+Entity.finish_upbringing_class = finish_class
 
 local function check_circuit_upbringing_station(entry)
     local entity = entry[EK.entity]

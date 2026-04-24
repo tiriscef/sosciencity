@@ -15,8 +15,10 @@ local Housing = require("constants.housing")
 
 DEBUG = script.active_mods["sosciencity-debug"] ~= nil
 BALANCING = script.active_mods["sosciencity-balancing"] ~= nil
+-- Either companion mod enables the full dev/debug GUI + action set.
+DEV_MODE = DEBUG or BALANCING
 
-if BALANCING then
+if DEV_MODE then
     BalancingData = {
         scripted_items = {}, -- item/fluid name → unlock condition ("always" or tech_name)
         scripted_techs = {}, -- tech_name → human-readable description of unlock condition
@@ -158,7 +160,7 @@ if DEBUG then
     )
 end
 
-if BALANCING then
+if DEV_MODE then
     require("balancing")
 end
 
