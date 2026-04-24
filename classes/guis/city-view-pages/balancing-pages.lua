@@ -1,7 +1,7 @@
---- Balancing category for the CityView.
---- Only loaded when BALANCING is true (sosciencity-balancing companion mod present).
+--- Debug category for the CityView — shared home for all dev-tool pages.
+--- Only loaded when DEV_MODE is true (either sosciencity-debug or sosciencity-balancing active).
 
-Gui.CityView.add_category("balancing", {"city-view.balancing"})
+Gui.CityView.add_category("debug", {"city-view.debug"})
 
 ---------------------------------------------------------------------------------------------------
 -- << Constants >>
@@ -666,22 +666,15 @@ local function add_new_technologies_section(content, rd)
     end
 end
 
-local function rebuild_content(main_flow)
-    local content = main_flow.content
-    content.clear()
-
+local function compute_tech_sets(main_flow)
     local baseline_packs, target_packs,
           baseline_start_recipes, baseline_trigger_techs,
           target_start_recipes, target_trigger_techs = get_selections(main_flow)
     local player_index = main_flow.player_index
-    local display_mode = Gui.get_element(CONTEXT, "display_grid", player_index).toggled and "grid" or "list"
-    local sort_mode = Gui.get_element(CONTEXT, "sort_inventory", player_index).toggled and "inventory" or "name"
-    local sosciencity_only = Gui.get_element(CONTEXT, "mod_sosciencity", player_index).toggled
 
     local available_baseline = compute_available_techs(baseline_packs, baseline_trigger_techs)
     local available_target   = compute_available_techs(target_packs,   target_trigger_techs)
 
-    -- Expand available_target with target tech ancestors (and optionally siblings).
     local include_siblings = main_flow.target_row.siblings_toggle.toggled
     local target_names = get_target_tech_names(Gui.get_element(CONTEXT, "target_slots", player_index))
     for _, target_name in pairs(target_names) do
@@ -692,6 +685,21 @@ local function rebuild_content(main_flow)
             if include_siblings then add_siblings(available_target, target_name, ancestors) end
         end
     end
+
+    return available_baseline, available_target, baseline_start_recipes, target_start_recipes
+end
+
+local function rebuild_content(main_flow)
+    local content = main_flow.content
+    content.clear()
+
+    local player_index = main_flow.player_index
+    local display_mode = Gui.get_element(CONTEXT, "display_grid", player_index).toggled and "grid" or "list"
+    local sort_mode = Gui.get_element(CONTEXT, "sort_inventory", player_index).toggled and "inventory" or "name"
+    local sosciencity_only = Gui.get_element(CONTEXT, "mod_sosciencity", player_index).toggled
+
+    local available_baseline, available_target,
+          baseline_start_recipes, target_start_recipes = compute_tech_sets(main_flow)
 
     local tech_to_recipes, all_tech_recipes = build_tech_to_recipes()
 
@@ -917,6 +925,31 @@ Gui.set_click_handler(
     end
 )
 
+Gui.set_click_handler(
+    "balancing_apply_target",
+    function(event)
+        local main_flow = get_main_flow(event)
+        local available_baseline, available_target = compute_tech_sets(main_flow)
+        local player = game.players[event.player_index]
+        local techs = player.force.technologies
+        local count = 0
+        for name in pairs(available_target) do
+            if not available_baseline[name] then
+                local tech = techs[name]
+                if tech and not tech.researched then
+                    tech.researched = true
+                    count = count + 1
+                end
+            end
+        end
+        if count > 0 then
+            player.print({"city-view.balancing-apply-target-done", count})
+        else
+            player.print({"city-view.balancing-apply-target-noop"})
+        end
+    end
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << Page registration >>
 ---------------------------------------------------------------------------------------------------
@@ -944,7 +977,7 @@ end
 
 Gui.CityView.add_page {
     name = "balancing-progression",
-    category = "balancing",
+    category = "debug",
     localised_name = {"city-view.balancing-progression"},
     creator = function(container)
         local main_flow = container.add {
@@ -986,6 +1019,15 @@ Gui.CityView.add_page {
             caption = {"city-view.balancing-sync-to-target"},
             tooltip = {"", {"city-view.balancing-baseline"}, " → ", {"city-view.balancing-target"}},
             tags = {sosciencity_gui_event = "balancing_sync_to_target"}
+        }
+
+        controls.add {type = "line", direction = "vertical"}
+        controls.add {
+            type = "button",
+            style = "red_button",
+            caption = {"city-view.balancing-apply-target"},
+            tooltip = {"city-view.balancing-apply-target-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_apply_target"}
         }
 
         -- Pack selection grid:

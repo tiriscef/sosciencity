@@ -224,6 +224,17 @@ local function update_hospital_details(container, entry, player_id)
     update_disease_catalogue(container, entry)
 end
 
+local function create_hospital_debug_tab(tabbed_pane)
+    local content = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
+    content.add {
+        type = "button",
+        style = "red_button",
+        caption = {"city-view.debug-hospital-complete-go"},
+        tooltip = {"city-view.debug-hospital-complete-tooltip"},
+        tags = {sosciencity_gui_event = "debug_hospital_complete_slots"}
+    }
+end
+
 local function create_hospital_details(container, entry, player_id)
     local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
 
@@ -261,6 +272,10 @@ local function create_hospital_details(container, entry, player_id)
 
     create_disease_catalogue(container)
 
+    if DEV_MODE then
+        create_hospital_debug_tab(tabbed_pane)
+    end
+
     update_hospital_details(container, entry)
 end
 
@@ -271,6 +286,37 @@ Gui.set_gui_confirmed_handler(
         entry[EK.blood_donation_threshold] = tonumber(event.element.text)
     end
 )
+
+if DEV_MODE then
+    Gui.set_click_handler(
+        "debug_hospital_complete_slots",
+        function(event)
+            local entry = Register.try_get(storage.details_view[event.player_index])
+            if not entry then return end
+            local slots = entry[EK.slots]
+            local statistics = entry[EK.treated]
+            local completed = 0
+            for i = #slots, 1, -1 do
+                local slot = slots[i]
+                if slot.blood_donation then
+                    slot.done = true
+                else
+                    local housing = Register.try_get(slot.uid)
+                    if housing then
+                        local disease_id = slot.disease_id
+                        DiseaseGroup.cure(housing[EK.diseases], disease_id, 1)
+                        Inhabitants.apply_cure_side_effects(housing, disease_id, 1, true)
+                        statistics[disease_id] = (statistics[disease_id] or 0) + 1
+                        Communication.report_treatment(disease_id, 1)
+                    end
+                end
+                table.remove(slots, i)
+                completed = completed + 1
+            end
+            game.players[event.player_index].print({"city-view.debug-hospital-complete-done", completed})
+        end
+    )
+end
 
 Gui.DetailsView.register_type(Type.hospital, {creater = create_hospital_details, updater = update_hospital_details})
 Gui.DetailsView.register_type(

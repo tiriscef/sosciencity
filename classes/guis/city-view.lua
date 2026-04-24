@@ -356,6 +356,7 @@ require("classes.guis.city-view-pages.data-pages")
 require("classes.guis.city-view-pages.caste-pages")
 require("classes.guis.city-view-pages.howto-pages")
 
-if BALANCING then
+if DEV_MODE then
     require("classes.guis.city-view-pages.balancing-pages")
+    require("classes.guis.city-view-pages.debug-pages")
 end

@@ -1030,6 +1030,108 @@ local function update_housing_details(container, entry)
     update_housing_diet_tab(tabbed_pane, entry)
 end
 
+local function add_housing_debug_tab(tabbed_pane, entry, player_id)
+    local DebugWidgets = Gui.DebugWidgets
+    local NumericTextField = Gui.Elements.NumericTextField
+    local unit_number = entry[EK.unit_number]
+
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
+    local content = tab.add {type = "flow", direction = "vertical"}
+
+    -- Add inhabitants
+    local add_row = DebugWidgets.labelled(content, "city-view.debug-housing-add")
+    local add_count = NumericTextField.create(add_row)
+    add_count.text = "1"
+    Gui.register_element(add_count, unit_number, "debug_add_count", player_id)
+    add_row.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-add-go"},
+        tooltip = {"city-view.debug-housing-add-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_add"}
+    }
+
+    -- Remove inhabitants
+    local remove_row = DebugWidgets.labelled(content, "city-view.debug-housing-remove")
+    local remove_count = NumericTextField.create(remove_row)
+    remove_count.text = "1"
+    Gui.register_element(remove_count, unit_number, "debug_remove_count", player_id)
+    remove_row.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-remove-go"},
+        tooltip = {"city-view.debug-housing-remove-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_remove"}
+    }
+
+    -- Set HHS
+    local hhs_row = DebugWidgets.labelled(content, "city-view.debug-housing-set-hhs")
+    local happy = NumericTextField.create(hhs_row)
+    happy.text = tostring(entry[EK.happiness])
+    Gui.register_element(happy, unit_number, "debug_hhs_happiness", player_id)
+    local health = NumericTextField.create(hhs_row)
+    health.text = tostring(entry[EK.health])
+    Gui.register_element(health, unit_number, "debug_hhs_health", player_id)
+    local sanity = NumericTextField.create(hhs_row)
+    sanity.text = tostring(entry[EK.sanity])
+    Gui.register_element(sanity, unit_number, "debug_hhs_sanity", player_id)
+    hhs_row.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-set-hhs-go"},
+        tooltip = {"city-view.debug-housing-set-hhs-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_set_hhs"}
+    }
+
+    -- Infect
+    Gui.Elements.Utils.separator_line(content)
+    local infect_section = content.add {type = "flow", direction = "vertical"}
+    infect_section.add {type = "label", caption = {"city-view.debug-housing-infect"}, style = "sosciencity_heading_3"}
+    local infect_scope_dd, infect_target_dd = DebugWidgets.build_scope_picker(infect_section, unit_number, "debug_infect_target")
+    Gui.register_element(infect_scope_dd, unit_number, "debug_infect_scope", player_id)
+    Gui.register_element(infect_target_dd, unit_number, "debug_infect_target", player_id)
+    local infect_count_row = DebugWidgets.labelled(infect_section, "city-view.debug-infect-count")
+    local infect_count = NumericTextField.create(infect_count_row)
+    infect_count.text = "1"
+    Gui.register_element(infect_count, unit_number, "debug_infect_count", player_id)
+    infect_section.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-infect-go"},
+        tooltip = {"city-view.debug-housing-infect-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_infect"}
+    }
+
+    -- Cure
+    Gui.Elements.Utils.separator_line(content)
+    local cure_section = content.add {type = "flow", direction = "vertical"}
+    cure_section.add {type = "label", caption = {"city-view.debug-housing-cure"}, style = "sosciencity_heading_3"}
+    local cure_scope_dd, cure_target_dd = DebugWidgets.build_scope_picker(cure_section, unit_number, "debug_cure_target")
+    Gui.register_element(cure_scope_dd, unit_number, "debug_cure_scope", player_id)
+    Gui.register_element(cure_target_dd, unit_number, "debug_cure_target", player_id)
+    local cure_count_row = DebugWidgets.labelled(cure_section, "city-view.debug-infect-count")
+    local cure_count = NumericTextField.create(cure_count_row)
+    cure_count.text = "1"
+    Gui.register_element(cure_count, unit_number, "debug_cure_count", player_id)
+    cure_section.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-cure-go"},
+        tooltip = {"city-view.debug-housing-cure-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_cure"}
+    }
+
+    -- Blood donation + garbage
+    Gui.Elements.Utils.separator_line(content)
+    content.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-blood-donation-go"},
+        tooltip = {"city-view.debug-housing-blood-donation-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_blood_donation"}
+    }
+    content.add {
+        type = "button", style = "red_button",
+        caption = {"city-view.debug-housing-garbage-go"},
+        tooltip = {"city-view.debug-housing-garbage-tooltip"},
+        tags = {sosciencity_gui_event = "housing_debug_garbage"}
+    }
+end
+
 local function create_housing_details(container, entry, player_id)
     local title = {"", entry[EK.entity].localised_name, "  -  ", Locale.caste(entry[EK.type])}
     Gui.DetailsView.set_title(container, title)
@@ -1040,6 +1142,118 @@ local function create_housing_details(container, entry, player_id)
     add_housing_general_info_tab(tabbed_pane, entry, caste_id, player_id)
     add_housing_detailed_info_tab(tabbed_pane, entry)
     add_housing_diet_tab(tabbed_pane, entry, caste_id)
+
+    if DEV_MODE then
+        add_housing_debug_tab(tabbed_pane, entry, player_id)
+    end
+end
+
+if DEV_MODE then
+    local function read(entry, key, event)
+        return tonumber(Gui.get_element(entry[EK.unit_number], key, event.player_index).text)
+    end
+
+    Gui.set_click_handler("housing_debug_add", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local count = read(entry, "debug_add_count", event)
+        local player = game.players[event.player_index]
+        if not count or count < 1 then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+        local group = InhabitantGroup.new(
+            entry[EK.type], count,
+            entry[EK.happiness], entry[EK.health], entry[EK.sanity]
+        )
+        local added = Inhabitants.try_add_to_house(entry, group, true)
+        player.print({"city-view.debug-housing-add-done", added, count})
+    end)
+
+    Gui.set_click_handler("housing_debug_remove", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local count = read(entry, "debug_remove_count", event)
+        local player = game.players[event.player_index]
+        if not count or count < 1 then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+        local before = entry[EK.inhabitants]
+        InhabitantGroup.take(entry, count)  -- discards taken group (vanish semantics)
+        local removed = before - entry[EK.inhabitants]
+        Inhabitants.update_free_space_status(entry)
+        player.print({"city-view.debug-housing-remove-done", removed})
+    end)
+
+    Gui.set_click_handler("housing_debug_set_hhs", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local happiness = read(entry, "debug_hhs_happiness", event)
+        local health = read(entry, "debug_hhs_health", event)
+        local sanity = read(entry, "debug_hhs_sanity", event)
+        local player = game.players[event.player_index]
+        if not happiness or not health or not sanity then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+        entry[EK.happiness] = happiness
+        entry[EK.health] = health
+        entry[EK.sanity] = sanity
+        player.print({"city-view.debug-housing-set-hhs-done"})
+    end)
+
+    Gui.set_click_handler("housing_debug_infect", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local player = game.players[event.player_index]
+        local scope_idx = Gui.get_element(entry[EK.unit_number], "debug_infect_scope", event.player_index).selected_index
+        local target_idx = Gui.get_element(entry[EK.unit_number], "debug_infect_target", event.player_index).selected_index
+        local count = read(entry, "debug_infect_count", event)
+        if not count or count < 1 then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+        local sickened = Gui.DebugWidgets.apply_infection_to_entry(entry[EK.diseases], count, scope_idx, target_idx)
+        player.print({"city-view.debug-housing-infect-done", sickened, count})
+    end)
+
+    Gui.set_click_handler("housing_debug_cure", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local player = game.players[event.player_index]
+        local scope_idx = Gui.get_element(entry[EK.unit_number], "debug_cure_scope", event.player_index).selected_index
+        local target_idx = Gui.get_element(entry[EK.unit_number], "debug_cure_target", event.player_index).selected_index
+        local count = read(entry, "debug_cure_count", event)
+        if not count or count < 1 then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+        local cured = Gui.DebugWidgets.apply_cure_to_entry(entry, count, scope_idx, target_idx)
+        player.print({"city-view.debug-housing-cure-done", cured, count})
+    end)
+
+    Gui.set_click_handler("housing_debug_blood_donation", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local player = game.players[event.player_index]
+        local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
+        Tirislib.Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
+        for _, hospital in pairs(hospitals) do
+            if Entity.try_blood_donation(hospital, entry) then
+                player.print({"city-view.debug-housing-blood-donation-done"})
+                return
+            end
+        end
+        player.print({"city-view.debug-housing-blood-donation-noop"})
+    end)
+
+    Gui.set_click_handler("housing_debug_garbage", function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        Inventories.produce_garbage(entry, "garbage", 1)
+        game.players[event.player_index].print({"city-view.debug-housing-garbage-done"})
+    end)
 end
 
 Gui.DetailsView.register_type(Type.empty_house, {

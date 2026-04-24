@@ -162,6 +162,17 @@ local function create_upbringing_station(container, entry, player_id)
     Datalist.add_kv_flow(building_data, "classes", {"sosciencity.classes"})
     Datalist.add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
 
+    if DEV_MODE then
+        local debug_tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
+        debug_tab.add {
+            type = "button",
+            style = "red_button",
+            caption = {"city-view.debug-upbringing-complete-go"},
+            tooltip = {"city-view.debug-upbringing-complete-tooltip"},
+            tags = {sosciencity_gui_event = "debug_upbringing_complete_classes"}
+        }
+    end
+
     update_upbringing_station(container, entry)
 end
 
@@ -176,6 +187,24 @@ Gui.set_checked_state_handler(
         end
     end
 )
+
+if DEV_MODE then
+    Gui.set_click_handler(
+        "debug_upbringing_complete_classes",
+        function(event)
+            local entry = Register.try_get(storage.details_view[event.player_index])
+            if not entry then return end
+            local classes = entry[EK.classes]
+            local completed = 0
+            for i = #classes, 1, -1 do
+                Entity.finish_upbringing_class(entry, classes[i], entry[EK.education_mode])
+                classes[i] = nil
+                completed = completed + 1
+            end
+            game.players[event.player_index].print({"city-view.debug-upbringing-complete-done", completed})
+        end
+    )
+end
 
 Gui.DetailsView.register_type(
     Type.upbringing_station,
