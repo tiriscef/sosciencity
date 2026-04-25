@@ -359,4 +359,5 @@ require("classes.guis.city-view-pages.howto-pages")
 if DEV_MODE then
     require("classes.guis.city-view-pages.balancing-pages")
     require("classes.guis.city-view-pages.debug-pages")
+    require("classes.guis.city-view-pages.item-browser-page")
 end
