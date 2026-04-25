@@ -291,7 +291,7 @@ Register.set_entity_updater(Type.hospital, update_hospital)
 Register.set_entity_updater(Type.improvised_hospital, update_hospital)
 
 --- Accepts a blood donation from a housing entry if the hospital has capacity and resources.
---- Consumes one medical-instruments item upfront and claims a slot.
+--- Consumes one surgery-instruments item upfront and claims a slot.
 --- Returns true if accepted, false if refused (inactive, at threshold, or missing items).
 --- @param hospital Entry
 --- @param housing Entry
@@ -306,9 +306,9 @@ function Entity.try_blood_donation(hospital, housing)
     local contents = Inventories.get_combined_contents(inventories)
     local cost = Biology.blood_donation_medical_instruments_cost
 
-    if (contents["medical-instruments"] or 0) < cost then return false end
+    if (contents["surgery-instruments"] or 0) < cost then return false end
 
-    Inventories.remove_item_range_from_inventory_range(inventories, {["medical-instruments"] = cost})
+    Inventories.remove_item_range_from_inventory_range(inventories, {["surgery-instruments"] = cost})
     hospital[EK.slots][#hospital[EK.slots] + 1] = {uid = housing[EK.unit_number], blood_donation = true, work_done = 0}
 
     return true
