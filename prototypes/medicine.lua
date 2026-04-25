@@ -453,8 +453,11 @@ Tirislib.RecipeGenerator.create_from_prototype {
     results = {
         {type = "item", name = "sosciencity-emergency-ration", amount = 1}
     },
-    name = "sosciencity-emergency-ration",
-    category = "sosciencity-handcrafting"
+    category = "sosciencity-handcrafting",
+    localised_description = {
+        "recipe-description.sosciencity-emergency-ration",
+        tostring(Food.emergency_ration_calories)
+    }
 }
 
 -- TODO: emergency ration needs a non-handcrafting recipe because I want to use it as a medicine item

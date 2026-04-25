@@ -203,6 +203,9 @@ function DiseaseGroup.take(group, to_take, total_count)
     return ret
 end
 
+--- Subtracts the disease counts in rh from lh. Errors if lh has fewer of any disease than rh.
+--- @param lh DiseaseGroup
+--- @param rh DiseaseGroup
 function DiseaseGroup.subtract(lh, rh)
     for disease, count in pairs(rh) do
         local new_count = lh[disease] - count
@@ -322,6 +325,17 @@ function AgeGroup.random_new(count, age_function)
     return ret
 end
 
+--- Returns a new AgeGroup with randomly distributed immigrant ages.
+--- @param count integer
+--- @return AgeGroup
+function AgeGroup.new_immigrants(count)
+    return AgeGroup.random_new(count, get_immigrant_age)
+end
+
+--- Merges the right hand group into the left hand group. If keep_rh is falsy, the right hand group gets emptied.
+--- @param lh AgeGroup
+--- @param rh AgeGroup
+--- @param keep_rh boolean?
 function AgeGroup.merge(lh, rh, keep_rh)
     for age, count in pairs(rh) do
         lh[age] = (lh[age] or 0) + count
@@ -332,6 +346,11 @@ function AgeGroup.merge(lh, rh, keep_rh)
     end
 end
 
+--- Takes the given count of people from the given age group and returns the age group of the taken people.
+--- @param group AgeGroup
+--- @param to_take integer
+--- @param total_count integer?
+--- @return AgeGroup
 function AgeGroup.take(group, to_take, total_count)
     total_count = total_count or Tables.sum(group)
     to_take = min(to_take, total_count)
@@ -364,6 +383,9 @@ function AgeGroup.take(group, to_take, total_count)
     return ret
 end
 
+--- Subtracts the age counts in rh from lh. Errors if lh has fewer people of any age than rh.
+--- @param lh AgeGroup
+--- @param rh AgeGroup
 function AgeGroup.subtract(lh, rh)
     for age, count in pairs(rh) do
         local new_count = lh[age] - count
@@ -376,6 +398,9 @@ function AgeGroup.subtract(lh, rh)
     end
 end
 
+--- Shifts all ages in the group forward by the given time increment.
+--- @param group AgeGroup
+--- @param time integer
 function AgeGroup.shift(group, time)
     local copy = Tables.copy(group)
     Tables.empty(group)
@@ -402,10 +427,18 @@ function GenderGroup.new(agender, fale, pachin, ga)
     return {agender or 0, fale or 0, pachin or 0, ga or 0}
 end
 
+--- Returns a new GenderGroup with randomly distributed immigrant genders for the given caste.
+--- @param count integer
+--- @param caste_id Type
+--- @return GenderGroup
 function GenderGroup.new_immigrants(count, caste_id)
     return dice_rolls(castes[caste_id].immigration_genders, count, 20)
 end
 
+--- Merges the right hand group into the left hand group. If keep_rh is falsy, the right hand group gets zeroed out.
+--- @param lh GenderGroup
+--- @param rh GenderGroup
+--- @param keep_rh boolean?
 function GenderGroup.merge(lh, rh, keep_rh)
     for gender, count in pairs(rh) do
         lh[gender] = lh[gender] + count
@@ -416,6 +449,11 @@ function GenderGroup.merge(lh, rh, keep_rh)
     end
 end
 
+--- Takes the given count of people from the given gender group and returns the gender group of the taken people.
+--- @param group GenderGroup
+--- @param to_take integer
+--- @param total_count integer?
+--- @return GenderGroup
 function GenderGroup.take(group, to_take, total_count)
     total_count = total_count or Tables.sum(group)
     to_take = min(to_take, total_count)
@@ -449,6 +487,9 @@ function GenderGroup.take(group, to_take, total_count)
     return ret
 end
 
+--- Subtracts the gender counts in rh from lh. Errors if lh has fewer of any gender than rh.
+--- @param lh GenderGroup
+--- @param rh GenderGroup
 function GenderGroup.subtract(lh, rh)
     for gender, count in pairs(rh) do
         lh[gender] = lh[gender] - count
@@ -634,6 +675,9 @@ function InhabitantGroup.merge_partially(lh, rh, count)
     InhabitantGroup.merge(lh, InhabitantGroup.take(rh, count))
 end
 
+--- Returns the total power demand of the given InhabitantGroup.
+--- @param group InhabitantGroup
+--- @return number
 function InhabitantGroup.get_power_usage(group)
     return group[EK.inhabitants] * castes[group[EK.type]].power_demand
 end
@@ -651,6 +695,8 @@ local update_homelessness
 ---------------------------------------------------------------------------------------------------
 -- << immigration >>
 
+--- Processes one immigration wave from the given port, distributing immigrants into free housing.
+--- @param immigration_port_details Entry
 function Inhabitants.migration_wave(immigration_port_details)
     local capacity = immigration_port_details.capacity
     local order = Tables.get_keyset(immigration)
@@ -704,6 +750,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general update >>
 
+--- Periodic update: recalculates caste bonuses and handles homelessness once per minute.
+--- @param current_tick integer
 function Inhabitants.update(current_tick)
     update_caste_bonuses()
 

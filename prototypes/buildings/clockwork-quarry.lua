@@ -19,8 +19,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {theme = "building", amount = 1},
         {type = "item", name = "architectural-concept", amount = 1}
-    },
-    name = "architectural-concept"
+    }
 }
 
 Tirislib.Entity.create {

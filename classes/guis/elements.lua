@@ -728,39 +728,54 @@ local suffix_multipliers = {
     M = 1e6
 }
 
---- Evaluates a numeric expression string, supporting suffixes.
+local function clamp_and_snap(result, min, max, step)
+    if min ~= nil then result = math.max(min, result) end
+    if max ~= nil then result = math.min(max, result) end
+    if step ~= nil then
+        result = math.floor(result / step + 0.5) * step
+        if min ~= nil then result = math.max(min, result) end
+        if max ~= nil then result = math.min(max, result) end
+    end
+    return result
+end
+
 --- @param text string
+--- @param min number?
+--- @param max number?
+--- @param step number?
 --- @return number? result
-local function evaluate_numeric_expression(text)
+local function evaluate_numeric_expression(text, min, max, step)
     if text == "" then
-        return
+        return nil
     end
 
-    -- Replace suffix notation before evaluating, e.g. "10k" -> "10000", "2.5M" -> "2500000"
     text = text:gsub("(%d+%.?%d*)([kKmM])", function(num, suffix)
         return tostring(tonumber(num) * suffix_multipliers[suffix])
     end)
 
-    -- Evaluate using load() with an empty environment so no globals are accessible
+    if text:find("%%") then
+        if min == nil or max == nil then
+            return nil
+        end
+        text = text:gsub("(%d+%.?%d*)%%", function(num)
+            return tostring(min + (tonumber(num) / 100) * (max - min))
+        end)
+    end
+
     local chunk = load("return " .. text, "expression", "t", {})
     if not chunk then
         return nil
     end
 
     local ok, result = pcall(chunk)
-    if not ok then
+    if not ok or type(result) ~= "number" then
         return nil
     end
 
-    if type(result) ~= "number" then
-        return nil
-    end
-
-    return result
+    return clamp_and_snap(result, min, max, step)
 end
 
 local function format_number(n)
-    -- Show integers without a decimal point
     if n == math.floor(n) then
         return tostring(math.floor(n))
     else
@@ -768,9 +783,26 @@ local function format_number(n)
     end
 end
 
---- Lookup for post-evaluation confirmed handlers by tag.
---- Registered via Gui.Elements.NumericTextField.set_confirmed_handler.
 local numeric_confirmed_handlers = {}
+
+local function apply_numeric_result(textfield, result, event)
+    textfield.style = "sosciencity_numeric_textfield"
+    textfield.tooltip = ""
+    textfield.text = format_number(result)
+
+    local preview = textfield.parent["numeric_preview"]
+    if preview then
+        preview.caption = format_number(result)
+    end
+
+    local secondary_tag = textfield.tags.numeric_confirmed_event
+    if secondary_tag then
+        local handler = numeric_confirmed_handlers[secondary_tag]
+        if handler then
+            handler(event, result)
+        end
+    end
+end
 
 --- Registers a handler to be called after a NumericTextField successfully evaluates its expression.
 --- The textfield must have been created with a matching 'numeric_confirmed_event' tag.
@@ -787,37 +819,38 @@ end
 
 --- Creates a textfield that evaluates arithmetic expressions on Enter.
 --- Supports suffixes: k/K (×1000), m/M (×1000000).
---- Pass 'numeric_confirmed_event = "tag"' in extra_tags to hook into post-evaluation via
---- Gui.Elements.NumericTextField.set_confirmed_handler.
+--- Options (merged into element tags):
+---   numeric_confirmed_event: string - tag for post-evaluation callback (see set_confirmed_handler)
+---   min: number - clamp minimum
+---   max: number - clamp maximum
+---   step: number - snap to nearest multiple; step=1 gives integer-only behaviour
+--- When both min and max are given, "N%" in expressions resolves to min + N%*(max-min).
 --- @param container LuaGuiElement
 --- @param name string?
---- @param extra_tags table? additional tags
+--- @param options table?
 --- @return LuaGuiElement textfield
-function Gui.Elements.NumericTextField.create(container, name, extra_tags)
+function Gui.Elements.NumericTextField.create(container, name, options)
     local tags = {sosciencity_gui_event = "evaluate_numeric_expression"}
-    if extra_tags then
-        for k, v in pairs(extra_tags) do
+    if options then
+        for k, v in pairs(options) do
             tags[k] = v
         end
     end
 
-    local textfield = container.add {
+    return container.add {
         type = "textfield",
         name = name,
         tags = tags,
         style = "sosciencity_numeric_textfield"
     }
-
-    return textfield
 end
 
 Gui.set_gui_confirmed_handler(
     "evaluate_numeric_expression",
     function(event)
         local textfield = event.element
-        local text = textfield.text
-
-        local result = evaluate_numeric_expression(text)
+        local tags = textfield.tags
+        local result = evaluate_numeric_expression(textfield.text, tags.min, tags.max, tags.step)
 
         if not result then
             textfield.style = "sosciencity_numeric_textfield_error"
@@ -825,17 +858,7 @@ Gui.set_gui_confirmed_handler(
             return
         end
 
-        textfield.style = "sosciencity_numeric_textfield"
-        textfield.tooltip = ""
-        textfield.text = format_number(result)
-
-        local secondary_tag = textfield.tags.numeric_confirmed_event
-        if secondary_tag then
-            local handler = numeric_confirmed_handlers[secondary_tag]
-            if handler then
-                handler(event, result)
-            end
-        end
+        apply_numeric_result(textfield, result, event)
     end
 )
 
@@ -845,6 +868,132 @@ Gui.set_text_changed_handler(
         local textfield = event.element
         textfield.style = "sosciencity_numeric_textfield"
         textfield.tooltip = ""
+
+        local preview = textfield.parent["numeric_preview"]
+        if preview then
+            local tags = textfield.tags
+            local result = evaluate_numeric_expression(textfield.text, tags.min, tags.max, tags.step)
+            preview.caption = result and format_number(result) or ""
+        end
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << NumericTextField.Panel >>
+---------------------------------------------------------------------------------------------------
+
+Gui.Elements.NumericTextField.Panel = {}
+
+--- Creates a horizontal flow with a NumericTextField plus optional controls.
+--- The inner textfield is always named "numeric_input"; optional siblings:
+---   "numeric_preview"   - live-evaluation label   (options.preview = true)
+---   "numeric_step_down" - step-down button        (options.step set)
+---   "numeric_step_up"   - step-up button          (options.step set)
+---   "numeric_reset"     - reset-to-default button (options.default set)
+--- Note: numeric_confirmed_event handlers receive the click event when triggered by buttons,
+--- so event.element will be the button, not the textfield. event.player_index is always correct.
+--- @param container LuaGuiElement
+--- @param name string? name for the inner textfield
+--- @param options table? {min, max, step, default, preview, numeric_confirmed_event}
+--- @return LuaGuiElement flow
+function Gui.Elements.NumericTextField.Panel.create(container, name, options)
+    options = options or {}
+
+    local flow = container.add {type = "flow", direction = "horizontal"}
+
+    local tags = {sosciencity_gui_event = "evaluate_numeric_expression"}
+    for _, key in pairs({"min", "max", "step", "numeric_confirmed_event", "default"}) do
+        if options[key] ~= nil then
+            tags[key] = options[key]
+        end
+    end
+
+    local textfield = flow.add {
+        type = "textfield",
+        name = "numeric_input",
+        tags = tags,
+        style = "sosciencity_numeric_textfield"
+    }
+    if options.default ~= nil then
+        textfield.text = format_number(options.default)
+    end
+
+    if options.preview then
+        flow.add {
+            type = "label",
+            name = "numeric_preview",
+            caption = "",
+            style = "sosciencity_numeric_preview"
+        }
+    end
+
+    if options.step ~= nil then
+        flow.add {
+            type = "sprite-button",
+            name = "numeric_step_down",
+            sprite = "utility/backward_arrow_black",
+            mouse_button_filter = {"left"},
+            tags = {sosciencity_gui_event = "numeric_step_down"},
+            style = "sosciencity_small_button"
+        }
+        flow.add {
+            type = "sprite-button",
+            name = "numeric_step_up",
+            sprite = "utility/forward_arrow_black",
+            mouse_button_filter = {"left"},
+            tags = {sosciencity_gui_event = "numeric_step_up"},
+            style = "sosciencity_small_button"
+        }
+    end
+
+    if options.default ~= nil then
+        flow.add {
+            type = "sprite-button",
+            name = "numeric_reset",
+            sprite = "utility/reset_white",
+            mouse_button_filter = {"left"},
+            tooltip = {"sosciencity.reset-to-default"},
+            tags = {sosciencity_gui_event = "numeric_reset"},
+            style = "sosciencity_small_button"
+        }
+    end
+
+    return flow
+end
+
+local function get_panel_textfield(event)
+    return event.element.parent["numeric_input"]
+end
+
+Gui.set_click_handler(
+    "numeric_step_down",
+    function(event)
+        local textfield = get_panel_textfield(event)
+        local tags = textfield.tags
+        local current = evaluate_numeric_expression(textfield.text, tags.min, tags.max, tags.step)
+        if not current then return end
+        apply_numeric_result(textfield, clamp_and_snap(current - tags.step, tags.min, tags.max, tags.step), event)
+    end
+)
+
+Gui.set_click_handler(
+    "numeric_step_up",
+    function(event)
+        local textfield = get_panel_textfield(event)
+        local tags = textfield.tags
+        local current = evaluate_numeric_expression(textfield.text, tags.min, tags.max, tags.step)
+        if not current then return end
+        apply_numeric_result(textfield, clamp_and_snap(current + tags.step, tags.min, tags.max, tags.step), event)
+    end
+)
+
+Gui.set_click_handler(
+    "numeric_reset",
+    function(event)
+        local textfield = get_panel_textfield(event)
+        local default = textfield.tags.default
+        if default == nil then return end
+        apply_numeric_result(textfield, default, event)
     end
 )
 
@@ -1395,9 +1544,9 @@ end
 ---   title: locale (optional)
 ---   buttons: array of button specs:
 ---     caption: locale (required)
----     roles: string[]? — subset of {"confirm", "cancel"}
----     tag: string? — key for a handler registered via set_button_handler
----     style: string? — Factorio button style override
+---     roles: string[]? - subset of {"confirm", "cancel"}
+---     tag: string? - key for a handler registered via set_button_handler
+---     style: string? - Factorio button style override
 function Gui.Elements.MessageBox.show(player_index, options)
     local player = game.get_player(player_index)
     messagebox_close(player)

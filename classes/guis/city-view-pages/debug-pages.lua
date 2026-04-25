@@ -1,4 +1,4 @@
---- Broadcast debug actions for the CityView — population/disease manipulation for testing.
+--- Broadcast debug actions for the CityView - population/disease manipulation for testing.
 --- Only loaded when DEV_MODE is true (either sosciencity-debug or sosciencity-balancing active).
 
 ---------------------------------------------------------------------------------------------------
@@ -29,9 +29,8 @@ local function build_spawn_section(content, player_index)
     Gui.register_element(caste_dd, CONTEXT, "spawn_caste", player_index)
 
     local count_row = DebugWidgets.labelled(section, "city-view.debug-spawn-count")
-    local count_field = NumericTextField.create(count_row)
-    count_field.text = "1"
-    Gui.register_element(count_field, CONTEXT, "spawn_count", player_index)
+    local count_panel = NumericTextField.Panel.create(count_row, nil, {step = 1, min = 1, default = 1})
+    Gui.register_element(count_panel["numeric_input"], CONTEXT, "spawn_count", player_index)
 
     local hhs_row = DebugWidgets.labelled(section, "city-view.debug-spawn-hhs")
     local happiness = NumericTextField.create(hhs_row)
@@ -43,6 +42,14 @@ local function build_spawn_section(content, player_index)
     local sanity = NumericTextField.create(hhs_row)
     sanity.text = "10"
     Gui.register_element(sanity, CONTEXT, "spawn_sanity", player_index)
+
+    local gender_dd, egg_dd = DebugWidgets.build_gender_picker(section, CONTEXT, "spawn_egg")
+    Gui.register_element(gender_dd, CONTEXT, "spawn_gender", player_index)
+    Gui.register_element(egg_dd, CONTEXT, "spawn_egg", player_index)
+
+    local age_dd, age_value = DebugWidgets.build_age_picker(section, CONTEXT, "spawn_age_value")
+    Gui.register_element(age_dd, CONTEXT, "spawn_age", player_index)
+    Gui.register_element(age_value, CONTEXT, "spawn_age_value", player_index)
 
     section.add {
         type = "button",
@@ -61,7 +68,7 @@ local function build_infect_section(content, player_index)
     Gui.register_element(target_dd, CONTEXT, "infect_target", player_index)
 
     local count_row = DebugWidgets.labelled(section, "city-view.debug-infect-count")
-    local count_field = NumericTextField.create(count_row)
+    local count_field = NumericTextField.create(count_row, nil, {step = 1, min = 1, max = Inhabitants.get_population_count()})
     count_field.text = "1"
     Gui.register_element(count_field, CONTEXT, "infect_count", player_index)
 
@@ -136,8 +143,20 @@ Gui.set_click_handler(
             return
         end
 
+        local gender_idx = Gui.get_element(CONTEXT, "spawn_gender", event.player_index).selected_index
+        local egg_idx = Gui.get_element(CONTEXT, "spawn_egg", event.player_index).selected_index
+        local age_dd = Gui.get_element(CONTEXT, "spawn_age", event.player_index)
+        local age_idx = age_dd.selected_index
+        local age_value = (age_idx == 3) and read_numeric(Gui.get_element(CONTEXT, "spawn_age_value", event.player_index)) or nil
+        if age_idx == 3 and (not age_value or age_value < 0) then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+
         local caste_id = DebugWidgets.caste_ids[caste_dd.selected_index]
-        local group = InhabitantGroup.new(caste_id, count, happiness, health, sanity)
+        local genders = DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
+        local ages = DebugWidgets.make_age_group(age_idx, count, age_value)
+        local group = InhabitantGroup.new(caste_id, count, happiness, health, sanity, nil, genders, ages)
         Inhabitants.add_to_city(group)
         player.print({"city-view.debug-spawn-done", count, Castes.values[caste_id].localised_name})
     end

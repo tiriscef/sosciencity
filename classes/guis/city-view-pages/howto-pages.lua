@@ -262,6 +262,9 @@ Gui.CityView.add_page {
         Gui.Elements.Label.heading_1(container, {"city-view.competition-text1"})
         Gui.Elements.Label.paragraph(container, {"city-view.competition-text2"})
         Gui.Elements.Label.paragraph(container, {"city-view.competition-text3"})
+        Gui.Elements.Label.heading_2(container, {"city-view.competition-text4"})
+        Gui.Elements.Label.paragraph(container, {"city-view.competition-text5"})
+        Gui.Elements.Label.paragraph(container, {"city-view.competition-text6"})
         -- END GENERATED: competition
     end
 }
