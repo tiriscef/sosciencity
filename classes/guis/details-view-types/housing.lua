@@ -1033,28 +1033,56 @@ end
 local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     local DebugWidgets = Gui.DebugWidgets
     local NumericTextField = Gui.Elements.NumericTextField
+    local Label = Gui.Elements.Label
+    local separator = Gui.Elements.Utils.separator_line
     local unit_number = entry[EK.unit_number]
 
     local tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
     local content = tab.add {type = "flow", direction = "vertical"}
 
     -- Add inhabitants
-    local add_row = DebugWidgets.labelled(content, "city-view.debug-housing-add")
-    local add_count = NumericTextField.create(add_row)
-    add_count.text = "1"
-    Gui.register_element(add_count, unit_number, "debug_add_count", player_id)
-    add_row.add {
+    Label.heading_3(content, {"city-view.debug-housing-add"})
+
+    local count_row = DebugWidgets.labelled(content, "city-view.debug-spawn-count", true)
+    local add_count_panel = NumericTextField.Panel.create(count_row, nil, {step = 1, min = 1, max = Housing.get_capacity(entry), default = 1})
+    Gui.register_element(add_count_panel["numeric_input"], unit_number, "debug_add_count", player_id)
+
+    local gender_dd, egg_dd = DebugWidgets.build_gender_picker(content, unit_number, "debug_add_egg", true)
+    Gui.register_element(gender_dd, unit_number, "debug_add_gender", player_id)
+    Gui.register_element(egg_dd, unit_number, "debug_add_egg", player_id)
+
+    local age_dd, age_val = DebugWidgets.build_age_picker(content, unit_number, "debug_add_age_value", true)
+    Gui.register_element(age_dd, unit_number, "debug_add_age", player_id)
+    Gui.register_element(age_val, unit_number, "debug_add_age_value", player_id)
+
+    local happiness_row = DebugWidgets.labelled(content, "sosciencity.happiness", true)
+    local add_happiness = NumericTextField.create(happiness_row, nil, {min = 0, step = 1})
+    add_happiness.text = "10"
+    Gui.register_element(add_happiness, unit_number, "debug_add_happiness", player_id)
+
+    local health_row = DebugWidgets.labelled(content, "sosciencity.health", true)
+    local add_health = NumericTextField.create(health_row, nil, {min = 0, step = 1})
+    add_health.text = "10"
+    Gui.register_element(add_health, unit_number, "debug_add_health", player_id)
+
+    local sanity_row = DebugWidgets.labelled(content, "sosciencity.sanity", true)
+    local add_sanity = NumericTextField.create(sanity_row, nil, {min = 0, step = 1})
+    add_sanity.text = "10"
+    Gui.register_element(add_sanity, unit_number, "debug_add_sanity", player_id)
+
+    content.add {
         type = "button", style = "red_button",
         caption = {"city-view.debug-housing-add-go"},
         tooltip = {"city-view.debug-housing-add-tooltip"},
         tags = {sosciencity_gui_event = "housing_debug_add"}
     }
 
+    separator(content)
+
     -- Remove inhabitants
-    local remove_row = DebugWidgets.labelled(content, "city-view.debug-housing-remove")
-    local remove_count = NumericTextField.create(remove_row)
-    remove_count.text = "1"
-    Gui.register_element(remove_count, unit_number, "debug_remove_count", player_id)
+    local remove_row = DebugWidgets.labelled(content, "city-view.debug-housing-remove", true)
+    local remove_panel = NumericTextField.Panel.create(remove_row, nil, {step = 1, min = 1, max = Housing.get_capacity(entry), default = 1})
+    Gui.register_element(remove_panel["numeric_input"], unit_number, "debug_remove_count", player_id)
     remove_row.add {
         type = "button", style = "red_button",
         caption = {"city-view.debug-housing-remove-go"},
@@ -1062,18 +1090,27 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
         tags = {sosciencity_gui_event = "housing_debug_remove"}
     }
 
+    separator(content)
+
     -- Set HHS
-    local hhs_row = DebugWidgets.labelled(content, "city-view.debug-housing-set-hhs")
-    local happy = NumericTextField.create(hhs_row)
+    Label.heading_3(content, {"city-view.debug-housing-set-hhs"})
+
+    local hhs_happiness_row = DebugWidgets.labelled(content, "sosciencity.happiness", true)
+    local happy = NumericTextField.create(hhs_happiness_row, nil, {min = 0, step = 0.1})
     happy.text = tostring(entry[EK.happiness])
     Gui.register_element(happy, unit_number, "debug_hhs_happiness", player_id)
-    local health = NumericTextField.create(hhs_row)
-    health.text = tostring(entry[EK.health])
-    Gui.register_element(health, unit_number, "debug_hhs_health", player_id)
-    local sanity = NumericTextField.create(hhs_row)
-    sanity.text = tostring(entry[EK.sanity])
-    Gui.register_element(sanity, unit_number, "debug_hhs_sanity", player_id)
-    hhs_row.add {
+
+    local hhs_health_row = DebugWidgets.labelled(content, "sosciencity.health", true)
+    local hhs_health = NumericTextField.create(hhs_health_row, nil, {min = 0, step = 0.1})
+    hhs_health.text = tostring(entry[EK.health])
+    Gui.register_element(hhs_health, unit_number, "debug_hhs_health", player_id)
+
+    local hhs_sanity_row = DebugWidgets.labelled(content, "sosciencity.sanity", true)
+    local hhs_sanity = NumericTextField.create(hhs_sanity_row, nil, {min = 0, step = 0.1})
+    hhs_sanity.text = tostring(entry[EK.sanity])
+    Gui.register_element(hhs_sanity, unit_number, "debug_hhs_sanity", player_id)
+
+    content.add {
         type = "button", style = "red_button",
         caption = {"city-view.debug-housing-set-hhs-go"},
         tooltip = {"city-view.debug-housing-set-hhs-tooltip"},
@@ -1081,14 +1118,14 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     }
 
     -- Infect
-    Gui.Elements.Utils.separator_line(content)
+    separator(content)
     local infect_section = content.add {type = "flow", direction = "vertical"}
-    infect_section.add {type = "label", caption = {"city-view.debug-housing-infect"}, style = "sosciencity_heading_3"}
+    Label.heading_3(infect_section, {"city-view.debug-housing-infect"})
     local infect_scope_dd, infect_target_dd = DebugWidgets.build_scope_picker(infect_section, unit_number, "debug_infect_target")
     Gui.register_element(infect_scope_dd, unit_number, "debug_infect_scope", player_id)
     Gui.register_element(infect_target_dd, unit_number, "debug_infect_target", player_id)
-    local infect_count_row = DebugWidgets.labelled(infect_section, "city-view.debug-infect-count")
-    local infect_count = NumericTextField.create(infect_count_row)
+    local infect_count_row = DebugWidgets.labelled(infect_section, "city-view.debug-infect-count", true)
+    local infect_count = NumericTextField.create(infect_count_row, nil, {step = 1, min = 1, max = entry[EK.inhabitants]})
     infect_count.text = "1"
     Gui.register_element(infect_count, unit_number, "debug_infect_count", player_id)
     infect_section.add {
@@ -1099,14 +1136,14 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     }
 
     -- Cure
-    Gui.Elements.Utils.separator_line(content)
+    separator(content)
     local cure_section = content.add {type = "flow", direction = "vertical"}
-    cure_section.add {type = "label", caption = {"city-view.debug-housing-cure"}, style = "sosciencity_heading_3"}
+    Label.heading_3(cure_section, {"city-view.debug-housing-cure"})
     local cure_scope_dd, cure_target_dd = DebugWidgets.build_scope_picker(cure_section, unit_number, "debug_cure_target")
     Gui.register_element(cure_scope_dd, unit_number, "debug_cure_scope", player_id)
     Gui.register_element(cure_target_dd, unit_number, "debug_cure_target", player_id)
-    local cure_count_row = DebugWidgets.labelled(cure_section, "city-view.debug-infect-count")
-    local cure_count = NumericTextField.create(cure_count_row)
+    local cure_count_row = DebugWidgets.labelled(cure_section, "city-view.debug-infect-count", true)
+    local cure_count = NumericTextField.create(cure_count_row, nil, {step = 1, min = 1, max = entry[EK.inhabitants] - entry[EK.diseases][DiseaseGroup.HEALTHY]})
     cure_count.text = "1"
     Gui.register_element(cure_count, unit_number, "debug_cure_count", player_id)
     cure_section.add {
@@ -1117,7 +1154,7 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     }
 
     -- Blood donation + garbage
-    Gui.Elements.Utils.separator_line(content)
+    separator(content)
     content.add {
         type = "button", style = "red_button",
         caption = {"city-view.debug-housing-blood-donation-go"},
@@ -1156,16 +1193,27 @@ if DEV_MODE then
     Gui.set_click_handler("housing_debug_add", function(event)
         local entry = Register.try_get(storage.details_view[event.player_index])
         if not entry then return end
+        local unit_number = entry[EK.unit_number]
         local count = read(entry, "debug_add_count", event)
+        local happiness = read(entry, "debug_add_happiness", event)
+        local health = read(entry, "debug_add_health", event)
+        local sanity = read(entry, "debug_add_sanity", event)
         local player = game.players[event.player_index]
-        if not count or count < 1 then
+        if not count or count < 1 or not happiness or not health or not sanity then
             player.print({"city-view.debug-invalid-count"})
             return
         end
-        local group = InhabitantGroup.new(
-            entry[EK.type], count,
-            entry[EK.happiness], entry[EK.health], entry[EK.sanity]
-        )
+        local gender_idx = Gui.get_element(unit_number, "debug_add_gender", event.player_index).selected_index
+        local egg_idx = Gui.get_element(unit_number, "debug_add_egg", event.player_index).selected_index
+        local age_idx = Gui.get_element(unit_number, "debug_add_age", event.player_index).selected_index
+        local age_value = (age_idx == 3) and read(entry, "debug_add_age_value", event) or nil
+        if age_idx == 3 and (not age_value or age_value < 0) then
+            player.print({"city-view.debug-invalid-count"})
+            return
+        end
+        local genders = Gui.DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
+        local ages = Gui.DebugWidgets.make_age_group(age_idx, count, age_value)
+        local group = InhabitantGroup.new(entry[EK.type], count, happiness, health, sanity, nil, genders, ages)
         local added = Inhabitants.try_add_to_house(entry, group, true)
         player.print({"city-view.debug-housing-add-done", added, count})
     end)

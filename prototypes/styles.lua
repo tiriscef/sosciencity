@@ -11,6 +11,12 @@ style.sosciencity_numeric_textfield_error = {
     font_color = {r = 0.9, g = 0.2, b = 0.2}
 }
 
+style.sosciencity_numeric_preview = {
+    type = "label_style",
+    left_margin = 4,
+    font_color = {180, 180, 180}
+}
+
 style.sosciencity_city_view = {
     type = "frame_style",
     height = 800,
