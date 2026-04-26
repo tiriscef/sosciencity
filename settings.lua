@@ -55,5 +55,19 @@ data:extend {
         setting_type = "runtime-global",
         default_value = 50,
         minimum_value = 1
+    },
+    {
+        type = "bool-setting",
+        name = "sosciencity-auto-naming",
+        order = "bab",
+        setting_type = "runtime-global",
+        default_value = true
+    },
+    {
+        type = "bool-setting",
+        name = "sosciencity-auto-naming-personal",
+        order = "aaa",
+        setting_type = "runtime-per-user",
+        default_value = true
     }
 }

@@ -32,16 +32,30 @@ function Locale.caste_short(caste_id)
     return castes[caste_id].localised_name_short
 end
 
-function Locale.entry(entry)
+--- Returns the display name of an entry: custom_name if set, otherwise localised_entity_name.
+--- @param entry Entry
+--- @param with_entity_name boolean? when true and a custom_name is set, appends " (entity_name)"
+function Locale.entry(entry, with_entity_name)
+    local custom_name = entry[EK.custom_name]
+    if custom_name then
+        if with_entity_name then
+            return {"", custom_name, " (", entry[EK.entity].localised_name, ")"}
+        end
+        return custom_name
+    end
+    return entry[EK.entity].localised_name
+end
+
+function Locale.entry_with_coords(entry)
     local entity = entry[EK.entity]
     local position = entity.position
-    return {"sosciencity.entry-representation", entity.localised_name, position.x, position.y}
+    return {"sosciencity.entry-representation", Locale.entry(entry), position.x, position.y}
 end
 
 function Locale.entry_in_chat(entry)
     local entity = entry[EK.entity]
     local position = entity.position
-    return {"sosciencity.display-entry", entity.localised_name, position.x, position.y, entity.surface.name}
+    return {"sosciencity.display-entry", Locale.entry(entry), position.x, position.y, entity.surface.name}
 end
 
 function Locale.integer_summand(number)

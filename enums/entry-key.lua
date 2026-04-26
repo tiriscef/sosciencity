@@ -20,6 +20,8 @@ EK.tick_of_creation = 6
 EK.subentities = 7
 --- table with (rendering_type, id)-pairs
 EK.attached_renderings = 9
+--- optional player-set name for this entry
+EK.custom_name = 10
 
 -- inventory stuff
 
