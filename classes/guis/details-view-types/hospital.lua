@@ -134,11 +134,6 @@ local function update_treatment_slots(general, entry)
         if housing then
             local housing_type_details = type_definitions[housing[EK.type]]
             local pos = housing[EK.entity].position
-            treatments.add {
-                type = "label",
-                name = "house-" .. i,
-                caption = {"sosciencity.slot-house", housing_type_details.localised_name, floor(pos.x), floor(pos.y)}
-            }
 
             local workload, slot_caption, slot_tooltip
             if slot.blood_donation then
@@ -151,23 +146,25 @@ local function update_treatment_slots(general, entry)
                 slot_tooltip = disease.localised_description
             end
 
-            treatments.add {
+            local card = treatments.add {type = "frame", name = "slot-" .. i, direction = "vertical", style = "inside_deep_frame"}
+            card.style.horizontally_stretchable = true
+
+            local label = card.add {
                 type = "label",
-                name = "disease-" .. i,
-                caption = slot_caption,
+                name = "label-" .. i,
+                caption = {"", {"sosciencity.slot-house", housing_type_details.localised_name, floor(pos.x), floor(pos.y)}, "  ", slot_caption},
                 tooltip = slot_tooltip
             }
+            label.style.single_line = false
 
             local progress = math.min((slot.work_done or 0) / workload, 1)
-            local progressbar =
-                treatments.add {
+            local progressbar = card.add {
                 type = "progressbar",
                 name = "progress-" .. i,
                 value = progress,
                 tooltip = {"sosciencity.slot-progress", floor(progress * 100), workload}
             }
             progressbar.style.horizontally_stretchable = true
-            progressbar.style.minimal_width = 100
         end
     end
 end
@@ -268,7 +265,7 @@ local function create_hospital_details(container, entry, player_id)
     Datalist.create(general, "patients")
 
     Gui.Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
-    Datalist.create(general, "treatments", 3)
+    general.add {type = "flow", name = "treatments", direction = "vertical"}
 
     create_disease_catalogue(container)
 

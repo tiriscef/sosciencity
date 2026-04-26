@@ -43,6 +43,7 @@ local function update_details_header(container, entry)
     local display_flow = container.parent.header.display_flow
     display_flow.name_label.caption = Locale.entry(entry)
     display_flow.reset_button.visible = entry[EK.custom_name] ~= nil
+    display_flow.regenerate_button.visible = get_building_details(entry).auto_name ~= nil
 end
 
 local function get_or_create_tabbed_pane(container) -- TODO this doesn't belong to this file
@@ -426,6 +427,20 @@ Gui.set_click_handler(
     end
 )
 
+Gui.set_click_handler(
+    "details_name_regenerate",
+    function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+
+        local scheme = get_building_details(entry).auto_name
+        if scheme then
+            AutoNames.generate(scheme, entry)
+            Gui.DetailsView.update_header_for_entry(entry)
+        end
+    end
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << type registry >>
 
@@ -505,6 +520,15 @@ function Gui.DetailsView.create(player)
         visible = false,
         tooltip = {"sosciencity.reset-name"},
         tags = {sosciencity_gui_event = "details_name_reset"}
+    }
+    display_flow.add {
+        type = "sprite-button",
+        name = "regenerate_button",
+        sprite = "utility/shuffle",
+        style = "frame_action_button",
+        visible = false,
+        tooltip = {"sosciencity.regenerate-name"},
+        tags = {sosciencity_gui_event = "details_name_regenerate"}
     }
     display_flow.add {
         type = "sprite-button",
