@@ -39,8 +39,10 @@ local display_enumeration = Tirislib.Locales.create_enumeration
 
 local Datalist = Gui.Elements.Datalist
 
-local function set_details_view_title(container, caption)
-    container.parent.caption = caption
+local function update_details_header(container, entry)
+    local display_flow = container.parent.header.display_flow
+    display_flow.name_label.caption = Locale.entry(entry)
+    display_flow.reset_button.visible = entry[EK.custom_name] ~= nil
 end
 
 local function get_or_create_tabbed_pane(container) -- TODO this doesn't belong to this file
@@ -55,7 +57,7 @@ local function get_or_create_tabbed_pane(container) -- TODO this doesn't belong 
     end
 end
 
-Gui.DetailsView.set_title = set_details_view_title
+Gui.DetailsView.update_header = update_details_header
 Gui.DetailsView.get_or_create_tabbed_pane = get_or_create_tabbed_pane
 
 -- Per-player flag: true while the player is typing in the staff target textfield.
@@ -75,7 +77,7 @@ local function update_worker_list(list, entry)
     for unit_number, count in pairs(workers) do
         local house = Register.try_get(unit_number)
         if house then
-            Datalist.add_operand_entry(list, unit_number, Locale.entry(house), count)
+            Datalist.add_operand_entry(list, unit_number, Locale.entry_with_coords(house), count)
 
             at_least_one = true
         end
@@ -163,8 +165,7 @@ local function update_general_building_details(container, entry, player_id)
 end
 
 local function create_general_building_details(container, entry, player_id)
-    local entity = entry[EK.entity]
-    set_details_view_title(container, entity.localised_name)
+    update_details_header(container, entry)
 
     local building_details = get_building_details(entry)
     local type_details = type_definitions[entry[EK.type]]
@@ -361,6 +362,71 @@ Gui.set_checked_state_handler(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << name editing >>
+
+local function apply_name_edit(player_index)
+    local frame = game.get_player(player_index).gui.screen[DETAILS_VIEW_NAME]
+    if not frame or not frame.valid then return end
+    local entry = Register.try_get(storage.details_view[player_index])
+    if not entry then return end
+
+    local new_name = frame.header.edit_flow.name_input.text
+    entry[EK.custom_name] = (new_name ~= "") and new_name or nil
+
+    frame.header.edit_flow.visible = false
+    frame.header.display_flow.visible = true
+
+    Gui.DetailsView.update_header_for_entry(entry)
+end
+
+Gui.set_click_handler(
+    "details_name_edit",
+    function(event)
+        local player_index = event.player_index
+        local entry = Register.try_get(storage.details_view[player_index])
+        if not entry then return end
+
+        local frame = game.get_player(player_index).gui.screen[DETAILS_VIEW_NAME]
+        local header = frame.header
+        header.display_flow.visible = false
+        header.edit_flow.visible = true
+        local input = header.edit_flow.name_input
+        input.text = entry[EK.custom_name] or ""
+        input.focus()
+    end
+)
+
+Gui.set_click_handler("details_name_confirm", function(event)
+    apply_name_edit(event.player_index)
+end)
+
+Gui.set_gui_confirmed_handler("details_name_input", function(event)
+    apply_name_edit(event.player_index)
+end)
+
+Gui.set_click_handler(
+    "details_name_cancel",
+    function(event)
+        local frame = game.get_player(event.player_index).gui.screen[DETAILS_VIEW_NAME]
+        if not frame or not frame.valid then return end
+        frame.header.edit_flow.visible = false
+        frame.header.display_flow.visible = true
+    end
+)
+
+Gui.set_click_handler(
+    "details_name_reset",
+    function(event)
+        local player_index = event.player_index
+        local entry = Register.try_get(storage.details_view[player_index])
+        if not entry then return end
+
+        entry[EK.custom_name] = nil
+        Gui.DetailsView.update_header_for_entry(entry)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
 -- << type registry >>
 
 local type_gui_specifications = {}
@@ -396,14 +462,90 @@ function Gui.DetailsView.create(player)
         return
     end
 
-    frame =
-        player.gui.screen.add {
+    frame = player.gui.screen.add {
         type = "frame",
         name = DETAILS_VIEW_NAME,
-        direction = "horizontal",
+        direction = "vertical",
         style = "sosciencity_details_view_frame"
     }
     frame.location = {x = 10, y = 120}
+
+    local header = frame.add {
+        type = "flow",
+        name = "header",
+        direction = "horizontal",
+        style = "sosciencity_city_view_header_flow"
+    }
+    header.drag_target = frame
+
+    local display_flow = header.add {
+        type = "flow",
+        name = "display_flow",
+        direction = "horizontal"
+    }
+    display_flow.style.horizontally_stretchable = true
+    display_flow.drag_target = frame
+
+    display_flow.add {
+        type = "label",
+        name = "name_label",
+        ignored_by_interaction = true,
+        style = "frame_title"
+    }
+    display_flow.add {
+        type = "empty-widget",
+        ignored_by_interaction = true,
+        style = "sosciencity_details_header_drag"
+    }
+    display_flow.add {
+        type = "sprite-button",
+        name = "reset_button",
+        sprite = "utility/reset_white",
+        style = "frame_action_button",
+        visible = false,
+        tooltip = {"sosciencity.reset-name"},
+        tags = {sosciencity_gui_event = "details_name_reset"}
+    }
+    display_flow.add {
+        type = "sprite-button",
+        name = "edit_button",
+        sprite = "utility/rename_icon",
+        style = "frame_action_button",
+        tooltip = {"sosciencity.edit-name"},
+        tags = {sosciencity_gui_event = "details_name_edit"}
+    }
+
+    local edit_flow = header.add {
+        type = "flow",
+        name = "edit_flow",
+        direction = "horizontal",
+        visible = false
+    }
+    edit_flow.style.horizontally_stretchable = true
+
+    local name_input = edit_flow.add {
+        type = "textfield",
+        name = "name_input",
+        tags = {sosciencity_gui_event = "details_name_input"}
+    }
+    name_input.style.horizontally_stretchable = true
+
+    edit_flow.add {
+        type = "sprite-button",
+        name = "confirm_button",
+        sprite = "utility/check_mark_white",
+        style = "frame_action_button",
+        tooltip = {"sosciencity.confirm-name-edit"},
+        tags = {sosciencity_gui_event = "details_name_confirm"}
+    }
+    edit_flow.add {
+        type = "sprite-button",
+        name = "cancel_button",
+        sprite = "utility/close",
+        style = "frame_action_button",
+        tooltip = {"sosciencity.cancel-name-edit"},
+        tags = {sosciencity_gui_event = "details_name_cancel"}
+    }
 
     frame.add {
         type = "frame",
@@ -488,6 +630,11 @@ function Gui.DetailsView.open(player, unit_number)
         Gui.unregister_context(previous)
     end
     nested.clear()
+
+    local header = details_view.header
+    header.edit_flow.visible = false
+    header.display_flow.visible = true
+
     creater(nested, entry, player_id)
     details_view.visible = true
     storage.details_view[player_id] = unit_number
@@ -503,7 +650,6 @@ function Gui.DetailsView.close(player)
     end
     details_view.visible = false
     storage.details_view[player.index] = nil
-    details_view.caption = nil
     details_view.nested.clear()
 end
 
@@ -535,6 +681,20 @@ function Gui.DetailsView.update_for_entry(entry)
             if updater then
                 updater(get_nested_details_view(player), entry, player_id)
             end
+        end
+    end
+end
+
+--- Updates the name label and reset button for all players currently viewing entry.
+--- @param entry Entry
+function Gui.DetailsView.update_header_for_entry(entry)
+    local unit_number = entry[EK.unit_number]
+    for player_id, viewed_unit_number in pairs(storage.details_view) do
+        if unit_number == viewed_unit_number then
+            update_details_header(
+                get_details_view(game.get_player(player_id)).nested,
+                entry
+            )
         end
     end
 end

@@ -95,6 +95,7 @@ require("classes.entity")
 require("classes.handcrafting")
 require("classes.gui")
 require("classes.tree-planting")
+require("classes.auto-names")
 
 if DEBUG then
     require("tests.load-tests")
@@ -227,6 +228,8 @@ local function update_settings()
     storage.starting_clockwork_points = settings.global["sosciencity-start-clockwork-points"].value
 
     storage.tiriscef = settings.global["sosciencity-allow-tiriscef"].value
+
+    storage.auto_naming_enabled = settings.global["sosciencity-auto-naming"].value
 
     Communication.settings_update()
 end

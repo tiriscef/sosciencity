@@ -434,7 +434,7 @@ local function update_empty_housing_details(container, entry)
 end
 
 local function create_empty_housing_details(container, entry)
-    Gui.DetailsView.set_title(container, entry[EK.entity].localised_name)
+    Gui.DetailsView.update_header(container, entry)
 
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
 
@@ -478,7 +478,7 @@ local function update_occupations_list(flow, entry)
             Datalist.add_operand_entry(
                 occupations_list,
                 building_number,
-                {"sosciencity.employed", Locale.entry(building)},
+                {"sosciencity.employed", Locale.entry_with_coords(building)},
                 count
             )
         end
@@ -1170,8 +1170,7 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
 end
 
 local function create_housing_details(container, entry, player_id)
-    local title = {"", entry[EK.entity].localised_name, "  -  ", Locale.caste(entry[EK.type])}
-    Gui.DetailsView.set_title(container, title)
+    Gui.DetailsView.update_header(container, entry)
 
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
 

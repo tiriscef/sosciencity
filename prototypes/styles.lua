@@ -43,6 +43,15 @@ style.sosciencity_city_view_header_drag = {
     right_margin = 4
 }
 
+style.sosciencity_details_header_drag = {
+    type = "empty_widget_style",
+    parent = "draggable_space",
+    horizontally_stretchable = "on",
+    height = 24,
+    left_margin = 4,
+    right_margin = 4
+}
+
 style.sosciencity_city_view_tab_frame = {
     type = "frame_style",
     parent = "inside_deep_frame",

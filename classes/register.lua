@@ -128,6 +128,21 @@ local function init_custom_building(entry, event)
     if tags and tags.target_worker_count then
         entry[EK.target_worker_count] = tags.target_worker_count
     end
+
+    if building_details.auto_name and storage.auto_naming_enabled then
+        local entity = entry[EK.entity]
+        local player_index = event and (event.player_index or (entity.last_user and entity.last_user.index))
+        if not player_index or settings.get_player_settings(player_index)["sosciencity-auto-naming-personal"].value then
+            AutoNames.generate(building_details.auto_name, entry)
+        end
+    end
+end
+
+--- Generic clone handler for CustomBuilding-systems that aren't specific to one type.
+--- @param source Entry
+--- @param destination Entry
+local function clone_custom_building(source, destination)
+    destination[EK.custom_name] = source[EK.custom_name]
 end
 
 local function update_custom_building(entry)
@@ -421,6 +436,7 @@ function Register.clone(source, destination)
     local _type = source[EK.type]
     local destination_entry = add_entity(destination, _type)
     destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
+    clone_custom_building(source, destination_entry)
 
     on_copy(_type, source, destination_entry)
 end

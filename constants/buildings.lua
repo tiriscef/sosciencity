@@ -16,6 +16,7 @@ local Building = {}
 --- @field power_usage number in kW
 --- @field speed number in 1/tick, depends on type
 --- @field workforce WorkforceDefinition
+--- @field auto_name string? name of the auto-naming scheme in AutoNames (see classes/auto-names.lua); omit to skip auto-naming
 
 --- Definition table for a building's workforce
 --- @class WorkforceDefinition
@@ -134,6 +135,7 @@ Building.values = {
     ["ember-hq"] = {
         type = Type.manufactory,
         range = range_by_foot,
+        auto_name = "ember-hq",
         workforce = {
             count = 20,
             castes = {Type.ember},
@@ -344,6 +346,7 @@ Building.values = {
     ["nightclub"] = {
         type = Type.nightclub,
         range = range_by_foot,
+        auto_name = "nightclub",
         power_usage = 100
     },
     ["orangery"] = {
