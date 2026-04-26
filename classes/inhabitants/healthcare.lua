@@ -23,10 +23,13 @@ local cure = DiseaseGroup.cure
 local take_specific_inhabitants = InhabitantGroup.take_specific
 local floor = math.floor
 
-local unemploy_inhabitants -- set during load
+-- set during load
+local unemploy_inhabitants
+local update_unclaimed_disease_ticks
 
 function Inhabitants.load_healthcare()
     unemploy_inhabitants = Inhabitants.unemploy_inhabitants
+    update_unclaimed_disease_ticks = Inhabitants.update_unclaimed_disease_ticks
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -310,6 +313,7 @@ local function update_diseases(entry, delta_ticks)
 
     create_disease_cases(entry, disease_group, delta_ticks)
     update_disease_cases(entry, disease_group, delta_ticks)
+    update_unclaimed_disease_ticks(entry, delta_ticks)
 
     -- check employments
     local healthy_count = disease_group[HEALTHY]

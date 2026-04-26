@@ -32,6 +32,7 @@ local update_free_space_status
 local unemploy_inhabitants
 local get_caste_bonus_multiplier
 local try_auto_upgrades
+local update_sanatorium
 
 function Inhabitants.load_housing_update()
     evaluate_diet = Inhabitants.evaluate_diet
@@ -46,6 +47,7 @@ function Inhabitants.load_housing_update()
     unemploy_inhabitants = Inhabitants.unemploy_inhabitants
     get_caste_bonus_multiplier = Inhabitants.get_caste_bonus_multiplier
     try_auto_upgrades = Inhabitants.try_auto_upgrades
+    update_sanatorium = Inhabitants.update_sanatorium
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -302,6 +304,10 @@ Inhabitants.set_custom_status = set_custom_status
 --- @param entry Entry
 --- @param delta_ticks integer
 local function update_house(entry, delta_ticks)
+    if entry[EK.is_sanatorium] then
+        update_sanatorium(entry)
+    end
+
     local caste_id = entry[EK.type]
     local caste = castes[caste_id]
 

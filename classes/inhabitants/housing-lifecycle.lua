@@ -172,6 +172,7 @@ function Inhabitants.remove_house(entry, cause, event)
     local caste_id = entry[EK.type]
     local housing_details = get_housing_details(entry)
     storage.free_houses[housing_details.is_improvised][caste_id][unit_number] = nil
+    storage.transport_eligible_houses[caste_id][unit_number] = nil
 
     if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)

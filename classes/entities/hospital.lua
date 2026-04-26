@@ -63,6 +63,19 @@ local function has_facility(hospital, facility_type)
     return false
 end
 
+--- Returns whether the given hospital can currently treat the given disease.
+--- Checks treatability, required facility availability, and treatment permissions.
+--- @param hospital Entry
+--- @param disease_id integer
+--- @return boolean
+function Entity.hospital_can_treat(hospital, disease_id)
+    local disease = disease_values[disease_id]
+    if not disease.is_treatable then return false end
+    if hospital[EK.treatment_permissions][disease_id] == false then return false end
+    if disease.curing_facility and not has_facility(hospital, disease.curing_facility) then return false end
+    return true
+end
+
 --- Treats one specific disease in a housing entry using one hospital slot's work budget for one tick.
 --- Cure items were consumed when the slot was claimed; this only accumulates work and cures.
 --- @param housing Entry
@@ -226,10 +239,8 @@ local function update_hospital(entry, delta_ticks)
                         if #slots >= effective_slots then break end
                         if disease_id == HEALTHY or count == 0 then goto next_disease end
 
+                        if not Entity.hospital_can_treat(entry, disease_id) then goto next_disease end
                         local disease = disease_values[disease_id]
-                        if not disease.is_treatable then goto next_disease end
-                        if entry[EK.treatment_permissions][disease_id] == false then goto next_disease end
-                        if disease.curing_facility and not has_facility(entry, disease.curing_facility) then goto next_disease end
 
                         local current_claims = (claims and claims[disease_id]) and #claims[disease_id] or 0
                         if current_claims >= count then goto next_disease end

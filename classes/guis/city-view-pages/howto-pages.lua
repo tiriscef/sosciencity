@@ -125,6 +125,8 @@ Gui.CityView.add_page {
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text57"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text58"})
         Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text59"})
+        Gui.Elements.Label.paragraph(container, {"city-view.huwans101-text60"})
+        Gui.Elements.Button.page_link(container, "how-tos", "healthcare")
         Gui.Elements.Button.page_link(container, "data", "diseases")
         -- END GENERATED: huwans101
     end
@@ -209,6 +211,152 @@ Gui.CityView.add_page {
         Gui.Elements.Label.paragraph(container, {"city-view.housing-text46"})
         Gui.Elements.Label.paragraph(container, {"city-view.housing-text47"})
         -- END GENERATED: housing
+    end
+}
+
+Gui.CityView.add_page {
+    name = "food",
+    category = "how-tos",
+    localised_name = {"city-view.food-text1"},
+    creator = function(container)
+        -- BEGIN GENERATED: food
+        Gui.Elements.Label.heading_1(container, {"city-view.food-text1"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text2"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text3"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text4"})
+        Gui.Elements.Label.heading_3(container, {"city-view.food-text5"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text6"})
+        Gui.Elements.Label.heading_3(container, {"city-view.food-text7"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text8"})
+        Gui.Elements.Label.heading_3(container, {"city-view.food-text9"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text10"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text11"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text12"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text13"},
+                {"city-view.food-text14"},
+                {"city-view.food-text15"},
+                {"city-view.food-text16"}
+            }
+        )
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text17"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text18"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text19"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text20"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text21"},
+                {"city-view.food-text22"},
+                {"city-view.food-text23"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text24"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text25"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text26"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text27"},
+                {"city-view.food-text28"},
+                {"city-view.food-text29"}
+            }
+        )
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text30"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text31"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text32"},
+                {"city-view.food-text33"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text34"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text35"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text36"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text37"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text38"},
+                {"city-view.food-text39"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text40"})
+        -- END GENERATED: food
+    end
+}
+
+Gui.CityView.add_page {
+    name = "healthcare",
+    category = "how-tos",
+    localised_name = {"city-view.healthcare-text1"},
+    creator = function(container)
+        -- BEGIN GENERATED: healthcare
+        Gui.Elements.Label.heading_1(container, {"city-view.healthcare-text1"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text2"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text3"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text4"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text5"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text6"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.healthcare-text7"},
+                {"city-view.healthcare-text8"},
+                {"city-view.healthcare-text9"},
+                {"city-view.healthcare-text10"},
+                {"city-view.healthcare-text11"},
+                {"city-view.healthcare-text12"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text13"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text14"})
+        Gui.Elements.Button.page_link(container, "data", "diseases")
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text16"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text17"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text18"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text19"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text20"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text21"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text22"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.healthcare-text23"},
+                {"city-view.healthcare-text24"},
+                {"city-view.healthcare-text25"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text26"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text27"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text28"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text29"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text30"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text31"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text32"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text33"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text34"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text35"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text36"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text37"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text38"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text39"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text40"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text41"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.healthcare-text42"},
+                {"city-view.healthcare-text43"},
+                {"city-view.healthcare-text44"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text45"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text46"})
+        -- END GENERATED: healthcare
     end
 }
 
@@ -383,80 +531,5 @@ Gui.CityView.add_page {
         )
         Gui.Elements.Label.paragraph(container, {"city-view.strike-text23"})
         -- END GENERATED: strike
-    end
-}
-
-Gui.CityView.add_page {
-    name = "food",
-    category = "how-tos",
-    localised_name = {"city-view.food-text1"},
-    creator = function(container)
-        -- BEGIN GENERATED: food
-        Gui.Elements.Label.heading_1(container, {"city-view.food-text1"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text2"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text3"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text4"})
-        Gui.Elements.Label.heading_3(container, {"city-view.food-text5"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text6"})
-        Gui.Elements.Label.heading_3(container, {"city-view.food-text7"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text8"})
-        Gui.Elements.Label.heading_3(container, {"city-view.food-text9"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text10"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text11"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text12"})
-        Gui.Elements.Label.list(
-            container,
-            {
-                {"city-view.food-text13"},
-                {"city-view.food-text14"},
-                {"city-view.food-text15"},
-                {"city-view.food-text16"}
-            }
-        )
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text17"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text18"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text19"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text20"})
-        Gui.Elements.Label.list(
-            container,
-            {
-                {"city-view.food-text21"},
-                {"city-view.food-text22"},
-                {"city-view.food-text23"}
-            }
-        )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text24"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text25"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text26"})
-        Gui.Elements.Label.list(
-            container,
-            {
-                {"city-view.food-text27"},
-                {"city-view.food-text28"},
-                {"city-view.food-text29"}
-            }
-        )
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text30"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text31"})
-        Gui.Elements.Label.list(
-            container,
-            {
-                {"city-view.food-text32"},
-                {"city-view.food-text33"}
-            }
-        )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text34"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text35"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text36"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text37"})
-        Gui.Elements.Label.list(
-            container,
-            {
-                {"city-view.food-text38"},
-                {"city-view.food-text39"}
-            }
-        )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text40"})
-        -- END GENERATED: food
     end
 }
