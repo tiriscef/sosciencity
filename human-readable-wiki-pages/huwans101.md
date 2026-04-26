@@ -115,4 +115,7 @@ You can provide healthcare to your people by building med bays or hospitals. The
 
 Curing a disease takes some work by the healthcare workers (displayed as 'operations') and might need some medicine items that you can provide either inside the hospital building or in a pharmacy. Some diseases even require extra hospital facilities, which need to be placed next to the main hospital building.
 
+If you're building outposts far from your main city, you don't need to build a full hospital everywhere. You can designate a house near your central hospital as a **sanatorium** - sick huwans from your outposts will travel there automatically to get treated when local care isn't available.
+
+[linked-page=how-tos/healthcare]
 [linked-page=data/diseases]

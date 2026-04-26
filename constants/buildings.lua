@@ -505,6 +505,12 @@ Building.values = {
         },
         power_usage = 50
     },
+    ["test-hospital-no-workforce"] = {
+        type = Type.hospital,
+        range = 42,
+        slots = 5,
+        speed = 20 / Time.second
+    },
     ["test-psych-ward"] = {
         type = Type.psych_ward,
         range = 42,

@@ -700,6 +700,21 @@ Gui.set_gui_confirmed_handler(
     end
 )
 
+Gui.set_checked_state_handler(
+    "toggle_sanatorium",
+    function(event)
+        local tags = event.element.tags
+
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then
+            return
+        end
+
+        if Housing.get(entry).is_improvised then return end
+        entry[EK.is_sanatorium] = event.element.state or nil
+    end
+)
+
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player_id)
     local flow = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"})
 
@@ -775,6 +790,23 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
             style = "sosciencity_sortable_list_head",
             tooltip = {"sosciencity.tooltip-priority-button", priority_preset.value}
         }
+    end
+
+    if not housing_details.is_improvised then
+        local sanatorium_flow = Gui.Elements.Flow.horizontal_right(flow, "sanatorium_flow")
+        sanatorium_flow.style.vertical_align = "center"
+        local sanatorium_checkbox =
+            sanatorium_flow.add {
+            type = "checkbox",
+            caption = {"sosciencity.sanatorium"},
+            tooltip = {"sosciencity.explain-sanatorium"},
+            state = entry[EK.is_sanatorium] or false,
+            tags = {
+                sosciencity_gui_event = "toggle_sanatorium",
+                unit_number = entry[EK.unit_number]
+            }
+        }
+        Gui.register_element(sanatorium_checkbox, entry[EK.unit_number], "sanatorium_checkbox", player_id)
     end
 
     Gui.Elements.Utils.separator_line(flow)

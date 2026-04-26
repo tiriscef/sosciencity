@@ -152,6 +152,10 @@ EK.target_comfort = 236
 EK.trait_upgrades = 237
 --- lookup table of HousingTraits queued for logistics delivery
 EK.target_tags = 238
+--- whether this house is flagged as a sanatorium (boolean)
+EK.is_sanatorium = 239
+--- table of (disease_id → ticks unclaimed) for tracking transport eligibility
+EK.unclaimed_disease_ticks = 240
 
 -- water distributer
 

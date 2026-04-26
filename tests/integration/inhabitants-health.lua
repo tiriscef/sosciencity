@@ -2,6 +2,8 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 local SubentityType = require("enums.subentity-type")
 
+local Diseases = require("constants.diseases")
+
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
 
@@ -79,10 +81,16 @@ Tirislib.Testing.add_test_case(
     "Hospital claims slots for sick inhabitants",
     "integration|integration.inhabitants",
     function()
-        local hospital_entry = Helpers.create_and_register(test_surface, "test-hospital", {0, 0})
+        local hospital_entry = Helpers.create_and_register(test_surface, "test-hospital-no-workforce", {0, 0})
         local house_entry = Helpers.create_inhabited_house(test_surface, {3, 0}, Type.plasma, 20)
 
         DiseaseGroup.make_sick(house_entry[EK.diseases], 1, 3)
+
+        -- stock the hospital with enough cure items for disease 1 so the claim can proceed
+        local inventory = Inventories.get_chest_inventory(hospital_entry)
+        for item_name, count in pairs(Diseases.values[1].cure_items) do
+            inventory.insert({name = item_name, count = count})
+        end
 
         Register.update_entry(hospital_entry, game.tick + 100)
 
