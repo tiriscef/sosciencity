@@ -41,3 +41,20 @@ Tirislib.Technology.create {
         time = 15
     }
 }
+
+Tirislib.Technology.create {
+    name = "precious-metalworking",
+    icon = Tirislib.Prototype.placeholder_icon,
+    icon_size = 64,
+    prerequisites = {"clockwork-mines", "foundry-caste"},
+    unit = {
+        count = 150,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1}
+        },
+        time = 30
+    }
+}
