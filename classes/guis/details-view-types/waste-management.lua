@@ -9,6 +9,7 @@ local WasteDumpOperationMode = require("enums.waste-dump-operation-mode")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local Gui = Gui
@@ -140,7 +141,7 @@ local function analyse_garbage_output(entry)
         calorific_demand = calorific_demand + caste_inhabitants * caste.calorific_demand
     end
 
-    return inhabitant_count, garbage, Food.food_leftovers_chance * calorific_demand / average_calories
+    return inhabitant_count, garbage, InhabitantsConstants.food_leftovers_chance * calorific_demand / average_calories
 end
 
 local function update_dumpster(container, entry, player_id)

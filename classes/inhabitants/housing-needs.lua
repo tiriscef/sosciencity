@@ -9,14 +9,14 @@ local SanitySummand = require("enums.sanity-summand")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
-local Biology = require("constants.biology")
 local Castes = require("constants.castes")
 local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 
 local castes = Castes.values
 local food_values = Food.values
-local required_nutrition_tags = Food.required_nutrition_tags
-local nutrition_tag_effects = Food.nutrition_tag_effects
+local required_nutrition_tags = InhabitantsConstants.required_nutrition_tags
+local nutrition_tag_effects = InhabitantsConstants.nutrition_tag_effects
 local log_fluid = Statistics.log_fluid
 local assembling_machine_output = defines.inventory.crafter_output
 
@@ -260,8 +260,8 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     local sanity = entry[EK.sanity_summands]
 
     if #diet == 0 then
-        happiness_factors[HappinessFactor.hunger] = Biology.starvation.happiness_factor
-        health_factors[HealthFactor.hunger] = Biology.starvation.health_factor
+        happiness_factors[HappinessFactor.hunger] = InhabitantsConstants.starvation.happiness_factor
+        health_factors[HealthFactor.hunger] = InhabitantsConstants.starvation.health_factor
         if entry[EK.inhabitants] > 0 then
             Communication.warning(WarningType.no_food, entry)
         end
@@ -514,8 +514,8 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
 
     local has_water = satisfaction > 0
     if not has_water then
-        happiness_factors[HappinessFactor.thirst] = Biology.dehydration.happiness_factor
-        health_factors[HealthFactor.thirst] = Biology.dehydration.health_factor
+        happiness_factors[HappinessFactor.thirst] = InhabitantsConstants.dehydration.happiness_factor
+        health_factors[HealthFactor.thirst] = InhabitantsConstants.dehydration.health_factor
     end
     if quality ~= 0 then
         health_summands[HealthSummand.water] = quality

@@ -6,7 +6,7 @@ local EK = require("enums.entry-key")
 local DiseaseCategory = require("enums.disease-category")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
-local Biology = require("constants.biology")
+local InhabitantsConstants = require("constants.inhabitants")
 
 local random = math.random
 local min = math.min
@@ -140,7 +140,7 @@ local GENDER_ITEMS = {
 }
 
 local EGG_ENTRIES = {}
-for name, data in pairs(Biology.egg_data) do
+for name, data in pairs(InhabitantsConstants.egg_data) do
     EGG_ENTRIES[#EGG_ENTRIES + 1] = {name = name, genders = data.genders}
 end
 

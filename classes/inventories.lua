@@ -1,8 +1,8 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
-local Biology = require("constants.biology")
 local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 local ItemConstants = require("constants.item-constants")
 
 --- Static class for the manipulation of inventories, items and fluids.
@@ -353,7 +353,7 @@ function Inventories.output_eggs(entry, count)
     for _, egg_collector in all_neighbors_of_type(entry, Type.egg_collector) do
         if is_active(egg_collector) then
             local inventory = get_chest_inventory(egg_collector)
-            inserted = inserted - try_insert(inventory, Biology.egg_fertile, count - inserted)
+            inserted = inserted - try_insert(inventory, InhabitantsConstants.egg_fertile, count - inserted)
 
             if count - inserted < 0.001 then
                 return inserted
@@ -362,8 +362,8 @@ function Inventories.output_eggs(entry, count)
     end
 
     local house_inventory = get_chest_inventory(entry)
-    local already_inside = house_inventory.get_item_count(Biology.egg_fertile)
-    return try_insert(house_inventory, Biology.egg_fertile, min(20 - already_inside, count))
+    local already_inside = house_inventory.get_item_count(InhabitantsConstants.egg_fertile)
+    return try_insert(house_inventory, InhabitantsConstants.egg_fertile, min(20 - already_inside, count))
 end
 
 --- Removes eggs from the given entry's inventory.
@@ -371,7 +371,7 @@ end
 --- @param max_count integer
 --- @return table eggs with (item_name, count)-pairs
 function Inventories.remove_eggs(entry, max_count)
-    local eggs = Table.get_keyset(Biology.egg_data)
+    local eggs = Table.get_keyset(InhabitantsConstants.egg_data)
     Tirislib.Arrays.shuffle(eggs)
 
     local count = 0
@@ -460,7 +460,7 @@ local function consume_specific_food(entry, inventories, amount, item_name)
             if items_consumed > 0 then
                 log_item(item_name, -items_consumed)
 
-                local food_leftovers = Utils.coin_flips(Food.food_leftovers_chance, items_consumed, 5)
+                local food_leftovers = Utils.coin_flips(InhabitantsConstants.food_leftovers_chance, items_consumed, 5)
 
                 if food_leftovers > 0 then
                     produce_garbage(entry, "food-leftovers", food_leftovers)

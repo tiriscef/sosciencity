@@ -699,20 +699,7 @@ for name, food_definition in pairs(Food.values) do
     food_definition.density = food_definition.calories / food_definition.item_weight
 end
 
---- The set of nutrition tags that contribute to health when covered by the diet.
---- Order determines display and iteration order.
-Food.required_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich}
-
---- Health effect per nutrition tag. bonus applies when the tag is covered by the diet, malus when it is missing.
---- @type table<NutritionTag, {bonus: number, malus: number}>
-Food.nutrition_tag_effects = {
-    [NutritionTag.protein_rich] = {bonus = 1, malus = -2},
-    [NutritionTag.fat_rich]     = {bonus = 1, malus = -2},
-    [NutritionTag.carb_rich]    = {bonus = 1, malus = -2},
-}
-
 Food.emergency_ration_calories = 1000
-Food.food_leftovers_chance = 0.125
 
 if Tirislib.Utils.is_control_stage() then
     for food_name, food_data in pairs(Food.values) do

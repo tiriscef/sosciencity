@@ -1,4 +1,4 @@
-local Biology = require("constants.biology")
+local InhabitantsConstants = require("constants.inhabitants")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -141,7 +141,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     icon_size = 64,
     subgroup = "sosciencity-inhabitants",
     main_product = "",
-    localised_description = {"recipe-description.lay-egg", tostring(Biology.egg_calories)},
+    localised_description = {"recipe-description.lay-egg", tostring(InhabitantsConstants.egg_calories)},
     unlock = "upbringing"
 }
 
@@ -164,7 +164,7 @@ for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-eg
     }
 end
 
-for egg_name, egg_data in pairs(Biology.egg_data) do
+for egg_name, egg_data in pairs(InhabitantsConstants.egg_data) do
     local item = Tirislib.Item.get(egg_name)
     item:add_custom_tooltip {
         name = {"sosciencity.birth-defect-probability"},
