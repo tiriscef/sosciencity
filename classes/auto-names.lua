@@ -101,4 +101,44 @@ generators["ember-hq"] = function(_entry)
     return ember_hq_names[math.random(#ember_hq_names)]
 end
 
+---------------------------------------------------------------------------------------------------
+-- << kitchen for all >>
+
+local kitchen_for_all_names = {
+    "Progreszive Diner",
+    "The Food Produkzion",
+    "Masz Produkzion Kitchen",
+    "The Mesz",
+    "Publik Diner",
+    "Klasz Struggle Kitchen",
+    "Sozial Eating",
+    "The Komunal Pot",
+    "Zolidarity Soup",
+    "Kalorie Throughput",
+    "Cooked with Love",
+    "Nutrizion Stazion",
+    "Komunity Mealz",
+    "The Graszroots Grill",
+    "Paszionate Cooking",
+    "Sustainable Eatz",
+    "Masz Appeal Diner",
+    "Folx Kitchen",
+    "The Worxshop",
+    "Nutrizion Basix",
+    "Snax for All",
+    "Legume Lagoon",
+    "The Burrowed Stove",
+    "Lost and Found Ingredienz",
+    "The Konsensus Kitchen",
+    "Still in Diskuszion",
+    "Chickpea Zentral",
+    "Tofu Towerz",
+    "Rice and Shine",
+    "The Open Diner",
+}
+
+generators["kitchen-for-all"] = function(_entry)
+    return kitchen_for_all_names[math.random(#kitchen_for_all_names)]
+end
+
 return AutoNames
