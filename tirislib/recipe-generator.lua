@@ -346,8 +346,38 @@ end
 ---@field default_theme_level? number Fallback technology level used when a theme entry omits its own `level`. Defaults to 0.
 ---@field do_index_fluid_ingredients? boolean When true, fluid ingredient entries receive an explicit `fluidbox_index` after creation.
 ---@field do_index_fluid_results? boolean When true, fluid result entries receive an explicit `fluidbox_index` after creation.
+---@field no_auto_catalyst? boolean When true, skips automatic catalyst detection. By default any result that also appears as an ingredient gets `ignored_by_productivity` set to `min(ingredient_amount, result_amount)`.
 
 ---------------------------------------------------------------------------------------------------
+
+--- Automatically sets ignored_by_productivity on result entries that also appear as ingredients.
+--- Catalyst amount = min(ingredient_amount, result_amount). For range results, amount_max is used.
+--- Skips results that already have ignored_by_productivity set.
+local function auto_detect_catalysts(recipe)
+    local ingredient_amounts = {}
+    for _, ingredient in recipe:iterate_ingredients() do
+        local key = (ingredient.type or "item") .. ":" .. ingredient.name
+        ingredient_amounts[key] = (ingredient_amounts[key] or 0) + (ingredient.amount or 0)
+    end
+
+    recipe:transform_result_entries(function(result)
+        if result.ignored_by_productivity ~= nil then
+            return
+        end
+
+        local key = (result.type or "item") .. ":" .. result.name
+        local ingredient_amount = ingredient_amounts[key]
+        if not ingredient_amount then
+            return
+        end
+
+        local result_amount = result.amount or result.amount_max or 0
+        local catalyst_amount = math.min(ingredient_amount, result_amount)
+        if catalyst_amount > 0 then
+            result.ignored_by_productivity = catalyst_amount
+        end
+    end)
+end
 
 --- Separates theme entries from real entries in an array.
 --- Theme entries are identified by having a `theme` key.
@@ -484,10 +514,12 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
     local default_theme_level = prototype.default_theme_level
     local index_fluid_ingredients = prototype.do_index_fluid_ingredients
     local index_fluid_results = prototype.do_index_fluid_results
+    local skip_auto_catalyst = prototype.no_auto_catalyst
     prototype.unlock = nil
     prototype.default_theme_level = nil
     prototype.do_index_fluid_ingredients = nil
     prototype.do_index_fluid_results = nil
+    prototype.no_auto_catalyst = nil
 
     -- separate theme entries from real entries
     local real_ingredients, ingredient_theme_entries = separate_themes(prototype.ingredients)
@@ -534,6 +566,11 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
             )
         end
         recipe:transform_result_entries(function(e) Tirislib.RecipeEntry.transform_amount(e, math.floor) end)
+    end
+
+    -- auto-detect catalysts after all themes are expanded
+    if not skip_auto_catalyst then
+        auto_detect_catalysts(recipe)
     end
 
     -- unlock (accepts a single string or a table of strings)
