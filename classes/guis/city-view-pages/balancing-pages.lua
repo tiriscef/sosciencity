@@ -979,7 +979,8 @@ end
 -- << Full progression export (v2) >>
 ---------------------------------------------------------------------------------------------------
 
-local PROGRESSION_DIR = "sosciencity-progression"
+local PROGRESSION_DIR_COMPACT  = "sosciencity-progression-compact"
+local PROGRESSION_DIR_DETAILED = "sosciencity-progression-detailed"
 
 -- Strips "-science-pack" / "-pack" suffix for compact display + filenames.
 local function strip_pack_suffix(name)
@@ -1245,19 +1246,17 @@ local function format_recipe_inline(recipe_name)
     if not recipe then return string.format("`%s`", recipe_name) end
     local ings = {}
     for _, ing in pairs(recipe.ingredients) do
-        local sprite_type = ing.type == "fluid" and "fluid" or "item"
-        ings[#ings + 1] = string.format("%d×[%s=%s]", ing.amount, sprite_type, ing.name)
+        ings[#ings + 1] = string.format("%d×%s", ing.amount, ing.name)
     end
     local prods = {}
     for _, prod in pairs(recipe.products) do
-        local sprite_type = prod.type == "fluid" and "fluid" or "item"
         local amt = prod.amount or ((prod.amount_min or 0) + (prod.amount_max or 0)) / 2
         if amt == 0 then amt = 1 end
-        prods[#prods + 1] = string.format("%g×[%s=%s]", amt, sprite_type, prod.name)
+        prods[#prods + 1] = string.format("%g×%s", amt, prod.name)
     end
     local cat = recipe.category or "crafting"
     local time = recipe.energy or 0.5
-    return string.format("[recipe=%s] %s → %s (%s, %ss)",
+    return string.format("`%s`: %s → %s (%s, %ss)",
         recipe_name,
         #ings > 0 and table.concat(ings, " + ") or "(no ingredients)",
         #prods > 0 and table.concat(prods, " + ") or "(no products)",
@@ -1301,14 +1300,12 @@ local function render_item_line(name, is_new, item_meta, item_to_recipes, availa
     local star = is_new and "★ " or ""
     local meta = item_meta and item_meta[name]
 
-    local line = string.format("- %s[item=%s] `%s`", star, name, name)
+    local line = string.format("- %s`%s`", star, name)
 
     local trailing = {}
     if meta then
         if #meta.entities > 0 then
-            local ents = {}
-            for _, e in pairs(meta.entities) do ents[#ents + 1] = string.format("[entity=%s]", e) end
-            trailing[#trailing + 1] = "from " .. table.concat(ents, " ")
+            trailing[#trailing + 1] = "from " .. table.concat(meta.entities, ", ")
         end
         if meta.scripted then trailing[#trailing + 1] = "[scripted]" end
     end
@@ -1337,14 +1334,12 @@ local function render_fluid_line(name, is_new, fluid_meta, item_to_recipes, avai
     local star = is_new and "★ " or ""
     local meta = fluid_meta and fluid_meta[name]
 
-    local line = string.format("- %s[fluid=%s] `%s`", star, name, name)
+    local line = string.format("- %s`%s`", star, name)
 
     local trailing = {}
     if meta then
         if #meta.entities > 0 then
-            local ents = {}
-            for _, e in pairs(meta.entities) do ents[#ents + 1] = string.format("[entity=%s]", e) end
-            trailing[#trailing + 1] = "from " .. table.concat(ents, " ")
+            trailing[#trailing + 1] = "from " .. table.concat(meta.entities, ", ")
         end
         if meta.scripted then trailing[#trailing + 1] = "[scripted]" end
     end
@@ -1375,11 +1370,11 @@ local function render_tech_line(name, is_new)
     local cost_parts = {}
     if tech then
         for _, ing in pairs(tech.research_unit_ingredients) do
-            cost_parts[#cost_parts + 1] = string.format("[item=%s]", ing.name)
+            cost_parts[#cost_parts + 1] = ing.name
         end
     end
-    local cost_str = #cost_parts > 0 and ("  " .. table.concat(cost_parts, " ")) or ""
-    return string.format("- %s[technology=%s] `%s`%s", star, name, name, cost_str)
+    local cost_str = #cost_parts > 0 and ("  (cost: " .. table.concat(cost_parts, ", ") .. ")") or ""
+    return string.format("- %s`%s`%s", star, name, cost_str)
 end
 
 local function pluralize_count(n, singular)
@@ -1603,7 +1598,7 @@ local function build_overview_lines(tiers)
         if #new_techs > 0 then
             local items = {}
             for _, n in pairs(new_techs) do
-                items[#items + 1] = string.format("[technology=%s] `%s`", n, n)
+                items[#items + 1] = string.format("`%s`", n)
             end
             add(string.format("**New techs (%d):** %s", #new_techs, table.concat(items, ", ")))
         end
@@ -1619,12 +1614,12 @@ local function build_overview_lines(tiers)
 
         if #new_buildings > 0 then
             local b = {}
-            for _, n in pairs(new_buildings) do b[#b + 1] = string.format("[item=%s] `%s`", n, n) end
+            for _, n in pairs(new_buildings) do b[#b + 1] = string.format("`%s`", n) end
             add(string.format("**New buildings (%d):** %s", #new_buildings, table.concat(b, ", ")))
         end
         if #new_items > 0 then
             local b = {}
-            for _, n in pairs(new_items) do b[#b + 1] = string.format("[item=%s] `%s`", n, n) end
+            for _, n in pairs(new_items) do b[#b + 1] = string.format("`%s`", n) end
             add(string.format("**New items (%d):** %s", #new_items, table.concat(b, ", ")))
         end
 
@@ -1633,7 +1628,7 @@ local function build_overview_lines(tiers)
         sort_items_by_factorio_order(new_fluids)
         if #new_fluids > 0 then
             local b = {}
-            for _, n in pairs(new_fluids) do b[#b + 1] = string.format("[fluid=%s] `%s`", n, n) end
+            for _, n in pairs(new_fluids) do b[#b + 1] = string.format("`%s`", n) end
             add(string.format("**New fluids (%d):** %s", #new_fluids, table.concat(b, ", ")))
         end
 
@@ -1652,8 +1647,10 @@ local function export_full_progression(main_flow, mode)
     compute_per_tier_data(tiers, sosciencity_only)
     local item_to_recipes = build_item_to_recipes()
 
+    local dir = mode == "detailed" and PROGRESSION_DIR_DETAILED or PROGRESSION_DIR_COMPACT
+
     local function write(rel, lines)
-        helpers.write_file(PROGRESSION_DIR .. "/" .. rel,
+        helpers.write_file(dir .. "/" .. rel,
             table.concat(lines, "\n") .. "\n", false, player_index)
     end
 
@@ -1664,7 +1661,7 @@ local function export_full_progression(main_flow, mode)
         write(tier.filename, build_tier_file_lines(tier, item_to_recipes, mode))
     end
 
-    return PROGRESSION_DIR, #tiers + 2
+    return dir, #tiers + 2
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1919,7 +1916,37 @@ Gui.CityView.add_page {
         }
         Gui.register_element(main_flow, CONTEXT, MAIN_FLOW_KEY, container.player_index)
 
-        -- Controls bar
+        -- Export / apply row
+        local export_bar = main_flow.add {type = "flow", direction = "horizontal"}
+        export_bar.style.vertical_align = "center"
+
+        export_bar.add {
+            type = "button",
+            caption = {"city-view.balancing-export"},
+            tooltip = {"city-view.balancing-export-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_export_view"}
+        }
+        export_bar.add {
+            type = "button",
+            caption = {"city-view.balancing-export-progression-compact"},
+            tooltip = {"city-view.balancing-export-progression-compact-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_export_progression", mode = "compact"}
+        }
+        export_bar.add {
+            type = "button",
+            caption = {"city-view.balancing-export-progression-detailed"},
+            tooltip = {"city-view.balancing-export-progression-detailed-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_export_progression", mode = "detailed"}
+        }
+        export_bar.add {
+            type = "button",
+            style = "red_button",
+            caption = {"city-view.balancing-apply-target"},
+            tooltip = {"city-view.balancing-apply-target-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_apply_target"}
+        }
+
+        -- Pack selection helper row
         local controls = main_flow.add {
             type = "flow",
             name = "controls",
@@ -1951,33 +1978,6 @@ Gui.CityView.add_page {
             caption = {"city-view.balancing-sync-to-target"},
             tooltip = {"", {"city-view.balancing-baseline"}, " → ", {"city-view.balancing-target"}},
             tags = {sosciencity_gui_event = "balancing_sync_to_target"}
-        }
-
-        controls.add {type = "line", direction = "vertical"}
-        controls.add {
-            type = "button",
-            caption = {"city-view.balancing-export"},
-            tooltip = {"city-view.balancing-export-tooltip"},
-            tags = {sosciencity_gui_event = "balancing_export_view"}
-        }
-        controls.add {
-            type = "button",
-            caption = {"city-view.balancing-export-progression-compact"},
-            tooltip = {"city-view.balancing-export-progression-compact-tooltip"},
-            tags = {sosciencity_gui_event = "balancing_export_progression", mode = "compact"}
-        }
-        controls.add {
-            type = "button",
-            caption = {"city-view.balancing-export-progression-detailed"},
-            tooltip = {"city-view.balancing-export-progression-detailed-tooltip"},
-            tags = {sosciencity_gui_event = "balancing_export_progression", mode = "detailed"}
-        }
-        controls.add {
-            type = "button",
-            style = "red_button",
-            caption = {"city-view.balancing-apply-target"},
-            tooltip = {"city-view.balancing-apply-target-tooltip"},
-            tags = {sosciencity_gui_event = "balancing_apply_target"}
         }
 
         -- Pack selection grid:
