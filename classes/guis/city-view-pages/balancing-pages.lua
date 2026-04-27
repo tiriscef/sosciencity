@@ -1,5 +1,7 @@
---- Debug category for the CityView — shared home for all dev-tool pages.
+--- Debug category for the CityView - shared home for all dev-tool pages.
 --- Only loaded when DEV_MODE is true (either sosciencity-debug or sosciencity-balancing active).
+
+local Castes = require("constants.castes")
 
 Gui.CityView.add_category("debug", {"city-view.debug"})
 
@@ -962,7 +964,6 @@ local function build_export_tech_detail_lines(rd)
     return out
 end
 
--- TODO v2: full lattice-based tech-tree walk grouping techs by minimum required pack-set.
 local function export_current_view(main_flow)
     local rd = compute_render_data(main_flow)
 
@@ -972,6 +973,698 @@ local function export_current_view(main_flow)
 
     helpers.write_file(EXPORT_FILENAME, table.concat(lines, "\n") .. "\n", false, main_flow.player_index)
     return EXPORT_FILENAME
+end
+
+---------------------------------------------------------------------------------------------------
+-- << Full progression export (v2) >>
+---------------------------------------------------------------------------------------------------
+
+local PROGRESSION_DIR = "sosciencity-progression"
+
+-- Strips "-science-pack" / "-pack" suffix for compact display + filenames.
+local function strip_pack_suffix(name)
+    if Tirislib.String.ends_with(name, "-science-pack") then
+        return name:sub(1, #name - #"-science-pack")
+    elseif Tirislib.String.ends_with(name, "-pack") then
+        return name:sub(1, #name - #"-pack")
+    end
+    return name
+end
+
+local function sorted_pack_names(pack_set)
+    local names = {}
+    for n in pairs(pack_set) do names[#names + 1] = n end
+    table.sort(names)
+    return names
+end
+
+local function pack_set_key(pack_set)
+    return table.concat(sorted_pack_names(pack_set), ",")
+end
+
+local function pack_set_subset(a, b)
+    for k in pairs(a) do
+        if not b[k] then return false end
+    end
+    return true
+end
+
+local function pack_set_equal(a, b)
+    return pack_set_subset(a, b) and pack_set_subset(b, a)
+end
+
+local function pack_set_size(s)
+    local n = 0
+    for _ in pairs(s) do n = n + 1 end
+    return n
+end
+
+local function format_pack_set(pack_set_sorted, separator)
+    if #pack_set_sorted == 0 then return "(empty)" end
+    local short = {}
+    for _, n in pairs(pack_set_sorted) do short[#short + 1] = strip_pack_suffix(n) end
+    return "{" .. table.concat(short, separator or ", ") .. "}"
+end
+
+-- Recursive memoized computation of min_packs for every tech (including hidden).
+-- min_packs(T) = T.research_unit_ingredients ∪ ⋃ min_packs(prereq).
+-- Trigger techs have empty research_unit_ingredients, so own_packs = ∅.
+-- Hidden techs are still computed so visible descendants inherit their packs;
+-- the lattice builder filters them out when collecting unique tier pack-sets.
+local function compute_min_packs_per_tech()
+    local memo = {}
+
+    local function compute(tech_name, visiting)
+        if memo[tech_name] ~= nil then return memo[tech_name] end
+        local tech = prototypes.technology[tech_name]
+        if not tech then
+            memo[tech_name] = {}
+            return memo[tech_name]
+        end
+        if visiting[tech_name] then return {} end
+        visiting[tech_name] = true
+
+        local result = {}
+        for _, ing in pairs(tech.research_unit_ingredients) do
+            result[ing.name] = true
+        end
+        for prereq in pairs(tech.prerequisites) do
+            local p = compute(prereq, visiting)
+            for k in pairs(p) do result[k] = true end
+        end
+
+        visiting[tech_name] = nil
+        memo[tech_name] = result
+        return result
+    end
+
+    for tech_name in pairs(prototypes.technology) do
+        compute(tech_name, {})
+    end
+
+    return memo
+end
+
+-- Builds the lattice of unique pack-sets and ordered tier records.
+-- Each tier record has: id, depth, pack_set, pack_set_sorted, key, marginal,
+-- parents (array of tier records), filename.
+local function build_lattice(min_packs_per_tech)
+    local by_key = {}
+    for tech_name, packs in pairs(min_packs_per_tech) do
+        local tech = prototypes.technology[tech_name]
+        if tech and not tech.hidden then
+            local key = pack_set_key(packs)
+            if not by_key[key] then
+                by_key[key] = {pack_set = packs, key = key}
+            end
+        end
+    end
+
+    local tiers = {}
+    for _, t in pairs(by_key) do tiers[#tiers + 1] = t end
+
+    -- Sort by pack-set size first so subsets come before supersets.
+    table.sort(tiers, function(a, b)
+        local sa, sb = pack_set_size(a.pack_set), pack_set_size(b.pack_set)
+        if sa ~= sb then return sa < sb end
+        return a.key < b.key
+    end)
+
+    -- Compute depth + direct parents.
+    for _, tier in pairs(tiers) do
+        local proper_subsets = {}
+        for _, other in pairs(tiers) do
+            if other ~= tier
+              and pack_set_subset(other.pack_set, tier.pack_set)
+              and not pack_set_equal(other.pack_set, tier.pack_set) then
+                proper_subsets[#proper_subsets + 1] = other
+            end
+        end
+
+        local max_depth = -1
+        for _, ps in pairs(proper_subsets) do
+            if ps.depth > max_depth then max_depth = ps.depth end
+        end
+        tier.depth = max_depth + 1
+
+        -- Direct parent = proper subset that is not a proper subset of any other proper subset.
+        local direct = {}
+        for i, ps in pairs(proper_subsets) do
+            local is_direct = true
+            for j, ps2 in pairs(proper_subsets) do
+                if i ~= j
+                  and pack_set_subset(ps.pack_set, ps2.pack_set)
+                  and not pack_set_equal(ps.pack_set, ps2.pack_set) then
+                    is_direct = false
+                    break
+                end
+            end
+            if is_direct then direct[#direct + 1] = ps end
+        end
+        tier.parents = direct
+    end
+
+    -- Resort by (depth, lex of key) and assign IDs.
+    table.sort(tiers, function(a, b)
+        if a.depth ~= b.depth then return a.depth < b.depth end
+        return a.key < b.key
+    end)
+
+    for i, tier in pairs(tiers) do
+        tier.id = i
+        tier.pack_set_sorted = sorted_pack_names(tier.pack_set)
+    end
+
+    -- Compute marginal = pack-set - ⋃ parents.pack-sets.
+    for _, tier in pairs(tiers) do
+        local parents_union = {}
+        for _, p in pairs(tier.parents) do
+            for k in pairs(p.pack_set) do parents_union[k] = true end
+        end
+        tier.marginal = {}
+        for k in pairs(tier.pack_set) do
+            if not parents_union[k] then
+                tier.marginal[#tier.marginal + 1] = k
+            end
+        end
+        table.sort(tier.marginal)
+    end
+
+    -- Filename: tier-NNN-{marginal}.md, suffix omitted on reconvergence.
+    for _, tier in pairs(tiers) do
+        local id_str = string.format("%03d", tier.id)
+        if #tier.marginal == 0 then
+            tier.filename = string.format("tier-%s.md", id_str)
+        else
+            local short = {}
+            for _, m in pairs(tier.marginal) do
+                short[#short + 1] = strip_pack_suffix(m)
+            end
+            tier.filename = string.format("tier-%s-%s.md", id_str, table.concat(short, "-"))
+        end
+    end
+
+    return tiers
+end
+
+-- For each tier: populate available_techs/recipes/items/fluids and ★ markers.
+-- Reuses v1's collect_available_resources et al.
+local function compute_per_tier_data(tiers, sosciencity_only)
+    local tech_to_recipes, all_tech_recipes = build_tech_to_recipes()
+
+    for _, tier in pairs(tiers) do
+        tier.available_techs = compute_available_techs(tier.pack_set, true)
+        tier.available_recipes = compute_available_recipe_set(
+            tier.available_techs, tech_to_recipes, all_tech_recipes, true)
+        tier.items, tier.fluids, tier.item_meta, tier.fluid_meta =
+            collect_available_resources(tier.available_techs, tier.available_recipes, sosciencity_only)
+    end
+
+    for _, tier in pairs(tiers) do
+        local pt, pr, pi, pf = {}, {}, {}, {}
+        for _, p in pairs(tier.parents) do
+            for k in pairs(p.available_techs) do pt[k] = true end
+            for k in pairs(p.available_recipes) do pr[k] = true end
+            for k in pairs(p.items) do pi[k] = true end
+            for k in pairs(p.fluids) do pf[k] = true end
+        end
+        tier.new_techs, tier.new_recipes, tier.new_items, tier.new_fluids = {}, {}, {}, {}
+        for k in pairs(tier.available_techs) do if not pt[k] then tier.new_techs[k] = true end end
+        for k in pairs(tier.available_recipes) do if not pr[k] then tier.new_recipes[k] = true end end
+        for k in pairs(tier.items) do if not pi[k] then tier.new_items[k] = true end end
+        for k in pairs(tier.fluids) do if not pf[k] then tier.new_fluids[k] = true end end
+    end
+
+    for _, tier in pairs(tiers) do
+        tier.visible_techs = {}
+        tier.visible_new_techs = {}
+        for n in pairs(tier.available_techs) do
+            local tech = prototypes.technology[n]
+            if tech and not tech.hidden then
+                tier.visible_techs[n] = true
+                if tier.new_techs[n] then tier.visible_new_techs[n] = true end
+            end
+        end
+    end
+
+    for _, tier in pairs(tiers) do
+        tier.available_castes = {}
+        tier.new_castes = {}
+        for _, caste in pairs(Castes.values) do
+            if caste.enabled and tier.available_techs[caste.tech_name] then
+                tier.available_castes[caste.name] = true
+                if tier.new_techs[caste.tech_name] then
+                    tier.new_castes[caste.name] = true
+                end
+            end
+        end
+    end
+
+    return tech_to_recipes
+end
+
+-- Build {item_name → [recipe_name, ...]} for fast recipe lookup in mode C.
+local function build_item_to_recipes()
+    local map = {}
+    for recipe_name, recipe in pairs(prototypes.recipe) do
+        if not recipe.parameter then
+            for _, product in pairs(recipe.products) do
+                if not map[product.name] then map[product.name] = {} end
+                local list = map[product.name]
+                local seen = false
+                for _, n in pairs(list) do if n == recipe_name then seen = true break end end
+                if not seen then list[#list + 1] = recipe_name end
+            end
+        end
+    end
+    return map
+end
+
+local function format_recipe_inline(recipe_name)
+    local recipe = prototypes.recipe[recipe_name]
+    if not recipe then return string.format("`%s`", recipe_name) end
+    local ings = {}
+    for _, ing in pairs(recipe.ingredients) do
+        local sprite_type = ing.type == "fluid" and "fluid" or "item"
+        ings[#ings + 1] = string.format("%d×[%s=%s]", ing.amount, sprite_type, ing.name)
+    end
+    local prods = {}
+    for _, prod in pairs(recipe.products) do
+        local sprite_type = prod.type == "fluid" and "fluid" or "item"
+        local amt = prod.amount or ((prod.amount_min or 0) + (prod.amount_max or 0)) / 2
+        if amt == 0 then amt = 1 end
+        prods[#prods + 1] = string.format("%g×[%s=%s]", amt, sprite_type, prod.name)
+    end
+    local cat = recipe.category or "crafting"
+    local time = recipe.energy or 0.5
+    return string.format("[recipe=%s] %s → %s (%s, %ss)",
+        recipe_name,
+        #ings > 0 and table.concat(ings, " + ") or "(no ingredients)",
+        #prods > 0 and table.concat(prods, " + ") or "(no products)",
+        cat, time)
+end
+
+-- Sort an array of names by Factorio subgroup+order (matches v1's "inventory" sort).
+local function sort_items_by_factorio_order(names)
+    table.sort(names, function(a, b)
+        local pa = prototypes.item[a] or prototypes.fluid[a]
+        local pb = prototypes.item[b] or prototypes.fluid[b]
+        local oa = pa and ((pa.subgroup and pa.subgroup.order or "") .. "\x00" .. (pa.order or "")) or a
+        local ob = pb and ((pb.subgroup and pb.subgroup.order or "") .. "\x00" .. (pb.order or "")) or b
+        return oa < ob
+    end)
+    return names
+end
+
+local function sort_recipes_by_factorio_order(names)
+    table.sort(names, function(a, b)
+        local ra, rb = prototypes.recipe[a], prototypes.recipe[b]
+        local oa = ra and ((ra.subgroup and ra.subgroup.order or "") .. "\x00" .. (ra.order or "")) or a
+        local ob = rb and ((rb.subgroup and rb.subgroup.order or "") .. "\x00" .. (rb.order or "")) or b
+        return oa < ob
+    end)
+    return names
+end
+
+local function sort_techs_by_factorio_order(names)
+    table.sort(names, function(a, b)
+        local ta, tb = prototypes.technology[a], prototypes.technology[b]
+        local oa = ta and (ta.order or a) or a
+        local ob = tb and (tb.order or b) or b
+        return oa < ob
+    end)
+    return names
+end
+
+-- Render an item line. mode = "compact" (A) or "detailed" (C).
+local function render_item_line(name, is_new, item_meta, item_to_recipes, available_recipes, mode)
+    local star = is_new and "★ " or ""
+    local meta = item_meta and item_meta[name]
+
+    local line = string.format("- %s[item=%s] `%s`", star, name, name)
+
+    local trailing = {}
+    if meta then
+        if #meta.entities > 0 then
+            local ents = {}
+            for _, e in pairs(meta.entities) do ents[#ents + 1] = string.format("[entity=%s]", e) end
+            trailing[#trailing + 1] = "from " .. table.concat(ents, " ")
+        end
+        if meta.scripted then trailing[#trailing + 1] = "[scripted]" end
+    end
+    if #trailing > 0 then
+        line = line .. "  " .. table.concat(trailing, " ")
+    end
+
+    local lines = {line}
+
+    if mode == "detailed" then
+        local recipes = item_to_recipes[name] or {}
+        local visible = {}
+        for _, rn in pairs(recipes) do
+            if available_recipes[rn] then visible[#visible + 1] = rn end
+        end
+        sort_recipes_by_factorio_order(visible)
+        for _, rn in pairs(visible) do
+            lines[#lines + 1] = "  - " .. format_recipe_inline(rn)
+        end
+    end
+
+    return lines
+end
+
+local function render_fluid_line(name, is_new, fluid_meta, item_to_recipes, available_recipes, mode)
+    local star = is_new and "★ " or ""
+    local meta = fluid_meta and fluid_meta[name]
+
+    local line = string.format("- %s[fluid=%s] `%s`", star, name, name)
+
+    local trailing = {}
+    if meta then
+        if #meta.entities > 0 then
+            local ents = {}
+            for _, e in pairs(meta.entities) do ents[#ents + 1] = string.format("[entity=%s]", e) end
+            trailing[#trailing + 1] = "from " .. table.concat(ents, " ")
+        end
+        if meta.scripted then trailing[#trailing + 1] = "[scripted]" end
+    end
+    if #trailing > 0 then
+        line = line .. "  " .. table.concat(trailing, " ")
+    end
+
+    local lines = {line}
+
+    if mode == "detailed" then
+        local recipes = item_to_recipes[name] or {}
+        local visible = {}
+        for _, rn in pairs(recipes) do
+            if available_recipes[rn] then visible[#visible + 1] = rn end
+        end
+        sort_recipes_by_factorio_order(visible)
+        for _, rn in pairs(visible) do
+            lines[#lines + 1] = "  - " .. format_recipe_inline(rn)
+        end
+    end
+
+    return lines
+end
+
+local function render_tech_line(name, is_new)
+    local tech = prototypes.technology[name]
+    local star = is_new and "★ " or ""
+    local cost_parts = {}
+    if tech then
+        for _, ing in pairs(tech.research_unit_ingredients) do
+            cost_parts[#cost_parts + 1] = string.format("[item=%s]", ing.name)
+        end
+    end
+    local cost_str = #cost_parts > 0 and ("  " .. table.concat(cost_parts, " ")) or ""
+    return string.format("- %s[technology=%s] `%s`%s", star, name, name, cost_str)
+end
+
+local function pluralize_count(n, singular)
+    return string.format("%d %s%s", n, singular, n == 1 and "" or "s")
+end
+
+local function tier_link(tier)
+    return string.format("[tier-%03d](%s)", tier.id, tier.filename)
+end
+
+-- Build the markdown lines for a single tier file (cumulative).
+local function build_tier_file_lines(tier, item_to_recipes, mode)
+    local lines = {}
+    local function add(s) lines[#lines + 1] = s end
+
+    add(string.format("# Tier %03d - %s", tier.id, format_pack_set(tier.pack_set_sorted)))
+    add("")
+    add(string.format("**Depth:** %d", tier.depth))
+
+    if #tier.parents > 0 then
+        local parent_links = {}
+        table.sort(tier.parents, function(a, b) return a.id < b.id end)
+        for _, p in pairs(tier.parents) do parent_links[#parent_links + 1] = tier_link(p) end
+        add(string.format("**Parents:** %s", table.concat(parent_links, ", ")))
+    else
+        add("**Parents:** (none - root tier)")
+    end
+
+    local nt = pack_set_size(tier.visible_new_techs)
+    local nb, ni = 0, 0
+    for n in pairs(tier.items) do
+        local proto = prototypes.item[n]
+        if proto and proto.place_result then
+            if tier.new_items[n] then nb = nb + 1 end
+        else
+            if tier.new_items[n] then ni = ni + 1 end
+        end
+    end
+    local nf = pack_set_size(tier.new_fluids)
+
+    local total_techs = pack_set_size(tier.visible_techs)
+    local total_buildings, total_items = 0, 0
+    for n in pairs(tier.items) do
+        local proto = prototypes.item[n]
+        if proto and proto.place_result then total_buildings = total_buildings + 1
+        else total_items = total_items + 1 end
+    end
+    local total_fluids = pack_set_size(tier.fluids)
+
+    add(string.format("**Counts:** %s, %s, %s, %s (★ %d / %d / %d / %d new this tier)",
+        pluralize_count(total_techs, "tech"),
+        pluralize_count(total_buildings, "building"),
+        pluralize_count(total_items, "item"),
+        pluralize_count(total_fluids, "fluid"),
+        nt, nb, ni, nf))
+
+    local available = sorted_pack_names(tier.available_castes)
+    local new = sorted_pack_names(tier.new_castes)
+    add(string.format("**Castes available:** %s",
+        #available > 0 and table.concat(available, ", ") or "(none)"))
+    if #new > 0 then
+        add(string.format("**New caste this tier:** %s", table.concat(new, ", ")))
+    end
+
+    add("")
+
+    -- Technologies section
+    add("## Technologies")
+    add("")
+    local tech_names = {}
+    for n in pairs(tier.visible_techs) do tech_names[#tech_names + 1] = n end
+    sort_techs_by_factorio_order(tech_names)
+    if #tech_names == 0 then
+        add("(none)")
+    else
+        for _, n in pairs(tech_names) do
+            add(render_tech_line(n, tier.visible_new_techs[n] == true))
+        end
+    end
+    add("")
+
+    -- Buildings section
+    add("## Buildings")
+    add("")
+    local building_names = {}
+    for n in pairs(tier.items) do
+        local proto = prototypes.item[n]
+        if proto and proto.place_result then building_names[#building_names + 1] = n end
+    end
+    sort_items_by_factorio_order(building_names)
+    if #building_names == 0 then
+        add("(none)")
+    else
+        for _, n in pairs(building_names) do
+            for _, l in pairs(render_item_line(n, tier.new_items[n] == true,
+                tier.item_meta, item_to_recipes, tier.available_recipes, mode)) do add(l) end
+        end
+    end
+    add("")
+
+    -- Items section
+    add("## Items")
+    add("")
+    local item_names = {}
+    for n in pairs(tier.items) do
+        local proto = prototypes.item[n]
+        if not (proto and proto.place_result) then item_names[#item_names + 1] = n end
+    end
+    sort_items_by_factorio_order(item_names)
+    if #item_names == 0 then
+        add("(none)")
+    else
+        for _, n in pairs(item_names) do
+            for _, l in pairs(render_item_line(n, tier.new_items[n] == true,
+                tier.item_meta, item_to_recipes, tier.available_recipes, mode)) do add(l) end
+        end
+    end
+    add("")
+
+    -- Fluids section
+    add("## Fluids")
+    add("")
+    local fluid_names = {}
+    for n in pairs(tier.fluids) do fluid_names[#fluid_names + 1] = n end
+    sort_items_by_factorio_order(fluid_names)
+    if #fluid_names == 0 then
+        add("(none)")
+    else
+        for _, n in pairs(fluid_names) do
+            for _, l in pairs(render_fluid_line(n, tier.new_fluids[n] == true,
+                tier.fluid_meta, item_to_recipes, tier.available_recipes, mode)) do add(l) end
+        end
+    end
+    add("")
+
+    return lines
+end
+
+local function build_index_lines(tiers, mode, sosciencity_only)
+    local lines = {}
+    local function add(s) lines[#lines + 1] = s end
+
+    add("# Sosciencity Progression Snapshot")
+    add("")
+    add(string.format("**Generated:** game tick %d", game.tick))
+    add(string.format("**Mode:** %s", mode == "detailed" and "Detailed (C)" or "Compact (A)"))
+    if sosciencity_only then
+        add("**Filter:** sosciencity prototypes only")
+    end
+
+    local mod_names = {}
+    for n in pairs(script.active_mods) do mod_names[#mod_names + 1] = n end
+    table.sort(mod_names)
+    add("")
+    add("**Active mods:**")
+    for _, n in pairs(mod_names) do
+        add(string.format("- %s %s", n, script.active_mods[n]))
+    end
+
+    add("")
+    add("See [overview.md](overview.md) for the delta-per-tier walk in one file.")
+    add("")
+    add("## Tiers")
+    add("")
+    add("| # | Pack-set | Depth | Techs | Buildings | Items | Fluids | New here (T/B/I/F) |")
+    add("|---|---|---|---|---|---|---|---|")
+
+    for _, tier in pairs(tiers) do
+        local total_techs = pack_set_size(tier.visible_techs)
+        local total_buildings, total_items = 0, 0
+        for n in pairs(tier.items) do
+            local proto = prototypes.item[n]
+            if proto and proto.place_result then total_buildings = total_buildings + 1
+            else total_items = total_items + 1 end
+        end
+        local total_fluids = pack_set_size(tier.fluids)
+
+        local nt = pack_set_size(tier.visible_new_techs)
+        local nr_b, nr_i = 0, 0
+        for n in pairs(tier.new_items) do
+            local proto = prototypes.item[n]
+            if proto and proto.place_result then nr_b = nr_b + 1
+            else nr_i = nr_i + 1 end
+        end
+        local nr_f = pack_set_size(tier.new_fluids)
+
+        add(string.format("| [%03d](%s) | %s | %d | %d | %d | %d | %d | %d/%d/%d/%d |",
+            tier.id, tier.filename,
+            format_pack_set(tier.pack_set_sorted),
+            tier.depth, total_techs, total_buildings, total_items, total_fluids,
+            nt, nr_b, nr_i, nr_f))
+    end
+
+    add("")
+    return lines
+end
+
+local function build_overview_lines(tiers)
+    local lines = {}
+    local function add(s) lines[#lines + 1] = s end
+
+    add("# Progression Overview")
+    add("")
+    add("Delta per tier - shows only what is new at each tier. See [index.md](index.md) for cumulative views per tier.")
+    add("")
+
+    for _, tier in pairs(tiers) do
+        add(string.format("## Tier %03d - %s", tier.id, format_pack_set(tier.pack_set_sorted)))
+        add("")
+        add(string.format("**Depth:** %d  **File:** [%s](%s)", tier.depth, tier.filename, tier.filename))
+
+        local new_castes = sorted_pack_names(tier.new_castes)
+        if #new_castes > 0 then
+            add(string.format("**New caste this tier:** %s", table.concat(new_castes, ", ")))
+        end
+        add("")
+
+        local new_techs = {}
+        for n in pairs(tier.visible_new_techs) do new_techs[#new_techs + 1] = n end
+        sort_techs_by_factorio_order(new_techs)
+        if #new_techs > 0 then
+            local items = {}
+            for _, n in pairs(new_techs) do
+                items[#items + 1] = string.format("[technology=%s] `%s`", n, n)
+            end
+            add(string.format("**New techs (%d):** %s", #new_techs, table.concat(items, ", ")))
+        end
+
+        local new_buildings, new_items = {}, {}
+        for n in pairs(tier.new_items) do
+            local proto = prototypes.item[n]
+            if proto and proto.place_result then new_buildings[#new_buildings + 1] = n
+            else new_items[#new_items + 1] = n end
+        end
+        sort_items_by_factorio_order(new_buildings)
+        sort_items_by_factorio_order(new_items)
+
+        if #new_buildings > 0 then
+            local b = {}
+            for _, n in pairs(new_buildings) do b[#b + 1] = string.format("[item=%s] `%s`", n, n) end
+            add(string.format("**New buildings (%d):** %s", #new_buildings, table.concat(b, ", ")))
+        end
+        if #new_items > 0 then
+            local b = {}
+            for _, n in pairs(new_items) do b[#b + 1] = string.format("[item=%s] `%s`", n, n) end
+            add(string.format("**New items (%d):** %s", #new_items, table.concat(b, ", ")))
+        end
+
+        local new_fluids = {}
+        for n in pairs(tier.new_fluids) do new_fluids[#new_fluids + 1] = n end
+        sort_items_by_factorio_order(new_fluids)
+        if #new_fluids > 0 then
+            local b = {}
+            for _, n in pairs(new_fluids) do b[#b + 1] = string.format("[fluid=%s] `%s`", n, n) end
+            add(string.format("**New fluids (%d):** %s", #new_fluids, table.concat(b, ", ")))
+        end
+
+        add("")
+    end
+
+    return lines
+end
+
+local function export_full_progression(main_flow, mode)
+    local player_index = main_flow.player_index
+    local sosciencity_only = Gui.get_element(CONTEXT, "mod_sosciencity", player_index).toggled
+
+    local min_packs = compute_min_packs_per_tech()
+    local tiers = build_lattice(min_packs)
+    compute_per_tier_data(tiers, sosciencity_only)
+    local item_to_recipes = build_item_to_recipes()
+
+    local function write(rel, lines)
+        helpers.write_file(PROGRESSION_DIR .. "/" .. rel,
+            table.concat(lines, "\n") .. "\n", false, player_index)
+    end
+
+    write("index.md", build_index_lines(tiers, mode, sosciencity_only))
+    write("overview.md", build_overview_lines(tiers))
+
+    for _, tier in pairs(tiers) do
+        write(tier.filename, build_tier_file_lines(tier, item_to_recipes, mode))
+    end
+
+    return PROGRESSION_DIR, #tiers + 2
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -1155,6 +1848,16 @@ Gui.set_click_handler(
 )
 
 Gui.set_click_handler(
+    "balancing_export_progression",
+    function(event)
+        local main_flow = get_main_flow(event)
+        local mode = event.element.tags.mode
+        local dir, file_count = export_full_progression(main_flow, mode)
+        game.players[event.player_index].print({"city-view.balancing-export-progression-done", file_count, dir})
+    end
+)
+
+Gui.set_click_handler(
     "balancing_apply_target",
     function(event)
         local main_flow = get_main_flow(event)
@@ -1256,6 +1959,18 @@ Gui.CityView.add_page {
             caption = {"city-view.balancing-export"},
             tooltip = {"city-view.balancing-export-tooltip"},
             tags = {sosciencity_gui_event = "balancing_export_view"}
+        }
+        controls.add {
+            type = "button",
+            caption = {"city-view.balancing-export-progression-compact"},
+            tooltip = {"city-view.balancing-export-progression-compact-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_export_progression", mode = "compact"}
+        }
+        controls.add {
+            type = "button",
+            caption = {"city-view.balancing-export-progression-detailed"},
+            tooltip = {"city-view.balancing-export-progression-detailed-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_export_progression", mode = "detailed"}
         }
         controls.add {
             type = "button",
