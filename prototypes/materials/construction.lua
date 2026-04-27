@@ -102,6 +102,10 @@ local construction_items = {
         use_placeholder_icon = true
     },
     {
+        name = "polished-gemstone",
+        use_placeholder_icon = true
+    },
+    {
         name = "tirinite",
         use_placeholder_icon = true
     }
@@ -456,4 +460,88 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "filter", amount = 1}
     },
     unlock = "activated-carbon-filtering"
+}
+
+-- Clockwork Mine
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "precious-ore", amount = 2}
+    },
+    ingredients = {},
+    category = "sosciencity-clockwork-mines",
+    energy_required = 5,
+    allow_productivity = true
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "gemstone", amount = 1}
+    },
+    ingredients = {},
+    category = "sosciencity-clockwork-mines",
+    energy_required = 8,
+    allow_productivity = true
+}
+
+-- Tinkering Workshop - precious materials
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "rosegold-ingot", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "precious-ore", amount = 10},
+        {type = "item", name = "copper-ore", amount = 10}
+    },
+    category = "sosciencity-tinkering-workshop",
+    energy_required = 8,
+    unlock = "clockwork-mines"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "rosegold-ingot", amount = 3}
+    },
+    ingredients = {
+        {type = "item", name = "precious-ore", amount = 5},
+        {type = "item", name = "copper-ore", amount = 5},
+        {type = "item", name = "limestone", amount = 2},
+        {type = "item", name = "glass", amount = 1},
+        {type = "item", name = "metallurgical-report", amount = 1}
+    },
+    category = "sosciencity-tinkering-workshop",
+    energy_required = 12,
+    unlock = "precious-metalworking"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "polished-gemstone", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "gemstone", amount = 1},
+        {type = "item", name = "sand", amount = 3},
+        {type = "item", name = "tools", amount = 1},
+        {type = "item", name = "sketch", amount = 1}
+    },
+    category = "sosciencity-tinkering-workshop",
+    energy_required = 6,
+    unlock = "clockwork-mines"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "polished-gemstone", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "gemstone", amount = 1},
+        {type = "item", name = "sand", amount = 2},
+        {type = "item", name = "tools", amount = 1},
+        {type = "item", name = "sketch", amount = 1},
+        {type = "fluid", name = "sulfuric-acid", amount = 5}
+    },
+    category = "sosciencity-tinkering-workshop",
+    energy_required = 8,
+    unlock = "precious-metalworking"
 }

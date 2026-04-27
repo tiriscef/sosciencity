@@ -79,7 +79,9 @@ Tirislib.RecipeGenerator.create_from_prototype {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "jewellery", amount = 1}},
     ingredients = {
-        -- TODO: ingredients :)
+        {type = "item", name = "rosegold-ingot", amount = 1},
+        {type = "item", name = "polished-gemstone", amount = 1},
+        {type = "item", name = "sketch", amount = 2}
     },
     category = "sosciencity-atelier",
     --unlock = "ember-caste"
