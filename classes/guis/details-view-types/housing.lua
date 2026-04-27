@@ -17,12 +17,13 @@ local Color = require("constants.color")
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 local Housing = require("constants.housing")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
-local required_nutrition_tags = Food.required_nutrition_tags
+local required_nutrition_tags = InhabitantsConstants.required_nutrition_tags
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale

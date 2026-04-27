@@ -7,9 +7,8 @@ local NutritionTag = require("enums.nutrition-tag")
 local SanitySummand = require("enums.sanity-summand")
 local Type = require("enums.type")
 
-local Biology = require("constants.biology")
 local Castes = require("constants.castes")
-local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
@@ -59,7 +58,7 @@ local function run_evaluate_diet(house, delta_ticks)
            house[EK.sanity_summands]
 end
 
-local tag_effects = Food.nutrition_tag_effects
+local tag_effects = InhabitantsConstants.nutrition_tag_effects
 local carb_bonus = tag_effects[NutritionTag.carb_rich].bonus
 local protein_bonus = tag_effects[NutritionTag.protein_rich].bonus
 local fat_bonus = tag_effects[NutritionTag.fat_rich].bonus
@@ -83,9 +82,9 @@ Tirislib.Testing.add_test_case(
 
         local _, hf, _, thf, _ = run_evaluate_diet(house, Time.minute)
 
-        Assert.equals(hf[HappinessFactor.hunger], Biology.starvation.happiness_factor,
+        Assert.equals(hf[HappinessFactor.hunger], InhabitantsConstants.starvation.happiness_factor,
             "hunger happiness factor should be applied with no food")
-        Assert.equals(thf[HealthFactor.hunger], Biology.starvation.health_factor,
+        Assert.equals(thf[HealthFactor.hunger], InhabitantsConstants.starvation.health_factor,
             "hunger health factor should be applied with no food")
     end,
     setup,

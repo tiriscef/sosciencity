@@ -5,10 +5,10 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 -- constants
-local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
 local TypeGroup = require("constants.type-groups")
 local type_definitions = require("constants.types").definitions
 
@@ -137,7 +137,7 @@ local function update_treatment_slots(general, entry)
 
             local workload, slot_caption, slot_tooltip
             if slot.blood_donation then
-                workload = Biology.blood_donation_workload
+                workload = InhabitantsConstants.blood_donation_workload
                 slot_caption = {"sosciencity.blood-donation-slot"}
             else
                 local disease = diseases[slot.disease_id]

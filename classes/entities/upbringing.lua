@@ -3,9 +3,9 @@ local EK = require("enums.entry-key")
 local ImmigrationCause = require("enums.immigration-cause")
 local Type = require("enums.type")
 
-local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local get_building_details = Buildings.get
@@ -44,11 +44,11 @@ local function finish_class(entry, class, mode)
     local genders = GenderGroup.new()
     local diseases = DiseaseGroup.new(count)
     for egg_name, egg_count in pairs(class[2]) do
-        GenderGroup.merge(genders, Utils.dice_rolls(Biology.egg_data[egg_name], egg_count, 5))
+        GenderGroup.merge(genders, Utils.dice_rolls(InhabitantsConstants.egg_data[egg_name], egg_count, 5))
 
         local birth_defect_count =
             Utils.coin_flips(
-                Biology.egg_data[egg_name].birth_defect_probability *
+                InhabitantsConstants.egg_data[egg_name].birth_defect_probability *
                 0.8 ^ storage.technologies["improved-reproductive-healthcare"],
                 egg_count
             )

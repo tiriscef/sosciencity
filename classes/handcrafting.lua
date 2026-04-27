@@ -1,5 +1,5 @@
-local Biology = require("constants.biology")
 local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 ---Static class for the game logic of handcrafting side effects.
@@ -122,7 +122,7 @@ local function consume_calories_per_craft(player_id, recipe_name, count, calorie
 end
 
 local function produce_eggs(player_id, recipe_name, count)
-    consume_calories_per_craft(player_id, recipe_name, count, Biology.egg_calories, "sosciencity.less-eggs")
+    consume_calories_per_craft(player_id, recipe_name, count, InhabitantsConstants.egg_calories, "sosciencity.less-eggs")
 end
 
 local function produce_rations(player_id, recipe_name, count)

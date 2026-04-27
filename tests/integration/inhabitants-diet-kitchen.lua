@@ -6,7 +6,7 @@ local NutritionTag = require("enums.nutrition-tag")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
-local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
@@ -45,7 +45,7 @@ end
 
 local assembling_machine_output = defines.inventory.crafter_output
 
-local tag_effects = Food.nutrition_tag_effects
+local tag_effects = InhabitantsConstants.nutrition_tag_effects
 local carb_bonus = tag_effects[NutritionTag.carb_rich].bonus
 local protein_bonus = tag_effects[NutritionTag.protein_rich].bonus
 local fat_bonus = tag_effects[NutritionTag.fat_rich].bonus

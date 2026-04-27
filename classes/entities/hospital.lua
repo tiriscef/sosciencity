@@ -1,10 +1,10 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
-local Biology = require("constants.biology")
 local Castes = require("constants.castes")
 local Buildings = require("constants.buildings")
 local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
 local TypeGroup = require("constants.type-groups")
 
 local get_building_details = Buildings.get
@@ -123,8 +123,8 @@ end
 local function process_blood_donation_slot(hospital, slot, inventories, available_work)
     local work_done = (slot.work_done or 0) + available_work
 
-    if work_done >= Biology.blood_donation_workload then
-        Inventories.try_insert_into_inventory_range(inventories, Biology.blood_donation_item, 1)
+    if work_done >= InhabitantsConstants.blood_donation_workload then
+        Inventories.try_insert_into_inventory_range(inventories, InhabitantsConstants.blood_donation_item, 1)
         hospital[EK.blood_donations] = hospital[EK.blood_donations] + 1
         slot.done = true
     else
@@ -315,7 +315,7 @@ function Entity.try_blood_donation(hospital, housing)
 
     local inventories = Entity.get_hospital_inventories(hospital)
     local contents = Inventories.get_combined_contents(inventories)
-    local cost = Biology.blood_donation_medical_instruments_cost
+    local cost = InhabitantsConstants.blood_donation_medical_instruments_cost
 
     if (contents["surgery-instruments"] or 0) < cost then return false end
 
