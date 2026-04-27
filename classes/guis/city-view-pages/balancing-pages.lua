@@ -689,10 +689,8 @@ local function compute_tech_sets(main_flow)
     return available_baseline, available_target, baseline_start_recipes, target_start_recipes
 end
 
-local function rebuild_content(main_flow)
-    local content = main_flow.content
-    content.clear()
-
+-- Builds the render-data table consumed by both the GUI render path and the markdown export.
+local function compute_render_data(main_flow)
     local player_index = main_flow.player_index
     local display_mode = Gui.get_element(CONTEXT, "display_grid", player_index).toggled and "grid" or "list"
     local sort_mode = Gui.get_element(CONTEXT, "sort_inventory", player_index).toggled and "inventory" or "name"
@@ -733,7 +731,7 @@ local function rebuild_content(main_flow)
         :where(function(n) return not fluids_baseline[n] end)
         :to_array()
 
-    local rd = {
+    return {
         display_mode     = display_mode,
         sort_mode        = sort_mode,
         sosciencity_only = sosciencity_only,
@@ -745,6 +743,13 @@ local function rebuild_content(main_flow)
         item_meta        = item_meta,
         fluid_meta       = fluid_meta,
     }
+end
+
+local function rebuild_content(main_flow)
+    local content = main_flow.content
+    content.clear()
+
+    local rd = compute_render_data(main_flow)
 
     add_summary_section(content, rd)
     add_new_technologies_section(content, rd)
@@ -752,6 +757,221 @@ local function rebuild_content(main_flow)
     if #content.children == 0 then
         Gui.Elements.Label.paragraph(content, {"city-view.balancing-nothing-available"})
     end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << Markdown export >>
+---------------------------------------------------------------------------------------------------
+
+-- Single fixed path so re-exports overwrite. Users who want to keep a snapshot can rename it.
+local EXPORT_FILENAME = "sosciencity-progression.md"
+
+local function describe_pack_selection(packs, start_recipes, trigger_techs)
+    local pack_names = {}
+    for name in pairs(packs) do pack_names[#pack_names + 1] = name end
+    table.sort(pack_names)
+
+    local parts = {}
+    parts[#parts + 1] = #pack_names == 0 and "(no science packs)" or table.concat(pack_names, ", ")
+    if start_recipes then parts[#parts + 1] = "+ start recipes" end
+    if trigger_techs then parts[#parts + 1] = "+ trigger techs" end
+    return table.concat(parts, ", ")
+end
+
+local function build_export_header_lines(main_flow)
+    local baseline_packs, target_packs,
+          baseline_start_recipes, baseline_trigger_techs,
+          target_start_recipes, target_trigger_techs = get_selections(main_flow)
+
+    local target_techs = get_target_tech_names(
+        Gui.get_element(CONTEXT, "target_slots", main_flow.player_index)
+    )
+    local include_siblings = main_flow.target_row.siblings_toggle.toggled
+
+    local mod_names = {}
+    for name in pairs(script.active_mods) do mod_names[#mod_names + 1] = name end
+    table.sort(mod_names)
+
+    local lines = {
+        "# Sosciencity Progression Export",
+        "",
+        "**Generated:** game tick " .. game.tick,
+        "**Baseline:** " .. describe_pack_selection(baseline_packs, baseline_start_recipes, baseline_trigger_techs),
+        "**Target:** " .. describe_pack_selection(target_packs, target_start_recipes, target_trigger_techs),
+    }
+
+    if #target_techs > 0 then
+        lines[#lines + 1] = "**Target technologies:** " .. table.concat(target_techs, ", ") ..
+            (include_siblings and " (+ siblings)" or "")
+    end
+
+    lines[#lines + 1] = ""
+    lines[#lines + 1] = "**Active mods:**"
+    for _, name in pairs(mod_names) do
+        lines[#lines + 1] = "- " .. name .. " " .. script.active_mods[name]
+    end
+
+    lines[#lines + 1] = ""
+    lines[#lines + 1] = "Shows items, fluids, recipes and technologies reachable at Target but not Baseline."
+    lines[#lines + 1] = "Regenerated from the live prototype graph - includes contributions from every active mod."
+    lines[#lines + 1] = ""
+    lines[#lines + 1] = "---"
+    lines[#lines + 1] = ""
+
+    return lines
+end
+
+local function build_resource_lines(names, meta_table)
+    local sorted = Q.from(names):order_by(get_item_sort_key):to_array()
+    local lines = {}
+    for _, name in pairs(sorted) do
+        local suffix = ""
+        local meta = meta_table and meta_table[name]
+        if meta then
+            if #meta.entities > 0 then
+                suffix = suffix .. " (from " .. table.concat(meta.entities, ", ") .. ")"
+            end
+            if meta.scripted then suffix = suffix .. " [scripted]" end
+        end
+        lines[#lines + 1] = "- `" .. name .. "`" .. suffix
+    end
+    return lines
+end
+
+local function build_recipe_lines(names)
+    local sorted = Q.from(names)
+        :where(function(name) return prototypes.recipe[name] ~= nil end)
+        :order_by(get_recipe_sort_key)
+        :to_array()
+    local lines = {}
+    for _, name in pairs(sorted) do
+        lines[#lines + 1] = "- `" .. name .. "`"
+    end
+    return lines
+end
+
+local function build_tech_lines(names)
+    local sorted = Q.from(names):order_by(get_tech_sort_key):to_array()
+    local lines = {}
+    for _, name in pairs(sorted) do
+        local tech = prototypes.technology[name]
+        local cost = ""
+        if tech then
+            local ingredients = {}
+            for _, ing in pairs(tech.research_unit_ingredients) do
+                ingredients[#ingredients + 1] = ing.name
+            end
+            if #ingredients > 0 then
+                cost = " (cost: " .. table.concat(ingredients, ", ") .. ")"
+            end
+        end
+        lines[#lines + 1] = "- `" .. name .. "`" .. cost
+    end
+    return lines
+end
+
+local function append_section(out, title, body_lines)
+    if #body_lines == 0 then return end
+    out[#out + 1] = string.format("### %s (%d)", title, #body_lines)
+    out[#out + 1] = ""
+    for _, line in pairs(body_lines) do out[#out + 1] = line end
+    out[#out + 1] = ""
+end
+
+local function build_export_summary_lines(rd)
+    local out = {}
+
+    local buildings = Q.from(rd.items_delta)
+        :where(function(name)
+            local proto = prototypes.item[name]
+            return proto ~= nil and proto.place_result ~= nil
+        end)
+        :to_array()
+    local plain_items = Q.from(rd.items_delta)
+        :where(function(name)
+            local proto = prototypes.item[name]
+            return not (proto ~= nil and proto.place_result ~= nil)
+        end)
+        :to_array()
+
+    local total = #buildings + #plain_items + #rd.fluids_delta + #rd.techs_delta + #rd.recipes_delta
+    if total == 0 then
+        out[#out + 1] = "(Nothing new in Target compared to Baseline.)"
+        return out
+    end
+
+    out[#out + 1] = "## Summary"
+    out[#out + 1] = ""
+    append_section(out, "New Buildings", build_resource_lines(buildings, rd.item_meta))
+    append_section(out, "New Items", build_resource_lines(plain_items, rd.item_meta))
+    append_section(out, "New Fluids", build_resource_lines(rd.fluids_delta, rd.fluid_meta))
+    append_section(out, "New Technologies", build_tech_lines(rd.techs_delta))
+    append_section(out, "New Recipes", build_recipe_lines(rd.recipes_delta))
+    return out
+end
+
+local function build_export_tech_detail_lines(rd)
+    local out = {}
+    if #rd.techs_delta == 0 then return out end
+
+    out[#out + 1] = "## New Technologies in Detail"
+    out[#out + 1] = ""
+
+    for _, tech_name in pairs(rd.techs_delta) do
+        local tech = prototypes.technology[tech_name]
+        if tech then
+            local recipes = Q.from(rd.tech_to_recipes[tech_name] or {})
+                :where(function(name)
+                    local recipe = prototypes.recipe[name]
+                    return recipe ~= nil and not recipe.parameter
+                       and (not rd.sosciencity_only or is_sosciencity(recipe))
+                end)
+                :to_array()
+
+            local scripted_items = Q.from(BalancingData.scripted_items)
+                :where(function(condition, name)
+                    if condition ~= tech_name then return false end
+                    local proto = prototypes.item[name] or prototypes.fluid[name]
+                    return proto ~= nil and (not rd.sosciencity_only or is_sosciencity(proto))
+                end)
+                :select(function(_, name) return name end)
+                :to_array()
+
+            if #recipes > 0 or #scripted_items > 0 then
+                out[#out + 1] = "### `" .. tech_name .. "`"
+                local ingredients = {}
+                for _, ing in pairs(tech.research_unit_ingredients) do
+                    ingredients[#ingredients + 1] = ing.name
+                end
+                if #ingredients > 0 then
+                    out[#out + 1] = "**Cost:** " .. table.concat(ingredients, ", ")
+                end
+                if #recipes > 0 then
+                    out[#out + 1] = "**Recipes:**"
+                    for _, line in pairs(build_recipe_lines(recipes)) do out[#out + 1] = line end
+                end
+                if #scripted_items > 0 then
+                    out[#out + 1] = "**Scripted items/fluids:**"
+                    for _, line in pairs(build_resource_lines(scripted_items, nil)) do out[#out + 1] = line end
+                end
+                out[#out + 1] = ""
+            end
+        end
+    end
+
+    return out
+end
+
+-- TODO v2: full lattice-based tech-tree walk grouping techs by minimum required pack-set.
+local function export_current_view(main_flow)
+    local rd = compute_render_data(main_flow)
+
+    local lines = build_export_header_lines(main_flow)
+    for _, l in pairs(build_export_summary_lines(rd)) do lines[#lines + 1] = l end
+    for _, l in pairs(build_export_tech_detail_lines(rd)) do lines[#lines + 1] = l end
+
+    helpers.write_file(EXPORT_FILENAME, table.concat(lines, "\n") .. "\n", false, main_flow.player_index)
+    return EXPORT_FILENAME
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -926,6 +1146,15 @@ Gui.set_click_handler(
 )
 
 Gui.set_click_handler(
+    "balancing_export_view",
+    function(event)
+        local main_flow = get_main_flow(event)
+        local filename = export_current_view(main_flow)
+        game.players[event.player_index].print({"city-view.balancing-export-done", filename})
+    end
+)
+
+Gui.set_click_handler(
     "balancing_apply_target",
     function(event)
         local main_flow = get_main_flow(event)
@@ -1022,6 +1251,12 @@ Gui.CityView.add_page {
         }
 
         controls.add {type = "line", direction = "vertical"}
+        controls.add {
+            type = "button",
+            caption = {"city-view.balancing-export"},
+            tooltip = {"city-view.balancing-export-tooltip"},
+            tags = {sosciencity_gui_event = "balancing_export_view"}
+        }
         controls.add {
             type = "button",
             style = "red_button",
