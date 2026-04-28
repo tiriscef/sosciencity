@@ -25,5 +25,7 @@ PE.worker_happiness = 9
 PE.trees = 10
 --- competition from nearby hunting huts
 PE.hunting_competition = 11
+--- mining drill productivity research bonus
+PE.mining_productivity = 12
 
 return PE

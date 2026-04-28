@@ -97,6 +97,7 @@ Building.values = {
     },
     ["clockwork-mines"] = {
         type = Type.manufactory,
+        profits_from_mining_productivity = true,
         workforce = {
             count = 10,
             castes = {Type.clockwork},
@@ -107,6 +108,7 @@ Building.values = {
     },
     ["clockwork-quarry"] = {
         type = Type.manufactory,
+        profits_from_mining_productivity = true,
         workforce = {
             count = 10,
             castes = {Type.clockwork},
