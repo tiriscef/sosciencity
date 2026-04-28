@@ -15,6 +15,9 @@ Register.set_entity_creation_handler(Type.rocket_silo, create_active_machine_sta
 local function update_machine(entry)
     local clockwork_bonus = Entity.caste_bonuses[Type.clockwork]
     local penalty_module_needed = (clockwork_bonus < 0)
+
+    entry[EK.entity].consumption_modifier = penalty_module_needed and (1 + clockwork_bonus / 100) or 1
+
     if penalty_module_needed then
         clockwork_bonus = clockwork_bonus + 80
     end
@@ -29,6 +32,9 @@ Register.set_entity_updater(Type.mining_drill, update_machine)
 local function update_rocket_silo(entry)
     local clockwork_bonus = Entity.caste_bonuses[Type.clockwork]
     local use_penalty_module = (clockwork_bonus < 0)
+
+    entry[EK.entity].consumption_modifier = use_penalty_module and (1 + clockwork_bonus / 100) or 1
+
     if use_penalty_module then
         clockwork_bonus = clockwork_bonus + 80
     end

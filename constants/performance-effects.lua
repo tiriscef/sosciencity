@@ -16,7 +16,8 @@ PerformanceEffects.labels = {
     [PE.fishing_competition] = {"sosciencity.competition"},
     [PE.worker_happiness] = {"sosciencity.worker-happiness"},
     [PE.trees] = {"sosciencity.trees"},
-    [PE.hunting_competition] = {"sosciencity.competition"}
+    [PE.hunting_competition] = {"sosciencity.competition"},
+    [PE.mining_productivity] = {"sosciencity.mining-productivity"}
 }
 
 PerformanceEffects.descriptions = {
@@ -30,7 +31,8 @@ PerformanceEffects.descriptions = {
     [PE.fishing_competition] = {"sosciencity.describe-fishing-competition"},
     [PE.worker_happiness] = {"sosciencity.describe-worker-happiness"},
     [PE.trees] = {"sosciencity.describe-trees"},
-    [PE.hunting_competition] = {"sosciencity.describe-hunting-competition"}
+    [PE.hunting_competition] = {"sosciencity.describe-hunting-competition"},
+    [PE.mining_productivity] = {"sosciencity.describe-mining-productivity"}
 }
 
 PerformanceEffects.dimension_labels = {
