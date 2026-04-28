@@ -478,6 +478,7 @@ require("prototypes.technologies.architecture")
 require("prototypes.technologies.ember")
 require("prototypes.technologies.orchid")
 require("prototypes.technologies.clockwork")
+require("prototypes.technologies.foundry")
 
 require("prototypes.technologies.healthcare")
 require("prototypes.technologies.biology")
