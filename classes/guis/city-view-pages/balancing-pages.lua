@@ -1365,16 +1365,8 @@ local function render_fluid_line(name, is_new, fluid_meta, item_to_recipes, avai
 end
 
 local function render_tech_line(name, is_new)
-    local tech = prototypes.technology[name]
     local star = is_new and "★ " or ""
-    local cost_parts = {}
-    if tech then
-        for _, ing in pairs(tech.research_unit_ingredients) do
-            cost_parts[#cost_parts + 1] = ing.name
-        end
-    end
-    local cost_str = #cost_parts > 0 and ("  (cost: " .. table.concat(cost_parts, ", ") .. ")") or ""
-    return string.format("- %s`%s`%s", star, name, cost_str)
+    return string.format("- %s`%s`", star, name)
 end
 
 local function pluralize_count(n, singular)
@@ -1386,7 +1378,7 @@ local function tier_link(tier)
 end
 
 -- Build the markdown lines for a single tier file (cumulative).
-local function build_tier_file_lines(tier, item_to_recipes, mode)
+local function build_tier_file_lines(tier, item_to_recipes, mode, sosciencity_only)
     local lines = {}
     local function add(s) lines[#lines + 1] = s end
 
@@ -1441,21 +1433,6 @@ local function build_tier_file_lines(tier, item_to_recipes, mode)
 
     add("")
 
-    -- Technologies section
-    add("## Technologies")
-    add("")
-    local tech_names = {}
-    for n in pairs(tier.visible_techs) do tech_names[#tech_names + 1] = n end
-    sort_techs_by_factorio_order(tech_names)
-    if #tech_names == 0 then
-        add("(none)")
-    else
-        for _, n in pairs(tech_names) do
-            add(render_tech_line(n, tier.visible_new_techs[n] == true))
-        end
-    end
-    add("")
-
     -- Buildings section
     add("## Buildings")
     add("")
@@ -1506,6 +1483,46 @@ local function build_tier_file_lines(tier, item_to_recipes, mode)
         for _, n in pairs(fluid_names) do
             for _, l in pairs(render_fluid_line(n, tier.new_fluids[n] == true,
                 tier.fluid_meta, item_to_recipes, tier.available_recipes, mode)) do add(l) end
+        end
+    end
+    add("")
+
+    -- Productless Recipes section (detailed mode only)
+    if mode == "detailed" then
+        add("## Productless Recipes")
+        add("")
+        local productless = {}
+        for recipe_name in pairs(tier.available_recipes) do
+            local recipe = prototypes.recipe[recipe_name]
+            if recipe and not recipe.parameter and #recipe.products == 0 then
+                if not sosciencity_only or is_sosciencity(recipe) then
+                    productless[#productless + 1] = recipe_name
+                end
+            end
+        end
+        sort_recipes_by_factorio_order(productless)
+        if #productless == 0 then
+            add("(none)")
+        else
+            for _, rn in pairs(productless) do
+                local star = tier.new_recipes[rn] and "★ " or ""
+                add("- " .. star .. format_recipe_inline(rn))
+            end
+        end
+        add("")
+    end
+
+    -- Technologies section
+    add("## Technologies")
+    add("")
+    local tech_names = {}
+    for n in pairs(tier.visible_techs) do tech_names[#tech_names + 1] = n end
+    sort_techs_by_factorio_order(tech_names)
+    if #tech_names == 0 then
+        add("(none)")
+    else
+        for _, n in pairs(tech_names) do
+            add(render_tech_line(n, tier.visible_new_techs[n] == true))
         end
     end
     add("")
@@ -1658,7 +1675,7 @@ local function export_full_progression(main_flow, mode)
     write("overview.md", build_overview_lines(tiers))
 
     for _, tier in pairs(tiers) do
-        write(tier.filename, build_tier_file_lines(tier, item_to_recipes, mode))
+        write(tier.filename, build_tier_file_lines(tier, item_to_recipes, mode, sosciencity_only))
     end
 
     return dir, #tiers + 2
