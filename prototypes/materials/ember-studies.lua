@@ -8,7 +8,8 @@ local ember_items = {
     {name = "painting", sprite_variations = {name = "painting-on-belt", count = 7}},
     {name = "statue"},
     {name = "jewellery", use_placeholder_icon = true},
-    {name = "mixtape", use_placeholder_icon = true}
+    {name = "mixtape", use_placeholder_icon = true},
+    {name = "novel", use_placeholder_icon = true}
 }
 
 Tirislib.Item.batch_create(
@@ -130,4 +131,17 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-caste-ember",
     energy_required = 8,
     unlock = "atelier"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "novel", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "paper", amount = 5},
+        {type = "item", name = "artistic-insight", amount = 2}
+    },
+    category = "sosciencity-caste-ember",
+    energy_required = 6,
+    unlock = "gleam-caste"
 }
