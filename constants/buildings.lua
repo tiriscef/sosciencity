@@ -285,7 +285,8 @@ Building.values = {
     ["kitchen-for-all"] = {
         type = Type.kitchen_for_all,
         range = range_by_foot,
-        inhabitant_count = 20
+        inhabitant_count = 20,
+        auto_name = "kitchen-for-all"
     },
     ["market-hall"] = {
         type = Type.market,
