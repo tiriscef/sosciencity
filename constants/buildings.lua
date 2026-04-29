@@ -37,7 +37,7 @@ local range_by_foot = 50
 --- I'm defining the disease_frequency as progress per tick *when fully staffed*. The postprocessing divides the value by the count.
 Building.values = {
     ["algae-farm"] = {
-        type = Type.automatic_farm,
+        type = Type.farm,
         accepts_plant_care = false
     },
     ["aquafarm"] = {
@@ -331,7 +331,7 @@ Building.values = {
         result_caste = Type.gunfire
     },
     ["mushroom-farm"] = {
-        type = Type.automatic_farm,
+        type = Type.farm,
         accepts_plant_care = false
     },
     ["natural-sciences-faculty"] = {
@@ -580,6 +580,21 @@ Building.values = {
             disease_frequency = 0.1 / Time.minute,
             happiness_weight = 1
         }
+    },
+    ["test-farm"] = {
+        type = Type.farm,
+        open_environment = true,
+        accepts_plant_care = true
+    },
+    ["test-fertilization-station"] = {
+        type = Type.fertilization_station,
+        range = 10,
+        humus_capacity = 100
+    },
+    ["test-pruning-station"] = {
+        type = Type.pruning_station,
+        range = 10,
+        slots = 5
     }
 }
 local buildings = Building.values

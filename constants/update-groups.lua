@@ -14,7 +14,7 @@ UpdateGroup.definitions = {
     [UpdateGroup.low]  = {slice_percent = 0.40},
 }
 
---- Ordered list — entity_update_cycle iterates this array.
+--- Ordered list - entity_update_cycle iterates this array.
 UpdateGroup.all = Tirislib.Tables.get_keyset(UpdateGroup.definitions)
 
 UpdateGroup.default = UpdateGroup.high

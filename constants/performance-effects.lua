@@ -17,7 +17,13 @@ PerformanceEffects.labels = {
     [PE.worker_happiness] = {"sosciencity.worker-happiness"},
     [PE.trees] = {"sosciencity.trees"},
     [PE.hunting_competition] = {"sosciencity.competition"},
-    [PE.mining_productivity] = {"sosciencity.mining-productivity"}
+    [PE.mining_productivity] = {"sosciencity.mining-productivity"},
+    [PE.humus_fertilization] = {"sosciencity.humus-fertilization"},
+    [PE.growth_variance] = {"sosciencity.growth-variance"},
+    [PE.required_module] = {"sosciencity.required-module"},
+    [PE.orchid_caste_bonus] = {"sosciencity.orchid-caste-bonus"},
+    [PE.pruning] = {"sosciencity.pruning"},
+    [PE.biomass] = {"sosciencity.biomass"}
 }
 
 PerformanceEffects.descriptions = {
@@ -32,7 +38,13 @@ PerformanceEffects.descriptions = {
     [PE.worker_happiness] = {"sosciencity.describe-worker-happiness"},
     [PE.trees] = {"sosciencity.describe-trees"},
     [PE.hunting_competition] = {"sosciencity.describe-hunting-competition"},
-    [PE.mining_productivity] = {"sosciencity.describe-mining-productivity"}
+    [PE.mining_productivity] = {"sosciencity.describe-mining-productivity"},
+    [PE.humus_fertilization] = {"sosciencity.describe-humus-fertilization"},
+    [PE.growth_variance] = {"sosciencity.describe-growth-variance"},
+    [PE.required_module] = {"sosciencity.describe-required-module"},
+    [PE.orchid_caste_bonus] = {"sosciencity.describe-orchid-caste-bonus"},
+    [PE.pruning] = {"sosciencity.describe-pruning"},
+    [PE.biomass] = {"sosciencity.describe-biomass"}
 }
 
 PerformanceEffects.dimension_labels = {

@@ -2011,7 +2011,7 @@ Gui.CityView.add_page {
         pack_grid.style.top_padding = 4
         pack_grid.style.vertical_align = "center"
 
-        -- Baseline row (all unchecked — empty baseline = show everything in target)
+        -- Baseline row (all unchecked - empty baseline = show everything in target)
         pack_grid.add {type = "label", caption = {"city-view.balancing-baseline"}}
         pack_grid.add {
             type = "checkbox",

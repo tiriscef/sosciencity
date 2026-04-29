@@ -174,7 +174,7 @@ Tirislib.Testing.add_test_case(
         house[EK.target_comfort] = 1
         local cost = upgrade_cost(1) -- needs furniture
 
-        -- Insert all but one furniture — a shortfall of 1 remains
+        -- Insert all but one furniture - a shortfall of 1 remains
         chest_inv(house).insert({name = cost[1].name, count = cost[1].count - 1})
 
         Inhabitants.try_auto_upgrades(house)
@@ -226,7 +226,7 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << phase 6 — tag upgrade tests >>
+-- << phase 6 - tag upgrade tests >>
 
 local function tag_cost(tag)
     return Housing.get_tag_cost(Housing.values["test-house"], tag)

@@ -50,7 +50,7 @@ function Tirislib.Locales.create_enumeration(elements, separator, last_separator
     end
     ret[#ret] = nil
 
-    -- #ret == 2 means a single element {"", e1} — no separator to replace
+    -- #ret == 2 means a single element {"", e1} - no separator to replace
     if last_separator and #ret > 2 then
 ---@diagnostic disable-next-line: assign-type-mismatch
         ret[#ret - 1] = last_separator

@@ -229,7 +229,7 @@ Tirislib.Testing.add_test_case(
         local composter = Helpers.create_and_register(test_surface, "test-composter", {0, 0})
         local output = Helpers.create_and_register(test_surface, "test-compost-output", {3, 0})
 
-        -- set fractional humus — floor(0.5) = 0, so nothing should transfer
+        -- set fractional humus - floor(0.5) = 0, so nothing should transfer
         composter[EK.humus] = 0.5
 
         Register.update_entry(output, game.tick + 100)

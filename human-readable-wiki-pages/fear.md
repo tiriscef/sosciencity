@@ -1,6 +1,6 @@
 #Fear
 
-Your city exists in a world that can turn hostile. When buildings get destroyed — whether by enemy raids, accidents, or other disasters - the news spreads through your population. Huwans are not oblivious to what's happening around them. They get scared. This is represented by the **Fear** level.
+Your city exists in a world that can turn hostile. When buildings get destroyed - whether by enemy raids, accidents, or other disasters - the news spreads through your population. Huwans are not oblivious to what's happening around them. They get scared. This is represented by the **Fear** level.
 
 
 ##How Fear builds up

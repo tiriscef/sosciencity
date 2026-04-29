@@ -18,7 +18,7 @@ local Food = {}
 --- @field taste_category Taste taste profile of this food
 --- @field appeal number overall desirability of this food (combining former taste quality and luxury) (1–10)
 --- @field nutrition_tags table<NutritionTag, true> nutritional role flags
---- @field item_weight number kg per item; scales total calories per item — does not affect relative item consumption rate between foods
+--- @field item_weight number kg per item; scales total calories per item - does not affect relative item consumption rate between foods
 --- @field group string variety group; foods sharing a group count as one for variety purposes
 --- @field max_spoil table<string, number> spoil ticks per quality level (set at runtime from prototype data)
 

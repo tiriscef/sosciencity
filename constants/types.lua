@@ -347,10 +347,6 @@ Types.definitions = {
             [Type.pruning_station] = ConnectionType.from_neighbor,
         }
     },
-    [Type.automatic_farm] = {
-        localised_name = {"sosciencity.farm"},
-        localised_description = {"sosciencity.explain-farm"}
-    },
     [Type.animal_farm] = {
         signature_color = Color.brown
     },

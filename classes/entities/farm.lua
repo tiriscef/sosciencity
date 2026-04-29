@@ -1,5 +1,8 @@
-local DeconstructionCause = require("enums.deconstruction-cause")
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
 local EK = require("enums.entry-key")
+local PE = require("enums.performance-effect")
+local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
 local Biology = require("constants.biology")
@@ -11,15 +14,15 @@ local evaluate_workforce = Inhabitants.evaluate_workforce
 local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local multiply_percentages = Entity.multiply_percentages
-local has_power = Subentities.has_power
-local log_item = Statistics.log_item
+local Fertilization = Entity.Fertilization
+local Pruning = Entity.Pruning
 local flora = Biology.flora
-local Utils = Tirislib.Utils
-local map_range = Utils.map_range
 local floor = math.floor
-local min = math.min
-local max = math.max
 local get_species = Biology.get_species
+
+---Static class for farm-specific mechanics.
+Entity.Farm = {}
+local Farm = Entity.Farm
 
 ---------------------------------------------------------------------------------------------------
 -- << farms >>
@@ -32,22 +35,7 @@ local function biomass_to_productivity(biomass)
         return 0
     end
 end
-
--- put an alias in the Entity table so the gui can get this value
-Entity.biomass_to_productivity = biomass_to_productivity
-
-Entity.pruning_productivity = 20 --%
-
---- Effective slot count for a pruning station at the given performance.
---- Performance is floored to the nearest 10% to damp tick-to-tick slot thrashing;
---- shared between the updater and the details GUI.
-function Entity.pruning_effective_slots(performance, max_slots)
-    return floor(max_slots * floor(performance * 10) / 10)
-end
-
-Entity.humus_fertilization_speed = 30 --%
-Entity.humus_fertilization_workhours = 1 / Time.minute
-Entity.humus_fertilitation_consumption = 10 / Time.minute
+Farm.biomass_to_productivity = biomass_to_productivity
 
 local function square_wave(
     tick,
@@ -81,98 +69,82 @@ local function square_wave(
     end
 end
 
+local function evaluate_growth_variance(flora_details)
+    local gv = flora_details.growth_variance
+    return square_wave(
+        game.tick + gv.time_offset,
+        gv.min_value,
+        gv.max_value,
+        gv.hold_time_max,
+        gv.slope_down_time,
+        gv.hold_time_min,
+        gv.slope_up_time
+    )
+end
+
+local function record_effect(effects, effect_id, value, dim, comb, detail)
+    effects[#effects + 1] = {
+        [PK.effect] = effect_id,
+        [PK.value] = value,
+        [PK.dimension] = dim,
+        [PK.combination] = comb,
+        [PK.detail] = detail
+    }
+end
+
 local function update_farm(entry, delta_ticks)
     local entity = entry[EK.entity]
     local building_details = get_building_details(entry)
     local recipe = entity.get_recipe()
     local species_name = get_species(recipe)
 
-    local productivity = Entity.caste_bonuses[Type.orchid]
-    local performance = evaluate_workforce(entry) * evaluate_worker_happiness(entry)
-
     if species_name ~= entry[EK.species] then
         entry[EK.species] = species_name
         entry[EK.biomass] = 0
     end
 
-    local accepts_plant_care = building_details.accepts_plant_care
+    local effects = {}
 
-    if accepts_plant_care and recipe and entry[EK.humus_mode] then
-        local humus_needed = delta_ticks * Entity.humus_fertilitation_consumption
-        local percentage_to_consume = 1
+    -- speed: workforce coverage gates a chain of multipliers (worker happiness, humus, growth variance, etc.)
+    local workforce = evaluate_workforce(entry)
+    local happiness = evaluate_worker_happiness(entry)
+    record_effect(effects, PE.workforce, workforce, Dim.speed, Comb.bottleneck)
+    record_effect(effects, PE.worker_happiness, happiness, Dim.speed, Comb.multiplier)
+    local performance = workforce * happiness
 
-        for _, fertilization_station in Neighborhood.iterate_type(entry, Type.fertilization_station) do
-            if fertilization_station[EK.active] then
-                local humus_available = fertilization_station[EK.humus_stored]
-                local percentage_available =
-                    min(
-                        percentage_to_consume,
-                        humus_available / humus_needed * percentage_to_consume
-                    )
-
-                percentage_to_consume = percentage_to_consume - percentage_available
-                local consumed_humus = humus_needed * percentage_available
-                fertilization_station[EK.humus_stored] = humus_available - consumed_humus
-
-                log_item("humus", -consumed_humus)
-
-                if percentage_to_consume < 0.0001 then
-                    break
-                end
-            end
-        end
-
-        local humus_bonus = map_range(percentage_to_consume, 1, 0, 0, Entity.humus_fertilization_speed)
-        entry[EK.humus_bonus] = humus_bonus
-        performance = performance * map_range(percentage_to_consume, 1, 0, 1, 1 + humus_bonus / 100)
-    else
-        entry[EK.humus_bonus] = nil
+    local humus_bonus = Fertilization.consume_for_farm(entry, delta_ticks)
+    entry[EK.humus_bonus] = humus_bonus
+    if humus_bonus then
+        local mult = 1 + humus_bonus / 100
+        record_effect(effects, PE.humus_fertilization, mult, Dim.speed, Comb.multiplier)
+        performance = performance * mult
     end
 
-    if accepts_plant_care and recipe and entry[EK.pruning_mode] then
-        local pruned_by_uid = entry[EK.pruned_by]
-        local is_pruned = false
+    -- productivity: caste bonus + pruning + biomass; biomass is appended after speed is finalized
+    local productivity = Entity.caste_bonuses[Type.orchid]
+    record_effect(effects, PE.orchid_caste_bonus, productivity, Dim.productivity, Comb.flat)
 
-        if pruned_by_uid then
-            local station = Register.try_get(pruned_by_uid)
-            if station and station[EK.active] then
-                is_pruned = true
-            else
-                entry[EK.pruned_by] = nil
-            end
-        end
-
-        local pruning_bonus = is_pruned and Entity.pruning_productivity or 0
-        entry[EK.prune_bonus] = pruning_bonus
+    local pruning_bonus = Pruning.get_bonus_for_farm(entry)
+    entry[EK.prune_bonus] = pruning_bonus > 0 and pruning_bonus or nil
+    if pruning_bonus > 0 then
         productivity = multiply_percentages(productivity, pruning_bonus)
-    else
-        entry[EK.prune_bonus] = nil
-        -- release any dangling claim when pruning mode is off
-        if entry[EK.pruned_by] then
-            entry[EK.pruned_by] = nil
-        end
+        record_effect(effects, PE.pruning, pruning_bonus, Dim.productivity, Comb.flat)
     end
 
+    -- species-dependent effects: required-module gate, growth variance, persistent biomass
     if species_name then
         local flora_details = flora[species_name]
 
-        if flora_details.required_module and not Inventories.assembler_has_module(entity, flora_details.required_module) then
+        if flora_details.required_module
+            and not Inventories.assembler_has_module(entity, flora_details.required_module) then
+            record_effect(effects, PE.required_module, 0, Dim.speed, Comb.bottleneck)
             performance = 0
         end
 
         if building_details.open_environment and flora_details.growth_variance then
-            local growth_variance = flora_details.growth_variance
-            performance =
-                performance *
-                square_wave(
-                    game.tick + growth_variance.time_offset,
-                    growth_variance.min_value,
-                    growth_variance.max_value,
-                    growth_variance.hold_time_max,
-                    growth_variance.slope_down_time,
-                    growth_variance.hold_time_min,
-                    growth_variance.slope_up_time
-                )
+            local mult = evaluate_growth_variance(flora_details)
+            record_effect(effects, PE.growth_variance, mult, Dim.speed, Comb.multiplier)
+            performance = performance * mult
         end
 
         if flora_details.persistent then
@@ -182,17 +154,25 @@ local function update_farm(entry, delta_ticks)
             end
             entry[EK.biomass] = biomass
 
-            productivity = multiply_percentages(productivity, biomass ^ 0.2)
+            local biomass_bonus = biomass_to_productivity(biomass)
+            if biomass_bonus > 0 then
+                productivity = multiply_percentages(productivity, biomass_bonus)
+                record_effect(effects, PE.biomass, biomass_bonus, Dim.productivity, Comb.flat)
+            end
         end
     end
 
+    entry[EK.performance_report] = {
+        [PK.effects] = effects,
+        [PK.results] = {[Dim.speed] = performance, [Dim.productivity] = productivity}
+    }
     set_crafting_machine_performance(entry, performance, productivity)
 end
 Register.set_entity_updater(Type.farm, update_farm)
-Register.set_entity_updater(Type.automatic_farm, update_farm)
 
 local function create_farm(entry)
     entry[EK.performance] = 1
+    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
 
     if get_building_details(entry).accepts_plant_care then
         entry[EK.humus_mode] = true
@@ -200,7 +180,6 @@ local function create_farm(entry)
     end
 end
 Register.set_entity_creation_handler(Type.farm, create_farm)
-Register.set_entity_creation_handler(Type.automatic_farm, create_farm)
 
 local function copy_farm(source, destination)
     destination[EK.biomass] = source[EK.biomass]
@@ -212,7 +191,6 @@ local function copy_farm(source, destination)
     destination[EK.pruned_by] = source[EK.pruned_by]
 end
 Register.set_entity_copy_handler(Type.farm, copy_farm)
-Register.set_entity_copy_handler(Type.automatic_farm, copy_farm)
 
 local function paste_farm_settings(source, destination)
     if get_building_details(destination).accepts_plant_care then
@@ -221,180 +199,3 @@ local function paste_farm_settings(source, destination)
     end
 end
 Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
--- at the moment: no paste handler for automatic_farms because these cannot have humus/pruning modes and that's all the handler does
-
----------------------------------------------------------------------------------------------------
--- << fertilization station >>
-
-Register.set_entity_updater(
-    Type.fertilization_station,
-    function(entry, delta_ticks)
-        local building_details = get_building_details(entry)
-
-        entry[EK.active] = has_power(entry)
-
-        local humus_stored = entry[EK.humus_stored]
-        local free_humus_capacity = building_details.humus_capacity - humus_stored
-        if free_humus_capacity >= 10 then
-            local inventory = Inventories.get_chest_inventory(entry)
-            entry[EK.humus_stored] =
-                humus_stored + inventory.remove {name = "humus", count = floor(free_humus_capacity)}
-        end
-    end
-)
-
-Register.set_entity_creation_handler(
-    Type.fertilization_station,
-    function(entry)
-        entry[EK.humus_stored] = 0
-
-        --entry[EK.fertiliser_stored] = 0
-    end
-)
-
-Register.set_entity_destruction_handler(
-    Type.fertilization_station,
-    function(entry, cause, event)
-        if not entry[EK.entity].valid then
-            return
-        end
-
-        local humus = floor(entry[EK.humus_stored])
-
-        if cause == DeconstructionCause.destroyed and humus > 0 then
-            Inventories.spill_items(entry, "humus", humus / 10)
-        end
-        if cause == DeconstructionCause.mined and humus > 0 then
-            event.buffer.insert {name = "humus", count = humus}
-        end
-    end
-)
-
-Register.set_entity_copy_handler(
-    Type.fertilization_station,
-    function(source, destination)
-        destination[EK.humus_stored] = source[EK.humus_stored]
-
-        --destination[EK.fertiliser_stored] = source[EK.fertiliser_stored]
-    end
-)
-
----------------------------------------------------------------------------------------------------
--- << pruning station >>
-
-local try_get = Register.try_get
-
-local function is_valid_prune_target(farm)
-    return farm[EK.entity].valid
-        and get_building_details(farm).accepts_plant_care
-        and farm[EK.pruning_mode]
-end
-
---- Writes a fake-tooltip custom_status showing pruning slot occupancy.
---- @param entry Entry pruning station
---- @param filled integer
---- @param effective_slots integer slots currently usable given performance
---- @param max_slots integer absolute capacity at 100% performance
-local function set_pruning_custom_status(entry, filled, effective_slots, max_slots)
-    local diode, header
-    if effective_slots == 0 then
-        diode = defines.entity_status_diode.red
-        header = "sosciencity-custom-status.pruning-inactive"
-    elseif filled == 0 then
-        diode = defines.entity_status_diode.yellow
-        header = "sosciencity-custom-status.pruning-idle"
-    else
-        diode = defines.entity_status_diode.green
-        header = "sosciencity-custom-status.pruning-pruning"
-    end
-
-    local label = {header}
-    if effective_slots < max_slots then
-        Tirislib.Locales.append(label, {"sosciencity-custom-status.pruning-slots-capped", filled, effective_slots, max_slots})
-    else
-        Tirislib.Locales.append(label, {"sosciencity-custom-status.pruning-slots", filled, effective_slots})
-    end
-
-    entry[EK.entity].custom_status = {
-        diode = diode,
-        label = label
-    }
-end
-
-Register.set_entity_updater(
-    Type.pruning_station,
-    function(entry, delta_ticks)
-        local building_details = get_building_details(entry)
-        local performance = evaluate_workforce(entry) * evaluate_worker_happiness(entry) * (has_power(entry) and 1 or 0)
-        entry[EK.performance] = performance
-
-        local max_slots = building_details.slots
-        local effective_slots = Entity.pruning_effective_slots(performance, max_slots)
-
-        local slots = entry[EK.slots]
-        local unit_number = entry[EK.unit_number]
-        local neighbor_farms = (entry[EK.neighbors] and entry[EK.neighbors][Type.farm]) or {}
-
-        -- validate existing slots: release any whose target has become invalid or is no longer a neighbor
-        for i = #slots, 1, -1 do
-            local target_uid = slots[i]
-            local target = try_get(target_uid)
-            local still_ours = target
-                and neighbor_farms[target_uid]
-                and is_valid_prune_target(target)
-                and target[EK.pruned_by] == unit_number
-            if not still_ours then
-                if target and target[EK.pruned_by] == unit_number then
-                    target[EK.pruned_by] = nil
-                end
-                table.remove(slots, i)
-            end
-        end
-
-        -- shrink to effective_slots when performance drops; drop newest claims first so FIFO is preserved
-        while #slots > effective_slots do
-            local target_uid = slots[#slots]
-            slots[#slots] = nil
-            local target = try_get(target_uid)
-            if target and target[EK.pruned_by] == unit_number then
-                target[EK.pruned_by] = nil
-            end
-        end
-
-        -- claim free neighbor farms up to capacity
-        if #slots < effective_slots then
-            for _, farm in Neighborhood.iterate_type(entry, Type.farm) do
-                if #slots >= effective_slots then
-                    break
-                end
-                if is_valid_prune_target(farm) and not farm[EK.pruned_by] then
-                    slots[#slots + 1] = farm[EK.unit_number]
-                    farm[EK.pruned_by] = unit_number
-                end
-            end
-        end
-
-        entry[EK.active] = #slots > 0
-
-        set_pruning_custom_status(entry, #slots, effective_slots, max_slots)
-    end
-)
-
-Register.set_entity_creation_handler(
-    Type.pruning_station,
-    function(entry)
-        entry[EK.slots] = {}
-    end
-)
-
-Register.set_entity_copy_handler(
-    Type.pruning_station,
-    function(source, destination)
-        -- unit_numbers are stable across Register.clone, so farm back-references to source.unit_number
-        -- remain valid for destination as well. When migrating from a pre-slot save, source[EK.slots]
-        -- is nil and the creation handler's empty-table default stays.
-        if source[EK.slots] then
-            destination[EK.slots] = Tirislib.Tables.copy(source[EK.slots])
-        end
-    end
-)
