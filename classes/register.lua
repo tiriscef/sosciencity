@@ -282,7 +282,7 @@ function Register.set_settings_paste_handler(source_type, destination_type, fn)
 end
 
 --- Calls the event handler when the player pastes the settings of one entity to another - if there is a handler.
---- Handlers receive (source, destination, event) — event is the raw Factorio event table.
+--- Handlers receive (source, destination, event) - event is the raw Factorio event table.
 --- @param source_type Type
 --- @param source Entry
 --- @param destination_type Type
@@ -432,6 +432,7 @@ local add_entity = Register.add
 --- Adds the given destination entity to the register with the same type as the source entry and copies the relevant entry data.
 --- @param source Entry
 --- @param destination LuaEntity
+--- @return Entry destination_entry
 function Register.clone(source, destination)
     local _type = source[EK.type]
     local destination_entry = add_entity(destination, _type)
@@ -439,6 +440,17 @@ function Register.clone(source, destination)
     clone_custom_building(source, destination_entry)
 
     on_copy(_type, source, destination_entry)
+
+    -- mod-update rebuild stashed state on the source during remove_entry; otherwise capture from
+    -- the still-live source (real clone-event flow). Either way, apply to the fresh subentities.
+    local subentity_state = source[EK.subentity_state_pending]
+    source[EK.subentity_state_pending] = nil
+    if not subentity_state then
+        subentity_state = Subentities.serialize(source)
+    end
+    Subentities.restore(destination_entry, subentity_state)
+
+    return destination_entry
 end
 
 local stale_entry_metatable = {
@@ -473,6 +485,11 @@ end
 --- @param keep_valid boolean? if invalidation should be ommitted
 function Register.remove_entry(entry, cause, event, keep_valid)
     local _type = entry[EK.type]
+
+    -- preserve subentity state across mod-update rebuild; clone consumes this on the destination side
+    if cause == DeconstructionCause.mod_update then
+        entry[EK.subentity_state_pending] = Subentities.serialize(entry)
+    end
 
     destroy_custom_building(entry)
     on_destruction(_type, entry, cause, event)

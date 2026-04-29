@@ -333,6 +333,67 @@ local subentity_types_where_active_status_makes_sense = {
     SubentityType.turret_gunfire_hq4
 }
 
+---------------------------------------------------------------------------------------------------
+-- << state preservation across rebuild and clone >>
+--
+-- Each entry in `state_handlers` is { serialize = fn(subentity) -> state, restore = fn(subentity, state) }.
+-- Subentity types that are intentionally absent:
+--   * `beacon` - self-restoring; the entity updater calls set_beacon_effects from
+--     EK.speed_bonus / EK.productivity_bonus on the next tick after rebuild.
+--   * `turret_gunfire` and the HQ variants — these turrets currently don't use ammo
+--     (setting it up was impractical), so there's no inventory state worth preserving.
+--     Add a handler here if that ever changes.
+
+Subentities.state_handlers = {
+    [SubentityType.eei] = {
+        serialize = function(eei) return eei.energy end,
+        restore = function(eei, energy) eei.energy = energy end
+    }
+}
+local state_handlers = Subentities.state_handlers
+
+--- Captures preservable state from an entry's subentities, or nil if there's nothing to capture.
+--- @param entry Entry
+--- @return table? state
+function Subentities.serialize(entry)
+    local subentities = entry[EK.subentities]
+    if not subentities then
+        return nil
+    end
+
+    local state
+    for type_id, subentity in pairs(subentities) do
+        local handler = state_handlers[type_id]
+        if handler and subentity.valid then
+            state = state or {}
+            state[type_id] = handler.serialize(subentity)
+        end
+    end
+
+    return state
+end
+
+--- Applies previously serialized state to an entry's freshly-created subentities.
+--- @param entry Entry
+--- @param state table?
+function Subentities.restore(entry, state)
+    if not state then
+        return
+    end
+    local subentities = entry[EK.subentities]
+    if not subentities then
+        return
+    end
+
+    for type_id, sub_state in pairs(state) do
+        local handler = state_handlers[type_id]
+        local subentity = subentities[type_id]
+        if handler and subentity and subentity.valid then
+            handler.restore(subentity, sub_state)
+        end
+    end
+end
+
 --- Sets the active status of all subentities to the given boolean.
 --- @param entry Entry
 --- @param is_active boolean
