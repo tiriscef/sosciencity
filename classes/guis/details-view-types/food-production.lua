@@ -14,8 +14,10 @@ local Entity = Entity
 local Gui = Gui
 local Inventories = Inventories
 local Register = Register
+local Farm = Entity.Farm
+local Fertilization = Entity.Fertilization
+local Pruning = Entity.Pruning
 local get_building_details = Buildings.get
-local ceil = math.ceil
 local floor = math.floor
 local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step
@@ -111,12 +113,6 @@ local function update_farm(container, entry, player_id)
 
     local building_details = get_building_details(entry)
 
-    Datalist.set_kv_pair_value(
-        building_data,
-        "orchid-bonus",
-        {"sosciencity.percentage-bonus", storage.caste_bonuses[Type.orchid], {"sosciencity.productivity"}}
-    )
-
     local flora_details = Biology.flora[entry[EK.species]]
     if flora_details then
         Datalist.set_kv_pair_visibility(building_data, "biomass", flora_details.persistent)
@@ -125,7 +121,7 @@ local function update_farm(container, entry, player_id)
             Datalist.set_kv_pair_value(
                 building_data,
                 "biomass",
-                {"sosciencity.display-biomass", floor(biomass), Entity.biomass_to_productivity(biomass)}
+                {"sosciencity.display-biomass", floor(biomass), Farm.biomass_to_productivity(biomass)}
             )
         end
 
@@ -151,25 +147,9 @@ local function update_farm(container, entry, player_id)
     if building_details.accepts_plant_care then
         local humus_checkbox = Datalist.get_checkbox(building_data, "humus-mode")
         humus_checkbox.state = entry[EK.humus_mode]
-        Datalist.set_kv_pair_visibility(building_data, "humus-bonus", entry[EK.humus_mode])
-        if entry[EK.humus_bonus] then
-            Datalist.set_kv_pair_value(
-                building_data,
-                "humus-bonus",
-                {"sosciencity.percentage-bonus", ceil(entry[EK.humus_bonus]), {"sosciencity.speed"}}
-            )
-        end
 
         local pruning_checkbox = Datalist.get_checkbox(building_data, "pruning-mode")
         pruning_checkbox.state = entry[EK.pruning_mode]
-        Datalist.set_kv_pair_visibility(building_data, "prune-bonus", entry[EK.humus_mode])
-        if entry[EK.prune_bonus] then
-            Datalist.set_kv_pair_value(
-                building_data,
-                "prune-bonus",
-                {"sosciencity.percentage-bonus", ceil(entry[EK.prune_bonus]), {"sosciencity.productivity"}}
-            )
-        end
     end
 end
 
@@ -179,7 +159,6 @@ local function create_farm(container, entry, player_id)
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    Datalist.add_kv_pair(building_data, "orchid-bonus", {"caste-short.orchid"})
     Datalist.add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
 
     if get_building_details(entry).accepts_plant_care then
@@ -199,12 +178,11 @@ local function create_farm(container, entry, player_id)
             "",
             {
                 "sosciencity.explain-humus-fertilization",
-                Entity.humus_fertilization_workhours * Time.minute,
-                Entity.humus_fertilitation_consumption * Time.minute,
-                Entity.humus_fertilization_speed
+                Fertilization.workhours * Time.minute,
+                Fertilization.consumption * Time.minute,
+                Fertilization.speed_bonus
             }
         )
-        Datalist.add_kv_pair(building_data, "humus-bonus")
 
         local pruning_checkbox, _ =
             Datalist.add_kv_checkbox(
@@ -220,9 +198,8 @@ local function create_farm(container, entry, player_id)
             building_data,
             "explain-pruning",
             "",
-            {"sosciencity.explain-pruning", Entity.pruning_productivity}
+            {"sosciencity.explain-pruning", Pruning.productivity}
         )
-        Datalist.add_kv_pair(building_data, "prune-bonus")
     end
 
     Datalist.add_kv_pair(building_data, "module")
@@ -247,7 +224,6 @@ Gui.set_checked_state_handler(
 )
 
 Gui.DetailsView.register_type(Type.farm, {creater = create_farm, updater = update_farm})
-Gui.DetailsView.register_type(Type.automatic_farm, {creater = create_farm, updater = update_farm})
 
 ---------------------------------------------------------------------------------------------------
 -- << fishing hut >>

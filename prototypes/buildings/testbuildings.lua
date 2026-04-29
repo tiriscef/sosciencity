@@ -60,6 +60,8 @@ create_test_container("psych-ward")
 create_test_container("upbringing-station")
 create_test_container("egg-collector")
 create_test_container("dumpster")
+create_test_container("fertilization-station")
+create_test_container("pruning-station")
 
 -- test-water-distributer must be a storage-tank so it can hold fluid for entity.remove_fluid
 Tirislib.Item.create {
@@ -179,6 +181,7 @@ end
 create_test_assembling_machine("gene-lab", {"sosciencity-reproductive-gene-lab"})
 create_test_assembling_machine("kitchen-for-all", {"sosciencity-kitchen-for-all"})
 create_test_assembling_machine("assembling-machine", {"crafting"})
+create_test_assembling_machine("farm", {"sosciencity-farming-annual", "sosciencity-farming-perennial"})
 
 create_test_container("ember-manufactory")
 create_test_container("orchid-manufactory")

@@ -315,7 +315,7 @@ Tirislib.Testing.add_test_case(
     "n_metric_distance works with negative coordinates",
     "lib.utils",
     function()
-        -- same distance as (0,0) to (3,4) — the fix for negative differences
+        -- same distance as (0,0) to (3,4) - the fix for negative differences
         Assert.equals(Utils.n_metric_distance(2, 0, 0, -3, -4), 5)
         Assert.equals(Utils.n_metric_distance(3, 0, 0, -1, -1), Utils.n_metric_distance(3, 0, 0, 1, 1))
     end

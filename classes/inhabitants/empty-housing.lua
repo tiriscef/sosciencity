@@ -119,7 +119,7 @@ local function create_empty_house(entry, event)
         entry[EK.target_tags] = Tables.copy(tags.target_tags)
     end
     -- Applied tags from the blueprint source become logistics targets on the new house
-    -- (items haven't been spent yet — logistics will deliver and apply them)
+    -- (items haven't been spent yet - logistics will deliver and apply them)
     if tags.applied_tags ~= nil then
         local target = entry[EK.target_tags] or {}
         for tag in pairs(tags.applied_tags) do

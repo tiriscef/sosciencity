@@ -16,6 +16,8 @@ local Entity = Entity
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
+local Fertilization = Entity.Fertilization
+local Pruning = Entity.Pruning
 local get_building_details = Buildings.get
 local floor = math.floor
 local display_item_stack = Tirislib.Locales.display_item_stack
@@ -114,9 +116,9 @@ local function create_fertilization_station(container, entry, player_id)
         {"sosciencity.humus-fertilization"},
         {
             "sosciencity.explain-humus-fertilization",
-            Entity.humus_fertilization_workhours * Time.minute,
-            Entity.humus_fertilitation_consumption * Time.minute,
-            Entity.humus_fertilization_speed
+            Fertilization.workhours * Time.minute,
+            Fertilization.consumption * Time.minute,
+            Fertilization.speed_bonus
         }
     )
 
@@ -162,7 +164,7 @@ local function update_pruning_station(container, entry, player_id)
     local building_details = get_building_details(entry)
     local max_slots = building_details.slots
     local performance = entry[EK.performance] or 0
-    local effective_slots = Entity.pruning_effective_slots(performance, max_slots)
+    local effective_slots = Pruning.effective_slots(performance, max_slots)
     Datalist.set_kv_pair_value(
         building_data,
         "capacity",
@@ -185,7 +187,7 @@ local function create_pruning_station(container, entry, player_id)
         building_data,
         "explain-pruning",
         {"sosciencity.pruning"},
-        {"sosciencity.explain-pruning", Entity.pruning_productivity}
+        {"sosciencity.explain-pruning", Pruning.productivity}
     )
 
     Gui.Elements.Label.header_label(general, "header-pruning-slots", {"sosciencity.pruned-farms"})

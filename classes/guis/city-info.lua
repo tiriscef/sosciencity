@@ -6,8 +6,8 @@ Gui.CityInfo = {}
     --------------------------------
     storage.placement_settings: table
         [player_index]: table
-            target_comfort: integer — comfort target applied to newly placed houses
-            auto_assign_caste: integer|nil — Type enum value of the caste to auto-assign, or nil for none
+            target_comfort: integer - comfort target applied to newly placed houses
+            auto_assign_caste: integer|nil - Type enum value of the caste to auto-assign, or nil for none
 ]]
 
 -- enums

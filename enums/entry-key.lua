@@ -18,6 +18,8 @@ EK.last_update = 5
 EK.tick_of_creation = 6
 --- table with (subentity_type, subentity)-pairs
 EK.subentities = 7
+--- pending subentity state captured during a mod-update remove, consumed by Register.clone
+EK.subentity_state_pending = 8
 --- table with (rendering_type, id)-pairs
 EK.attached_renderings = 9
 --- optional player-set name for this entry

@@ -343,7 +343,7 @@ Gui.CityView.add_page {
         end
 
         -- Production
-        local farm_count = type_count(Type.farm, Type.automatic_farm)
+        local farm_count = type_count(Type.farm)
         local production_entries = {
             {key = "manufactory", type_id = Type.manufactory, count = Register.get_type_count(Type.manufactory)},
             {key = "farms", type_id = Type.farm, count = farm_count, label = {"city-view.farms"}},

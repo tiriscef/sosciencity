@@ -119,7 +119,7 @@ local function add_tag_covering_foods(food_list, diet, covered_tags)
 end
 
 --- Minimalist: covers nutrition tags using favored foods first, then neutral, then disliked as a
---- last resort. No fill step — eating only what is nutritionally necessary.
+--- last resort. No fill step - eating only what is nutritionally necessary.
 --- @return string[] diet, integer disliked_count, table covered_tags
 local function build_diet_minimalist(favored, neutral, disliked)
     local diet = {}
