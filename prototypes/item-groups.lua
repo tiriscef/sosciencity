@@ -1,320 +1,82 @@
+Tirislib.ItemGroups.create {
+    name = "sosciencity-infrastructure",
+    order = "za",
+    icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
+    icon_size = 128,
+    subgroups = {
+        "sosciencity-infrastructure",
+        "sosciencity-housing",
+        "sosciencity-comfort-upgrade-info",
+        "sosciencity-trait-upgrade-info",
+        "sosciencity-inhabitants",
+        "sosciencity-education-buildings",
+        "sosciencity-education-recipes",
+        "sosciencity-hqs",
+        "sosciencity-buildings",
+        "sosciencity-flora-buildings",
+        "sosciencity-fauna-buildings",
+        "sosciencity-microorganism-buildings",
+        "sosciencity-food-buildings",
+        "sosciencity-production-buildings",
+        "sosciencity-water-buildings"
+    }
+}
+
+Tirislib.ItemGroups.create {
+    name = "sosciencity-production",
+    order = "za",
+    icon = "__sosciencity-graphics__/graphics/icon/production-group.png",
+    icon_size = 128,
+    subgroups = {
+        "sosciencity-materials",
+        "sosciencity-building-materials",
+        "sosciencity-furniture",
+        "sosciencity-art-materials",
+        "sosciencity-biology-materials",
+        "sosciencity-laboratory-materials",
+        "sosciencity-data",
+        "sosciencity-fluid-materials",
+        "sosciencity-ideas-by-hand",
+        "sosciencity-ember-studies",
+        "sosciencity-orchid-studies",
+        "sosciencity-clockwork-studies",
+        "sosciencity-foundry-studies",
+        "sosciencity-gleam-studies",
+        "sosciencity-gunfire-studies",
+        "sosciencity-medicine",
+        "sosciencity-consumable-medicine",
+        "sosciencity-drinking-water",
+        "sosciencity-garbage"
+    }
+}
+
+Tirislib.ItemGroups.create {
+    name = "sosciencity-agriculture",
+    order = "zb",
+    icon = "__sosciencity-graphics__/graphics/technology/open-environment-farming.png",
+    icon_size = 128,
+    subgroups = {
+        "sosciencity-gathering",
+        "sosciencity-microorganisms",
+        "sosciencity-growth-media",
+        "sosciencity-microorganism-products",
+        "sosciencity-flora",
+        "sosciencity-flora-perennial",
+        "sosciencity-saplings",
+        "sosciencity-flora-bloomhouse",
+        "sosciencity-algae",
+        "sosciencity-mushrooms",
+        "sosciencity-fauna",
+        "sosciencity-slaughter",
+        "sosciencity-animal-food",
+        "sosciencity-neogenesis-recipes",
+        "sosciencity-food",
+        "sosciencity-beverages"
+    }
+}
+
+-- subgroups in vanilla groups
 Tirislib.Prototype.batch_create {
-    {
-        type = "item-group",
-        name = "sosciencity-infrastructure",
-        order = "za",
-        icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
-        icon_size = 128
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-infrastructure",
-        group = "sosciencity-infrastructure",
-        order = "aaa"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-housing",
-        group = "sosciencity-infrastructure",
-        order = "aba"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-comfort-upgrade-info",
-        group = "sosciencity-infrastructure",
-        order = "abb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-trait-upgrade-info",
-        group = "sosciencity-infrastructure",
-        order = "abc"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-hqs",
-        group = "sosciencity-infrastructure",
-        order = "aca"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-education-buildings",
-        group = "sosciencity-infrastructure",
-        order = "aca"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-buildings",
-        group = "sosciencity-infrastructure",
-        order = "baa"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-flora-buildings",
-        group = "sosciencity-infrastructure",
-        order = "bab"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-fauna-buildings",
-        group = "sosciencity-infrastructure",
-        order = "bac"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-microorganism-buildings",
-        group = "sosciencity-infrastructure",
-        order = "bad"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-food-buildings",
-        group = "sosciencity-infrastructure",
-        order = "bae"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-production-buildings",
-        group = "sosciencity-infrastructure",
-        order = "baf"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-water-buildings",
-        group = "sosciencity-infrastructure",
-        order = "bag"
-    },
-    {
-        type = "item-group",
-        name = "sosciencity-production",
-        order = "za",
-        icon = "__sosciencity-graphics__/graphics/icon/production-group.png",
-        icon_size = 128
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-materials",
-        group = "sosciencity-production",
-        order = "aba"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-building-materials",
-        group = "sosciencity-production",
-        order = "abb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-furniture",
-        group = "sosciencity-production",
-        order = "abc"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-art-materials",
-        group = "sosciencity-production",
-        order = "abd"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-biology-materials",
-        group = "sosciencity-production",
-        order = "abf"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-laboratory-materials",
-        group = "sosciencity-production",
-        order = "abg"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-data",
-        group = "sosciencity-production",
-        order = "abh"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-fluid-materials",
-        group = "sosciencity-production",
-        order = "abx"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-gathering",
-        group = "sosciencity-production",
-        order = "abz"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-microorganisms",
-        group = "sosciencity-production",
-        order = "aca"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-growth-media",
-        group = "sosciencity-production",
-        order = "acb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-microorganism-products",
-        group = "sosciencity-production",
-        order = "acc"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-flora",
-        group = "sosciencity-production",
-        order = "ada"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-flora-perennial",
-        group = "sosciencity-production",
-        order = "adb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-saplings",
-        group = "sosciencity-production",
-        order = "adba"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-flora-bloomhouse",
-        group = "sosciencity-production",
-        order = "adc"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-algae",
-        group = "sosciencity-production",
-        order = "adca"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-mushrooms",
-        group = "sosciencity-production",
-        order = "add"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-fauna",
-        group = "sosciencity-production",
-        order = "aea"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-slaughter",
-        group = "sosciencity-production",
-        order = "aeb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-animal-food",
-        group = "sosciencity-production",
-        order = "aec"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-neogenesis-recipes",
-        group = "sosciencity-production",
-        order = "aed"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-food",
-        group = "sosciencity-production",
-        order = "afa"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-beverages",
-        group = "sosciencity-production",
-        order = "afb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-medicine",
-        group = "sosciencity-production",
-        order = "aga"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-consumable-medicine",
-        group = "sosciencity-production",
-        order = "agb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-drinking-water",
-        group = "sosciencity-production",
-        order = "aha"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-garbage",
-        group = "sosciencity-production",
-        order = "aia"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-inhabitants",
-        group = "sosciencity-production",
-        order = "aja"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-education-recipes",
-        group = "sosciencity-production",
-        order = "aka"
-    },
-    -- idea items/recipes in the vanilla intermediate tab
-    {
-        type = "item-subgroup",
-        name = "sosciencity-ideas-per-hand",
-        group = "intermediate-products",
-        order = "ha"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-ember-studies",
-        group = "intermediate-products",
-        order = "hb"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-orchid-studies",
-        group = "intermediate-products",
-        order = "hc"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-clockwork-studies",
-        group = "intermediate-products",
-        order = "hd"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-foundry-studies",
-        group = "intermediate-products",
-        order = "he"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-gleam-studies",
-        group = "intermediate-products",
-        order = "hf"
-    },
-    {
-        type = "item-subgroup",
-        name = "sosciencity-gunfire-studies",
-        group = "intermediate-products",
-        order = "hg"
-    },
-    -- virtual signals in the vanilla signals tab
     {
         type = "item-subgroup",
         name = "sosciencity-population",

@@ -33,7 +33,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     icon = "__sosciencity-graphics__/graphics/icon/botanical-study.png",
     icon_size = 64,
-    subgroup = "sosciencity-ideas-per-hand",
+    subgroup = "sosciencity-ideas-by-hand",
     order = "00001",
     main_product = "",
     unlock = "orchid-caste"

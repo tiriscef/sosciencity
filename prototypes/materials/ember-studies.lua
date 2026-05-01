@@ -33,7 +33,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     icon = "__sosciencity-graphics__/graphics/icon/artistic-insight.png",
     icon_size = 64,
-    subgroup = "sosciencity-ideas-per-hand",
+    subgroup = "sosciencity-ideas-by-hand",
     order = "00000",
     main_product = "",
     unlock = "automation-science-pack"
