@@ -336,8 +336,8 @@ end
 ---   entries; those are expanded and removed before the recipe prototype is submitted.
 --- - One entry in `results` may be marked with `product = true` to identify the main product for
 ---   field derivation (name, subgroup, order, icon, localisation). Falls back to `results[1]`.
---- - `unlock`, `default_theme_level`, `do_index_fluid_ingredients`, and
----   `do_index_fluid_results` are extra keys consumed by `create_from_prototype` and never
+--- - `unlock`, `default_theme_level`, `do_index_fluid_ingredients`, `do_index_fluid_results`,
+---   and `localised_name_wrapper` are extra keys consumed by `create_from_prototype` and never
 ---   forwarded to the underlying Factorio prototype.
 ---@class ExtendedRecipePrototype : data.RecipePrototype
 ---@field ingredients? (data.IngredientPrototype | ThemeEntry)[] Regular ingredient entries and/or inline theme expansions.
@@ -347,6 +347,7 @@ end
 ---@field do_index_fluid_ingredients? boolean When true, fluid ingredient entries receive an explicit `fluidbox_index` after creation.
 ---@field do_index_fluid_results? boolean When true, fluid result entries receive an explicit `fluidbox_index` after creation.
 ---@field no_auto_catalyst? boolean When true, skips automatic catalyst detection. By default any result that also appears as an ingredient gets `ignored_by_productivity` set to `min(ingredient_amount, result_amount)`.
+---@field localised_name_wrapper? string Locale key used to wrap the recipe name. Wraps `localised_name` if set, otherwise wraps the product's derived name. Result: `{wrapper, inner_name}`. Defaults `show_amount_in_title` to false unless explicitly set to true.
 
 ---------------------------------------------------------------------------------------------------
 
@@ -439,7 +440,7 @@ function Tirislib.RecipeGenerator.get_product_entry(prototype)
 end
 
 --- Derives recipe fields from the product's item/fluid prototype where not already set.
-local function derive_fields_from_product(prototype, product_entry)
+local function derive_fields_from_product(prototype, product_entry, localised_name_wrapper)
     if not product_entry then
         return
     end
@@ -453,6 +454,11 @@ local function derive_fields_from_product(prototype, product_entry)
 
         if prototype.always_show_products == nil then
             prototype.always_show_products = (product.place_result == nil)
+        end
+
+        if localised_name_wrapper then
+            local inner = prototype.localised_name or product:get_localised_name()
+            prototype.localised_name = {localised_name_wrapper, inner}
         end
     end
 
@@ -515,11 +521,13 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
     local index_fluid_ingredients = prototype.do_index_fluid_ingredients
     local index_fluid_results = prototype.do_index_fluid_results
     local skip_auto_catalyst = prototype.no_auto_catalyst
+    local localised_name_wrapper = prototype.localised_name_wrapper
     prototype.unlock = nil
     prototype.default_theme_level = nil
     prototype.do_index_fluid_ingredients = nil
     prototype.do_index_fluid_results = nil
     prototype.no_auto_catalyst = nil
+    prototype.localised_name_wrapper = nil
 
     -- separate theme entries from real entries
     local real_ingredients, ingredient_theme_entries = separate_themes(prototype.ingredients)
@@ -529,7 +537,7 @@ function Tirislib.RecipeGenerator.create_from_prototype(prototype)
 
     -- find product and derive missing fields
     local product_entry = find_product_entry(prototype.results)
-    derive_fields_from_product(prototype, product_entry)
+    derive_fields_from_product(prototype, product_entry, localised_name_wrapper)
 
     -- defaults
     if prototype.enabled == nil then
