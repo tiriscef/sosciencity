@@ -24,6 +24,7 @@ local construction_items = {
         name = "soda",
         sprite_variations = {name = "soda", count = 3, include_icon = true}
     },
+    {name = "lye", use_placeholder_icon = true},
     {name = "glass"},
     {name = "glass-mixture"},
     {
@@ -459,6 +460,21 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "pyrifera", amount = 5}
     },
     energy_required = 5
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "lye", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "soda", amount = 2},
+        {type = "item", name = "limestone", amount = 2},
+        {type = "item", name = "sawdust", amount = 5},
+        {type = "fluid", name = "water", amount = 20}
+    },
+    category = "chemistry",
+    energy_required = 5,
+    unlock = "food-processing"
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {

@@ -28,7 +28,8 @@ local flora_items = {
     {name = "phytofall-blossom", sprite_variations = {name = "phytofall-blossom-pile", count = 4}},
     {name = "chromafall", sprite_variations = {name = "chromafall-pile", count = 4}},
     {name = "chronofall", sprite_variations = {name = "chronofall-pile", count = 4}},
-    {name = "chamofall", sprite_variations = {name = "chamofall-pile", count = 4}}
+    {name = "chamofall", sprite_variations = {name = "chamofall-pile", count = 4}},
+    {name = "ignivern", use_placeholder_icon = true}
 }
 
 for _, item in pairs(flora_items) do
@@ -41,6 +42,8 @@ for _, item in pairs(flora_items) do
 end
 
 Tirislib.Item.batch_create(flora_items, {subgroup = "sosciencity-flora", stack_size = 200})
+
+Sosciencity.make_existing_item_food("ignivern")
 
 ---------------------------------------------------------------------------------------------------
 -- << farming recipes >>
@@ -119,6 +122,42 @@ local function create_perennial_recipe(details)
         localised_description = {"recipe-description.perennial", product:get_localised_name()},
         category = "sosciencity-farming-perennial",
         subgroup = "sosciencity-flora-perennial",
+        icons = {
+            {icon = product.icon},
+            {
+                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
+                scale = 0.3,
+                shift = {-8, -8}
+            }
+        },
+        icon_size = 64,
+        unlock = "open-environment-farming"
+    })
+
+    add_general_growing_attributes(details, plant_details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details)
+end
+
+local function create_perennial_crop_recipe(details)
+    local product_name = details.product
+    local mult = details.output_multiplier or 1
+    details.product = nil
+    details.output_multiplier = nil
+
+    local product = Tirislib.Item.get_by_name(product_name)
+    local plant_details = Biology.flora[product_name]
+
+    Tirislib.RecipeGenerator.merge_prototypes(details, {
+        name = "farming-perennial-crop-" .. product_name,
+        results = {
+            {type = "item", name = product_name, amount_min = 5 * mult, amount_max = 10 * mult, product = true},
+            {type = "item", name = "leafage", amount = 1}
+        },
+        energy_required = 25,
+        localised_name = {"recipe-name.perennial-crop", product:get_localised_name()},
+        localised_description = {"recipe-description.perennial-crop", product:get_localised_name()},
+        category = "sosciencity-farming-perennial-crop",
+        subgroup = "sosciencity-flora",
         icons = {
             {icon = product.icon},
             {
@@ -592,6 +631,12 @@ create_identification_recipe {
         {type = "item", name = "botanical-study", amount = 10},
         {type = "item", name = "humus", amount = 40}
     },
+    unlock = "explore-alien-flora-1"
+}
+
+-- ignivern
+create_perennial_crop_recipe {
+    product = "ignivern",
     unlock = "explore-alien-flora-1"
 }
 

@@ -244,6 +244,24 @@ Biology.flora = {
         --wrong_humidity_coefficient = 0.8,
         recipes = {"farming-annual-hardcorn-punk"}
     },
+    ["ignivern"] = {
+        persistent = true,
+        growth_coefficient = 1,
+        growth_variance = {
+            max_value = 1,
+            min_value = 0.6,
+            hold_time_max = 10 * Time.minute,
+            slope_down_time = Time.minute,
+            hold_time_min = 8 * Time.minute,
+            slope_up_time = Time.minute,
+            time_offset = 3 * Time.minute
+        },
+        --preferred_climate = Climate.hot,
+        --wrong_climate_coefficient = 0.5,
+        --preferred_humidity = Humidity.dry,
+        --wrong_humidity_coefficient = 0.5,
+        recipes = {"farming-perennial-crop-ignivern"}
+    },
     ["lemon"] = {
         persistent = true,
         growth_coefficient = 1,

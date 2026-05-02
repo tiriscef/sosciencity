@@ -101,6 +101,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-farming-perennial-crop"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-fermentation-tank"
     },
     {

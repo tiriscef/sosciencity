@@ -138,7 +138,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
         {type = "item", name = "sugar", amount = 1, product = true},
-        {type = "item", name = "molasses", amount = 1}
+        {type = "item", name = "molasses", amount = 1},
+        {type = "item", name = "wax", amount = 1, probability = 0.25}
     },
     ingredients = {
         {type = "item", name = "tello-fruit", amount = 2}
@@ -165,7 +166,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
         {type = "item", name = "sugar", amount = 3, product = true},
-        {type = "item", name = "molasses", amount = 2}
+        {type = "item", name = "molasses", amount = 2},
+        {type = "item", name = "wax", amount = 1, probability = 0.25}
     },
     ingredients = {
         {type = "item", name = "sugar-cane", amount = 2}

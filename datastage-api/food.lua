@@ -42,7 +42,7 @@ end
 --- Creates a new food item prototype and adds it to data.
 --- The prototype's type must be "item" or "tool". "item" is converted to "tool" automatically.
 --- @param prototype table Factorio item prototype table (not yet in data.raw)
---- @param food_def table|nil Food definition; looked up in constants/food.lua by prototype.name if nil
+--- @param food_def table? Food definition; looked up in constants/food.lua by prototype.name if nil
 function Sosciencity.create_food_item(prototype, food_def)
     if prototype.type ~= nil and prototype.type ~= "item" and prototype.type ~= "tool" then
         error(
@@ -63,11 +63,11 @@ end
 --- Converts an already-registered item prototype to a food item.
 --- Removes it from data.raw.item and re-registers it as a tool with food fields applied.
 --- @param item_name string Name of the item in data.raw.item
---- @param food_def table|nil Food definition; looked up in constants/food.lua by item_name if nil
+--- @param food_def table? Food definition; looked up in constants/food.lua by item_name if nil
 function Sosciencity.make_existing_item_food(item_name, food_def)
-    local prototype = data.raw["item"][item_name]
+    local prototype = data.raw["item"][item_name] or data.raw["tool"][item_name]
     if not prototype then
-        error("Sosciencity.make_existing_item_food: item '" .. item_name .. "' not found in data.raw.item")
+        error("Sosciencity.make_existing_item_food: item '" .. item_name .. "' not found in data.raw")
     end
 
     food_def = food_def or Food.values[item_name]

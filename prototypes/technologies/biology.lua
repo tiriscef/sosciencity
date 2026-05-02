@@ -196,3 +196,20 @@ Tirislib.Technology.create {
         time = 30
     }
 }
+
+Tirislib.Technology.create {
+    name = "synthetic-materials",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"advanced-oil-processing"},
+    unit = {
+        count = 313,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1},
+            {"production-science-pack", 1}
+        },
+        time = 20
+    }
+}

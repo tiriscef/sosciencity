@@ -12,7 +12,7 @@ local art_material_items = {
     },
     {
         name = "wax",
-        use_placeholder_icon = true,
+        sprite_variations = {name = "wax", count = 3, include_icon = true},
         distinctions = {fuel_value = "1MJ", fuel_category = "chemical"}
     },
     {
@@ -85,13 +85,24 @@ Tirislib.RecipeGenerator.create_from_prototype {
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
-    category = "sosciencity-tinkering-workshop",
     results = {{type = "item", name = "musical-instruments", amount = 1}},
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
         {type = "item", name = "copper-plate", amount = 5},
         {type = "item", name = "rope", amount = 2}
     },
+    unlock = "clockwork-caste"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {{type = "item", name = "musical-instruments", amount = 3}},
+    ingredients = {
+        {type = "item", name = "lumber", amount = 5},
+        {type = "item", name = "copper-plate", amount = 5},
+        {type = "item", name = "rope", amount = 2}
+    },
+    category = "sosciencity-tinkering-workshop",
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
     unlock = "clockwork-caste"
 }
 
@@ -106,6 +117,42 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "crayons",
     unlock = "gunfire-caste"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "wax", amount = 1},
+        {type = "item", name = "leafage", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "ignivern", amount = 5}
+    },
+    unlock = "explore-alien-flora-1"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "wax", amount = 1}
+    },
+    ingredients = {
+        {type = "fluid", name = "fatty-oil", amount = 20},
+        {type = "item", name = "lye", amount = 2}
+    },
+    category = "chemistry",
+    unlock = "food-processing"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "wax", amount = 2}
+    },
+    ingredients = {
+        {type = "fluid", name = "heavy-oil", amount = 20},
+        {type = "fluid", name = "sulfuric-acid", amount = 10},
+        {type = "item", name = "limestone", amount = 5}
+    },
+    category = "chemistry",
+    unlock = "synthetic-materials"
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
