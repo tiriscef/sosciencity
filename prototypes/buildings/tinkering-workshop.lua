@@ -72,6 +72,7 @@ Tirislib.Entity.create {
             production_type = "input"
         }
     },
+    fluid_boxes_off_when_no_fluid_recipe = true,
     energy_usage = "60kW",
     energy_source = {
         type = "electric",

@@ -68,7 +68,7 @@ local construction_items = {
         distinctions = {
             icon = "__sosciencity-graphics__/graphics/icon/blueprint-1.png",
             icon_size = 64,
-            pictures = Sosciencity_Config.blueprint_on_belt
+            pictures = Sosciencity.Config.blueprint_on_belt
         }
     },
     {name = "filter"},
@@ -199,6 +199,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
+    localised_name = {"recipe-name.screw-set-copper"},
     results = {
         {type = "item", name = "screw-set", amount = 2}
     },
@@ -210,6 +211,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
+    localised_name = {"recipe-name.screw-set-iron"},
     results = {
         {type = "item", name = "screw-set", amount = 2}
     },
@@ -217,6 +219,30 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "iron-plate", amount = 2}
     },
     allow_productivity = true,
+    unlock = "architecture-1"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "screw-set-copper-workshop",
+    localised_name = {"recipe-name.screw-set-copper"},
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
+    category = "sosciencity-tinkering-workshop",
+    results = {{type = "item", name = "screw-set", amount = 6}},
+    ingredients = {
+        {type = "item", name = "copper-plate", amount = 2}
+    },
+    unlock = "architecture-1"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "screw-set-iron-workshop",
+    localised_name = {"recipe-name.screw-set-iron"},
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
+    category = "sosciencity-tinkering-workshop",
+    results = {{type = "item", name = "screw-set", amount = 6}},
+    ingredients = {
+        {type = "item", name = "iron-plate", amount = 2}
+    },
     unlock = "architecture-1"
 }
 
@@ -229,7 +255,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "rope", amount = 1},
         {type = "item", name = "screw-set", amount = 1}
     },
-    name = "tiriscefing-willow-wood",
     energy_required = 1,
     unlock = "fermentation"
 }]]
@@ -275,6 +300,17 @@ Tirislib.RecipeGenerator.create_from_prototype {
     results = {
         {type = "item", name = "pot", amount = 1}
     },
+    ingredients = {
+        {type = "item", name = "ceramic", amount = 2}
+    },
+    unlock = "indoor-growing"
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "pot-workshop",
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
+    category = "sosciencity-tinkering-workshop",
+    results = {{type = "item", name = "pot", amount = 3}},
     ingredients = {
         {type = "item", name = "ceramic", amount = 2}
     },
