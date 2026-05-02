@@ -1,4 +1,4 @@
-if not Sosciencity_Config.lumber_in_vanilla_recipes then
+if not Sosciencity.Config.lumber_in_vanilla_recipes then
     return
 end
 

@@ -1,7 +1,4 @@
-if not Sosciencity_Config then
-    --- Table with centrally defined global values.
-    Sosciencity_Config = {}
-end
+Sosciencity.Config = Sosciencity.Config or {}
 
 local default_values = {
     DEBUG = false,
@@ -43,6 +40,4 @@ if mods["sosciencity-debug"] then
 end
 
 default_values.__index = default_values
-setmetatable(Sosciencity_Config, default_values)
-
-return Sosciencity_Config
+setmetatable(Sosciencity.Config, default_values)

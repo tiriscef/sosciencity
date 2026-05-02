@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-hqs",
     order = "eaa",
     place_result = "foundry-hq",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 3,
     unlock = "foundry-caste"
 }
-Sosciencity_Config.remove_quality_multipliers("foundry-hq")
+Sosciencity.Config.remove_quality_multipliers("foundry-hq")
 
 Tirislib.Entity.create {
     type = "assembling-machine",

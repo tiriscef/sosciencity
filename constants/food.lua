@@ -409,6 +409,18 @@ Food.values = {
         item_weight = 1,
         group = "chickpea"
     },
+    ["ignivern"] = {
+        fat = 2,
+        carbohydrates = 9,
+        proteins = 1.5,
+        healthiness = 5,
+        food_category = "alien-vegetable",
+        taste_category = Taste.spicy,
+        appeal = 5,
+        nutrition_tags = {},
+        item_weight = 0.5,
+        group = "ignivern"
+    },
     ["hummus"] = {
         fat = 20,
         carbohydrates = 28,

@@ -8,8 +8,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-food-buildings",
     order = "daa",
     place_result = "storage-cellar",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -46,4 +46,4 @@ Tirislib.Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(4, 4):copy_icon_from_item()
-Sosciencity_Config.add_eei("storage-cellar")
+Sosciencity.Config.add_eei("storage-cellar")

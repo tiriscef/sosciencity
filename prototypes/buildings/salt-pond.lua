@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-production-buildings",
     order = "daa",
     place_result = "salt-pond",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -21,7 +21,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 1,
     unlock = {"fermentation", "medbay"}
 }
-Sosciencity_Config.remove_quality_multipliers("salt-pond")
+Sosciencity.Config.remove_quality_multipliers("salt-pond")
 
 local sprite_width = 14
 local sprite_height = 14

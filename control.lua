@@ -98,6 +98,20 @@ require("classes.gui")
 require("classes.tree-planting")
 require("classes.auto-names")
 
+---------------------------------------------------------------------------------------------------
+-- << remote interface >>
+
+local Food = require("constants.food")
+
+remote.add_interface("sosciencity", {
+    --- Register or overwrite a food definition.
+    --- @param name string Item name
+    --- @param definition table Food definition table (same structure as constants/food.lua entries)
+    register_food = function(name, definition)
+        Food.values[name] = definition
+    end
+})
+
 if DEBUG then
     require("tests.load-tests")
     require("tests.controlstage.load-tests")

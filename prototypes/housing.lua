@@ -284,7 +284,7 @@ local housing_prototype_details = {
     }
 }
 
-if Sosciencity_Config.DEBUG then
+if Sosciencity.Config.DEBUG then
     housing_prototype_details["test-house"] = {
         picture = {
             filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
@@ -395,9 +395,9 @@ local function create_item(house_name, house, details)
         icon_size = 64,
         subgroup = "sosciencity-housing",
         order = get_order(house),
-        stack_size = details.stack_size or Sosciencity_Config.building_stacksize,
+        stack_size = details.stack_size or Sosciencity.Config.building_stacksize,
         place_result = house_name,
-        pictures = Sosciencity_Config.blueprint_on_belt
+        pictures = Sosciencity.Config.blueprint_on_belt
     }
 
     Tirislib.Tables.set_fields(item_prototype, details.distinctions)
@@ -526,10 +526,10 @@ for house_name, details in pairs(housing_prototype_details) do
     end
 
     create_entity(house_name, house, details)
-    Sosciencity_Config.add_eei(house_name)
+    Sosciencity.Config.add_eei(house_name)
 end
 
-if Sosciencity_Config.DEBUG then
+if Sosciencity.Config.DEBUG then
     Tirislib.Recipe.get_by_name("test-house"):clear_ingredients()
 end
 
@@ -542,7 +542,7 @@ Tirislib.Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "zzy",
     place_result = "improvised-hut",
-    stack_size = Sosciencity_Config.building_stacksize,
+    stack_size = Sosciencity.Config.building_stacksize,
     localised_name = {"entity-name.improvised-hut"}
 }
 
@@ -554,6 +554,6 @@ Tirislib.Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "zzz",
     place_result = "improvised-hut-2",
-    stack_size = Sosciencity_Config.building_stacksize,
+    stack_size = Sosciencity.Config.building_stacksize,
     localised_name = {"entity-name.improvised-hut"}
 }

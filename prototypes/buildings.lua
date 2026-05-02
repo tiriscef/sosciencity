@@ -74,6 +74,6 @@ require("buildings.ember-hq")
 require("buildings.foundry-hq")
 require("buildings.gleam-hq")
 
-if Sosciencity_Config.DEBUG then
+if Sosciencity.Config.DEBUG then
     require("buildings.testbuildings")
 end

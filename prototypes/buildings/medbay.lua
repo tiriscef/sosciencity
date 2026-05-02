@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "eaa",
     place_result = "medbay",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -49,4 +49,4 @@ Tirislib.Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(6, 6):copy_icon_from_item()
-Sosciencity_Config.add_eei("medbay")
+Sosciencity.Config.add_eei("medbay")

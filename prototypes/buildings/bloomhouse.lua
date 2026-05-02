@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-flora-buildings",
     order = "bab",
     place_result = "bloomhouse",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -25,7 +25,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 2,
     unlock = "indoor-growing"
 }
-Sosciencity_Config.remove_quality_multipliers("bloomhouse")
+Sosciencity.Config.remove_quality_multipliers("bloomhouse")
 
 local height = 7
 local width = 7
@@ -81,7 +81,7 @@ Tirislib.Entity.create {
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = {pollution = Sosciencity_Config.agriculture_pollutes and 1 or -5},
+        emissions_per_minute = {pollution = Sosciencity.Config.agriculture_pollutes and 1 or -5},
         drain = "5kW"
     },
     fluid_boxes = {

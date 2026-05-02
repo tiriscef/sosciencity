@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-fauna-buildings",
     order = "cac",
     place_result = "aquafarm",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -23,7 +23,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 3,
     unlock = "animal-husbandry"
 }
-Sosciencity_Config.remove_quality_multipliers("aquafarm")
+Sosciencity.Config.remove_quality_multipliers("aquafarm")
 
 local sprite_height = 14
 local sprite_width = 12

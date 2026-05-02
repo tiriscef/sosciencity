@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-production-buildings",
     order = "daa",
     place_result = "drying-unit",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()

@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-fauna-buildings",
     order = "bab",
     place_result = "fishing-hut",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 0,
     unlock = "infrastructure-1"
 }
-Sosciencity_Config.remove_quality_multipliers("fishing-hut")
+Sosciencity.Config.remove_quality_multipliers("fishing-hut")
 
 local shift = {0.25, -0.5}
 local width = 160

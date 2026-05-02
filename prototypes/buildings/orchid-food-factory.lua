@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-food-buildings",
     order = "daa",
     place_result = "orchid-food-factory",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -25,7 +25,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 2,
     unlock = "food-processing"
 }
-Sosciencity_Config.remove_quality_multipliers("orchid-food-factory")
+Sosciencity.Config.remove_quality_multipliers("orchid-food-factory")
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}

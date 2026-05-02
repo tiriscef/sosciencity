@@ -8,8 +8,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-hqs",
     order = "faa",
     place_result = "gleam-hq",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -21,7 +21,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 4,
     unlock = "gleam-caste"
 }
-Sosciencity_Config.remove_quality_multipliers("gleam-hq")
+Sosciencity.Config.remove_quality_multipliers("gleam-hq")
 
 Tirislib.Entity.create {
     type = "assembling-machine",

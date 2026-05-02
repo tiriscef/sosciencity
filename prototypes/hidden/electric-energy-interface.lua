@@ -1,5 +1,5 @@
 -- Create an eei with a fitting size for every entity that will need one in control stage.
-for entity_name in pairs(Sosciencity_Config.eei_needing_buildings) do
+for entity_name in pairs(Sosciencity.Config.eei_needing_buildings) do
     local entity = Tirislib.Entity.get_by_name(entity_name)
 
     Tirislib.Entity.create {

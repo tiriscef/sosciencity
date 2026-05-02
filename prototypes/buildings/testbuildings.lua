@@ -9,7 +9,7 @@ local function create_test_container(name)
         subgroup = "sosciencity-infrastructure",
         order = "aab",
         place_result = full_name,
-        stack_size = Sosciencity_Config.building_stacksize,
+        stack_size = Sosciencity.Config.building_stacksize,
         localised_name = full_name
     }
 
@@ -46,7 +46,7 @@ local function create_test_container(name)
         localised_name = full_name
     }:set_size(3, 3)
 
-    Sosciencity_Config.add_eei(full_name)
+    Sosciencity.Config.add_eei(full_name)
 end
 
 create_test_container("composter")
@@ -72,7 +72,7 @@ Tirislib.Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "aab",
     place_result = "test-water-distributer",
-    stack_size = Sosciencity_Config.building_stacksize,
+    stack_size = Sosciencity.Config.building_stacksize,
     localised_name = "test-water-distributer"
 }
 
@@ -128,7 +128,7 @@ local function create_test_assembling_machine(name, categories)
         subgroup = "sosciencity-infrastructure",
         order = "aab",
         place_result = "test-" .. name,
-        stack_size = Sosciencity_Config.building_stacksize,
+        stack_size = Sosciencity.Config.building_stacksize,
         localised_name = "test-" .. name
     }
 

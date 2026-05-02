@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-infrastructure",
     order = "haa",
     place_result = "nightclub",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -86,4 +86,4 @@ Tirislib.Entity.create {
         volume = 2.5
     }
 }:set_size(size_x, size_y)
-Sosciencity_Config.add_eei("nightclub")
+Sosciencity.Config.add_eei("nightclub")

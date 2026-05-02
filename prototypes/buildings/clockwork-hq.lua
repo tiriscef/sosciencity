@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-hqs",
     order = "aaa",
     place_result = "clockwork-hq",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -23,7 +23,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 2,
     unlock = "clockwork-caste"
 }
-Sosciencity_Config.remove_quality_multipliers("clockwork-hq")
+Sosciencity.Config.remove_quality_multipliers("clockwork-hq")
 
 Tirislib.Entity.create {
     type = "assembling-machine",

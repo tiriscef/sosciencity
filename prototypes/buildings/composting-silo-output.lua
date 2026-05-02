@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-flora-buildings",
     order = "gab",
     place_result = "composting-silo-output",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {

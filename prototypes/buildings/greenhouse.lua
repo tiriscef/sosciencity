@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-flora-buildings",
     order = "baa",
     place_result = "greenhouse",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 3,
     unlock = "controlled-environment-farming"
 }
-Sosciencity_Config.remove_quality_multipliers("greenhouse")
+Sosciencity.Config.remove_quality_multipliers("greenhouse")
 
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
@@ -62,12 +62,12 @@ Tirislib.Entity.create {
         }
     },
     crafting_speed = 1.5,
-    crafting_categories = {"sosciencity-farming-annual"},
+    crafting_categories = {"sosciencity-farming-annual", "sosciencity-farming-perennial-crop"},
     energy_usage = "195kW",
     energy_source = {
         type = "electric",
         usage_priority = "secondary-input",
-        emissions_per_minute = {pollution = Sosciencity_Config.agriculture_pollutes and 1 or -5},
+        emissions_per_minute = {pollution = Sosciencity.Config.agriculture_pollutes and 1 or -5},
         drain = "5kW"
     },
     working_sound = {
@@ -105,7 +105,7 @@ Tirislib.Entity.create {
             production_type = "output"
         }
     },
-    fluid_boxes_off_when_no_fluid_recipe = true
+    --fluid_boxes_off_when_no_fluid_recipe = true
 }:set_size(15, 15)
 
 Tirislib.Entity.create {

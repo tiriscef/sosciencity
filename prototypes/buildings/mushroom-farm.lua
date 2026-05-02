@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-microorganism-buildings",
     order = "daa",
     place_result = "mushroom-farm",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -22,7 +22,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 1,
     unlock = "mushroom-farming"
 }
-Sosciencity_Config.remove_quality_multipliers("mushroom-farm")
+Sosciencity.Config.remove_quality_multipliers("mushroom-farm")
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}

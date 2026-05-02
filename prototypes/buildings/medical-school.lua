@@ -8,8 +8,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-education-buildings",
     order = "aaa",
     place_result = "medical-school",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {

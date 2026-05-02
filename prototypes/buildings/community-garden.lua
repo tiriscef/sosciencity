@@ -6,7 +6,7 @@ Tirislib.Item.create {
     subgroup = "sosciencity-flora-buildings",
     order = "gaa",
     place_result = "community-garden",
-    stack_size = Sosciencity_Config.building_stacksize
+    stack_size = Sosciencity.Config.building_stacksize
 }
 
 Tirislib.Entity.create {

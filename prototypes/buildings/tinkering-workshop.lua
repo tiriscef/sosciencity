@@ -8,8 +8,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-production-buildings",
     order = "aaa",
     place_result = "tinkering-workshop",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -22,7 +22,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 2,
-    unlock = "clockwork-caste"
+    unlock = "tinkering-workshop"
 }
 
 Tirislib.Entity.create {
@@ -60,6 +60,18 @@ Tirislib.Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-tinkering-workshop"},
+    fluid_boxes = {
+        {
+            volume = 200,
+            pipe_connections = {{position = {-2.5, 0}, flow_direction = "input", direction = defines.direction.west}},
+            production_type = "input"
+        },
+        {
+            volume = 200,
+            pipe_connections = {{position = {2.5, 0}, flow_direction = "input", direction = defines.direction.east}},
+            production_type = "input"
+        }
+    },
     energy_usage = "60kW",
     energy_source = {
         type = "electric",

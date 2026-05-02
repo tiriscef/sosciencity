@@ -6,8 +6,8 @@ Tirislib.Item.create {
     subgroup = "sosciencity-hqs",
     order = "baa",
     place_result = "orchid-hq",
-    stack_size = Sosciencity_Config.building_stacksize,
-    pictures = Sosciencity_Config.blueprint_on_belt
+    stack_size = Sosciencity.Config.building_stacksize,
+    pictures = Sosciencity.Config.blueprint_on_belt
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -22,7 +22,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 1,
     unlock = "orchid-caste"
 }
-Sosciencity_Config.remove_quality_multipliers("orchid-hq")
+Sosciencity.Config.remove_quality_multipliers("orchid-hq")
 
 Tirislib.Entity.create {
     type = "assembling-machine",

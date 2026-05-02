@@ -1,18 +1,4 @@
-local Food = require("constants.food")
 local Time = require("constants.time")
-local Locale = require("classes.locale")
-
-local function make_nutrition_string(nutrition_tags)
-    local query = Tirislib.LazyLuaq.from_keyset(nutrition_tags)
-
-    if query:count() == 0 then
-        return {"nutrition-tag.none"}
-    end
-
-    local localised_tags = query:select(Locale.nutrition_tag):to_array()
-
-    return Tirislib.Locales.create_enumeration(localised_tags, " · ")
-end
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -260,37 +246,11 @@ local foods = {
     }
 }
 
--- add the food values to the... prototype prototype
+Tirislib.Item.batch_create(foods, {subgroup = "sosciencity-food"})
+
 for _, food in pairs(foods) do
-    local food_details = Food.values[food.name]
-
-    local appeal = food_details.appeal
-    local health = food_details.healthiness
-
-    local distinctions = Tirislib.Tables.get_subtbl(food, "distinctions")
-
-    distinctions.durability = food_details.calories
-    distinctions.durability_description_key = "description.food-key"
-    distinctions.durability_description_value = "description.food-value"
-    distinctions.infinite = false
-    distinctions.localised_description = {
-        "sosciencity-util.foods",
-        {"item-description." .. food.name}, -- 1: description
-        {"food-category." .. food_details.food_category}, -- 2: category
-        {"food-group." .. food_details.group}, -- 3: group
-        Locale.taste_category(food_details.taste_category), -- 4: taste
-        {"color-scale." .. appeal, {"taste-scale." .. appeal}}, -- 5: colored appeal label
-        {"description.sos-details", tostring(appeal)}, -- 6: appeal value
-        {"color-scale." .. health, {"health-scale." .. health}}, -- 7: colored health label
-        {"description.sos-details", tostring(health)}, -- 8: health value
-        make_nutrition_string(food_details.nutrition_tags), -- 9: nutrition tags
-        tostring(Tirislib.Utils.round_to_step(food_details.fat / Food.energy_density_fat, 0.1)), -- 10: fat g/100g
-        tostring(Tirislib.Utils.round_to_step(food_details.carbohydrates / Food.energy_density_carbohydrates, 0.1)), -- 11: carbs g/100g
-        tostring(Tirislib.Utils.round_to_step(food_details.proteins / Food.energy_density_proteins, 0.1)) -- 12: protein g/100g
-    }
+    Sosciencity.make_existing_item_food(food.name)
 end
-
-Tirislib.Item.batch_create(foods, {type = "tool", subgroup = "sosciencity-food"})
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
@@ -371,7 +331,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 ---------------------------------------------------------------------------------------------------
 -- << test food items >>
 
-if Sosciencity_Config.DEBUG then
+if Sosciencity.Config.DEBUG then
     local test_food_names = {
         "test-food-fruity-carb",
         "test-food-fruity-fat",
