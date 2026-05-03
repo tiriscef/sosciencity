@@ -10,6 +10,7 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 local DeconstructionCause = require("enums.deconstruction-cause")
 local Housing = require("constants.housing")
+local Castes = require("constants.castes")
 
 ---------------------------------------------------------------------------------------------------
 -- << development feature flags >>
@@ -455,6 +456,11 @@ local function on_configuration_change()
         storage.register_by_group = storage.register_by_group or {}
         storage.last_index_per_group = storage.last_index_per_group or {}
         storage.last_index = nil
+        if not storage.transport_eligible_houses then
+            storage.transport_eligible_houses = Tirislib.LazyLuaq.from(Castes.all)
+                :select(function(caste) return {}, caste.type end)
+                :to_table()
+        end
         Register.load()
 
         -- Rebuild entries

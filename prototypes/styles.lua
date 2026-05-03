@@ -180,6 +180,12 @@ style.sosciencity_datalist = {
     left_cell_padding = 6
 }
 
+style.sosciencity_datalist_wide = {
+    type = "table_style",
+    parent = "sosciencity_datalist",
+    column_widths = {{column = 1, minimal_width = 150}}
+}
+
 style.sosciencity_datalist_value = {
     type = "label_style",
     horizontally_stretchable = "on",

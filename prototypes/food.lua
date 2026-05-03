@@ -1,4 +1,5 @@
 local Time = require("constants.time")
+local Food = require("constants.food")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>

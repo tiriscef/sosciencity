@@ -53,7 +53,7 @@ local function add_population_cell_with_trend(container, population, delta, styl
         caption = "▲ " .. caption
         color = Color.green
     elseif delta < 0 then
-        arrow = "▼ " .. caption
+        caption = "▼ " .. caption
         color = Color.red
     end
 
@@ -113,6 +113,9 @@ Gui.CityView.add_page {
             column_count = 4,
             style = "sosciencity_calculation_table"
         }
+        pop_table.style.column_alignments[2] = "right"
+        pop_table.style.column_alignments[3] = "right"
+        pop_table.style.column_alignments[4] = "right"
 
         -- header row
         local function add_head_cell(caption)
@@ -190,6 +193,8 @@ Gui.CityView.add_page {
                 column_count = 3,
                 style = "sosciencity_calculation_table"
             }
+            bonus_table.style.column_alignments[2] = "right"
+            bonus_table.style.column_alignments[3] = "right"
 
             -- header row
             bonus_table.add {type = "label", caption = "", style = "sosciencity_calculation_table_left_head"}
@@ -203,7 +208,8 @@ Gui.CityView.add_page {
 
                 bonus_table.add {
                     type = "label",
-                    caption = {"caste-bonus." .. caste.name},
+                    caption = Locale.caste(caste_id),
+                    tooltip = {"caste-bonus." .. caste.name},
                     style = "sosciencity_calculation_table_left"
                 }
 
@@ -231,7 +237,7 @@ Gui.CityView.add_page {
             {"city-view.city-health"}
         )
 
-        local health_data = Gui.Elements.Datalist.create(health_content)
+        local health_data = Gui.Elements.Datalist.create(health_content, nil, nil, "sosciencity_datalist_wide")
         Gui.Elements.Datalist.add_kv_pair(
             health_data, "fear",
             {"city-view.fear-level"},
@@ -259,7 +265,7 @@ Gui.CityView.add_page {
             {"city-view.workforce"}
         )
 
-        local workforce_data = Gui.Elements.Datalist.create(workforce_content)
+        local workforce_data = Gui.Elements.Datalist.create(workforce_content, nil, nil, "sosciencity_datalist_wide")
         Gui.Elements.Datalist.add_kv_pair(
             workforce_data,
             "employed",
@@ -284,7 +290,7 @@ Gui.CityView.add_page {
 
         -- Factories
         Gui.Elements.Label.heading_3(infra_content, {"city-view.factories"})
-        local factory_data = Gui.Elements.Datalist.create(infra_content, "factories")
+        local factory_data = Gui.Elements.Datalist.create(infra_content, "factories", nil, "sosciencity_datalist_wide")
         Gui.Elements.Datalist.add_kv_pair(
             factory_data, "machines",
             {"sosciencity.machines"},
@@ -313,7 +319,7 @@ Gui.CityView.add_page {
         end
         if has_healthcare then
             Gui.Elements.Label.heading_3(infra_content, {"city-view.healthcare-buildings"})
-            local hc_data = Gui.Elements.Datalist.create(infra_content, "healthcare")
+            local hc_data = Gui.Elements.Datalist.create(infra_content, "healthcare", nil, "sosciencity_datalist_wide")
             for _, t in pairs(healthcare_types) do
                 add_building_row(hc_data, "hc-" .. t, t, Register.get_type_count(t))
             end
@@ -336,7 +342,7 @@ Gui.CityView.add_page {
         end
         if has_civil then
             Gui.Elements.Label.heading_3(infra_content, {"city-view.civil-buildings"})
-            local civil_data = Gui.Elements.Datalist.create(infra_content, "civil")
+            local civil_data = Gui.Elements.Datalist.create(infra_content, "civil", nil, "sosciencity_datalist_wide")
             for _, t in pairs(civil_types) do
                 add_building_row(civil_data, "civil-" .. t, t, Register.get_type_count(t))
             end
@@ -362,7 +368,7 @@ Gui.CityView.add_page {
         end
         if has_production then
             Gui.Elements.Label.heading_3(infra_content, {"city-view.production-buildings"})
-            local prod_data = Gui.Elements.Datalist.create(infra_content, "production")
+            local prod_data = Gui.Elements.Datalist.create(infra_content, "production", nil, "sosciencity_datalist_wide")
             for _, entry in pairs(production_entries) do
                 if entry.count > 0 then
                     local label = entry.label or Types.definitions[entry.type_id].localised_name
@@ -386,7 +392,7 @@ Gui.CityView.add_page {
         end
         if has_other then
             Gui.Elements.Label.heading_3(infra_content, {"city-view.other-buildings"})
-            local other_data = Gui.Elements.Datalist.create(infra_content, "other")
+            local other_data = Gui.Elements.Datalist.create(infra_content, "other", nil, "sosciencity_datalist_wide")
             for _, t in pairs(other_types) do
                 add_building_row(other_data, "other-" .. t, t, Register.get_type_count(t))
             end

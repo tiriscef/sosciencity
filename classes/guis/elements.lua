@@ -98,13 +98,13 @@ end
 --- Class for generic lists
 Gui.Elements.Datalist = {}
 
-function Gui.Elements.Datalist.create(container, name, columns)
+function Gui.Elements.Datalist.create(container, name, columns, style)
     local datatable =
         container.add {
         type = "table",
         name = name or "datalist",
         column_count = columns or 2,
-        style = "sosciencity_datalist"
+        style = style or "sosciencity_datalist"
     }
 
     return datatable
@@ -571,24 +571,20 @@ end
 
 Gui.Elements.Label = {}
 
--- XXX: I guess there is a better way to do this with just one label
+--- Creates a bold centered label spanning the full width of its container.
+--- @param container LuaGuiElement
+--- @param name string
+--- @param caption locale
+--- @return LuaGuiElement
 function Gui.Elements.Label.header_label(container, name, caption)
-    local flow =
-        container.add {
-        type = "flow",
-        name = name,
-        direction = "horizontal"
-    }
-    flow.style.horizontally_stretchable = true
-    flow.style.horizontal_align = "center"
-
-    local header =
-        flow.add {
+    local header = container.add {
         type = "label",
         name = name,
         caption = caption
     }
     header.style.font = "default-bold"
+    header.style.horizontally_stretchable = true
+    header.style.horizontal_align = "center"
 
     return header
 end
