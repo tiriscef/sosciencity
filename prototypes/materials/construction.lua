@@ -95,7 +95,8 @@ local construction_items = {
         use_placeholder_icon = true
     },
     {
-        name = "rosegold-ingot"
+        name = "rosegold-ingot",
+        sprite_variations = {name = "rosegold-ingot-pile", count = 4}
     },
     {
         name = "gemstone",

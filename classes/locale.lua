@@ -14,8 +14,6 @@ Locale = {}
 local castes = Castes.values
 local format = string.format
 
--- TODO XXX: migrate random locale functions from all around the code to this class
-
 --- The localised name of a caste.
 --- @param caste_id Type
 --- @param short boolean?
@@ -228,6 +226,36 @@ end
 
 function Locale.prototype_description(name, _type)
     return prototypes[_type][name].localised_description
+end
+
+local HappinessSummand = require("enums.happiness-summand")
+local HappinessFactor = require("enums.happiness-factor")
+local HealthSummand = require("enums.health-summand")
+local HealthFactor = require("enums.health-factor")
+local SanitySummand = require("enums.sanity-summand")
+local SanityFactor = require("enums.sanity-factor")
+
+Locale.happiness_summands = build_locale_lookup(HappinessSummand, "happiness-summand")
+Locale.happiness_summand_descriptions = build_locale_lookup(HappinessSummand, "happiness-summand-description")
+Locale.happiness_factors = build_locale_lookup(HappinessFactor, "happiness-factor")
+Locale.happiness_factor_descriptions = build_locale_lookup(HappinessFactor, "happiness-factor-description")
+Locale.health_summands = build_locale_lookup(HealthSummand, "health-summand")
+Locale.health_summand_descriptions = build_locale_lookup(HealthSummand, "health-summand-description")
+Locale.health_factors = build_locale_lookup(HealthFactor, "health-factor")
+Locale.health_factor_descriptions = build_locale_lookup(HealthFactor, "health-factor-description")
+Locale.sanity_summands = build_locale_lookup(SanitySummand, "sanity-summand")
+Locale.sanity_summand_descriptions = build_locale_lookup(SanitySummand, "sanity-summand-description")
+Locale.sanity_factors = build_locale_lookup(SanityFactor, "sanity-factor")
+Locale.sanity_factor_descriptions = build_locale_lookup(SanityFactor, "sanity-factor-description")
+
+function Locale.nutrition_tags_string(nutrition_tags)
+    local query = Tirislib.LazyLuaq.from_keyset(nutrition_tags)
+
+    if query:count() == 0 then
+        return {"nutrition-tag.none"}
+    end
+
+    return Tirislib.Locales.create_enumeration(query:select(Locale.nutrition_tag):to_array(), " · ")
 end
 
 return Locale

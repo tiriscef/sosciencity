@@ -28,9 +28,6 @@ local function update_nightclub(entry)
     end
 
     local worker_performance = evaluate_workforce(entry)
-
-    -- TODO consume and evaluate drinks
-
     entry[EK.performance] = worker_performance * get_culture_bonus()
 end
 Register.set_entity_updater(Type.nightclub, update_nightclub)

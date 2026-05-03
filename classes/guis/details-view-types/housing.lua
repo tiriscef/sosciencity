@@ -889,30 +889,6 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
     update_genders_list(flow, entry)
 end
 
-local function build_localised(enum_table, format_string)
-    local ret = {}
-
-    for name, id in pairs(enum_table) do
-        ret[id] = {format(format_string, name)}
-    end
-
-    return ret
-end
-
-local localised_happiness_summands = build_localised(HappinessSummand, "happiness-summand.%s")
-local localised_happiness_summand_descriptions = build_localised(HappinessSummand, "happiness-summand-description.%s")
-local localised_happiness_factors = build_localised(HappinessFactor, "happiness-factor.%s")
-local localised_happiness_factor_descriptions = build_localised(HappinessFactor, "happiness-factor-description.%s")
-local localised_health_summands = build_localised(HealthSummand, "health-summand.%s")
-local localised_health_summand_descriptions = build_localised(HealthSummand, "health-summand-description.%s")
-local localised_health_factors = build_localised(HealthFactor, "health-factor.%s")
-local localised_health_factor_descriptions = build_localised(HealthFactor, "health-factor-description.%s")
-local localised_sanity_summands = build_localised(SanitySummand, "sanity-summand.%s")
-local localised_sanity_summand_descriptions = build_localised(SanitySummand, "sanity-summand-description.%s")
-local localised_sanity_factors = build_localised(SanityFactor, "sanity-factor.%s")
-local localised_sanity_factor_descriptions = build_localised(SanityFactor, "sanity-factor-description.%s")
-
-build_localised = nil
 
 local function add_housing_detailed_info_tab(tabbed_pane, entry)
     local flow = Gui.Elements.Tabs.create(tabbed_pane, "details", {"sosciencity.details"})
@@ -922,11 +898,11 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         happiness_list,
         {"sosciencity.happiness"},
         HappinessSummand,
-        localised_happiness_summands,
-        localised_happiness_summand_descriptions,
+        Locale.happiness_summands,
+        Locale.happiness_summand_descriptions,
         HappinessFactor,
-        localised_happiness_factors,
-        localised_happiness_factor_descriptions
+        Locale.happiness_factors,
+        Locale.happiness_factor_descriptions
     )
 
     Gui.Elements.Utils.separator_line(flow)
@@ -936,11 +912,11 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         health_list,
         {"sosciencity.health"},
         HealthSummand,
-        localised_health_summands,
-        localised_health_summand_descriptions,
+        Locale.health_summands,
+        Locale.health_summand_descriptions,
         HealthFactor,
-        localised_health_factors,
-        localised_health_factor_descriptions
+        Locale.health_factors,
+        Locale.health_factor_descriptions
     )
 
     Gui.Elements.Utils.separator_line(flow)
@@ -950,11 +926,11 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         sanity_list,
         {"sosciencity.sanity"},
         SanitySummand,
-        localised_sanity_summands,
-        localised_sanity_summand_descriptions,
+        Locale.sanity_summands,
+        Locale.sanity_summand_descriptions,
         SanityFactor,
-        localised_sanity_factors,
-        localised_sanity_factor_descriptions
+        Locale.sanity_factors,
+        Locale.sanity_factor_descriptions
     )
 
     Gui.Elements.Utils.separator_line(flow)

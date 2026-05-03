@@ -1,18 +1,6 @@
 local Food = require("constants.food")
 local Locale = require("classes.locale")
 
-local function make_nutrition_string(nutrition_tags)
-    local query = Tirislib.LazyLuaq.from_keyset(nutrition_tags)
-
-    if query:count() == 0 then
-        return {"nutrition-tag.none"}
-    end
-
-    local localised_tags = query:select(Locale.nutrition_tag):to_array()
-
-    return Tirislib.Locales.create_enumeration(localised_tags, " · ")
-end
-
 local function apply_food_fields(prototype, food_def)
     local appeal = food_def.appeal
     local health = food_def.healthiness
@@ -32,7 +20,7 @@ local function apply_food_fields(prototype, food_def)
         {"description.sos-details", tostring(appeal)}, -- 6: appeal value
         {"color-scale." .. health, {"health-scale." .. health}}, -- 7: colored health label
         {"description.sos-details", tostring(health)}, -- 8: health value
-        make_nutrition_string(food_def.nutrition_tags), -- 9: nutrition tags
+        Locale.nutrition_tags_string(food_def.nutrition_tags), -- 9: nutrition tags
         tostring(Tirislib.Utils.round_to_step(food_def.fat / Food.energy_density_fat, 0.1)), -- 10: fat g/100g
         tostring(Tirislib.Utils.round_to_step(food_def.carbohydrates / Food.energy_density_carbohydrates, 0.1)), -- 11: carbs g/100g
         tostring(Tirislib.Utils.round_to_step(food_def.proteins / Food.energy_density_proteins, 0.1)) -- 12: protein g/100g
