@@ -38,10 +38,11 @@ local floor = math.floor
 -- independent circular buffers at different resolutions, each sampling on their own interval
 
 local population_history_tiers = {
-    {name = "fine", interval = 1 * Time.minute, size = 60}, -- every 1 min, ~1 hour
+    {name = "fine", interval = 1 * Time.minute, size = 120}, -- every 1 min, ~2 hours
     {name = "medium", interval = 10 * Time.minute, size = 144}, -- every 10 min, ~1 day
     {name = "coarse", interval = 1 * Time.hour, size = 168} -- every 1 hour, ~1 week
 }
+Statistics.population_history_tiers = population_history_tiers
 
 local function init_population_history()
     storage.population_history = {}
@@ -81,14 +82,6 @@ function Statistics.init()
     init_population_history()
 
     set_locals()
-
-    -- take an immediate first sample so the GUI has data right away
-    local snapshot = sample_population()
-    for _, tier in pairs(population_history_tiers) do
-        local buffer = population_history[tier.name]
-        buffer.data[1] = snapshot
-        buffer.index = 2
-    end
 end
 
 function Statistics.load()
@@ -101,14 +94,6 @@ function Statistics.migrate()
 
     if not storage.population_history then
         init_population_history()
-
-        -- seed all tiers with current population
-        local snapshot = sample_population()
-        for _, tier in pairs(population_history_tiers) do
-            local buffer = storage.population_history[tier.name]
-            buffer.data[1] = snapshot
-            buffer.index = 2
-        end
     end
 end
 

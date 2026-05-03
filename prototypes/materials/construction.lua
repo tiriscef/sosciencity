@@ -95,8 +95,7 @@ local construction_items = {
         use_placeholder_icon = true
     },
     {
-        name = "rosegold-ingot",
-        use_placeholder_icon = true
+        name = "rosegold-ingot"
     },
     {
         name = "gemstone",
@@ -104,7 +103,7 @@ local construction_items = {
     },
     {
         name = "polished-gemstone",
-        use_placeholder_icon = true
+        sprite_variations = {name = "polished-gemstone-pile", count = 4}
     },
     {
         name = "tirinite",

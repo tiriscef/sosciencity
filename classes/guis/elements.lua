@@ -1,4 +1,5 @@
 local Castes = require("constants.castes")
+local Color = require("constants.color")
 
 Gui.Elements = {}
 
@@ -1626,3 +1627,96 @@ Gui.add_gui_closed_handler(
         messagebox_invoke_handler(cancel_tag, event)
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << Bar Chart >>
+---------------------------------------------------------------------------------------------------
+
+Gui.Elements.BarChart = {}
+
+--- Creates the bars flow element for a bar chart.
+--- Returns the element to pass to BarChart.render (and again on re-render).
+--- @param container LuaGuiElement
+--- @return LuaGuiElement bars_flow
+function Gui.Elements.BarChart.create(container)
+    return container.add {
+        type = "flow",
+        direction = "horizontal",
+        style = "sosciencity_chart_bars_flow"
+    }
+end
+
+--- Renders samples as a vertical bar chart. Clears any previous render first.
+--- @param bars_flow LuaGuiElement (from BarChart.create)
+--- @param samples {value: number, tooltip: string?}[]
+--- @param options table
+---   height: number (required)
+---   bar_width: number - fixed px per bar; mutually exclusive with total_width
+---   total_width: number - total chart width incl. gaps; bar_width derived from sample count
+---   gap: number - px between bars (default 0)
+---   color: Color or function(index, value) -> Color (default Color.light_teal)
+function Gui.Elements.BarChart.render(bars_flow, samples, options)
+    bars_flow.clear()
+
+    local n = #samples
+    if n == 0 then return end
+
+    local height = options.height
+    local gap = options.gap or 0
+
+    local bar_width, remainder
+    if options.total_width then
+        bar_width = math.max(1, math.floor((options.total_width - gap * (n - 1)) / n))
+        remainder = options.total_width - bar_width * n - gap * (n - 1)
+    else
+        bar_width = options.bar_width
+        remainder = 0
+    end
+
+    bars_flow.style.horizontal_spacing = gap
+
+    local color_opt = options.color or Color.light_teal
+    local color_is_fn = type(color_opt) == "function"
+
+    local max_val = Tirislib.LazyLuaq.from(samples)
+        :select_key("value")
+        :max()
+    if max_val == 0 then
+        max_val = 1
+    end
+
+    local accumulator = 0
+    for index, sample in pairs(samples) do
+        accumulator = accumulator + remainder
+        local this_width = bar_width + (accumulator >= n and 1 or 0)
+        if accumulator >= n then accumulator = accumulator - n end
+
+        local bar_height = math.floor(sample.value / max_val * height)
+        local spacer_height = height - bar_height
+        local color = color_is_fn and color_opt(index, sample.value) or color_opt
+
+        local col = bars_flow.add {type = "flow", direction = "vertical"}
+        col.style.width = this_width
+        col.style.vertical_spacing = 0
+
+        if spacer_height > 0 then
+            local spacer = col.add {type = "empty-widget"}
+            spacer.style.width = this_width
+            spacer.style.height = spacer_height
+            if sample.tooltip then spacer.tooltip = sample.tooltip end
+        end
+
+        if bar_height > 0 then
+            local bar = col.add {
+                type = "progressbar",
+                value = 1,
+                style = "sosciencity_chart_bar"
+            }
+            bar.style.width = this_width
+            bar.style.height = bar_height
+            bar.style.bar_width = bar_height
+            bar.style.color = color
+            if sample.tooltip then bar.tooltip = sample.tooltip end
+        end
+    end
+end

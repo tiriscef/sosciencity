@@ -158,6 +158,20 @@ style.sosciencity_city_view_footer_label = {
     font = "default-small-semibold"
 }
 
+style.sosciencity_chart_bar = {
+    type = "progressbar_style",
+    bar_width = 800,
+    left_padding = 0,
+    right_padding = 0,
+    top_padding = 0,
+    bottom_padding = 0
+}
+
+style.sosciencity_chart_bars_flow = {
+    type = "horizontal_flow_style",
+    horizontal_spacing = 1
+}
+
 style.sosciencity_datalist = {
     type = "table_style",
     parent = "bordered_table",
