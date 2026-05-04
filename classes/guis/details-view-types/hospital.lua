@@ -46,7 +46,7 @@ end
 
 local function create_disease_catalogue(container)
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "diseases", {"sosciencity.diseases"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "diseases", {"sosciencity.diseases"}, "sosciencity_details_tab")
 
     Gui.Elements.Button.page_link(tab, "data", "diseases")
 
@@ -146,7 +146,7 @@ local function update_treatment_slots(general, entry)
                 slot_tooltip = disease.localised_description
             end
 
-            local card = treatments.add {type = "frame", name = "slot-" .. i, direction = "vertical", style = "inside_deep_frame"}
+            local card = treatments.add {type = "frame", name = "slot-" .. i, direction = "vertical", style = "sosciencity_card_frame"}
             card.style.horizontally_stretchable = true
 
             local label = card.add {
@@ -222,7 +222,7 @@ local function update_hospital_details(container, entry, player_id)
 end
 
 local function create_hospital_debug_tab(tabbed_pane)
-    local content = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
+    local content = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
     content.add {
         type = "button",
         style = "red_button",

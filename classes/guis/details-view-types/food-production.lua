@@ -30,7 +30,7 @@ local Datalist = Gui.Elements.Datalist
 
 local function create_composting_catalogue(container)
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "compostables", {"sosciencity.compostables"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "compostables", {"sosciencity.compostables"}, "sosciencity_details_tab")
 
     local composting_list = Datalist.create(tab, "compostables")
     composting_list.style.column_alignments[2] = "right"

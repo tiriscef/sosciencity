@@ -192,6 +192,18 @@ style.sosciencity_datalist_value = {
     single_line = false
 }
 
+style.sosciencity_card_frame = {
+    type = "frame_style",
+    parent = "inside_deep_frame",
+    margin = 4
+}
+
+style.sosciencity_details_tab = {
+    type = "tab_style",
+    parent = "tab",
+    minimal_width = 0
+}
+
 style.sosciencity_generic_tab_flow = {
     type = "vertical_flow_style",
     horizontally_stretchable = "on",

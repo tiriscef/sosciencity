@@ -536,12 +536,13 @@ end
 
 Gui.Elements.Tabs = {}
 
-function Gui.Elements.Tabs.create(tabbed_pane, name, caption)
+function Gui.Elements.Tabs.create(tabbed_pane, name, caption, tab_style)
     local tab =
         tabbed_pane.add {
         type = "tab",
         name = name .. "tab",
-        caption = caption
+        caption = caption,
+        style = tab_style
     }
     local scrollpane =
         tabbed_pane.add {

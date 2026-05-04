@@ -132,7 +132,7 @@ Gui.DetailsView.register_type(Type.market, {creater = create_market, updater = u
 
 local function create_water_catalogue(container)
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "waters", {"sosciencity.drinking-water"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "waters", {"sosciencity.drinking-water"}, "sosciencity_details_tab")
 
     local data_list = Datalist.create(tab, "waters", 2)
     data_list.style.column_alignments[2] = "right"

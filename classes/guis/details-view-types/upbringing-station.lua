@@ -163,7 +163,7 @@ local function create_upbringing_station(container, entry, player_id)
     Datalist.add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
 
     if DEV_MODE then
-        local debug_tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
+        local debug_tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
         debug_tab.add {
             type = "button",
             style = "red_button",

@@ -172,7 +172,7 @@ local function create_general_building_details(container, entry, player_id)
     local type_details = type_definitions[entry[EK.type]]
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"}, "sosciencity_details_tab")
 
     if type_details.has_subscriptions then
         local flow =

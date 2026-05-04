@@ -154,7 +154,7 @@ local function update_caste_chooser(flow, entry, house_details)
 end
 
 local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"}, "sosciencity_details_tab")
     flow.style.horizontal_align = "center"
     flow.style.vertical_align = "center"
     flow.style.vertical_spacing = 6
@@ -231,7 +231,7 @@ Gui.set_click_handler(
     end
 )
 
-Gui.set_click_handler(
+Gui.set_checked_state_handler(
     "toggle_request_trait_tag",
     function(event)
         local tags = event.element.tags
@@ -248,37 +248,36 @@ Gui.set_click_handler(
     end
 )
 
-local function update_tag_section(section_flow, entry, tag)
+local function update_tag_section(frame, entry, tag)
     local is_locked = not Housing.is_tag_unlocked(tag)
 
     if is_locked then
-        section_flow.visible = false
+        frame.visible = false
         return
     end
 
-    section_flow.visible = true
+    frame.visible = true
 
+    local section_flow = frame["inner"]
     local active_tags = entry[EK.trait_upgrades] or {}
     local is_applied = active_tags[tag] ~= nil
     local is_targeted = not is_applied and (entry[EK.target_tags] or {})[tag] ~= nil
     local btn = section_flow["tag-button"]
-    local request_btn = section_flow["request-button"]
+    local request_flow = section_flow["request-flow"]
     local progress_flow = section_flow["item-progress-flow"]
 
     if is_applied then
         btn.caption = {"sosciencity.tag-applied", Locale.housing_trait(tag)}
         btn.enabled = false
         btn.tooltip = ""
-        request_btn.visible = false
+        request_flow.visible = false
         progress_flow.visible = false
     else
         btn.caption = {"sosciencity.add-tag", Locale.housing_trait(tag)}
         btn.enabled = true
         btn.tooltip = ""
-        request_btn.visible = true
-        request_btn.caption = is_targeted
-            and {"sosciencity.cancel-tag-request", Locale.housing_trait(tag)}
-            or  {"sosciencity.request-tag", Locale.housing_trait(tag)}
+        request_flow.visible = true
+        request_flow["request-checkbox"].state = is_targeted
         progress_flow.visible = true
         progress_flow.clear()
         local progress = Inhabitants.get_tag_progress(entry, tag)
@@ -296,31 +295,36 @@ local function update_tag_section(section_flow, entry, tag)
 end
 
 local function add_tag_section(parent_flow, entry, tag)
-    local section_flow = parent_flow.add {
-        type = "flow",
+    local section_frame = parent_flow.add {
+        type = "frame",
         name = "tag-section-" .. tag,
-        direction = "vertical"
+        style = "sosciencity_card_frame"
     }
+    local section_flow = section_frame.add {type = "flow", name = "inner", direction = "vertical"}
     section_flow.style.vertical_spacing = 4
+    section_flow.style.padding = 4
 
     local unit_number = entry[EK.unit_number]
     section_flow.add {
         type = "button",
         name = "tag-button",
-        style = "sosciencity_heading_2_button",
+        style = "sosciencity_heading_2_button_compact",
         mouse_button_filter = {"left"},
         tags = {sosciencity_gui_event = "add_trait_tag", unit_number = unit_number, tag = tag}
     }
-    section_flow.add {
-        type = "button",
-        name = "request-button",
-        style = "sosciencity_heading_3_button",
-        mouse_button_filter = {"left"},
-        tags = {sosciencity_gui_event = "toggle_request_trait_tag", unit_number = unit_number, tag = tag}
-    }
     section_flow.add {type = "flow", name = "item-progress-flow", direction = "horizontal"}
 
-    update_tag_section(section_flow, entry, tag)
+    local request_flow = section_flow.add {type = "flow", name = "request-flow", direction = "horizontal"}
+    request_flow.style.vertical_align = "center"
+    request_flow.add {type = "label", caption = {"sosciencity.auto-deliver"}}
+    request_flow.add {
+        type = "checkbox",
+        name = "request-checkbox",
+        state = false,
+        tags = {sosciencity_gui_event = "toggle_request_trait_tag", unit_number = unit_number, tag = tag}
+    }
+
+    update_tag_section(section_frame, entry, tag)
 end
 
 local function add_tag_sections(parent_flow, entry)
@@ -338,7 +342,8 @@ local function update_tag_sections(parent_flow, entry)
     end
 end
 
-local function update_upgrade_section(flow, entry, house_details)
+local function update_upgrade_section(frame, entry, house_details)
+    local flow = frame["inner"]
     local current = entry[EK.current_comfort] or 0
     local target = entry[EK.target_comfort] or current
     local max_comfort = house_details.max_comfort
@@ -360,7 +365,6 @@ local function update_upgrade_section(flow, entry, house_details)
     upgrade_btn.enabled = not is_locked
     upgrade_btn.tooltip = is_locked and {"sosciencity.upgrade-comfort-locked", Locale.prototype_name(Housing.required_tech[next_level], "technology")} or ""
 
-    -- update per-item progress labels
     local progress_flow = flow["item-progress-flow"]
     progress_flow.clear()
     local progress = Inhabitants.get_upgrade_progress(entry)
@@ -375,20 +379,21 @@ local function update_upgrade_section(flow, entry, house_details)
         end
     end
 
-    -- update automation row
     Gui.Elements.IntStepper.update(flow["automation-flow"]["stepper"], target, current, max_comfort)
 end
 
 local function add_upgrade_section(flow, entry, house_details)
-    local upgrade_flow = flow.add {type = "flow", name = "upgrade-section", direction = "vertical"}
+    local upgrade_frame = flow.add {type = "frame", name = "upgrade-section", style = "sosciencity_card_frame"}
+    local upgrade_flow = upgrade_frame.add {type = "flow", name = "inner", direction = "vertical"}
     upgrade_flow.style.vertical_spacing = 4
+    upgrade_flow.style.padding = 4
 
     local unit_number = entry[EK.unit_number]
 
     upgrade_flow.add {
         type = "button",
         name = "upgrade-button",
-        style = "sosciencity_heading_2_button",
+        style = "sosciencity_heading_2_button_compact",
         mouse_button_filter = {"left"},
         tags = {sosciencity_gui_event = "upgrade_house", unit_number = unit_number}
     }
@@ -398,10 +403,8 @@ local function add_upgrade_section(flow, entry, house_details)
         caption = {"sosciencity.upgrade-comfort-maxed", house_details.max_comfort}
     }
 
-    -- per-item delivery progress
     upgrade_flow.add {type = "flow", name = "item-progress-flow", direction = "horizontal"}
 
-    -- automation target row
     local auto_flow = upgrade_flow.add {type = "flow", name = "automation-flow", direction = "horizontal"}
     auto_flow.style.vertical_align = "center"
     auto_flow.add {type = "label", caption = {"sosciencity.auto-deliver-target"}}
@@ -413,7 +416,7 @@ local function add_upgrade_section(flow, entry, house_details)
         max = 0
     })
 
-    update_upgrade_section(upgrade_flow, entry, house_details)
+    update_upgrade_section(upgrade_frame, entry, house_details)
 end
 
 local function fill_traits_flow(traits_flow, housing_details, caste, trait_upgrades)
@@ -450,7 +453,7 @@ local function fill_traits_flow(traits_flow, housing_details, caste, trait_upgra
 end
 
 local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"}, "sosciencity_details_tab")
 
     local data_list = Datalist.create(flow, "house-infos")
     Datalist.add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
@@ -771,7 +774,7 @@ Gui.set_checked_state_handler(
 )
 
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player_id)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"}, "sosciencity_details_tab")
 
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
@@ -945,7 +948,7 @@ end
 
 
 local function add_housing_detailed_info_tab(tabbed_pane, entry)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "details", {"sosciencity.details"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "details", {"sosciencity.details"}, "sosciencity_details_tab")
 
     local happiness_list = Datalist.create(flow, "happiness")
     Datalist.create_operand_entries(
@@ -1051,7 +1054,7 @@ local function update_housing_diet_tab(tabbed_pane, entry)
 end
 
 local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "diet", {"sosciencity.diet"})
+    local flow = Gui.Elements.Tabs.create(tabbed_pane, "diet", {"sosciencity.diet"}, "sosciencity_details_tab")
 
     local caste = castes[caste_id]
 
@@ -1100,7 +1103,7 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     local separator = Gui.Elements.Utils.separator_line
     local unit_number = entry[EK.unit_number]
 
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"})
+    local tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
     local content = tab.add {type = "flow", direction = "vertical"}
 
     -- Add inhabitants
