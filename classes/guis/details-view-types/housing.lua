@@ -59,31 +59,33 @@ local function fill_caste_chooser(flow, entry, house_details)
             flow.add {
                 type = "button",
                 name = format(Gui.unique_prefix_builder, "assign-caste", caste_name),
+                style = "sosciencity_caste_chooser_button",
                 caption = {"caste-name." .. caste_name},
                 mouse_button_filter = {"left"},
                 tags = {sosciencity_gui_event = "assign_caste", caste_id = caste.type}
             }
-        button.style.width = 150
 
         local has_room = house_details.room_count >= caste.required_room_count
         local has_comfort = current_comfort >= caste.minimum_comfort
         local can_reach_comfort = house_details.max_comfort >= caste.minimum_comfort
 
+        local happiness_tooltip = {
+            "sosciencity.move-in",
+            Locale.integer_summand(
+                Inhabitants.evaluate_housing_traits(house_details, caste, trait_upgrades) + current_comfort
+            )
+        }
+
         if not has_room then
             button.tooltip = {"sosciencity.not-enough-room"}
         elseif not has_comfort and not can_reach_comfort then
             button.style.font_color = Color.red
-            button.tooltip = {"sosciencity.comfort-max-warning", house_details.max_comfort, caste.minimum_comfort}
+            button.tooltip = {"", {"sosciencity.comfort-max-warning", house_details.max_comfort, caste.minimum_comfort}, "\n", happiness_tooltip}
         elseif not has_comfort then
             button.style.font_color = Color.orange
-            button.tooltip = {"sosciencity.comfort-warning", current_comfort, caste.minimum_comfort}
+            button.tooltip = {"", {"sosciencity.comfort-warning", current_comfort, caste.minimum_comfort}, "\n", happiness_tooltip}
         else
-            button.tooltip = {
-                "sosciencity.move-in",
-                Locale.integer_summand(
-                    Inhabitants.evaluate_housing_traits(house_details, caste, trait_upgrades) + current_comfort
-                )
-            }
+            button.tooltip = happiness_tooltip
         end
         button.enabled = has_room
         at_least_one = true
@@ -96,6 +98,58 @@ local function fill_caste_chooser(flow, entry, house_details)
             name = "no-castes-researched-label",
             caption = {"sosciencity.no-castes-researched"}
         }
+    end
+end
+
+--- Updates caste button states in-place. Falls back to a full rebuild only if a
+--- newly-researched caste has no button yet (rare). Never calls flow.clear(), so
+--- existing buttons are never destroyed mid-click.
+local function update_caste_chooser(flow, entry, house_details)
+    local current_comfort = entry[EK.current_comfort] or 0
+    local trait_upgrades = entry[EK.trait_upgrades]
+
+    for _, caste in pairs(Castes.all) do
+        if not Inhabitants.caste_is_researched(caste.type) then
+            goto continue
+        end
+
+        local button = flow[format(Gui.unique_prefix_builder, "assign-caste", caste.name)]
+        if not button then
+            -- A caste was just researched and has no button yet - full rebuild is safe here
+            -- because this only happens on a tech-research event tick, not a routine update.
+            fill_caste_chooser(flow, entry, house_details)
+            return
+        end
+
+        local has_room = house_details.room_count >= caste.required_room_count
+        local has_comfort = current_comfort >= caste.minimum_comfort
+        local can_reach_comfort = house_details.max_comfort >= caste.minimum_comfort
+
+        local happiness_tooltip = {
+            "sosciencity.move-in",
+            Locale.integer_summand(
+                Inhabitants.evaluate_housing_traits(house_details, caste, trait_upgrades) + current_comfort
+            )
+        }
+
+        -- Reset to base style before applying state-specific overrides,
+        -- so font_color returns to the style default when leaving an orange/red state.
+        button.style = "sosciencity_caste_chooser_button"
+
+        if not has_room then
+            button.tooltip = {"sosciencity.not-enough-room"}
+        elseif not has_comfort and not can_reach_comfort then
+            button.style.font_color = Color.red
+            button.tooltip = {"", {"sosciencity.comfort-max-warning", house_details.max_comfort, caste.minimum_comfort}, "\n", happiness_tooltip}
+        elseif not has_comfort then
+            button.style.font_color = Color.orange
+            button.tooltip = {"", {"sosciencity.comfort-warning", current_comfort, caste.minimum_comfort}, "\n", happiness_tooltip}
+        else
+            button.tooltip = happiness_tooltip
+        end
+        button.enabled = has_room
+
+        ::continue::
     end
 end
 
@@ -420,7 +474,7 @@ local function update_empty_housing_details(container, entry)
     local house_details = Housing.get(entry)
 
     local caste_chooser_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "caste-chooser")
-    fill_caste_chooser(caste_chooser_flow, entry, house_details)
+    update_caste_chooser(caste_chooser_flow, entry, house_details)
 
     local info_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "house-info")
     local data_list = info_flow["house-infos"]

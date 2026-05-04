@@ -390,6 +390,12 @@ style.sosciencity_small_button = {
     vertically_stretchable = "off",
 }
 
+style.sosciencity_caste_chooser_button = {
+    type = "button_style",
+    parent = "button",
+    width = 150,
+}
+
 style.sosciencity_sortable_list_row = {
     type = "label_style",
     left_margin = 2,
