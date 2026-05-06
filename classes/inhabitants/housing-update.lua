@@ -328,7 +328,7 @@ local function update_house(entry, delta_ticks)
         update_sanatorium(entry)
     end
 
-    local moving_still, moving_healthy = expire_moving_cohorts(entry)
+    local moving_still, moving_healthy, has_penalized = expire_moving_cohorts(entry)
 
     local caste_id = entry[EK.type]
     local caste = castes[caste_id]
@@ -349,8 +349,8 @@ local function update_house(entry, delta_ticks)
 
     local inhabitants = entry[EK.inhabitants]
 
-    -- apply relocation penalty factor while movers are still settling in
-    if moving_still > 0 and caste.relocation_penalty then
+    -- apply relocation penalty factor while penalized movers are still settling in
+    if has_penalized and caste.relocation_penalty then
         happiness_factors[HappinessFactor.recently_relocated] = caste.relocation_penalty.factor
     end
 

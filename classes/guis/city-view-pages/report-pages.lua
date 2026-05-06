@@ -182,6 +182,19 @@ Gui.CityView.add_page {
             Gui.Elements.Button.technology_link(container, "upbringing")
         end
 
+        -- Population Management
+        if storage.technologies["passive-redistribution"] then
+            Gui.Elements.Label.heading_3(container, {"city-view.population-management"})
+
+            container.add {
+                type = "checkbox",
+                caption = {"city-view.passive-redistribution-enabled"},
+                tooltip = {"city-view.passive-redistribution-tooltip"},
+                state = storage.passive_redistribution_enabled,
+                tags = {sosciencity_gui_event = "toggle-passive-redistribution"}
+            }
+        end
+
         -----------------------------------------------------------------------
         -- Section 2: Caste Bonuses
         -----------------------------------------------------------------------
@@ -399,6 +412,13 @@ Gui.CityView.add_page {
         end
     end
 }
+
+Gui.set_checked_state_handler(
+    "toggle-passive-redistribution",
+    function(event)
+        storage.passive_redistribution_enabled = event.element.state
+    end
+)
 
 Gui.CityView.add_page {
     name = "census-report",

@@ -33,6 +33,28 @@ InhabitantsConstants.nutrition_tag_effects = {
     [NutritionTag.carb_rich]    = {bonus = 1, malus = -2},
 }
 
+--- Move causes that trigger the relocation penalty.
+--- @type table<MoveCause, boolean>
+InhabitantsConstants.relocation_penalty_causes = {
+    [MoveCause.pull]                   = true,
+    [MoveCause.push]                   = true,
+    [MoveCause.passive_redistribution] = true,
+}
+
+--- What fraction of the moving efficiency tech reduction applies per move cause.
+--- @type table<MoveCause, number>
+InhabitantsConstants.moving_efficiency_applicability = {
+    [MoveCause.pull]                   = 1.0,
+    [MoveCause.push]                   = 1.0,
+    [MoveCause.passive_redistribution] = 1.0,
+    [MoveCause.caste_conversion]       = 1.0,
+    [MoveCause.immigration]            = 0.5,
+    [MoveCause.upbringing]             = 0.5,
+    [MoveCause.sanatorium_eviction]    = 0.0,
+    [MoveCause.house_destroyed]        = 0.0,
+    [MoveCause.copy]                   = 0.0,
+}
+
 --- Moving downtime durations per cause. Tune values after playtesting.
 --- Inhabitants with moving downtime count as residents but provide no workforce or caste points.
 --- @type table<MoveCause, integer>
@@ -41,8 +63,8 @@ InhabitantsConstants.moving_downtime = {
     [MoveCause.upbringing]             = 1 * Time.minute,
     [MoveCause.pull]                   = 3 * Time.minute,
     [MoveCause.push]                   = 3 * Time.minute,
-    [MoveCause.caste_conversion]       = 5 * Time.minute,
-    [MoveCause.passive_redistribution] = 5 * Time.minute,
+    [MoveCause.caste_conversion]       = 3 * Time.minute,
+    [MoveCause.passive_redistribution] = 6 * Time.minute,
     [MoveCause.sanatorium_eviction]    = 1 * Time.minute,
     [MoveCause.house_destroyed]        = 1 * Time.minute,
     [MoveCause.copy]                   = 0,

@@ -52,6 +52,8 @@ Inhabitants = {}
     storage.last_social_change: tick
 
     storage.starting_clockwork_points: number
+
+    storage.passive_redistribution_enabled: bool
 ]]
 -- local often used globals for enormous performance gains
 
@@ -105,6 +107,7 @@ function Inhabitants.init()
     storage.caste_points = new_caste_table()
     storage.caste_bonuses = new_caste_table()
     storage.immigration = new_caste_table()
+    storage.passive_redistribution_enabled = true
 
     for _, caste in pairs(Castes.all) do
         storage.housing_capacity[caste.type] = {[true] = 0, [false] = 0}
@@ -126,6 +129,7 @@ function Inhabitants.load()
     Inhabitants.load_homelessness()
     Inhabitants.load_healthcare()
     Inhabitants.load_housing_management()
+    Inhabitants.load_housing_redistribution()
     Inhabitants.load_housing_update()
     Inhabitants.load_housing_lifecycle()
 end
@@ -752,13 +756,17 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general update >>
 
---- Periodic update: recalculates caste bonuses and handles homelessness once per minute.
+--- Periodic update: recalculates caste bonuses, handles homelessness, and runs passive redistribution.
 --- @param current_tick integer
 function Inhabitants.update(current_tick)
     update_caste_bonuses()
 
     if current_tick % Time.minute == 0 then
         update_homelessness()
+    end
+
+    if current_tick % (5 * Time.minute) == 0 then
+        Inhabitants.passive_redistribution_pass()
     end
 end
 
@@ -820,6 +828,7 @@ require("classes.inhabitants.housing-update")
 require("classes.inhabitants.housing-lifecycle")
 require("classes.inhabitants.housing-upgrades")
 require("classes.inhabitants.empty-housing")
+require("classes.inhabitants.housing-redistribution")
 
 is_researched = Inhabitants.caste_is_researched
 update_caste_bonuses = Inhabitants.update_caste_bonuses

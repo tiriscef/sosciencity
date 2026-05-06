@@ -18,15 +18,14 @@ local HEALTHY = DiseaseGroup.HEALTHY
 local disease_values = Diseases.values
 local transport_eligibility_threshold = InhabitantsConstants.transport_eligibility_threshold
 local moving_downtime = InhabitantsConstants.moving_downtime
+local relocation_penalty_causes = InhabitantsConstants.relocation_penalty_causes
+local moving_efficiency_applicability = InhabitantsConstants.moving_efficiency_applicability
 local hospital_types = {Type.hospital, Type.improvised_hospital}
 
--- Entity is loaded after Inhabitants, so this is resolved lazily at call time
-local function hospital_can_treat(hospital, disease_id)
-    return Entity.hospital_can_treat(hospital, disease_id)
-end
-
--- set during load, after homelessness.lua is loaded
+-- set during load
 local add_to_homeless_pool
+local hospital_can_treat
+local get_moving_downtime_factor
 
 ---------------------------------------------------------------------------------------------------
 -- << lifecycle >>
@@ -47,6 +46,8 @@ end
 
 function Inhabitants.load_housing_management()
     add_to_homeless_pool = Inhabitants.add_to_homeless_pool
+    hospital_can_treat = Entity.hospital_can_treat
+    get_moving_downtime_factor = Technologies.get_moving_downtime_factor
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -97,13 +98,15 @@ end
 --- @param entry Entry
 --- @return integer still_moving total moving inhabitants not yet settled
 --- @return integer still_moving_healthy how many of those are healthy
+--- @return boolean has_penalized whether any active cohort carries a relocation penalty
 local function expire_moving_cohorts(entry)
     local cohorts = entry[EK.moving_cohorts]
-    if not cohorts then return 0, 0 end
+    if not cohorts then return 0, 0, false end
 
     local tick = game.tick
     local still_count = 0
     local still_healthy = 0
+    local has_penalized = false
 
     for i = #cohorts, 1, -1 do
         local cohort = cohorts[i]
@@ -112,6 +115,7 @@ local function expire_moving_cohorts(entry)
         else
             still_count = still_count + cohort.count
             still_healthy = still_healthy + cohort.healthy
+            if cohort.penalized then has_penalized = true end
         end
     end
 
@@ -119,7 +123,7 @@ local function expire_moving_cohorts(entry)
         entry[EK.moving_cohorts] = nil
     end
 
-    return still_count, still_healthy
+    return still_count, still_healthy, has_penalized
 end
 Inhabitants.expire_moving_cohorts = expire_moving_cohorts
 
@@ -208,20 +212,31 @@ local function add_to_house(house, group, move_cause, silent)
     local added = try_add_to_house(house, group, silent)
     if added == 0 then return 0 end
 
-    local downtime = moving_downtime[move_cause]
-    if downtime > 0 then
-        local cohort_healthy = floor(group_healthy * added / group_count)
-        local cohorts = house[EK.moving_cohorts] or {}
-        house[EK.moving_cohorts] = cohorts
-        cohorts[#cohorts + 1] = {
-            count = added,
-            healthy = cohort_healthy,
-            expires = game.tick + downtime
-        }
+    local base_downtime = moving_downtime[move_cause]
+    local penalized = relocation_penalty_causes[move_cause] == true
 
-        local penalty = castes[house[EK.type]].relocation_penalty
-        if penalty then
-            house[EK.happiness] = max(0, house[EK.happiness] - penalty.shock)
+    if base_downtime > 0 then
+        if penalized then
+            local penalty = castes[house[EK.type]].relocation_penalty
+            if penalty then
+                house[EK.happiness] = max(0, house[EK.happiness] - penalty.shock)
+            end
+        end
+
+        local reduction = (1 - get_moving_downtime_factor())
+                        * moving_efficiency_applicability[move_cause]
+        local downtime = floor(base_downtime * (1 - reduction))
+
+        if downtime > 0 then
+            local cohort_healthy = floor(group_healthy * added / group_count)
+            local cohorts = house[EK.moving_cohorts] or {}
+            house[EK.moving_cohorts] = cohorts
+            cohorts[#cohorts + 1] = {
+                count = added,
+                healthy = cohort_healthy,
+                expires = game.tick + downtime,
+                penalized = penalized,
+            }
         end
     end
 

@@ -2,6 +2,7 @@ local UnlockCondition = require("enums.unlock-condition")
 local InformationType = require("enums.information-type")
 
 local Castes = require("constants.castes")
+local TechEffects = require("constants.tech-effects")
 local Unlocks = require("constants.unlocks")
 
 
@@ -28,6 +29,12 @@ local tracked_techs = {
     ["architecture-5"] = true,
     ["architecture-6"] = true,
     ["architecture-7"] = true,
+    ["moving-efficiency-1"] = true,
+    ["moving-efficiency-2"] = true,
+    ["moving-efficiency-3"] = true,
+    ["passive-redistribution"] = true,
+    ["redistribution-efficiency-1"] = true,
+    ["redistribution-efficiency-2"] = true,
 }
 
 local tracked_multi_level_techs = {
@@ -147,6 +154,25 @@ function Technologies.update()
 
         ::continue::
     end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << effects >>
+
+--- Returns the downtime multiplier for the current moving-efficiency research level.
+--- Multiply base downtime by this value to get the effective downtime.
+function Technologies.get_moving_downtime_factor()
+    local level = (storage.technologies["moving-efficiency-1"] and 1 or 0)
+                + (storage.technologies["moving-efficiency-2"] and 1 or 0)
+                + (storage.technologies["moving-efficiency-3"] and 1 or 0)
+    return TechEffects.moving_efficiency_factors[level]
+end
+
+--- Returns the fraction of total population to redistribute per passive redistribution pass.
+function Technologies.get_redistribution_budget_fraction()
+    local level = (storage.technologies["redistribution-efficiency-1"] and 1 or 0)
+                + (storage.technologies["redistribution-efficiency-2"] and 1 or 0)
+    return TechEffects.redistribution_budget_fractions[level]
 end
 
 ---------------------------------------------------------------------------------------------------
