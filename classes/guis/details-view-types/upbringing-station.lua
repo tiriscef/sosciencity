@@ -35,7 +35,7 @@ local function update_upbringing_mode_radiobuttons(entry, mode_flow)
         local mode_id = breedable_castes[index]
 
         if mode_id then
-            radiobutton.visible = Inhabitants.caste_is_researched(mode_id)
+            radiobutton.visible = Technologies.caste_is_researched(mode_id)
             radiobutton.state = (mode == mode_id)
         else
             radiobutton.state = (mode == Type.null)

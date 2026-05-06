@@ -14,7 +14,7 @@ Tirislib.Testing.add_test_case(
         local original = storage.technologies["upbringing"]
         storage.technologies["upbringing"] = nil
 
-        Assert.is_false(Inhabitants.caste_is_researched(Type.clockwork))
+        Assert.is_false(Technologies.caste_is_researched(Type.clockwork))
 
         storage.technologies["upbringing"] = original
     end,
@@ -33,7 +33,7 @@ Tirislib.Testing.add_test_case(
         local original = storage.technologies["upbringing"]
         storage.technologies["upbringing"] = 1
 
-        Assert.is_true(Inhabitants.caste_is_researched(Type.clockwork) and true or false)
+        Assert.is_true(Technologies.caste_is_researched(Type.clockwork) and true or false)
 
         storage.technologies["upbringing"] = original
     end,
@@ -52,7 +52,7 @@ Tirislib.Testing.add_test_case(
         local original = storage.technologies["clockwork-caste-efficiency"]
         storage.technologies["clockwork-caste-efficiency"] = 3
 
-        Assert.equals(Inhabitants.get_caste_efficiency_level(Type.clockwork), 3)
+        Assert.equals(Technologies.get_caste_efficiency_level(Type.clockwork), 3)
 
         storage.technologies["clockwork-caste-efficiency"] = original
     end,

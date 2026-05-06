@@ -11,6 +11,7 @@ local Type = require("enums.type")
 local DeconstructionCause = require("enums.deconstruction-cause")
 local Housing = require("constants.housing")
 local Castes = require("constants.castes")
+local Food = require("constants.food")
 
 ---------------------------------------------------------------------------------------------------
 -- << development feature flags >>
@@ -101,8 +102,6 @@ require("classes.auto-names")
 
 ---------------------------------------------------------------------------------------------------
 -- << remote interface >>
-
-local Food = require("constants.food")
 
 remote.add_interface("sosciencity", {
     --- Register or overwrite a food definition.

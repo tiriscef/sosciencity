@@ -13,23 +13,6 @@ local max = math.max
 
 local set_binary_techs = Technologies.set_binary_techs
 
----------------------------------------------------------------------------------------------------
--- << caste research >>
-
---- Checks if the given caste has been researched by the player.
---- @param caste_id Type
---- @return boolean
-function Inhabitants.caste_is_researched(caste_id)
-    return storage.technologies[castes[caste_id].tech_name] and true or false
-end
-
---- Returns the level of the efficiency technology for the given caste.
---- @param caste_id Type
---- @return integer
-function Inhabitants.get_caste_efficiency_level(caste_id)
-    return storage.technologies[castes[caste_id].efficiency_tech]
-end
-
 --- Returns the total number of inhabitants.
 --- @param pop table? population table, defaults to storage.population
 --- @return integer

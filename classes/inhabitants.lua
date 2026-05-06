@@ -690,7 +690,7 @@ end
 
 -- caste research, bonus calculations, and update_caste_bonuses
 -- moved to classes/inhabitants/castes.lua
-local is_researched -- set after castes.lua is loaded
+local is_researched = Technologies.caste_is_researched
 local update_caste_bonuses -- set after castes.lua is loaded
 
 -- nominal value functions moved to classes/inhabitants/housing-update.lua
@@ -830,7 +830,6 @@ require("classes.inhabitants.housing-upgrades")
 require("classes.inhabitants.empty-housing")
 require("classes.inhabitants.housing-redistribution")
 
-is_researched = Inhabitants.caste_is_researched
 update_caste_bonuses = Inhabitants.update_caste_bonuses
 build_social_environment = Inhabitants.build_social_environment
 add_to_homeless_pool = Inhabitants.add_to_homeless_pool

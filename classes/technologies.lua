@@ -3,6 +3,8 @@ local InformationType = require("enums.information-type")
 
 local Castes = require("constants.castes")
 local TechEffects = require("constants.tech-effects")
+
+local castes = Castes.values
 local Unlocks = require("constants.unlocks")
 
 
@@ -173,6 +175,34 @@ function Technologies.get_redistribution_budget_fraction()
     local level = (storage.technologies["redistribution-efficiency-1"] and 1 or 0)
                 + (storage.technologies["redistribution-efficiency-2"] and 1 or 0)
     return TechEffects.redistribution_budget_fractions[level]
+end
+
+--- Returns whether the given caste's unlock technology has been researched.
+--- @param caste_id Type
+--- @return boolean
+function Technologies.caste_is_researched(caste_id)
+    return storage.technologies[castes[caste_id].tech_name] and true or false
+end
+
+--- Returns the level of the efficiency technology for the given caste.
+--- @param caste_id Type
+--- @return integer
+function Technologies.get_caste_efficiency_level(caste_id)
+    return storage.technologies[castes[caste_id].efficiency_tech]
+end
+
+--- Returns the caste point output multiplier for the given caste's current efficiency level.
+--- @param caste_id Type
+--- @return number
+function Technologies.get_caste_efficiency_multiplier(caste_id)
+    return 1 + TechEffects.caste_efficiency_points_per_level * storage.technologies[castes[caste_id].efficiency_tech]
+end
+
+--- Returns the birth-defect probability multiplier for the current reproductive healthcare level.
+--- Multiply any base birth-defect probability by this value.
+--- @return number
+function Technologies.get_reproductive_healthcare_factor()
+    return TechEffects.reproductive_healthcare_level_factor ^ storage.technologies["improved-reproductive-healthcare"]
 end
 
 ---------------------------------------------------------------------------------------------------

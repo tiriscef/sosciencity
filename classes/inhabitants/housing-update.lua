@@ -225,7 +225,7 @@ local function update_housing_census(entry, moving_still)
     end
 
     local caste = castes[caste_id]
-    local efficiency = 1 + 0.1 * storage.technologies[caste.efficiency_tech]
+    local efficiency = Technologies.get_caste_efficiency_multiplier(caste_id)
     local manpower = entry[EK.diseases][HEALTHY]
     for disease, count in pairs(entry[EK.diseases]) do
         if disease ~= HEALTHY then

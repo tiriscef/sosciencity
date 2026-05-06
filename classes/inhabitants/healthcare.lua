@@ -101,7 +101,7 @@ end
 --- Returns the probability of getting birth defects based on the current tech level.
 --- @return number
 function Inhabitants.get_birth_defect_probability()
-    return 0.25 * 0.8 ^ storage.technologies["improved-reproductive-healthcare"]
+    return 0.25 * Technologies.get_reproductive_healthcare_factor()
 end
 
 --- Returns the disease progress for accident-type diseases.

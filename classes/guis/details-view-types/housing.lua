@@ -50,7 +50,7 @@ local function fill_caste_chooser(flow, entry, house_details)
 
     local at_least_one = false
     for _, caste in pairs(Castes.all) do
-        if not Inhabitants.caste_is_researched(caste.type) then
+        if not Technologies.caste_is_researched(caste.type) then
             goto continue
         end
 
@@ -110,7 +110,7 @@ local function update_caste_chooser(flow, entry, house_details)
     local trait_upgrades = entry[EK.trait_upgrades]
 
     for _, caste in pairs(Castes.all) do
-        if not Inhabitants.caste_is_researched(caste.type) then
+        if not Technologies.caste_is_researched(caste.type) then
             goto continue
         end
 

@@ -369,7 +369,7 @@ local function update_caste_flow(container, caste_id, caste_tooltips)
     local caste_frame = container["caste-" .. caste_id]
 
     -- Always show the clockwork caste, so the player has a chance to understand the maintenance mechanic.
-    local visibility = (caste_id == Type.clockwork) or Inhabitants.caste_is_researched(caste_id)
+    local visibility = (caste_id == Type.clockwork) or Technologies.caste_is_researched(caste_id)
     caste_frame.visible = visibility
 
     if visibility then

@@ -27,10 +27,10 @@ local max = math.max
 local function get_upbringing_expectations(mode)
     return Tirislib.LazyLuaq.from(Castes.all)
         :where_key("breedable")
-        :where(function(caste) return Inhabitants.caste_is_researched(caste.type) end)
+        :where(function(caste) return Technologies.caste_is_researched(caste.type) end)
         :select(
             function(caste)
-                return mode == caste.type and 4 / 3 + 1 / 3 * Inhabitants.get_caste_efficiency_level(caste.type) or 1,
+                return mode == caste.type and 4 / 3 + 1 / 3 * Technologies.get_caste_efficiency_level(caste.type) or 1,
                     caste.type
             end
         )
@@ -50,7 +50,7 @@ local function finish_class(entry, class, mode)
         local birth_defect_count =
             Utils.coin_flips(
                 InhabitantsConstants.egg_data[egg_name].birth_defect_probability *
-                0.8 ^ storage.technologies["improved-reproductive-healthcare"],
+                Technologies.get_reproductive_healthcare_factor(),
                 egg_count
             )
         if birth_defect_count > 0 then
@@ -118,7 +118,7 @@ local function update_upbringing_station(entry)
 
     check_circuit_upbringing_station(entry)
 
-    if mode ~= Type.null and not Inhabitants.caste_is_researched(mode) then
+    if mode ~= Type.null and not Technologies.caste_is_researched(mode) then
         -- the player somehow managed to set the mode to a not researched caste
         entry[EK.education_mode] = Type.null
         mode = Type.null

@@ -45,7 +45,7 @@ local function update_immigration_port_details(container, entry, player_id)
             key,
             floor(immigrants)
         )
-        Datalist.set_kv_pair_visibility(immigrants_list, key, Inhabitants.caste_is_researched(caste))
+        Datalist.set_kv_pair_visibility(immigrants_list, key, Technologies.caste_is_researched(caste))
     end
 end
 

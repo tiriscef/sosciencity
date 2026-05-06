@@ -95,7 +95,7 @@ Gui.CityView.add_page {
         -- collect researched castes
         local researched_castes = {}
         for _, caste in pairs(Castes.all) do
-            if Inhabitants.caste_is_researched(caste.type) then
+            if Technologies.caste_is_researched(caste.type) then
                 researched_castes[#researched_castes + 1] = caste
             end
         end
