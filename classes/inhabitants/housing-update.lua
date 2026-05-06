@@ -33,6 +33,7 @@ local unemploy_inhabitants
 local get_caste_bonus_multiplier
 local try_auto_upgrades
 local update_sanatorium
+local expire_moving_cohorts
 
 function Inhabitants.load_housing_update()
     evaluate_diet = Inhabitants.evaluate_diet
@@ -48,6 +49,7 @@ function Inhabitants.load_housing_update()
     get_caste_bonus_multiplier = Inhabitants.get_caste_bonus_multiplier
     try_auto_upgrades = Inhabitants.try_auto_upgrades
     update_sanatorium = Inhabitants.update_sanatorium
+    expire_moving_cohorts = Inhabitants.expire_moving_cohorts
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -135,7 +137,7 @@ Inhabitants.update_ages = update_ages
 ---------------------------------------------------------------------------------------------------
 -- << strike >>
 
---- Computes and stores the current strike level for a housing entry, and fires workers who are no longer willing.
+--- Computes and stores the current strike level for a housing entry.
 --- Strike level 0 means no strike, 1 means full strike.
 --- @param entry Entry
 --- @param happiness number current happiness
@@ -159,13 +161,24 @@ local function update_strike_level(entry, happiness, caste)
 
     if new_level > 0 then
         Communication.warning(WarningType.on_strike, entry[EK.type])
-        local willing = floor(entry[EK.diseases][HEALTHY] * (1 - new_level * (1 - caste.full_strike_worker_fraction)))
-        local excess = entry[EK.employed] - willing
-        if excess > 0 then
-            unemploy_inhabitants(entry, excess)
-        end
     end
 end
+
+--- Fires excess workers to match available capacity.
+--- Accounts for sickness, strikes, and moving downtime all at once.
+--- @param entry Entry
+--- @param moving_healthy integer inhabitants currently in moving downtime (healthy)
+local function validate_employment_capacity(entry, moving_healthy)
+    local caste = castes[entry[EK.type]]
+    local healthy = entry[EK.diseases][HEALTHY]
+    local willing_fraction = 1 - entry[EK.strike_level] * (1 - caste.full_strike_worker_fraction)
+    local available = floor((healthy - moving_healthy) * willing_fraction)
+    local excess = entry[EK.employed] - available
+    if excess > 0 then
+        unemploy_inhabitants(entry, excess)
+    end
+end
+Inhabitants.validate_employment_capacity = validate_employment_capacity
 
 ---------------------------------------------------------------------------------------------------
 -- << garbage >>
@@ -194,8 +207,10 @@ Inhabitants.update_garbage_output = update_garbage_output
 -- << housing census >>
 
 --- Syncs the population count and caste bonus points for a housing entry.
+--- Moving inhabitants count toward population but provide no caste points.
 --- @param entry Entry
-local function update_housing_census(entry)
+--- @param moving_still integer total inhabitants currently in moving downtime
+local function update_housing_census(entry, moving_still)
     local caste_id = entry[EK.type]
     local inhabitants = entry[EK.inhabitants]
     local official_inhabitants = entry[EK.official_inhabitants]
@@ -216,6 +231,11 @@ local function update_housing_census(entry)
         if disease ~= HEALTHY then
             manpower = manpower + count * disease_values[disease].work_effectivity
         end
+    end
+
+    -- moving inhabitants provide no caste points; scale manpower proportionally
+    if (moving_still or 0) > 0 and inhabitants > 0 then
+        manpower = manpower * (inhabitants - moving_still) / inhabitants
     end
 
     local points = manpower * get_caste_bonus_multiplier(entry[EK.happiness], entry[EK.strike_level], caste) * efficiency
@@ -308,6 +328,8 @@ local function update_house(entry, delta_ticks)
         update_sanatorium(entry)
     end
 
+    local moving_still, moving_healthy = expire_moving_cohorts(entry)
+
     local caste_id = entry[EK.type]
     local caste = castes[caste_id]
 
@@ -326,6 +348,11 @@ local function update_house(entry, delta_ticks)
     entry[EK.sanity_factors] = sanity_factors
 
     local inhabitants = entry[EK.inhabitants]
+
+    -- apply relocation penalty factor while movers are still settling in
+    if moving_still > 0 and caste.relocation_penalty then
+        happiness_factors[HappinessFactor.recently_relocated] = caste.relocation_penalty.factor
+    end
 
     -- collect all the influences
     evaluate_diet(entry, delta_ticks)
@@ -367,7 +394,8 @@ local function update_house(entry, delta_ticks)
 
     update_ages(entry)
     update_strike_level(entry, entry[EK.happiness], caste)
-    update_housing_census(entry)
+    validate_employment_capacity(entry, moving_healthy)
+    update_housing_census(entry, moving_still)
     update_garbage_output(entry, delta_ticks)
     update_diseases(entry, delta_ticks)
     update_blood_donations(entry, delta_ticks)

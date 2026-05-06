@@ -158,6 +158,8 @@ EK.target_tags = 238
 EK.is_sanatorium = 239
 --- table of (disease_id → ticks unclaimed) for tracking transport eligibility
 EK.unclaimed_disease_ticks = 240
+--- array of moving cohorts: {count, healthy, expires} for inhabitants currently settling in
+EK.moving_cohorts = 241
 
 -- water distributer
 

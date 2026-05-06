@@ -2,6 +2,7 @@
 
 -- enums
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 local DiseaseCategory = require("enums.disease-category")
 local HappinessSummand = require("enums.happiness-summand")
@@ -529,6 +530,12 @@ local function update_occupations_list(flow, entry)
         end
     end
 
+    local _, moving_healthy = Inhabitants.get_moving_count(entry)
+    if moving_healthy > 0 then
+        Datalist.add_operand_entry(occupations_list, "settling-in", {"sosciencity.settling-in"}, moving_healthy)
+        Datalist.set_kv_pair_tooltip(occupations_list, "settling-in", {"sosciencity.explain-settling-in"})
+    end
+
     local employments = entry[EK.employments]
     for building_number, count in pairs(employments) do
         local building = Register.try_get(building_number)
@@ -585,6 +592,7 @@ end
 
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+
     local general_list = flow["general-infos"]
 
     local caste = castes[entry[EK.type]]
@@ -617,6 +625,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     if inhabitants == 0 then
         Datalist.set_kv_pair_value(general_list, "happiness", "-")
         Datalist.set_kv_pair_visibility(general_list, "strike", false)
+        Datalist.set_kv_pair_visibility(general_list, "settling-in", false)
         Datalist.set_kv_pair_value(general_list, "health", "-")
         Datalist.set_kv_pair_value(general_list, "sanity", "-")
         Datalist.set_kv_pair_value(general_list, "calorific-demand", "-")
@@ -644,6 +653,13 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         Datalist.set_kv_pair_visibility(general_list, "strike", true)
     else
         Datalist.set_kv_pair_visibility(general_list, "strike", false)
+    end
+    local moving_total, _ = Inhabitants.get_moving_count(entry)
+    if moving_total > 0 then
+        Datalist.set_kv_pair_value(general_list, "settling-in", {"sosciencity.show-settling-in", moving_total})
+        Datalist.set_kv_pair_visibility(general_list, "settling-in", true)
+    else
+        Datalist.set_kv_pair_visibility(general_list, "settling-in", false)
     end
     Datalist.set_kv_pair_value(
         general_list,
@@ -785,6 +801,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     Datalist.add_kv_pair(general_list, "inhabitants", {"sosciencity.inhabitants"})
     Datalist.add_kv_pair(general_list, "happiness", {"sosciencity.happiness"})
     Datalist.add_kv_pair(general_list, "strike", {"sosciencity.strike"})
+    Datalist.add_kv_pair(general_list, "settling-in", {"sosciencity.settling-in"})
     Datalist.add_kv_pair(general_list, "health", {"sosciencity.health"})
     Datalist.add_kv_pair(general_list, "sanity", {"sosciencity.sanity"})
     Datalist.add_kv_pair(general_list, "calorific-demand", {"sosciencity.calorific-demand"})
@@ -865,6 +882,34 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
             }
         }
         Gui.register_element(sanatorium_checkbox, entry[EK.unit_number], "sanatorium_checkbox", player_id)
+
+        local relocation_flow = Gui.Elements.Flow.horizontal_right(flow, "relocation_flow")
+        local pull_button = relocation_flow.add {
+            type = "button",
+            name = "pull_button",
+            caption = {"sosciencity.pull"},
+            tooltip = {"sosciencity.explain-pull"},
+            mouse_button_filter = {"left"},
+            tags = {sosciencity_gui_event = "pull_to_house", unit_number = entry[EK.unit_number], pull_all = false}
+        }
+
+        relocation_flow.add {
+            type = "button",
+            name = "push_button",
+            caption = {"sosciencity.push"},
+            tooltip = {"sosciencity.explain-push"},
+            mouse_button_filter = {"left"},
+            tags = {sosciencity_gui_event = "push_from_house", unit_number = entry[EK.unit_number]}
+        }
+
+        local pull_hint = flow.add {
+            type = "label",
+            name = "pull_hint",
+            caption = {"sosciencity.pull-hint-all"},
+            visible = false
+        }
+        pull_hint.style.single_line = false
+        Gui.register_element(pull_hint, entry[EK.unit_number], "pull_hint", player_id)
     end
 
     Gui.Elements.Utils.separator_line(flow)
@@ -890,6 +935,45 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     -- call the update function to set the values
     update_housing_general_info_tab(tabbed_pane, entry)
 end
+
+Gui.set_click_handler(
+    "pull_to_house",
+    function(event)
+        local tags = event.element.tags
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then return end
+
+        local pull_all = tags.pull_all or false
+        Inhabitants.pull_to_house(entry, pull_all)
+
+        local new_pull_all = Housing.get_free_capacity(entry) > 0 and not pull_all
+        local el = event.element
+        el.tags = {sosciencity_gui_event = "pull_to_house", unit_number = tags.unit_number, pull_all = new_pull_all}
+
+        local hint = Gui.get_element(tags.unit_number, "pull_hint", event.player_index)
+        if hint and hint.valid then
+            hint.visible = new_pull_all
+        end
+    end
+)
+
+Gui.set_click_handler(
+    "push_from_house",
+    function(event)
+        local tags = event.element.tags
+        local entry = Register.try_get(tags.unit_number)
+        if not entry then return end
+
+        Inhabitants.push_from_house(entry)
+
+        for _, el in pairs(Gui.get_elements(tags.unit_number, "pull_button")) do
+            if el.valid then
+                el.caption = {"sosciencity.pull"}
+                el.tooltip = {"sosciencity.explain-pull"}
+            end
+        end
+    end
+)
 
 Gui.set_click_handler(
     "kickout",
@@ -1279,7 +1363,7 @@ if DEV_MODE then
         local genders = Gui.DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
         local ages = Gui.DebugWidgets.make_age_group(age_idx, count, age_value)
         local group = InhabitantGroup.new(entry[EK.type], count, happiness, health, sanity, nil, genders, ages)
-        local added = Inhabitants.try_add_to_house(entry, group, true)
+        local added = Inhabitants.add_to_house(entry, group, MoveCause.copy, true)
         player.print({"city-view.debug-housing-add-done", added, count})
     end)
 

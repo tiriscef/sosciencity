@@ -1,5 +1,6 @@
 local DeathCause = require("enums.death-cause")
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
@@ -124,6 +125,7 @@ function Inhabitants.load()
     -- submodule load
     Inhabitants.load_homelessness()
     Inhabitants.load_healthcare()
+    Inhabitants.load_housing_management()
     Inhabitants.load_housing_update()
     Inhabitants.load_housing_lifecycle()
 end
@@ -711,7 +713,7 @@ function Inhabitants.migration_wave(immigration_port_details)
 
         local immigrants = InhabitantGroup.new_immigrant_group(caste, count_immigrated)
 
-        Inhabitants.add_to_city(immigrants)
+        Inhabitants.add_to_city(immigrants, MoveCause.immigration)
     end
 end
 
@@ -798,8 +800,9 @@ end
 
 --- Adds new inhabitants to the city. First tries to distribute to free houses, then adds the rest to the homeless pool.
 --- @param group InhabitantGroup
-function Inhabitants.add_to_city(group)
-    Inhabitants.distribute(group, false)
+--- @param move_cause MoveCause reason for the move, determines moving downtime
+function Inhabitants.add_to_city(group, move_cause)
+    Inhabitants.distribute(group, false, move_cause)
     add_to_homeless_pool(group)
 end
 

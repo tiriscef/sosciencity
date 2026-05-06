@@ -1,6 +1,7 @@
 local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local ImmigrationCause = require("enums.immigration-cause")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
@@ -65,7 +66,7 @@ local function finish_class(entry, class, mode)
         local caste_diseases = DiseaseGroup.take(diseases, caste_count)
 
         local graduates = InhabitantGroup.new(caste, caste_count, nil, nil, nil, caste_diseases, caste_genders)
-        Inhabitants.add_to_city(graduates)
+        Inhabitants.add_to_city(graduates, MoveCause.upbringing)
     end
 
     entry[EK.graduates] = entry[EK.graduates] + count

@@ -1,5 +1,6 @@
 local DeconstructionCause = require("enums.deconstruction-cause")
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
@@ -12,7 +13,7 @@ local random = math.random
 
 -- cross-submodule references, set during load
 local update_free_space_status
-local try_add_to_house
+local add_to_house
 local add_to_homeless_pool
 local build_social_environment
 local update_housing_census
@@ -21,7 +22,7 @@ local disease_progress_updaters
 
 function Inhabitants.load_housing_lifecycle()
     update_free_space_status = Inhabitants.update_free_space_status
-    try_add_to_house = Inhabitants.try_add_to_house
+    add_to_house = Inhabitants.add_to_house
     add_to_homeless_pool = Inhabitants.add_to_homeless_pool
     build_social_environment = Inhabitants.build_social_environment
     update_housing_census = Inhabitants.update_housing_census
@@ -141,7 +142,7 @@ end
 --- @param source Entry
 --- @param destination Entry
 function Inhabitants.copy_house(source, destination)
-    try_add_to_house(destination, source, true)
+    add_to_house(destination, source, MoveCause.copy, true)
     destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Tables.copy(source[EK.disease_progress])
     destination[EK.housing_priority] = source[EK.housing_priority] or 0

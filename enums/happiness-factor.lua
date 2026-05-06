@@ -8,5 +8,6 @@ HappinessFactor.thirst = 3
 HappinessFactor.bad_health = 4
 HappinessFactor.bad_sanity = 5
 HappinessFactor.comfort_malus = 6
+HappinessFactor.recently_relocated = 7
 
 return HappinessFactor

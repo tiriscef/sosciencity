@@ -6,6 +6,7 @@
 ---------------------------------------------------------------------------------------------------
 
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Castes = require("constants.castes")
 
 local CONTEXT = "debug-broadcast"
@@ -157,7 +158,7 @@ Gui.set_click_handler(
         local genders = DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
         local ages = DebugWidgets.make_age_group(age_idx, count, age_value)
         local group = InhabitantGroup.new(caste_id, count, happiness, health, sanity, nil, genders, ages)
-        Inhabitants.add_to_city(group)
+        Inhabitants.add_to_city(group, MoveCause.immigration)
         player.print({"city-view.debug-spawn-done", count, Castes.values[caste_id].localised_name})
     end
 )

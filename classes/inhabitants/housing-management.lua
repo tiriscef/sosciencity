@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
@@ -6,6 +7,7 @@ local Housing = require("constants.housing")
 local InhabitantsConstants = require("constants.inhabitants")
 local Type = require("enums.type")
 
+local castes = Castes.values
 local get_housing_details = Housing.get
 local get_free_capacity = Housing.get_free_capacity
 local try_get = Register.try_get
@@ -15,12 +17,16 @@ local min = math.min
 local HEALTHY = DiseaseGroup.HEALTHY
 local disease_values = Diseases.values
 local transport_eligibility_threshold = InhabitantsConstants.transport_eligibility_threshold
+local moving_downtime = InhabitantsConstants.moving_downtime
 local hospital_types = {Type.hospital, Type.improvised_hospital}
 
 -- Entity is loaded after Inhabitants, so this is resolved lazily at call time
 local function hospital_can_treat(hospital, disease_id)
     return Entity.hospital_can_treat(hospital, disease_id)
 end
+
+-- set during load, after homelessness.lua is loaded
+local add_to_homeless_pool
 
 ---------------------------------------------------------------------------------------------------
 -- << lifecycle >>
@@ -37,6 +43,10 @@ function Inhabitants.init_housing_management()
     storage.transport_eligible_houses = Tirislib.LazyLuaq.from(Castes.all)
         :select(function(caste) return {}, caste.type end)
         :to_table()
+end
+
+function Inhabitants.load_housing_management()
+    add_to_homeless_pool = Inhabitants.add_to_homeless_pool
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -79,13 +89,245 @@ local function try_add_to_house(entry, group, silent)
 
     return count_moving_in
 end
-Inhabitants.try_add_to_house = try_add_to_house
+
+---------------------------------------------------------------------------------------------------
+-- << moving cohort system >>
+
+--- Expires finished cohorts and returns the still-moving totals.
+--- @param entry Entry
+--- @return integer still_moving total moving inhabitants not yet settled
+--- @return integer still_moving_healthy how many of those are healthy
+local function expire_moving_cohorts(entry)
+    local cohorts = entry[EK.moving_cohorts]
+    if not cohorts then return 0, 0 end
+
+    local tick = game.tick
+    local still_count = 0
+    local still_healthy = 0
+
+    for i = #cohorts, 1, -1 do
+        local cohort = cohorts[i]
+        if cohort.expires <= tick then
+            table.remove(cohorts, i)
+        else
+            still_count = still_count + cohort.count
+            still_healthy = still_healthy + cohort.healthy
+        end
+    end
+
+    if #cohorts == 0 then
+        entry[EK.moving_cohorts] = nil
+    end
+
+    return still_count, still_healthy
+end
+Inhabitants.expire_moving_cohorts = expire_moving_cohorts
+
+--- Returns the count of inhabitants currently in moving downtime, without expiring cohorts.
+--- @param entry Entry
+--- @return integer total all inhabitants in active cohorts
+--- @return integer healthy healthy inhabitants in active cohorts
+local function get_moving_count(entry)
+    local cohorts = entry[EK.moving_cohorts]
+    if not cohorts then return 0, 0 end
+
+    local tick = game.tick
+    local total = 0
+    local healthy = 0
+    for _, cohort in pairs(cohorts) do
+        if cohort.expires > tick then
+            total = total + cohort.count
+            healthy = healthy + cohort.healthy
+        end
+    end
+    return total, healthy
+end
+Inhabitants.get_moving_count = get_moving_count
+
+--- Scales moving cohorts down proportionally after inhabitants are taken from a house.
+--- @param entry Entry
+--- @param taken integer number of inhabitants removed
+--- @param total_before integer total inhabitants before removal
+local function scale_moving_cohorts(entry, taken, total_before)
+    local cohorts = entry[EK.moving_cohorts]
+    if not cohorts or total_before == 0 then return end
+
+    local remaining = total_before - taken
+    if remaining == 0 then
+        entry[EK.moving_cohorts] = nil
+        return
+    end
+
+    local scale = remaining / total_before
+    for i = #cohorts, 1, -1 do
+        local cohort = cohorts[i]
+        cohort.count = floor(cohort.count * scale)
+        cohort.healthy = floor(cohort.healthy * scale)
+        if cohort.count == 0 then
+            table.remove(cohorts, i)
+        end
+    end
+
+    if #cohorts == 0 then
+        entry[EK.moving_cohorts] = nil
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << relocation wrappers >>
+
+--- Takes inhabitants from a house, scaling moving cohorts proportionally.
+--- @param house Entry
+--- @param count integer
+--- @param diseases DiseaseGroup? specific disease composition to take (nil for proportional)
+--- @return InhabitantGroup
+local function take_from_house(house, count, diseases)
+    local total_before = house[EK.inhabitants]
+    local taken_group = InhabitantGroup.take_specific(house, count, diseases)
+    local actually_taken = total_before - house[EK.inhabitants]
+    if actually_taken > 0 then
+        scale_moving_cohorts(house, actually_taken, total_before)
+        update_free_space_status(house)
+    end
+    return taken_group
+end
+Inhabitants.take_from_house = take_from_house
+
+--- Adds inhabitants to a house, registering a moving cohort and applying any relocation penalty.
+--- @param house Entry
+--- @param group InhabitantGroup
+--- @param move_cause MoveCause reason for the move, used to look up downtime
+--- @param silent boolean? suppress flying text
+--- @return integer number of inhabitants actually added
+local function add_to_house(house, group, move_cause, silent)
+    local group_count = group[EK.inhabitants]
+    if group_count == 0 then return 0 end
+
+    local group_healthy = group[EK.diseases][HEALTHY]
+
+    local added = try_add_to_house(house, group, silent)
+    if added == 0 then return 0 end
+
+    local downtime = moving_downtime[move_cause]
+    if downtime > 0 then
+        local cohort_healthy = floor(group_healthy * added / group_count)
+        local cohorts = house[EK.moving_cohorts] or {}
+        house[EK.moving_cohorts] = cohorts
+        cohorts[#cohorts + 1] = {
+            count = added,
+            healthy = cohort_healthy,
+            expires = game.tick + downtime
+        }
+
+        local penalty = castes[house[EK.type]].relocation_penalty
+        if penalty then
+            house[EK.happiness] = max(0, house[EK.happiness] - penalty.shock)
+        end
+    end
+
+    return added
+end
+Inhabitants.add_to_house = add_to_house
+
+---------------------------------------------------------------------------------------------------
+-- << pull / push >>
+
+--- Fills this house from healthy inhabitants in other (non-sanatorium) houses.
+--- Pulls from strictly lower-priority sources first; if `all_sources` is true, pulls from any house.
+--- Returns the number of inhabitants pulled.
+--- @param entry Entry
+--- @param all_sources boolean if true, pull from any non-sanatorium house regardless of priority
+--- @return integer count pulled
+function Inhabitants.pull_to_house(entry, all_sources)
+    local capacity = get_free_capacity(entry)
+    if capacity == 0 then return 0 end
+
+    local caste_id = entry[EK.type]
+    local target_number = entry[EK.unit_number]
+    local priority = entry[EK.housing_priority]
+    local pulled = 0
+
+    -- iterate all houses of this caste, ascending priority (take from lowest first)
+    local sources = {}
+    for _, house in Register.iterate_type(caste_id) do
+        if house[EK.unit_number] ~= target_number and not house[EK.is_sanatorium] then
+            local house_priority = house[EK.housing_priority]
+            if all_sources or house_priority < priority then
+                if house[EK.diseases][HEALTHY] > 0 then
+                    sources[#sources + 1] = house
+                end
+            end
+        end
+    end
+
+    table.sort(sources, function(a, b)
+        return a[EK.housing_priority] < b[EK.housing_priority]
+    end)
+
+    for _, source in pairs(sources) do
+        if capacity == 0 then break end
+
+        local healthy = source[EK.diseases][HEALTHY]
+        if healthy == 0 then goto continue end
+
+        local to_take = min(healthy, capacity)
+        local taken_group = take_from_house(source, to_take, {[HEALTHY] = to_take})
+        local added = add_to_house(entry, taken_group, MoveCause.pull)
+        pulled = pulled + added
+        capacity = capacity - added
+
+        ::continue::
+    end
+
+    return pulled
+end
+
+--- Evicts all inhabitants (healthy and sick) from this house and distributes them to free houses.
+--- Remaining inhabitants who find no housing go to the homeless pool.
+--- @param entry Entry
+function Inhabitants.push_from_house(entry)
+    local inhabitants = entry[EK.inhabitants]
+    if inhabitants == 0 then return end
+
+    local caste_id = entry[EK.type]
+
+    local evicted = take_from_house(entry, inhabitants, nil)
+
+    -- distribute to free non-improvised houses with moving downtime
+    local query = Tirislib.LazyLuaq.from(storage.free_houses[false][caste_id]):choose(
+        function(unit_number)
+            local house = try_get(unit_number)
+            return house ~= nil, house
+        end
+    ):order_by(
+        function(house)
+            return house[EK.is_sanatorium] and 1 or 0
+        end
+    ):then_by_descending(
+        function(house)
+            return house[EK.housing_priority]
+        end
+    )
+
+    for _, house in query:iterate() do
+        if evicted[EK.inhabitants] == 0 then break end
+        add_to_house(house, evicted, MoveCause.push)
+    end
+
+    if evicted[EK.inhabitants] > 0 then
+        add_to_homeless_pool(evicted)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << distribution >>
 
 --- Distributes the given group to free houses, sorted by descending housing priority.
 --- @param group InhabitantGroup
 --- @param to_improvised boolean whether to distribute to improvised houses
+--- @param move_cause MoveCause reason for the move, passed to add_to_house
 --- @return integer count of inhabitants distributed
-local function distribute(group, to_improvised)
+local function distribute(group, to_improvised, move_cause)
     local count_before = group[EK.inhabitants]
     local caste_id = group[EK.type]
 
@@ -107,7 +349,7 @@ local function distribute(group, to_improvised)
 
     local to_distribute = count_before
     for _, house in query:iterate() do
-        to_distribute = to_distribute - try_add_to_house(house, group)
+        to_distribute = to_distribute - add_to_house(house, group, move_cause)
 
         if to_distribute == 0 then
             break
@@ -246,12 +488,8 @@ local function evict_healthy_from_sanatorium(entry)
         if capacity == 0 then goto next_house end
 
         local to_move = min(healthy, capacity)
-        local specific_diseases = {[HEALTHY] = to_move}
-        local taken = InhabitantGroup.take_specific(entry, to_move, specific_diseases)
-        InhabitantGroup.merge(house, taken)
-        update_free_space_status(house)
-        update_free_space_status(entry)
-        Communication.create_flying_text(house, {"sosciencity.inhabitants-moved-in", to_move})
+        local taken = take_from_house(entry, to_move, {[HEALTHY] = to_move})
+        add_to_house(house, taken, MoveCause.sanatorium_eviction)
         healthy = healthy - to_move
 
         ::next_house::
@@ -304,11 +542,8 @@ local function pull_sick_to_sanatorium(entry)
             to_pull = adjusted_count
         end
 
-        local taken = InhabitantGroup.take_specific(source, to_pull, treatable_diseases)
-        InhabitantGroup.merge(entry, taken)
-        update_free_space_status(source)
-        update_free_space_status(entry)
-        Communication.create_flying_text(entry, {"sosciencity.inhabitants-moved-in", to_pull})
+        local taken = take_from_house(source, to_pull, treatable_diseases)
+        add_to_house(entry, taken, MoveCause.sanatorium_eviction)
 
         update_transport_eligible_status(source)
         free_capacity = free_capacity - to_pull

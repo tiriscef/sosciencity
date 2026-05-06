@@ -49,6 +49,7 @@ local Castes = {}
 --- @field accident_disease_resilience number multiplier reducing accident disease probability
 --- @field health_disease_resilience number multiplier reducing health disease probability
 --- @field sanity_disease_resilience number multiplier reducing sanity disease probability
+--- @field relocation_penalty {shock: number, factor: number}? happiness shock and factor applied on relocation (nil if caste has no penalty)
 --- @field type Type set in postprocessing from the table key
 
 -- TODO: Balancing of new diet fields
@@ -311,7 +312,11 @@ Castes.values = {
         },
         accident_disease_resilience = 0.5,
         health_disease_resilience = 1,
-        sanity_disease_resilience = 1
+        sanity_disease_resilience = 1,
+        relocation_penalty = {
+            shock = 3,
+            factor = 0.8
+        }
     },
     [Type.gleam] = {
         name = "gleam",
@@ -361,7 +366,11 @@ Castes.values = {
         },
         accident_disease_resilience = 0.2,
         health_disease_resilience = 2,
-        sanity_disease_resilience = 2
+        sanity_disease_resilience = 2,
+        relocation_penalty = {
+            shock = 3,
+            factor = 0.8
+        }
     },
     [Type.aurora] = {
         name = "aurora",

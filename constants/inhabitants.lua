@@ -1,4 +1,5 @@
 local Gender = require("enums.gender")
+local MoveCause = require("enums.move-cause")
 local NutritionTag = require("enums.nutrition-tag")
 
 local Time = require("constants.time")
@@ -30,6 +31,21 @@ InhabitantsConstants.nutrition_tag_effects = {
     [NutritionTag.protein_rich] = {bonus = 1, malus = -2},
     [NutritionTag.fat_rich]     = {bonus = 1, malus = -2},
     [NutritionTag.carb_rich]    = {bonus = 1, malus = -2},
+}
+
+--- Moving downtime durations per cause. Tune values after playtesting.
+--- Inhabitants with moving downtime count as residents but provide no workforce or caste points.
+--- @type table<MoveCause, integer>
+InhabitantsConstants.moving_downtime = {
+    [MoveCause.immigration]            = 1 * Time.minute,
+    [MoveCause.upbringing]             = 1 * Time.minute,
+    [MoveCause.pull]                   = 3 * Time.minute,
+    [MoveCause.push]                   = 3 * Time.minute,
+    [MoveCause.caste_conversion]       = 5 * Time.minute,
+    [MoveCause.passive_redistribution] = 5 * Time.minute,
+    [MoveCause.sanatorium_eviction]    = 1 * Time.minute,
+    [MoveCause.house_destroyed]        = 1 * Time.minute,
+    [MoveCause.copy]                   = 0,
 }
 
 --- Probability per consumed food item that it produces a food-leftovers item.

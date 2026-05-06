@@ -82,8 +82,7 @@ Entity.multiply_percentages = multiply_percentages
 --- @param entry Entry
 --- @param performance number 0-1+ performance factor
 --- @param productivity integer? optional productivity bonus percentage
---- @param consumption integer? optional consumption modifier percentage (negative = less consumption)
-local function set_crafting_machine_performance(entry, performance, productivity, consumption)
+local function set_crafting_machine_performance(entry, performance, productivity)
     entry[EK.performance] = performance
 
     local entity = entry[EK.entity]
@@ -93,10 +92,6 @@ local function set_crafting_machine_performance(entry, performance, productivity
     entry[EK.active] = is_active
     entity.active = is_active
     Subentities.set_active(entry, is_active)
-
-    if consumption then
-        entity.consumption_modifier = 1 + consumption / 100
-    end
 
     if is_active then
         set_beacon_effects(entry, get_speed_from_performance(performance), productivity or 0, true)

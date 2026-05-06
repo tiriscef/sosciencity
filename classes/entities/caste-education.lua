@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
@@ -45,7 +46,7 @@ local function update_caste_education_building(entry)
 
         -- add them as the result_caste
         if converted_group[EK.inhabitants] > 0 then
-            Inhabitants.add_to_city(converted_group)
+            Inhabitants.add_to_city(converted_group, MoveCause.caste_conversion)
         end
     else
         if Inhabitants.get_workforce_count(entry) > 0 then

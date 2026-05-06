@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 local DeconstructionCause = require("enums.deconstruction-cause")
 
@@ -73,10 +74,10 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << try_add_to_house >>
+-- << add_to_house >>
 
 Tirislib.Testing.add_test_case(
-    "try_add_to_house respects capacity",
+    "add_to_house respects capacity",
     "integration|integration.inhabitants",
     function()
         local house = Inhabitants.try_allow_for_caste(
@@ -92,7 +93,7 @@ Tirislib.Testing.add_test_case(
 
         -- try to add 10 more - only free_space should fit
         local group = InhabitantGroup.new(Type.clockwork, 10)
-        local added = Inhabitants.try_add_to_house(house, group, true)
+        local added = Inhabitants.add_to_house(house, group, MoveCause.immigration, true)
 
         Assert.equals(added, free_space, "should only add up to capacity")
         Assert.equals(house[EK.inhabitants], capacity, "house should be at capacity")

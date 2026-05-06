@@ -24,11 +24,9 @@ local take_specific_inhabitants = InhabitantGroup.take_specific
 local floor = math.floor
 
 -- set during load
-local unemploy_inhabitants
 local update_unclaimed_disease_ticks
 
 function Inhabitants.load_healthcare()
-    unemploy_inhabitants = Inhabitants.unemploy_inhabitants
     update_unclaimed_disease_ticks = Inhabitants.update_unclaimed_disease_ticks
 end
 
@@ -305,7 +303,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << main disease update >>
 
---- Updates diseases for a housing entry: creates new cases, treats existing ones, and adjusts employment.
+--- Updates diseases for a housing entry: creates new cases and treats existing ones.
+--- Employment correction is handled by validate_employment_capacity in update_house.
 --- @param entry Entry
 --- @param delta_ticks integer
 local function update_diseases(entry, delta_ticks)
@@ -314,14 +313,6 @@ local function update_diseases(entry, delta_ticks)
     create_disease_cases(entry, disease_group, delta_ticks)
     update_disease_cases(entry, disease_group, delta_ticks)
     update_unclaimed_disease_ticks(entry, delta_ticks)
-
-    -- check employments
-    local healthy_count = disease_group[HEALTHY]
-    local employed_count = entry[EK.employed]
-
-    if employed_count > healthy_count then
-        unemploy_inhabitants(entry, employed_count - healthy_count)
-    end
 end
 Inhabitants.update_diseases = update_diseases
 

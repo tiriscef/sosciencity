@@ -1,5 +1,6 @@
 local EK = require("enums.entry-key")
 local LossCause = require("enums.loss-cause")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
@@ -15,7 +16,7 @@ local Utils = Tirislib.Utils
 local ceil = math.ceil
 local random = math.random
 
-local try_add_to_house -- set during load
+local add_to_house -- set during load
 
 ---------------------------------------------------------------------------------------------------
 -- << lifecycle >>
@@ -28,7 +29,7 @@ function Inhabitants.init_homelessness()
 end
 
 function Inhabitants.load_homelessness()
-    try_add_to_house = Inhabitants.try_add_to_house
+    add_to_house = Inhabitants.add_to_house
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -36,7 +37,7 @@ end
 
 --- Tries to distribute all homeless inhabitants to official (non-improvised) free houses.
 local function distribute_inhabitants(group)
-    return Inhabitants.distribute(group, false)
+    return Inhabitants.distribute(group, false, MoveCause.immigration)
 end
 
 --- Tries to move all homeless inhabitants into existing free caste houses.
@@ -85,7 +86,7 @@ local function try_occupy_empty_housing()
         for _, current_house in pairs(empty_houses) do
             local new_entry = Inhabitants.try_allow_for_caste(current_house, caste_id, true)
             if new_entry then
-                try_add_to_house(new_entry, group)
+                add_to_house(new_entry, group, MoveCause.immigration)
             end
 
             if group[EK.inhabitants] == 0 then
@@ -133,7 +134,7 @@ local function create_improvised_huts()
                 }
                 local entry = Register.add(new_hut, caste_id)
 
-                try_add_to_house(entry, group)
+                add_to_house(entry, group, MoveCause.immigration)
             end
 
             ::continue::
