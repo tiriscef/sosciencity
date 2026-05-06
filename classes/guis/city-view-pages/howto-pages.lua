@@ -210,6 +210,20 @@ Gui.CityView.add_page {
         Gui.Elements.Label.heading_2(container, {"city-view.housing-text45"})
         Gui.Elements.Label.paragraph(container, {"city-view.housing-text46"})
         Gui.Elements.Label.paragraph(container, {"city-view.housing-text47"})
+        Gui.Elements.Label.heading_2(container, {"city-view.housing-text48"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text49"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text50"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.housing-text51"},
+                {"city-view.housing-text52"}
+            }
+        )
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text53"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text54"})
+        Gui.Elements.Label.heading_3(container, {"city-view.housing-text55"})
+        Gui.Elements.Label.paragraph(container, {"city-view.housing-text56"})
         -- END GENERATED: housing
     end
 }

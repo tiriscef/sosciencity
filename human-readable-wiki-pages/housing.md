@@ -89,3 +89,21 @@ In the same tab, you can set a **target comfort** using a stepper control. Once 
 In the occupied house detail view there's a **Priority** field. This controls which houses inhabitants prefer when choosing where to live. Higher priority houses fill up first. You can use the preset buttons (low, mid, high, very high) or type in a custom value.
 
 Priority is also saved in blueprints and copied by settings-paste.
+
+
+## Moving Inhabitants
+
+Priority controls where new arrivals go, but sometimes you need to redistribute people you already have. Two buttons in the occupied house detail view let you do this manually.
+
+### Pull and Push
+
+- **Pull** - draws healthy inhabitants from lower-priority houses to fill this one. Pull never takes from sanatorium houses.
+- **Push** - evicts all inhabitants from this house into the distribution pool, where they'll be reallocated by the normal priority system.
+
+### Moving Downtime
+
+When inhabitants are relocated by any means, they spend some time carrying boxes and getting used to their new home - they count as residents but provide neither workforce nor caste points until they've settled in. The duration depends why they had to move and can be reduced with **Moving Efficiency** technologies.
+
+### Passive Redistribution
+
+Once you research the [technology=passive-redistribution] technology, the game periodically redistributes healthy inhabitants automatically every 5 minutes - drawing from lower-priority houses to fill higher-priority vacancies. A global pause toggle for this is in the city view's **Overview** page. Further **Redistribution Efficiency** technologies increase how many people can be moved per pass.

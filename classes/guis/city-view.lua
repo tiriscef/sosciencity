@@ -286,9 +286,7 @@ function Gui.CityView.open(player)
     end
 
     local last_opened_tab = get_subtbl(storage, "last_opened_tab")[player.index]
-    if last_opened_tab then
-        content_tabpane.selected_tab_index = last_opened_tab
-    end
+    content_tabpane.selected_tab_index = last_opened_tab or Gui.CityView.get_category_definition("how-tos").index
 
     local footer =
         city_view_frame.add {
