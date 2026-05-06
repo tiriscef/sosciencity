@@ -119,7 +119,7 @@ Tirislib.Testing.add_test_case(
     "Farm update populates baseline workforce, happiness and caste effects",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         Register.update_entry(farm, game.tick + 100)
 
         local report = farm[EK.performance_report]
@@ -135,7 +135,7 @@ Tirislib.Testing.add_test_case(
     "Farm update tracks species name from current recipe",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         Register.update_entry(farm, game.tick + 100)
 
         Assert.equals(farm[EK.species], "bell-pepper")
@@ -148,11 +148,11 @@ Tirislib.Testing.add_test_case(
     "Changing species resets biomass to 0",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-perennial-olive")
+        local farm = create_farm({0, 0}, "test-farming-perennial-olive")
         Register.update_entry(farm, game.tick + 1)
         farm[EK.biomass] = 50000
 
-        farm[EK.entity].set_recipe("farming-annual-bell-pepper")
+        farm[EK.entity].set_recipe("test-farming-annual-bell-pepper")
         Register.update_entry(farm, game.tick + 100)
 
         Assert.equals(farm[EK.species], "bell-pepper")
@@ -169,7 +169,7 @@ Tirislib.Testing.add_test_case(
     "Farm with humus_mode disabled records no humus_fertilization effect",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         farm[EK.humus_mode] = false
 
         Register.update_entry(farm, game.tick + 100)
@@ -186,7 +186,7 @@ Tirislib.Testing.add_test_case(
     "Farm consumes humus from neighbor station and records humus_fertilization effect",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         local station = Helpers.create_and_register(test_surface, "test-fertilization-station", {3, 0})
         station[EK.humus_stored] = 50
 
@@ -210,7 +210,7 @@ Tirislib.Testing.add_test_case(
     "Pruning station claims neighbor farm with pruning_mode on",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         local station = Helpers.create_and_register(test_surface, "test-pruning-station", {3, 0})
 
         Register.update_entry(station, game.tick + 1)
@@ -225,7 +225,7 @@ Tirislib.Testing.add_test_case(
     "Pruning station does not claim farm with pruning_mode off",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         farm[EK.pruning_mode] = false
         local station = Helpers.create_and_register(test_surface, "test-pruning-station", {3, 0})
 
@@ -241,7 +241,7 @@ Tirislib.Testing.add_test_case(
     "Claimed farm records pruning productivity effect",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         local station = Helpers.create_and_register(test_surface, "test-pruning-station", {3, 0})
         Register.update_entry(station, game.tick + 1)
 
@@ -258,7 +258,7 @@ Tirislib.Testing.add_test_case(
     "Disabling pruning_mode releases the station's claim on next farm update",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         local station = Helpers.create_and_register(test_surface, "test-pruning-station", {3, 0})
         Register.update_entry(station, game.tick + 1)
         Assert.not_nil(farm[EK.pruned_by], "precondition: claim should be in place")
@@ -279,7 +279,10 @@ Tirislib.Testing.add_test_case(
     "Persistent crop above biomass threshold records biomass productivity effect",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-perennial-olive")
+        local farm = create_farm({0, 0}, "test-farming-perennial-olive")
+        -- first update locks in the species; otherwise the next update would treat
+        -- this as a species change and reset biomass back to 0
+        Register.update_entry(farm, game.tick + 1)
         farm[EK.biomass] = 100000
 
         Register.update_entry(farm, game.tick + 100)
@@ -295,7 +298,8 @@ Tirislib.Testing.add_test_case(
     "Persistent crop below biomass threshold records no biomass effect",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-perennial-olive")
+        local farm = create_farm({0, 0}, "test-farming-perennial-olive")
+        Register.update_entry(farm, game.tick + 1)
         farm[EK.biomass] = 500
 
         Register.update_entry(farm, game.tick + 100)
@@ -311,7 +315,7 @@ Tirislib.Testing.add_test_case(
     "Non-persistent crop never records biomass effect",
     "integration|integration.farm",
     function()
-        local farm = create_farm({0, 0}, "farming-annual-bell-pepper")
+        local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         -- biomass field still gets set but the productivity factor should never appear
         farm[EK.biomass] = 100000
 

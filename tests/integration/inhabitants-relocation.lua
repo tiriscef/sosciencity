@@ -138,7 +138,7 @@ Tirislib.Testing.add_test_case(
         local dest = create_house({0, 0}, 0)
         local group = InhabitantGroup.new(Type.clockwork, 10)
 
-        Inhabitants.add_to_house(dest, group, MoveCause.sanatorium_eviction)
+        Inhabitants.add_to_house(dest, group, MoveCause.copy)
 
         Assert.is_nil(dest[EK.moving_cohorts], "no cohort should be registered for zero downtime")
     end,
@@ -171,7 +171,7 @@ Tirislib.Testing.add_test_case(
         gleam_house[EK.happiness] = 10.0
 
         local group = InhabitantGroup.new(Type.gleam, 5)
-        Inhabitants.add_to_house(gleam_house, group, MoveCause.sanatorium_eviction)
+        Inhabitants.add_to_house(gleam_house, group, MoveCause.copy)
 
         Assert.equals(gleam_house[EK.happiness], 10.0, "no shock should apply when downtime = 0")
     end,

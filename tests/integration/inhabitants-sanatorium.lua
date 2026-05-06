@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 
 local InhabitantsConstants = require("constants.inhabitants")
@@ -278,7 +279,7 @@ Tirislib.Testing.add_test_case(
         Inhabitants.update_free_space_status(sanatorium)
 
         local immigrants = InhabitantGroup.new_immigrant_group(Type.clockwork, 5)
-        Inhabitants.distribute(immigrants, false)
+        Inhabitants.distribute(immigrants, false, MoveCause.immigration)
 
         Assert.greater_than(normal_house[EK.inhabitants], 0, "normal house should receive inhabitants despite lower priority than sanatorium")
     end,
@@ -295,7 +296,7 @@ Tirislib.Testing.add_test_case(
         Inhabitants.update_free_space_status(sanatorium)
 
         local immigrants = InhabitantGroup.new_immigrant_group(Type.clockwork, 5)
-        Inhabitants.distribute(immigrants, false)
+        Inhabitants.distribute(immigrants, false, MoveCause.immigration)
 
         Assert.greater_than(sanatorium[EK.inhabitants], 0, "sanatorium should accept inhabitants when it is the only available house")
     end,

@@ -183,5 +183,19 @@ create_test_assembling_machine("kitchen-for-all", {"sosciencity-kitchen-for-all"
 create_test_assembling_machine("assembling-machine", {"crafting"})
 create_test_assembling_machine("farm", {"sosciencity-farming-annual", "sosciencity-farming-perennial"})
 
+-- Test farming recipes for integration tests: no unlock so they're enabled by default,
+-- which set_recipe / get_recipe require. Their names are wired into Biology.flora so
+-- Biology.get_species maps them back to the right species.
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "test-farming-annual-bell-pepper",
+    category = "sosciencity-farming-annual",
+    results = {{type = "item", name = "bell-pepper", amount = 1}}
+}
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "test-farming-perennial-olive",
+    category = "sosciencity-farming-perennial",
+    results = {{type = "item", name = "olive", amount = 1}}
+}
+
 create_test_container("ember-manufactory")
 create_test_container("orchid-manufactory")

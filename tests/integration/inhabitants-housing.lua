@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local MoveCause = require("enums.move-cause")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
@@ -79,7 +80,7 @@ Tirislib.Testing.add_test_case(
         local count_before = house[EK.inhabitants]
 
         local group = InhabitantGroup.new(Type.clockwork, 5)
-        Inhabitants.add_to_city(group)
+        Inhabitants.add_to_city(group, MoveCause.immigration)
 
         Assert.greater_than(house[EK.inhabitants], count_before, "house should have gained inhabitants")
     end,
@@ -92,7 +93,7 @@ Tirislib.Testing.add_test_case(
     "integration|integration.inhabitants",
     function()
         local group = InhabitantGroup.new(Type.clockwork, 10)
-        Inhabitants.add_to_city(group)
+        Inhabitants.add_to_city(group, MoveCause.immigration)
 
         Assert.greater_than(
             storage.homeless[Type.clockwork][EK.inhabitants],

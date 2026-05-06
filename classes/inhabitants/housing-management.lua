@@ -290,12 +290,15 @@ function Inhabitants.push_from_house(entry)
     if inhabitants == 0 then return end
 
     local caste_id = entry[EK.type]
+    local source_unit_number = entry[EK.unit_number]
 
     local evicted = take_from_house(entry, inhabitants, nil)
 
-    -- distribute to free non-improvised houses with moving downtime
+    -- distribute to free non-improvised houses with moving downtime; exclude source so we
+    -- don't immediately move the evicted inhabitants back into the house we just emptied.
     local query = Tirislib.LazyLuaq.from(storage.free_houses[false][caste_id]):choose(
         function(unit_number)
+            if unit_number == source_unit_number then return false end
             local house = try_get(unit_number)
             return house ~= nil, house
         end
@@ -542,6 +545,9 @@ local function pull_sick_to_sanatorium(entry)
             to_pull = adjusted_count
         end
 
+        -- pad with HEALTHY = 0 so the resulting group has a complete DiseaseGroup
+        -- (add_to_house reads diseases[HEALTHY] when computing the moving cohort)
+        treatable_diseases[HEALTHY] = 0
         local taken = take_from_house(source, to_pull, treatable_diseases)
         add_to_house(entry, taken, MoveCause.sanatorium_eviction)
 

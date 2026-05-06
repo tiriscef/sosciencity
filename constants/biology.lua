@@ -61,7 +61,7 @@ Biology.flora = {
         --wrong_climate_coefficient = 0.8,
         --preferred_humidity = Humidity.moderate,
         --wrong_humidity_coefficient = 0.7,
-        recipes = {"farming-annual-bell-pepper"}
+        recipes = {"farming-annual-bell-pepper", "test-farming-annual-bell-pepper"}
     },
     ["blue-grapes"] = {
         persistent = false,
@@ -353,7 +353,7 @@ Biology.flora = {
         --wrong_climate_coefficient = 0.8,
         --preferred_humidity = Humidity.dry,
         --wrong_humidity_coefficient = 0.7,
-        recipes = {"farming-perennial-olive"}
+        recipes = {"farming-perennial-olive", "test-farming-perennial-olive"}
     },
     ["orange"] = {
         persistent = true,

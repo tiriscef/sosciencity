@@ -36,7 +36,7 @@ Tirislib.Testing.add_test_case(
 
         -- distribute 5 inhabitants - should go to high priority first
         local group = InhabitantGroup.new(Type.clockwork, 5)
-        Inhabitants.distribute(group, false)
+        Inhabitants.distribute(group, false, MoveCause.immigration)
 
         Assert.equals(high_priority[EK.inhabitants], 5, "high priority house should get all 5")
         Assert.equals(low_priority[EK.inhabitants], 0, "low priority house should get none")
@@ -65,7 +65,7 @@ Tirislib.Testing.add_test_case(
 
         -- now distribute 10 more - should go to low priority
         local overflow = InhabitantGroup.new(Type.clockwork, 10)
-        Inhabitants.distribute(overflow, false)
+        Inhabitants.distribute(overflow, false, MoveCause.immigration)
 
         Assert.equals(low_priority[EK.inhabitants], 10, "overflow should go to low priority house")
     end,
