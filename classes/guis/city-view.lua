@@ -286,6 +286,7 @@ function Gui.CityView.open(player)
     end
 
     local last_opened_tab = get_subtbl(storage, "last_opened_tab")[player.index]
+    -- defaulting to the 'how-tos' category on first open, because tiriscef points new players there in the welcome message
     content_tabpane.selected_tab_index = last_opened_tab or Gui.CityView.get_category_definition("how-tos").index
 
     local footer =
@@ -359,4 +360,5 @@ if DEV_MODE then
     require("classes.guis.city-view-pages.balancing-pages")
     require("classes.guis.city-view-pages.debug-pages")
     require("classes.guis.city-view-pages.item-browser-page")
+    require("classes.guis.city-view-pages.recipe-balancing-page")
 end

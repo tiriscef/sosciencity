@@ -92,7 +92,7 @@ local construction_items = {
     },
     {
         name = "precious-ore",
-        use_placeholder_icon = true
+        sprite_variations = {name = "precious-ore-pile", count = 4}
     },
     {
         name = "rosegold-ingot",
