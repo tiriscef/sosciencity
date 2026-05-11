@@ -212,7 +212,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "tinkering-workshop"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "bed", amount = 2}},
@@ -225,7 +225,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-1"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "carpet", amount = 2}},
@@ -236,7 +236,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-2"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "furniture", amount = 3}},
@@ -247,7 +247,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-1"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -262,7 +262,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-3"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -276,7 +276,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-2"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "curtain", amount = 2}},
@@ -287,7 +287,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-2"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "sofa", amount = 2}},
@@ -301,7 +301,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
     unlock = "architecture-4"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "stove", amount = 3}},
@@ -314,7 +314,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     default_theme_level = 2,
     unlock = "architecture-3"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "refrigerator", amount = 3}},
@@ -327,7 +327,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     default_theme_level = 2,
     unlock = "architecture-3"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {{type = "item", name = "air-conditioner", amount = 3}},
@@ -341,4 +341,4 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     default_theme_level = 3,
     unlock = "architecture-5"
-}
+}:add_category_layer("workshop")

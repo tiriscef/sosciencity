@@ -340,9 +340,7 @@ local subentity_types_where_active_status_makes_sense = {
 -- Subentity types that are intentionally absent:
 --   * `beacon` - self-restoring; the entity updater calls set_beacon_effects from
 --     EK.speed_bonus / EK.productivity_bonus on the next tick after rebuild.
---   * `turret_gunfire` and the HQ variants — these turrets currently don't use ammo
---     (setting it up was impractical), so there's no inventory state worth preserving.
---     Add a handler here if that ever changes.
+--   * `turret_gunfire` and the HQ variants - these turrets currently don't use ammo
 
 Subentities.state_handlers = {
     [SubentityType.eei] = {

@@ -161,7 +161,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
     allow_productivity = true
-}
+}:add_number_layer(1)
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -173,7 +173,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
     allow_productivity = true
-}
+}:add_number_layer(2)
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -209,7 +209,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     allow_productivity = true,
     unlock = "architecture-1"
-}
+}:add_ingredient_layer("copper-plate")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     localised_name = {"recipe-name.screw-set-iron"},
@@ -221,7 +221,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     allow_productivity = true,
     unlock = "architecture-1"
-}
+}:add_ingredient_layer("iron-plate")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     name = "screw-set-copper-workshop",
@@ -233,7 +233,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "copper-plate", amount = 2}
     },
     unlock = "architecture-1"
-}
+}:add_category_layer("workshop"):add_ingredient_layer("copper-plate")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     name = "screw-set-iron-workshop",
@@ -245,7 +245,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "iron-plate", amount = 2}
     },
     unlock = "architecture-1"
-}
+}:add_category_layer("workshop"):add_ingredient_layer("iron-plate")
 
 --[[Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -316,7 +316,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "ceramic", amount = 2}
     },
     unlock = "indoor-growing"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -327,7 +327,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     energy_required = 4,
     unlock = "infrastructure-1"
-}
+}:add_ingredient_layer("stone")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -361,7 +361,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "smelting",
     energy_required = 3.2
-}
+}:add_ingredient_layer("glass-mixture")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -373,7 +373,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "smelting",
     energy_required = 3.2,
     unlock = "infrastructure-1"
-}
+}:add_ingredient_layer("sand")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -549,7 +549,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     energy_required = 8,
     unlock = "clockwork-mines"
-}
+}:add_number_layer(1)
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -565,7 +565,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     energy_required = 12,
     unlock = "precious-metalworking"
-}
+}:add_number_layer(2)
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -580,7 +580,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     energy_required = 6,
     unlock = "clockwork-mines"
-}
+}:add_number_layer(1)
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
@@ -596,4 +596,4 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop",
     energy_required = 8,
     unlock = "precious-metalworking"
-}
+}:add_number_layer(2)

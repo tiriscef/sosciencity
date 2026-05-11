@@ -209,7 +209,7 @@ Inhabitants.update_garbage_output = update_garbage_output
 --- Syncs the population count and caste bonus points for a housing entry.
 --- Moving inhabitants count toward population but provide no caste points.
 --- @param entry Entry
---- @param moving_still integer total inhabitants currently in moving downtime
+--- @param moving_still integer? total inhabitants currently in moving downtime
 local function update_housing_census(entry, moving_still)
     local caste_id = entry[EK.type]
     local inhabitants = entry[EK.inhabitants]

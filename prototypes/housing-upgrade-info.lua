@@ -27,12 +27,7 @@ for level = 1, Housing.max_level do
             energy_required = 1,
         }
 
-        recipe:add_icon_layer(
-            "__sosciencity-graphics__/graphics/utility/number-" .. level .. ".png",
-            "topright",
-            0.6,
-            nil,
-            32)
+        recipe:add_number_layer(level)
         recipe:add_unlock(Housing.required_tech[level])
     end
 end
