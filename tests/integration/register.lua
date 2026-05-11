@@ -293,3 +293,102 @@ Tirislib.Testing.add_test_case(
         Helpers.clean_up()
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << external-ownership detection >>
+
+--- Creates an entity without registering it, so the test can mutate it pre-registration.
+local function create_unregistered(surface, name, position)
+    local entity = surface.create_entity {
+        name = name,
+        position = position,
+        force = "player"
+    }
+    assert(entity, "Failed to create entity '" .. name .. "'")
+    return entity
+end
+
+Tirislib.Testing.add_test_case(
+    "external-ownership: healthy catch-all entry is not flagged",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
+
+        Assert.is_nil(entry[EK.externally_owned], "fresh healthy entry should not have flag set")
+        Assert.equals(entry[EK.active], true, "EK.active baseline should be initialized to true")
+        Assert.is_false(Register.is_externally_owned(entry), "is_externally_owned should return false")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "external-ownership: entity inactive at registration is flagged",
+    "integration|integration.register",
+    function()
+        local entity = create_unregistered(test_surface, "test-assembling-machine", {0, 0})
+        entity.active = false
+
+        local entry = Register.add(entity)
+
+        Assert.is_true(entry[EK.externally_owned], "inactive-at-registration entry should be flagged")
+        Assert.is_true(Register.is_externally_owned(entry), "is_externally_owned should return true")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "external-ownership: entity with custom_status at registration is flagged",
+    "integration|integration.register",
+    function()
+        local entity = create_unregistered(test_surface, "test-assembling-machine", {0, 0})
+        entity.custom_status = {
+            diode = defines.entity_status_diode.red,
+            label = {"sosciencity.machine"}
+        }
+
+        local entry = Register.add(entity)
+
+        Assert.is_true(entry[EK.externally_owned], "entry with pre-existing custom_status should be flagged")
+        Assert.is_true(Register.is_externally_owned(entry), "is_externally_owned should return true")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "external-ownership: runtime divergence flags an entry disabled post-registration",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
+        Assert.is_nil(entry[EK.externally_owned], "should start unflagged")
+
+        -- Simulate another mod disabling the entity after registration
+        entry[EK.entity].active = false
+
+        Assert.is_true(Register.is_externally_owned(entry), "runtime divergence should flag the entry")
+        Assert.is_true(entry[EK.externally_owned], "flag should be persisted on the entry")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "external-ownership: flag is sticky even after the entity becomes active again",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
+
+        entry[EK.entity].active = false
+        Assert.is_true(Register.is_externally_owned(entry), "should flag on first divergence")
+
+        -- External mod re-enables; flag must not auto-clear
+        entry[EK.entity].active = true
+        entry[EK.active] = true
+
+        Assert.is_true(Register.is_externally_owned(entry), "flag should remain set (sticky)")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)

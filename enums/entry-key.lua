@@ -24,6 +24,8 @@ EK.subentity_state_pending = 8
 EK.attached_renderings = 9
 --- optional player-set name for this entry
 EK.custom_name = 10
+--- If another mod controls this entry's entity. Sosciencity should not mutate its active state in that case.
+EK.externally_owned = 11
 
 -- inventory stuff
 

@@ -47,6 +47,7 @@ end
 --- **is_inhabited:** do people live in this entity\
 --- **has_subscriptions:** does this type have notifications and thus the "notify me"-checkbox in its gui\
 --- **affected_by_clockwork:** is this machine affected by the clockwork-maintenance-mechanic\
+--- **is_catch_all:** does this type map to a broad Factorio prototype type (so entries can come from any mod) - drives external-ownership detection\
 --- **signature_color:** color for this entity, for displaying purposes\
 --- **localised_name:** localised name for this type\
 --- **localised_description:** localised description for this type
@@ -325,19 +326,23 @@ Types.definitions = {
     },
     [Type.assembling_machine] = {
         localised_name = {"sosciencity.machine"},
-        localised_description = {"sosciencity.explain-machine"}
+        localised_description = {"sosciencity.explain-machine"},
+        is_catch_all = true
     },
     [Type.furnace] = {
         localised_name = {"sosciencity.machine"},
-        localised_description = {"sosciencity.explain-machine"}
+        localised_description = {"sosciencity.explain-machine"},
+        is_catch_all = true
     },
     [Type.rocket_silo] = {
         localised_name = {"sosciencity.machine"},
-        localised_description = {"sosciencity.explain-machine"}
+        localised_description = {"sosciencity.explain-machine"},
+        is_catch_all = true
     },
     [Type.mining_drill] = {
         localised_name = {"sosciencity.machine"},
-        localised_description = {"sosciencity.explain-machine"}
+        localised_description = {"sosciencity.explain-machine"},
+        is_catch_all = true
     },
     [Type.farm] = {
         localised_name = {"sosciencity.farm"},

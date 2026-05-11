@@ -417,6 +417,14 @@ function Register.add(entity, _type, event)
 
     local entry = create_new_entry(entity, _type)
 
+    if Types.definitions[_type].is_catch_all then
+        local entity_active = entity.active
+        entry[EK.active] = entity_active
+        if not entity_active or entity.custom_status ~= nil then
+            entry[EK.externally_owned] = true
+        end
+    end
+
     add_entry_to_register(entry)
 
     init_custom_building(entry, event)
@@ -437,6 +445,8 @@ function Register.clone(source, destination)
     local _type = source[EK.type]
     local destination_entry = add_entity(destination, _type)
     destination_entry[EK.tick_of_creation] = source[EK.tick_of_creation]
+    destination_entry[EK.externally_owned] =
+        destination_entry[EK.externally_owned] or source[EK.externally_owned]
     clone_custom_building(source, destination_entry)
 
     on_copy(_type, source, destination_entry)
@@ -476,6 +486,30 @@ end
 --- @return boolean is_stale
 function Register.is_stale(entry)
     return getmetatable(entry) == stale_entry_metatable
+end
+
+--- Checks if the given catch-all entry is controlled by another mod, so Sosciencity systems
+--- that mutate entity.active should leave it alone.
+--- @param entry Entry
+--- @return boolean is_externally_owned
+function Register.is_externally_owned(entry)
+    if DEBUG then
+        assert(
+            Types.definitions[entry[EK.type]].is_catch_all,
+            "is_externally_owned called on non-catch-all entry"
+        )
+    end
+
+    if entry[EK.externally_owned] then
+        return true
+    end
+
+    if entry[EK.active] ~= entry[EK.entity].active then
+        entry[EK.externally_owned] = true
+        return true
+    end
+
+    return false
 end
 
 --- Removes the given entry from the register.
