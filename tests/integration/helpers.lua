@@ -86,6 +86,14 @@ function Helpers.create_and_register(surface, name, position, _type)
     return entry
 end
 
+--- Triggers a full update cycle on an entry.
+--- Use this instead of Register.update_entry(entry, game.tick) in tests.
+--- Register.update_entry skips the updater when delta_ticks = 0
+--- @param entry Entry
+function Helpers.update_entry(entry)
+    Register.update_entry(entry, entry[EK.last_update] + 1)
+end
+
 --- Removes an entry from the register and destroys the entity.
 --- @param entry Entry
 function Helpers.destroy_entry(entry)
@@ -124,6 +132,7 @@ end
 function Helpers.reset_inhabitants_state()
     Inhabitants.init()
     Inhabitants.load()
+    Entity.load()
 end
 
 return Helpers

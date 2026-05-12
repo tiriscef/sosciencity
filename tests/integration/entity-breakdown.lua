@@ -84,7 +84,7 @@ Tirislib.Testing.add_test_case(
 
         -- Force a malus that breaks this specific entry's phase
         storage.caste_bonuses[Type.clockwork] = -(effective_phase + 1)
-        Register.update_entry(entry, game.tick)
+        Helpers.update_entry(entry)
 
         Assert.is_false(entity.active, "broken entry should be inactive after update_machine")
         Assert.not_nil(entity.custom_status, "broken entry should have a custom_status")
@@ -96,7 +96,7 @@ Tirislib.Testing.add_test_case(
 
         -- Clear the bonus; the entry should recover on next update
         storage.caste_bonuses[Type.clockwork] = 0
-        Register.update_entry(entry, game.tick)
+        Helpers.update_entry(entry)
 
         Assert.is_true(entity.active, "entry should reactivate when bonus is no longer negative")
         Assert.is_nil(entity.custom_status, "custom_status should clear on recovery")
@@ -122,7 +122,7 @@ Tirislib.Testing.add_test_case(
 
         -- Even though the breakdown verdict would fire, update_machine must skip the active write
         storage.caste_bonuses[Type.clockwork] = -(effective_phase + 1)
-        Register.update_entry(entry, game.tick)
+        Helpers.update_entry(entry)
 
         Assert.is_true(
             entity.active,
