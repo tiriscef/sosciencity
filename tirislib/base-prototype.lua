@@ -1,13 +1,45 @@
 ---------------------------------------------------------------------------------------------------
 -- << base class for all prototypes >>
 --- @class BasePrototype
-Tirislib.BasePrototype = {}
+Tirislib.BasePrototype = Tirislib.BasePrototype or {}
 
 -- this makes an object of this class call the class methods (if it has no own method)
 -- lua is weird
 Tirislib.BasePrototype.__index = Tirislib.BasePrototype
 
+--- Resolves the main_product shorthand to an explicit icon, so that icon layer methods
+--- work correctly on recipes that rely on Factorio's icon auto-derivation.
+--- No-op if icon or icons is already set, or if main_product is absent/empty.
+--- @return BasePrototype itself
+function Tirislib.BasePrototype:resolve_main_product_icon()
+    if self.icon or self.icons or type(self.main_product) ~= "string" or self.main_product == "" then
+        return self
+    end
+
+    local source, found = Tirislib.Item.get_by_name(self.main_product)
+    if not found then
+        source, found = Tirislib.Fluid.get_by_name(self.main_product)
+    end
+    if not found then return self end
+
+    if source.icons then
+        -- shallow copy so later add_icon_layer calls don't mutate the source prototype
+        self.icons = {}
+        for k, v in pairs(source.icons) do
+            self.icons[k] = v
+        end
+    elseif source.icon then
+        self.icon = source.icon
+        self.icon_size = self.icon_size or source.icon_size
+    end
+
+    return self
+end
+
 function Tirislib.BasePrototype:convert_to_icons_table()
+    -- resolve before the guard so that a source.icons result sets self.icons and skips the init block
+    Tirislib.BasePrototype.resolve_main_product_icon(self)
+
     if not self.icons then
         self.icons = {}
 
@@ -93,12 +125,12 @@ Tirislib.BasePrototype.category_icons = Tirislib.BasePrototype.category_icons or
 --- and live in the topleft corner per the icon-layer corner convention:
 --- topright = tier indicator, topleft = category indicator, bottomleft = ingredient indicator.
 --- @param key string
---- @param options table { path = string, scale? = number, tint? = table, default_corner? = string, icon_size? = number }
+--- @param options table { path = string, scale? = number, tint? = table, no_tint? = bool, default_corner? = string, icon_size? = number }
 function Tirislib.BasePrototype.register_category_icon(key, options)
     Tirislib.BasePrototype.category_icons[key] = {
         path = options.path,
         scale = options.scale or 0.25,
-        tint = options.tint or {a = 0.5, r = 1, g = 1, b = 1},
+        tint = options.no_tint and nil or (options.tint or {a = 0.5, r = 1, g = 1, b = 1}),
         default_corner = options.default_corner or "topleft",
         icon_size = options.icon_size or 64,
     }

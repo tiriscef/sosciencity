@@ -244,16 +244,7 @@ create_hunting_gathering_recipe {
     name = "hunting-with-trap",
     category = "sosciencity-hunting",
     energy_required = 20,
-    icons = {
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
-        },
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/trap.png",
-            scale = 0.3,
-            shift = {8, 8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
     icon_size = 64,
     results = {
         {type = "item", name = "river-horse", amount = 1, probability = 0.1},
@@ -263,22 +254,13 @@ create_hunting_gathering_recipe {
     },
     order = "000655",
     unlock = "hunting-fishing"
-}:add_catalyst("trap", "item", 2, 0.85)
+}:add_ingredient_layer("trap"):add_catalyst("trap", "item", 2, 0.85)
 
 create_hunting_gathering_recipe {
     name = "hunting-with-trap-cage",
     category = "sosciencity-hunting",
     energy_required = 20,
-    icons = {
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/hunting.png"
-        },
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/trap-cage.png",
-            scale = 0.3,
-            shift = {8, 8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
     icon_size = 64,
     results = {
         {type = "item", name = "primal-quackling", amount = 3, probability = 0.5},
@@ -290,22 +272,13 @@ create_hunting_gathering_recipe {
     },
     order = "000656",
     unlock = "hunting-fishing"
-}:add_catalyst("trap-cage", "item", 2, 0.85)
+}:add_ingredient_layer("trap-cage"):add_catalyst("trap-cage", "item", 2, 0.85)
 
 create_hunting_gathering_recipe {
     name = "fishing-with-simple-fishtrap",
     category = "sosciencity-fishery",
     energy_required = 6.5,
-    icons = {
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
-        },
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/simple-fishtrap.png",
-            scale = 0.3,
-            shift = {8, 8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/fishing.png",
     icon_size = 64,
     results = {
         {type = "item", name = "boofish", amount_min = 1, amount_max = 2},
@@ -313,22 +286,13 @@ create_hunting_gathering_recipe {
     },
     order = "000755",
     unlock = "hunting-fishing"
-}:add_catalyst("simple-fishtrap", "item", 1, 0.9)
+}:add_ingredient_layer("simple-fishtrap"):add_catalyst("simple-fishtrap", "item", 1, 0.9)
 
 create_hunting_gathering_recipe {
     name = "fishing-with-fishing-net",
     category = "sosciencity-fishery",
     energy_required = 30,
-    icons = {
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
-        },
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/fishing-net.png",
-            scale = 0.3,
-            shift = {8, 8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/fishing.png",
     icon_size = 64,
     results = {
         {type = "item", name = "shellscript", amount_min = 1, amount_max = 2},
@@ -340,22 +304,13 @@ create_hunting_gathering_recipe {
     },
     order = "000756",
     unlock = "advanced-fishing"
-}:add_catalyst("fishing-net", "item", 1, 0.95)
+}:add_ingredient_layer("fishing-net"):add_catalyst("fishing-net", "item", 1, 0.95)
 
 create_hunting_gathering_recipe {
     name = "fishing-with-harpoon",
     category = "sosciencity-fishery",
     energy_required = 40,
-    icons = {
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/fishing.png"
-        },
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/harpoon.png",
-            scale = 0.3,
-            shift = {8, 8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/fishing.png",
     icon_size = 64,
     results = {
         {type = "item", name = "petunial", amount = 1, probability = 0.06},
@@ -366,4 +321,4 @@ create_hunting_gathering_recipe {
     },
     order = "000757",
     unlock = "advanced-fishing"
-}:add_catalyst("harpoon", "item", 1, 0.85)
+}:add_ingredient_layer("harpoon"):add_catalyst("harpoon", "item", 1, 0.85)

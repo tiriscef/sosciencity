@@ -54,20 +54,13 @@ local function create_enrichment_recipe(details)
         energy_required = 4,
         localised_name = {"recipe-name.enrichment", product:get_localised_name()},
         localised_description = {"recipe-description.enrichment", product:get_localised_name()},
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/enrichment.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         do_index_fluid_ingredients = true,
         do_index_fluid_results = true
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("enrichment")
 end
 
 local function create_pure_culture_recipe(details)
@@ -78,20 +71,13 @@ local function create_pure_culture_recipe(details)
         energy_required = 4,
         localised_name = {"recipe-name.pure-culture", product:get_localised_name()},
         localised_description = {"recipe-description.pure-culture", product:get_localised_name()},
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/pure-culture.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         do_index_fluid_ingredients = true,
         do_index_fluid_results = true
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("pure-culture")
 end
 
 create_enrichment_recipe {

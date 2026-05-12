@@ -266,15 +266,7 @@ local function create_slaughter_recipe(animal, index)
             {type = "item", name = animal.name, amount = 1}
         },
         results = results,
-        icons = {
-            {icon = item.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/slaughter.png",
-                scale = 0.3,
-                shift = {-8, -8},
-                tint = {r = 1, g = 0.2, b = 0.2}
-            }
-        },
+        icon = item.icon,
         icon_size = 64,
         subgroup = "sosciencity-slaughter",
         main_product = "",
@@ -282,7 +274,7 @@ local function create_slaughter_recipe(animal, index)
         localised_name = {"recipe-name.slaughter", item:get_localised_name()},
         localised_description = {"recipe-description.slaughter"},
         unlock = animal.unlock
-    }
+    }:add_category_layer("slaughter")
 
     animal_calorie_values[animal.name] =
         Tirislib.Luaq.from(recipe.results):select(
@@ -364,19 +356,14 @@ local function create_husbandry_recipe(details)
             animal_item:get_localised_name()
         },
         localised_description = "",
-        icons = {
-            {icon = animal_item.icon},
-            {
-                icon = style == "breeding" and "__sosciencity-graphics__/graphics/icon/breeding.png" or
-                    "__sosciencity-graphics__/graphics/icon/keeping.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = animal_item.icon,
+        icon_size = 64,
         unlock = animal.unlock
     })
 
-    local recipe = Tirislib.RecipeGenerator.create_from_prototype(details)
+    local recipe = Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer(
+        style == "breeding" and "breeding" or "keeping"
+    )
     add_food(recipe, animal)
     return recipe
 end

@@ -86,20 +86,13 @@ local function create_annual_recipe(details)
         localised_description = {"recipe-description.annual", product:get_localised_name()},
         category = "sosciencity-farming-annual",
         subgroup = "sosciencity-flora",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         unlock = "open-environment-farming"
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
 end
 
 local function create_perennial_recipe(details)
@@ -122,20 +115,13 @@ local function create_perennial_recipe(details)
         localised_description = {"recipe-description.perennial", product:get_localised_name()},
         category = "sosciencity-farming-perennial",
         subgroup = "sosciencity-flora-perennial",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         unlock = "open-environment-farming"
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
 end
 
 local function create_perennial_crop_recipe(details)
@@ -158,20 +144,13 @@ local function create_perennial_crop_recipe(details)
         localised_description = {"recipe-description.perennial-crop", product:get_localised_name()},
         category = "sosciencity-farming-perennial-crop",
         subgroup = "sosciencity-flora",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         unlock = "open-environment-farming"
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
 end
 
 local function create_annual_bloomhouse_recipe(details)
@@ -201,20 +180,13 @@ local function create_annual_bloomhouse_recipe(details)
         localised_description = {"recipe-description.annual-bloomhouse", product:get_localised_name()},
         category = "sosciencity-bloomhouse-annual",
         subgroup = "sosciencity-flora-bloomhouse",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         unlock = "indoor-growing"
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
 end
 
 local function create_identification_recipe(details)
@@ -232,18 +204,11 @@ local function create_identification_recipe(details)
         localised_description = {"recipe-description.flora-identification", product:get_localised_name()},
         category = "sosciencity-caste-ember",
         subgroup = "sosciencity-neogenesis-recipes",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("plant-neogenesis")
 end
 
 local function create_neogenesis_recipe(details)
@@ -267,19 +232,12 @@ local function create_neogenesis_recipe(details)
         localised_description = {"recipe-description.neogenesis", product:get_localised_name()},
         category = "sosciencity-phyto-gene-lab",
         subgroup = "sosciencity-neogenesis-recipes",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         unlock = "genetic-neogenesis"
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("plant-neogenesis")
 end
 
 -- apple
@@ -664,20 +622,13 @@ local function create_mushroom_recipe(details)
         localised_description = {"recipe-description.annual", product:get_localised_name()},
         category = "sosciencity-mushroom-farm",
         subgroup = "sosciencity-mushrooms",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         unlock = "basic-biotechnology"
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
 end
 
 -- fawoxylas
@@ -744,14 +695,7 @@ local function create_algae_recipe(details)
         localised_description = {"recipe-description.farm-algae", product:get_localised_name()},
         category = "sosciencity-algae-farm",
         subgroup = "sosciencity-algae",
-        icons = {
-            {icon = product.icon},
-            {
-                icon = "__sosciencity-graphics__/graphics/icon/farming.png",
-                scale = 0.3,
-                shift = {-8, -8}
-            }
-        },
+        icon = product.icon,
         icon_size = 64,
         do_index_fluid_ingredients = true,
         do_index_fluid_results = true,
@@ -759,7 +703,7 @@ local function create_algae_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
 end
 
 -- endower flower
@@ -801,14 +745,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "unnamed-fruit", amount_min = 0, amount_max = 5},
         {type = "item", name = "blue-grapes", amount_min = 0, amount_max = 4}
     },
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/wild-edible-plants.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-            scale = 0.3,
-            shift = {-8, -8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/wild-edible-plants.png",
     icon_size = 64,
     subgroup = "sosciencity-neogenesis-recipes",
     main_product = "",
@@ -816,7 +753,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-edible-plants"}},
     localised_description = {"recipe-description.flora-sorting"},
     unlock = "open-environment-farming"
-}
+}:add_category_layer("plant-neogenesis")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     name = "sort-fungi",
@@ -832,14 +769,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "red-hatty", amount_min = 0, amount_max = 4},
         {type = "item", name = "birdsnake", amount_min = 0, amount_max = 4}
     },
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/wild-fungi.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-            scale = 0.3,
-            shift = {-8, -8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/wild-fungi.png",
     icon_size = 64,
     subgroup = "sosciencity-neogenesis-recipes",
     main_product = "",
@@ -847,7 +777,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-fungi"}},
     localised_description = {"recipe-description.flora-sorting"},
     unlock = "mushroom-farming"
-}
+}:add_category_layer("plant-neogenesis")
 
 Tirislib.RecipeGenerator.create_from_prototype {
     name = "sort-algae",
@@ -862,14 +792,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "pyrifera", amount_min = 0, amount_max = 4},
         {type = "item", name = "endower-flower", amount_min = 0, amount_max = 2}
     },
-    icons = {
-        {icon = "__sosciencity-graphics__/graphics/icon/wild-algae.png"},
-        {
-            icon = "__sosciencity-graphics__/graphics/icon/plant-neogenesis.png",
-            scale = 0.3,
-            shift = {-8, -8}
-        }
-    },
+    icon = "__sosciencity-graphics__/graphics/icon/wild-algae.png",
     icon_size = 64,
     subgroup = "sosciencity-neogenesis-recipes",
     main_product = "",
@@ -877,7 +800,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-algae"}},
     localised_description = {"recipe-description.flora-sorting"},
     unlock = "algae-farming"
-}
+}:add_category_layer("plant-neogenesis")
 
 ---------------------------------------------------------------------------------------------------
 -- << processing recipes >>
