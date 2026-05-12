@@ -6,11 +6,12 @@ local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
-local get_maintenance_performance = Entity.get_maintenance_performance
 local create_active_machine_status = Entity.create_active_machine_status
 local update_active_machine_status = Entity.update_active_machine_status
 local remove_active_machine_status = Entity.remove_active_machine_status
-local min = math.min
+local get_breakdown_state = Entity.get_breakdown_state
+local set_active = Entity.set_active
+local max = math.max
 
 local function get_waterwell_competition_performance(entry)
     -- +1 so it counts itself too
@@ -19,6 +20,10 @@ local function get_waterwell_competition_performance(entry)
 end
 
 Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
+
+local function get_clockwork_boost()
+    return 1 + max(0, Entity.caste_bonuses[Type.clockwork]) / 100
+end
 
 local function update_waterwell(entry)
     local entity = entry[EK.entity]
@@ -30,8 +35,12 @@ local function update_waterwell(entry)
     end
 
     local competition, _ = get_waterwell_competition_performance(entry)
-    local maintenance = get_maintenance_performance()
-    set_crafting_machine_performance(entry, min(competition, maintenance))
+    set_crafting_machine_performance(entry, competition * get_clockwork_boost())
+
+    if get_breakdown_state(entry) then
+        set_active(entry, false, Entity.broken_status)
+    end
+
     update_active_machine_status(entry)
 end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
@@ -45,7 +54,7 @@ local function build_waterwell_report(entry)
     end
 
     local competition, near_count = get_waterwell_competition_performance(entry)
-    local maintenance = get_maintenance_performance()
+    local boost = get_clockwork_boost()
 
     return {
         [PK.effects] = {
@@ -58,12 +67,12 @@ local function build_waterwell_report(entry)
             },
             {
                 [PK.effect] = PE.maintenance,
-                [PK.value] = maintenance,
+                [PK.value] = boost,
                 [PK.dimension] = Dim.speed,
-                [PK.combination] = Comb.bottleneck
+                [PK.combination] = Comb.multiplier
             }
         },
-        [PK.results] = {[Dim.speed] = min(competition, maintenance)}
+        [PK.results] = {[Dim.speed] = competition * boost}
     }
 end
 Entity.set_performance_report_builder(Type.waterwell, build_waterwell_report)

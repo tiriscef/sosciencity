@@ -126,6 +126,42 @@ local function set_active(entry, active, inactive_custom_status)
 end
 Entity.set_active = set_active
 
+--- Visible status used when a machine is in the broken-down state due to insufficient maintenance.
+local broken_status = {
+    diode = defines.entity_status_diode.red,
+    label = {"sosciencity-custom-status.maintenance-broken-down"}
+}
+Entity.broken_status = broken_status
+
+local BREAKDOWN_CYCLE_LENGTH = 10 * Time.second
+local BREAKDOWN_LOCAL_JITTER = 10
+local BREAKDOWN_LOCATION_CHUNK_SIZE = 16
+
+--- Verdict for whether the entry is currently in the broken-down phase due to insufficient
+--- clockwork maintenance. Pure: returns a boolean derived from clockwork_bonus, the entry's
+--- phase, and game.tick.
+--- @param entry Entry
+--- @return boolean is_broken
+local function get_breakdown_state(entry)
+    local clockwork_bonus = caste_bonuses[Type.clockwork]
+    if clockwork_bonus >= 0 then
+        return false
+    end
+
+    local entity = entry[EK.entity]
+    local position = entity.position
+    local phase =
+        (entity.unit_number % BREAKDOWN_LOCAL_JITTER
+            + floor(position.x / BREAKDOWN_LOCATION_CHUNK_SIZE)
+            + floor(position.y / BREAKDOWN_LOCATION_CHUNK_SIZE)) % 100
+    local time_index = floor(game.tick / BREAKDOWN_CYCLE_LENGTH)
+    local effective_phase = (phase + time_index) % 100
+    local broken_threshold = -clockwork_bonus
+
+    return effective_phase < broken_threshold
+end
+Entity.get_breakdown_state = get_breakdown_state
+
 --- Generic check for whether a building is functional: has power and sufficient workforce.
 --- Used as the default active check for entity types that don't implement their own.
 --- @param entry Entry
