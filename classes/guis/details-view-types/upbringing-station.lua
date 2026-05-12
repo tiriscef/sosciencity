@@ -51,13 +51,21 @@ local function update_classes_flow(entry, classes_flow)
     local at_least_one = false
 
     for index, class in pairs(classes) do
-        local percentage = (current_tick - class[1]) / Entity.upbringing_time
+        local progress = math.min((current_tick - class[1]) / Entity.upbringing_time, 1)
         local count = Array.sum(class[2])
-        classes_flow.add {
-            name = tostring(index),
-            type = "label",
-            caption = {"sosciencity.show-class", count, display_percentage(percentage)}
+
+        local card = classes_flow.add {type = "frame", name = "class-" .. index, direction = "vertical", style = "sosciencity_card_frame"}
+        card.style.horizontally_stretchable = true
+
+        card.add {type = "label", name = "label", caption = {"sosciencity.show-class-count", count}}
+
+        local progressbar = card.add {
+            type = "progressbar",
+            name = "progress",
+            value = progress,
+            tooltip = {"sosciencity.show-class-progress", math.floor(progress * 100)}
         }
+        progressbar.style.horizontally_stretchable = true
 
         at_least_one = true
     end
@@ -75,7 +83,8 @@ local function update_upbringing_station(container, entry, player_id)
     Gui.DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local building_data = general.building
 
     local mode_flow = Datalist.get_kv_value_element(building_data, "mode")
     update_upbringing_mode_radiobuttons(entry, mode_flow)
@@ -103,7 +112,7 @@ local function update_upbringing_station(container, entry, player_id)
 
     probability_flow.no_castes.visible = not at_least_one
 
-    update_classes_flow(entry, Datalist.get_kv_value_element(building_data, "classes"))
+    update_classes_flow(entry, general.classes)
 
     Datalist.set_kv_pair_value(building_data, "graduates", entry[EK.graduates])
 end
@@ -159,8 +168,10 @@ local function create_upbringing_station(container, entry, player_id)
         }
     end
 
-    Datalist.add_kv_flow(building_data, "classes", {"sosciencity.classes"})
     Datalist.add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
+
+    Gui.Elements.Label.header_label(general, "header-classes", {"sosciencity.classes"})
+    general.add {type = "flow", name = "classes", direction = "vertical"}
 
     if DEV_MODE then
         local debug_tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
