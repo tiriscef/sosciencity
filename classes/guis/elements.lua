@@ -783,8 +783,12 @@ end
 
 local numeric_confirmed_handlers = {}
 
+local DEFAULT_NORMAL_COLOR = {r = 1, g = 1, b = 1}
+local DEFAULT_ERROR_COLOR = {r = 0.9, g = 0.2, b = 0.2}
+
 local function apply_numeric_result(textfield, result, event)
-    textfield.style = "sosciencity_numeric_textfield"
+    local tags = textfield.tags
+    textfield.style.font_color = tags.normal_font_color or DEFAULT_NORMAL_COLOR
     textfield.tooltip = ""
     textfield.text = format_number(result)
 
@@ -793,7 +797,7 @@ local function apply_numeric_result(textfield, result, event)
         preview.caption = format_number(result)
     end
 
-    local secondary_tag = textfield.tags.numeric_confirmed_event
+    local secondary_tag = tags.numeric_confirmed_event
     if secondary_tag then
         local handler = numeric_confirmed_handlers[secondary_tag]
         if handler then
@@ -822,6 +826,8 @@ end
 ---   min: number - clamp minimum
 ---   max: number - clamp maximum
 ---   step: number - snap to nearest multiple; step=1 gives integer-only behaviour
+---   normal_font_color: Color - font color when value is valid (default: {r=1, g=1, b=1})
+---   error_font_color:  Color - font color when expression is invalid (default: {r=0.9, g=0.2, b=0.2})
 --- When both min and max are given, "N%" in expressions resolves to min + N%*(max-min).
 --- @param container LuaGuiElement
 --- @param name string?
@@ -851,7 +857,7 @@ Gui.set_gui_confirmed_handler(
         local result = evaluate_numeric_expression(textfield.text, tags.min, tags.max, tags.step)
 
         if not result then
-            textfield.style = "sosciencity_numeric_textfield_error"
+            textfield.style.font_color = tags.error_font_color or DEFAULT_ERROR_COLOR
             textfield.tooltip = {"sosciencity.invalid-expression"}
             return
         end
@@ -864,12 +870,12 @@ Gui.set_text_changed_handler(
     "evaluate_numeric_expression",
     function(event)
         local textfield = event.element
-        textfield.style = "sosciencity_numeric_textfield"
+        local tags = textfield.tags
+        textfield.style.font_color = tags.normal_font_color or DEFAULT_NORMAL_COLOR
         textfield.tooltip = ""
 
         local preview = textfield.parent["numeric_preview"]
         if preview then
-            local tags = textfield.tags
             local result = evaluate_numeric_expression(textfield.text, tags.min, tags.max, tags.step)
             preview.caption = result and format_number(result) or ""
         end
@@ -1105,13 +1111,11 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Reusable GUI component that renders a standardised performance breakdown.
---- Entity update functions populate an entry's performance_report (EK.performance_report),
---- and this component renders it grouped by dimension with pre-computed results.
+--- Receives a report built by Entity.build_performance_report, renders it grouped by dimension.
 Gui.Elements.PerformanceReport = {}
 
 local Comb = require("enums.performance-combination")
 local Dim = require("enums.performance-dimension")
-local EK_report = require("enums.entry-key").performance_report
 local PK = require("enums.performance-key")
 local PerfEffects = require("constants.performance-effects")
 
@@ -1202,13 +1206,12 @@ function Gui.Elements.PerformanceReport.create(container, name)
     }
 end
 
---- Updates (rebuilds) the performance report from the entry's report data.
+--- Updates (rebuilds) the performance report from the given report data.
 --- @param report_flow LuaGuiElement the flow created by PerformanceReport.create
---- @param entry Entry
-function Gui.Elements.PerformanceReport.update(report_flow, entry)
+--- @param report table? report built by Entity.build_performance_report
+function Gui.Elements.PerformanceReport.update(report_flow, report)
     report_flow.clear()
 
-    local report = entry[EK_report]
     if not report then
         return
     end

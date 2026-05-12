@@ -16,45 +16,54 @@ local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local get_building_details = Buildings.get
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 
+local function get_all_neighbor_houses(entry)
+    return Tirislib.LazyLuaq.from(Castes.all)
+        :select_many(function(caste) return Neighborhood.get_by_type(entry, caste.type) end)
+end
+
 local function update_social_observatory(entry)
     local building_details = get_building_details(entry)
+    local houses = get_all_neighbor_houses(entry)
 
-    local houses =
-        Tirislib.LazyLuaq.from(Castes.all)
-        :select_many(
-            function(caste)
-                return Neighborhood.get_by_type(entry, caste.type)
-            end
-        )
-
-    -- population performance (diminishing returns)
     local total_population = houses:select_key(EK.inhabitants):sum()
     local target = building_details.target_population
     local population_performance = total_population / (total_population + target)
 
-    -- workforce performance
     local worker_performance = evaluate_workforce(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
 
-    -- competition penalty (soft, waterwell-style)
     local observatory_count = Neighborhood.get_neighbor_count(entry, Type.social_observatory)
     local competition = (observatory_count + 1) ^ (-0.35)
 
     local performance = min(worker_performance, population_performance) * competition * worker_happiness
 
-    -- caste diversity productivity bonus
-    local unique_castes = houses:distinct_by(
-        function(house)
-            return house[EK.type]
-        end
-    ):count()
-    local bonus_castes = max(0, unique_castes - building_details.min_castes)
-    local productivity = bonus_castes * building_details.caste_bonus
+    local unique_castes = houses:distinct_by(function(house) return house[EK.type] end):count()
+    local productivity = max(0, unique_castes - building_details.min_castes) * building_details.caste_bonus
 
     set_crafting_machine_performance(entry, performance, productivity)
+end
+Register.set_entity_updater(Type.social_observatory, update_social_observatory)
 
-    -- performance report for GUI
-    entry[EK.performance_report] = {
+local function build_social_observatory_report(entry)
+    local building_details = get_building_details(entry)
+    local houses = get_all_neighbor_houses(entry)
+
+    local total_population = houses:select_key(EK.inhabitants):sum()
+    local target = building_details.target_population
+    local population_performance = total_population / (total_population + target)
+
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
+
+    local observatory_count = Neighborhood.get_neighbor_count(entry, Type.social_observatory)
+    local competition = (observatory_count + 1) ^ (-0.35)
+
+    local performance = min(worker_performance, population_performance) * competition * worker_happiness
+
+    local unique_castes = houses:distinct_by(function(house) return house[EK.type] end):count()
+    local productivity = max(0, unique_castes - building_details.min_castes) * building_details.caste_bonus
+
+    return {
         [PK.effects] = {
             {
                 [PK.effect] = PE.workforce,
@@ -90,18 +99,12 @@ local function update_social_observatory(entry)
                 [PK.detail] = {"sosciencity.show-caste-diversity", unique_castes, building_details.min_castes}
             }
         },
-        [PK.results] = {
-            [Dim.speed] = performance,
-            [Dim.productivity] = productivity
-        }
+        [PK.results] = {[Dim.speed] = performance, [Dim.productivity] = productivity}
     }
 end
-Register.set_entity_updater(Type.social_observatory, update_social_observatory)
+Entity.set_performance_report_builder(Type.social_observatory, build_social_observatory_report)
 
 Register.set_entity_creation_handler(
     Type.social_observatory,
-    function(entry)
-        entry[EK.performance] = 1
-        entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
-    end
+    function(entry) entry[EK.performance] = 1 end
 )

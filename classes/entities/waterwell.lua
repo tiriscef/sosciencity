@@ -23,22 +23,31 @@ Entity.get_waterwell_competition_performance = get_waterwell_competition_perform
 local function update_waterwell(entry)
     local entity = entry[EK.entity]
     local recipe = entity.get_recipe()
-    if
-        recipe and recipe.name == "clean-water-from-ground" and
-        not Inventories.assembler_has_module(entity, "water-filter")
-    then
+    if recipe and recipe.name == "clean-water-from-ground"
+        and not Inventories.assembler_has_module(entity, "water-filter") then
         set_crafting_machine_performance(entry, 0)
-        entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
         return
+    end
+
+    local competition, _ = get_waterwell_competition_performance(entry)
+    local maintenance = get_maintenance_performance()
+    set_crafting_machine_performance(entry, min(competition, maintenance))
+    update_active_machine_status(entry)
+end
+Register.set_entity_updater(Type.waterwell, update_waterwell)
+
+local function build_waterwell_report(entry)
+    local entity = entry[EK.entity]
+    local recipe = entity.get_recipe()
+    if recipe and recipe.name == "clean-water-from-ground"
+        and not Inventories.assembler_has_module(entity, "water-filter") then
+        return {[PK.effects] = {}, [PK.results] = {}}
     end
 
     local competition, near_count = get_waterwell_competition_performance(entry)
     local maintenance = get_maintenance_performance()
-    local performance = min(competition, maintenance)
-    set_crafting_machine_performance(entry, performance)
-    update_active_machine_status(entry)
 
-    entry[EK.performance_report] = {
+    return {
         [PK.effects] = {
             {
                 [PK.effect] = PE.waterwell_competition,
@@ -54,16 +63,13 @@ local function update_waterwell(entry)
                 [PK.combination] = Comb.bottleneck
             }
         },
-        [PK.results] = {
-            [Dim.speed] = performance
-        }
+        [PK.results] = {[Dim.speed] = min(competition, maintenance)}
     }
 end
-Register.set_entity_updater(Type.waterwell, update_waterwell)
+Entity.set_performance_report_builder(Type.waterwell, build_waterwell_report)
 
 local function create_waterwell(entry)
     entry[EK.performance] = 1
-    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
     create_active_machine_status(entry)
 end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)

@@ -55,20 +55,29 @@ end
 Entity.get_hunting_competition = get_hunting_competition
 
 local function update_hunting_hut(entry)
-    local worker_performance = evaluate_workforce(entry)
-    local worker_happiness = evaluate_worker_happiness(entry)
-
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)
     entry[EK.tree_count] = tree_count
+
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
     local forest_performance = tree_count / building_details.tree_count
+    local competition, _, _ = get_hunting_competition(entry)
 
+    set_crafting_machine_performance(entry, min(worker_performance, forest_performance) * competition * worker_happiness)
+end
+Register.set_entity_updater(Type.hunting_hut, update_hunting_hut)
+
+local function build_hunting_hut_report(entry)
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
+    local building_details = get_building_details(entry)
+    local tree_count = entry[EK.tree_count] or 0
+    local forest_performance = tree_count / building_details.tree_count
     local competition, same_count, other_count = get_hunting_competition(entry)
-
     local performance = min(worker_performance, forest_performance) * competition * worker_happiness
-    set_crafting_machine_performance(entry, performance)
 
-    entry[EK.performance_report] = {
+    return {
         [PK.effects] = {
             {
                 [PK.effect] = PE.workforce,
@@ -101,15 +110,12 @@ local function update_hunting_hut(entry)
                 [PK.combination] = Comb.multiplier
             }
         },
-        [PK.results] = {
-            [Dim.speed] = performance
-        }
+        [PK.results] = {[Dim.speed] = performance}
     }
 end
-Register.set_entity_updater(Type.hunting_hut, update_hunting_hut)
+Entity.set_performance_report_builder(Type.hunting_hut, build_hunting_hut_report)
 
 local function create_hunting_hut(entry)
     entry[EK.performance] = 1
-    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
 end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)

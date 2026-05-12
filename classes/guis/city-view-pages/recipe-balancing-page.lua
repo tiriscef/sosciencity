@@ -75,7 +75,7 @@ local function collect_state(player_index)
                     item_type = row.tags.item_type,
                     amount = tonumber(row.amount_field.text) or 0,
                     prob = math.max(0, math.min(1, prob)),
-                    catalyst = row.tags.catalyst or 0
+                    catalyst = tonumber(row.cat_field.text) or 0
                 }
             end
         end
@@ -186,23 +186,36 @@ local function generate_lua_export(state)
     local lines = {}
     local function add(s) lines[#lines + 1] = s end
 
+    local catalyst_by_name = {}
+    for _, prod in pairs(state.products) do
+        if prod.catalyst > 0 then
+            catalyst_by_name[prod.name] = prod.catalyst
+        end
+    end
+
     add("results = {")
     for _, prod in pairs(state.products) do
         local type_str = prod.item_type == "fluid" and '"fluid"' or '"item"'
+        local s = string.format('    {type = %s, name = "%s", amount = %s', type_str, prod.name, format_number(prod.amount))
         if prod.prob < 1 then
-            add(string.format('    {type = %s, name = "%s", amount = %s, probability = %s},',
-                type_str, prod.name, format_number(prod.amount), format_number(prod.prob)))
-        else
-            add(string.format('    {type = %s, name = "%s", amount = %s},',
-                type_str, prod.name, format_number(prod.amount)))
+            s = s .. string.format(", probability = %s", format_number(prod.prob))
         end
+        if prod.catalyst > 0 then
+            s = s .. string.format(", ignored_by_productivity = %s, ignored_by_stats = %s", format_number(prod.catalyst), format_number(prod.catalyst))
+        end
+        add(s .. "},")
     end
     add("},")
 
     add("ingredients = {")
     for _, ing in pairs(state.ingredients) do
         local type_str = ing.item_type == "fluid" and '"fluid"' or '"item"'
-        add(string.format('    {type = %s, name = "%s", amount = %s},', type_str, ing.name, format_number(ing.amount)))
+        local s = string.format('    {type = %s, name = "%s", amount = %s', type_str, ing.name, format_number(ing.amount))
+        local cat = catalyst_by_name[ing.name]
+        if cat then
+            s = s .. string.format(", ignored_by_stats = %s", format_number(cat))
+        end
+        add(s .. "},")
     end
     add("},")
 
@@ -333,7 +346,7 @@ local function add_io_row(flow, item_type, is_product, entry)
     local row = flow.add {
         type = "flow",
         direction = "horizontal",
-        tags = {item_type = item_type, catalyst = 0}
+        tags = {item_type = item_type}
     }
     row.style.vertical_align = "center"
 
@@ -360,11 +373,17 @@ local function add_io_row(flow, item_type, is_product, entry)
         local prob = NumericTextField.create(row, "prob_field", {numeric_confirmed_event = CONFIRMED_EVENT, min = 0, max = 1})
         prob.style.width = 50
         prob.text = "1"
-    end
 
-    -- Catalyst placeholder: filled in below when loading from an entry.
-    local cat_label = row.add {type = "label", name = "cat_label", caption = "", style = "sosciencity_paragraph"}
-    cat_label.style.font_color = {r = 0.6, g = 0.6, b = 0.6}
+        local cat_lbl = row.add {type = "label", caption = {"city-view.recipe-balancing-cat"}, style = "sosciencity_paragraph"}
+        cat_lbl.style.font_color = {r = 0.6, g = 0.6, b = 0.6}
+        local cat = NumericTextField.create(row, "cat_field", {
+            numeric_confirmed_event = CONFIRMED_EVENT,
+            min = 0,
+            normal_font_color = {r = 0.6, g = 0.6, b = 0.6}
+        })
+        cat.style.width = 50
+        cat.text = "0"
+    end
 
     row.add {
         type = "sprite-button",
@@ -382,13 +401,7 @@ local function add_io_row(flow, item_type, is_product, entry)
         amt.text = tostring(get_amount(entry))
         if is_product then
             row.prob_field.text = tostring(get_probability(entry))
-            local catalyst = entry.ignored_by_productivity or 0
-            if catalyst > 0 then
-                local tags = row.tags
-                tags.catalyst = catalyst
-                row.tags = tags
-                cat_label.caption = "(cat: " .. catalyst .. ")"
-            end
+            row.cat_field.text = tostring(entry.ignored_by_productivity or 0)
         end
     end
 

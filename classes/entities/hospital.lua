@@ -301,6 +301,43 @@ end
 Register.set_entity_updater(Type.hospital, update_hospital)
 Register.set_entity_updater(Type.improvised_hospital, update_hospital)
 
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
+local PE = require("enums.performance-effect")
+local PK = require("enums.performance-key")
+
+local function build_hospital_report(entry)
+    if not has_power(entry) then
+        return {
+            [PK.effects] = {{[PK.effect] = PE.power, [PK.value] = 0, [PK.dimension] = Dim.speed, [PK.combination] = Comb.bottleneck}},
+            [PK.results] = {[Dim.speed] = 0}
+        }
+    end
+
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
+
+    return {
+        [PK.effects] = {
+            {
+                [PK.effect] = PE.workforce,
+                [PK.value] = worker_performance,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.bottleneck
+            },
+            {
+                [PK.effect] = PE.worker_happiness,
+                [PK.value] = worker_happiness,
+                [PK.dimension] = Dim.speed,
+                [PK.combination] = Comb.multiplier
+            }
+        },
+        [PK.results] = {[Dim.speed] = worker_performance * worker_happiness}
+    }
+end
+Entity.set_performance_report_builder(Type.hospital, build_hospital_report)
+Entity.set_performance_report_builder(Type.improvised_hospital, build_hospital_report)
+
 --- Accepts a blood donation from a housing entry if the hospital has capacity and resources.
 --- Consumes one surgery-instruments item upfront and claims a slot.
 --- Returns true if accepted, false if refused (inactive, at threshold, or missing items).

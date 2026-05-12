@@ -161,7 +161,7 @@ local function update_general_building_details(container, entry, player_id)
 
     local report_flow = tab["performance-report"]
     if report_flow then
-        Gui.Elements.PerformanceReport.update(report_flow, entry)
+        Gui.Elements.PerformanceReport.update(report_flow, Entity.build_performance_report(entry))
     end
 end
 
@@ -286,7 +286,7 @@ local function create_general_building_details(container, entry, player_id)
         Datalist.add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
     end
 
-    if entry[EK.performance_report] then
+    if Entity.has_performance_report_builder(entry[EK.type]) then
         Gui.Elements.Utils.separator_line(tab)
         Gui.Elements.Label.header_label(tab, "header-performance", {"sosciencity.performance-breakdown"})
         Gui.Elements.PerformanceReport.create(tab, "performance-report")

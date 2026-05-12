@@ -241,6 +241,37 @@ function Entity.delay_food_spoilage(inventory, delta_ticks, percentage)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << performance report builder registry >>
+
+local report_builder_lookup = {}
+
+--- Registers a function that builds a performance report for the given type on demand.
+--- @param _type Type
+--- @param fn function receives entry, returns a report table {effects, results}
+function Entity.set_performance_report_builder(_type, fn)
+    Tirislib.Utils.desync_protection()
+    if report_builder_lookup[_type] then
+        error("Duplicate performance_report_builder registration for type " .. tostring(_type))
+    end
+    report_builder_lookup[_type] = fn
+end
+
+--- Builds and returns a performance report for the given entry, or nil if no builder is registered.
+--- @param entry Entry
+--- @return table?
+function Entity.build_performance_report(entry)
+    local fn = report_builder_lookup[entry[EK.type]]
+    return fn and fn(entry)
+end
+
+--- Returns whether the given type has a registered performance report builder.
+--- @param _type Type
+--- @return boolean
+function Entity.has_performance_report_builder(_type)
+    return report_builder_lookup[_type] ~= nil
+end
+
+---------------------------------------------------------------------------------------------------
 -- << per-type entity files >>
 
 require("classes.entities.machines")

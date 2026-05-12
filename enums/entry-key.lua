@@ -79,8 +79,6 @@ EK.workhours = 152
 EK.last_time_active = 153
 --- is this maintenance relevant machine counted as currently active
 EK.active_machine_status = 154
---- table of performance effects for GUI display
-EK.performance_report = 155
 
 -- type specific stuff
 -- empty housing

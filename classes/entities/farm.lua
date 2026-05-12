@@ -162,17 +162,68 @@ local function update_farm(entry, delta_ticks)
         end
     end
 
-    entry[EK.performance_report] = {
-        [PK.effects] = effects,
-        [PK.results] = {[Dim.speed] = performance, [Dim.productivity] = productivity}
-    }
     set_crafting_machine_performance(entry, performance, productivity)
 end
 Register.set_entity_updater(Type.farm, update_farm)
 
+local function build_farm_report(entry)
+    local effects = {}
+
+    local workforce = evaluate_workforce(entry)
+    local happiness = evaluate_worker_happiness(entry)
+    record_effect(effects, PE.workforce, workforce, Dim.speed, Comb.bottleneck)
+    record_effect(effects, PE.worker_happiness, happiness, Dim.speed, Comb.multiplier)
+    local performance = workforce * happiness
+
+    -- reads the value cached by the updater to avoid re-running the side-effecting consume call
+    local humus_bonus = entry[EK.humus_bonus]
+    if humus_bonus then
+        local mult = 1 + humus_bonus / 100
+        record_effect(effects, PE.humus_fertilization, mult, Dim.speed, Comb.multiplier)
+        performance = performance * mult
+    end
+
+    local productivity = Entity.caste_bonuses[Type.orchid]
+    record_effect(effects, PE.orchid_caste_bonus, productivity, Dim.productivity, Comb.flat)
+
+    local pruning_bonus = entry[EK.prune_bonus] or 0
+    if pruning_bonus > 0 then
+        productivity = multiply_percentages(productivity, pruning_bonus)
+        record_effect(effects, PE.pruning, pruning_bonus, Dim.productivity, Comb.flat)
+    end
+
+    local species_name = entry[EK.species]
+    if species_name then
+        local flora_details = flora[species_name]
+        local building_details = get_building_details(entry)
+
+        if flora_details.required_module
+            and not Inventories.assembler_has_module(entry[EK.entity], flora_details.required_module) then
+            record_effect(effects, PE.required_module, 0, Dim.speed, Comb.bottleneck)
+            performance = 0
+        end
+
+        if building_details.open_environment and flora_details.growth_variance then
+            local mult = evaluate_growth_variance(flora_details)
+            record_effect(effects, PE.growth_variance, mult, Dim.speed, Comb.multiplier)
+            performance = performance * mult
+        end
+
+        if flora_details.persistent then
+            local biomass_bonus = biomass_to_productivity(entry[EK.biomass])
+            if biomass_bonus > 0 then
+                productivity = multiply_percentages(productivity, biomass_bonus)
+                record_effect(effects, PE.biomass, biomass_bonus, Dim.productivity, Comb.flat)
+            end
+        end
+    end
+
+    return {[PK.effects] = effects, [PK.results] = {[Dim.speed] = performance, [Dim.productivity] = productivity}}
+end
+Entity.set_performance_report_builder(Type.farm, build_farm_report)
+
 local function create_farm(entry)
     entry[EK.performance] = 1
-    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
 
     if get_building_details(entry).accepts_plant_care then
         entry[EK.humus_mode] = true

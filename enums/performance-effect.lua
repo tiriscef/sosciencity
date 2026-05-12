@@ -39,5 +39,9 @@ PE.orchid_caste_bonus = 16
 PE.pruning = 17
 --- accumulated biomass productivity bonus on a persistent crop
 PE.biomass = 18
+--- electricity availability (0 when unpowered)
+PE.power = 19
+--- culture bonus from city-wide mixtape production (nightclub)
+PE.culture_bonus = 20
 
 return PE

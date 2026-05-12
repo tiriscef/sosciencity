@@ -99,12 +99,12 @@ Tirislib.Testing.add_test_case(
 -- << farm creation >>
 
 Tirislib.Testing.add_test_case(
-    "Farm creation initializes performance_report and plant care modes",
+    "Farm creation initializes plant care modes and report builder is available",
     "integration|integration.farm",
     function()
         local entry = create_farm({0, 0})
 
-        Assert.not_nil(entry[EK.performance_report], "performance_report should be set on creation")
+        Assert.not_nil(Entity.build_performance_report(entry), "farm should have a performance report builder")
         Assert.is_true(entry[EK.humus_mode], "humus_mode defaults to true on a plant-care farm")
         Assert.is_true(entry[EK.pruning_mode], "pruning_mode defaults to true on a plant-care farm")
     end,
@@ -122,7 +122,7 @@ Tirislib.Testing.add_test_case(
         local farm = create_farm({0, 0}, "test-farming-annual-bell-pepper")
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.not_nil(find_effect(report, PE.workforce), "workforce effect missing")
         Assert.not_nil(find_effect(report, PE.worker_happiness), "worker_happiness effect missing")
         Assert.not_nil(find_effect(report, PE.orchid_caste_bonus), "orchid_caste_bonus effect missing")
@@ -174,7 +174,7 @@ Tirislib.Testing.add_test_case(
 
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.is_nil(find_effect(report, PE.humus_fertilization))
         Assert.is_nil(farm[EK.humus_bonus])
     end,
@@ -195,7 +195,7 @@ Tirislib.Testing.add_test_case(
 
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.not_nil(find_effect(report, PE.humus_fertilization))
         Assert.less_than(station[EK.humus_stored], 50, "humus should have been drawn from the station")
     end,
@@ -247,7 +247,7 @@ Tirislib.Testing.add_test_case(
 
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.not_nil(find_effect(report, PE.pruning))
     end,
     setup_surface,
@@ -287,7 +287,7 @@ Tirislib.Testing.add_test_case(
 
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.not_nil(find_effect(report, PE.biomass))
     end,
     setup_surface,
@@ -304,7 +304,7 @@ Tirislib.Testing.add_test_case(
 
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.is_nil(find_effect(report, PE.biomass))
     end,
     setup_surface,
@@ -321,7 +321,7 @@ Tirislib.Testing.add_test_case(
 
         Register.update_entry(farm, game.tick + 100)
 
-        local report = farm[EK.performance_report]
+        local report = Entity.build_performance_report(farm)
         Assert.is_nil(find_effect(report, PE.biomass))
     end,
     setup_surface,

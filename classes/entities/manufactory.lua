@@ -14,15 +14,21 @@ local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local function update_manufactory(entry)
     local worker_performance = evaluate_workforce(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
-
-    local performance = worker_performance * worker_happiness
-
     local mining_productivity_bonus = nil
     if get_building_details(entry).profits_from_mining_productivity then
         mining_productivity_bonus = math.floor(entry[EK.entity].force.mining_drill_productivity_bonus * 100)
     end
+    set_crafting_machine_performance(entry, worker_performance * worker_happiness, mining_productivity_bonus)
+end
+Register.set_entity_updater(Type.manufactory, update_manufactory)
 
-    set_crafting_machine_performance(entry, performance, mining_productivity_bonus)
+local function build_manufactory_report(entry)
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
+    local mining_productivity_bonus = nil
+    if get_building_details(entry).profits_from_mining_productivity then
+        mining_productivity_bonus = math.floor(entry[EK.entity].force.mining_drill_productivity_bonus * 100)
+    end
 
     local effects = {
         {
@@ -48,18 +54,14 @@ local function update_manufactory(entry)
         }
     end
 
-    entry[EK.performance_report] = {
+    return {
         [PK.effects] = effects,
-        [PK.results] = {
-            [Dim.speed] = performance,
-            [Dim.productivity] = mining_productivity_bonus
-        }
+        [PK.results] = {[Dim.speed] = worker_performance * worker_happiness, [Dim.productivity] = mining_productivity_bonus}
     }
 end
-Register.set_entity_updater(Type.manufactory, update_manufactory)
+Entity.set_performance_report_builder(Type.manufactory, build_manufactory_report)
 
 local function create_manufactory(entry)
     entry[EK.performance] = 1
-    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
 end
 Register.set_entity_creation_handler(Type.manufactory, create_manufactory)

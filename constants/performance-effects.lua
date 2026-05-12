@@ -23,7 +23,9 @@ PerformanceEffects.labels = {
     [PE.required_module] = {"sosciencity.required-module"},
     [PE.orchid_caste_bonus] = {"sosciencity.orchid-caste-bonus"},
     [PE.pruning] = {"sosciencity.pruning"},
-    [PE.biomass] = {"sosciencity.biomass"}
+    [PE.biomass] = {"sosciencity.biomass"},
+    [PE.power] = {"sosciencity.power"},
+    [PE.culture_bonus] = {"sosciencity.culture-bonus"}
 }
 
 PerformanceEffects.descriptions = {
@@ -44,7 +46,9 @@ PerformanceEffects.descriptions = {
     [PE.required_module] = {"sosciencity.describe-required-module"},
     [PE.orchid_caste_bonus] = {"sosciencity.describe-orchid-caste-bonus"},
     [PE.pruning] = {"sosciencity.describe-pruning"},
-    [PE.biomass] = {"sosciencity.describe-biomass"}
+    [PE.biomass] = {"sosciencity.describe-biomass"},
+    [PE.power] = {"sosciencity.describe-power"},
+    [PE.culture_bonus] = {"sosciencity.describe-culture-bonus"}
 }
 
 PerformanceEffects.dimension_labels = {

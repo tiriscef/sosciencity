@@ -57,19 +57,26 @@ end
 Entity.get_fishing_competition = get_fishing_competition
 
 local function update_fishery(entry)
-    local worker_performance = evaluate_workforce(entry)
-    local worker_happiness = evaluate_worker_happiness(entry)
-
     local building_details = get_building_details(entry)
     local water_tiles = get_water_tiles(entry, building_details)
     local water_performance = water_tiles / building_details.water_tiles
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
+    local competition, _, _ = get_fishing_competition(entry)
+    set_crafting_machine_performance(entry, min(worker_performance, water_performance) * competition * worker_happiness)
+end
+Register.set_entity_updater(Type.fishery, update_fishery)
 
+local function build_fishery_report(entry)
+    local worker_performance = evaluate_workforce(entry)
+    local worker_happiness = evaluate_worker_happiness(entry)
+    local building_details = get_building_details(entry)
+    local water_tiles = entry[EK.water_tiles] or 0
+    local water_performance = water_tiles / building_details.water_tiles
     local competition, same_count, other_count = get_fishing_competition(entry)
-
     local performance = min(worker_performance, water_performance) * competition * worker_happiness
-    set_crafting_machine_performance(entry, performance)
 
-    entry[EK.performance_report] = {
+    return {
         [PK.effects] = {
             {
                 [PK.effect] = PE.workforce,
@@ -102,15 +109,12 @@ local function update_fishery(entry)
                 [PK.combination] = Comb.multiplier
             }
         },
-        [PK.results] = {
-            [Dim.speed] = performance
-        }
+        [PK.results] = {[Dim.speed] = performance}
     }
 end
-Register.set_entity_updater(Type.fishery, update_fishery)
+Entity.set_performance_report_builder(Type.fishery, build_fishery_report)
 
 local function create_fishery(entry)
     entry[EK.performance] = 1
-    entry[EK.performance_report] = {[PK.effects] = {}, [PK.results] = {}}
 end
 Register.set_entity_creation_handler(Type.fishery, create_fishery)
