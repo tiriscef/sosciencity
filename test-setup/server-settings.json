@@ -1,0 +1,9 @@
+{
+  "name": "Sosciencity Test Server",
+  "description": "Automated test runner - not for public use",
+  "visibility": {
+    "public": false,
+    "lan": false
+  },
+  "auto_pause": false
+}
