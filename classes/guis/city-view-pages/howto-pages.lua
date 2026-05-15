@@ -407,10 +407,11 @@ Gui.CityView.add_page {
                 {"city-view.maintenance-text3"},
                 {"city-view.maintenance-text4"},
                 {"city-view.maintenance-text5"},
-                {"city-view.maintenance-text6"}
+                {"city-view.maintenance-text6"},
+                {"city-view.maintenance-text7"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.maintenance-text7"})
+        Gui.Elements.Label.paragraph(container, {"city-view.maintenance-text8"})
         -- END GENERATED: maintenance
     end
 }
