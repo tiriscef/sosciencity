@@ -174,6 +174,15 @@ if DEBUG then
             IntegrationHelpers.delete_test_surfaces()
         end
     )
+
+    remote.add_interface("sosciencity_tests", {
+        run = function()
+            local results = Tirislib.Testing.run_all(true)
+            log(results)
+            helpers.write_file("test-results.txt", results)
+            IntegrationHelpers.delete_test_surfaces()
+        end
+    })
 end
 
 if DEV_MODE then

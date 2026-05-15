@@ -1,0 +1,27 @@
+name: Run tests
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sosciencity
+        uses: actions/checkout@v4
+        with:
+          path: sosciencity
+
+      - name: Checkout sosciencity-graphics
+        run: git clone https://git.gay/tirisabella/sosciencity-graphics.git sosciencity-graphics
+
+      - name: Build test image
+        run: |
+          docker build \
+            -t sosciencity-test \
+            -f sosciencity/test-setup/Dockerfile \
+            .
+
+      - name: Run tests
+        run: docker run --rm sosciencity-test
