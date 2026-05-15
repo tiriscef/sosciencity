@@ -14,10 +14,7 @@ jobs:
           path: sosciencity
 
       - name: Checkout sosciencity-graphics
-        uses: actions/checkout@v4
-        with:
-          repository: tirisabella/sosciencity-graphics
-          path: sosciencity-graphics
+        run: git clone https://git.gay/tirisabella/sosciencity-graphics.git sosciencity-graphics
 
       - name: Build test image
         run: |
