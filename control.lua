@@ -224,11 +224,9 @@ end
 
 local storage
 
-local add_fear = Inhabitants.add_fear
 local ease_fear = Inhabitants.ease_fear
 
 local get_entity_type = Types.get_entity_type
-local type_definitions = Types.definitions
 
 local try_get_entry = Register.try_get
 local remove_entity = Register.remove_entity
@@ -371,20 +369,7 @@ local function on_clone_built(event)
         return
     end
 
-    local entity_type = get_entity_type(destination)
-
-    -- try to copy the source - if possible
-    local source = event.source
-    if source and source.valid then
-        local source_entry = try_get_entry(source.unit_number)
-        if source_entry then
-            Register.clone(source_entry, destination)
-            return
-        end
-    end
-
-    -- otherwise register the destination entity on it's own
-    add_to_register(destination, entity_type, event)
+    Register.add_or_clone(event.source, destination, event)
 end
 
 local function on_entity_removed(event)
@@ -395,7 +380,7 @@ local function on_entity_removed(event)
         return
     end
 
-    remove_entity(entity, DeconstructionCause.unknown)
+    remove_entity(entity)
 end
 
 local function on_entity_died(event)
@@ -407,15 +392,8 @@ local function on_entity_died(event)
         return
     end
 
-    local unit_number = entity.unit_number
-    local entry = try_get_entry(unit_number)
+    local entry = try_get_entry(entity.unit_number)
     if entry then
-        local _type = entry[EK.type]
-
-        if type_definitions[_type].is_civil then
-            add_fear()
-        end
-
         remove_entry(entry, DeconstructionCause.destroyed, event)
     end
 end

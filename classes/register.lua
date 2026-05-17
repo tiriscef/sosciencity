@@ -40,7 +40,10 @@ local register_by_group
 local entry_counts
 local last_index_per_group
 
+local type_definitions = Types.definitions
+
 local fire_all_workers
+local add_fear
 
 local add_subentities
 local remove_subentities
@@ -70,6 +73,7 @@ local function set_locals()
 
     -- These systems are loaded after the register, so we local them during on_load
     fire_all_workers = Inhabitants.unemploy_all_workers
+    add_fear = Inhabitants.add_fear
 
     add_subentities = Subentities.add_all_for
     remove_subentities = Subentities.remove_all_for
@@ -463,6 +467,23 @@ function Register.clone(source, destination)
     return destination_entry
 end
 
+--- Registers a cloned entity, copying from the source entry when available.
+--- Falls back to a fresh registration if the source is unknown to the register.
+--- @param source LuaEntity?
+--- @param destination LuaEntity
+--- @param event table?
+function Register.add_or_clone(source, destination, event)
+    if source and source.valid then
+        local source_entry = Register.try_get(source.unit_number)
+        if source_entry then
+            Register.clone(source_entry, destination)
+            return
+        end
+    end
+
+    add_entity(destination, get_entity_type(destination), event)
+end
+
 local stale_entry_metatable = {
     __index = function(_, k)
         error("Accessed stale entry (key: " .. tostring(k) .. ").")
@@ -525,6 +546,10 @@ function Register.remove_entry(entry, cause, event, keep_valid)
         entry[EK.subentity_state_pending] = Subentities.serialize(entry)
     end
 
+    if cause == DeconstructionCause.destroyed and type_definitions[_type].is_civil then
+        add_fear()
+    end
+
     destroy_custom_building(entry)
     on_destruction(_type, entry, cause, event)
     remove_subentities(entry)
@@ -541,15 +566,11 @@ local remove_entry = Register.remove_entry
 
 --- Removes the given entity from the register.
 --- @param entity LuaEntity
---- @param unit_number integer?
 --- @param cause DeconstructionCause?
-function Register.remove_entity(entity, unit_number, cause)
-    unit_number = unit_number or entity.unit_number
-    cause = cause or DeconstructionCause.unknown
-
-    local entry = register[unit_number]
+function Register.remove_entity(entity, cause)
+    local entry = register[entity.unit_number]
     if entry then
-        remove_entry(entry, cause)
+        remove_entry(entry, cause or DeconstructionCause.unknown)
     end
 end
 

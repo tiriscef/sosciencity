@@ -297,17 +297,6 @@ Tirislib.Testing.add_test_case(
 ---------------------------------------------------------------------------------------------------
 -- << external-ownership detection >>
 
---- Creates an entity without registering it, so the test can mutate it pre-registration.
-local function create_unregistered(surface, name, position)
-    local entity = surface.create_entity {
-        name = name,
-        position = position,
-        force = "player"
-    }
-    assert(entity, "Failed to create entity '" .. name .. "'")
-    return entity
-end
-
 Tirislib.Testing.add_test_case(
     "external-ownership: healthy catch-all entry is not flagged",
     "integration|integration.register",
@@ -326,7 +315,7 @@ Tirislib.Testing.add_test_case(
     "external-ownership: entity inactive at registration is flagged",
     "integration|integration.register",
     function()
-        local entity = create_unregistered(test_surface, "test-assembling-machine", {0, 0})
+        local entity = Helpers.create_unregistered(test_surface, "test-assembling-machine", {0, 0})
         entity.active = false
 
         local entry = Register.add(entity)
@@ -342,7 +331,7 @@ Tirislib.Testing.add_test_case(
     "external-ownership: entity with custom_status at registration is flagged",
     "integration|integration.register",
     function()
-        local entity = create_unregistered(test_surface, "test-assembling-machine", {0, 0})
+        local entity = Helpers.create_unregistered(test_surface, "test-assembling-machine", {0, 0})
         entity.custom_status = {
             diode = defines.entity_status_diode.red,
             label = {"sosciencity.machine"}
@@ -388,6 +377,218 @@ Tirislib.Testing.add_test_case(
         entry[EK.active] = true
 
         Assert.is_true(Register.is_externally_owned(entry), "flag should remain set (sticky)")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Register.clone >>
+
+Tirislib.Testing.add_test_case(
+    "Register.clone creates destination entry with source's type",
+    "integration|integration.register",
+    function()
+        local source = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {5, 0}, force = "player"}
+        assert(dest_entity)
+
+        local dest = Register.clone(source, dest_entity)
+
+        Assert.equals(dest[EK.type], source[EK.type], "destination type should match source type")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.clone copies tick_of_creation from source",
+    "integration|integration.register",
+    function()
+        local source = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local source_tick = source[EK.tick_of_creation]
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {5, 0}, force = "player"}
+        assert(dest_entity)
+
+        local dest = Register.clone(source, dest_entity)
+
+        Assert.equals(dest[EK.tick_of_creation], source_tick, "tick_of_creation should be copied from source")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.clone leaves source in register alongside destination",
+    "integration|integration.register",
+    function()
+        local source = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local count_before = Register.get_type_count(Type.market)
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {5, 0}, force = "player"}
+        assert(dest_entity)
+
+        Register.clone(source, dest_entity)
+
+        Assert.equals(Register.get_type_count(Type.market), count_before + 1, "clone should add one more entry")
+        Assert.not_nil(Register.try_get(source[EK.unit_number]), "source should still be in register")
+        Assert.not_nil(Register.try_get(dest_entity.unit_number), "destination should be in register")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Register.add_or_clone >>
+
+Tirislib.Testing.add_test_case(
+    "Register.add_or_clone takes the clone path when source is registered",
+    "integration|integration.register",
+    function()
+        local source = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local source_tick = source[EK.tick_of_creation]
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {5, 0}, force = "player"}
+        assert(dest_entity)
+
+        Register.add_or_clone(source[EK.entity], dest_entity, nil)
+
+        local dest = Register.try_get(dest_entity.unit_number)
+        Assert.not_nil(dest, "destination should be registered")
+        Assert.equals(dest[EK.tick_of_creation], source_tick, "clone path should copy tick_of_creation from source")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.add_or_clone falls back to fresh add when source is not registered",
+    "integration|integration.register",
+    function()
+        local source_entity = test_surface.create_entity {name = "test-market", position = {0, 0}, force = "player"}
+        assert(source_entity)
+        -- source deliberately not registered
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {5, 0}, force = "player"}
+        assert(dest_entity)
+
+        Register.add_or_clone(source_entity, dest_entity, nil)
+
+        local dest = Register.try_get(dest_entity.unit_number)
+        Assert.not_nil(dest, "destination should be registered via fresh add")
+        Assert.equals(dest[EK.type], Type.market, "fresh add should resolve the correct type")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.add_or_clone falls back to fresh add when source is nil",
+    "integration|integration.register",
+    function()
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {0, 0}, force = "player"}
+        assert(dest_entity)
+
+        Register.add_or_clone(nil, dest_entity, nil)
+
+        Assert.not_nil(Register.try_get(dest_entity.unit_number), "destination should be registered")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.add_or_clone falls back to fresh add when source entity is invalid",
+    "integration|integration.register",
+    function()
+        local source_entity = test_surface.create_entity {name = "test-market", position = {0, 0}, force = "player"}
+        assert(source_entity)
+        source_entity.destroy()
+        -- source now invalid, not in register
+        local dest_entity = test_surface.create_entity {name = "test-market", position = {5, 0}, force = "player"}
+        assert(dest_entity)
+
+        Register.add_or_clone(source_entity, dest_entity, nil)
+
+        Assert.not_nil(Register.try_get(dest_entity.unit_number), "destination should be registered via fresh add")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Register.remove_entity >>
+
+Tirislib.Testing.add_test_case(
+    "Register.remove_entity removes the entry for the given entity",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local unit_number = entry[EK.unit_number]
+
+        Register.remove_entity(entry[EK.entity])
+
+        Assert.is_nil(Register.try_get(unit_number), "entry should be gone after remove_entity")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.remove_entity is a no-op for an entity not in the register",
+    "integration|integration.register",
+    function()
+        local entity = test_surface.create_entity {name = "test-market", position = {0, 0}, force = "player"}
+        assert(entity)
+
+        Register.remove_entity(entity)
+
+        Assert.is_true(entity.valid, "entity should still be valid; remove_entity should not error or touch it")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << fear on destruction >>
+
+Tirislib.Testing.add_test_case(
+    "removing a civil building with DeconstructionCause.destroyed increases fear",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local fear_before = storage.fear
+
+        Register.remove_entry(entry, DeconstructionCause.destroyed)
+
+        Assert.is_true(storage.fear > fear_before, "fear should increase when a civil building is destroyed")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "removing a civil building with DeconstructionCause.mined does not increase fear",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local fear_before = storage.fear
+
+        Register.remove_entry(entry, DeconstructionCause.mined)
+
+        Assert.equals(storage.fear, fear_before, "fear should not change when a civil building is mined")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "removing a non-civil building with DeconstructionCause.destroyed does not increase fear",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
+        local fear_before = storage.fear
+
+        Register.remove_entry(entry, DeconstructionCause.destroyed)
+
+        Assert.equals(storage.fear, fear_before, "fear should not change when a non-civil building is destroyed")
     end,
     function() test_surface = Helpers.create_test_surface() end,
     function() Helpers.clean_up() end
