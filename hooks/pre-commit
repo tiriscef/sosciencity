@@ -1,0 +1,23 @@
+#!/bin/bash
+
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep '^human-readable-wiki-pages/.*\.md$')
+
+if [ -z "$STAGED_MD" ]; then
+    exit 0
+fi
+
+BEFORE=$(find locale/ classes/guis/ -type f \( -name "*.cfg" -o -name "*.lua" \) | sort | xargs md5sum)
+
+echo "Regenerating locale and GUI code for staged markdown files..."
+FILENAMES=$(echo "$STAGED_MD" | xargs -I{} basename {})
+python3 human-readable-wiki-pages/convert.py $FILENAMES
+
+AFTER=$(find locale/ classes/guis/ -type f \( -name "*.cfg" -o -name "*.lua" \) | sort | xargs md5sum)
+
+if [ "$BEFORE" != "$AFTER" ]; then
+    echo ""
+    echo "Generated files were updated - stage the changes and commit again."
+    exit 1
+fi
+
+exit 0
