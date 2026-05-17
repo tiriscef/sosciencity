@@ -48,4 +48,4 @@ Tirislib.Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(7, 7)
-Sosciencity.Config.add_eei("market-hall")
+Sosciencity.configure_building("market-hall")

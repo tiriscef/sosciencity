@@ -51,4 +51,4 @@ Tirislib.Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(6, 6)
-Sosciencity.Config.add_eei("upbringing-station")
+Sosciencity.configure_building("upbringing-station")

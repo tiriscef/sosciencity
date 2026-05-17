@@ -4,6 +4,7 @@ local SubentityType = require("enums.subentity-type")
 local Type = require("enums.type")
 
 local Time = require("constants.time")
+local Unit = require("constants.unit")
 local Housing = require("constants.housing")
 
 --- Defines the general custom properties for various entities.
@@ -13,7 +14,7 @@ local Building = {}
 --- @class CustomBuildingDefinition
 --- @field type Type
 --- @field range integer|string tiles in every direction or 'global'
---- @field power_usage number in kW
+--- @field power_usage number in J/tick
 --- @field speed number in 1/tick, depends on type
 --- @field workforce WorkforceDefinition
 --- @field auto_name string? name of the auto-naming scheme in AutoNames (see classes/auto-names.lua); omit to skip auto-naming
@@ -23,7 +24,8 @@ local Building = {}
 --- @field count integer Count of workers needed
 --- @field castes Type[] array of casteIDs that can work in this building
 --- @field disease_category DiseaseCategory the category of diseases that this work can cause
---- @field disease_frequency number the frequency with which diseases are caused by this work (as progress per worker per tick)
+--- @field disease_frequency_fully_staffed number? disease progress per tick for a fully staffed building; postprocess divides by count to derive disease_frequency
+--- @field disease_frequency number disease progress per worker per tick
 --- @field happiness_weight number how much worker happiness affects this building's performance (0 = none, 1 = full effect)
 
 --- The standard range for connections where the huwans are supposed to walk to the entity.
@@ -31,10 +33,10 @@ local range_by_foot = 50
 
 --- Values of various custom behaviours I implemented for the Custom Buildings.<br>
 --- **range:** number (tiles in every direction) or "global"<br>
---- **power_usage:** number (kW)<br>
+--- **power_usage:** number (J/tick; use Unit.kW, e.g. 50 * Unit.kW)<br>
 --- **speed:** number (1/tick)<br>
 --- **workforce:** WorkforceDefinition<br>
---- I'm defining the disease_frequency as progress per tick *when fully staffed*. The postprocessing divides the value by the count.
+--- **disease_frequency_fully_staffed:** define the rate for a full crew; postprocess divides by count into disease_frequency (per-worker-per-tick)
 Building.values = {
     ["algae-farm"] = {
         type = Type.farm,
@@ -56,7 +58,7 @@ Building.values = {
             count = 8,
             castes = {Type.clockwork, Type.gleam, Type.foundry},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -66,7 +68,7 @@ Building.values = {
             count = 8,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -76,7 +78,7 @@ Building.values = {
             count = 2,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         },
         accepts_plant_care = true
@@ -91,7 +93,7 @@ Building.values = {
             count = 20,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.2 / Time.minute,
+            disease_frequency_fully_staffed = 0.2 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -102,7 +104,7 @@ Building.values = {
             count = 10,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.2 / Time.minute,
+            disease_frequency_fully_staffed = 0.2 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -113,7 +115,7 @@ Building.values = {
             count = 10,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -127,8 +129,9 @@ Building.values = {
     },
     ["cold-storage-warehouse"] = {
         type = Type.cold_storage,
-        power_usage = 300,
-        spoil_slowdown = 0.9
+        power_usage = 300 * Unit.kW,
+        spoil_slowdown = 0.9,
+        eei = true
     },
     ["egg-collecting-station"] = {
         type = Type.egg_collector,
@@ -142,7 +145,7 @@ Building.values = {
             count = 20,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -153,7 +156,7 @@ Building.values = {
             count = 8,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -165,7 +168,8 @@ Building.values = {
     ["fertilization-station"] = {
         type = Type.fertilization_station,
         range = 30,
-        humus_capacity = 100 -- Keep that fairly small. The purpose is mainly to create a buffer for fractions of humus items and reducing the number of inventory API calls.
+        humus_capacity = 100, -- Keep that fairly small. The purpose is mainly to create a buffer for fractions of humus items and reducing the number of inventory API calls.
+        eei = true
     },
     ["fishing-hut"] = {
         type = Type.fishery,
@@ -175,7 +179,7 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.fishing_hut,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -186,13 +190,14 @@ Building.values = {
             count = 20,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
     ["gene-clinic"] = {
         type = Type.gene_clinic,
-        range = 7
+        range = 7,
+        eei = true
     },
     ["gleam-hq"] = {
         type = Type.manufactory,
@@ -201,7 +206,7 @@ Building.values = {
             count = 20,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -220,7 +225,7 @@ Building.values = {
             count = 10,
             castes = {Type.gunfire},
             disease_category = DiseaseCategory.hard_work,
-            disease_frequency = 0.2 / Time.minute,
+            disease_frequency_fully_staffed = 0.2 * Unit.per_minute,
             happiness_weight = 1
         },
         subentities = {
@@ -245,10 +250,11 @@ Building.values = {
             count = 10,
             castes = {Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         },
-        power_usage = 100
+        power_usage = 100 * Unit.kW,
+        eei = true
     },
     ["hunting-hut"] = {
         type = Type.hunting_hut,
@@ -258,7 +264,7 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.hunting_hut,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -269,7 +275,7 @@ Building.values = {
             count = 5,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute,
+            disease_frequency_fully_staffed = 0.01 * Unit.per_minute,
             happiness_weight = 1
         },
         result_caste = Type.gleam
@@ -280,7 +286,8 @@ Building.values = {
     },
     ["intensive-care-unit"] = {
         type = Type.intensive_care_unit,
-        range = 7
+        range = 7,
+        eei = true
     },
     ["kitchen-for-all"] = {
         type = Type.kitchen_for_all,
@@ -290,7 +297,8 @@ Building.values = {
     },
     ["market-hall"] = {
         type = Type.market,
-        range = range_by_foot
+        range = range_by_foot,
+        eei = true
     },
     ["medbay"] = {
         type = Type.improvised_hospital,
@@ -301,10 +309,11 @@ Building.values = {
             count = 5,
             castes = {Type.orchid, Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         },
-        power_usage = 50
+        power_usage = 50 * Unit.kW,
+        eei = true
     },
     ["medical-school"] = {
         type = Type.caste_education_building,
@@ -313,7 +322,7 @@ Building.values = {
             count = 5,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute,
+            disease_frequency_fully_staffed = 0.01 * Unit.per_minute,
             happiness_weight = 1
         },
         result_caste = Type.plasma
@@ -325,7 +334,7 @@ Building.values = {
             count = 10,
             castes = {Type.ember, Type.orchid, Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute,
+            disease_frequency_fully_staffed = 0.01 * Unit.per_minute,
             happiness_weight = 1
         },
         result_caste = Type.gunfire
@@ -341,7 +350,7 @@ Building.values = {
             count = 5,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.01 / Time.minute,
+            disease_frequency_fully_staffed = 0.01 * Unit.per_minute,
             happiness_weight = 1
         },
         result_caste = Type.foundry
@@ -350,7 +359,8 @@ Building.values = {
         type = Type.nightclub,
         range = range_by_foot,
         auto_name = "nightclub",
-        power_usage = 100
+        power_usage = 100 * Unit.kW,
+        eei = true
     },
     ["orangery"] = {
         type = Type.farm,
@@ -363,7 +373,7 @@ Building.values = {
             count = 10,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -374,7 +384,7 @@ Building.values = {
             count = 20,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.05 / Time.minute,
+            disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -385,7 +395,7 @@ Building.values = {
             count = 4,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.05 / Time.minute,
+            disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -404,7 +414,7 @@ Building.values = {
             count = 8,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.05 / Time.minute,
+            disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -412,7 +422,8 @@ Building.values = {
         type = Type.pruning_station,
         range = 30,
         slots = 5,
-        power_usage = 150
+        power_usage = 150 * Unit.kW,
+        eei = true
     },
     ["salt-pond"] = {
         type = Type.salt_pond,
@@ -426,7 +437,7 @@ Building.values = {
             count = 8,
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.05 / Time.minute,
+            disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
             happiness_weight = 1
         },
         target_population = 200,
@@ -435,7 +446,8 @@ Building.values = {
     },
     ["storage-cellar"] = {
         type = Type.cold_storage,
-        spoil_slowdown = 0.6
+        spoil_slowdown = 0.6,
+        eei = true
     },
     ["tech-institute"] = {
         type = Type.manufactory,
@@ -444,7 +456,7 @@ Building.values = {
             count = 8,
             castes = {Type.foundry},
             disease_category = DiseaseCategory.office_work,
-            disease_frequency = 0.05 / Time.minute,
+            disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -455,7 +467,7 @@ Building.values = {
             count = 8,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
@@ -465,13 +477,15 @@ Building.values = {
     },
     ["upbringing-station"] = {
         type = Type.upbringing_station,
-        power_usage = 150,
+        power_usage = 150 * Unit.kW,
         power_drain = 5,
-        capacity = 20
+        capacity = 20,
+        eei = true
     },
     ["waste-dump"] = {
         type = Type.waste_dump,
-        capacity = 200000
+        capacity = 200000,
+        eei = true
     },
     ["water-tower"] = {
         type = Type.water_distributer,
@@ -488,11 +502,13 @@ Building.values = {
     },
     ["test-dumpster"] = {
         type = Type.dumpster,
-        range = 42
+        range = 42,
+        eei = true
     },
     ["test-market"] = {
         type = Type.market,
-        range = 42
+        range = 42,
+        eei = true
     },
     ["test-hospital"] = {
         type = Type.hospital,
@@ -503,21 +519,29 @@ Building.values = {
             count = 20,
             castes = {Type.plasma},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         },
-        power_usage = 50
+        power_usage = 50 * Unit.kW,
+        eei = true
     },
     ["test-hospital-no-workforce"] = {
         type = Type.hospital,
         range = 42,
         slots = 5,
-        speed = 20 / Time.second
+        speed = 20 / Time.second,
+        eei = true
     },
     ["test-psych-ward"] = {
         type = Type.psych_ward,
         range = 42,
-        power_usage = 50
+        power_usage = 50 * Unit.kW,
+        eei = true
+    },
+    ["test-night-club"] = {
+        type = Type.nightclub,
+        range = 42,
+        eei = true
     },
     ["test-water-distributer"] = {
         type = Type.water_distributer,
@@ -531,30 +555,35 @@ Building.values = {
             count = 20,
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.fishing_hut,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
         }
     },
     ["test-composter"] = {
         type = Type.composter,
-        capacity = 5000
+        capacity = 5000,
+        eei = true
     },
     ["test-compost-output"] = {
         type = Type.composter_output,
-        range = 5
+        range = 5,
+        eei = true
     },
     ["test-pharmacy"] = {
         type = Type.pharmacy,
-        range = "global"
+        range = "global",
+        eei = true
     },
     ["test-upbringing-station"] = {
         type = Type.upbringing_station,
-        power_usage = 100,
-        capacity = 40
+        power_usage = 100 * Unit.kW,
+        capacity = 40,
+        eei = true
     },
     ["test-egg-collector"] = {
         type = Type.egg_collector,
-        range = 42
+        range = 42,
+        eei = true
     },
     ["test-kitchen-for-all"] = {
         type = Type.kitchen_for_all,
@@ -567,9 +596,10 @@ Building.values = {
             count = 10,
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
-        }
+        },
+        eei = true
     },
     ["test-orchid-manufactory"] = {
         type = Type.manufactory,
@@ -577,9 +607,10 @@ Building.values = {
             count = 10,
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
-            disease_frequency = 0.1 / Time.minute,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1
-        }
+        },
+        eei = true
     },
     ["test-farm"] = {
         type = Type.farm,
@@ -589,32 +620,36 @@ Building.values = {
     ["test-fertilization-station"] = {
         type = Type.fertilization_station,
         range = 10,
-        humus_capacity = 100
+        humus_capacity = 100,
+        eei = true
     },
     ["test-pruning-station"] = {
         type = Type.pruning_station,
         range = 10,
-        slots = 5
+        slots = 5,
+        eei = true
     }
 }
 local buildings = Building.values
 
+--- Applies unit conversions to a building definition in place.
+--- disease_frequency_fully_staffed: per-minute for full crew to disease_frequency per-worker-per-tick.
+--- @param def CustomBuildingDefinition
+function Building.postprocess(def)
+    if def.workforce and def.workforce.disease_frequency_fully_staffed then
+        def.workforce.disease_frequency = def.workforce.disease_frequency_fully_staffed / def.workforce.count
+    end
+end
+
 -- values postprocessing
 for _, details in pairs(Building.values) do
-    -- convert power usages to J / tick
-    if details.power_usage then
-        details.power_usage = details.power_usage * 1000 / Time.second
-    end
-
-    if details.workforce then
-        details.workforce.disease_frequency = details.workforce.disease_frequency / details.workforce.count
-    end
+    Building.postprocess(details)
 end
 
 local houses = Housing.values
 local housing_details = {
     range = range_by_foot, -- range 'by foot'
-    power_usage = 1 -- Will be set dynamically, depending on the number of inhabitants. This dummy value will assure the eei is spawned upon placement.
+    power_usage = 1 * Unit.kW -- Will be set dynamically, depending on the number of inhabitants. This dummy value will assure the eei is spawned upon placement.
 }
 
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.

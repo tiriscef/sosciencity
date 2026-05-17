@@ -80,3 +80,4 @@ Tirislib.Entity.create {
         scale = 0.5
     }
 }:set_size(5, 5)]]
+Sosciencity.configure_building("zeppelin-port")

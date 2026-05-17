@@ -47,3 +47,4 @@ Tirislib.Entity.create {
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
 }:set_size(3, 3)
+Sosciencity.configure_building("composting-silo-output")

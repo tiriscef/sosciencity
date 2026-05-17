@@ -72,3 +72,4 @@ Tirislib.Entity.create {
         drain = "10kW"
     }
 }:set_size(5, 5)
+Sosciencity.configure_building("fishing-hut")

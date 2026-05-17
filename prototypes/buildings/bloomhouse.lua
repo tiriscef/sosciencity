@@ -119,3 +119,4 @@ Tirislib.Entity.create {
         apparent_volume = 1.5
     }
 }:set_size(width, height)
+Sosciencity.configure_building("bloomhouse")

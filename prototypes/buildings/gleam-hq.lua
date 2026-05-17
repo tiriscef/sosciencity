@@ -67,3 +67,4 @@ Tirislib.Entity.create {
         drain = "10kW"
     }
 }:set_size(7, 7):copy_icon_from_item()
+Sosciencity.configure_building("gleam-hq")

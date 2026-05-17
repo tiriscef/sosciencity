@@ -66,3 +66,4 @@ Tirislib.Entity.create {
         drain = "0W"
     }
 }:set_size(6, 6):copy_icon_from_item()
+Sosciencity.configure_building("huwanities-faculty")

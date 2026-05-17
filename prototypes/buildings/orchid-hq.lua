@@ -71,3 +71,4 @@ Tirislib.Entity.create {
         drain = "10kW"
     }
 }:set_size(11, 8):copy_icon_from_item()
+Sosciencity.configure_building("orchid-hq")

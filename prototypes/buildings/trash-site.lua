@@ -85,3 +85,4 @@ Tirislib.Entity.create {
     },
     localised_name = {"entity-name.trash-site"}
 }:set_size(4, 4)
+Sosciencity.configure_building("trash-site")

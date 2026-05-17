@@ -115,3 +115,4 @@ Tirislib.Entity.create {
         apparent_volume = 1.5
     }
 }:set_size(15, 15)
+Sosciencity.configure_building("orangery")

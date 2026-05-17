@@ -125,3 +125,4 @@ Tirislib.Entity.create {
     },
     fluid_boxes_off_when_no_fluid_recipe = true
 }:set_size(10, 10)
+Sosciencity.configure_building("aquafarm")

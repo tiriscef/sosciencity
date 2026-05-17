@@ -68,3 +68,4 @@ Tirislib.Entity.create {
         }
     }
 }:set_size(17, 14):copy_icon_from_item()
+Sosciencity.configure_building("clockwork-hq")

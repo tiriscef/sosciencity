@@ -380,3 +380,4 @@ Tirislib.Entity.create {
         }
     }
 }
+Sosciencity.configure_building("city-combinator")

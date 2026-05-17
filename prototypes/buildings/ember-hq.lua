@@ -54,3 +54,4 @@ Tirislib.Entity.create {
         drain = "10kW"
     }
 }:set_size(11, 11):copy_icon_from_item()
+Sosciencity.configure_building("ember-hq")

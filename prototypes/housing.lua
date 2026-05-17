@@ -1,6 +1,4 @@
 local Housing = require("constants.housing")
-local HousingTrait = require("enums.housing-trait")
-local Locale = require("classes.locale")
 
 -- things that are needed to create the prototype, but shouldn't be in memory during the control stage
 local housing_prototype_details = {
@@ -15,7 +13,10 @@ local housing_prototype_details = {
         width = 4,
         height = 4,
         tech_level = 0,
-        main_entity = "improvised-hut"
+        main_entity = "improvised-hut",
+        entity_only = true,
+        mining_result = {type = "item", name = "lumber", amount_min = 2, amount_max = 5},
+        description_prefix = {"entity-description.improvised-hut"}
     },
     ["improvised-hut-2"] = {
         picture = Tirislib.Entity.create_standard_picture {
@@ -29,7 +30,9 @@ local housing_prototype_details = {
         height = 4,
         tech_level = 0,
         icon = "improvised-hut",
-        main_entity = "improvised-hut"
+        main_entity = "improvised-hut",
+        mining_result = {type = "item", name = "lumber", amount_min = 2, amount_max = 5},
+        description_prefix = {"entity-description.improvised-hut"}
     },
     --[[["boring-brick-house"] = {
         picture = {
@@ -56,7 +59,6 @@ local housing_prototype_details = {
         width = 8,
         height = 6,
         tech_level = 3,
-        main_entity = "boring-brick-house"
     },]]
     ["khrushchyovka"] = {
         picture = Tirislib.Entity.create_standard_picture {
@@ -69,8 +71,7 @@ local housing_prototype_details = {
         },
         width = 7,
         height = 4,
-        tech_level = 2,
-        main_entity = "khrushchyovka"
+        tech_level = 2
     },
     ["sheltered-house"] = {
         picture = Tirislib.Entity.create_standard_picture {
@@ -85,8 +86,7 @@ local housing_prototype_details = {
         },
         width = 11,
         height = 7,
-        tech_level = 4,
-        main_entity = "sheltered-house"
+        tech_level = 4
     },
     ["small-prefabricated-house"] = {
         picture = Tirislib.Entity.create_standard_picture {
@@ -327,206 +327,15 @@ if Sosciencity.Config.DEBUG then
     }
 end
 
-local unlocks = {
-    [0] = "infrastructure-1",
-    [1] = "architecture-1",
-    [2] = "architecture-2",
-    [3] = "architecture-3",
-    [4] = "architecture-4",
-    [5] = "architecture-5",
-    [6] = "architecture-6",
-    [7] = "architecture-7"
-}
-
-local function get_inventory_size(house)
-    return 10 * math.ceil(1 + math.log(house.room_count, 10))
-end
-
-local function get_order(house)
-    return string.format("%02d", house.comfort) .. string.format("%09d", house.room_count)
-end
-
-local function get_localised_traits(house)
-    local ret = {""}
-
-    for _, trait in pairs(house.traits) do
-        ret[#ret + 1] = Locale.housing_trait(trait)
-        ret[#ret + 1] = "  "
-    end
-
-    return ret
-end
-
-local function get_localised_description(house_name, house)
-    local ret = {""}
-
-    if Tirislib.String.begins_with(house_name, "improvised-hut") then
-        ret[#ret + 1] = {"entity-description.improvised-hut"}
-    end
-
-    Tirislib.Locales.append(
-        ret,
-        {
-            "sosciencity-util.housing",
-            tostring(house.room_count),
-            {"color-scale." .. house.max_comfort, {"comfort-scale." .. house.max_comfort}},
-            {"description.sos-details", tostring(house.max_comfort)},
-            get_localised_traits(house)
-        },
-        "\n\n",
-        {
-            "sosciencity-util.official-looking-point",
-            {"sosciencity.range"},
-            {"sosciencity.show-range", tostring(100)} -- 2 times the "by foot"-range (50)
-        },
-        "\n",
-        {"sosciencity.grey", {"range-description.housing"}}
-    )
-
-    return ret
-end
-
-local function create_item(house_name, house, details)
-    local item_prototype =
-        Tirislib.Item.create {
-        type = "item",
-        name = house_name,
-        icon = "__sosciencity-graphics__/graphics/icon/" .. (details.icon or house_name) .. ".png",
-        icon_size = 64,
-        subgroup = "sosciencity-housing",
-        order = get_order(house),
-        stack_size = details.stack_size or Sosciencity.Config.building_stacksize,
-        place_result = house_name,
-        pictures = Sosciencity.Config.blueprint_on_belt
-    }
-
-    Tirislib.Tables.set_fields(item_prototype, details.distinctions)
-end
-
-local trait_effect_on_recipe = {
-    [HousingTrait.sheltered] = function(details, house, tech_level)
-        table.insert(details.ingredients, {theme = "housing_sheltered", amount = house.room_count, level = tech_level})
-    end,
-    [HousingTrait.green] = function(details, house, tech_level)
-        -- Not an architectural trait anymore
-        --table.insert(details.ingredients, {theme = "housing_green", amount = house.room_count, level = tech_level})
-    end,
-    [HousingTrait.technical] = function(details, house, tech_level)
-        -- Not an architectural trait anymore
-        --table.insert(details.ingredients, {theme = "housing_technical", amount = house.room_count, level = tech_level})
-    end,
-    [HousingTrait.spacey] = function(details, house, tech_level)
-        -- increase the "building" theme amount
-        details.ingredients[1].amount = details.ingredients[1].amount * 1.25
-    end,
-    [HousingTrait.compact] = function(details, house, tech_level)
-        -- decrease the "building" theme amount
-        details.ingredients[1].amount = details.ingredients[1].amount * 0.8
-    end,
-    [HousingTrait.decorated] = function(details, house, tech_level)
-        -- Not an architectural trait anymore
-        --table.insert(details.ingredients, {theme = "furnishing_decorated", amount = house.room_count, level = tech_level})
-    end,
-    [HousingTrait.simple] = function(details, house, tech_level)
-        -- furnishing is no longer part of the base recipe (handled by runtime upgrades)
-    end,
-    [HousingTrait.individualistic] = function(details, house, tech_level)
-        details.energy_required = details.energy_required * 3
-    end,
-    [HousingTrait.copy_paste] = function(details, house, tech_level)
-        details.energy_required = details.energy_required / 2
-    end,
-    [HousingTrait.pompous] = function(details, house, tech_level)
-        details.ingredients[1].theme = "pompous_building"
-    end,
-    [HousingTrait.cheap] = function(details, house, tech_level)
-        details.ingredients[1].theme = "cheap_building"
-    end,
-    [HousingTrait.tall] = function(details, house, tech_level)
-        table.insert(details.ingredients, {theme = "tall_building_structure", amount = house.room_count, level = tech_level})
-    end,
-    [HousingTrait.low] = function(details, house, tech_level)
-        -- no idea
-    end
-}
-
-local function create_recipe(house_name, house, details)
-    local tech_level = details.tech_level
-
-    local recipe_details = {
-        results = {
-            {type = "item", name = house_name, amount = 1}
-        },
-        ingredients = {
-            {theme = "building", amount = house.room_count * 0.5, level = tech_level},
-            {type = "item", name = "architectural-concept", amount = 1}
-        },
-        unlock = unlocks[tech_level],
-        energy_required = house.room_count / 5
-    }
-
-    for _, trait in pairs(house.traits) do
-        trait_effect_on_recipe[trait](recipe_details, house, tech_level)
-    end
-
-    Tirislib.RecipeGenerator.create_from_prototype(recipe_details)
-end
-
-local function create_entity(house_name, house, details)
-    local entity =
-        Tirislib.Entity.create {
-        type = "container",
-        name = house_name,
-        order = get_order(house),
-        icon = "__sosciencity-graphics__/graphics/icon/" .. (details.icon or house_name) .. ".png",
-        icon_size = 64,
-        flags = {"placeable-neutral", "player-creation"},
-        minable = {mining_time = 0.5},
-        max_health = 500,
-        corpse = "small-remnants",
-        open_sound = details.open_sound or {filename = "__base__/sound/metallic-chest-open.ogg", volume = 0.65},
-        close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7},
-        inventory_size = get_inventory_size(house),
-        inventory_type = "with_filters_and_bar",
-        vehicle_impact_sound = {
-            filename = "__base__/sound/car-metal-impact.ogg",
-            volume = 0.65
-        },
-        picture = details.picture,
-        circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
-        circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
-        circuit_wire_max_distance = 13,
-        localised_name = {"entity-name." .. details.main_entity},
-        localised_description = get_localised_description(house_name, house)
-    }:set_size(details.width, details.height)
-
-    if details.main_entity ~= "improvised-hut" then
-        entity:add_mining_result({type = "item", name = details.main_entity, amount = 1})
-    else
-        entity:add_mining_result(
-            {
-                type = "item",
-                name = "lumber",
-                amount_min = 2,
-                amount_max = 5
-            }
-        )
-    end
-end
-
 for house_name, details in pairs(housing_prototype_details) do
-    local house = Housing.values[house_name]
-
-    -- if the main_entity isn't set, then this house is its own
     details.main_entity = details.main_entity or house_name
+    local house_def = Housing.values[house_name] or Housing.values[details.main_entity]
 
-    if details.main_entity == house_name and house_name ~= "improvised-hut" then
-        create_item(house_name, house, details)
-        create_recipe(house_name, house, details)
+    if details.entity_only or details.main_entity ~= house_name then
+        Sosciencity.create_house_entity(house_name, details, house_def)
+    else
+        Sosciencity.create_house(house_name, details, house_def)
     end
-
-    create_entity(house_name, house, details)
-    Sosciencity.Config.add_eei(house_name)
 end
 
 if Sosciencity.Config.DEBUG then

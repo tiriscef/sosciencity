@@ -54,3 +54,4 @@ Tirislib.Entity.create {
         drain = "10kW"
     }
 }:set_size(15, 12):copy_icon_from_item()
+Sosciencity.configure_building("gunfire-hq")

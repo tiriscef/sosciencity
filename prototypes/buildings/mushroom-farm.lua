@@ -79,3 +79,4 @@ Tirislib.Entity.create {
         apparent_volume = 1.5
     }
 }:set_size(5, 5):copy_icon_from_item()
+Sosciencity.configure_building("mushroom-farm")

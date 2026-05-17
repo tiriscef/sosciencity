@@ -55,3 +55,4 @@ Tirislib.Entity.create {
         drain = "0W"
     }
 }:set_size(7, 7):copy_icon_from_item()
+Sosciencity.configure_building("orchid-paradise")

@@ -68,3 +68,4 @@ Tirislib.Entity.create {
         drain = "5kW"
     }
 }:set_size(6, 6):copy_icon_from_item()
+Sosciencity.configure_building("psychology-institute")

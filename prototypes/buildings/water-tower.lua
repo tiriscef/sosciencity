@@ -106,3 +106,4 @@ Tirislib.Entity.create {
     },
     localised_name = {"entity-name.water-tower"}
 }:set_size(size_x, size_y)
+Sosciencity.configure_building("water-tower")

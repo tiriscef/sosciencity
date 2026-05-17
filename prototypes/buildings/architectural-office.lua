@@ -70,3 +70,4 @@ Tirislib.Entity.create {
         drain = "5kW"
     }
 }:set_size(5, 5)
+Sosciencity.configure_building("architectural-office")

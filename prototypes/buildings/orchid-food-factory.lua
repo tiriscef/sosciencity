@@ -73,3 +73,4 @@ Tirislib.Entity.create {
     },
     fluid_boxes_off_when_no_fluid_recipe = true
 }:set_size(24, 6):copy_icon_from_item()
+Sosciencity.configure_building("orchid-food-factory")

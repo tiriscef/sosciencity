@@ -72,3 +72,4 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.25}
     }
 }:set_size(12, 12):copy_icon_from_item()
+Sosciencity.configure_building("salt-pond")

@@ -132,3 +132,4 @@ Tirislib.Entity.create {
     },
     fluid_boxes_off_when_no_fluid_recipe = true
 }:set_size(20, 5)
+Sosciencity.configure_building("industrial-animal-farm")

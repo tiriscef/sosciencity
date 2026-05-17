@@ -86,4 +86,4 @@ Tirislib.Entity.create {
         volume = 2.5
     }
 }:set_size(size_x, size_y)
-Sosciencity.Config.add_eei("nightclub")
+Sosciencity.configure_building("nightclub")

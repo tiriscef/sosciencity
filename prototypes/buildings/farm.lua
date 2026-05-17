@@ -205,3 +205,4 @@ Tirislib.Entity.create {
     },
     localised_name = {"entity-name.farm"}
 }:set_size(15, 7)
+Sosciencity.configure_building("farm")

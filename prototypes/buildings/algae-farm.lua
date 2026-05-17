@@ -107,3 +107,4 @@ Tirislib.Entity.create {
         fade_out_ticks = 20
     }
 }:set_size(9, 3):copy_icon_from_item()
+Sosciencity.configure_building("algae-farm")

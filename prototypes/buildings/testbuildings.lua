@@ -46,7 +46,7 @@ local function create_test_container(name)
         localised_name = full_name
     }:set_size(3, 3)
 
-    Sosciencity.Config.add_eei(full_name)
+    Sosciencity.configure_building(full_name)
 end
 
 create_test_container("composter")
@@ -119,6 +119,8 @@ Tirislib.Entity.create {
     window_bounding_box = Tirislib.Entity.get_selection_box(0, 0),
 }:set_size(3, 3)
 
+Sosciencity.configure_building("test-water-distributer")
+
 local function create_test_assembling_machine(name, categories)
     Tirislib.Item.create {
         type = "item",
@@ -180,8 +182,10 @@ end
 
 create_test_assembling_machine("gene-lab", {"sosciencity-reproductive-gene-lab"})
 create_test_assembling_machine("kitchen-for-all", {"sosciencity-kitchen-for-all"})
+Sosciencity.configure_building("test-kitchen-for-all")
 create_test_assembling_machine("assembling-machine", {"crafting"})
 create_test_assembling_machine("farm", {"sosciencity-farming-annual", "sosciencity-farming-perennial"})
+Sosciencity.configure_building("test-farm")
 
 -- Test farming recipes for integration tests: no unlock so they're enabled by default,
 -- which set_recipe / get_recipe require. Their names are wired into Biology.flora so

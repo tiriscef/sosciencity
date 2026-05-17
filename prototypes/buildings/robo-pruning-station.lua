@@ -53,4 +53,4 @@ Tirislib.Entity.create {
         audible_distance_modifier = 0.75
     }
 }:set_size(5, 3):copy_icon_from_item()
-Sosciencity.Config.add_eei("robo-pruning-station")
+Sosciencity.configure_building("robo-pruning-station")

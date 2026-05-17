@@ -54,3 +54,4 @@ Tirislib.Entity.create {
         drain = "10kW"
     }
 }:set_size(16, 12):copy_icon_from_item()
+Sosciencity.configure_building("foundry-hq")

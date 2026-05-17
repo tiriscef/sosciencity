@@ -9,9 +9,11 @@ require("tirislib.init")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 local DeconstructionCause = require("enums.deconstruction-cause")
+local Building = require("constants.buildings")
 local Housing = require("constants.housing")
 local Castes = require("constants.castes")
 local Food = require("constants.food")
+local DrinkingWater = require("constants.drinking-water")
 
 ---------------------------------------------------------------------------------------------------
 -- << development feature flags >>
@@ -109,6 +111,28 @@ remote.add_interface("sosciencity", {
     --- @param definition table Food definition table (same structure as constants/food.lua entries)
     register_food = function(name, definition)
         Food.values[name] = definition
+    end,
+
+    --- Register or overwrite a house definition.
+    --- @param name string Entity name
+    --- @param definition table House definition table (same structure as constants/housing.lua entries)
+    register_house = function(name, definition)
+        Housing.values[name] = definition
+    end,
+
+    --- Register or overwrite a drinking water definition.
+    --- @param name string Fluid name
+    --- @param definition table Drinking water definition table (same structure as constants/drinking-water.lua entries)
+    register_drinking_water = function(name, definition)
+        DrinkingWater.values[name] = definition
+    end,
+
+    --- Register or overwrite a building definition.
+    --- @param name string Entity name
+    --- @param definition table Building definition table (same structure as constants/buildings.lua entries)
+    register_building = function(name, definition)
+        Building.postprocess(definition)
+        Building.values[name] = definition
     end
 })
 

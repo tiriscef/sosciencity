@@ -55,3 +55,4 @@ Tirislib.Entity.create {
         drain = "0W"
     }
 }:set_size(5, 5):copy_icon_from_item()
+Sosciencity.configure_building("kitchen-for-all")

@@ -12,7 +12,7 @@ local function apply_food_fields(prototype, food_def)
     prototype.infinite = false
     prototype.localised_description = {
         "sosciencity-util.foods",
-        {"item-description." .. prototype.name}, -- 1: description
+        prototype.localised_description or {"item-description." .. prototype.name}, -- 1: description
         {"food-category." .. food_def.food_category}, -- 2: category
         {"food-group." .. food_def.group}, -- 3: group
         Locale.taste_category(food_def.taste_category), -- 4: taste
@@ -50,7 +50,7 @@ end
 
 --- Converts an already-registered item prototype to a food item.
 --- Removes it from data.raw.item and re-registers it as a tool with food fields applied.
---- @param item_name string Name of the item in data.raw.item
+--- @param item_name string Name of the item in data.raw
 --- @param food_def table? Food definition; looked up in constants/food.lua by item_name if nil
 function Sosciencity.make_existing_item_food(item_name, food_def)
     local prototype = data.raw["item"][item_name] or data.raw["tool"][item_name]

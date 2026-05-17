@@ -104,3 +104,4 @@ Tirislib.Entity.create {
     },
     localised_name = {"entity-name.groundwater-pump"}
 }:set_size(3, 3)
+Sosciencity.configure_building("groundwater-pump")
