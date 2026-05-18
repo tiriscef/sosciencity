@@ -139,72 +139,83 @@ remote.add_interface("sosciencity", {
 if DEBUG then
     require("tests.load-tests")
     require("tests.controlstage.load-tests")
+    require("tests.integration.load-tests")
+    local IntegrationHelpers = require("tests.integration.helpers")
+
+    --- Registers an on_nth_tick(1) driver that advances the cursor each tick.
+    --- Deregisters itself and calls on_done with the results string when the run completes.
+    --- @param cursor table Cursor returned by Tirislib.Testing.start_multi_tick_run
+    --- @param on_done function Called with the results string when all tests finish
+    local function drive_multi_tick_run(cursor, on_done)
+        script.on_nth_tick(1, function()
+            if cursor.tick() then
+                script.on_nth_tick(1, nil)
+                on_done(cursor.get_results())
+            end
+        end)
+    end
+
+    --- Prints a warning and returns true if a multi-tick run is already in progress.
+    --- Use as an early-return guard at the top of each test command handler.
+    --- @param player_index integer
+    --- @return boolean blocked
+    local function guard_no_active_run(player_index)
+        if Tirislib.Testing.is_multi_tick_run_active() then
+            game.get_player(player_index).print("A test run is already in progress.")
+            return true
+        end
+        return false
+    end
 
     commands.add_command(
         "sosciencity-tests",
         "",
         function(input)
-            local results
+            if guard_no_active_run(input.player_index) then return end
             local group = input.parameter
-            if group then
-                results = Tirislib.Testing.run_group_suite(group, true)
-            else
-                results = Tirislib.Testing.run_all_except_group("integration", true)
-            end
-
-            game.print(results)
-            log(results)
-            helpers.write_file("test-results.txt", results)
+            local filter = group
+                and function(tc) return tc.groups[group] end
+                or function(tc) return not tc.groups["integration"] end
+            local cursor = Tirislib.Testing.start_multi_tick_run(filter)
+            drive_multi_tick_run(cursor, function(results)
+                game.print(results)
+                log(results)
+                helpers.write_file("test-results.txt", results)
+            end)
         end
     )
-
-    commands.add_command(
-        "sosciencity-tests-debug",
-        "",
-        function(input)
-            local results
-            local group = input.parameter
-            if group then
-                results = Tirislib.Testing.run_group_suite(group, false)
-            else
-                results = Tirislib.Testing.run_all_except_group("integration", false)
-            end
-
-            game.print(results)
-            log(results)
-            helpers.write_file("test-results.txt", results)
-        end
-    )
-
-    require("tests.integration.load-tests")
-    local IntegrationHelpers = require("tests.integration.helpers")
 
     commands.add_command(
         "sosciencity-integration-tests",
         "",
         function(input)
-            local results
+            if guard_no_active_run(input.player_index) then return end
             local group = input.parameter
-            if group then
-                results = Tirislib.Testing.run_group_suite(group, true)
-            else
-                results = Tirislib.Testing.run_group_suite("integration", true)
-            end
-
-            game.print(results)
-            log(results)
-            helpers.write_file("test-results.txt", results)
-
-            IntegrationHelpers.delete_test_surfaces()
+            local filter = group
+                and function(tc) return tc.groups[group] end
+                or function(tc) return tc.groups["integration"] end
+            local cursor = Tirislib.Testing.start_multi_tick_run(filter)
+            drive_multi_tick_run(cursor, function(results)
+                game.print(results)
+                log(results)
+                helpers.write_file("test-results.txt", results)
+                IntegrationHelpers.delete_test_surfaces()
+            end)
         end
     )
 
     remote.add_interface("sosciencity_tests", {
         run = function()
-            local results = Tirislib.Testing.run_all(true)
-            log(results)
-            helpers.write_file("test-results.txt", results)
-            IntegrationHelpers.delete_test_surfaces()
+            if Tirislib.Testing.is_multi_tick_run_active() then
+                log("A test run is already in progress.")
+                return
+            end
+            local cursor = Tirislib.Testing.start_multi_tick_run(nil)
+            drive_multi_tick_run(cursor, function(results)
+                log(results)
+                helpers.write_file("test-results.txt", results)
+                IntegrationHelpers.delete_test_surfaces()
+            end)
         end
     })
 end

@@ -52,6 +52,11 @@ end
 -- Active results context, set during a test run
 local active_results = nil
 
+-- Multi tick runner state
+local pending_continuation = nil
+local pending_poll = nil
+local multi_tick_runner_active = false
+
 ---------------------------------------------------------------------------------------------------
 -- << logging >>
 
@@ -104,6 +109,19 @@ local function log_failed_assert(results, message)
     results.failed_asserts[#results.failed_asserts + 1] = {
         test_case = results.current_test,
         error_message = string.format("%s, line %d:\n%s", info.source, info.currentline, message)
+    }
+end
+
+--- Records a failed assert with a pre-captured source location.
+--- Use when the call site cannot be recovered from the stack at failure time (e.g. async continuations).
+--- @param results table The results context
+--- @param message string The failure description
+--- @param source string The source file captured at registration time
+--- @param line integer The line number captured at registration time
+local function log_failed_assert_at(results, message, source, line)
+    results.failed_asserts[#results.failed_asserts + 1] = {
+        test_case = results.current_test,
+        error_message = string.format("%s, line %d:\n%s", source, line, message)
     }
 end
 
@@ -186,59 +204,45 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << running the test cases >>
 
---- Runs a single test case, handling setup, teardown, and exception suppression.
+--- Runs a single test case, handling setup, teardown, and error capture.
 --- @param test_case table The test case to run
 --- @param results table The results context
---- @param suppress_exceptions boolean Whether to catch errors via xpcall
-local function run_test(test_case, results, suppress_exceptions)
+local function run_test(test_case, results)
     results.current_test = test_case.name
     log_test_execution(results)
 
-    if suppress_exceptions then
-        -- Run setup if present
-        if test_case.setup then
-            local ok, err = xpcall(test_case.setup, debug.traceback)
-            if not ok then
-                log_failed_test(results, test_case, "Setup failed:\n" .. err)
-                return
-            end
-        end
-
-        local ok, err = xpcall(test_case.fn, debug.traceback)
+    if test_case.setup then
+        local ok, err = xpcall(test_case.setup, debug.traceback)
         if not ok then
-            log_failed_test(results, test_case, err)
+            log_failed_test(results, test_case, "Setup failed:\n" .. err)
+            return
         end
+    end
 
-        -- Run teardown even on failure
-        if test_case.teardown then
-            local tok, terr = xpcall(test_case.teardown, debug.traceback)
-            if not tok then
-                log_failed_test(results, test_case, "Teardown failed:\n" .. terr)
-            end
-        end
-    else
-        if test_case.setup then
-            test_case.setup()
-        end
-        test_case.fn()
-        if test_case.teardown then
-            test_case.teardown()
+    local ok, err = xpcall(test_case.fn, debug.traceback)
+    if not ok then
+        log_failed_test(results, test_case, err)
+    end
+
+    if test_case.teardown then
+        local tok, terr = xpcall(test_case.teardown, debug.traceback)
+        if not tok then
+            log_failed_test(results, test_case, "Teardown failed:\n" .. terr)
         end
     end
 end
 
 --- Runs all the test cases in the given group.
 --- @param group_name string The group to run
---- @param suppress_exceptions boolean Whether to catch errors via xpcall
 --- @return string summary The formatted test results
 --- @return table results The structured results context
-function Tirislib.Testing.run_group_suite(group_name, suppress_exceptions)
+function Tirislib.Testing.run_group_suite(group_name)
     local results = new_results()
     active_results = results
 
     for _, test_case in pairs(tests) do
         if test_case.groups[group_name] then
-            run_test(test_case, results, suppress_exceptions)
+            run_test(test_case, results)
         end
     end
 
@@ -247,15 +251,14 @@ function Tirislib.Testing.run_group_suite(group_name, suppress_exceptions)
 end
 
 --- Runs all test cases.
---- @param suppress_exceptions boolean Whether to catch errors via xpcall
 --- @return string summary The formatted test results
 --- @return table results The structured results context
-function Tirislib.Testing.run_all(suppress_exceptions)
+function Tirislib.Testing.run_all()
     local results = new_results()
     active_results = results
 
     for _, test_case in pairs(tests) do
-        run_test(test_case, results, suppress_exceptions)
+        run_test(test_case, results)
     end
 
     active_results = nil
@@ -264,16 +267,15 @@ end
 
 --- Runs all test cases except those belonging to the given group.
 --- @param excluded_group string The group name to exclude
---- @param suppress_exceptions boolean Whether to catch errors via xpcall
 --- @return string summary The formatted test results
 --- @return table results The structured results context
-function Tirislib.Testing.run_all_except_group(excluded_group, suppress_exceptions)
+function Tirislib.Testing.run_all_except_group(excluded_group)
     local results = new_results()
     active_results = results
 
     for _, test_case in pairs(tests) do
         if not test_case.groups[excluded_group] then
-            run_test(test_case, results, suppress_exceptions)
+            run_test(test_case, results)
         end
     end
 
@@ -519,4 +521,206 @@ function Assert.contains(tbl, value, message)
         log_failed_assert(results,
             message or string.format("Expected table to contain %s", get_string_representation(value)))
     end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << multi-tick runner >>
+
+--- Returns whether a multi-tick test run is currently in progress.
+--- @return boolean
+function Tirislib.Testing.is_multi_tick_run_active()
+    return multi_tick_runner_active
+end
+
+--- Registers a continuation to run after n game ticks have passed.
+--- Can only be called from within a test that is running under start_multi_tick_run.
+--- Nest the next call inside the continuation fn to chain multiple waits.
+--- @param n integer Number of ticks to let pass before calling fn (must be >= 1)
+--- @param fn function The continuation to run
+function Tirislib.Testing.let_n_ticks_pass(n, fn)
+    assert(n >= 1, "let_n_ticks_pass requires n >= 1")
+    if not multi_tick_runner_active then
+        error("let_n_ticks_pass requires the multi-tick runner", 2)
+    end
+    if pending_continuation or pending_poll then
+        error("let_n_ticks_pass called alongside another wait in the same test phase - nest the next call inside a continuation", 2)
+    end
+    pending_continuation = {n = n, fn = fn}
+end
+
+--- Registers a continuation to run after exactly one game tick has passed.
+--- Shorthand for let_n_ticks_pass(1, fn).
+--- @param fn function The continuation to run
+function Tirislib.Testing.let_one_tick_pass(fn)
+    Tirislib.Testing.let_n_ticks_pass(1, fn)
+end
+
+--- Polls condition_fn each tick until it returns true, then calls fn.
+--- If timeout_ticks ticks pass without the condition becoming true, the test fails.
+--- Can only be called from within a test that is running under start_multi_tick_run.
+--- @param condition_fn function Polled each tick; run is considered done when this returns true
+--- @param timeout_ticks integer Maximum number of ticks to wait before failing
+--- @param fn function The continuation to run when condition_fn returns true
+function Tirislib.Testing.wait_until(condition_fn, timeout_ticks, fn)
+    if not multi_tick_runner_active then
+        error("wait_until requires the multi-tick runner", 2)
+    end
+    if pending_continuation or pending_poll then
+        error("wait_until called alongside another wait in the same test phase", 2)
+    end
+    local info = debug.getinfo(2, "Sl")
+    pending_poll = {
+        condition = condition_fn,
+        remaining = timeout_ticks,
+        timeout = timeout_ticks,
+        fn = fn,
+        source = info.source,
+        line = info.currentline
+    }
+end
+
+--- Starts a multi-tick test run and returns a cursor.
+--- Drive the run by calling cursor.tick() once per game tick until it returns true,
+--- then retrieve results with cursor.get_results().
+--- @param test_filter function? Predicate (test_case -> bool) to select tests. nil runs all tests.
+--- @return table cursor
+function Tirislib.Testing.start_multi_tick_run(test_filter)
+    assert(not multi_tick_runner_active, "A multi-tick test run is already in progress")
+
+    local results = new_results()
+    active_results = results
+    multi_tick_runner_active = true
+
+    local test_index = 0
+    local current_test_case = nil
+    local current_fn = nil
+    local wait_ticks = 0
+    local current_poll = nil
+
+    local function protected_call(fn)
+        pending_continuation = nil
+        pending_poll = nil
+        local ok, err = xpcall(fn, debug.traceback)
+        local cont = pending_continuation
+        local poll = pending_poll
+        pending_continuation = nil
+        pending_poll = nil
+        return ok, err, cont, poll
+    end
+
+    local function finish_test()
+        if current_test_case and current_test_case.teardown then
+            local ok, err = xpcall(current_test_case.teardown, debug.traceback)
+            if not ok then
+                log_failed_test(results, current_test_case, "Teardown failed:\n" .. err)
+            end
+        end
+        current_test_case = nil
+        current_fn = nil
+        wait_ticks = 0
+        current_poll = nil
+    end
+
+    local function get_next_test()
+        while true do
+            test_index = test_index + 1
+            local tc = tests[test_index]
+            if tc == nil then
+                return nil
+            end
+            if test_filter == nil or test_filter(tc) then
+                return tc
+            end
+        end
+    end
+
+    local cursor = {}
+
+    --- Advances the test run by one tick. Returns true when all tests have completed.
+    --- @return boolean done
+    function cursor.tick()
+        if current_poll then
+            local ok, result = xpcall(current_poll.condition, debug.traceback)
+            if not ok then
+                log_failed_test(results, current_test_case, "wait_until condition errored:\n" .. result)
+                current_poll = nil
+                finish_test()
+            elseif result then
+                current_fn = current_poll.fn
+                current_poll = nil
+            elseif current_poll.remaining > 0 then
+                current_poll.remaining = current_poll.remaining - 1
+                return false
+            else
+                log_assert_execution(results)
+                log_failed_assert_at(
+                    results,
+                    string.format("wait_until: condition not satisfied after %d ticks", current_poll.timeout),
+                    current_poll.source,
+                    current_poll.line
+                )
+                current_poll = nil
+                finish_test()
+            end
+        end
+
+        if wait_ticks > 0 then
+            wait_ticks = wait_ticks - 1
+            return false
+        end
+
+        while true do
+            if current_fn then
+                local ok, err, cont, poll = protected_call(current_fn)
+                current_fn = nil
+
+                if not ok then
+                    log_failed_test(results, current_test_case, err)
+                    finish_test()
+                elseif cont then
+                    wait_ticks = cont.n - 1
+                    current_fn = cont.fn
+                    return false
+                elseif poll then
+                    current_poll = poll
+                    current_fn = poll.fn
+                    return false
+                else
+                    finish_test()
+                end
+            else
+                current_test_case = get_next_test()
+                if current_test_case == nil then
+                    multi_tick_runner_active = false
+                    active_results = nil
+                    return true
+                end
+
+                results.current_test = current_test_case.name
+                log_test_execution(results)
+
+                if current_test_case.setup then
+                    local ok, err = xpcall(current_test_case.setup, debug.traceback)
+                    if not ok then
+                        log_failed_test(results, current_test_case, "Setup failed:\n" .. err)
+                        current_test_case = nil
+                        -- teardown intentionally skipped (mirrors sync runner)
+                    else
+                        current_fn = current_test_case.fn
+                    end
+                else
+                    current_fn = current_test_case.fn
+                end
+            end
+        end
+    end
+
+    --- Returns the formatted results string and the raw results table.
+    --- @return string summary
+    --- @return table results
+    function cursor.get_results()
+        return get_logged_results(results), results
+    end
+
+    return cursor
 end
