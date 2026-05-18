@@ -46,7 +46,7 @@ end
 
 function Inhabitants.load_housing_management()
     add_to_homeless_pool = Inhabitants.add_to_homeless_pool
-    hospital_can_treat = Entity.hospital_can_treat
+    hospital_can_treat = Entity.Hospital.can_treat
     get_moving_downtime_factor = Technologies.get_moving_downtime_factor
 end
 

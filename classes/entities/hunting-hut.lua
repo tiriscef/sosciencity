@@ -52,8 +52,6 @@ local function get_hunting_competition(entry)
     local effective_count = same_count + different_recipe_weight * other_count
     return (effective_count + 1) ^ (-0.35), same_count, other_count
 end
-Entity.get_hunting_competition = get_hunting_competition
-
 local function update_hunting_hut(entry)
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)

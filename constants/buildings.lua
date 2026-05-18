@@ -612,6 +612,9 @@ Building.values = {
         },
         eei = true
     },
+    ["test-animal-farm"] = {
+        type = Type.animal_farm
+    },
     ["test-farm"] = {
         type = Type.farm,
         open_environment = true,
@@ -627,6 +630,11 @@ Building.values = {
         type = Type.pruning_station,
         range = 10,
         slots = 5,
+        eei = true
+    },
+    ["test-waste-dump"] = {
+        type = Type.waste_dump,
+        capacity = 50,
         eei = true
     }
 }

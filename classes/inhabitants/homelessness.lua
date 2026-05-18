@@ -103,7 +103,7 @@ Inhabitants.try_occupy_empty_housing = try_occupy_empty_housing
 local function create_improvised_huts()
     for caste_id, group in pairs(storage.homeless) do
         for _, market in Register.iterate_type(Type.market) do
-            if not Entity.market_has_food(market) then
+            if not Entity.Market.has_food(market) then
                 goto continue
             end
 

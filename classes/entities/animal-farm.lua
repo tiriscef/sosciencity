@@ -10,7 +10,8 @@ local function update_animal_farm(entry)
     local entity = entry[EK.entity]
     local recipe = entity.get_recipe()
     local houses_animals =
-        recipe and entity.status == defines.entity_status.working and
+        recipe ~= nil and
+        entity.status == defines.entity_status.working and
         Tirislib.String.begins_with(recipe.name, "sos-husbandry-")
     local housed_in_the_past = entry[EK.houses_animals]
 

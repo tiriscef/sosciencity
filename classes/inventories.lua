@@ -100,7 +100,7 @@ local get_combined_contents = Inventories.get_combined_contents
 --- Saves the contents of this entry's entity.
 --- @param entry Entry
 function Inventories.cache_contents(entry)
-    entry[EK.inventory_contents] = get_chest_inventory(entry).get_contents()
+    entry[EK.inventory_contents] = Inventories.get_contents(get_chest_inventory(entry))
 end
 
 --- Tries to insert the given count of the given item into the inventory and adds the inserted items to the production statistics.
@@ -189,7 +189,7 @@ function Inventories.spill_items(entry, item, amount, suppress_logging)
     end
 
     local entity = entry[EK.entity]
-    entity.surface.spill_item_stack(entity.position, {name = item, count = amount})
+    entity.surface.spill_item_stack {position = entity.position, stack = {name = item, count = amount}}
 
     if not suppress_logging then
         log_item(item, amount)
@@ -209,7 +209,7 @@ function Inventories.spill_item_range(entry, items, suppress_logging)
 
     for item, count in pairs(items) do
         if count > 0 then
-            surface.spill_item_stack(position, {name = item, count = count})
+            surface.spill_item_stack {position = position, stack = {name = item, count = count}}
         end
     end
 
@@ -353,7 +353,7 @@ function Inventories.output_eggs(entry, count)
     for _, egg_collector in all_neighbors_of_type(entry, Type.egg_collector) do
         if is_active(egg_collector) then
             local inventory = get_chest_inventory(egg_collector)
-            inserted = inserted - try_insert(inventory, InhabitantsConstants.egg_fertile, count - inserted)
+            inserted = inserted + try_insert(inventory, InhabitantsConstants.egg_fertile, count - inserted)
 
             if count - inserted < 0.001 then
                 return inserted
@@ -363,7 +363,7 @@ function Inventories.output_eggs(entry, count)
 
     local house_inventory = get_chest_inventory(entry)
     local already_inside = house_inventory.get_item_count(InhabitantsConstants.egg_fertile)
-    return try_insert(house_inventory, InhabitantsConstants.egg_fertile, min(20 - already_inside, count))
+    return try_insert(house_inventory, InhabitantsConstants.egg_fertile, min(20 - already_inside, count - inserted))
 end
 
 --- Removes eggs from the given entry's inventory.

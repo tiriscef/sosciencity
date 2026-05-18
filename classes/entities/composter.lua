@@ -12,6 +12,9 @@ local floor = math.floor
 local min = math.min
 local Utils = Tirislib.Utils
 
+Entity.Composter = {}
+local Composter = Entity.Composter
+
 ---------------------------------------------------------------------------------------------------
 -- << composter >>
 
@@ -47,7 +50,7 @@ local function analyze_composter_inventory(content)
 
     return item_count * item_type_count * composting_coefficient, compostable_items
 end
-Entity.analyze_composter_inventory = analyze_composter_inventory
+Composter.analyze_inventory = analyze_composter_inventory
 
 local function compostify_items(inventory, count, compostable_items, entry, mold_amount)
     Tirislib.Arrays.shuffle(compostable_items)

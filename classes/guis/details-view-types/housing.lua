@@ -1437,7 +1437,7 @@ if DEV_MODE then
         local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
         Tirislib.Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
         for _, hospital in pairs(hospitals) do
-            if Entity.try_blood_donation(hospital, entry) then
+            if Entity.Hospital.try_blood_donation(hospital, entry) then
                 player.print({"city-view.debug-housing-blood-donation-done"})
                 return
             end

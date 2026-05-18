@@ -62,6 +62,9 @@ create_test_container("egg-collector")
 create_test_container("dumpster")
 create_test_container("fertilization-station")
 create_test_container("pruning-station")
+create_test_container("waste-dump")
+create_test_container("ember-manufactory")
+create_test_container("orchid-manufactory")
 
 -- test-water-distributer must be a storage-tank so it can hold fluid for entity.remove_fluid
 Tirislib.Item.create {
@@ -121,7 +124,14 @@ Tirislib.Entity.create {
 
 Sosciencity.configure_building("test-water-distributer")
 
-local function create_test_assembling_machine(name, categories)
+local electric_energy_source = {
+    type = "electric",
+    usage_priority = "secondary-input",
+    emissions_per_minute = {pollution = 1},
+    drain = "0W"
+}
+
+local function create_test_assembling_machine(name, categories, energy_source)
     Tirislib.Item.create {
         type = "item",
         name = "test-" .. name,
@@ -170,12 +180,7 @@ local function create_test_assembling_machine(name, categories)
         crafting_speed = 1,
         crafting_categories = categories,
         energy_usage = "50kW",
-        energy_source = {
-            type = "electric",
-            usage_priority = "secondary-input",
-            emissions_per_minute = {pollution = 1},
-            drain = "0W"
-        },
+        energy_source = energy_source or electric_energy_source,
         localised_name = "test-" .. name
     }:set_size(3, 3)
 end
@@ -186,6 +191,18 @@ Sosciencity.configure_building("test-kitchen-for-all")
 create_test_assembling_machine("assembling-machine", {"crafting"})
 create_test_assembling_machine("farm", {"sosciencity-farming-annual", "sosciencity-farming-perennial"})
 Sosciencity.configure_building("test-farm")
+
+-- Void energy so entity.status == working as soon as a recipe is set, without needing
+-- a power network on the test surface.
+create_test_assembling_machine("animal-farm", {"sosciencity-animal-farming"}, {type = "void"})
+Sosciencity.configure_building("test-animal-farm")
+
+-- No ingredients so the machine is always working once the recipe is set.
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "sos-husbandry-null",
+    category = "sosciencity-animal-farming",
+    results = {{type = "item", name = "raw-fish", amount = 1}}
+}
 
 -- Test farming recipes for integration tests: no unlock so they're enabled by default,
 -- which set_recipe / get_recipe require. Their names are wired into Biology.flora so
@@ -200,6 +217,3 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-farming-perennial",
     results = {{type = "item", name = "olive", amount = 1}}
 }
-
-create_test_container("ember-manufactory")
-create_test_container("orchid-manufactory")

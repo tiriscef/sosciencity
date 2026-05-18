@@ -1,4 +1,4 @@
--- TODO: graphics, runtime behavior (neighborhood diversity bonus)
+-- TODO: graphics
 
 Tirislib.Item.create {
     type = "item",

@@ -3,9 +3,12 @@ local Type = require("enums.type")
 
 local Food = require("constants.food")
 
-function Entity.market_has_food(entry)
-    for _, item_stack in pairs(entry[EK.inventory_contents]) do
-        if Food.values[item_stack.name] then
+Entity.Market = {}
+local Market = Entity.Market
+
+function Market.has_food(entry)
+    for name in pairs(entry[EK.inventory_contents]) do
+        if Food.values[name] then
             return true
         end
     end

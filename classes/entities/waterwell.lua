@@ -19,8 +19,6 @@ local function get_waterwell_competition_performance(entry)
     return near_count ^ (-0.45), near_count - 1
 end
 
-Entity.get_waterwell_competition_performance = get_waterwell_competition_performance
-
 local function get_clockwork_boost()
     return 1 + max(0, Entity.caste_bonuses[Type.clockwork]) / 100
 end

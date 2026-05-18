@@ -22,10 +22,14 @@ local coin_flips_overcrit = Utils.coin_flips_overcrit
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor
 
+--- Static class for hospital-specific mechanics.
+Entity.Hospital = {}
+local Hospital = Entity.Hospital
+
 --- Returns the LuaInventory of the given hospital and all hospital complement buildings connected to it.
 --- @param entry Entry hospital
 --- @return LuaInventory[]
-function Entity.get_hospital_inventories(entry)
+function Hospital.get_inventories(entry)
     local ret = {get_chest_inventory(entry)}
 
     for _, _type in pairs(TypeGroup.hospital_complements) do
@@ -68,7 +72,7 @@ end
 --- @param hospital Entry
 --- @param disease_id integer
 --- @return boolean
-function Entity.hospital_can_treat(hospital, disease_id)
+function Hospital.can_treat(hospital, disease_id)
     local disease = disease_values[disease_id]
     if not disease.is_treatable then return false end
     if hospital[EK.treatment_permissions][disease_id] == false then return false end
@@ -172,12 +176,12 @@ local function update_hospital(entry, delta_ticks)
     local unit_number = entry[EK.unit_number]
     local slots = entry[EK.slots]
 
-    -- validate existing slots: remove done/stale blood donation slots;
+    -- validate existing slots: remove blood donation slots whose target is gone;
     -- release disease slots whose target is gone, disease resolved, or treatment conditions changed
     for i = #slots, 1, -1 do
         local slot = slots[i]
         if slot.blood_donation then
-            if slot.done or not try_get(slot.uid) then
+            if not try_get(slot.uid) then
                 table.remove(slots, i)
             end
         else
@@ -221,7 +225,7 @@ local function update_hospital(entry, delta_ticks)
     end
 
     if performance > 0 then
-        local inventories = Entity.get_hospital_inventories(entry)
+        local inventories = Hospital.get_inventories(entry)
 
         -- claim new (housing, disease) pairs with upfront cure-item consumption
         if #slots < effective_slots then
@@ -239,7 +243,7 @@ local function update_hospital(entry, delta_ticks)
                         if #slots >= effective_slots then break end
                         if disease_id == HEALTHY or count == 0 then goto next_disease end
 
-                        if not Entity.hospital_can_treat(entry, disease_id) then goto next_disease end
+                        if not Hospital.can_treat(entry, disease_id) then goto next_disease end
                         local disease = disease_values[disease_id]
 
                         local current_claims = (claims and claims[disease_id]) and #claims[disease_id] or 0
@@ -275,20 +279,30 @@ local function update_hospital(entry, delta_ticks)
             end
         end
 
-        -- treat each claimed slot
+        -- treat each claimed slot; prune completed/cured slots immediately so capacity is
+        -- freed within this update rather than waiting for the next validation pass
         if #slots > 0 then
             local work_per_slot = performance * delta_ticks * building_details.speed
             local statistics = entry[EK.treated]
 
-            for _, slot in pairs(slots) do
+            for i = #slots, 1, -1 do
+                local slot = slots[i]
                 if slot.blood_donation then
                     if not slot.done then
                         process_blood_donation_slot(entry, slot, inventories, work_per_slot)
+                    end
+                    if slot.done then
+                        table.remove(slots, i)
                     end
                 else
                     local housing = try_get(slot.uid)
                     if housing then
                         treat_disease_slot(housing, slot, inventories, work_per_slot, statistics)
+                        local disease_count = housing[EK.diseases][slot.disease_id]
+                        if not disease_count or disease_count == 0 then
+                            release_claim(housing, slot.disease_id, unit_number)
+                            table.remove(slots, i)
+                        end
                     end
                 end
             end
@@ -344,13 +358,13 @@ Entity.set_performance_report_builder(Type.improvised_hospital, build_hospital_r
 --- @param hospital Entry
 --- @param housing Entry
 --- @return boolean
-function Entity.try_blood_donation(hospital, housing)
+function Hospital.try_blood_donation(hospital, housing)
     if not hospital[EK.active] then return false end
 
     local free_slots = get_building_details(hospital).slots - #hospital[EK.slots]
     if free_slots <= hospital[EK.blood_donation_threshold] then return false end
 
-    local inventories = Entity.get_hospital_inventories(hospital)
+    local inventories = Hospital.get_inventories(hospital)
     local contents = Inventories.get_combined_contents(inventories)
     local cost = InhabitantsConstants.blood_donation_medical_instruments_cost
 

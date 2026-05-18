@@ -345,7 +345,7 @@ local function update_blood_donations(entry, delta_ticks)
         Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
 
         for _, hospital in pairs(hospitals) do
-            if Entity.try_blood_donation(hospital, entry) then
+            if Entity.Hospital.try_blood_donation(hospital, entry) then
                 donations = donations - 1
                 if donations < 1 then
                     return

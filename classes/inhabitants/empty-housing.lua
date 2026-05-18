@@ -30,7 +30,7 @@ local function update_empty_house(entry)
 
     local has_food = false
     for _, market in Neighborhood.iterate_type(entry, Type.market) do
-        if Entity.market_has_food(market) then
+        if Entity.Market.has_food(market) then
             has_food = true
             break
         end

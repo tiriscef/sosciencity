@@ -174,7 +174,7 @@ Entity.check_is_active = is_active
 ---------------------------------------------------------------------------------------------------
 -- << circuit stuff >>
 
-local circuit_wires = {defines.wire_type.red, defines.wire_type.green}
+local circuit_wires = {defines.wire_connector_id.circuit_red, defines.wire_connector_id.circuit_green}
 Entity.circuit_wires = circuit_wires
 
 local caste_signals = {
@@ -245,6 +245,24 @@ Entity.remove_active_machine_status = remove_active_machine_status
 
 ---------------------------------------------------------------------------------------------------
 -- << shared utilities >>
+
+--- Returns the number of water tiles in the building's area, using a cached value when the tile layout hasn't changed.
+--- @param entry Entry
+--- @param building_details table
+--- @return integer
+function Entity.get_water_tiles(entry, building_details)
+    local cached_value = entry[EK.water_tiles]
+    if not cached_value or storage.last_tile_update > entry[EK.last_update] then
+        local entity = entry[EK.entity]
+        local area = Utils.get_range_bounding_box(entity.position, building_details.range)
+        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
+
+        entry[EK.water_tiles] = water_tiles
+        return water_tiles
+    else
+        return cached_value
+    end
+end
 
 --- Manipulates the spoil_ticks of all Food item stacks in the given inventory to simulate a slower spoil rate.
 --- @param inventory LuaInventory

@@ -35,15 +35,6 @@ local function filter_count(inventory)
     return count
 end
 
-local function has_filter_for(inventory, item_name)
-    for i = 1, #inventory do
-        local filter = inventory.get_filter(i)
-        if filter and filter.name == item_name then
-            return true
-        end
-    end
-    return false
-end
 
 local function assert_all_consumed(entry, items)
     local inv = chest_inv(entry)
@@ -61,7 +52,7 @@ end
 
 local function assert_has_filters_for_cost(inventory, items)
     for _, item in pairs(items) do
-        Assert.is_true(has_filter_for(inventory, item.name), "proxy should include " .. item.name)
+        Assert.is_true(Helpers.has_filter_for(inventory, item.name), "proxy should include " .. item.name)
     end
 end
 

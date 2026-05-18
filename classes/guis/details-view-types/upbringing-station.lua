@@ -11,6 +11,7 @@ local type_definitions = require("constants.types").definitions
 
 local castes = Castes.values
 local Entity = Entity
+local Upbringing = Entity.Upbringing
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Register = Register
@@ -51,7 +52,7 @@ local function update_classes_flow(entry, classes_flow)
     local at_least_one = false
 
     for index, class in pairs(classes) do
-        local progress = math.min((current_tick - class[1]) / Entity.upbringing_time, 1)
+        local progress = math.min((current_tick - class[1]) / Upbringing.time, 1)
         local count = Array.sum(class[2])
 
         local card = classes_flow.add {type = "frame", name = "class-" .. index, direction = "vertical", style = "sosciencity_card_frame"}
@@ -90,7 +91,7 @@ local function update_upbringing_station(container, entry, player_id)
     update_upbringing_mode_radiobuttons(entry, mode_flow)
 
     local probability_flow = Datalist.get_kv_value_element(building_data, "probabilities")
-    local probabilities = Entity.get_upbringing_expectations(entry[EK.education_mode])
+    local probabilities = Upbringing.get_expectations(entry[EK.education_mode])
     local at_least_one = false
 
     for _, caste_id in pairs(breedable_castes) do
@@ -208,7 +209,7 @@ if DEV_MODE then
             local classes = entry[EK.classes]
             local completed = 0
             for i = #classes, 1, -1 do
-                Entity.finish_upbringing_class(entry, classes[i], entry[EK.education_mode])
+                Upbringing.finish_class(entry, classes[i], entry[EK.education_mode])
                 classes[i] = nil
                 completed = completed + 1
             end

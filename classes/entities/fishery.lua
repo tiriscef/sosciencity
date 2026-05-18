@@ -11,25 +11,11 @@ local get_building_details = Buildings.get
 local evaluate_workforce = Inhabitants.evaluate_workforce
 local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
-local Utils = Tirislib.Utils
+local get_water_tiles = Entity.get_water_tiles
 local min = math.min
 
-local function get_water_tiles(entry, building_details)
-    local cached_value = entry[EK.water_tiles]
-    if not cached_value or storage.last_tile_update > entry[EK.last_update] then
-        local entity = entry[EK.entity]
-        local position = entity.position
-        local area = Utils.get_range_bounding_box(position, building_details.range)
-        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
-
-        entry[EK.water_tiles] = water_tiles
-        return water_tiles
-    else
-        -- nothing could possibly have changed, return the cached value
-        return cached_value
-    end
-end
-Entity.get_water_tiles = get_water_tiles
+Entity.Fishery = {}
+local Fishery = Entity.Fishery
 
 local different_recipe_weight = 0.3
 
@@ -54,7 +40,7 @@ local function get_fishing_competition(entry)
     local effective_count = same_count + different_recipe_weight * other_count
     return (effective_count + 1) ^ (-0.35), same_count, other_count
 end
-Entity.get_fishing_competition = get_fishing_competition
+Fishery.get_fishing_competition = get_fishing_competition
 
 local function update_fishery(entry)
     local building_details = get_building_details(entry)

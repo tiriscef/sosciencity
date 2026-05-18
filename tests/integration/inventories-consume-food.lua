@@ -139,3 +139,106 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << count_calories >>
+
+Tirislib.Testing.add_test_case(
+    "count_calories returns 0 for an empty inventory",
+    "integration|integration.inventories",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local inventory = Inventories.get_chest_inventory(entry)
+
+        Assert.equals(Inventories.count_calories(inventory), 0, "empty inventory should have 0 calories")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "count_calories returns the correct total for a fresh full stack",
+    "integration|integration.inventories",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local inventory = Inventories.get_chest_inventory(entry)
+        inventory.insert {name = "potato", count = 5}
+
+        Assert.equals(
+            Inventories.count_calories(inventory),
+            5 * Food.values["potato"].calories,
+            "fresh stack should have count x calories"
+        )
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "count_calories uses the durability of the top item rather than assuming it is full",
+    "integration|integration.inventories",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local inventory = Inventories.get_chest_inventory(entry)
+        inventory.insert {name = "potato", count = 3}
+        inventory.find_item_stack("potato").drain_durability(100) -- partially consume the top item
+
+        local result = Inventories.count_calories(inventory)
+        -- 2 full items + 1 partially consumed item; must be less than 3 full items
+        Assert.greater_than(result, 2 * Food.values["potato"].calories, "should account for the partial top item")
+        Assert.less_than(result, 3 * Food.values["potato"].calories, "should be less than 3 full items worth")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "count_calories ignores non-food items",
+    "integration|integration.inventories",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local inventory = Inventories.get_chest_inventory(entry)
+        inventory.insert {name = "iron-plate", count = 10}
+
+        Assert.equals(Inventories.count_calories(inventory), 0, "non-food items should not contribute calories")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << consume_calories >>
+
+Tirislib.Testing.add_test_case(
+    "consume_calories returns the requested amount when enough food is available",
+    "integration|integration.inventories",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local inventory = Inventories.get_chest_inventory(entry)
+        inventory.insert {name = "potato", count = 10}
+        local request = 2 * Food.values["potato"].calories
+
+        local consumed = Inventories.consume_calories(inventory, request)
+        Assert.equals(consumed, request, "should return exactly the requested amount when satisfied")
+        Assert.less_than(inventory.get_item_count("potato"), 10, "some potatoes should have been consumed")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "consume_calories returns only what was available when food runs short",
+    "integration|integration.inventories",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local inventory = Inventories.get_chest_inventory(entry)
+        inventory.insert {name = "potato", count = 1}
+        local one_potato = Food.values["potato"].calories
+
+        local consumed = Inventories.consume_calories(inventory, 3 * one_potato)
+        Assert.equals(consumed, one_potato, "should return only what was available")
+        Assert.equals(inventory.get_item_count("potato"), 0, "all food should be consumed")
+    end,
+    setup,
+    teardown
+)

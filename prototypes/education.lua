@@ -6,7 +6,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "medical-report", amount = 10},
         {type = "item", name = "surgery-instruments", amount = 10},
-        {type = "item", name = "bandage", amount = 10}
+        {type = "item", name = "bandage", amount = 10},
+        {type = "item", name = "anatomical-study", amount = 5}
     },
     results = {},
     icon = "__sosciencity-graphics__/graphics/plasma-caste.png",

@@ -171,7 +171,7 @@ local function remove_waste_dump(entry, cause, event)
     end
 
     if cause == DeconstructionCause.destroyed then
-        Inventories.spill_item_range(entry, "humus", true)
+        Inventories.spill_item_range(entry, entry[EK.stored_garbage], true)
     end
     if cause == DeconstructionCause.mined then
         for item, count in pairs(entry[EK.stored_garbage]) do

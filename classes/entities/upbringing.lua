@@ -21,10 +21,17 @@ local max = math.max
 -- [1]: tick of creation
 -- [2]: table with (item_name, count)-pairs
 
+---Static class for upbringing station mechanics.
+Entity.Upbringing = {}
+local Upbringing = Entity.Upbringing
+
+Upbringing.time = 2 * Time.minute
+local upbringing_time = Upbringing.time
+
 --- Returns the probabilities that new inhabitants will join the breedable castes with the given caste-focus of the upbringing station.
 --- @param mode Type
 --- @return table
-local function get_upbringing_expectations(mode)
+local function get_expectations(mode)
     return Tirislib.LazyLuaq.from(Castes.all)
         :where_key("breedable")
         :where(function(caste) return Technologies.caste_is_researched(caste.type) end)
@@ -37,7 +44,7 @@ local function get_upbringing_expectations(mode)
         :normalize()
         :to_table()
 end
-Entity.get_upbringing_expectations = get_upbringing_expectations
+Upbringing.get_expectations = get_expectations
 
 local function finish_class(entry, class, mode)
     local count = Table.sum(class[2])
@@ -45,7 +52,7 @@ local function finish_class(entry, class, mode)
     local genders = GenderGroup.new()
     local diseases = DiseaseGroup.new(count)
     for egg_name, egg_count in pairs(class[2]) do
-        GenderGroup.merge(genders, Utils.dice_rolls(InhabitantsConstants.egg_data[egg_name], egg_count, 5))
+        GenderGroup.merge(genders, Utils.dice_rolls(InhabitantsConstants.egg_data[egg_name].genders, egg_count, 5))
 
         local birth_defect_count =
             Utils.coin_flips(
@@ -58,7 +65,7 @@ local function finish_class(entry, class, mode)
         end
     end
 
-    local caste_probabilities = get_upbringing_expectations(mode)
+    local caste_probabilities = get_expectations(mode)
     local castes = Utils.dice_rolls(caste_probabilities, count, 20, true)
 
     for caste, caste_count in pairs(castes) do
@@ -81,14 +88,16 @@ local function finish_class(entry, class, mode)
         }
     )
 end
-Entity.finish_upbringing_class = finish_class
+Upbringing.finish_class = finish_class
 
 local function check_circuit_upbringing_station(entry)
     local entity = entry[EK.entity]
+    local has_network = false
 
     for _, wire in pairs(circuit_wires) do
         local circuit_network = entity.get_circuit_network(wire)
         if circuit_network then
+            has_network = true
             for type, signal in pairs(caste_signals) do
                 local value = circuit_network.get_signal(signal)
 
@@ -99,10 +108,13 @@ local function check_circuit_upbringing_station(entry)
             end
         end
     end
-end
 
-Entity.upbringing_time = 2 * Time.minute
-local upbringing_time = Entity.upbringing_time
+    -- Connected but no defining signal: circuit is in control, reset to null.
+    -- No connection at all: leave the player's manually-set mode alone.
+    if has_network then
+        entry[EK.education_mode] = Type.null
+    end
+end
 
 local function update_upbringing_station(entry)
     local mode = entry[EK.education_mode]
@@ -117,6 +129,7 @@ local function update_upbringing_station(entry)
     end
 
     check_circuit_upbringing_station(entry)
+    mode = entry[EK.education_mode]
 
     if mode ~= Type.null and not Technologies.caste_is_researched(mode) then
         -- the player somehow managed to set the mode to a not researched caste
@@ -125,7 +138,7 @@ local function update_upbringing_station(entry)
     end
 
     local classes = entry[EK.classes]
-    local most_recent_class = -30 * Time.second
+    local most_recent_class = -30 * Time.second -- sentinel: old enough that a new class can be created immediately if there are no existing ones
     local students = 0
     local current_tick = game.tick
 
