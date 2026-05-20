@@ -46,7 +46,7 @@ local function update_empty_house(entry)
     Inhabitants.try_auto_upgrades(entry)
 
     local current_comfort = entry[EK.current_comfort] or 0
-    local max_comfort = Housing.get(entry).max_comfort
+    local max_comfort = Inhabitants.HousingCore.get(entry).max_comfort
     local label = {
         "sosciencity-custom-status.no-caste-assigned"
     }
@@ -84,7 +84,7 @@ Register.set_entity_updater(Type.empty_house, update_empty_house)
 --- @param entry Entry
 --- @param event table?
 local function create_empty_house(entry, event)
-    local house_details = Housing.get(entry)
+    local house_details = Inhabitants.HousingCore.get(entry)
     entry[EK.current_comfort] = house_details.starting_comfort
     entry[EK.target_comfort] = house_details.starting_comfort
 
@@ -151,13 +151,13 @@ local function remove_empty_house(entry, cause, event)
     if cause == DeconstructionCause.mined then
         local buffer = event and event.buffer
         if buffer then
-            local house_details = Housing.get(entry)
-            for _, item in pairs(Housing.get_total_refund(house_details, entry[EK.current_comfort] or 0)) do
+            local house_details = Inhabitants.HousingCore.get(entry)
+            for _, item in pairs(Inhabitants.HousingUpgrades.get_total_refund(house_details, entry[EK.current_comfort] or 0)) do
                 buffer.insert({name = item.name, count = item.count})
             end
             local trait_upgrades = entry[EK.trait_upgrades]
             if trait_upgrades then
-                for _, item in pairs(Housing.get_tag_refund(house_details, trait_upgrades)) do
+                for _, item in pairs(Inhabitants.HousingUpgrades.get_tag_refund(house_details, trait_upgrades)) do
                     buffer.insert({name = item.name, count = item.count})
                 end
             end

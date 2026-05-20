@@ -4,17 +4,18 @@ local MoveCause = require("enums.move-cause")
 local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
-local get_free_capacity = Housing.get_free_capacity
 local floor = math.floor
 local min = math.min
 local HEALTHY = DiseaseGroup.HEALTHY
 
 local take_from_house
 local add_to_house
+local get_free_capacity
 
 function Inhabitants.load_housing_redistribution()
     take_from_house = Inhabitants.take_from_house
     add_to_house = Inhabitants.add_to_house
+    get_free_capacity = Inhabitants.HousingCore.get_free_capacity
 end
 
 --- Redistributes healthy inhabitants from lower-priority houses to fill vacancies in

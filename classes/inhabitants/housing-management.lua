@@ -8,8 +8,6 @@ local InhabitantsConstants = require("constants.inhabitants")
 local Type = require("enums.type")
 
 local castes = Castes.values
-local get_housing_details = Housing.get
-local get_free_capacity = Housing.get_free_capacity
 local try_get = Register.try_get
 local floor = math.floor
 local max = math.max
@@ -26,6 +24,8 @@ local hospital_types = {Type.hospital, Type.improvised_hospital}
 local add_to_homeless_pool
 local hospital_can_treat
 local get_moving_downtime_factor
+local get_housing_details
+local get_free_capacity
 
 ---------------------------------------------------------------------------------------------------
 -- << lifecycle >>
@@ -48,6 +48,8 @@ function Inhabitants.load_housing_management()
     add_to_homeless_pool = Inhabitants.add_to_homeless_pool
     hospital_can_treat = Entity.Hospital.can_treat
     get_moving_downtime_factor = Technologies.get_moving_downtime_factor
+    get_housing_details = Inhabitants.HousingCore.get
+    get_free_capacity = Inhabitants.HousingCore.get_free_capacity
 end
 
 ---------------------------------------------------------------------------------------------------

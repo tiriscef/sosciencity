@@ -425,7 +425,7 @@ function Inhabitants.evaluate_diet(entry, delta_ticks)
 
     if #diet > 0 then
         local to_consume = caste.calorific_demand * delta_ticks * entry[EK.inhabitants]
-        local satisfaction = Inventories.consume_food(entry, inventories, to_consume, diet)
+        local satisfaction = Consumption.consume_food(entry, inventories, to_consume, diet)
 
         Subentities.remove_common_sprite(entry, RenderingType.food_warning)
         entry[EK.has_food] = satisfaction >= 0.9

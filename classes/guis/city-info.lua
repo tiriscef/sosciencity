@@ -109,7 +109,7 @@ local function create_advanced_placement_section(flow, player_index)
             type = "checkbox",
             caption = Locale.housing_trait(tag),
             state = target_tags and target_tags[tag] and true or false,
-            enabled = Housing.is_tag_unlocked(tag),
+            enabled = Inhabitants.HousingUpgrades.is_tag_unlocked(tag),
             tags = {sosciencity_gui_event = "placement_tag_checkbox", tag = tag}
         }
         Gui.register_element(checkbox, "city-info-placement-tag", tag, player_index)
@@ -527,7 +527,7 @@ function Gui.CityInfo.set_placement_mode(player, active)
             local el = Gui.get_element("city-info-placement-tag", tag, player.index)
             if el and el.valid then
                 el.state = settings.target_tags and settings.target_tags[tag] and true or false
-                el.enabled = Housing.is_tag_unlocked(tag)
+                el.enabled = Inhabitants.HousingUpgrades.is_tag_unlocked(tag)
             end
         end
     end

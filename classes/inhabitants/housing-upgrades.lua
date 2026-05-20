@@ -1,6 +1,102 @@
 local EK = require("enums.entry-key")
 local Housing = require("constants.housing")
 
+-- Things about upgrading homes.
+Inhabitants.HousingUpgrades = {}
+local HousingUpgrades = Inhabitants.HousingUpgrades
+
+--- @param level integer
+--- @return boolean
+function HousingUpgrades.is_level_unlocked(level)
+    local tech = Housing.required_tech[level]
+    return tech == nil or storage.technologies[tech]
+end
+
+--- @return integer
+function HousingUpgrades.get_max_unlocked_level()
+    for level = Housing.max_level, 1, -1 do
+        if HousingUpgrades.is_level_unlocked(level) then
+            return level
+        end
+    end
+    return 0
+end
+
+--- @param tag integer
+--- @return boolean
+function HousingUpgrades.is_tag_unlocked(tag)
+    local tech = Housing.tag_required_tech[tag]
+    return tech == nil or storage.technologies[tech]
+end
+
+--- @param house HouseDefinition
+--- @param level integer
+--- @return table?
+function HousingUpgrades.get_upgrade_cost(house, level)
+    local per_room = Housing.furniture_costs[level]
+    if not per_room then return nil end
+    local room_count = house.room_count
+    local result = {}
+    for _, entry in pairs(per_room) do
+        result[#result + 1] = {name = entry.name, count = math.ceil(entry.amount * room_count)}
+    end
+    return result
+end
+
+--- @param house HouseDefinition
+--- @param current_comfort integer
+--- @return table
+function HousingUpgrades.get_total_refund(house, current_comfort)
+    local totals = {}
+    for level = 1, current_comfort do
+        local cost = HousingUpgrades.get_upgrade_cost(house, level)
+        if cost then
+            for _, item in pairs(cost) do
+                totals[item.name] = (totals[item.name] or 0) + item.count
+            end
+        end
+    end
+    local result = {}
+    for name, count in pairs(totals) do
+        result[#result + 1] = {name = name, count = count}
+    end
+    return result
+end
+
+--- @param house HouseDefinition
+--- @param tag integer
+--- @return table?
+function HousingUpgrades.get_tag_cost(house, tag)
+    local per_room = Housing.tag_costs[tag]
+    if not per_room then return nil end
+    local room_count = house.room_count
+    local result = {}
+    for _, entry in pairs(per_room) do
+        result[#result + 1] = {name = entry.name, count = math.ceil(entry.amount * room_count)}
+    end
+    return result
+end
+
+--- @param house HouseDefinition
+--- @param active_tags table
+--- @return table
+function HousingUpgrades.get_tag_refund(house, active_tags)
+    local totals = {}
+    for tag in pairs(active_tags) do
+        local cost = HousingUpgrades.get_tag_cost(house, tag)
+        if cost then
+            for _, item in pairs(cost) do
+                totals[item.name] = (totals[item.name] or 0) + item.count
+            end
+        end
+    end
+    local result = {}
+    for name, count in pairs(totals) do
+        result[#result + 1] = {name = name, count = count}
+    end
+    return result
+end
+
 local display_item_stack = Tirislib.Locales.display_item_stack
 
 local function get_inventory(entry)
@@ -12,7 +108,7 @@ end
 --- @return table?
 function Inhabitants.get_upgrade_progress(entry)
     local current = entry[EK.current_comfort] or 0
-    local cost = Housing.get_upgrade_cost(Housing.get(entry), current + 1)
+    local cost = HousingUpgrades.get_upgrade_cost(Inhabitants.HousingCore.get(entry), current + 1)
     if not cost then return nil end
 
     local inventory = get_inventory(entry)
@@ -33,17 +129,17 @@ end
 --- @param player LuaPlayer
 --- @return LocalisedString?
 function Inhabitants.try_manual_upgrade(entry, player)
-    local house_details = Housing.get(entry)
+    local house_details = Inhabitants.HousingCore.get(entry)
     local max_comfort = house_details.max_comfort
     local current_comfort = entry[EK.current_comfort] or 0
     if current_comfort >= max_comfort then return end
 
     local next_level = current_comfort + 1
-    if not Housing.is_level_unlocked(next_level) then
+    if not HousingUpgrades.is_level_unlocked(next_level) then
         return {"sosciencity.upgrade-comfort-locked", Locale.prototype_name(Housing.required_tech[next_level], "technology")}
     end
 
-    local cost = Housing.get_upgrade_cost(house_details, next_level)
+    local cost = HousingUpgrades.get_upgrade_cost(house_details, next_level)
     if not cost then
         ItemRequests.set_request(entry[EK.entity], get_inventory(entry), entry, "comfort", nil)
         entry[EK.current_comfort] = next_level
@@ -105,7 +201,7 @@ end
 --- @param tag integer HousingTrait enum value
 --- @return table?
 function Inhabitants.get_tag_progress(entry, tag)
-    local cost = Housing.get_tag_cost(Housing.get(entry), tag)
+    local cost = HousingUpgrades.get_tag_cost(Inhabitants.HousingCore.get(entry), tag)
     if not cost then return nil end
     local inventory = get_inventory(entry)
     local result = {}
@@ -129,12 +225,12 @@ function Inhabitants.try_manual_add_tag(entry, player, tag)
     local active_tags = entry[EK.trait_upgrades] or {}
     if active_tags[tag] then return end
 
-    if not Housing.is_tag_unlocked(tag) then
+    if not HousingUpgrades.is_tag_unlocked(tag) then
         return {"sosciencity.add-tag-locked", Locale.prototype_name(Housing.tag_required_tech[tag], "technology")}
     end
 
-    local house_details = Housing.get(entry)
-    local cost = Housing.get_tag_cost(house_details, tag)
+    local house_details = Inhabitants.HousingCore.get(entry)
+    local cost = HousingUpgrades.get_tag_cost(house_details, tag)
 
     if not cost then
         active_tags[tag] = true
@@ -203,7 +299,7 @@ end
 function Inhabitants.try_request_tag(entry, tag)
     local active_tags = entry[EK.trait_upgrades] or {}
     if active_tags[tag] then return end
-    if not Housing.is_tag_unlocked(tag) then return end
+    if not HousingUpgrades.is_tag_unlocked(tag) then return end
 
     local target_tags = entry[EK.target_tags] or {}
     if target_tags[tag] then return end
@@ -211,7 +307,7 @@ function Inhabitants.try_request_tag(entry, tag)
     entry[EK.target_tags] = target_tags
 
     local entity = entry[EK.entity]
-    local cost = Housing.get_tag_cost(Housing.get(entry), tag)
+    local cost = HousingUpgrades.get_tag_cost(Inhabitants.HousingCore.get(entry), tag)
     if cost then
         ItemRequests.set_request(entity, get_inventory(entry), entry, tag, cost)
     end
@@ -233,7 +329,7 @@ end
 --- Checks chest inventory for fulfilled upgrades and applies them.
 --- @param entry Entry
 function Inhabitants.try_auto_upgrades(entry)
-    local house_details = Housing.get(entry)
+    local house_details = Inhabitants.HousingCore.get(entry)
     local entity = entry[EK.entity]
     local inventory = entity.get_inventory(defines.inventory.chest)
 
@@ -242,8 +338,8 @@ function Inhabitants.try_auto_upgrades(entry)
     local target = math.min(entry[EK.target_comfort] or 0, house_details.max_comfort)
     if current < target then
         local next_level = current + 1
-        if Housing.is_level_unlocked(next_level) then
-            local cost = Housing.get_upgrade_cost(house_details, next_level)
+        if HousingUpgrades.is_level_unlocked(next_level) then
+            local cost = HousingUpgrades.get_upgrade_cost(house_details, next_level)
             if not cost or ItemRequests.fulfilled(inventory, cost) then
                 if cost then
                     for _, item in pairs(cost) do
@@ -261,8 +357,8 @@ function Inhabitants.try_auto_upgrades(entry)
     local comfort_request = nil
     if new_current < new_target then
         local nxt = new_current + 1
-        if Housing.is_level_unlocked(nxt) then
-            comfort_request = Housing.get_upgrade_cost(house_details, nxt)
+        if HousingUpgrades.is_level_unlocked(nxt) then
+            comfort_request = HousingUpgrades.get_upgrade_cost(house_details, nxt)
         end
     end
     ItemRequests.set_request(entity, inventory, entry, "comfort", comfort_request)
@@ -272,8 +368,8 @@ function Inhabitants.try_auto_upgrades(entry)
     if target_tags then
         local trait_upgrades = entry[EK.trait_upgrades] or {}
         for tag in pairs(target_tags) do
-            if not trait_upgrades[tag] and Housing.is_tag_unlocked(tag) then
-                local cost = Housing.get_tag_cost(house_details, tag)
+            if not trait_upgrades[tag] and HousingUpgrades.is_tag_unlocked(tag) then
+                local cost = HousingUpgrades.get_tag_cost(house_details, tag)
                 if not cost or ItemRequests.fulfilled(inventory, cost) then
                     if cost then
                         for _, item in pairs(cost) do

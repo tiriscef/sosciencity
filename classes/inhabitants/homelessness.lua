@@ -10,7 +10,7 @@ local Housing = require("constants.housing")
 
 local castes = Castes.values
 local get_building_details = Buildings.get
-local get_housing_details = Housing.get
+local get_housing_details
 local try_get = Register.try_get
 local Utils = Tirislib.Utils
 local ceil = math.ceil
@@ -30,6 +30,7 @@ end
 
 function Inhabitants.load_homelessness()
     add_to_house = Inhabitants.add_to_house
+    get_housing_details = Inhabitants.HousingCore.get
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -60,7 +61,7 @@ local function try_occupy_empty_housing()
         local empty_houses = {}
 
         for _, empty_house in Register.iterate_type(Type.empty_house) do
-            if empty_house[EK.is_liveable] and Housing.allowes_caste(get_housing_details(empty_house), caste_id) then
+            if empty_house[EK.is_liveable] and Inhabitants.HousingCore.allowes_caste(get_housing_details(empty_house), caste_id) then
                 empty_houses[#empty_houses + 1] = empty_house
             end
         end

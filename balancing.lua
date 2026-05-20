@@ -167,14 +167,14 @@ local function write_files()
             local res = name .. ";" .. size .. ";" .. housing.room_count .. ";" .. housing.room_count / size .. ";" .. housing.comfort .. ";" .. get_housing_level(name) .. ";"
 
             for caste_id, caste in pairs(Castes.values) do
-                if housing.is_improvised or Housing.allowes_caste(housing, caste_id) then
+                if housing.is_improvised or Inhabitants.HousingCore.allowes_caste(housing, caste_id) then
                     local quality_assessment = 0
                     local preferences = caste.housing_preferences
                     for _, trait in pairs(housing.traits) do
                         quality_assessment = quality_assessment + (preferences[trait] or 0)
                     end
 
-                    local capacity = Housing.get_capacity {[EK.type] = caste_id, [EK.name] = name}
+                    local capacity = Inhabitants.HousingCore.get_capacity {[EK.type] = caste_id, [EK.name] = name}
 
                     res = res .. (quality_assessment + housing.comfort) .. ";" .. capacity .. ";"
                 else

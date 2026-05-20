@@ -77,7 +77,7 @@ local function update_market(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    local amount = Inventories.count_calories(Inventories.get_chest_inventory(entry))
+    local amount = Consumption.count_calories(Inventories.get_chest_inventory(entry))
 
     Datalist.set_kv_pair_value(
         building_data,

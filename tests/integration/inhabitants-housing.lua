@@ -131,7 +131,7 @@ Tirislib.Testing.add_test_case(
 
         local expected_capacity = math.floor(
             Housing.values["test-house"].room_count / Castes.values[Type.clockwork].required_room_count)
-        Assert.equals(Housing.get_capacity(house), expected_capacity, "capacity should be floor(room_count / required_room_count)")
+        Assert.equals(Inhabitants.HousingCore.get_capacity(house), expected_capacity, "capacity should be floor(room_count / required_room_count)")
     end,
     setup,
     teardown

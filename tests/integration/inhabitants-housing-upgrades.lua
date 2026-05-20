@@ -61,7 +61,7 @@ local function create_empty_house()
 end
 
 local function upgrade_cost(level)
-    return Housing.get_upgrade_cost(Housing.values["test-house"], level)
+    return Inhabitants.HousingUpgrades.get_upgrade_cost(Housing.values["test-house"], level)
 end
 
 local function fill_chest(entry, items)
@@ -220,7 +220,7 @@ Tirislib.Testing.add_test_case(
 -- << phase 6 - tag upgrade tests >>
 
 local function tag_cost(tag)
-    return Housing.get_tag_cost(Housing.values["test-house"], tag)
+    return Inhabitants.HousingUpgrades.get_tag_cost(Housing.values["test-house"], tag)
 end
 
 local function setup_with_tags()

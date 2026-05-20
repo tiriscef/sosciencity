@@ -1,5 +1,5 @@
 --- Enum table for named performance effects.
---- Maps to labels and descriptions in constants/performance-effects.lua.
+--- Maps to labels and descriptions in classes/locale.lua via build_locale_lookup.
 --- @enum PerformanceEffect
 local PE = {}
 

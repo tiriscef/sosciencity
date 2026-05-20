@@ -61,7 +61,6 @@ local immigration
 
 local castes = Castes.values
 
-local get_housing_details = Housing.get
 
 local Tables = Tirislib.Tables
 local Utils = Tirislib.Utils
@@ -780,7 +779,7 @@ end
 function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     if
         entry[EK.type] == Type.empty_house and is_researched(caste_id) and
-            Housing.allowes_caste(get_housing_details(entry), caste_id)
+            Inhabitants.HousingCore.allowes_caste(Inhabitants.HousingCore.get(entry), caste_id)
      then
         local saved_comfort = entry[EK.current_comfort]
         local saved_target = entry[EK.target_comfort]
@@ -817,6 +816,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << outsourced subsystems >>
 
+require("classes.inhabitants.housing-core")
 require("classes.inhabitants.castes")
 require("classes.inhabitants.workforce")
 require("classes.inhabitants.housing-environment")

@@ -1117,14 +1117,12 @@ Gui.Elements.PerformanceReport = {}
 local Comb = require("enums.performance-combination")
 local Dim = require("enums.performance-dimension")
 local PK = require("enums.performance-key")
-local PerfEffects = require("constants.performance-effects")
-
 local ceil = math.ceil
 local floor = math.floor
 
-local effect_labels = PerfEffects.labels
-local effect_descriptions = PerfEffects.descriptions
-local dimension_labels = PerfEffects.dimension_labels
+local effect_labels = Locale.performance_effect_labels
+local effect_descriptions = Locale.performance_effect_descriptions
+local dimension_labels = Locale.performance_dimension_labels
 
 -- ordered list of dimensions to render
 local dimension_order = {Dim.speed, Dim.productivity}

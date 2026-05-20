@@ -16,8 +16,7 @@ local TypeGroup = require("constants.type-groups")
 
 local castes = Castes.values
 local disease_values = Diseases.values
-local get_housing_details = Housing.get
-local get_garbage_value = Inventories.get_garbage_value
+local get_garbage_value = Consumption.get_garbage_value
 local has_power = Subentities.has_power
 local try_get = Register.try_get
 local Tables = Tirislib.Tables
@@ -62,7 +61,7 @@ Inhabitants.evaluate_housing_traits = evaluate_housing_traits
 --- Evaluates the effect of the housing on its inhabitants.
 --- @param entry Entry
 local function evaluate_housing(entry, happiness_summands, sanity_summands, happiness_factors, caste)
-    local housing = get_housing_details(entry)
+    local housing = Inhabitants.HousingCore.get(entry)
     local current_comfort = entry[EK.current_comfort] or 0
     happiness_summands[HappinessSummand.housing] = current_comfort
     sanity_summands[SanitySummand.housing] = current_comfort
@@ -225,7 +224,7 @@ local function social_meeting(entry, meeting_count)
 
         local actual_conceptions = min(fertile_ga_count, available_partners, conceptions)
         if actual_conceptions > 0 then
-            Inventories.output_eggs(entry, actual_conceptions)
+            Consumption.output_eggs(entry, actual_conceptions)
             entry[EK.ga_conceptions] = past_conceptions + actual_conceptions
         end
     end

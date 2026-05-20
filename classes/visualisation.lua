@@ -239,7 +239,7 @@ end
 
 local function show_inhabitants(player_id, entry, created_highlights)
     local inhabitants = entry[EK.inhabitants]
-    local capacity = Housing.get_capacity(entry)
+    local capacity = Inhabitants.HousingCore.get_capacity(entry)
     local entity = entry[EK.entity]
     local players = {player_id}
 

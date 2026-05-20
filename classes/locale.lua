@@ -258,4 +258,11 @@ function Locale.nutrition_tags_string(nutrition_tags)
     return Tirislib.Locales.create_enumeration(query:select(Locale.nutrition_tag):to_array(), " · ")
 end
 
+local PE = require("enums.performance-effect")
+local Dim = require("enums.performance-dimension")
+
+Locale.performance_effect_labels = build_locale_lookup(PE, "performance-effect")
+Locale.performance_effect_descriptions = build_locale_lookup(PE, "performance-effect-description")
+Locale.performance_dimension_labels = build_locale_lookup(Dim, "performance-dimension")
+
 return Locale

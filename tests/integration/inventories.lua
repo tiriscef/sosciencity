@@ -165,7 +165,7 @@ Tirislib.Testing.add_test_case(
         -- place collector within range 42 so it becomes a neighbor automatically
         Helpers.create_and_register(test_surface, "test-egg-collector", Helpers.next_position())
 
-        Inventories.output_eggs(house_entry, 5)
+        Consumption.output_eggs(house_entry, 5)
 
         local collector_neighbors = Neighborhood.get_by_type(house_entry, Type.egg_collector)
         Assert.greater_than(#collector_neighbors, 0, "house should have egg_collector neighbor")
@@ -431,7 +431,7 @@ Tirislib.Testing.add_test_case(
     function()
         local house_entry = Helpers.create_and_register(test_surface, "test-house", Helpers.next_position())
 
-        Inventories.output_eggs(house_entry, 5)
+        Consumption.output_eggs(house_entry, 5)
 
         Assert.equals(
             Inventories.get_chest_inventory(house_entry).get_item_count(InhabitantsConstants.egg_fertile),
@@ -451,7 +451,7 @@ Tirislib.Testing.add_test_case(
         local house_inv = Inventories.get_chest_inventory(house_entry)
         house_inv.insert {name = InhabitantsConstants.egg_fertile, count = 18}
 
-        Inventories.output_eggs(house_entry, 10)
+        Consumption.output_eggs(house_entry, 10)
 
         Assert.equals(
             house_inv.get_item_count(InhabitantsConstants.egg_fertile),
@@ -475,7 +475,7 @@ Tirislib.Testing.add_test_case(
         collector_inv.set_bar(2) -- only 1 slot accessible
         collector_inv.insert {name = egg_name, count = stack_size - 3} -- leave 3 spaces
 
-        Inventories.output_eggs(house_entry, 5)
+        Consumption.output_eggs(house_entry, 5)
 
         -- collector absorbs 3; house should receive exactly the 2 remaining eggs, not the full 5
         Assert.equals(collector_inv.get_item_count(egg_name), stack_size, "collector should be full (absorbed 3)")
@@ -505,7 +505,7 @@ Tirislib.Testing.add_test_case(
         Subentities.has_power(collector_entry) -- creates EEI; subsequent calls see energy == 0
         collector_entry[EK.active] = false
 
-        Inventories.output_eggs(house_entry, 5)
+        Consumption.output_eggs(house_entry, 5)
 
         Assert.equals(
             Inventories.get_chest_inventory(collector_entry).get_item_count(InhabitantsConstants.egg_fertile),
@@ -533,7 +533,7 @@ Tirislib.Testing.add_test_case(
         local inv = Inventories.get_chest_inventory(entry)
         inv.insert {name = InhabitantsConstants.egg_fertile, count = 10}
 
-        local removed = Inventories.remove_eggs(entry, 6)
+        local removed = Consumption.remove_eggs(entry, 6)
 
         local total = 0
         for _, count in pairs(removed) do
@@ -554,7 +554,7 @@ Tirislib.Testing.add_test_case(
         local inv = Inventories.get_chest_inventory(entry)
         inv.insert {name = InhabitantsConstants.egg_fertile, count = 3}
 
-        local removed = Inventories.remove_eggs(entry, 10)
+        local removed = Consumption.remove_eggs(entry, 10)
 
         local total = 0
         for _, count in pairs(removed) do
@@ -577,7 +577,7 @@ Tirislib.Testing.add_test_case(
         local house_entry = Helpers.create_and_register(test_surface, "test-house", Helpers.next_position())
         local dumpster_entry = Helpers.create_and_register(test_surface, "test-dumpster", Helpers.next_position())
 
-        Inventories.produce_garbage(house_entry, "garbage", 10)
+        Consumption.produce_garbage(house_entry, "garbage", 10)
 
         Assert.equals(
             Inventories.get_chest_inventory(dumpster_entry).get_item_count("garbage"),
@@ -600,7 +600,7 @@ Tirislib.Testing.add_test_case(
     function()
         local house_entry = Helpers.create_and_register(test_surface, "test-house", Helpers.next_position())
 
-        Inventories.produce_garbage(house_entry, "garbage", 5)
+        Consumption.produce_garbage(house_entry, "garbage", 5)
 
         Assert.equals(
             Inventories.get_chest_inventory(house_entry).get_item_count("garbage"),
@@ -620,7 +620,7 @@ Tirislib.Testing.add_test_case(
         -- no dumpster in range; fill the house inventory completely
         Inventories.get_chest_inventory(house_entry).insert {name = "iron-plate", count = 999999}
 
-        Inventories.produce_garbage(house_entry, "garbage", 3)
+        Consumption.produce_garbage(house_entry, "garbage", 3)
 
         local spilled = test_surface.find_entities_filtered {type = "item-entity"}
         Assert.greater_than(#spilled, 0, "garbage should be spilled to the ground when all storage is full")
@@ -640,7 +640,7 @@ Tirislib.Testing.add_test_case(
         dumpster_inv.set_bar(2) -- only 1 slot accessible
         dumpster_inv.insert {name = "garbage", count = stack_size - 3} -- leave 3 spaces
 
-        Inventories.produce_garbage(house_entry, "garbage", 10)
+        Consumption.produce_garbage(house_entry, "garbage", 10)
 
         Assert.equals(dumpster_inv.get_item_count("garbage"), stack_size, "dumpster should be full after absorbing 3")
         Assert.equals(
@@ -663,7 +663,7 @@ Tirislib.Testing.add_test_case(
         local entry = Helpers.create_and_register(test_surface, "test-house", Helpers.next_position())
         Inventories.get_chest_inventory(entry).insert {name = "iron-plate", count = 10}
 
-        Assert.equals(Inventories.get_garbage_value(entry), 0, "non-garbage items should contribute 0 garbage value")
+        Assert.equals(Consumption.get_garbage_value(entry), 0, "non-garbage items should contribute 0 garbage value")
     end,
     setup,
     teardown
@@ -677,7 +677,7 @@ Tirislib.Testing.add_test_case(
         Inventories.get_chest_inventory(entry).insert {name = "garbage", count = 10}
 
         local expected = ItemConstants.garbage_values["garbage"] * 10
-        Assert.equals(Inventories.get_garbage_value(entry), expected, "value should be count times the garbage multiplier")
+        Assert.equals(Consumption.get_garbage_value(entry), expected, "value should be count times the garbage multiplier")
     end,
     setup,
     teardown
@@ -691,7 +691,7 @@ Tirislib.Testing.add_test_case(
         local dumpster_entry = Helpers.create_and_register(test_surface, "test-dumpster", Helpers.next_position())
         Inventories.get_chest_inventory(entry).insert {name = "garbage", count = 10}
 
-        local value = Inventories.get_garbage_value(entry)
+        local value = Consumption.get_garbage_value(entry)
 
         Assert.equals(value, 0, "garbage value should be 0 after all garbage is moved to the dumpster")
         Assert.equals(
@@ -717,7 +717,7 @@ Tirislib.Testing.add_test_case(
         local expected =
             ItemConstants.garbage_values["garbage"] * 4 +
             ItemConstants.garbage_values["slaughter-waste"] * 2
-        Assert.equals(Inventories.get_garbage_value(entry), expected, "each item type should use its own multiplier")
+        Assert.equals(Consumption.get_garbage_value(entry), expected, "each item type should use its own multiplier")
     end,
     setup,
     teardown

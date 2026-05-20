@@ -199,7 +199,7 @@ Gui.set_click_handler(
             return
         end
 
-        local house_details = Housing.get(entry)
+        local house_details = Inhabitants.HousingCore.get(entry)
         local current = entry[EK.current_comfort] or 0
         local target = entry[EK.target_comfort] or current
         local new_target = math.max(current, math.min(house_details.max_comfort, target + tags.delta))
@@ -250,7 +250,7 @@ Gui.set_checked_state_handler(
 )
 
 local function update_tag_section(frame, entry, tag)
-    local is_locked = not Housing.is_tag_unlocked(tag)
+    local is_locked = not Inhabitants.HousingUpgrades.is_tag_unlocked(tag)
 
     if is_locked then
         frame.visible = false
@@ -360,7 +360,7 @@ local function update_upgrade_section(frame, entry, house_details)
     end
 
     local next_level = current + 1
-    local is_locked = not Housing.is_level_unlocked(next_level)
+    local is_locked = not Inhabitants.HousingUpgrades.is_level_unlocked(next_level)
     local upgrade_btn = flow["upgrade-button"]
     upgrade_btn.caption = {"sosciencity.upgrade-comfort", current, next_level}
     upgrade_btn.enabled = not is_locked
@@ -475,7 +475,7 @@ end
 
 local function update_empty_housing_details(container, entry)
     local tabbed_pane = container.tabpane
-    local house_details = Housing.get(entry)
+    local house_details = Inhabitants.HousingCore.get(entry)
 
     local caste_chooser_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "caste-chooser")
     update_caste_chooser(caste_chooser_flow, entry, house_details)
@@ -497,7 +497,7 @@ local function create_empty_housing_details(container, entry)
 
     local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
 
-    local house_details = Housing.get(entry)
+    local house_details = Inhabitants.HousingCore.get(entry)
     add_caste_chooser_tab(tabbed_pane, entry, house_details)
     add_empty_house_info_tab(tabbed_pane, entry, house_details)
 end
@@ -599,7 +599,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local inhabitants = entry[EK.inhabitants]
     local nominal_happiness = Inhabitants.get_nominal_happiness(entry)
 
-    local housing_details = Housing.get(entry)
+    local housing_details = Inhabitants.HousingCore.get(entry)
     Datalist.set_kv_pair_value(
         general_list,
         "comfort",
@@ -609,7 +609,7 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     update_upgrade_section(flow["upgrade-section"], entry, housing_details)
     update_tag_sections(flow, entry)
 
-    local capacity = Housing.get_capacity(entry)
+    local capacity = Inhabitants.HousingCore.get_capacity(entry)
     Datalist.set_kv_pair_value(
         general_list,
         "inhabitants",
@@ -784,7 +784,7 @@ Gui.set_checked_state_handler(
             return
         end
 
-        if Housing.get(entry).is_improvised then return end
+        if Inhabitants.HousingCore.get(entry).is_improvised then return end
         entry[EK.is_sanatorium] = event.element.state or nil
     end
 )
@@ -824,7 +824,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     end
 
     local caste = castes[caste_id]
-    local housing_details = Housing.get(entry)
+    local housing_details = Inhabitants.HousingCore.get(entry)
 
     Datalist.add_kv_pair(general_list, "comfort", {"sosciencity.comfort"})
 
@@ -946,7 +946,7 @@ Gui.set_click_handler(
         local pull_all = tags.pull_all or false
         Inhabitants.pull_to_house(entry, pull_all)
 
-        local new_pull_all = Housing.get_free_capacity(entry) > 0 and not pull_all
+        local new_pull_all = Inhabitants.HousingCore.get_free_capacity(entry) > 0 and not pull_all
         local el = event.element
         el.tags = {sosciencity_gui_event = "pull_to_house", unit_number = tags.unit_number, pull_all = new_pull_all}
 
@@ -1194,7 +1194,7 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     Label.heading_3(content, {"city-view.debug-housing-add"})
 
     local count_row = DebugWidgets.labelled(content, "city-view.debug-spawn-count", true)
-    local add_count_panel = NumericTextField.Panel.create(count_row, nil, {step = 1, min = 1, max = Housing.get_capacity(entry), default = 1})
+    local add_count_panel = NumericTextField.Panel.create(count_row, nil, {step = 1, min = 1, max = Inhabitants.HousingCore.get_capacity(entry), default = 1})
     Gui.register_element(add_count_panel["numeric_input"], unit_number, "debug_add_count", player_id)
 
     local gender_dd, egg_dd = DebugWidgets.build_gender_picker(content, unit_number, "debug_add_egg", true)
@@ -1231,7 +1231,7 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
 
     -- Remove inhabitants
     local remove_row = DebugWidgets.labelled(content, "city-view.debug-housing-remove", true)
-    local remove_panel = NumericTextField.Panel.create(remove_row, nil, {step = 1, min = 1, max = Housing.get_capacity(entry), default = 1})
+    local remove_panel = NumericTextField.Panel.create(remove_row, nil, {step = 1, min = 1, max = Inhabitants.HousingCore.get_capacity(entry), default = 1})
     Gui.register_element(remove_panel["numeric_input"], unit_number, "debug_remove_count", player_id)
     remove_row.add {
         type = "button", style = "red_button",
@@ -1448,7 +1448,7 @@ if DEV_MODE then
     Gui.set_click_handler("housing_debug_garbage", function(event)
         local entry = Register.try_get(storage.details_view[event.player_index])
         if not entry then return end
-        Inventories.produce_garbage(entry, "garbage", 1)
+        Consumption.produce_garbage(entry, "garbage", 1)
         game.players[event.player_index].print({"city-view.debug-housing-garbage-done"})
     end)
 end

@@ -160,7 +160,7 @@ local function update_upbringing_station(entry)
     -- create new classes
     if current_tick - most_recent_class >= 10 * Time.second then
         local free_capacity = details.capacity - students
-        local eggs = Inventories.remove_eggs(entry, free_capacity)
+        local eggs = Consumption.remove_eggs(entry, free_capacity)
 
         if Table.sum(eggs) > 0 then
             classes[#classes + 1] = {current_tick, eggs}

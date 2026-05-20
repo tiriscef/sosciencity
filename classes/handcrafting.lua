@@ -91,7 +91,7 @@ local function consume_calories_per_craft(player_id, recipe_name, count, calorie
     local player = game.get_player(player_id)
     local inventory = player.get_main_inventory()
 
-    local calories_available = Inventories.count_calories(inventory)
+    local calories_available = Consumption.count_calories(inventory)
     local actual_crafts = min(floor(calories_available / calories_per_craft), count)
 
     if actual_crafts < count then
@@ -116,7 +116,7 @@ local function consume_calories_per_craft(player_id, recipe_name, count, calorie
         end
     end
 
-    Inventories.consume_calories(inventory, actual_crafts * calories_per_craft)
+    Consumption.consume_calories(inventory, actual_crafts * calories_per_craft)
 
     return actual_crafts
 end

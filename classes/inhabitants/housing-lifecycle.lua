@@ -6,8 +6,6 @@ local Type = require("enums.type")
 local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
-local get_housing_details = Housing.get
-local get_capacity = Housing.get_capacity
 local Tables = Tirislib.Tables
 local random = math.random
 
@@ -19,6 +17,8 @@ local build_social_environment
 local update_housing_census
 local remove_housing_census
 local disease_progress_updaters
+local get_housing_details
+local get_capacity
 
 function Inhabitants.load_housing_lifecycle()
     update_free_space_status = Inhabitants.update_free_space_status
@@ -28,6 +28,8 @@ function Inhabitants.load_housing_lifecycle()
     update_housing_census = Inhabitants.update_housing_census
     remove_housing_census = Inhabitants.remove_housing_census
     disease_progress_updaters = Inhabitants.disease_progress_updaters
+    get_housing_details = Inhabitants.HousingCore.get
+    get_capacity = Inhabitants.HousingCore.get_capacity
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -181,12 +183,12 @@ function Inhabitants.remove_house(entry, cause, event)
         add_to_homeless_pool(entry)
         local buffer = event and event.buffer
         if buffer then
-            for _, item in pairs(Housing.get_total_refund(housing_details, entry[EK.current_comfort] or 0)) do
+            for _, item in pairs(Inhabitants.HousingUpgrades.get_total_refund(housing_details, entry[EK.current_comfort] or 0)) do
                 buffer.insert({name = item.name, count = item.count})
             end
             local trait_upgrades = entry[EK.trait_upgrades]
             if trait_upgrades then
-                for _, item in pairs(Housing.get_tag_refund(housing_details, trait_upgrades)) do
+                for _, item in pairs(Inhabitants.HousingUpgrades.get_tag_refund(housing_details, trait_upgrades)) do
                     buffer.insert({name = item.name, count = item.count})
                 end
             end

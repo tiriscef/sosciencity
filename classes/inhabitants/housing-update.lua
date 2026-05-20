@@ -198,7 +198,7 @@ local get_garbage_progress = Inhabitants.get_garbage_progress
 local function update_garbage_output(entry, delta_ticks)
     local garbage = Utils.update_progress(entry, EK.garbage_progress, get_garbage_progress(entry, delta_ticks))
     if garbage > 0 then
-        Inventories.produce_garbage(entry, "garbage", garbage)
+        Consumption.produce_garbage(entry, "garbage", garbage)
     end
 end
 Inhabitants.update_garbage_output = update_garbage_output
@@ -258,10 +258,10 @@ Inhabitants.remove_housing_census = remove_housing_census
 --- @param entry Entry
 local function set_custom_status(entry)
     local inhabitants = entry[EK.inhabitants]
-    local capacity = Housing.get_capacity(entry)
+    local capacity = Inhabitants.HousingCore.get_capacity(entry)
 
     local current_comfort = entry[EK.current_comfort] or 0
-    local max_comfort = Housing.get(entry).max_comfort
+    local max_comfort = Inhabitants.HousingCore.get(entry).max_comfort
     local comfort_append = {
         "sosciencity-custom-status.comfort-status",
         {"color-scale." .. current_comfort, {"comfort-scale." .. current_comfort}},

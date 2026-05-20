@@ -27,7 +27,7 @@ Tirislib.Testing.add_test_case(
 
         local demand = Food.values["potato"].calories * 5 -- half the available stock
 
-        local result = Inventories.consume_food(entry, {inventory}, demand, {"potato"})
+        local result = Consumption.consume_food(entry, {inventory}, demand, {"potato"})
 
         Assert.greater_than(result, 0.999, "should return full satisfaction when enough food is available")
     end,
@@ -48,7 +48,7 @@ Tirislib.Testing.add_test_case(
 
         local demand = Food.values["potato"].calories * 2 -- twice the available stock
 
-        local result = Inventories.consume_food(entry, {inventory}, demand, {"potato"})
+        local result = Consumption.consume_food(entry, {inventory}, demand, {"potato"})
 
         Assert.greater_than(result, 0, "some calories should have been consumed")
         Assert.less_than(result, 1, "satisfaction should be less than 1 when food is insufficient")
@@ -72,7 +72,7 @@ Tirislib.Testing.add_test_case(
         -- demand far exceeds what potato alone can provide
         local demand = Food.values["potato"].calories * 10
 
-        local result = Inventories.consume_food(entry, {inventory}, demand, {"potato", "bread"})
+        local result = Consumption.consume_food(entry, {inventory}, demand, {"potato", "bread"})
 
         Assert.greater_than(result, 0.999, "should reach full satisfaction after falling back to bread")
     end,
@@ -94,7 +94,7 @@ Tirislib.Testing.add_test_case(
 
         local demand = (Food.values["potato"].calories + Food.values["bread"].calories) * 10
 
-        local result = Inventories.consume_food(entry, {inventory}, demand, {"potato", "bread"})
+        local result = Consumption.consume_food(entry, {inventory}, demand, {"potato", "bread"})
 
         Assert.less_than(result, 1, "satisfaction should be less than 1 when all food is exhausted")
         Assert.greater_than(result, 0, "some calories should have been consumed")
@@ -116,7 +116,7 @@ Tirislib.Testing.add_test_case(
         local inventory = Inventories.get_chest_inventory(entry)
         -- no food inserted - diet references food that isn't there
 
-        local result = Inventories.consume_food(entry, {inventory}, 1000, {"potato"})
+        local result = Consumption.consume_food(entry, {inventory}, 1000, {"potato"})
 
         Assert.equals(result, 0, "should return 0 satisfaction with no food in inventory")
     end,
@@ -132,7 +132,7 @@ Tirislib.Testing.add_test_case(
         local inventory = Inventories.get_chest_inventory(entry)
         -- no food inserted - multiple diet items all absent
 
-        local result = Inventories.consume_food(entry, {inventory}, 1000, {"potato", "bread", "apple"})
+        local result = Consumption.consume_food(entry, {inventory}, 1000, {"potato", "bread", "apple"})
 
         Assert.equals(result, 0, "should return 0 satisfaction with no food in inventory")
     end,
@@ -150,7 +150,7 @@ Tirislib.Testing.add_test_case(
         local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
         local inventory = Inventories.get_chest_inventory(entry)
 
-        Assert.equals(Inventories.count_calories(inventory), 0, "empty inventory should have 0 calories")
+        Assert.equals(Consumption.count_calories(inventory), 0, "empty inventory should have 0 calories")
     end,
     setup,
     teardown
@@ -165,7 +165,7 @@ Tirislib.Testing.add_test_case(
         inventory.insert {name = "potato", count = 5}
 
         Assert.equals(
-            Inventories.count_calories(inventory),
+            Consumption.count_calories(inventory),
             5 * Food.values["potato"].calories,
             "fresh stack should have count x calories"
         )
@@ -183,7 +183,7 @@ Tirislib.Testing.add_test_case(
         inventory.insert {name = "potato", count = 3}
         inventory.find_item_stack("potato").drain_durability(100) -- partially consume the top item
 
-        local result = Inventories.count_calories(inventory)
+        local result = Consumption.count_calories(inventory)
         -- 2 full items + 1 partially consumed item; must be less than 3 full items
         Assert.greater_than(result, 2 * Food.values["potato"].calories, "should account for the partial top item")
         Assert.less_than(result, 3 * Food.values["potato"].calories, "should be less than 3 full items worth")
@@ -200,7 +200,7 @@ Tirislib.Testing.add_test_case(
         local inventory = Inventories.get_chest_inventory(entry)
         inventory.insert {name = "iron-plate", count = 10}
 
-        Assert.equals(Inventories.count_calories(inventory), 0, "non-food items should not contribute calories")
+        Assert.equals(Consumption.count_calories(inventory), 0, "non-food items should not contribute calories")
     end,
     setup,
     teardown
@@ -218,7 +218,7 @@ Tirislib.Testing.add_test_case(
         inventory.insert {name = "potato", count = 10}
         local request = 2 * Food.values["potato"].calories
 
-        local consumed = Inventories.consume_calories(inventory, request)
+        local consumed = Consumption.consume_calories(inventory, request)
         Assert.equals(consumed, request, "should return exactly the requested amount when satisfied")
         Assert.less_than(inventory.get_item_count("potato"), 10, "some potatoes should have been consumed")
     end,
@@ -235,7 +235,7 @@ Tirislib.Testing.add_test_case(
         inventory.insert {name = "potato", count = 1}
         local one_potato = Food.values["potato"].calories
 
-        local consumed = Inventories.consume_calories(inventory, 3 * one_potato)
+        local consumed = Consumption.consume_calories(inventory, 3 * one_potato)
         Assert.equals(consumed, one_potato, "should return only what was available")
         Assert.equals(inventory.get_item_count("potato"), 0, "all food should be consumed")
     end,
