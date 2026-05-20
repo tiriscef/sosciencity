@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local PK = require("enums.performance-key")
 local DeconstructionCause = require("enums.deconstruction-cause")
 
 local Helpers = {}
@@ -189,6 +190,19 @@ function Helpers.reset_inhabitants_state()
     Inhabitants.init()
     Inhabitants.load()
     Entity.load()
+end
+
+--- Finds an effect entry by ID inside a performance report, or nil if absent.
+--- @param report table performance report from Entity.build_performance_report
+--- @param effect_id integer PE enum value
+--- @return table?
+function Helpers.find_effect(report, effect_id)
+    for _, eff in pairs(report[PK.effects]) do
+        if eff[PK.effect] == effect_id then
+            return eff
+        end
+    end
+    return nil
 end
 
 --- Returns true if any slot in the inventory has a filter set to the given item name.

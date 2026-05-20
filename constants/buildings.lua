@@ -559,6 +559,23 @@ Building.values = {
             happiness_weight = 1
         }
     },
+    ["test-hunting-hut"] = {
+        type = Type.hunting_hut,
+        range = 30,
+        tree_count = 50,
+        workforce = {
+            count = 5,
+            castes = {Type.orchid},
+            disease_category = DiseaseCategory.hunting_hut,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        }
+    },
+    ["test-salt-pond"] = {
+        type = Type.salt_pond,
+        range = 10,
+        water_tiles = 50
+    },
     ["test-composter"] = {
         type = Type.composter,
         capacity = 5000,
@@ -612,6 +629,18 @@ Building.values = {
         },
         eei = true
     },
+    ["test-mining-manufactory"] = {
+        type = Type.manufactory,
+        profits_from_mining_productivity = true,
+        workforce = {
+            count = 10,
+            castes = {Type.clockwork},
+            disease_category = DiseaseCategory.hard_work,
+            disease_frequency_fully_staffed = 0.2 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        eei = true
+    },
     ["test-animal-farm"] = {
         type = Type.animal_farm
     },
@@ -636,6 +665,22 @@ Building.values = {
         type = Type.waste_dump,
         capacity = 50,
         eei = true
+    },
+    ["test-immigration-port"] = {
+        type = Type.immigration_port,
+        interval = 100,
+        random_interval = 1,
+        capacity = 10,
+        materials = {
+            ["rope"] = 5
+        }
+    },
+    ["test-social-observatory"] = {
+        type = Type.social_observatory,
+        range = 42,
+        target_population = 50,
+        min_castes = 2,
+        caste_bonus = 10
     }
 }
 local buildings = Building.values

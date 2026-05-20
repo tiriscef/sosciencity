@@ -9,16 +9,7 @@ local Farm = Entity.Farm
 local Pruning = Entity.Pruning
 
 local test_surface
-
---- Find an effect by ID inside a performance report, or nil if absent.
-local function find_effect(report, effect_id)
-    for _, eff in pairs(report[PK.effects]) do
-        if eff[PK.effect] == effect_id then
-            return eff
-        end
-    end
-    return nil
-end
+local find_effect = Helpers.find_effect
 
 --- Create a test farm at the given position with an optional recipe set on the entity.
 local function create_farm(position, recipe_name)

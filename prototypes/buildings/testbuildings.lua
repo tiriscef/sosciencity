@@ -63,8 +63,10 @@ create_test_container("dumpster")
 create_test_container("fertilization-station")
 create_test_container("pruning-station")
 create_test_container("waste-dump")
+create_test_container("immigration-port")
 create_test_container("ember-manufactory")
 create_test_container("orchid-manufactory")
+create_test_container("mining-manufactory")
 
 -- test-water-distributer must be a storage-tank so it can hold fluid for entity.remove_fluid
 Tirislib.Item.create {
@@ -217,3 +219,27 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-farming-perennial",
     results = {{type = "item", name = "olive", amount = 1}}
 }
+
+create_test_assembling_machine("fishery", {"sosciencity-fishery"}, {type = "void"})
+Sosciencity.configure_building("test-fishery")
+create_test_assembling_machine("hunting-hut", {"sosciencity-hunting"}, {type = "void"})
+Sosciencity.configure_building("test-hunting-hut")
+create_test_assembling_machine("salt-pond", {"sosciencity-salt-pond"}, {type = "void"})
+Sosciencity.configure_building("test-salt-pond")
+
+-- Test fishing recipes for integration tests: no unlock so enabled by default,
+-- which set_recipe / get_recipe require. Two distinct names let competition tests
+-- distinguish same-recipe vs different-recipe neighbors.
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "test-fishing-carp",
+    category = "sosciencity-fishery",
+    results = {{type = "item", name = "raw-fish", amount = 1}}
+}
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "test-fishing-salmon",
+    category = "sosciencity-fishery",
+    results = {{type = "item", name = "raw-fish", amount = 2}}
+}
+
+create_test_assembling_machine("social-observatory", {"sosciencity-social-observatory"}, {type = "void"})
+Sosciencity.configure_building("test-social-observatory")

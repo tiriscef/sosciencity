@@ -16,7 +16,7 @@ local culture_exponent = 0.25
 
 local function get_culture_bonus()
     local stats = game.forces.player.get_item_production_statistics("nauvis")
-    local total_mixtapes = stats.get_output_count("sosciencity-mixtape")
+    local total_mixtapes = stats.get_output_count("mixtape")
 
     if total_mixtapes <= 0 then
         return 1
