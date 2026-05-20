@@ -163,12 +163,20 @@ end
 local common_sprites = {
     [RenderingType.food_warning] = "virtual-signal/alert-no-food",
     [RenderingType.water_warning] = "virtual-signal/alert-no-water",
-    [RenderingType.no_workers] = "virtual-signal/alert-not-enough-workers"
+    [RenderingType.no_workers] = "virtual-signal/alert-not-enough-workers",
+    [RenderingType.breakdown_warning] = "virtual-signal/alert-red" -- TODO: replace placeholder
 }
 local common_sprite_offsets = {
     [RenderingType.food_warning] = {x = 1.25, y = 0},
     [RenderingType.water_warning] = {x = -1.25, y = 0},
-    [RenderingType.no_workers] = {x = 1.25, y = 0}
+    [RenderingType.no_workers] = {x = 1.25, y = 0},
+    [RenderingType.breakdown_warning] = {x = 0, y = 0}
+}
+local common_sprite_blink_intervals = {
+    [RenderingType.food_warning] = 30,
+    [RenderingType.water_warning] = 30,
+    [RenderingType.no_workers] = 30,
+    [RenderingType.breakdown_warning] = 30
 }
 
 --- Adds a common sprite to this entity.
@@ -184,7 +192,7 @@ function Subentities.add_common_sprite(entry, render_type)
 
     local entity = entry[EK.entity]
 
-    attached_renders[render_type] =
+    local render =
         rendering.draw_sprite(
         {
             sprite = common_sprites[render_type],
@@ -193,6 +201,8 @@ function Subentities.add_common_sprite(entry, render_type)
             render_layer = "189" -- lower than the default "arrow", so mouseover renderings should be drawn over this
         }
     )
+    render.blink_interval = common_sprite_blink_intervals[render_type] or 0
+    attached_renders[render_type] = render
 end
 
 --- Removes a common sprite from this entity (if one exists, otherwise the call does nothing).

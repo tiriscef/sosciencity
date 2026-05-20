@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local RenderingType = require("enums.rendering-type")
 local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
@@ -132,6 +133,19 @@ local broken_status = {
     label = {"sosciencity-custom-status.maintenance-broken-down"}
 }
 Entity.broken_status = broken_status
+
+--- Sets or clears the breakdown state: active flag, status label, and warning sprite.
+--- @param entry Entry
+--- @param is_broken boolean
+local function set_breakdown_state(entry, is_broken)
+    set_active(entry, not is_broken, is_broken and broken_status or nil)
+    if is_broken then
+        Subentities.add_common_sprite(entry, RenderingType.breakdown_warning)
+    else
+        Subentities.remove_common_sprite(entry, RenderingType.breakdown_warning)
+    end
+end
+Entity.set_breakdown_state = set_breakdown_state
 
 local BREAKDOWN_CYCLE_LENGTH = 10 * Time.second
 local BREAKDOWN_LOCAL_JITTER = 10

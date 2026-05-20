@@ -7,6 +7,7 @@ local create_active_machine_status = Entity.create_active_machine_status
 local update_active_machine_status = Entity.update_active_machine_status
 local remove_active_machine_status = Entity.remove_active_machine_status
 local get_breakdown_state = Entity.get_breakdown_state
+local set_breakdown_state = Entity.set_breakdown_state
 local set_active = Entity.set_active
 local is_externally_owned = Register.is_externally_owned
 local max = math.max
@@ -21,8 +22,7 @@ local function update_machine(entry)
     set_beacon_effects(entry, max(0, clockwork_bonus), 0, false)
 
     if not is_externally_owned(entry) then
-        local is_broken = get_breakdown_state(entry)
-        set_active(entry, not is_broken, is_broken and Entity.broken_status or nil)
+        set_breakdown_state(entry, get_breakdown_state(entry))
     end
 
     update_active_machine_status(entry)

@@ -10,7 +10,7 @@ local create_active_machine_status = Entity.create_active_machine_status
 local update_active_machine_status = Entity.update_active_machine_status
 local remove_active_machine_status = Entity.remove_active_machine_status
 local get_breakdown_state = Entity.get_breakdown_state
-local set_active = Entity.set_active
+local set_breakdown_state = Entity.set_breakdown_state
 local max = math.max
 
 local function get_waterwell_competition_performance(entry)
@@ -35,9 +35,7 @@ local function update_waterwell(entry)
     local competition, _ = get_waterwell_competition_performance(entry)
     set_crafting_machine_performance(entry, competition * get_clockwork_boost())
 
-    if get_breakdown_state(entry) then
-        set_active(entry, false, Entity.broken_status)
-    end
+    set_breakdown_state(entry, get_breakdown_state(entry))
 
     update_active_machine_status(entry)
 end
