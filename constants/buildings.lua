@@ -547,6 +547,12 @@ Building.values = {
         type = Type.water_distributer,
         range = 42
     },
+    ["test-water-distributer-powered"] = {
+        type = Type.water_distributer,
+        range = 42,
+        power_usage = 50 * Unit.kW,
+        eei = true
+    },
     ["test-fishery"] = {
         type = Type.fishery,
         range = 30,
@@ -681,6 +687,21 @@ Building.values = {
         target_population = 50,
         min_castes = 2,
         caste_bonus = 10
+    },
+    ["test-cold-storage"] = {
+        type = Type.cold_storage,
+        spoil_slowdown = 0.6,
+        eei = true
+    },
+    ["test-cold-storage-powered"] = {
+        type = Type.cold_storage,
+        power_usage = 300 * Unit.kW,
+        spoil_slowdown = 0.9,
+        eei = true
+    },
+    ["test-waterwell"] = {
+        type = Type.waterwell,
+        range = 30
     }
 }
 local buildings = Building.values

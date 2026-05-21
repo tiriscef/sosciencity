@@ -6,5 +6,6 @@
     "contact": "",
     "homepage": "",
     "factorio_version": "2.0",
-    "description": "Secret debug mod."
+    "description": "Secret debug mod.",
+    "spoiling_required": true
 }
