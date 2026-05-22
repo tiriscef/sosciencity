@@ -89,6 +89,7 @@ Tirislib.Testing.add_test_case(
         -- calling arbitrary methods on a dummy should silently do nothing
         dummy:set_something("value")
         dummy:another_method(1, 2, 3)
+        Assert.pass()
     end
 )
 

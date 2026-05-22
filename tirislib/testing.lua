@@ -45,7 +45,11 @@ local function new_results()
         failed_tests = {},
         executed_asserts = 0,
         failed_asserts = {},
-        current_test = nil
+        current_test = nil,
+        current_test_case = nil,
+        current_test_asserts = 0,
+        zero_assert_tests = {},
+        per_group = {}
     }
 end
 
@@ -60,10 +64,13 @@ local multi_tick_runner_active = false
 ---------------------------------------------------------------------------------------------------
 -- << logging >>
 
---- Increments the executed test counter.
+--- Increments the executed test counter and initialises per-test tracking.
 --- @param results table The results context
-local function log_test_execution(results)
+--- @param test_case table The test case being started
+local function log_test_execution(results, test_case)
     results.executed_tests = results.executed_tests + 1
+    results.current_test_case = test_case
+    results.current_test_asserts = 0
 end
 
 --- Records a failed test case.
@@ -73,6 +80,7 @@ end
 local function log_failed_test(results, test_case, message)
     results.failed_tests[#results.failed_tests + 1] = {
         name = test_case.name,
+        groups = test_case.groups,
         error_message = message
     }
 end
@@ -81,6 +89,7 @@ end
 --- @param results table The results context
 local function log_assert_execution(results)
     results.executed_asserts = results.executed_asserts + 1
+    results.current_test_asserts = results.current_test_asserts + 1
 end
 
 --- Walks the call stack to find the source location of the calling test code.
@@ -108,6 +117,7 @@ local function log_failed_assert(results, message)
 
     results.failed_asserts[#results.failed_asserts + 1] = {
         test_case = results.current_test,
+        groups = results.current_test_case and results.current_test_case.groups or {},
         error_message = string.format("%s, line %d:\n%s", info.source, info.currentline, message)
     }
 end
@@ -121,8 +131,27 @@ end
 local function log_failed_assert_at(results, message, source, line)
     results.failed_asserts[#results.failed_asserts + 1] = {
         test_case = results.current_test,
+        groups = results.current_test_case and results.current_test_case.groups or {},
         error_message = string.format("%s, line %d:\n%s", source, line, message)
     }
+end
+
+--- Records per-group counts and zero-assert warning for a completed test.
+--- Must be called once per test after setup/fn/teardown have all run.
+--- @param results table The results context
+--- @param test_case table The completed test case
+local function finish_test_tracking(results, test_case)
+    if results.current_test_asserts == 0 then
+        results.zero_assert_tests[#results.zero_assert_tests + 1] = test_case.name
+    end
+    for group in pairs(test_case.groups) do
+        if not results.per_group[group] then
+            results.per_group[group] = {tests = 0, asserts = 0}
+        end
+        results.per_group[group].tests = results.per_group[group].tests + 1
+        results.per_group[group].asserts = results.per_group[group].asserts + results.current_test_asserts
+    end
+    results.current_test_asserts = 0
 end
 
 local separator_line = "-------------------------------------------"
@@ -133,6 +162,7 @@ local separator_line = "-------------------------------------------"
 local function get_logged_results(results)
     local crashed_test_count = #results.failed_tests
     local failed_assert_count = #results.failed_asserts
+    local zero_assert_count = #results.zero_assert_tests
     local all_passed = crashed_test_count == 0 and failed_assert_count == 0
 
     local parts = {}
@@ -140,12 +170,36 @@ local function get_logged_results(results)
         parts[#parts + 1] = s
     end
 
-    -- summary
+    local function groups_string(groups)
+        local names = {}
+        for g in pairs(groups) do
+            names[#names + 1] = g
+        end
+        table.sort(names)
+        return table.concat(names, "|")
+    end
+
+    -- per-group summary + grand total
     add(separator_line)
-    if all_passed then
+    local group_names = {}
+    for g in pairs(results.per_group) do
+        group_names[#group_names + 1] = g
+    end
+    table.sort(group_names)
+    if #group_names > 0 then
+        for _, g in pairs(group_names) do
+            local gd = results.per_group[g]
+            add(string.format("  %s: %d tests, %d asserts", g, gd.tests, gd.asserts))
+        end
+        add("")
+    end
+
+    if results.executed_tests == 0 then
+        add("WARNING: 0 tests were executed")
+    elseif all_passed then
         add(string.format("ALL PASSED: %d tests, %d asserts", results.executed_tests, results.executed_asserts))
     else
-        -- A test fails if it crashed OR had at least one failed assert
+        -- a test fails if it crashed OR had at least one failed assert
         local failed_test_names = {}
         for _, ft in pairs(results.failed_tests) do
             failed_test_names[ft.name] = true
@@ -168,13 +222,24 @@ local function get_logged_results(results)
     end
     add(separator_line)
 
+    -- zero-assert warnings
+    if zero_assert_count > 0 then
+        add("")
+        add("Tests with 0 asserts (use Assert.pass() if intentional):")
+        for _, name in pairs(results.zero_assert_tests) do
+            add(string.format("  [WARN] %s", name))
+        end
+    end
+
     -- crashed tests
     if crashed_test_count > 0 then
         add("")
         add("Crashed tests:")
         for _, failed_test in pairs(results.failed_tests) do
-            add(string.format("  [CRASH] %s", failed_test.name))
-            -- indent each line of the error message
+            local gs = groups_string(failed_test.groups or {})
+            local label = gs ~= "" and string.format("  [CRASH] %s [%s]", failed_test.name, gs)
+                or string.format("  [CRASH] %s", failed_test.name)
+            add(label)
             for line in failed_test.error_message:gmatch("[^\n]+") do
                 add("    " .. line)
             end
@@ -186,10 +251,12 @@ local function get_logged_results(results)
         local grouped = Tirislib.Tables.group_by_key(results.failed_asserts, "test_case")
         add("")
         add("Failed asserts:")
-        for test_name, failed_asserts in pairs(grouped) do
-            add(string.format("  [FAIL] %s", test_name))
-            for _, failed_assert in pairs(failed_asserts) do
-                -- indent each line of the error message
+        for test_name, test_failed_asserts in pairs(grouped) do
+            local gs = groups_string(test_failed_asserts[1].groups or {})
+            local label = gs ~= "" and string.format("  [FAIL] %s [%s]", test_name, gs)
+                or string.format("  [FAIL] %s", test_name)
+            add(label)
+            for _, failed_assert in pairs(test_failed_asserts) do
                 for line in failed_assert.error_message:gmatch("[^\n]+") do
                     add("    " .. line)
                 end
@@ -209,12 +276,13 @@ end
 --- @param results table The results context
 local function run_test(test_case, results)
     results.current_test = test_case.name
-    log_test_execution(results)
+    log_test_execution(results, test_case)
 
     if test_case.setup then
         local ok, err = xpcall(test_case.setup, debug.traceback)
         if not ok then
             log_failed_test(results, test_case, "Setup failed:\n" .. err)
+            finish_test_tracking(results, test_case)
             return
         end
     end
@@ -230,6 +298,8 @@ local function run_test(test_case, results)
             log_failed_test(results, test_case, "Teardown failed:\n" .. terr)
         end
     end
+
+    finish_test_tracking(results, test_case)
 end
 
 --- Runs all the test cases in the given group.
@@ -523,6 +593,12 @@ function Assert.contains(tbl, value, message)
     end
 end
 
+--- Marks a test as intentionally having no domain assertions.
+--- Suppresses the zero-assert warning for tests that only verify the absence of crashes.
+function Assert.pass()
+    log_assert_execution(get_results())
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << multi-tick runner >>
 
@@ -615,6 +691,9 @@ function Tirislib.Testing.start_multi_tick_run(test_filter)
                 log_failed_test(results, current_test_case, "Teardown failed:\n" .. err)
             end
         end
+        if current_test_case then
+            finish_test_tracking(results, current_test_case)
+        end
         current_test_case = nil
         current_fn = nil
         wait_ticks = 0
@@ -683,7 +762,6 @@ function Tirislib.Testing.start_multi_tick_run(test_filter)
                     return false
                 elseif poll then
                     current_poll = poll
-                    current_fn = poll.fn
                     return false
                 else
                     finish_test()
@@ -697,12 +775,13 @@ function Tirislib.Testing.start_multi_tick_run(test_filter)
                 end
 
                 results.current_test = current_test_case.name
-                log_test_execution(results)
+                log_test_execution(results, current_test_case)
 
                 if current_test_case.setup then
                     local ok, err = xpcall(current_test_case.setup, debug.traceback)
                     if not ok then
                         log_failed_test(results, current_test_case, "Setup failed:\n" .. err)
+                        finish_test_tracking(results, current_test_case)
                         current_test_case = nil
                         -- teardown intentionally skipped (mirrors sync runner)
                     else

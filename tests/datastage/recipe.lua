@@ -118,6 +118,7 @@ Tirislib.Testing.add_test_case(
     function()
         local recipe = create_recipe("test-r-setfields-nil")
         recipe:set_fields(nil)
+        Assert.pass()
     end,
     setup,
     teardown
@@ -186,6 +187,7 @@ Tirislib.Testing.add_test_case(
     function()
         local recipe = create_recipe("test-r-nil-ingr")
         recipe:add_ingredient(nil)
+        Assert.pass()
     end,
     setup,
     teardown
@@ -214,6 +216,7 @@ Tirislib.Testing.add_test_case(
     function()
         local recipe = create_recipe("test-r-range-nil")
         recipe:add_ingredient_range(nil)
+        Assert.pass()
     end,
     setup,
     teardown
@@ -666,6 +669,7 @@ Tirislib.Testing.add_test_case(
     function()
         local recipe = create_recipe("test-r-res-range-nil")
         recipe:add_result_range(nil)
+        Assert.pass()
     end,
     setup,
     teardown

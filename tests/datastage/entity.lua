@@ -224,6 +224,7 @@ Tirislib.Testing.add_test_case(
         local entity = create_test_entity("test-ent-mine-none")
         -- should not error
         entity:add_mining_result({type = "item", name = "stone", amount = 1})
+        Assert.pass()
     end,
     setup,
     teardown

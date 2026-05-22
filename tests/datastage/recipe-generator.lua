@@ -169,6 +169,7 @@ Tirislib.Testing.add_test_case(
 
         -- should not error
         Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, nil, 0)
+        Assert.pass()
     end,
     setup,
     teardown
@@ -509,6 +510,7 @@ Tirislib.Testing.add_test_case(
         Tirislib.RecipeGenerator.merge_details(nil, {energy_required = 5})
         Tirislib.RecipeGenerator.merge_details({energy_required = 5}, nil)
         Tirislib.RecipeGenerator.merge_details(nil, nil)
+        Assert.pass()
     end
 )
 
@@ -1009,5 +1011,6 @@ Tirislib.Testing.add_test_case(
         Tirislib.RecipeGenerator.merge_prototypes(nil, {energy_required = 5})
         Tirislib.RecipeGenerator.merge_prototypes({energy_required = 5}, nil)
         Tirislib.RecipeGenerator.merge_prototypes(nil, nil)
+        Assert.pass()
     end
 )

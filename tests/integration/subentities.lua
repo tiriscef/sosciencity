@@ -156,9 +156,7 @@ Tirislib.Testing.add_test_case(
         local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
 
         local subentities = entry[EK.subentities]
-        if subentities then
-            Assert.is_nil(subentities[SubentityType.eei], "should not have an EEI subentity")
-        end
+        Assert.is_nil(subentities and subentities[SubentityType.eei], "should not have an EEI subentity")
     end,
     function()
         test_surface = Helpers.create_test_surface()
