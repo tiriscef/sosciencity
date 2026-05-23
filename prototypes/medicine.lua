@@ -1,5 +1,6 @@
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
+local InhabitantsConstants = require("constants.inhabitants")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -25,6 +26,7 @@ local medicine_items = {
     },
     {name = "isotonic-saline-solution"},
     {name = "blood-bag"},
+    {name = "engineer-spinal-fluid", use_placeholder_icon = true},
     {
         name = "psychotropics",
         sprite_variations = {name = "psychotropics-pile", count = 3}
@@ -80,31 +82,29 @@ Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", s
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
--- TODO: early game handcrafting recipe for surgery instruments, then a medical assembler one
-
 Tirislib.RecipeGenerator.create_from_prototype {
-    ingredients = {
-        {theme = "plating", amount = 1},
-        {theme = "plating2", amount = 1},
-    },
     results = {
         {type = "item", name = "surgery-instruments", amount = 1}
     },
-    energy_required = 5
+    ingredients = {
+        {theme = "plating", amount = 2},
+        {theme = "plating2", amount = 2},
+    }
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
-        {type = "item", name = "surgery-instruments", amount = 1}
+        {type = "item", name = "surgery-instruments", amount = 2}
     },
     ingredients = {
-        {theme = "plating", amount = 1},
-        {theme = "plating2", amount = 1},
+        {theme = "plating", amount = 2},
+        {theme = "plating2", amount = 2},
         {type = "fluid", name = "steam", amount = 200}
     },
     category = "sosciencity-pharma",
-    energy_required = 5,
+    energy_required = 4,
     allow_productivity = true,
+    do_index_fluid_ingredients = true,
     unlock = "medbay"
 }
 
@@ -321,6 +321,24 @@ Tirislib.RecipeGenerator.create_from_prototype {
     icon_size = 64,
     subgroup = "sosciencity-medicine",
     main_product = ""
+}
+
+Tirislib.RecipeGenerator.create_from_prototype {
+    name = "extract-spinal-fluid",
+    category = "sosciencity-handcrafting",
+    enabled = false,
+    energy_required = 5,
+    ingredients = {
+        {type = "item", name = "surgery-instruments", amount = 1},
+        {type = "item", name = "analgesics", amount = 1}
+    },
+    results = {
+        {type = "item", name = "engineer-spinal-fluid", amount = 5}
+    },
+    subgroup = "sosciencity-medicine",
+    localised_name = {"recipe-name.extract-spinal-fluid"},
+    localised_description = {"recipe-description.extract-spinal-fluid", tostring(InhabitantsConstants.spinal_fluid_health_cost)},
+    unlock = "ovosynthesis"
 }
 
 Tirislib.Prototype.batch_create {

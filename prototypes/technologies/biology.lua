@@ -32,6 +32,20 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "ovosynthesis",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"fermentation", "upbringing"},
+    unit = {
+        count = 60,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib.Technology.create {
     name = "basic-biotechnology",
     icon = "__sosciencity-graphics__/graphics/technology/basic-biotechnology.png",
     icon_size = 256,

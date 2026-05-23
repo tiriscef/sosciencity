@@ -51,6 +51,29 @@ local function get_recent_donation_count(player_id)
     return count
 end
 
+local function extract_spinal_fluid(player_id, _)
+    local player = game.get_player(player_id)
+    local character = player.character
+    if math.random() < InhabitantsConstants.spinal_fluid_oops_chance then
+        character.damage(InhabitantsConstants.spital_fluid_oops_health_cost, character.force, nil, nil, character)
+        if not character.valid then
+            player.print {"sosciencity.died-spinal-fluid-oops"}
+        else
+            player.print {"sosciencity.spinal-fluid-oops"}
+            character.surface.create_entity {
+                name = "blood-donation-3",
+                position = character.position,
+                target = character
+            }
+        end
+    else
+        character.damage(InhabitantsConstants.spinal_fluid_health_cost, character.force, nil, nil, character)
+        if not character.valid then
+            player.print {"sosciencity.died-spinal-fluid"}
+        end
+    end
+end
+
 local function blood_donation(player_id, _)
     local count = get_recent_donation_count(player_id)
     local player = game.get_player(player_id)
@@ -67,13 +90,18 @@ local function blood_donation(player_id, _)
 
     -- make them suffer
     local damage = count * 49
-    character.damage(damage, character.force)
+    character.damage(damage, character.force, nil, nil, character)
 
-    player.print {"sosciencity.donate-blood", count}
+    if not character.valid then
+        player.print {"sosciencity.died-blood-donation", count}
+    else
+        player.print {"sosciencity.donate-blood", count}
+    end
 end
 
 local crafted_lookup = {
-    ["donate-blood"] = blood_donation
+    ["donate-blood"] = blood_donation,
+    ["extract-spinal-fluid"] = extract_spinal_fluid
 }
 
 --- Event handler function for finished handcrafts.

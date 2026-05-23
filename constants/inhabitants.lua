@@ -83,6 +83,13 @@ InhabitantsConstants.blood_donation_medical_instruments_cost = 1
 --- Calorific cost an inhabitant pays to lay one fertile egg.
 InhabitantsConstants.egg_calories = 2000
 
+--- Health points lost per spinal fluid extraction.
+InhabitantsConstants.spinal_fluid_health_cost = 25
+--- Chance that a spinal fluid extraction goes wrong.
+InhabitantsConstants.spinal_fluid_oops_chance = 0.05
+--- Health points lost per botched spinal fluid extraction.
+InhabitantsConstants.spital_fluid_oops_health_cost = 110
+
 --- Item name of the fertile huwan egg.
 InhabitantsConstants.egg_fertile = "huwan-egg"
 
@@ -135,19 +142,19 @@ InhabitantsConstants.egg_data = {
     },
     ["huwan-egg-autoreproduction"] = {
         genders = {
-            [Gender.agender] = 0.6,
+            [Gender.agender] = 0.7,
             [Gender.fale] = 0.15,
-            [Gender.pachin] = 0.15,
-            [Gender.ga] = 0.1
+            [Gender.pachin] = 0.1,
+            [Gender.ga] = 0.05
         },
         birth_defect_probability = 0.1
     },
     ["huwan-egg-ovosynthesis"] = {
         genders = {
-            [Gender.agender] = 0.2,
+            [Gender.agender] = 0.3,
             [Gender.fale] = 0.1,
-            [Gender.pachin] = 0.4,
-            [Gender.ga] = 0.3
+            [Gender.pachin] = 0.35,
+            [Gender.ga] = 0.25
         },
         birth_defect_probability = 0.25
     }

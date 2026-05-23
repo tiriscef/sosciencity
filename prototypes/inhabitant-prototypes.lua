@@ -129,7 +129,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     name = "lay-egg",
     category = "sosciencity-handcrafting",
     enabled = true,
-    energy_required = 1,
+    energy_required = 3,
     ingredients = {
         {type = "item", name = "hehe", amount = 3}
     },
@@ -145,7 +145,24 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "upbringing"
 }
 
--- TODO: ovosynthesis recipe
+Tirislib.RecipeGenerator.create_from_prototype {
+    results = {
+        {type = "item", name = "huwan-egg-ovosynthesis", amount_min = 1, amount_max = 3},
+        {type = "item", name = "hehe", amount_min = 1, amount_max = 2}
+    },
+    ingredients = {
+        {type = "item", name = "engineer-spinal-fluid", amount = 1},
+        {type = "item", name = "proteins", amount = 1},
+        {type = "item", name = "phospholipids", amount = 1},
+        {type = "item", name = "nucleobases", amount = 1},
+        {type = "item", name = "limestone", amount = 2},
+        {type = "item", name = "hehe", amount = 2}
+    },
+    energy_required = 60,
+    category = "sosciencity-fermentation-tank",
+    localised_name = {"recipe-name.ovosynthesis"},
+    unlock = "ovosynthesis"
+}
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
     Tirislib.RecipeGenerator.create_from_prototype {
