@@ -361,4 +361,5 @@ if DEV_MODE then
     require("classes.guis.city-view-pages.debug-pages")
     require("classes.guis.city-view-pages.item-browser-page")
     require("classes.guis.city-view-pages.recipe-balancing-page")
+    require("classes.guis.city-view-pages.housing-balancing-page")
 end

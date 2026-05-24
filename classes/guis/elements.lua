@@ -783,7 +783,7 @@ end
 
 local numeric_confirmed_handlers = {}
 
-local DEFAULT_NORMAL_COLOR = {r = 1, g = 1, b = 1}
+local DEFAULT_NORMAL_COLOR = {r = 0, g = 0, b = 0}
 local DEFAULT_ERROR_COLOR = {r = 0.9, g = 0.2, b = 0.2}
 
 local function apply_numeric_result(textfield, result, event)
