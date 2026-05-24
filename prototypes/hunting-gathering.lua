@@ -36,7 +36,7 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "trap", amount = 1}
     },
@@ -48,7 +48,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "hunting-fishing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "trap-cage", amount = 1}
     },
@@ -61,7 +61,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "hunting-fishing"
 }
 
---[[Tirislib.RecipeGenerator.create_from_prototype {
+--[[Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bucket", amount = 1}
     },
@@ -73,7 +73,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-caste"
 }]]
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "simple-fishtrap", amount = 1}
     },
@@ -86,7 +86,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "hunting-fishing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "fishing-net", amount = 1}
     },
@@ -100,7 +100,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "advanced-fishing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "harpoon", amount = 1}
     },
@@ -125,7 +125,7 @@ local function create_hunting_gathering_recipe(details)
     details.subgroup = details.subgroup or "sosciencity-gathering"
     details.auto_recycle = false
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details)
+    return Tirislib.RecipeGenerator.create(details)
 end
 
 create_hunting_gathering_recipe {

@@ -1,4 +1,4 @@
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "education-plasma",
     category = "sosciencity-medical-school",
     enabled = true,
@@ -18,7 +18,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "plasma-caste"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "education-gunfire",
     category = "sosciencity-military-school",
     enabled = true,
@@ -38,7 +38,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "gunfire-caste"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "education-foundry",
     category = "sosciencity-natural-sciences-faculty",
     enabled = true,
@@ -59,7 +59,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "foundry-caste"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "education-foundry-advanced",
     category = "sosciencity-natural-sciences-faculty",
     enabled = true,
@@ -83,7 +83,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "academic-exchange"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "education-gleam",
     category = "sosciencity-huwanities-faculty",
     enabled = true,
@@ -103,7 +103,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "gleam-caste"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "education-gleam-advanced",
     category = "sosciencity-huwanities-faculty",
     enabled = true,

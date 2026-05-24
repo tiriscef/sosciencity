@@ -17,7 +17,7 @@ Tirislib.Item.batch_create(
 
 -- Psychology Institute
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "study-design", amount = 1}
     },
@@ -34,7 +34,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Social Observatory
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "survey", amount = 1}
     },
@@ -50,7 +50,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Gleam HQ
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "metastudy", amount = 1}
     },
@@ -65,7 +65,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "metastudy", amount = 2}
     },

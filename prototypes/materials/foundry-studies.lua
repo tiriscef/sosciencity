@@ -19,7 +19,7 @@ Tirislib.Item.batch_create(
 
 -- Experimental Workshop
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "experimental-data", amount = 1}
     },
@@ -33,7 +33,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "experimental-data", amount = 2}
     },
@@ -50,7 +50,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Tech Institute
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "computing-model", amount = 1}
     },
@@ -66,7 +66,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Computing Center
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "complex-scientific-data", amount = 2}
     },
@@ -82,7 +82,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Foundry HQ
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "scientific-theory", amount = 1}
     },
@@ -96,7 +96,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "scientific-theory", amount = 2}
     },
@@ -111,7 +111,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "metallurgical-report", amount = 1}
     },

@@ -10,7 +10,7 @@ Tirislib.Item.create {
     pictures = Sosciencity.Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "electric-water-heater", amount = 1}},
     ingredients = {
         {theme = "plating", amount = 10}, {theme = "piping", amount = 10}, {theme = "wiring", amount = 10},

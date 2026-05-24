@@ -82,7 +82,7 @@ Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", s
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "surgery-instruments", amount = 1}
     },
@@ -92,7 +92,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     }
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "surgery-instruments", amount = 2}
     },
@@ -108,7 +108,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "activated-carbon", amount = 1}
     },
@@ -126,7 +126,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "activated-carbon", amount = 2}
     },
@@ -144,7 +144,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "artificial-limb", amount = 1}
     },
@@ -160,7 +160,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "medbay"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "artificial-heart", amount = 1}
     },
@@ -177,7 +177,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "intensive-care"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bandage", amount = 15}
     },
@@ -194,7 +194,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "isotonic-saline-solution", amount = 1}
     },
@@ -210,7 +210,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "psychotropics", amount = 1}
     },
@@ -228,7 +228,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "analgesics", amount = 1}
     },
@@ -246,7 +246,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "potent-analgesics", amount = 1}
     },
@@ -264,7 +264,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "anesthetics", amount = 1}
     },
@@ -281,7 +281,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "antibiotics", amount = 1}
     },
@@ -299,7 +299,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "antimycotics", amount = 1}
     },
@@ -318,7 +318,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "donate-blood",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -336,7 +336,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     allow_as_intermediate = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "extract-spinal-fluid",
     category = "sosciencity-handcrafting",
     enabled = false,
@@ -482,7 +482,7 @@ Tirislib.Item.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sosciencity-emergency-ration", amount = 1}
     },
@@ -495,7 +495,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- TODO: emergency ration needs a non-handcrafting recipe because I want to use it as a medicine item
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sosciencity-medical-kit", amount = 1}
     },
@@ -508,7 +508,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sosciencity-medical-kit", amount = 5}
     },

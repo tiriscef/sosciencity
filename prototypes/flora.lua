@@ -93,7 +93,7 @@ local function create_annual_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("farming")
 end
 
 local function create_perennial_recipe(details)
@@ -123,7 +123,7 @@ local function create_perennial_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("farming")
 end
 
 local function create_perennial_crop_recipe(details)
@@ -153,7 +153,7 @@ local function create_perennial_crop_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("farming")
 end
 
 local function create_annual_bloomhouse_recipe(details)
@@ -190,7 +190,7 @@ local function create_annual_bloomhouse_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("farming")
 end
 
 local function create_identification_recipe(details)
@@ -213,7 +213,7 @@ local function create_identification_recipe(details)
         auto_recycle = false
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("plant-neogenesis")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("plant-neogenesis")
 end
 
 local function create_neogenesis_recipe(details)
@@ -243,7 +243,7 @@ local function create_neogenesis_recipe(details)
         auto_recycle = false
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("plant-neogenesis")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("plant-neogenesis")
 end
 
 -- apple
@@ -635,7 +635,7 @@ local function create_mushroom_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("farming")
 end
 
 -- fawoxylas
@@ -711,7 +711,7 @@ local function create_algae_recipe(details)
     })
 
     add_general_growing_attributes(details, plant_details)
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("farming")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("farming")
 end
 
 -- endower flower
@@ -739,7 +739,7 @@ create_algae_recipe {
 ---------------------------------------------------------------------------------------------------
 -- << mix sorting recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "sort-edible-plants",
     energy_required = 4,
     category = "sosciencity-sorting-machine",
@@ -764,7 +764,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_category_layer("plant-neogenesis")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "sort-fungi",
     energy_required = 4,
     category = "sosciencity-sorting-machine",
@@ -789,7 +789,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_category_layer("plant-neogenesis")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "sort-algae",
     energy_required = 4,
     category = "sosciencity-sorting-machine",
@@ -818,7 +818,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 for _, item in pairs(flora_items) do
     if item.wood then
-                Tirislib.RecipeGenerator.create_from_prototype {
+                Tirislib.RecipeGenerator.create {
             results = {
                 {type = "item", name = "lumber", amount = 3, product = true},
                 {type = "item", name = "sawdust", amount = 1}
@@ -910,7 +910,7 @@ Tirislib.Item.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "apple-sapling", amount = 1}
     },
@@ -925,7 +925,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "avocado-sapling", amount = 1}
     },
@@ -940,7 +940,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "cherry-sapling", amount = 1}
     },
@@ -955,7 +955,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "lemon-sapling", amount = 1}
     },
@@ -970,7 +970,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "orange-sapling", amount = 1}
     },
@@ -985,7 +985,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "ortrot-sapling", amount = 1}
     },
@@ -1000,7 +1000,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "zetorn-sapling", amount = 1}
     },
@@ -1141,7 +1141,7 @@ Tirislib.Item.create {
     stack_size = 50
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "tree-sapling", amount = 1}
     },

@@ -17,7 +17,7 @@ Tirislib.Fluid.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "drinkable-water", amount = 50}
     },
@@ -30,7 +30,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastructure-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "drinkable-water", amount = 80}
     },
@@ -40,7 +40,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastructure-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "clean-water", amount = 80}
     },
@@ -50,7 +50,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "activated-carbon-filtering"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "water", amount_min = 250, amount_max = 350}
     },
@@ -61,7 +61,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastructure-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "mechanically-cleaned-water", amount = 600, product = true},
         {theme = "sediment", amount = 1}
@@ -75,7 +75,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "biologically-cleaned-water", amount = 600, product = true},
         {type = "item", name = "sewage-sludge", amount = 1}
@@ -88,7 +88,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "clean-water", amount = 600}
     },
@@ -101,7 +101,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "drinking-water-treatment"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "ultra-pure-water", amount = 50, product = true},
         {type = "item", name = "semipermeable-membrane", amount = 1, probability = 0.8}

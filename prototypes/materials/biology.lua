@@ -113,7 +113,7 @@ Tirislib.Fluid.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "salt", amount = 5}
     },
@@ -124,7 +124,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "flour", amount = 5}
     },
@@ -137,7 +137,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sugar", amount = 1, product = true},
         {type = "item", name = "molasses", amount = 1},
@@ -153,7 +153,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sugar", amount = 3, product = true},
         {type = "item", name = "molasses", amount = 1}
@@ -167,7 +167,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sugar", amount = 3, product = true},
         {type = "item", name = "molasses", amount = 2},
@@ -182,7 +182,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "amylum", amount_min = 2, amount_max = 6}
     },
@@ -198,7 +198,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "agarose", amount = 1}
     },
@@ -211,7 +211,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "fatty-oil", amount = 20}
     },
@@ -224,7 +224,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "fatty-oil", amount = 30}
     },
@@ -236,7 +236,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "fatty-oil", amount = 30}
     },
@@ -248,7 +248,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "fatty-oil", amount = 30}
     },
@@ -261,7 +261,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "solid-fat", amount = 1}
     },
@@ -275,7 +275,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.5)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "proteins", amount = 1}
     },
@@ -287,7 +287,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "soy-milk", amount = 50}
     },
@@ -301,7 +301,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "ethanol", amount = 50}
     },
@@ -315,7 +315,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "ethanol", amount = 50}
     },
@@ -329,7 +329,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "pemtenn-extract", amount = 10}
     },

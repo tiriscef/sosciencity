@@ -73,7 +73,7 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "empty-hard-drive", amount = 1}
     },
@@ -87,7 +87,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "sosciencity-computing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "virus-genome", amount = 1}
     },
@@ -100,7 +100,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "plant-genome", amount = 1}
     },
@@ -113,7 +113,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "huwan-genome", amount = 1}
     },
@@ -126,7 +126,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "edited-huwan-genome", amount = 1}
     },
@@ -139,7 +139,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "glass-instruments", amount_min = 1, amount_max = 5}
     },
@@ -152,7 +152,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "semipermeable-membrane", amount = 1}
     },
@@ -164,7 +164,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "genetic-neogenesis"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "nucleobases", amount = 1}
     },
@@ -179,7 +179,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "phospholipids", amount = 1}
     },
@@ -195,7 +195,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "chloroplasts", amount = 1}
     },
@@ -209,7 +209,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "mitochondria", amount = 1}
     },
@@ -223,7 +223,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "synthetase", amount = 1}
     },
@@ -238,7 +238,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "thermostable-dna-polymerase", amount = 1}
     },
@@ -251,7 +251,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "blank-dna-virus", amount = 1, product = true},
         {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.95}

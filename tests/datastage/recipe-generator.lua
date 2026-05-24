@@ -235,227 +235,6 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << create >>
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create creates a recipe for an existing item",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-create-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-create-product",
-            name = "test-rg-create-recipe"
-        })
-
-        Assert.not_nil(recipe)
-        Assert.is_true(recipe:has_result("test-rg-create-product"))
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create errors for a non-existent product",
-    "lib.recipe-generator",
-    function()
-        Assert.throws(function()
-            Tirislib.RecipeGenerator.create({
-                product = "test-rg-nonexistent-item-xyz",
-                name = "test-rg-nonexistent-recipe"
-            })
-        end)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create respects product_amount",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-amount-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-amount-product",
-            name = "test-rg-amount-recipe",
-            product_amount = 5
-        })
-
-        Assert.equals(recipe:get_result_count("test-rg-amount-product"), 5)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create respects energy_required",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-energy-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-energy-product",
-            name = "test-rg-energy-recipe",
-            energy_required = 10
-        })
-
-        Assert.equals(recipe.energy_required, 10)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create defaults energy_required to 0.5",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-edefault-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-edefault-product",
-            name = "test-rg-edefault-recipe"
-        })
-
-        Assert.equals(recipe.energy_required, 0.5)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create adds explicit ingredients",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-ingr-product")
-        create_test_item("test-rg-ingr-input")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-ingr-product",
-            name = "test-rg-ingr-recipe",
-            ingredients = {{name = "test-rg-ingr-input", type = "item", amount = 3}}
-        })
-
-        Assert.is_true(recipe:has_ingredient("test-rg-ingr-input"))
-        Assert.equals(recipe:get_ingredient_count("test-rg-ingr-input"), 3)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create adds byproducts",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-bp-product")
-        create_test_item("test-rg-bp-byproduct")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-bp-product",
-            name = "test-rg-bp-recipe",
-            byproducts = {{name = "test-rg-bp-byproduct", type = "item", amount = 2}}
-        })
-
-        Assert.is_true(recipe:has_result("test-rg-bp-product"))
-        Assert.is_true(recipe:has_result("test-rg-bp-byproduct"))
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create sets category to crafting-with-fluid when fluid ingredients present",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-cat-product")
-        create_test_fluid("test-rg-cat-fluid")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-cat-product",
-            name = "test-rg-cat-recipe",
-            ingredients = {{name = "test-rg-cat-fluid", type = "fluid", amount = 10}}
-        })
-
-        Assert.equals(recipe.category, "crafting-with-fluid")
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create defaults to crafting category with no fluids",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-catdef-product")
-        create_test_item("test-rg-catdef-input")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-catdef-product",
-            name = "test-rg-catdef-recipe",
-            ingredients = {{name = "test-rg-catdef-input", type = "item", amount = 1}}
-        })
-
-        Assert.equals(recipe.category, "crafting")
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create respects explicit category override",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-catov-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-catov-product",
-            name = "test-rg-catov-recipe",
-            category = "smelting"
-        })
-
-        Assert.equals(recipe.category, "smelting")
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create applies additional_fields",
-    "lib.recipe-generator",
-    function()
-        create_test_item("test-rg-af-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-af-product",
-            name = "test-rg-af-recipe",
-            additional_fields = {hide_from_player_crafting = true}
-        })
-
-        Assert.is_true(recipe.hide_from_player_crafting)
-    end,
-    setup,
-    teardown
-)
-
-Tirislib.Testing.add_test_case(
-    "RecipeGenerator.create works with fluid products",
-    "lib.recipe-generator",
-    function()
-        create_test_fluid("test-rg-fluid-product")
-
-        local recipe = Tirislib.RecipeGenerator.create({
-            product = "test-rg-fluid-product",
-            product_type = "fluid",
-            name = "test-rg-fluid-recipe"
-        })
-
-        Assert.is_true(recipe:has_result("test-rg-fluid-product", "fluid"))
-    end,
-    setup,
-    teardown
-)
-
----------------------------------------------------------------------------------------------------
 -- << merge_details >>
 
 Tirislib.Testing.add_test_case(
@@ -547,15 +326,15 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << create_from_prototype >>
+-- << create >>
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype creates a recipe with basic results",
+    "create creates a recipe with basic results",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-product")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-basic",
             results = {{type = "item", name = "test-rg-cfp-product", amount = 1}}
         }
@@ -570,12 +349,27 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype derives fields from first result as default product",
+    "create errors for a non-existent product",
+    "lib.recipe-generator",
+    function()
+        Assert.throws(function()
+            Tirislib.RecipeGenerator.create {
+                name = "test-rg-nonexistent-recipe",
+                results = {{type = "item", name = "test-rg-nonexistent-item-xyz", amount = 1}}
+            }
+        end)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "create derives fields from first result as default product",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-derive", {subgroup = "raw-material", order = "z"})
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             results = {{type = "item", name = "test-rg-cfp-derive", amount = 1}}
         }
 
@@ -589,13 +383,13 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype respects the product flag on a non-first result",
+    "create respects the product flag on a non-first result",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-byprod")
         create_test_item("test-rg-cfp-main", {subgroup = "raw-material", order = "m"})
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-prodflag",
             results = {
                 {type = "item", name = "test-rg-cfp-byprod", amount = 1},
@@ -612,12 +406,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype strips the product flag from the result entry",
+    "create strips the product flag from the result entry",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-strip")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-strip-recipe",
             results = {{type = "item", name = "test-rg-cfp-strip", amount = 1, product = true}}
         }
@@ -630,7 +424,7 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype expands inline ingredient themes",
+    "create expands inline ingredient themes",
     "lib.recipe-generator",
     function()
         Tirislib.RecipeGenerator.add_themes({
@@ -643,7 +437,7 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-rg-cfp-themed-ingr")
         create_test_item("test-rg-cfp-explicit-ingr")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-itheme-recipe",
             results = {{type = "item", name = "test-rg-cfp-itheme-product", amount = 1}},
             ingredients = {
@@ -663,7 +457,7 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype expands inline result themes",
+    "create expands inline result themes",
     "lib.recipe-generator",
     function()
         Tirislib.RecipeGenerator.add_result_themes({
@@ -675,7 +469,7 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-rg-cfp-rtheme-product")
         create_test_item("test-rg-cfp-themed-result")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-rtheme-recipe",
             results = {
                 {type = "item", name = "test-rg-cfp-rtheme-product", amount = 1},
@@ -693,7 +487,7 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype respects default_theme_level for inline themes",
+    "create respects default_theme_level for inline themes",
     "lib.recipe-generator",
     function()
         Tirislib.RecipeGenerator.add_themes({
@@ -707,7 +501,7 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-rg-cfp-dtl-item-0")
         create_test_item("test-rg-cfp-dtl-item-3")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-dtl-recipe",
             default_theme_level = 3,
             results = {{type = "item", name = "test-rg-cfp-dtl-product", amount = 1}},
@@ -724,7 +518,7 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype inline theme level overrides default_theme_level",
+    "create inline theme level overrides default_theme_level",
     "lib.recipe-generator",
     function()
         Tirislib.RecipeGenerator.add_themes({
@@ -738,7 +532,7 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-rg-cfp-ovr-item-0")
         create_test_item("test-rg-cfp-ovr-item-3")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-ovr-recipe",
             default_theme_level = 3,
             results = {{type = "item", name = "test-rg-cfp-ovr-product", amount = 1}},
@@ -755,12 +549,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype nils extra keys from the prototype",
+    "create nils extra keys from the prototype",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-nil-product")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-nil-recipe",
             results = {{type = "item", name = "test-rg-cfp-nil-product", amount = 1}},
             default_theme_level = 2,
@@ -778,7 +572,7 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype auto-detects crafting-with-fluid after theme expansion",
+    "create auto-detects crafting-with-fluid after theme expansion",
     "lib.recipe-generator",
     function()
         Tirislib.RecipeGenerator.add_themes({
@@ -790,7 +584,7 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-rg-cfp-fluidcat-product")
         create_test_fluid("test-rg-cfp-fluidcat-fluid")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-fluidcat-recipe",
             results = {{type = "item", name = "test-rg-cfp-fluidcat-product", amount = 1}},
             ingredients = {
@@ -805,12 +599,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype respects explicit category",
+    "create respects explicit category",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-ecat-product")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-ecat-recipe",
             category = "smelting",
             results = {{type = "item", name = "test-rg-cfp-ecat-product", amount = 1}}
@@ -823,12 +617,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype respects explicit energy_required",
+    "create respects explicit energy_required",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-energy-product")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-energy-recipe",
             energy_required = 10,
             results = {{type = "item", name = "test-rg-cfp-energy-product", amount = 1}}
@@ -841,10 +635,10 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype works with no product when all fields are explicit",
+    "create works with no product when all fields are explicit",
     "lib.recipe-generator",
     function()
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-noproduct",
             subgroup = "raw-material",
             order = "a",
@@ -862,12 +656,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype sets always_show_made_in based on category",
+    "create sets always_show_made_in based on category",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-asmi-product")
 
-        local recipe_crafting = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe_crafting = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-asmi-crafting",
             results = {{type = "item", name = "test-rg-cfp-asmi-product", amount = 1}}
         }
@@ -876,7 +670,7 @@ Tirislib.Testing.add_test_case(
 
         create_test_item("test-rg-cfp-asmi-product2")
 
-        local recipe_smelting = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe_smelting = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-asmi-smelting",
             category = "smelting",
             results = {{type = "item", name = "test-rg-cfp-asmi-product2", amount = 1}}
@@ -889,12 +683,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype allows explicit always_show_made_in override",
+    "create allows explicit always_show_made_in override",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-asmi-ov-product")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-asmi-ov-recipe",
             category = "smelting",
             always_show_made_in = false,
@@ -908,12 +702,12 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "create_from_prototype passes allow_productivity through as a native recipe field",
+    "create passes allow_productivity through as a native recipe field",
     "lib.recipe-generator",
     function()
         create_test_item("test-rg-cfp-prod-product")
 
-        local recipe = Tirislib.RecipeGenerator.create_from_prototype {
+        local recipe = Tirislib.RecipeGenerator.create {
             name = "test-rg-cfp-prod-recipe",
             allow_productivity = true,
             results = {{type = "item", name = "test-rg-cfp-prod-product", amount = 1}}
@@ -1013,4 +807,135 @@ Tirislib.Testing.add_test_case(
         Tirislib.RecipeGenerator.merge_prototypes(nil, nil)
         Assert.pass()
     end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << auto-catalyst detection >>
+
+Tirislib.Testing.add_test_case(
+    "create auto-detects catalyst and sets ignored_by_productivity",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-cat-item")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-cat-recipe",
+            results = {{type = "item", name = "test-rg-cat-item", amount = 3}},
+            ingredients = {{type = "item", name = "test-rg-cat-item", amount = 5}}
+        }
+
+        local result = recipe:get_result("test-rg-cat-item", "item")
+        Assert.equals(result.ignored_by_productivity, 3) -- min(5, 3)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "create no_auto_catalyst skips catalyst detection",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-nocat-item")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-nocat-recipe",
+            no_auto_catalyst = true,
+            results = {{type = "item", name = "test-rg-nocat-item", amount = 3}},
+            ingredients = {{type = "item", name = "test-rg-nocat-item", amount = 5}}
+        }
+
+        local result = recipe:get_result("test-rg-nocat-item", "item")
+        Assert.is_nil(result.ignored_by_productivity)
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << localised_name_wrapper >>
+
+Tirislib.Testing.add_test_case(
+    "create localised_name_wrapper wraps the product name",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-lnw-product")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-lnw-recipe",
+            localised_name_wrapper = "my-wrapper-key",
+            results = {{type = "item", name = "test-rg-lnw-product", amount = 1}}
+        }
+
+        Assert.equals(recipe.localised_name[1], "my-wrapper-key")
+        Assert.is_false(recipe.show_amount_in_title)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "create localised_name_wrapper wraps an explicit localised_name",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-lnw2-product")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-lnw2-recipe",
+            localised_name_wrapper = "my-wrapper-key",
+            localised_name = {"item-name.iron-plate"},
+            results = {{type = "item", name = "test-rg-lnw2-product", amount = 1}}
+        }
+
+        Assert.equals(recipe.localised_name[1], "my-wrapper-key")
+        Assert.equals(recipe.localised_name[2][1], "item-name.iron-plate")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << fluid indexing >>
+
+Tirislib.Testing.add_test_case(
+    "create do_index_fluid_ingredients assigns fluidbox_index to fluid ingredients",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-fii-product")
+        create_test_fluid("test-rg-fii-fluid")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-fii-recipe",
+            do_index_fluid_ingredients = true,
+            results = {{type = "item", name = "test-rg-fii-product", amount = 1}},
+            ingredients = {{type = "fluid", name = "test-rg-fii-fluid", amount = 10}}
+        }
+
+        local ingredient = recipe:get_ingredient("test-rg-fii-fluid", "fluid")
+        Assert.equals(ingredient.fluidbox_index, 1)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "create do_index_fluid_results assigns fluidbox_index to fluid results",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-fir-product")
+        create_test_fluid("test-rg-fir-fluid")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-fir-recipe",
+            do_index_fluid_results = true,
+            results = {
+                {type = "item", name = "test-rg-fir-product", amount = 1},
+                {type = "fluid", name = "test-rg-fir-fluid", amount = 10}
+            }
+        }
+
+        local result = recipe:get_result("test-rg-fir-fluid", "fluid")
+        Assert.equals(result.fluidbox_index, 1)
+    end,
+    setup,
+    teardown
 )

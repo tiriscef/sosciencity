@@ -13,7 +13,7 @@ local function create_test_container(name)
         localised_name = full_name
     }
 
-    Tirislib.RecipeGenerator.create_from_prototype {
+    Tirislib.RecipeGenerator.create {
         results = {
             {type = "item", name = full_name, amount = 1}
         }
@@ -84,7 +84,7 @@ Tirislib.Item.create {
     localised_name = "test-water-distributer"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "test-water-distributer", amount = 1}
     }
@@ -141,7 +141,7 @@ Tirislib.Item.create {
     localised_name = "test-water-distributer-powered"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "test-water-distributer-powered", amount = 1}
     }
@@ -206,7 +206,7 @@ local function create_test_assembling_machine(name, categories, energy_source)
         localised_name = "test-" .. name
     }
 
-    Tirislib.RecipeGenerator.create_from_prototype {
+    Tirislib.RecipeGenerator.create {
         results = {
             {type = "item", name = "test-" .. name, amount = 1}
         }
@@ -259,7 +259,7 @@ create_test_assembling_machine("animal-farm", {"sosciencity-animal-farming"}, {t
 Sosciencity.configure_building("test-animal-farm")
 
 -- No ingredients so the machine is always working once the recipe is set.
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "sos-husbandry-null",
     category = "sosciencity-animal-farming",
     results = {{type = "item", name = "raw-fish", amount = 1}}
@@ -268,12 +268,12 @@ Tirislib.RecipeGenerator.create_from_prototype {
 -- Test farming recipes for integration tests: no unlock so they're enabled by default,
 -- which set_recipe / get_recipe require. Their names are wired into Biology.flora so
 -- Biology.get_species maps them back to the right species.
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "test-farming-annual-bell-pepper",
     category = "sosciencity-farming-annual",
     results = {{type = "item", name = "bell-pepper", amount = 1}}
 }
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "test-farming-perennial-olive",
     category = "sosciencity-farming-perennial",
     results = {{type = "item", name = "olive", amount = 1}}
@@ -303,12 +303,12 @@ Sosciencity.configure_building("test-salt-pond")
 -- Test fishing recipes for integration tests: no unlock so enabled by default,
 -- which set_recipe / get_recipe require. Two distinct names let competition tests
 -- distinguish same-recipe vs different-recipe neighbors.
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "test-fishing-carp",
     category = "sosciencity-fishery",
     results = {{type = "item", name = "raw-fish", amount = 1}}
 }
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "test-fishing-salmon",
     category = "sosciencity-fishery",
     results = {{type = "item", name = "raw-fish", amount = 2}}
@@ -330,7 +330,7 @@ test_waterwell.fluid_boxes = {
 Sosciencity.configure_building("test-waterwell")
 
 -- No-unlock recipe for normal-path tests (real groundwater-pump recipes require tech)
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "test-groundwater-pump-basic",
     category = "sosciencity-groundwater-pump",
     results = {{type = "fluid", name = "drinkable-water", amount = 10}}

@@ -118,7 +118,7 @@ Tirislib.Item.batch_create(items, {
     auto_recycle = false
 })
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "hehe", amount = 1}
     },
@@ -132,7 +132,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "upbringing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "lay-egg",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -153,7 +153,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "huwan-egg-ovosynthesis", amount_min = 1, amount_max = 3},
         {type = "item", name = "hehe",                   amount_min = 1, amount_max = 2}
@@ -173,7 +173,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 }
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
-    Tirislib.RecipeGenerator.create_from_prototype {
+    Tirislib.RecipeGenerator.create {
         results = {
             {type = "item", name = egg, amount = 1}
         },

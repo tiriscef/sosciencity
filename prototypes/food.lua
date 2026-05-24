@@ -256,7 +256,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "fermented-biter-meat", amount = 10}
     },
@@ -270,7 +270,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "hummus", amount = 20}
     },
@@ -283,7 +283,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "dried-solfaen", amount = 5}
     },
@@ -295,7 +295,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "tofu", amount = 30, product = true},
         {type = "item", name = "yuba", amount = 10}
@@ -308,7 +308,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bread", amount_min = 10, amount_max = 20}
     },
@@ -321,7 +321,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "potluck", amount = 1}
     },
@@ -376,14 +376,14 @@ if Sosciencity.Config.DEBUG then
 
     -- Test kitchen-for-all recipes so integration tests can call set_recipe() to
     -- open the output inventory slots before inserting test food items.
-        Tirislib.RecipeGenerator.create_from_prototype {
+        Tirislib.RecipeGenerator.create {
         results = {
             {type = "item", name = "test-food-fruity-carb", amount = 1}
         },
         name = "test-kitchen-fruity-carb",
         category = "sosciencity-kitchen-for-all"
     }
-        Tirislib.RecipeGenerator.create_from_prototype {
+        Tirislib.RecipeGenerator.create {
         results = {
             {type = "item", name = "test-food-neutral-protein-fat", amount = 1}
         },

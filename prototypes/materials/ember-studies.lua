@@ -22,7 +22,7 @@ Tirislib.Item.batch_create(
 
 -- Handcraft
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "brainstorm",
     category = "sosciencity-handcrafting",
     enabled = true,
@@ -42,7 +42,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Atelier
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sketch", amount = 1}
     },
@@ -56,7 +56,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "mosaic", amount = 1}},
     ingredients = {
         {type = "item", name = "sketch", amount = 1},
@@ -69,7 +69,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "statue", amount = 1}},
     ingredients = {
         {type = "item", name = "sketch", amount = 1},
@@ -81,7 +81,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "jewellery", amount = 1}},
     ingredients = {
         {type = "item", name = "rosegold-ingot", amount = 1},
@@ -93,7 +93,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "mixtape", amount = 1}},
     ingredients = {
         {type = "item", name = "musical-instruments", amount = 1},
@@ -104,7 +104,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "painting", amount = 1}},
     ingredients = {
         {type = "item", name = "lumber", amount = 1},
@@ -118,7 +118,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Ember HQ
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "artistic-insight", amount = 1}},
     ingredients = {
         {type = "item", name = "paper", amount = 2},
@@ -130,7 +130,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "artistic-insight", amount = 4}},
     ingredients = {
         {type = "item", name = "sketch", amount = 4},
@@ -143,7 +143,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "novel", amount = 1}
     },

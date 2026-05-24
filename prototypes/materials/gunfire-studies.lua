@@ -11,7 +11,7 @@ Tirislib.Item.batch_create(
 
 -- Gunfire HQ
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "strategic-considerations", amount = 4}
     },

@@ -60,7 +60,7 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "window", amount = 1}
     },
@@ -72,7 +72,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastucture-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bed", amount = 1}
     },
@@ -85,7 +85,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "carpet", amount = 1}
     },
@@ -96,7 +96,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-2"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "furniture", amount = 1}
     },
@@ -107,7 +107,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "kitchen-furniture", amount = 1}
     },
@@ -120,7 +120,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bathroom-furniture", amount = 1}
     },
@@ -132,7 +132,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-2"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "curtain", amount = 1}
     },
@@ -143,7 +143,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-2"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sofa", amount = 1}
     },
@@ -157,7 +157,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-4"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "stove", amount = 1}
     },
@@ -170,7 +170,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "refrigerator", amount = 1}
     },
@@ -184,7 +184,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "air-conditioner", amount = 1}
     },
@@ -202,7 +202,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 -- << tinkering workshop alternatives >>
 -- Same ingredients as the crafting recipes, but more yield - trade Clockwork workforce for materials.
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "window", amount = 2}},
     ingredients = {
         {theme = "glass", amount = 2},
@@ -214,7 +214,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "tinkering-workshop"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "bed", amount = 2}},
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -227,7 +227,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "carpet", amount = 2}},
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
@@ -238,7 +238,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-2"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "furniture", amount = 3}},
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -249,7 +249,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "kitchen-furniture", amount = 2}
     },
@@ -264,7 +264,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bathroom-furniture", amount = 2}
     },
@@ -278,7 +278,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-2"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "curtain", amount = 2}},
     ingredients = {
         {type = "item", name = "cloth", amount = 2},
@@ -289,7 +289,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-2"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "sofa", amount = 2}},
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -303,7 +303,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-4"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "stove", amount = 3}},
     ingredients = {
         {theme = "wiring", amount = 5, level = 0},
@@ -316,7 +316,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "refrigerator", amount = 3}},
     ingredients = {
         {theme = "electronics", amount = 1},
@@ -329,7 +329,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "air-conditioner", amount = 3}},
     ingredients = {
         {theme = "electronics", amount = 1},

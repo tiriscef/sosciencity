@@ -139,7 +139,7 @@ local function create_recipe(house_name, house_def, details)
         trait_effect_on_recipe[trait](recipe_details, house_def, tech_level)
     end
 
-    Tirislib.RecipeGenerator.create_from_prototype(recipe_details)
+    Tirislib.RecipeGenerator.create(recipe_details)
 end
 
 local function create_entity(house_name, house_def, details)

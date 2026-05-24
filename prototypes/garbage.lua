@@ -43,7 +43,7 @@ local garbage_items = {
 
 Tirislib.Item.batch_create(garbage_items, {subgroup = "sosciencity-garbage", stack_size = 200})
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "burn-garbage",
     emissions_multiplier = 2.5,
     energy_required = 0.8,
@@ -60,7 +60,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     {a = 0.7, r = 1, g = 1, b = 1}
 )
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "burn-food-leftovers",
     emissions_multiplier = 1.5,
     energy_required = 1.6,
@@ -77,7 +77,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     {a = 0.7, r = 1, g = 1, b = 1}
 )
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "burn-slaughter-waste",
     emissions_multiplier = 1.5,
     energy_required = 1.6,

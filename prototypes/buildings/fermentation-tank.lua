@@ -10,7 +10,7 @@ Tirislib.Item.create {
     pictures = Sosciencity.Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "fermentation-tank", amount = 1}},
     ingredients = {{theme = "piping", amount = 10}, {theme = "tank", amount = 1}},
     default_theme_level = 1,

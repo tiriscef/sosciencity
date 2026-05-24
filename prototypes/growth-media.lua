@@ -19,7 +19,7 @@ Tirislib.Fluid.batch_create(
     }
 )
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "sugar-medium", amount = 100}
     },
@@ -32,7 +32,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "sugar-medium", amount = 100}
     },
@@ -45,7 +45,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "sugar-medium", amount = 100}
     },

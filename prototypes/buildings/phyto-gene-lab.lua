@@ -10,7 +10,7 @@ Tirislib.Item.create {
     pictures = Sosciencity.Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "phyto-gene-lab", amount = 1}
     },

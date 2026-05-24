@@ -10,7 +10,7 @@ Tirislib.Item.create {
     pictures = Sosciencity.Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "farm", amount = 1}},
     ingredients = {{theme = "soil", amount = 50}, {theme = "tank", amount = 1}, {theme = "piping", amount = 10}, {theme = "plating", amount = 20}, {theme = "brick", amount = 20}},
     default_theme_level = 1,

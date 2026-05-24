@@ -10,7 +10,7 @@ Tirislib.Item.create {
     stack_size = 50
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "city-combinator", amount = 1}
     },

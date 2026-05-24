@@ -166,38 +166,6 @@ local function find_product_prototype(product_name, product_type)
     return found and product or nil
 end
 
-local function get_product_prototype(product_name, product_type)
-    local product = find_product_prototype(product_name, product_type)
-
-    if not product then
-        error(
-            "Tirislib RecipeGenerator was told to create a recipe for a non-existant product. A task it's unable to complete. The product's name is: " ..
-                tostring(product_name)
-        )
-    end
-
-    return product
-end
-
-local function get_main_product_entry(product, details)
-    local main_product = {
-        type = product.type == "fluid" and "fluid" or "item",
-        name = product.name,
-        probability = details.product_probability
-    }
-
-    if details.product_amount then
-        main_product.amount = details.product_amount
-    elseif details.product_min then
-        main_product.amount_min = details.product_min
-        main_product.amount_max = details.product_max
-    else
-        main_product.amount = 1
-    end
-
-    return main_product
-end
-
 local function get_standard_category(recipe)
     for _, ingredient in recipe:iterate_ingredients() do
         if ingredient.type == "fluid" then
@@ -208,108 +176,6 @@ local function get_standard_category(recipe)
     return "crafting"
 end
 
---- Creates a dynamic recipe.<br>
---- **Deprecated**, I want to migrate to the prototype-based `create_from_prototype` method instead.<br>
---- **product:** name of the main product<br>
---- **product_type:** type of the main product (defaults to "item")<br>
---- **product_amount:** amount of the main product (defaults to 1)<br>
---- **product_min:** minimal amount of the main product (if the recipe should use a range)<br>
---- **product_max:** maximal amount of the main product (if the recipe should use a range)<br>
---- **product_probability:** probability of the main product<br>
---- **name:** name of the recipe (defaults to the name of the product)<br>
---- **byproducts:** array of ResultPrototypes<br>
---- **category:** RecipeCategory of the recipe (defaults to "crafting" or "crafting-with-fluid")<br>
---- **themes:** array of themes<br>
---- **result_themes:** array of themes<br>
---- **default_theme_level:** number<br>
---- **ingredients:** array of IngredientPrototypes<br>
---- **energy_required:** energy_required field for the recipe (defaults to 0.5)<br>
---- **unlock:** technology that unlocks the recipe<br>
---- **additional_fields:** other fields that should be set for the recipe<br>
---- **localised_name:** locale<br>
---- **localised_description:** locale<br>
---- **icon:** path to icon<br>
---- **icons:** array of SpritePrototypes<br>
---- **icon_size:** integer<br>
---- **subgroup:** name of the subgroup (defaults to the product's subgroup)<br>
---- **do_index_fluid_ingredients:** bool (defaults to false)<br>
---- **do_index_fluid_results:** bool (defaults to false)
-function Tirislib.RecipeGenerator.create(details)
-    local product = get_product_prototype(details.product, details.product_type)
-    local main_product = get_main_product_entry(product, details)
-
-    local recipe =
-        Tirislib.Recipe.create {
-        name = details.name or Tirislib.Prototype.get_unique_name(product.name, "recipe"),
-        enabled = true,
-        energy_required = details.energy_required or 0.5,
-        results = {main_product},
-        subgroup = details.subgroup or product.subgroup,
-        order = product.order,
-        always_show_products = (product.place_result == nil)
-    }
-
-    if details.localised_name or details.localised_description or details.icon or details.icons then
-        recipe.localised_name = details.localised_name or product:get_localised_name()
-        if details.localised_name then
-            recipe.show_amount_in_title = false
-        end
-        recipe.localised_description = details.localised_description or product:get_localised_description()
-
-        if details.icon or details.icons then
-            recipe.icon = details.icon
-            recipe.icons = details.icons
-            recipe.icon_size = details.icon_size or 64
-        else
-            recipe.icon = product.icon
-            recipe.icons = product.icons
-            recipe.icon_size = product.icon_size or 64
-        end
-    else
-        recipe.main_product = product.name
-        recipe.localised_name = product:get_localised_name()
-    end
-
-    -- explicit defined
-    recipe:add_ingredient_range(details.ingredients)
-    recipe:add_result_range(details.byproducts, true)
-
-    -- theme defined
-    Tirislib.RecipeGenerator.add_ingredient_theme_range(recipe, details.themes, details.default_theme_level)
-    Tirislib.RecipeGenerator.add_result_theme_range(recipe, details.result_themes, details.default_theme_level)
-
-    -- unlock (accepts a single string or a table of strings)
-    local unlock = details.unlock
-    if type(unlock) == "table" then
-        for _, tech in pairs(unlock) do
-            recipe:add_unlock(tech)
-        end
-    else
-        recipe:add_unlock(unlock)
-    end
-
-    local category = details.category or get_standard_category(recipe)
-    recipe:set_field("category", category)
-    recipe:set_field("always_show_made_in", category ~= "crafting")
-
-    recipe:set_fields(details.additional_fields)
-
-    if details.allow_productivity then
-        recipe.allow_productivity = true
-    end
-
-    if details.do_index_fluid_ingredients then
-        recipe:index_fluid_ingredients()
-    end
-
-    if details.do_index_fluid_results then
-        recipe:index_fluid_results()
-    end
-
-    return recipe
-end
-
--- << prototype-based creation >>
 
 ---------------------------------------------------------------------------------------------------
 -- << EmmyLua type definitions >>
@@ -329,7 +195,7 @@ end
 --- @class ProductResultEntry : data.ItemProductPrototype
 --- @field product? true Marks this entry as the product for field derivation. Stripped before recipe creation.
 
---- A complete or partial Factorio RecipePrototype that `create_from_prototype` and
+--- A complete or partial Factorio RecipePrototype that `create` and
 --- `merge_prototypes` accept. All standard recipe fields are valid. In addition:
 ---
 --- - `ingredients` and `results` may contain `ThemeIngredientEntry` objects alongside regular
@@ -337,7 +203,7 @@ end
 --- - One entry in `results` may be marked with `product = true` to identify the main product for
 ---   field derivation (name, subgroup, order, icon, localisation). Falls back to `results[1]`.
 --- - `unlock`, `default_theme_level`, `do_index_fluid_ingredients`, `do_index_fluid_results`,
----   and `localised_name_wrapper` are extra keys consumed by `create_from_prototype` and never
+---   and `localised_name_wrapper` are extra keys consumed by `create` and never
 ---   forwarded to the underlying Factorio prototype.
 ---@class ExtendedRecipePrototype : data.RecipePrototype
 ---@field ingredients? (data.IngredientPrototype | ThemeEntry)[] Regular ingredient entries and/or inline theme expansions.
@@ -514,7 +380,7 @@ end
 --- The product is optional if all derived fields are provided explicitly.
 --- @param prototype ExtendedRecipePrototype
 --- @return data.RecipePrototype
-function Tirislib.RecipeGenerator.create_from_prototype(prototype)
+function Tirislib.RecipeGenerator.create(prototype)
     -- consume and nil extra keys
     local unlock = prototype.unlock
     local default_theme_level = prototype.default_theme_level

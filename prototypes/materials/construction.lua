@@ -129,7 +129,7 @@ Tirislib.Prototype.create {
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "lumber", amount = 3, product = true},
         {type = "item", name = "sawdust", amount = 1}
@@ -141,7 +141,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     allow_productivity = true
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sawdust", amount = 4}
     },
@@ -152,7 +152,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     allow_productivity = true
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "marble", amount = 2}
     },
@@ -164,7 +164,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     allow_productivity = true
 }:add_number_layer(1)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "marble", amount = 5}
     },
@@ -176,7 +176,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     allow_productivity = true
 }:add_number_layer(2)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "tools", amount = 1}
     },
@@ -187,7 +187,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-tinkering-workshop"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "power-tools", amount = 1}
     },
@@ -200,7 +200,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     default_theme_level = 3
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.screw-set-copper"},
     results = {
         {type = "item", name = "screw-set", amount = 2}
@@ -212,7 +212,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }:add_ingredient_layer("copper-plate")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.screw-set-iron"},
     results = {
         {type = "item", name = "screw-set", amount = 2}
@@ -224,7 +224,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }:add_ingredient_layer("iron-plate")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "screw-set-copper-workshop",
     localised_name = {"recipe-name.screw-set-copper"},
     localised_name_wrapper = "recipe-name.tinkering-workshop",
@@ -236,7 +236,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }:add_category_layer("workshop"):add_ingredient_layer("copper-plate")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "screw-set-iron-workshop",
     localised_name = {"recipe-name.screw-set-iron"},
     localised_name_wrapper = "recipe-name.tinkering-workshop",
@@ -248,7 +248,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }:add_category_layer("workshop"):add_ingredient_layer("iron-plate")
 
---[[Tirislib.RecipeGenerator.create_from_prototype {
+--[[Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "tiriscefing-willow-barrel", amount = 1}
     },
@@ -261,7 +261,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "fermentation"
 }]]
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "yarn", amount = 10}
     },
@@ -274,7 +274,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "cloth", amount = 1}
     },
@@ -286,7 +286,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "rope", amount = 10}
     },
@@ -298,7 +298,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = {"hunting-fishing", "clockwork-caste"}
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "pot", amount = 1}
     },
@@ -308,7 +308,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "indoor-growing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     name = "pot-workshop",
     localised_name_wrapper = "recipe-name.tinkering-workshop",
     category = "sosciencity-tinkering-workshop",
@@ -319,7 +319,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "indoor-growing"
 }:add_category_layer("workshop")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sand", amount = 1}
     },
@@ -330,7 +330,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastructure-1"
 }:add_ingredient_layer("stone")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sand", amount = 10}
     },
@@ -340,7 +340,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 4
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "glass-mixture", amount = 5}
     },
@@ -353,7 +353,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastructure-1"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "glass", amount = 2}
     },
@@ -364,7 +364,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3.2
 }:add_ingredient_layer("glass-mixture")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "glass", amount = 1}
     },
@@ -376,7 +376,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "infrastructure-1"
 }:add_ingredient_layer("sand")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "clay-minerals", amount = 5}
     },
@@ -387,7 +387,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 5
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "ceramic-mixture", amount = 2}
     },
@@ -398,7 +398,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     }
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "ceramic", amount = 1}
     },
@@ -408,7 +408,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "smelting"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "mineral-mixture", amount = 2}
     },
@@ -421,7 +421,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "mineral-wool", amount = 1}
     },
@@ -433,7 +433,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "architecture-3"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "architectural-concept", amount = 1}
     },
@@ -446,7 +446,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "limestone", amount = 2}
     },
@@ -454,7 +454,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 4
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "soda", amount = 2}
     },
@@ -464,7 +464,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 5
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "lye", amount = 2}
     },
@@ -479,7 +479,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "food-processing"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "ferrous-sulfate", amount = 3}
     },
@@ -493,7 +493,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-caste"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "filter", amount = 1}
     },
@@ -505,7 +505,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "activated-carbon-filtering"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "water-filter", amount = 1}
     },
@@ -518,7 +518,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Clockwork Mine
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "precious-ore", amount = 2}
     },
@@ -528,7 +528,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     allow_productivity = true
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "gemstone", amount = 1}
     },
@@ -540,7 +540,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
 
 -- Tinkering Workshop - precious materials
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "rosegold-ingot", amount = 1}
     },
@@ -553,7 +553,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-mines"
 }:add_number_layer(1)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "rosegold-ingot", amount = 3}
     },
@@ -569,7 +569,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "precious-metalworking"
 }:add_number_layer(2)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "polished-gemstone", amount = 1}
     },
@@ -584,7 +584,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-mines"
 }:add_number_layer(1)
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "polished-gemstone", amount = 2}
     },

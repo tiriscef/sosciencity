@@ -36,7 +36,7 @@ Tirislib.Item.batch_create(
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "dye", amount = 1}
     },
@@ -48,7 +48,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "dye", amount = 1}
     },
@@ -60,7 +60,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "dye", amount = 5}
     },
@@ -75,7 +75,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "crayons", amount = 1}
     },
@@ -88,7 +88,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "musical-instruments", amount = 1}},
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -98,7 +98,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-caste"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "musical-instruments", amount = 3}},
     ingredients = {
         {type = "item", name = "lumber", amount = 5},
@@ -110,7 +110,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "clockwork-caste"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "military-grade-crayons", amount = 1}
     },
@@ -124,7 +124,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "leafage", amount = 1}
@@ -136,7 +136,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "wax", amount = 1}
     },
@@ -149,7 +149,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "wax", amount = 2}
     },
@@ -163,7 +163,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "paper", amount = 1}
     },
@@ -177,7 +177,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     unlock = "automation-science-pack"
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "paper", amount = 10}
     },

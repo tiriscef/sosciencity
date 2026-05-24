@@ -6,7 +6,7 @@ local beverage_items = {
 
 Tirislib.Item.batch_create(beverage_items, {type = "tool", subgroup = "sosciencity-beverages"})
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "tiriscefing-whisky", amount = 10}
     },

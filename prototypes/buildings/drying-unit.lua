@@ -13,7 +13,7 @@ Tirislib.Item.create {
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
 local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south"}
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "drying-unit", amount = 1}},
     ingredients = {{theme = "machine", amount = 2}, {theme = "piping", amount = 8}},
     default_theme_level = 1,

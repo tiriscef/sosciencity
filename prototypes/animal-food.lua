@@ -12,7 +12,7 @@ Tirislib.Item.batch_create(animal_food_items, {subgroup = "sosciencity-animal-fo
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bird-food", amount = 2}
     },
@@ -24,7 +24,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("hardcorn-punk")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "bird-food", amount = 2}
     },
@@ -37,7 +37,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("slaughter-waste")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "fish-food", amount = 2}
     },
@@ -49,7 +49,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("dried-solfaen")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "fish-food", amount = 4}
     },
@@ -62,7 +62,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("queen-algae")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "carnivore-food", amount = 2}
     },
@@ -74,7 +74,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("slaughter-waste")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "carnivore-food", amount = 2}
     },
@@ -86,7 +86,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("offal")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "herbivore-food", amount = 2}
     },
@@ -99,7 +99,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     auto_recycle = false
 }:add_ingredient_layer("leafage")
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "herbivore-food", amount = 2}
     },

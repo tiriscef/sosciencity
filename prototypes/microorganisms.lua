@@ -61,7 +61,7 @@ local function create_enrichment_recipe(details)
         auto_recycle = false
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("enrichment")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("enrichment")
 end
 
 local function create_pure_culture_recipe(details)
@@ -79,7 +79,7 @@ local function create_pure_culture_recipe(details)
         auto_recycle = false
     })
 
-    return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("pure-culture")
+    return Tirislib.RecipeGenerator.create(details):add_category_layer("pure-culture")
 end
 
 create_enrichment_recipe {

@@ -10,7 +10,7 @@ Tirislib.Item.create {
     pictures = Sosciencity.Config.blueprint_on_belt
 }
 
-Tirislib.RecipeGenerator.create_from_prototype {
+Tirislib.RecipeGenerator.create {
     results = {{type = "item", name = "gunfire-hq", amount = 1}},
     ingredients = {
         {theme = "building", amount = 20}, {theme = "housing_sheltered", amount = 20}, {theme = "gun_turret", amount = 4},

@@ -258,7 +258,7 @@ local function create_slaughter_recipe(animal, index)
     end
 
     local recipe =
-        Tirislib.RecipeGenerator.create_from_prototype {
+        Tirislib.RecipeGenerator.create {
         name = "slaughter-" .. animal.name,
         category = "sosciencity-slaughter",
         energy_required = get_required_energy_slaughter(animal),
@@ -363,7 +363,7 @@ local function create_husbandry_recipe(details)
         auto_recycle = false
     })
 
-    local recipe = Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer(
+    local recipe = Tirislib.RecipeGenerator.create(details):add_category_layer(
         style == "breeding" and "breeding" or "keeping"
     )
     add_food(recipe, animal)
