@@ -120,7 +120,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     name = "salty-water-evaporation",
     category = "sosciencity-salt-pond",
     energy_required = 4,
-    unlock = {"fermentation", "medbay"}
+    unlock = {"fermentation", "medbay"},
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -132,7 +133,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = Tirislib.RecipeGenerator.category_alias.milling,
     energy_required = 1,
-    unlock = "food-processing"
+    unlock = "food-processing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -147,7 +149,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -160,7 +163,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 1.6,
-    allow_productivity = true
+    allow_productivity = true,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -174,7 +178,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 1.6,
-    allow_productivity = true
+    allow_productivity = true,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -189,7 +194,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 4,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "medbay"
+    unlock = "medbay",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -201,7 +207,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "steam", amount = 10}
     },
     category = "chemistry",
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -213,7 +220,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
-    unlock = "explore-alien-flora-1"
+    unlock = "explore-alien-flora-1",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -224,7 +232,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "avocado", amount = 5}
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
-    energy_required = 1.6
+    energy_required = 1.6,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -235,7 +244,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "olive", amount = 5}
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
-    energy_required = 1.6
+    energy_required = 1.6,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -247,7 +257,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
-    unlock = "hummus"
+    unlock = "hummus",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -260,7 +271,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 1.6,
-    unlock = "food-processing"
+    unlock = "food-processing",
+    auto_recycle = false
 }:add_catalyst(Tirislib.RecipeGenerator.item_alias.nickel_catalyst, "item", 1, 0.5)
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -271,7 +283,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "razha-bean", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -284,7 +297,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = Tirislib.RecipeGenerator.category_alias.fluid_mixing,
     energy_required = 2,
-    unlock = "soy-products"
+    unlock = "soy-products",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -297,7 +311,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-fermentation-tank",
     energy_required = 5,
-    unlock = "fermentation"
+    unlock = "fermentation",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -310,7 +325,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-fermentation-tank",
     energy_required = 5,
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -322,5 +338,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = Tirislib.RecipeGenerator.category_alias.drying,
     energy_required = 5,
-    unlock = "fermentation"
+    unlock = "fermentation",
+    auto_recycle = false
 }

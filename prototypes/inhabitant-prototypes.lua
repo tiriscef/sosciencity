@@ -7,7 +7,10 @@ local items = {
     {
         name = "hehe",
         sprite_variations = {name = "hehe", count = 3, include_icon = true},
-        distinctions = {stack_size = 100}
+        distinctions = {
+            stack_size = 100,
+            auto_recycle = true
+        }
     },
     {
         name = "huwan-egg",
@@ -109,17 +112,21 @@ local items = {
     },
 }
 
-Tirislib.Item.batch_create(items, {subgroup = "sosciencity-inhabitants", stack_size = 10})
+Tirislib.Item.batch_create(items, {
+    subgroup = "sosciencity-inhabitants",
+    stack_size = 10,
+    auto_recycle = false
+})
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
         {type = "item", name = "hehe", amount = 1}
     },
     ingredients = {
-        {theme = "plating", amount = 2},
+        {theme = "plating",  amount = 2},
         {theme = "plating2", amount = 4},
-        {theme = "glass", amount = 2},
-        {theme = "wiring", amount = 1}
+        {theme = "glass",    amount = 2},
+        {theme = "wiring",   amount = 1}
     },
     energy_required = 1,
     unlock = "upbringing"
@@ -135,33 +142,34 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     results = {
         {type = "item", name = "huwan-egg-autoreproduction", amount_min = 2, amount_max = 3},
-        {type = "item", name = "hehe", amount_min = 2, amount_max = 3}
+        {type = "item", name = "hehe",                       amount_min = 2, amount_max = 3}
     },
     icon = "__sosciencity-graphics__/graphics/icon/huwan-egg-autoreproduction.png",
     icon_size = 64,
     subgroup = "sosciencity-inhabitants",
     main_product = "",
     localised_description = {"recipe-description.lay-egg", tostring(InhabitantsConstants.egg_calories)},
-    unlock = "upbringing"
+    unlock = "upbringing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
     results = {
         {type = "item", name = "huwan-egg-ovosynthesis", amount_min = 1, amount_max = 3},
-        {type = "item", name = "hehe", amount_min = 1, amount_max = 2}
+        {type = "item", name = "hehe",                   amount_min = 1, amount_max = 2}
     },
     ingredients = {
         {type = "item", name = "engineer-spinal-fluid", amount = 1},
-        {type = "item", name = "proteins", amount = 1},
-        {type = "item", name = "phospholipids", amount = 1},
-        {type = "item", name = "nucleobases", amount = 1},
-        {type = "item", name = "limestone", amount = 2},
-        {type = "item", name = "hehe", amount = 2}
+        {type = "item", name = "proteins",              amount = 1},
+        {type = "item", name = "nucleobases",           amount = 1},
+        {type = "item", name = "limestone",             amount = 2},
+        {type = "item", name = "hehe",                  amount = 2}
     },
     energy_required = 60,
     category = "sosciencity-fermentation-tank",
     localised_name = {"recipe-name.ovosynthesis"},
-    unlock = "ovosynthesis"
+    unlock = "ovosynthesis",
+    auto_recycle = false
 }
 
 for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-egg", "huwan-ga-egg"}) do
@@ -171,13 +179,14 @@ for index, egg in pairs({"huwan-agender-egg", "huwan-fale-egg", "huwan-pachin-eg
         },
         ingredients = {
             {theme = "genetic_neogenesis", amount = 1},
-            {type = "item", name = "blood-bag", amount = 1},
-            {type = "item", name = "huwan-genome", amount = 1}
+            {type = "item",                name = "blood-bag",    amount = 1},
+            {type = "item",                name = "huwan-genome", amount = 1}
         },
         energy_required = 120,
         category = "sosciencity-reproductive-gene-lab",
         localised_name = {"recipe-name.in-vitro-reproduction", {"sosciencity.gender-" .. (index)}},
-        unlock = "huwan-genetic-neogenesis"
+        unlock = "huwan-genetic-neogenesis",
+        auto_recycle = false
     }
 end
 
@@ -185,6 +194,6 @@ for egg_name, egg_data in pairs(InhabitantsConstants.egg_data) do
     local item = Tirislib.Item.get(egg_name)
     item:add_custom_tooltip {
         name = {"sosciencity.birth-defect-probability"},
-        value = tostring(egg_data.birth_defect_probability * 100)
+        value = tostring(egg_data.birth_defect_probability * 100) .. "%"
     }
 end

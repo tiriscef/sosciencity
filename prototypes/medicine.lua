@@ -122,7 +122,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 5,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "activated-carbon-filtering"
+    unlock = "activated-carbon-filtering",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -139,7 +140,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 5,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "food-processing"
+    unlock = "food-processing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -188,7 +190,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 10,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "medbay"
+    unlock = "medbay",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -203,7 +206,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-pharma",
     energy_required = 2,
     do_index_fluid_ingredients = true,
-    unlock = "medbay"
+    unlock = "medbay",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -220,7 +224,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "psychiatry"
+    unlock = "psychiatry",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -237,7 +242,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "medbay"
+    unlock = "medbay",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -254,7 +260,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "intensive-care"
+    unlock = "intensive-care",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -270,7 +277,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "intensive-care"
+    unlock = "intensive-care",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -287,7 +295,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "hospital"
+    unlock = "hospital",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -305,29 +314,33 @@ Tirislib.RecipeGenerator.create_from_prototype {
     energy_required = 3,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "hospital"
+    unlock = "hospital",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
     name = "donate-blood",
     category = "sosciencity-handcrafting",
     enabled = true,
-    energy_required = 5,
-    ingredients = {},
+    energy_required = 3,
+    ingredients = {
+        {type = "item", name = "surgery-instruments", amount = 1}
+    },
     results = {
         {type = "item", name = "blood-bag", amount = 1}
     },
     icon = "__sosciencity-graphics__/graphics/icon/blood-bag.png",
     icon_size = 64,
     subgroup = "sosciencity-medicine",
-    main_product = ""
+    main_product = "",
+    allow_as_intermediate = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
     name = "extract-spinal-fluid",
     category = "sosciencity-handcrafting",
     enabled = false,
-    energy_required = 5,
+    energy_required = 3,
     ingredients = {
         {type = "item", name = "surgery-instruments", amount = 1},
         {type = "item", name = "analgesics", amount = 1}
@@ -338,7 +351,9 @@ Tirislib.RecipeGenerator.create_from_prototype {
     subgroup = "sosciencity-medicine",
     localised_name = {"recipe-name.extract-spinal-fluid"},
     localised_description = {"recipe-description.extract-spinal-fluid", tostring(InhabitantsConstants.spinal_fluid_health_cost)},
-    unlock = "ovosynthesis"
+    unlock = "ovosynthesis",
+    auto_recycle = false,
+    allow_as_intermediate = false
 }
 
 Tirislib.Prototype.batch_create {
@@ -489,7 +504,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "gingil-hemp", amount = 2}
     },
     name = "blood-bag",
-    category = "sosciencity-pharma"
+    category = "sosciencity-pharma",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -503,5 +519,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "blood-bag",
     category = "sosciencity-pharma",
-    unlock = "medbay"
+    unlock = "medbay",
+    auto_recycle = false
 }

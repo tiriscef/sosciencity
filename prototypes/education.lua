@@ -78,6 +78,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     subgroup = "sosciencity-education-recipes",
     order = "aca",
     main_product = "",
+    localised_name = {"recipe-name.education-foundry"},
+    localised_description = {"recipe-description.education-foundry"},
     unlock = "academic-exchange"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)
 
@@ -120,5 +122,7 @@ Tirislib.RecipeGenerator.create_from_prototype {
     subgroup = "sosciencity-education-recipes",
     order = "adb",
     main_product = "",
+    localised_name = {"recipe-name.education-gleam"},
+    localised_description = {"recipe-description.education-gleam"},
     unlock = "academic-exchange"
 }:add_icon_layer("__sosciencity-graphics__/graphics/icon/graduation.png", "topright", 0.3)

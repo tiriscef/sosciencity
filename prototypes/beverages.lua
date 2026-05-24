@@ -17,5 +17,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-fermentation-tank",
     energy_required = 20,
-    unlock = "fermentation"
+    unlock = "fermentation",
+    auto_recycle = false
 }

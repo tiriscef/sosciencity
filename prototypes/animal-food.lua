@@ -20,7 +20,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "hardcorn-punk", amount = 4}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("hardcorn-punk")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -32,7 +33,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "slaughter-waste", amount = 2}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("slaughter-waste")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -43,7 +45,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "dried-solfaen", amount = 4}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("dried-solfaen")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -55,7 +58,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "pyrifera", amount = 3}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("queen-algae")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -66,7 +70,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "slaughter-waste", amount = 3}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("slaughter-waste")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -77,7 +82,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "offal", amount = 2}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("offal")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -89,7 +95,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "razha-bean", amount = 2}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("leafage")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -101,5 +108,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "razha-bean", amount = 2}
     },
     allow_productivity = true,
-    unlock = "animal-husbandry"
+    unlock = "animal-husbandry",
+    auto_recycle = false
 }:add_ingredient_layer("hardcorn-punk")

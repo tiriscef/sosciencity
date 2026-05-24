@@ -28,7 +28,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
-    unlock = "clockwork-caste"
+    unlock = "clockwork-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -41,7 +42,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-architecture",
     energy_required = 4,
-    unlock = "clockwork-caste"
+    unlock = "clockwork-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -56,7 +58,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-tinkering-workshop",
     energy_required = 4,
-    unlock = "clockwork-caste"
+    unlock = "clockwork-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -70,5 +73,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-clockwork",
     energy_required = 4,
-    unlock = "clockwork-caste"
+    unlock = "clockwork-caste",
+    auto_recycle = false
 }

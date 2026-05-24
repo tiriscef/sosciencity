@@ -69,7 +69,8 @@ local construction_items = {
         distinctions = {
             icon = "__sosciencity-graphics__/graphics/icon/blueprint-1.png",
             icon_size = 64,
-            pictures = Sosciencity.Config.blueprint_on_belt
+            pictures = Sosciencity.Config.blueprint_on_belt,
+            auto_recycle = false
         }
     },
     {name = "filter"},
@@ -441,7 +442,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-architecture",
     energy_required = 2,
-    unlock = "infrastructure-1"
+    unlock = "infrastructure-1",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {

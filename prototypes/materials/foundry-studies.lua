@@ -29,7 +29,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-experimental-workshop",
     energy_required = 6,
-    unlock = "foundry-caste"
+    unlock = "foundry-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -43,7 +44,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-experimental-workshop",
     energy_required = 8,
-    unlock = "academic-exchange"
+    unlock = "academic-exchange",
+    auto_recycle = false
 }
 
 -- Tech Institute
@@ -58,7 +60,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-tech-institute",
     energy_required = 8,
-    unlock = "foundry-caste"
+    unlock = "foundry-caste",
+    auto_recycle = false
 }
 
 -- Computing Center
@@ -73,7 +76,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-computing-center",
     energy_required = 6,
-    unlock = "foundry-caste"
+    unlock = "foundry-caste",
+    auto_recycle = false
 }
 
 -- Foundry HQ
@@ -88,7 +92,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-foundry",
     energy_required = 8,
-    unlock = "foundry-caste"
+    unlock = "foundry-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -102,7 +107,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-foundry",
     energy_required = 10,
-    unlock = "academic-exchange"
+    unlock = "academic-exchange",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -115,5 +121,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-experimental-workshop",
     energy_required = 6,
-    unlock = "foundry-caste"
+    unlock = "foundry-caste",
+    auto_recycle = false
 }

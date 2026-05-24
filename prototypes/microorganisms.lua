@@ -57,7 +57,8 @@ local function create_enrichment_recipe(details)
         icon = product.icon,
         icon_size = 64,
         do_index_fluid_ingredients = true,
-        do_index_fluid_results = true
+        do_index_fluid_results = true,
+        auto_recycle = false
     })
 
     return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("enrichment")
@@ -74,7 +75,8 @@ local function create_pure_culture_recipe(details)
         icon = product.icon,
         icon_size = 64,
         do_index_fluid_ingredients = true,
-        do_index_fluid_results = true
+        do_index_fluid_results = true,
+        auto_recycle = false
     })
 
     return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("pure-culture")

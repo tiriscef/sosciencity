@@ -44,7 +44,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "wild-flowers", amount = 10}
     },
     name = "wild-flowers",
-    unlock = "ember-caste"
+    unlock = "ember-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -55,7 +56,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "chromafall", amount = 2}
     },
     name = "chromafall",
-    unlock = "orchid-caste"
+    unlock = "orchid-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -69,7 +71,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "water",
     category = "chemistry",
-    unlock = "clockwork-caste"
+    unlock = "clockwork-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -81,7 +84,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "dye", amount = 1}
     },
     name = "wax",
-    unlock = "ember-caste"
+    unlock = "ember-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -116,7 +120,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "sugar", amount = 1}
     },
     name = "crayons",
-    unlock = "gunfire-caste"
+    unlock = "gunfire-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -127,7 +132,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     ingredients = {
         {type = "item", name = "ignivern", amount = 5}
     },
-    unlock = "explore-alien-flora-1"
+    unlock = "explore-alien-flora-1",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -139,7 +145,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "lye", amount = 2}
     },
     category = "chemistry",
-    unlock = "food-processing"
+    unlock = "food-processing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -152,7 +159,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "limestone", amount = 5}
     },
     category = "chemistry",
-    unlock = "synthetic-materials"
+    unlock = "synthetic-materials",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {

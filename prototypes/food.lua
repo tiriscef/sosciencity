@@ -266,7 +266,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-fermentation-tank",
     energy_required = 5,
-    unlock = "fermentation"
+    unlock = "fermentation",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -278,7 +279,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "sesame", amount = 10}
     },
     energy_required = 3,
-    unlock = "hummus"
+    unlock = "hummus",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -289,7 +291,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "solfaen", amount = 100}
     },
     energy_required = 5,
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -301,7 +304,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "soy-milk", amount = 200}
     },
     energy_required = 5,
-    unlock = "soy-products"
+    unlock = "soy-products",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -313,7 +317,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     energy_required = 2,
-    unlock = "food-processing"
+    unlock = "food-processing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -326,7 +331,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "wild-algae", amount = 1}
     },
     category = "sosciencity-kitchen-for-all",
-    energy_required = 3
+    energy_required = 3,
+    auto_recycle = false
 }
 
 ---------------------------------------------------------------------------------------------------

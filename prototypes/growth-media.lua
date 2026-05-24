@@ -28,7 +28,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "drinkable-water", amount = 100}
     },
     energy_required = 3.2,
-    unlock = "fermentation"
+    unlock = "fermentation",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -40,7 +41,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "clean-water", amount = 100}
     },
     energy_required = 0.8,
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -52,5 +54,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "fluid", name = "clean-water", amount = 100}
     },
     energy_required = 0.8,
-    unlock = "basic-biotechnology"
+    unlock = "basic-biotechnology",
+    auto_recycle = false
 }

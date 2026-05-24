@@ -22,5 +22,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-gunfire",
     energy_required = 2,
-    unlock = "gunfire-caste"
+    unlock = "gunfire-caste",
+    auto_recycle = false
 }

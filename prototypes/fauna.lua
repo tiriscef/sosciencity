@@ -273,7 +273,8 @@ local function create_slaughter_recipe(animal, index)
         order = string.format("%03d", index),
         localised_name = {"recipe-name.slaughter", item:get_localised_name()},
         localised_description = {"recipe-description.slaughter"},
-        unlock = animal.unlock
+        unlock = animal.unlock,
+        auto_recycle = false
     }:add_category_layer("slaughter")
 
     animal_calorie_values[animal.name] =
@@ -358,7 +359,8 @@ local function create_husbandry_recipe(details)
         localised_description = "",
         icon = animal_item.icon,
         icon_size = 64,
-        unlock = animal.unlock
+        unlock = animal.unlock,
+        auto_recycle = false
     })
 
     local recipe = Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer(

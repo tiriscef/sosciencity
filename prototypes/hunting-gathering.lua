@@ -123,6 +123,7 @@ local function create_hunting_gathering_recipe(details)
     details.always_show_made_in = details.always_show_made_in or true
     details.main_product = details.main_product or ""
     details.subgroup = details.subgroup or "sosciencity-gathering"
+    details.auto_recycle = false
 
     return Tirislib.RecipeGenerator.create_from_prototype(details)
 end

@@ -96,7 +96,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-computing-center",
     energy_required = 10,
-    unlock = "sosciencity-computing"
+    unlock = "sosciencity-computing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -108,7 +109,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-computing-center",
     energy_required = 20,
-    unlock = "sosciencity-computing"
+    unlock = "sosciencity-computing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -120,7 +122,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-computing-center",
     energy_required = 30,
-    unlock = "sosciencity-computing"
+    unlock = "sosciencity-computing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -132,7 +135,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-computing-center",
     energy_required = 40,
-    unlock = "in-situ-gene-editing"
+    unlock = "in-situ-gene-editing",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -171,7 +175,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 3.2,
-    unlock = "genetic-neogenesis"
+    unlock = "genetic-neogenesis",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -186,7 +191,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-bioreactor",
     energy_required = 3.2,
-    unlock = "genetic-neogenesis"
+    unlock = "genetic-neogenesis",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -199,7 +205,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 3.2,
-    unlock = "genetic-neogenesis"
+    unlock = "genetic-neogenesis",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -212,7 +219,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 3.2,
-    unlock = "genetic-neogenesis"
+    unlock = "genetic-neogenesis",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -226,7 +234,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "chemistry",
     energy_required = 3.2,
-    unlock = "genetic-neogenesis"
+    unlock = "genetic-neogenesis",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -238,7 +247,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "glass-instruments", amount = 1}
     },
     category = "chemistry",
-    unlock = "genetic-neogenesis"
+    unlock = "genetic-neogenesis",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -254,5 +264,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "virus-genome", amount = 1}
     },
     category = "sosciencity-reproductive-gene-lab",
-    unlock = "in-situ-gene-editing"
+    unlock = "in-situ-gene-editing",
+    auto_recycle = false
 }

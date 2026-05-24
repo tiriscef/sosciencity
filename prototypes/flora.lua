@@ -88,7 +88,8 @@ local function create_annual_recipe(details)
         subgroup = "sosciencity-flora",
         icon = product.icon,
         icon_size = 64,
-        unlock = "open-environment-farming"
+        unlock = "open-environment-farming",
+        auto_recycle = false
     })
 
     add_general_growing_attributes(details, plant_details)
@@ -117,7 +118,8 @@ local function create_perennial_recipe(details)
         subgroup = "sosciencity-flora-perennial",
         icon = product.icon,
         icon_size = 64,
-        unlock = "open-environment-farming"
+        unlock = "open-environment-farming",
+        auto_recycle = false
     })
 
     add_general_growing_attributes(details, plant_details)
@@ -146,7 +148,8 @@ local function create_perennial_crop_recipe(details)
         subgroup = "sosciencity-flora",
         icon = product.icon,
         icon_size = 64,
-        unlock = "open-environment-farming"
+        unlock = "open-environment-farming",
+        auto_recycle = false
     })
 
     add_general_growing_attributes(details, plant_details)
@@ -182,7 +185,8 @@ local function create_annual_bloomhouse_recipe(details)
         subgroup = "sosciencity-flora-bloomhouse",
         icon = product.icon,
         icon_size = 64,
-        unlock = "indoor-growing"
+        unlock = "indoor-growing",
+        auto_recycle = false
     })
 
     add_general_growing_attributes(details, plant_details)
@@ -205,7 +209,8 @@ local function create_identification_recipe(details)
         category = "sosciencity-caste-ember",
         subgroup = "sosciencity-neogenesis-recipes",
         icon = product.icon,
-        icon_size = 64
+        icon_size = 64,
+        auto_recycle = false
     })
 
     return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("plant-neogenesis")
@@ -234,7 +239,8 @@ local function create_neogenesis_recipe(details)
         subgroup = "sosciencity-neogenesis-recipes",
         icon = product.icon,
         icon_size = 64,
-        unlock = "genetic-neogenesis"
+        unlock = "genetic-neogenesis",
+        auto_recycle = false
     })
 
     return Tirislib.RecipeGenerator.create_from_prototype(details):add_category_layer("plant-neogenesis")
@@ -624,7 +630,8 @@ local function create_mushroom_recipe(details)
         subgroup = "sosciencity-mushrooms",
         icon = product.icon,
         icon_size = 64,
-        unlock = "basic-biotechnology"
+        unlock = "basic-biotechnology",
+        auto_recycle = false
     })
 
     add_general_growing_attributes(details, plant_details)
@@ -699,7 +706,8 @@ local function create_algae_recipe(details)
         icon_size = 64,
         do_index_fluid_ingredients = true,
         do_index_fluid_results = true,
-        unlock = "basic-biotechnology"
+        unlock = "basic-biotechnology",
+        auto_recycle = false
     })
 
     add_general_growing_attributes(details, plant_details)
@@ -752,7 +760,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     order = "00001",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-edible-plants"}},
     localised_description = {"recipe-description.flora-sorting"},
-    unlock = "open-environment-farming"
+    unlock = "open-environment-farming",
+    auto_recycle = false
 }:add_category_layer("plant-neogenesis")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -776,7 +785,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     order = "00002",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-fungi"}},
     localised_description = {"recipe-description.flora-sorting"},
-    unlock = "mushroom-farming"
+    unlock = "mushroom-farming",
+    auto_recycle = false
 }:add_category_layer("plant-neogenesis")
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -799,7 +809,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     order = "00003",
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-algae"}},
     localised_description = {"recipe-description.flora-sorting"},
-    unlock = "algae-farming"
+    unlock = "algae-farming",
+    auto_recycle = false
 }:add_category_layer("plant-neogenesis")
 
 ---------------------------------------------------------------------------------------------------
@@ -817,7 +828,8 @@ for _, item in pairs(flora_items) do
             },
             name = "sawdust",
             category = "sosciencity-wood-processing",
-            allow_productivity = true
+            allow_productivity = true,
+            auto_recycle = false
         }
     end
 end
@@ -909,7 +921,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "ortrot-sapling",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 2
+    default_theme_level = 2,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -923,7 +936,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 1
+    default_theme_level = 1,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -937,7 +951,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 1
+    default_theme_level = 1,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -951,7 +966,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "zetorn-sapling",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 2
+    default_theme_level = 2,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -965,7 +981,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "zetorn-sapling",
     category = "sosciencity-plant-upbringing",
-    default_theme_level = 2
+    default_theme_level = 2,
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -979,7 +996,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
-    unlock = "explore-alien-flora-2"
+    unlock = "explore-alien-flora-2",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -993,7 +1011,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
-    unlock = "explore-alien-flora-1"
+    unlock = "explore-alien-flora-1",
+    auto_recycle = false
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -1134,7 +1153,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     category = "sosciencity-bloomhouse-annual",
     energy_required = 20,
     subgroup = "sosciencity-flora-bloomhouse",
-    unlock = "indoor-growing"
+    unlock = "indoor-growing",
+    auto_recycle = false
 }
 
 Tirislib.Prototype.create {

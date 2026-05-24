@@ -36,7 +36,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     subgroup = "sosciencity-ideas-by-hand",
     order = "00000",
     main_product = "",
-    unlock = "automation-science-pack"
+    unlock = "automation-science-pack",
+    auto_recycle = false
 }
 
 -- Atelier
@@ -51,7 +52,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-atelier",
     energy_required = 2,
-    unlock = "atelier"
+    unlock = "atelier",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -63,7 +65,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "dye", amount = 1}
     },
     category = "sosciencity-atelier",
-    --unlock = "ember-caste"
+    unlock = "logistic-science-pack",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -74,7 +77,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "tools", amount = 1}
     },
     category = "sosciencity-atelier",
-    --unlock = "ember-caste"
+    unlock = "architecture-3",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -85,7 +89,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "sketch", amount = 2}
     },
     category = "sosciencity-atelier",
-    --unlock = "ember-caste"
+    unlock = "production-science-pack",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -95,7 +100,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "artistic-insight", amount = 2}
     },
     category = "sosciencity-atelier",
-    --unlock = "ember-caste"
+    unlock = "chemical-science-pack",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -105,7 +111,9 @@ Tirislib.RecipeGenerator.create_from_prototype {
         {type = "item", name = "cloth", amount = 1},
         {type = "item", name = "dye", amount = 1}
     },
-    category = "sosciencity-caste-ember"
+    category = "sosciencity-caste-ember",
+    unlock = "architecture-3",
+    auto_recycle = false
 }
 
 -- Ember HQ
@@ -118,7 +126,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-ember",
     energy_required = 4,
-    unlock = "ember-caste"
+    unlock = "ember-caste",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -130,7 +139,8 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-ember",
     energy_required = 8,
-    unlock = "atelier"
+    unlock = "atelier",
+    auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create_from_prototype {
@@ -143,5 +153,6 @@ Tirislib.RecipeGenerator.create_from_prototype {
     },
     category = "sosciencity-caste-ember",
     energy_required = 6,
-    unlock = "gleam-caste"
+    unlock = "gleam-caste",
+    auto_recycle = false
 }
