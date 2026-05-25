@@ -7,18 +7,14 @@ local items = {
     {
         name = "hehe",
         sprite_variations = {name = "hehe", count = 3, include_icon = true},
-        distinctions = {
-            stack_size = 100,
-            auto_recycle = true
-        }
+        stack_size = 100,
+        auto_recycle = true
     },
     {
         name = "huwan-egg",
         sprite_variations = {name = "huwan-egg", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},
@@ -29,10 +25,8 @@ local items = {
     {
         name = "huwan-agender-egg",
         sprite_variations = {name = "huwan-agender-egg", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},
@@ -43,10 +37,8 @@ local items = {
     {
         name = "huwan-fale-egg",
         sprite_variations = {name = "huwan-fale-egg", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},
@@ -57,10 +49,8 @@ local items = {
     {
         name = "huwan-pachin-egg",
         sprite_variations = {name = "huwan-pachin-egg", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},
@@ -71,10 +61,8 @@ local items = {
     {
         name = "huwan-ga-egg",
         sprite_variations = {name = "huwan-ga-egg", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},
@@ -85,10 +73,8 @@ local items = {
     {
         name = "huwan-egg-autoreproduction",
         sprite_variations = {name = "huwan-egg-autoreproduction", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},
@@ -99,10 +85,8 @@ local items = {
     {
         name = "huwan-egg-ovosynthesis",
         sprite_variations = {name = "huwan-egg-ovosynthesis", count = 4, include_icon = true},
-        distinctions = {
-            localised_name = {"item-name.huwan-egg"},
-            localised_description = {"item-description.huwan-egg"}
-        },
+        localised_name = {"item-name.huwan-egg"},
+        localised_description = {"item-description.huwan-egg"},
         custom_tooltip_fields = {
             {
                 name = {"sosciencity.gender"},

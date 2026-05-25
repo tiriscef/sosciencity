@@ -1,38 +1,28 @@
 local microorganisms = {
     {
         name = "mynellia",
-        distinctions = {
-            base_color = {r = 0.164, g = 0.813, b = 0.411},
-            flow_color = {r = 0.164, g = 0.813, b = 0.411}
-        }
+        base_color = {r = 0.164, g = 0.813, b = 0.411},
+        flow_color = {r = 0.164, g = 0.813, b = 0.411}
     },
     {
         name = "solfaen",
-        distinctions = {
-            base_color = {r = 0.944, g = 0.180, b = 0.063},
-            flow_color = {r = 0.944, g = 0.383, b = 0.178}
-        }
+        base_color = {r = 0.944, g = 0.180, b = 0.063},
+        flow_color = {r = 0.944, g = 0.383, b = 0.178}
     },
     {
         name = "pemtenn",
-        distinctions = {
-            base_color = {r = 0.000, g = 0.800, b = 1.000},
-            flow_color = {r = 0.000, g = 0.478, b = 0.600}
-        }
+        base_color = {r = 0.000, g = 0.800, b = 1.000},
+        flow_color = {r = 0.000, g = 0.478, b = 0.600}
     },
     {
         name = "flinnum",
-        distinctions = {
-            base_color = {r = 0.117, g = 0.667, b = 0.231},
-            flow_color = {r = 0.273, g = 0.782, b = 0.632}
-        }
+        base_color = {r = 0.117, g = 0.667, b = 0.231},
+        flow_color = {r = 0.273, g = 0.782, b = 0.632}
     },
     {
         name = "fiicorum",
-        distinctions = {
-            base_color = {r = 0.944, g = 0.180, b = 0.063},
-            flow_color = {r = 0.944, g = 0.383, b = 0.178}
-        }
+        base_color = {r = 0.944, g = 0.180, b = 0.063},
+        flow_color = {r = 0.944, g = 0.383, b = 0.178}
     },
 }
 

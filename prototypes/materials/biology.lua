@@ -10,69 +10,56 @@ local biology_items = {
     },
     {
         name = "humus",
-        sprite_variations = {name = "humus", count = 2, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "humus", count = 2, include_icon = true}
     },
     {
         name = "sewage-sludge",
-        sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "sewage-sludge", count = 3, include_icon = true}
     },
     {
         name = "salt",
-        sprite_variations = {name = "salt", count = 3, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "salt", count = 3, include_icon = true}
     },
     {
         name = "flour",
-        sprite_variations = {name = "flour", count = 2, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "flour", count = 2, include_icon = true}
     },
     {
         name = "sugar",
-        sprite_variations = {name = "sugar", count = 3, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "sugar", count = 3, include_icon = true}
     },
     {
         name = "molasses",
-        sprite_variations = {name = "molasses", count = 3, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "molasses", count = 3, include_icon = true}
     },
     {
-        name = "mold",
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        name = "mold"
     },
     {
-        name = "amylum",
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        name = "amylum"
     },
     {
         name = "agarose",
-        sprite_variations = {name = "agarose", count = 3, include_icon = true},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "agarose", count = 3, include_icon = true}
     },
     {
         name = "solid-fat",
-        distinctions = {
-            subgroup = "sosciencity-biology-materials",
-            fuel_value = "500kJ",
-            fuel_category = "chemical"
-        }
+        fuel_value = "500kJ",
+        fuel_category = "chemical"
     },
     {
         name = "proteins",
-        sprite_variations = {name = "proteins-pile", count = 3},
-        distinctions = {subgroup = "sosciencity-biology-materials"}
+        sprite_variations = {name = "proteins-pile", count = 3}
     },
     {
         name = "pemtenn-extract",
-        distinctions = {subgroup = "sosciencity-microorganism-products"}
+        subgroup = "sosciencity-microorganism-products"
     }
 }
 
 Tirislib.Item.batch_create(
     biology_items,
-    {subgroup = "sosciencity-materials", stack_size = 200}
+    {subgroup = "sosciencity-biology-materials", stack_size = 200}
 )
 
 ---------------------------------------------------------------------------------------------------
@@ -81,21 +68,17 @@ Tirislib.Item.batch_create(
 local biology_fluids = {
     {
         name = "fatty-oil",
-        distinctions = {
-            base_color = {r = 0.965, g = 0.784, b = 0.040},
-            flow_color = {r = 0.965, g = 0.784, b = 0.040}
-        }
+        base_color = {r = 0.965, g = 0.784, b = 0.040},
+        flow_color = {r = 0.965, g = 0.784, b = 0.040}
     },
     {
         name = "soy-milk",
-        distinctions = {
-            base_color = {r = 0.933, g = 0.894, b = 0.729},
-            flow_color = {r = 0.933, g = 0.894, b = 0.729}
-        }
+        base_color = {r = 0.933, g = 0.894, b = 0.729},
+        flow_color = {r = 0.933, g = 0.894, b = 0.729}
     },
     {
         name = "ethanol",
-        distinctions = {subgroup = "sosciencity-microorganism-products"}
+        subgroup = "sosciencity-microorganism-products"
     }
 }
 

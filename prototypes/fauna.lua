@@ -4,7 +4,7 @@ local Food = require("constants.food")
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 
-local animals = {
+local animal_configs = {
     {
         name = "primal-quackling",
         size = 20,
@@ -194,19 +194,21 @@ local function get_stack_size(animal)
     end
 end
 
-for _, animal in pairs(animals) do
-    animal.distinctions = animal.distinctions or {}
-    local distinctions = animal.distinctions
-
-    distinctions.stack_size = get_stack_size(animal)
+local animal_prototypes = {}
+for _, config in pairs(animal_configs) do
+    local entry = {name = config.name, stack_size = get_stack_size(config)}
+    if config.sprite_variations then
+        entry.sprite_variations = config.sprite_variations
+    end
+    table.insert(animal_prototypes, entry)
 end
 
-Tirislib.Item.batch_create(animals, {subgroup = "sosciencity-fauna", stack_size = 20})
+Tirislib.Item.batch_create(animal_prototypes, {subgroup = "sosciencity-fauna", stack_size = 20})
 
 local function get_animal_definition(name)
-    for _, current_animal in pairs(animals) do
-        if current_animal.name == name then
-            return current_animal
+    for _, config in pairs(animal_configs) do
+        if config.name == name then
+            return config
         end
     end
 end
@@ -286,7 +288,7 @@ local function create_slaughter_recipe(animal, index)
     ):call(Tirislib.Tables.sum)
 end
 
-for index, animal in pairs(animals) do
+for index, animal in pairs(animal_configs) do
     create_slaughter_recipe(animal, index)
 end
 

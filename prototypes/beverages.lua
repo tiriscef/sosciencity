@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 local beverage_items = {
-    {name = "tiriscefing-whisky", distinctions = {durability = 300}}
+    {name = "tiriscefing-whisky", durability = 300}
 }
 
 Tirislib.Item.batch_create(beverage_items, {type = "tool", subgroup = "sosciencity-beverages"})

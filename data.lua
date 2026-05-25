@@ -2,6 +2,7 @@
 require("tirislib.init")
 Tirislib.Prototype.modname = "sosciencity"
 Tirislib.Prototype.placeholder_icon = "__sosciencity-graphics__/graphics/icon/placeholder.png"
+Tirislib.Prototype.default_icon_path = "__sosciencity-graphics__/graphics/icon/"
 require("datastage-api.load")
 require("recipe-generator-config")
 require("icon-layer-config")

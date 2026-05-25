@@ -75,7 +75,7 @@ local function create_item(house_name, house_def, details)
         pictures = Sosciencity.Config.blueprint_on_belt
     }
 
-    Tirislib.Tables.set_fields(item_prototype, details.distinctions)
+    Tirislib.Tables.set_fields(item_prototype, details.item_fields)
 end
 
 local trait_effect_on_recipe = {
@@ -177,7 +177,7 @@ end
 --- Creates a full house prototype: item, recipe, and entity.
 --- @param house_name string
 --- @param details table Prototype details: picture, width, height, tech_level; optionally icon, main_entity,
----   mining_result, description_prefix, open_sound, close_sound, stack_size, distinctions.
+---   mining_result, description_prefix, open_sound, close_sound, stack_size, item_fields.
 --- @param house_def table? House definition; looked up in constants/housing.lua by house_name if nil
 function Sosciencity.create_house(house_name, details, house_def)
     house_def = house_def or Housing.values[house_name]

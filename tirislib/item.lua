@@ -101,65 +101,57 @@ end
 -- << creation >>
 
 --- Creates an ItemPrototype from the given prototype table.
+--- Extra keys consumed: `sprite_variations`, `use_placeholder_icon`.
+--- Icon priority: `use_placeholder_icon` > explicit `icon` > auto-derived from `default_icon_path .. name`.
 --- @param prototype table
 --- @return ItemPrototype prototype
 function Tirislib.Item.create(prototype)
+    local sprite_variations = prototype.sprite_variations
+    local use_placeholder_icon = prototype.use_placeholder_icon
+    prototype.sprite_variations = nil
+    prototype.use_placeholder_icon = nil
+
+    if use_placeholder_icon then
+        prototype.icon = Tirislib.Prototype.placeholder_icon
+        prototype.icon_size = prototype.icon_size or 64
+    elseif not prototype.icon then
+        prototype.icon = Tirislib.Prototype.default_icon_path .. prototype.name .. ".png"
+    end
+
     prototype.type = prototype.type or "item"
 
     Tirislib.Prototype.create(prototype)
 
     local ret = Tirislib.Item.get_by_name(prototype.name)
+
+    if sprite_variations then
+        local path = (sprite_variations.path or Tirislib.Prototype.default_icon_path) .. sprite_variations.name
+        local size = sprite_variations.size or ret.icon_size or 64
+        ret:add_sprite_variations(size, path, sprite_variations.count)
+        if sprite_variations.include_icon then
+            ret:add_icon_to_sprite_variations()
+        end
+    end
+
     return ret
 end
 
---- Creates a bunch of item prototypes.\
---- **Item specification:**\
---- **name:** name of the item prototype\
---- **sprite_variations:** sprite variations for the prototype to use\
---- **distinctions:** table of prototype fields that should be different from the batch specification\
---- **custom_tooltip_fields:** array of custom tooltip fields
+--- Creates a bunch of item prototypes from an array of partial prototypes.
+--- Item entries are merged with `batch_data` defaults (item fields take priority).
 --- @param item_data_array table
 --- @param batch_data table
 --- @return ItemPrototypeArray
 function Tirislib.Item.batch_create(item_data_array, batch_data)
-    local prototype_type = batch_data.type or "item"
-    local path = batch_data.icon_path or "__sosciencity-graphics__/graphics/icon/"
-    local size = batch_data.icon_size or 64
-    local subgroup = batch_data.subgroup
-    local stack_size = batch_data.stack_size or 200
-
     local created_items = {}
     for index, item_data in pairs(item_data_array) do
-        local icon = item_data.use_placeholder_icon and Tirislib.Prototype.placeholder_icon or (path .. item_data.name .. ".png")
+        local prototype = {}
+        Tirislib.Tables.set_fields(prototype, batch_data)
+        Tirislib.Tables.set_fields(prototype, item_data)
+        prototype.order = prototype.order or string.format("%03d", index)
+        prototype.icon_size = prototype.icon_size or 64
+        prototype.stack_size = prototype.stack_size or 200
 
-        local prototype = {
-            type = prototype_type,
-            name = item_data.name,
-            icon = icon,
-            icon_size = size,
-            subgroup = subgroup,
-            order = string.format("%03d", index),
-            stack_size = stack_size
-        }
-        Tirislib.Tables.set_fields_passively(prototype, batch_data)
-        Tirislib.Tables.set_fields(prototype, item_data.distinctions)
-
-        local item = Tirislib.Item.create(prototype)
-
-        local variations = item_data.sprite_variations
-        if variations then
-            item:add_sprite_variations(64, path .. variations.name, variations.count)
-
-            if variations.include_icon then
-                item:add_icon_to_sprite_variations()
-            end
-        end
-
-        for _, field in pairs(item_data.custom_tooltip_fields or {}) do
-            item:add_custom_tooltip(field)
-        end
-
-        created_items[#created_items + 1] = item
+        created_items[#created_items + 1] = Tirislib.Item.create(prototype)
     end
 
     setmetatable(created_items, Tirislib.ItemArray)

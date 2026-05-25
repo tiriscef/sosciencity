@@ -401,32 +401,30 @@ local sounds = require("__base__.prototypes.entity.sounds")
 local consumable_medicine = {
     {
         name = "sosciencity-emergency-ration",
-        distinctions = {
-            icon = "__sosciencity-graphics__/graphics/icon/emergency-ration.png",
-            capsule_action = {
-                type = "use-on-self",
-                attack_parameters = {
-                    type = "projectile",
-                    activation_type = "consume",
-                    ammo_category = "capsule",
-                    cooldown = 15,
-                    range = 0,
-                    ammo_type = {
-                        category = "capsule",
-                        target_type = "position",
-                        action = {
-                            type = "direct",
-                            action_delivery = {
-                                type = "instant",
-                                target_effects = {
-                                    {
-                                        type = "damage",
-                                        damage = {type = "physical", amount = -80}
-                                    },
-                                    {
-                                        type = "play-sound",
-                                        sound = sounds.eat_fish
-                                    }
+        icon = "__sosciencity-graphics__/graphics/icon/emergency-ration.png",
+        capsule_action = {
+            type = "use-on-self",
+            attack_parameters = {
+                type = "projectile",
+                activation_type = "consume",
+                ammo_category = "capsule",
+                cooldown = 15,
+                range = 0,
+                ammo_type = {
+                    category = "capsule",
+                    target_type = "position",
+                    action = {
+                        type = "direct",
+                        action_delivery = {
+                            type = "instant",
+                            target_effects = {
+                                {
+                                    type = "damage",
+                                    damage = {type = "physical", amount = -80}
+                                },
+                                {
+                                    type = "play-sound",
+                                    sound = sounds.eat_fish
                                 }
                             }
                         }
@@ -437,32 +435,30 @@ local consumable_medicine = {
     },
     {
         name = "sosciencity-medical-kit",
-        distinctions = {
-            icon = "__sosciencity-graphics__/graphics/icon/medical-kit.png",
-            capsule_action = {
-                type = "use-on-self",
-                attack_parameters = {
-                    type = "projectile",
-                    activation_type = "consume",
-                    ammo_category = "capsule",
-                    cooldown = 15,
-                    range = 0,
-                    ammo_type = {
-                        category = "capsule",
-                        target_type = "position",
-                        action = {
-                            type = "direct",
-                            action_delivery = {
-                                type = "instant",
-                                target_effects = {
-                                    {
-                                        type = "damage",
-                                        damage = {type = "physical", amount = -200}
-                                    },
-                                    {
-                                        type = "play-sound",
-                                        sound = sounds.eat_fish
-                                    }
+        icon = "__sosciencity-graphics__/graphics/icon/medical-kit.png",
+        capsule_action = {
+            type = "use-on-self",
+            attack_parameters = {
+                type = "projectile",
+                activation_type = "consume",
+                ammo_category = "capsule",
+                cooldown = 15,
+                range = 0,
+                ammo_type = {
+                    category = "capsule",
+                    target_type = "position",
+                    action = {
+                        type = "direct",
+                        action_delivery = {
+                            type = "instant",
+                            target_effects = {
+                                {
+                                    type = "damage",
+                                    damage = {type = "physical", amount = -200}
+                                },
+                                {
+                                    type = "play-sound",
+                                    sound = sounds.eat_fish
                                 }
                             }
                         }

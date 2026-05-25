@@ -5,69 +5,61 @@ local laboratory_items = {
     {name = "semipermeable-membrane"},
     {
         name = "glass-instruments",
-        sprite_variations = {name = "glass-instruments-on-belt", count = 3},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "glass-instruments-on-belt", count = 3}
     },
     {
         name = "nucleobases",
-        sprite_variations = {name = "nucleobases-on-belt", count = 3},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "nucleobases-on-belt", count = 3}
     },
     {
         name = "phospholipids",
-        sprite_variations = {name = "phospholipids-on-belt", count = 3},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "phospholipids-on-belt", count = 3}
     },
     {
         name = "chloroplasts",
-        sprite_variations = {name = "chloroplasts-on-belt", count = 1},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "chloroplasts-on-belt", count = 1}
     },
     {
         name = "mitochondria",
-        sprite_variations = {name = "mitochondria-on-belt", count = 1},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "mitochondria-on-belt", count = 1}
     },
     {
         name = "synthetase",
-        sprite_variations = {name = "synthetase-on-belt", count = 1},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "synthetase-on-belt", count = 1}
     },
     {
         name = "thermostable-dna-polymerase",
-        sprite_variations = {name = "thermostable-dna-polymerase-on-belt", count = 1},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "thermostable-dna-polymerase-on-belt", count = 1}
     },
     {
         name = "blank-dna-virus",
-        sprite_variations = {name = "blank-dna-virus-on-belt", count = 1},
-        distinctions = {subgroup = "sosciencity-laboratory-materials"}
+        sprite_variations = {name = "blank-dna-virus-on-belt", count = 1}
     },
     {
         name = "empty-hard-drive",
-        distinctions = {subgroup = "sosciencity-data"}
+        subgroup = "sosciencity-data"
     },
     {
         name = "virus-genome",
-        distinctions = {subgroup = "sosciencity-data"}
+        subgroup = "sosciencity-data"
     },
     {
         name = "plant-genome",
-        distinctions = {subgroup = "sosciencity-data"}
+        subgroup = "sosciencity-data"
     },
     {
         name = "huwan-genome",
-        distinctions = {subgroup = "sosciencity-data"}
+        subgroup = "sosciencity-data"
     },
     {
         name = "edited-huwan-genome",
-        distinctions = {subgroup = "sosciencity-data"}
+        subgroup = "sosciencity-data"
     }
 }
 
 Tirislib.Item.batch_create(
     laboratory_items,
-    {subgroup = "sosciencity-materials", stack_size = 200}
+    {subgroup = "sosciencity-laboratory-materials", stack_size = 200}
 )
 
 ---------------------------------------------------------------------------------------------------

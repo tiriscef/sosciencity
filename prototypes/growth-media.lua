@@ -1,9 +1,7 @@
 local growth_media = {
     {
         name = "sugar-medium",
-        distinctions = {
-            icon = "__sosciencity-graphics__/graphics/icon/medium.png"
-        }
+        icon = "__sosciencity-graphics__/graphics/icon/medium.png"
     }
 }
 

@@ -8,36 +8,88 @@ local flora_items = {
     {
         name = "leafage",
         sprite_variations = {name = "leafage", count = 3, include_icon = true},
-        distinctions = {fuel_value = "500kJ", fuel_category = "chemical"}
+        fuel_value = "500kJ",
+        fuel_category = "chemical"
     },
     {
         name = "hardcorn-punk",
         sprite_variations = {name = "hardcorn-punk-pile", count = 3}
     },
-    {name = "plemnemm-cotton", sprite_variations = {name = "plemnemm-cotton-pile", count = 4}},
-    {name = "tiriscefing-willow-wood", wood = true},
-    {name = "cherry-wood", wood = true, unlock = Unlocks.get_tech_name("cherry")},
-    {name = "olive-wood", wood = true, unlock = Unlocks.get_tech_name("olive")},
-    {name = "ortrot-wood", wood = true, unlock = "explore-alien-flora-2"},
-    {name = "avocado-wood", wood = true, unlock = Unlocks.get_tech_name("avocado")},
-    {name = "zetorn-wood", wood = true, unlock = "explore-alien-flora-1"},
-    {name = "sugar-cane", sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}},
-    {name = "gingil-hemp", sprite_variations = {name = "gingil-hemp-pile", count = 3}},
-    {name = "wild-flowers", sprite_variations = {name = "wild-flowers", count = 5, include_icon = true}},
-    {name = "necrofall", sprite_variations = {name = "necrofall-pile", count = 4}},
-    {name = "phytofall-blossom", sprite_variations = {name = "phytofall-blossom-pile", count = 4}},
-    {name = "chromafall", sprite_variations = {name = "chromafall-pile", count = 4}},
-    {name = "chronofall", sprite_variations = {name = "chronofall-pile", count = 4}},
-    {name = "chamofall", sprite_variations = {name = "chamofall-pile", count = 4}},
-    {name = "ignivern", use_placeholder_icon = true}
+    {
+        name = "plemnemm-cotton",
+        sprite_variations = {name = "plemnemm-cotton-pile", count = 4}
+    },
+    {
+        name = "tiriscefing-willow-wood",
+        wood = true
+    },
+    {
+        name = "cherry-wood",
+        wood = true,
+        unlock = Unlocks.get_tech_name("cherry")
+    },
+    {
+        name = "olive-wood",
+        wood = true,
+        unlock = Unlocks.get_tech_name("olive")
+    },
+    {
+        name = "ortrot-wood",
+        wood = true,
+        unlock = "explore-alien-flora-2"
+    },
+    {
+        name = "avocado-wood",
+        wood = true,
+        unlock = Unlocks.get_tech_name("avocado")
+    },
+    {
+        name = "zetorn-wood",
+        wood = true,
+        unlock = "explore-alien-flora-1"
+    },
+    {
+        name = "sugar-cane",
+        sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}
+    },
+    {
+        name = "gingil-hemp",
+        sprite_variations = {name = "gingil-hemp-pile", count = 3}
+    },
+    {
+        name = "wild-flowers",
+        sprite_variations = {name = "wild-flowers", count = 5, include_icon = true}
+    },
+    {
+        name = "necrofall",
+        sprite_variations = {name = "necrofall-pile", count = 4}
+    },
+    {
+        name = "phytofall-blossom",
+        sprite_variations = {name = "phytofall-blossom-pile", count = 4}
+    },
+    {
+        name = "chromafall",
+        sprite_variations = {name = "chromafall-pile", count = 4}
+    },
+    {
+        name = "chronofall",
+        sprite_variations = {name = "chronofall-pile", count = 4}
+    },
+    {
+        name = "chamofall",
+        sprite_variations = {name = "chamofall-pile", count = 4}
+    },
+    {
+        name = "ignivern",
+        use_placeholder_icon = true
+    }
 }
 
 for _, item in pairs(flora_items) do
-    local distinctions = Tirislib.Tables.get_subtbl(item, "distinctions")
-
     if item.wood then
-        distinctions.fuel_value = "2MJ"
-        distinctions.fuel_category = "chemical"
+        item.fuel_value = "2MJ"
+        item.fuel_category = "chemical"
     end
 end
 
@@ -76,7 +128,7 @@ local function create_annual_recipe(details)
         results = {
             {type = "item", name = product_name, amount_min = 0, amount_max = 100 * mult, product = true},
             {type = "item", name = product_name, amount_min = 0, amount_max = 100 * mult},
-            {type = "item", name = "leafage", amount_min = 1, amount_max = 40}
+            {type = "item", name = "leafage",    amount_min = 1, amount_max = 40}
         },
         ingredients = {
             {type = "item", name = product_name, amount = 10 * mult}
@@ -109,7 +161,7 @@ local function create_perennial_recipe(details)
         name = "farming-perennial-" .. product_name,
         results = {
             {type = "item", name = product_name, amount_min = 5 * mult, amount_max = 10 * mult, product = true},
-            {type = "item", name = "leafage", amount = 1}
+            {type = "item", name = "leafage",    amount = 1}
         },
         energy_required = 25,
         localised_name = {"recipe-name.perennial", product:get_localised_name()},
@@ -139,7 +191,7 @@ local function create_perennial_crop_recipe(details)
         name = "farming-perennial-crop-" .. product_name,
         results = {
             {type = "item", name = product_name, amount_min = 5 * mult, amount_max = 10 * mult, product = true},
-            {type = "item", name = "leafage", amount = 1}
+            {type = "item", name = "leafage",    amount = 1}
         },
         energy_required = 25,
         localised_name = {"recipe-name.perennial-crop", product:get_localised_name()},
@@ -171,12 +223,12 @@ local function create_annual_bloomhouse_recipe(details)
         results = {
             {type = "item", name = product_name, amount_min = 50 * mult, amount_max = 100 * mult, product = true},
             {type = "item", name = product_name, amount_min = 50 * mult, amount_max = 100 * mult},
-            {type = "item", name = "leafage", amount_min = 1, amount_max = 40},
-            {type = "item", name = "pot", amount_min = 19, amount_max = 20}
+            {type = "item", name = "leafage",    amount_min = 1,         amount_max = 40},
+            {type = "item", name = "pot",        amount_min = 19,        amount_max = 20}
         },
         ingredients = {
             {type = "item", name = product_name, amount = 10},
-            {type = "item", name = "pot", amount = 20}
+            {type = "item", name = "pot",        amount = 20}
         },
         energy_required = energy_required,
         localised_name = {"recipe-name.annual-bloomhouse", product:get_localised_name()},
@@ -224,13 +276,13 @@ local function create_neogenesis_recipe(details)
 
     Tirislib.RecipeGenerator.merge_prototypes(details, {
         results = {
-            {type = "item", name = product_name, amount = 1, product = true},
+            {type = "item", name = product_name,       amount = 1, product = true},
             {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.9}
         },
         ingredients = {
             {theme = "genetic_neogenesis", amount = 1},
-            {type = "item", name = "chloroplasts", amount = 1},
-            {type = "item", name = "plant-genome", amount = 1}
+            {type = "item",                name = "chloroplasts", amount = 1},
+            {type = "item",                name = "plant-genome", amount = 1}
         },
         energy_required = 10,
         localised_name = {"recipe-name.neogenesis", product:get_localised_name()},
@@ -303,8 +355,8 @@ create_identification_recipe {
     product = "brutal-pumpkin",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 20},
-        {type = "item", name = "humus", amount = 40}
+        {type = "item", name = "botanical-study",    amount = 20},
+        {type = "item", name = "humus",              amount = 40}
     },
     unlock = "explore-alien-flora-2"
 }
@@ -364,8 +416,8 @@ create_identification_recipe {
     product = "hardcorn-punk",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "leafage", amount = 200}
+        {type = "item", name = "botanical-study",    amount = 10},
+        {type = "item", name = "leafage",            amount = 200}
     },
     unlock = "food-processing"
 }
@@ -401,8 +453,8 @@ create_identification_recipe {
     product = "manok",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "humus", amount = 40}
+        {type = "item", name = "botanical-study",    amount = 10},
+        {type = "item", name = "humus",              amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -449,8 +501,8 @@ create_identification_recipe {
     product = "ortrot",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 20},
-        {type = "item", name = "humus", amount = 40}
+        {type = "item", name = "botanical-study",    amount = 20},
+        {type = "item", name = "humus",              amount = 40}
     },
     unlock = "explore-alien-flora-2"
 }
@@ -525,8 +577,8 @@ create_identification_recipe {
     product = "tello-fruit",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "humus", amount = 40}
+        {type = "item", name = "botanical-study",    amount = 10},
+        {type = "item", name = "humus",              amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -575,8 +627,8 @@ create_identification_recipe {
     product = "weird-berry",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "humus", amount = 40}
+        {type = "item", name = "botanical-study",    amount = 10},
+        {type = "item", name = "humus",              amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -592,8 +644,8 @@ create_identification_recipe {
     product = "zetorn",
     ingredients = {
         {type = "item", name = "wild-edible-plants", amount = 20},
-        {type = "item", name = "botanical-study", amount = 10},
-        {type = "item", name = "humus", amount = 40}
+        {type = "item", name = "botanical-study",    amount = 10},
+        {type = "item", name = "humus",              amount = 40}
     },
     unlock = "explore-alien-flora-1"
 }
@@ -652,7 +704,7 @@ create_mushroom_recipe {
     product = "pocelial",
     ingredients = {
         {type = "fluid", name = "water", amount = 300},
-        {type = "item", name = "humus", amount = 20}
+        {type = "item",  name = "humus", amount = 20}
     },
     unlock = "mushroom-farming"
 }
@@ -662,7 +714,7 @@ create_mushroom_recipe {
     product = "red-hatty",
     ingredients = {
         {type = "fluid", name = "water", amount = 300},
-        {type = "item", name = "humus", amount = 20}
+        {type = "item",  name = "humus", amount = 20}
     },
     unlock = "mushroom-farming"
 }
@@ -671,8 +723,8 @@ create_mushroom_recipe {
 create_mushroom_recipe {
     product = "birdsnake",
     ingredients = {
-        {type = "fluid", name = "water", amount = 300},
-        {type = "item", name = "humus", amount = 10},
+        {type = "fluid",  name = "water", amount = 300},
+        {type = "item",   name = "humus", amount = 10},
         {theme = "stone", amount = 10}
     },
     unlock = "mushroom-farming"
@@ -747,11 +799,11 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wild-edible-plants", amount = 4}
     },
     results = {
-        {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "liontooth", amount_min = 0, amount_max = 5},
-        {type = "item", name = "razha-bean", amount_min = 0, amount_max = 4},
+        {type = "item", name = "leafage",       amount = 1},
+        {type = "item", name = "liontooth",     amount_min = 0, amount_max = 5},
+        {type = "item", name = "razha-bean",    amount_min = 0, amount_max = 4},
         {type = "item", name = "unnamed-fruit", amount_min = 0, amount_max = 5},
-        {type = "item", name = "blue-grapes", amount_min = 0, amount_max = 4}
+        {type = "item", name = "blue-grapes",   amount_min = 0, amount_max = 4}
     },
     icon = "__sosciencity-graphics__/graphics/icon/wild-edible-plants.png",
     icon_size = 64,
@@ -772,9 +824,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wild-fungi", amount = 4}
     },
     results = {
-        {type = "item", name = "leafage", amount = 1},
+        {type = "item", name = "leafage",   amount = 1},
         {type = "item", name = "fawoxylas", amount_min = 0, amount_max = 4},
-        {type = "item", name = "pocelial", amount_min = 0, amount_max = 4},
+        {type = "item", name = "pocelial",  amount_min = 0, amount_max = 4},
         {type = "item", name = "red-hatty", amount_min = 0, amount_max = 4},
         {type = "item", name = "birdsnake", amount_min = 0, amount_max = 4}
     },
@@ -797,9 +849,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wild-algae", amount = 4}
     },
     results = {
-        {type = "item", name = "leafage", amount = 1},
-        {type = "item", name = "queen-algae", amount_min = 0, amount_max = 4},
-        {type = "item", name = "pyrifera", amount_min = 0, amount_max = 4},
+        {type = "item", name = "leafage",        amount = 1},
+        {type = "item", name = "queen-algae",    amount_min = 0, amount_max = 4},
+        {type = "item", name = "pyrifera",       amount_min = 0, amount_max = 4},
         {type = "item", name = "endower-flower", amount_min = 0, amount_max = 2}
     },
     icon = "__sosciencity-graphics__/graphics/icon/wild-algae.png",
@@ -818,9 +870,9 @@ Tirislib.RecipeGenerator.create {
 
 for _, item in pairs(flora_items) do
     if item.wood then
-                Tirislib.RecipeGenerator.create {
+        Tirislib.RecipeGenerator.create {
             results = {
-                {type = "item", name = "lumber", amount = 3, product = true},
+                {type = "item", name = "lumber",  amount = 3, product = true},
                 {type = "item", name = "sawdust", amount = 1}
             },
             ingredients = {
@@ -845,44 +897,49 @@ Tirislib.Prototype.create {
 local saplings = {
     {
         name = "apple-sapling",
-        distinctions = {limitation = {"farming-perennial-apple"}, effect = {}}
+        limitation = {"farming-perennial-apple"},
+        effect = {}
     },
     {
         name = "avocado-sapling",
-        distinctions = {limitation = {"farming-perennial-avocado"}, effect = {}}
+        limitation = {"farming-perennial-avocado"},
+        effect = {}
     },
     {
         name = "cherry-sapling",
-        distinctions = {limitation = {"farming-perennial-cherry"}, effect = {}}
+        limitation = {"farming-perennial-cherry"},
+        effect = {}
     },
     {
         name = "lemon-sapling",
-        distinctions = {limitation = {"farming-perennial-lemon"}, effect = {}}
+        limitation = {"farming-perennial-lemon"},
+        effect = {}
     },
     {
         name = "orange-sapling",
-        distinctions = {limitation = {"farming-perennial-orange"}, effect = {}}
+        limitation = {"farming-perennial-orange"},
+        effect = {}
     },
     {
         name = "ortrot-sapling",
-        distinctions = {limitation = {"farming-perennial-ortrot"}, effect = {}}
+        limitation = {"farming-perennial-ortrot"},
+        effect = {}
     },
     {
         name = "zetorn-sapling",
-        distinctions = {limitation = {"farming-perennial-zetorn"}, effect = {}}
+        limitation = {"farming-perennial-zetorn"},
+        effect = {}
     }
 }
 
 for _, sapling in pairs(saplings) do
-    local distinctions = Tirislib.Tables.get_subtbl(sapling, "distinctions")
-
     -- search the flora item that needs this sapling
     for flora_name, details in pairs(Biology.flora) do
         if details.required_module == sapling.name then
             local flora_item = Tirislib.Item.get_by_name(flora_name)
-            distinctions.localised_description = {"sosciencity.sapling", flora_item:get_localised_name()}
+            sapling.localised_description = {"sosciencity.sapling", flora_item:get_localised_name()}
 
-            distinctions.icons = {
+            sapling.icons = {
                 {
                     icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png"
                 },
@@ -916,8 +973,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "ortrot-sapling", amount = 1},
-        {type = "item", name = "apple", amount = 10}
+        {type = "item",  name = "ortrot-sapling", amount = 1},
+        {type = "item",  name = "apple",          amount = 10}
     },
     name = "ortrot-sapling",
     category = "sosciencity-plant-upbringing",
@@ -931,8 +988,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "pot", amount = 1},
-        {type = "item", name = "avocado", amount = 10}
+        {type = "item",  name = "pot",     amount = 1},
+        {type = "item",  name = "avocado", amount = 10}
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
@@ -946,8 +1003,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "pot", amount = 1},
-        {type = "item", name = "cherry", amount = 10}
+        {type = "item",  name = "pot",    amount = 1},
+        {type = "item",  name = "cherry", amount = 10}
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
@@ -961,8 +1018,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "zetorn-sapling", amount = 1},
-        {type = "item", name = "lemon", amount = 10}
+        {type = "item",  name = "zetorn-sapling", amount = 1},
+        {type = "item",  name = "lemon",          amount = 10}
     },
     name = "zetorn-sapling",
     category = "sosciencity-plant-upbringing",
@@ -976,8 +1033,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "zetorn-sapling", amount = 1},
-        {type = "item", name = "orange", amount = 10}
+        {type = "item",  name = "zetorn-sapling", amount = 1},
+        {type = "item",  name = "orange",         amount = 10}
     },
     name = "zetorn-sapling",
     category = "sosciencity-plant-upbringing",
@@ -991,8 +1048,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "pot", amount = 1},
-        {type = "item", name = "ortrot", amount = 10}
+        {type = "item",  name = "pot",    amount = 1},
+        {type = "item",  name = "ortrot", amount = 10}
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
@@ -1006,8 +1063,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "soil", amount = 10},
-        {type = "item", name = "pot", amount = 1},
-        {type = "item", name = "zetorn", amount = 10}
+        {type = "item",  name = "pot",    amount = 1},
+        {type = "item",  name = "zetorn", amount = 10}
     },
     name = "pot",
     category = "sosciencity-plant-upbringing",
@@ -1042,7 +1099,7 @@ Tirislib.Entity.create {
         mining_time = 1,
         results = {
             {type = "item", name = "necrofall", amount_min = 10, amount_max = 15},
-            {type = "item", name = "leafage", amount_min = 10, amount_max = 15}
+            {type = "item", name = "leafage",   amount_min = 10, amount_max = 15}
         }
     },
     mined_sound = sounds.tree_leaves,
@@ -1147,8 +1204,8 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {type = "item", name = "leafage", amount = 10},
-        {type = "item", name = "humus", amount = 10},
-        {type = "item", name = "pot", amount = 1}
+        {type = "item", name = "humus",   amount = 10},
+        {type = "item", name = "pot",     amount = 1}
     },
     category = "sosciencity-bloomhouse-annual",
     energy_required = 20,

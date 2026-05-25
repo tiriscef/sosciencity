@@ -4,33 +4,27 @@
 local gathering_tool_items = {
     {
         name = "trap",
-        distinctions = {subgroup = "sosciencity-gathering"}
     },
     {
         name = "trap-cage",
-        distinctions = {subgroup = "sosciencity-gathering"}
     },
     {
         name = "bucket",
-        distinctions = {subgroup = "sosciencity-gathering"}
     },
     {
         name = "simple-fishtrap",
-        distinctions = {subgroup = "sosciencity-gathering"}
     },
     {
         name = "fishing-net",
-        distinctions = {subgroup = "sosciencity-gathering"}
     },
     {
         name = "harpoon",
-        distinctions = {subgroup = "sosciencity-gathering"}
     }
 }
 
 Tirislib.Item.batch_create(
     gathering_tool_items,
-    {subgroup = "sosciencity-materials", stack_size = 200}
+    {subgroup = "sosciencity-gathering", stack_size = 200}
 )
 
 ---------------------------------------------------------------------------------------------------

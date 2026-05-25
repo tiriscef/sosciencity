@@ -60,9 +60,21 @@ function Tirislib.Fluid.iterate()
 end
 
 --- Creates an FluidPrototype from the given prototype table.
+--- Extra key consumed: `use_placeholder_icon`.
+--- Icon priority: `use_placeholder_icon` > explicit `icon` > auto-derived from `default_icon_path .. name`.
 --- @param prototype table
 --- @return FluidPrototype prototype
 function Tirislib.Fluid.create(prototype)
+    local use_placeholder_icon = prototype.use_placeholder_icon
+    prototype.use_placeholder_icon = nil
+
+    if use_placeholder_icon then
+        prototype.icon = Tirislib.Prototype.placeholder_icon
+        prototype.icon_size = prototype.icon_size or 64
+    elseif not prototype.icon then
+        prototype.icon = Tirislib.Prototype.default_icon_path .. prototype.name .. ".png"
+    end
+
     prototype.type = prototype.type or "fluid"
 
     Tirislib.Prototype.create(prototype)
@@ -70,44 +82,21 @@ function Tirislib.Fluid.create(prototype)
     return Tirislib.Fluid.get(prototype.name)
 end
 
---- Creates a bunch of fluid prototypes.\
---- **Fluid specification:**\
---- **name:** name of the fluid prototype\
---- **distinctions:** table of prototype fields that should be different from the batch specification
+--- Creates a bunch of fluid prototypes.
+--- Fluid entries are merged with `batch_data` defaults (fluid fields take priority).
 --- @param fluid_data_array table
 --- @param batch_data table
 --- @return FluidPrototypeArray
 function Tirislib.Fluid.batch_create(fluid_data_array, batch_data)
-    local path = batch_data.icon_path or "__sosciencity-graphics__/graphics/icon/"
-    local size = batch_data.icon_size or 64
-    local subgroup = batch_data.subgroup
-    local base_color = batch_data.base_color
-    local flow_color = batch_data.flow_color or base_color
-    local default_temperature = batch_data.default_temperature or 10
-    local max_temperature = batch_data.max_temperature or 100
-
     local created_fluids = {}
     for index, fluid_data in pairs(fluid_data_array) do
-        local fluid =
-            Tirislib.Fluid.create {
-            name = fluid_data.name,
-            icon = path .. fluid_data.name .. ".png",
-            icon_size = size,
-            subgroup = subgroup,
-            order = string.format("%03d", index),
-            default_temperature = default_temperature,
-            max_temperature = max_temperature,
-            base_color = base_color,
-            flow_color = flow_color
-        }
+        local prototype = {}
+        Tirislib.Tables.set_fields(prototype, batch_data)
+        Tirislib.Tables.set_fields(prototype, fluid_data)
+        prototype.order = prototype.order or string.format("%03d", index)
+        prototype.icon_size = prototype.icon_size or 64
 
-        Tirislib.Tables.set_fields(fluid, fluid_data.distinctions)
-
-        for _, field in pairs(fluid_data.custom_tooltip_fields or {}) do
-            fluid:add_custom_tooltip(field)
-        end
-
-        created_fluids[#created_fluids + 1] = fluid
+        created_fluids[#created_fluids + 1] = Tirislib.Fluid.create(prototype)
     end
 
     setmetatable(created_fluids, Tirislib.FluidArray)

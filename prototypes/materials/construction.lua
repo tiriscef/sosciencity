@@ -6,7 +6,8 @@ local construction_items = {
     {
         name = "sawdust",
         sprite_variations = {name = "sawdust", count = 2, include_icon = true},
-        distinctions = {fuel_value = "200kJ", fuel_category = "chemical"}
+        fuel_value = "200kJ",
+        fuel_category = "chemical"
     },
     {
         name = "marble",
@@ -66,25 +67,20 @@ local construction_items = {
     {name = "mineral-wool"},
     {
         name = "architectural-concept",
-        distinctions = {
-            icon = "__sosciencity-graphics__/graphics/icon/blueprint-1.png",
-            icon_size = 64,
-            pictures = Sosciencity.Config.blueprint_on_belt,
-            auto_recycle = false
-        }
+        icon = "__sosciencity-graphics__/graphics/icon/blueprint-1.png",
+        icon_size = 64,
+        pictures = Sosciencity.Config.blueprint_on_belt
     },
     {name = "filter"},
     {
         name = "water-filter",
-        distinctions = {
-            type = "module",
-            effect = {},
-            limitation = {"clean-water-from-ground"},
-            category = "sosciencity-water-filter",
-            tier = 1,
-            subgroup = "sosciencity-drinking-water",
-            order = "z"
-        }
+        type = "module",
+        effect = {},
+        limitation = {"clean-water-from-ground"},
+        category = "sosciencity-water-filter",
+        tier = 1,
+        subgroup = "sosciencity-drinking-water",
+        order = "z"
     },
     {name = "ferrous-sulfate"},
     {

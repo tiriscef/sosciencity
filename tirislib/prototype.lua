@@ -7,6 +7,9 @@ Tirislib.Prototype.modname = nil
 --- Path to the icon to use for placeholder reasons.
 Tirislib.Prototype.placeholder_icon = nil
 
+--- Default base path for auto-generated icons (e.g. "__mod__/graphics/icon/").
+Tirislib.Prototype.default_icon_path = nil
+
 --- Class for arrays of prototypes. Setter-functions can be called on them.
 --- @class PrototypeArray
 Tirislib.PrototypeArray = {}

@@ -208,3 +208,274 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << Item.create: use_placeholder_icon meta-key >>
+
+Tirislib.Testing.add_test_case(
+    "Item.create use_placeholder_icon sets icon to placeholder_icon",
+    "lib.item",
+    function()
+        local item = Tirislib.Item.create {
+            type = "item", name = "test-item-placeholder-set",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            use_placeholder_icon = true
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-placeholder-set"}
+
+        Assert.equals(item.icon, Tirislib.Prototype.placeholder_icon)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create use_placeholder_icon overrides explicit icon",
+    "lib.item",
+    function()
+        local item = Tirislib.Item.create {
+            type = "item", name = "test-item-placeholder-override",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            icon = "explicit.png", icon_size = 64,
+            use_placeholder_icon = true
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-placeholder-override"}
+
+        Assert.equals(item.icon, Tirislib.Prototype.placeholder_icon)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create use_placeholder_icon defaults icon_size to 64",
+    "lib.item",
+    function()
+        local item = Tirislib.Item.create {
+            type = "item", name = "test-item-placeholder-icon-size",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            use_placeholder_icon = true
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-placeholder-icon-size"}
+
+        Assert.equals(item.icon_size, 64)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create strips use_placeholder_icon from data.raw prototype",
+    "lib.item",
+    function()
+        Tirislib.Item.create {
+            type = "item", name = "test-item-placeholder-strip",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            use_placeholder_icon = true
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-placeholder-strip"}
+
+        Assert.equals(data.raw["item"]["test-item-placeholder-strip"].use_placeholder_icon, nil)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create auto-derives icon from default_icon_path when none given",
+    "lib.item",
+    function()
+        Tirislib.Item.create {
+            type = "item", name = "test-item-auto-icon",
+            stack_size = 50, subgroup = "raw-material", order = "a"
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-auto-icon"}
+
+        local expected = Tirislib.Prototype.default_icon_path .. "test-item-auto-icon.png"
+        Assert.equals(data.raw["item"]["test-item-auto-icon"].icon, expected)
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Item.create: sprite_variations meta-key >>
+
+Tirislib.Testing.add_test_case(
+    "Item.create strips sprite_variations from data.raw prototype",
+    "lib.item",
+    function()
+        Tirislib.Item.create {
+            type = "item", name = "test-item-sv-strip",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            icon = "dummy.png", icon_size = 64,
+            sprite_variations = {name = "dummy-pile", path = "p/", count = 2}
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-sv-strip"}
+
+        Assert.equals(data.raw["item"]["test-item-sv-strip"].sprite_variations, nil)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create sprite_variations builds correct picture filenames",
+    "lib.item",
+    function()
+        local item = Tirislib.Item.create {
+            type = "item", name = "test-item-sv-filenames",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            icon = "dummy.png", icon_size = 64,
+            sprite_variations = {name = "pile", path = "custom/path/", count = 3}
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-sv-filenames"}
+
+        Assert.equals(#item.pictures, 3)
+        Assert.equals(item.pictures[1].filename, "custom/path/pile-1.png")
+        Assert.equals(item.pictures[3].filename, "custom/path/pile-3.png")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create sprite_variations include_icon appends icon as extra picture",
+    "lib.item",
+    function()
+        local item = Tirislib.Item.create {
+            type = "item", name = "test-item-sv-include-icon",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            icon = "my-icon.png", icon_size = 64,
+            sprite_variations = {name = "pile", path = "p/", count = 2, include_icon = true}
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-sv-include-icon"}
+
+        Assert.equals(#item.pictures, 3)
+        Assert.equals(item.pictures[3].filename, "my-icon.png")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.create sprite_variations falls back to default_icon_path when path is omitted",
+    "lib.item",
+    function()
+        local item = Tirislib.Item.create {
+            type = "item", name = "test-item-sv-default-path",
+            stack_size = 50, subgroup = "raw-material", order = "a",
+            icon = "dummy.png", icon_size = 64,
+            sprite_variations = {name = "my-pile", count = 1}
+        }
+        created_prototypes[#created_prototypes + 1] = {type = "item", name = "test-item-sv-default-path"}
+
+        local expected = Tirislib.Prototype.default_icon_path .. "my-pile-1.png"
+        Assert.equals(item.pictures[1].filename, expected)
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Item.batch_create >>
+
+local function batch_create_test_items(items, batch_data)
+    local results = Tirislib.Item.batch_create(items, batch_data)
+    for _, item in pairs(results) do
+        created_prototypes[#created_prototypes + 1] = {type = item.type or "item", name = item.name}
+    end
+    return results
+end
+
+Tirislib.Testing.add_test_case(
+    "Item.batch_create item fields override batch_data defaults",
+    "lib.item",
+    function()
+        local results = batch_create_test_items(
+            {{name = "test-item-bc-override", stack_size = 99}},
+            {subgroup = "raw-material", stack_size = 50}
+        )
+
+        Assert.equals(results[1].stack_size, 99)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.batch_create auto-generates icon from default_icon_path and name",
+    "lib.item",
+    function()
+        batch_create_test_items(
+            {{name = "test-item-bc-auto-icon"}},
+            {subgroup = "raw-material"}
+        )
+
+        local item = data.raw["item"]["test-item-bc-auto-icon"]
+        Assert.equals(item.icon, Tirislib.Prototype.default_icon_path .. "test-item-bc-auto-icon.png")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.batch_create skips auto-icon when use_placeholder_icon is set",
+    "lib.item",
+    function()
+        local results = batch_create_test_items(
+            {{name = "test-item-bc-placeholder", use_placeholder_icon = true}},
+            {subgroup = "raw-material"}
+        )
+
+        Assert.equals(results[1].icon, Tirislib.Prototype.placeholder_icon)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.batch_create skips auto-icon when icon is explicitly set on the entry",
+    "lib.item",
+    function()
+        batch_create_test_items(
+            {{name = "test-item-bc-explicit-icon", icon = "explicit.png", icon_size = 64}},
+            {subgroup = "raw-material"}
+        )
+
+        local item = data.raw["item"]["test-item-bc-explicit-icon"]
+        Assert.equals(item.icon, "explicit.png")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.batch_create applies stack_size = 200 default",
+    "lib.item",
+    function()
+        local results = batch_create_test_items(
+            {{name = "test-item-bc-stack-default"}},
+            {subgroup = "raw-material"}
+        )
+
+        Assert.equals(results[1].stack_size, 200)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Item.batch_create applies icon_size = 64 default",
+    "lib.item",
+    function()
+        local results = batch_create_test_items(
+            {{name = "test-item-bc-icon-size-default"}},
+            {subgroup = "raw-material"}
+        )
+
+        Assert.equals(results[1].icon_size, 64)
+    end,
+    setup,
+    teardown
+)
