@@ -1297,10 +1297,13 @@ end
 
 -- Render an item line. mode = "compact" (A) or "detailed" (C).
 local function render_item_line(name, is_new, item_meta, item_to_recipes, available_recipes, mode)
-    local star = is_new and "★ " or ""
+    local proto = prototypes.item[name]
+    local star = is_new and "★" or ""
+    local gem = (proto and is_sosciencity(proto)) and "◆" or ""
+    local prefix = star .. gem
     local meta = item_meta and item_meta[name]
 
-    local line = string.format("- %s`%s`", star, name)
+    local line = string.format("- %s%s`%s`", prefix, prefix ~= "" and " " or "", name)
 
     local trailing = {}
     if meta then
@@ -1331,10 +1334,13 @@ local function render_item_line(name, is_new, item_meta, item_to_recipes, availa
 end
 
 local function render_fluid_line(name, is_new, fluid_meta, item_to_recipes, available_recipes, mode)
-    local star = is_new and "★ " or ""
+    local proto = prototypes.fluid[name]
+    local star = is_new and "★" or ""
+    local gem = (proto and is_sosciencity(proto)) and "◆" or ""
+    local prefix = star .. gem
     local meta = fluid_meta and fluid_meta[name]
 
-    local line = string.format("- %s`%s`", star, name)
+    local line = string.format("- %s%s`%s`", prefix, prefix ~= "" and " " or "", name)
 
     local trailing = {}
     if meta then
@@ -1631,12 +1637,18 @@ local function build_overview_lines(tiers)
 
         if #new_buildings > 0 then
             local b = {}
-            for _, n in pairs(new_buildings) do b[#b + 1] = string.format("`%s`", n) end
+            for _, n in pairs(new_buildings) do
+                local p = prototypes.item[n]
+                b[#b + 1] = ((p and is_sosciencity(p)) and "◆" or "") .. string.format("`%s`", n)
+            end
             add(string.format("**New buildings (%d):** %s", #new_buildings, table.concat(b, ", ")))
         end
         if #new_items > 0 then
             local b = {}
-            for _, n in pairs(new_items) do b[#b + 1] = string.format("`%s`", n) end
+            for _, n in pairs(new_items) do
+                local p = prototypes.item[n]
+                b[#b + 1] = ((p and is_sosciencity(p)) and "◆" or "") .. string.format("`%s`", n)
+            end
             add(string.format("**New items (%d):** %s", #new_items, table.concat(b, ", ")))
         end
 
@@ -1645,7 +1657,10 @@ local function build_overview_lines(tiers)
         sort_items_by_factorio_order(new_fluids)
         if #new_fluids > 0 then
             local b = {}
-            for _, n in pairs(new_fluids) do b[#b + 1] = string.format("`%s`", n) end
+            for _, n in pairs(new_fluids) do
+                local p = prototypes.fluid[n]
+                b[#b + 1] = ((p and is_sosciencity(p)) and "◆" or "") .. string.format("`%s`", n)
+            end
             add(string.format("**New fluids (%d):** %s", #new_fluids, table.concat(b, ", ")))
         end
 
@@ -1655,10 +1670,7 @@ local function build_overview_lines(tiers)
     return lines
 end
 
-local function export_full_progression(main_flow, mode)
-    local player_index = main_flow.player_index
-    local sosciencity_only = Gui.get_element(CONTEXT, "mod_sosciencity", player_index).toggled
-
+local function export_full_progression(mode, sosciencity_only, player_index)
     local min_packs = compute_min_packs_per_tech()
     local tiers = build_lattice(min_packs)
     compute_per_tier_data(tiers, sosciencity_only)
@@ -1864,10 +1876,11 @@ Gui.set_click_handler(
 Gui.set_click_handler(
     "balancing_export_progression",
     function(event)
-        local main_flow = get_main_flow(event)
+        local player_index = event.player_index
         local mode = event.element.tags.mode
-        local dir, file_count = export_full_progression(main_flow, mode)
-        game.players[event.player_index].print({"city-view.balancing-export-progression-done", file_count, dir})
+        local sosciencity_only = Gui.get_element(CONTEXT, "mod_sosciencity", player_index).toggled
+        local dir, file_count = export_full_progression(mode, sosciencity_only, player_index)
+        game.players[player_index].print({"city-view.balancing-export-progression-done", file_count, dir})
     end
 )
 
@@ -2139,3 +2152,17 @@ Gui.CityView.add_page {
         rebuild_content(main_flow)
     end
 }
+
+---------------------------------------------------------------------------------------------------
+-- << Automated export interface >>
+---------------------------------------------------------------------------------------------------
+
+-- Called by the export_sosciencity scenario for headless snapshot generation.
+-- Exports both modes with sosciencity-only filter and no player_index (writes to shared script-output).
+remote.add_interface("sosciencity_export", {
+    run = function()
+        export_full_progression("compact", false, nil)
+        export_full_progression("detailed", false, nil)
+        log("SNAPSHOT DONE")
+    end
+})

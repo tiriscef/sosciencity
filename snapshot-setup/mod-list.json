@@ -1,0 +1,8 @@
+{
+  "mods": [
+    {"name": "base",                  "enabled": true},
+    {"name": "sosciencity-graphics",  "enabled": true},
+    {"name": "sosciencity",           "enabled": true},
+    {"name": "sosciencity-balancing", "enabled": true}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Sosciencity Snapshot Server",
+  "description": "Automated progression export - not for public use",
+  "visibility": {
+    "public": false,
+    "lan": false
+  },
+  "auto_pause": false
+}
