@@ -9,7 +9,9 @@ local ember_items = {
     {name = "statue"},
     {name = "jewellery", use_placeholder_icon = true},
     {name = "mixtape", use_placeholder_icon = true},
-    {name = "novel", use_placeholder_icon = true}
+    {name = "novel", use_placeholder_icon = true},
+    {name = "found-art", use_placeholder_icon = true},
+    {name = "kinetic-sculpture", use_placeholder_icon = true}
 }
 
 Tirislib.Item.batch_create(
@@ -65,8 +67,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "dye", amount = 1}
     },
     category = "sosciencity-atelier",
-    unlock = "logistic-science-pack",
-    auto_recycle = false
+    unlock = "logistic-science-pack"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -89,7 +90,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sketch", amount = 2}
     },
     category = "sosciencity-atelier",
-    unlock = "production-science-pack",
+    unlock = "utility-science-pack",
     auto_recycle = false
 }
 
@@ -111,9 +112,34 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "cloth", amount = 1},
         {type = "item", name = "dye", amount = 1}
     },
-    category = "sosciencity-caste-ember",
+    category = "sosciencity-atelier",
     unlock = "architecture-3",
     auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {{type = "item", name = "found-art", amount = 1}},
+    ingredients = {
+        {type = "item", name = "garbage", amount = 3},
+        {type = "item", name = "food-leftovers", amount = 3},
+        {type = "item", name = "sketch", amount = 1}
+    },
+    category = "sosciencity-atelier",
+    energy_required = 5,
+    unlock = "gunfire-caste"
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {{type = "item", name = "kinetic-sculpture", amount = 1}},
+    ingredients = {
+        {type = "item", name = "tirinite", amount = 3},
+        {type = "item", name = "rosegold-ingot", amount = 2},
+        {type = "item", name = "contraption", amount = 2},
+        {type = "item", name = "sketch", amount = 2}
+    },
+    category = "sosciencity-atelier",
+    energy_required = 30,
+    unlock = "production-science-pack"
 }
 
 -- Ember HQ

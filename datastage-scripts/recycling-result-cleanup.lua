@@ -5,6 +5,7 @@ local items_to_remove_from_recycling = {
     "sketch",
     "tools",
     "power-tools",
+    "dye"
 }
 
 for _, recipe in Tirislib.Recipe.iterate() do

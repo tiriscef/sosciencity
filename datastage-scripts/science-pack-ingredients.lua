@@ -44,6 +44,13 @@ local sp_pairings = {
         ingredient_type = "item",
         amount_fn = identity
     },
+    {
+        result = Sosciencity.Config.gunfire_pack,
+        result_type = "item",
+        ingredient = "found-art",
+        ingredient_type = "item",
+        amount_fn = identity
+    },
     -- chemical science
     {
         result = Sosciencity.Config.clockwork_pack,
@@ -70,7 +77,7 @@ local sp_pairings = {
     {
         result = Sosciencity.Config.foundry_pack,
         result_type = "item",
-        ingredient = "jewellery",
+        ingredient = "kinetic-sculpture",
         ingredient_type = "item",
         amount_fn = identity
     },
@@ -79,6 +86,13 @@ local sp_pairings = {
         result = Sosciencity.Config.gleam_pack,
         result_type = "item",
         ingredient = "metastudy",
+        ingredient_type = "item",
+        amount_fn = identity
+    },
+    {
+        result = Sosciencity.Config.gleam_pack,
+        result_type = "item",
+        ingredient = "jewellery",
         ingredient_type = "item",
         amount_fn = identity
     },

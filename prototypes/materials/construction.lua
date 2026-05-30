@@ -174,6 +174,19 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     results = {
+        {type = "item", name = "tirinite", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "explosives", amount = 1},
+        {type = "item", name = "power-tools", amount = 1}
+    },
+    category = "sosciencity-clockwork-quarry",
+    energy_required = 6,
+    unlock = "production-science-pack"
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
         {type = "item", name = "tools", amount = 1}
     },
     ingredients = {
