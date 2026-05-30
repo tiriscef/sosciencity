@@ -276,7 +276,8 @@ local function create_slaughter_recipe(animal, index)
         localised_name = {"recipe-name.slaughter", item:get_localised_name()},
         localised_description = {"recipe-description.slaughter"},
         unlock = animal.unlock,
-        auto_recycle = false
+        auto_recycle = false,
+        allow_productivity = false
     }:add_category_layer("slaughter")
 
     animal_calorie_values[animal.name] =

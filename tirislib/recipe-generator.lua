@@ -409,6 +409,9 @@ function Tirislib.RecipeGenerator.create(prototype)
     if prototype.enabled == nil then
         prototype.enabled = true
     end
+    if prototype.allow_productivity == nil then
+        prototype.allow_productivity = true
+    end
     prototype.energy_required = prototype.energy_required or 0.5
 
     -- track caller-provided values before creation

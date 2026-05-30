@@ -813,7 +813,8 @@ Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-edible-plants"}},
     localised_description = {"recipe-description.flora-sorting"},
     unlock = "open-environment-farming",
-    auto_recycle = false
+    auto_recycle = false,
+    allow_productivity = false
 }:add_category_layer("plant-neogenesis")
 
 Tirislib.RecipeGenerator.create {
@@ -838,7 +839,8 @@ Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-fungi"}},
     localised_description = {"recipe-description.flora-sorting"},
     unlock = "mushroom-farming",
-    auto_recycle = false
+    auto_recycle = false,
+    allow_productivity = false
 }:add_category_layer("plant-neogenesis")
 
 Tirislib.RecipeGenerator.create {
@@ -862,7 +864,8 @@ Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.flora-sorting", {"item-name.wild-algae"}},
     localised_description = {"recipe-description.flora-sorting"},
     unlock = "algae-farming",
-    auto_recycle = false
+    auto_recycle = false,
+    allow_productivity = false
 }:add_category_layer("plant-neogenesis")
 
 ---------------------------------------------------------------------------------------------------
