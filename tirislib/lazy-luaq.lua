@@ -11,6 +11,26 @@ Tirislib.LazyLuaq = LazyLuaq
 -- I didn't feel like writing classes for every iterator and weirdly it was slower in my rudimentary performance tests.
 -- That's why I'm just setting them in the table directly.
 
+-- Index semantics
+--
+-- Unlike .NET's IEnumerable which carries only values, every element in a LazyLuaqQuery is an
+-- (index, value) pair - because that is what Lua's next() yields and discarding the index would
+-- make the library useless for dictionary-like tables.
+--
+-- Operations fall into two camps:
+--   Index-preserving - pass the original index through unchanged:
+--     where, select (unless the selector returns a second value), choose, group_by, chunk, ...
+--   Index-replacing - produce a fresh sequential integer index:
+--     zip, pairwise, order, shuffle, range, concat, ...
+--
+-- Terminal functions let you choose what to do with the index:
+--   to_array()  - discards indices, collects values into a consecutive array.
+--   to_table()  - preserves the index->value mapping as-is.
+--
+-- Be aware that mixing index-preserving and index-replacing operations in one chain
+-- can produce unexpected indices - for example, concat of two arrays that share key 1
+-- will lose one element in to_table(), but to_array() will correctly return both values.
+
 -- A LazyLuaqQuery iteration cannot be iterated 'twice' at the same time.
 -- So nested iterations like this don't work:
 --
@@ -238,26 +258,51 @@ function LazyLuaq.repeat_function(generator, times)
 end
 
 local function iterator_move_next(self)
-    local last_index = self.last_index or self.initial_index
-    local index, element = self.fn(self.param, last_index)
+    local pos = (self.cache_pos or 0) + 1
+
+    if pos <= #self.cache_indices then
+        self.cache_pos = pos
+        return self.cache_indices[pos], self.cache_values[pos]
+    end
+
+    if self.iterator_exhausted then
+        return
+    end
+
+    local real_last = self.real_last_index or self.initial_index
+    local index, element = self.fn(self.param, real_last)
 
     if index == nil then
+        self.iterator_exhausted = true
         return
     end
 
     if element == nil then
         element = index
-        index = (self.last_index or self.initial_index or 0) + 1
+        index = (self.real_last_index or self.initial_index or 0) + 1
     end
 
-    self.last_index = index
+    self.real_last_index = index
+    local cache_pos = #self.cache_indices + 1
+    self.cache_indices[cache_pos] = index
+    self.cache_values[cache_pos] = element
+    self.cache_pos = cache_pos
     return index, element
+end
+
+local function iterator_reset(self)
+    self.cache_pos = nil
+    -- real_last_index, iterator_exhausted and the cache arrays are preserved:
+    -- reset rewinds to the start of the cache without re-calling the iterator.
 end
 
 --- Creates a LazyLuaqQuery from any iterator that can be used with the 'for ... in' syntax.<br>
 --- It doesn't really work with iterators that have more than 2 returns. But those wouldn't necessarily work with LazyLuaq in general.<br>
 --- If the iterator only returns one element, a numbered index is being added.<br>
---- Usage is like: `LazyLuaq.from_iterator(pairs(tbl))`
+--- Usage is like: `LazyLuaq.from_iterator(pairs(tbl))`<br>
+--- **Caching:** elements are cached on first pass. Resetting rewinds to the cached data without
+--- re-calling the iterator, so mutations to the underlying source after the first pass are not visible.
+--- This is intentional: many iterators are single-pass and cannot be restarted.
 --- @param fn function? iterator-function
 --- @param param any
 --- @param initial_index any
@@ -265,9 +310,12 @@ end
 function LazyLuaq.from_iterator(fn, param, initial_index)
     local ret = {
         move_next = iterator_move_next,
+        reset = iterator_reset,
         fn = fn,
         param = param,
         initial_index = initial_index,
+        cache_indices = {},
+        cache_values = {},
         is_content_iterator = true
     }
     setmetatable(ret, LazyLuaq)
@@ -336,9 +384,9 @@ function LazyLuaq:to_dictionary(value_selector, index_selector)
     local ret = {}
 
     for index, value in self:iterate() do
-        index = index_selector and index_selector(value, index) or index
-        value = value_selector and value_selector(value, index) or value
-        ret[index] = value
+        local new_index = index_selector and index_selector(value, index) or index
+        local new_value = value_selector and value_selector(value, index) or value
+        ret[new_index] = new_value
     end
 
     return ret
@@ -429,6 +477,18 @@ function LazyLuaq:count()
     return ret
 end
 
+--- Returns a table mapping keys (produced by the selector) to their occurrence count in the sequence.
+--- @param selector function
+--- @return table
+function LazyLuaq:count_by(selector)
+    local ret = {}
+    for index, value in self:iterate() do
+        local key = selector(value, index)
+        ret[key] = (ret[key] or 0) + 1
+    end
+    return ret
+end
+
 --- Returns the first element (that fulfills the given condition - if given).
 --- @param condition function?
 --- @return any first_element
@@ -443,6 +503,19 @@ function LazyLuaq:first(condition)
         self:reset()
         local _, value = self:move_next()
         return value
+    end
+end
+
+--- Returns the element at the given 1-based position, or nil if the sequence is shorter.
+--- @param n integer
+--- @return any
+function LazyLuaq:element_at(n)
+    local i = 0
+    for _, value in self:iterate() do
+        i = i + 1
+        if i == n then
+            return value
+        end
     end
 end
 
@@ -466,15 +539,44 @@ function LazyLuaq:last(condition)
     end
 end
 
+--- Returns the single element in the sequence (that fulfills the condition - if given).
+--- Errors if the sequence contains zero or more than one matching element.
+--- @param condition function?
+--- @return any
+function LazyLuaq:single(condition)
+    self:reset()
+
+    if condition then
+        local result
+        local found = false
+        while true do
+            local index, value = self:move_next()
+            if index == nil then break end
+            if condition(value, index) then
+                if found then error("single: sequence contains more than one matching element") end
+                result = value
+                found = true
+            end
+        end
+        if not found then error("single: sequence contains no matching element") end
+        return result
+    else
+        local _, first = self:move_next()
+        if first == nil then error("single: sequence is empty") end
+        local _, second = self:move_next()
+        if second ~= nil then error("single: sequence contains more than one element") end
+        return first
+    end
+end
+
 --- Returns the maximum value in the sequence.
 --- @return any max_value
 --- @return any max_index
 function LazyLuaq:max()
-    self:reset()
-    local candidate_index, candidate = self:move_next()
+    local candidate_index, candidate
 
     for index, value in self:iterate() do
-        if value > candidate then
+        if candidate == nil or value > candidate then
             candidate = value
             candidate_index = index
         end
@@ -489,16 +591,11 @@ end
 --- @return any max_index
 --- @return any max_value according to the selector
 function LazyLuaq:max_by(selector)
-    self:reset()
-    local candidate_index, candidate = self:move_next()
-    if candidate == nil then
-        return
-    end
-    local candidate_value = selector(candidate, candidate_index)
+    local candidate_index, candidate, candidate_value
 
     for index, element in self:iterate() do
         local value = selector(element, index)
-        if value > candidate_value then
+        if candidate == nil or value > candidate_value then
             candidate = element
             candidate_index = index
             candidate_value = value
@@ -515,16 +612,12 @@ function LazyLuaq:maxima(selector)
     selector = selector or identity
 
     local ret = {}
-
-    self:reset()
-    local _, first_element = self:move_next()
-    local max_value = selector(first_element)
+    local max_value
 
     for index, element in self:iterate() do
         local value = selector(element, index)
-        if value > max_value then
-            ret = {}
-            ret[#ret + 1] = element
+        if max_value == nil or value > max_value then
+            ret = {element}
             max_value = value
         elseif value == max_value then
             ret[#ret + 1] = element
@@ -538,11 +631,10 @@ end
 --- @return any min_value
 --- @return any min_index
 function LazyLuaq:min()
-    self:reset()
-    local candidate_index, candidate = self:move_next()
+    local candidate_index, candidate
 
     for index, value in self:iterate() do
-        if value < candidate then
+        if candidate == nil or value < candidate then
             candidate = value
             candidate_index = index
         end
@@ -557,16 +649,11 @@ end
 --- @return any min_index
 --- @return any min_value according to the selector
 function LazyLuaq:min_by(selector)
-    self:reset()
-    local candidate_index, candidate = self:move_next()
-    if candidate == nil then
-        return
-    end
-    local candidate_value = selector(candidate, candidate_index)
+    local candidate_index, candidate, candidate_value
 
     for index, element in self:iterate() do
         local value = selector(element, index)
-        if value < candidate_value then
+        if candidate == nil or value < candidate_value then
             candidate = element
             candidate_index = index
             candidate_value = value
@@ -583,16 +670,12 @@ function LazyLuaq:minima(selector)
     selector = selector or identity
 
     local ret = {}
-
-    self:reset()
-    local _, first_element = self:move_next()
-    local min_value = selector(first_element)
+    local min_value
 
     for index, element in self:iterate() do
         local value = selector(element, index)
-        if value < min_value then
-            ret = {}
-            ret[#ret + 1] = element
+        if min_value == nil or value < min_value then
+            ret = {element}
             min_value = value
         elseif value == min_value then
             ret[#ret + 1] = element
@@ -610,8 +693,8 @@ function LazyLuaq:average(selector)
     local count = 0
 
     if selector then
-        for _, value in self:iterate() do
-            sum = sum + selector(value)
+        for index, value in self:iterate() do
+            sum = sum + selector(value, index)
             count = count + 1
         end
     else
@@ -651,14 +734,35 @@ end
 --- Calls the given function for every element in the sequence.
 --- @param fn function
 function LazyLuaq:for_each(fn)
-    for _, value in self:iterate() do
-        fn(value)
+    for index, value in self:iterate() do
+        fn(value, index)
     end
 end
 
 ---------------------------------------------------------------------------------------------------
 --- Functions extending the iterators
 --- -> Execution is deferred
+
+local function tap_move_next(self)
+    local index, value = self.content:move_next()
+    if index ~= nil then
+        self.fn(value, index)
+        return index, value
+    end
+end
+
+--- Calls the given function for every element as it passes through without modifying the sequence.
+--- @param fn function
+--- @return LazyLuaqQuery
+function LazyLuaq:tap(fn)
+    local ret = {
+        content = self,
+        fn = fn,
+        move_next = tap_move_next
+    }
+    setmetatable(ret, LazyLuaq)
+    return ret
+end
 
 local function where_move_next(self)
     while true do
@@ -770,8 +874,13 @@ local function select_many_move_next(self)
     while true do
         local tbl = self.tbl
         if tbl ~= nil then
-            local index, value = next(tbl, self.tbl_index)
-            self.tbl_index = index
+            local index, value
+            if getmetatable(tbl) == LazyLuaq then
+                index, value = tbl:move_next()
+            else
+                index, value = next(tbl, self.tbl_index)
+                self.tbl_index = index
+            end
 
             if index ~= nil then
                 return index, value
@@ -1596,6 +1705,98 @@ function LazyLuaq:pairwise(selector)
     return ret
 end
 
+local function window_move_next(self)
+    local buf = self.buf
+    local size = self.size
+
+    repeat
+        local index, value = self.content:move_next()
+        if index == nil then return end
+        buf[self.head] = value
+        self.head = (self.head % size) + 1
+        if self.filled < size then
+            self.filled = self.filled + 1
+        end
+    until self.filled == size
+
+    local window = {}
+    local head = self.head
+    for i = 1, size do
+        window[i] = buf[((head - 1 + i - 1) % size) + 1]
+    end
+
+    self.i = self.i + 1
+    return self.i, LazyLuaq.from(window)
+end
+
+local function window_reset(self)
+    self.buf = {}
+    self.head = 1
+    self.filled = 0
+    self.i = 0
+    self.content:reset()
+end
+
+--- Returns a sliding window of the given size over the sequence.
+--- Each element is a LazyLuaqQuery containing the window's values in order.
+--- @param size integer
+--- @return LazyLuaqQuery
+function LazyLuaq:window(size)
+    if size <= 0 then
+        error("Window size must be a positive number")
+    end
+    local ret = {
+        content = self,
+        size = size,
+        buf = {},
+        head = 1,
+        filled = 0,
+        i = 0,
+        move_next = window_move_next,
+        reset = window_reset
+    }
+    setmetatable(ret, LazyLuaq)
+    return ret
+end
+
+local SCAN_NO_SEED = {}
+
+local function scan_move_next(self)
+    local index, value = self.content:move_next()
+    if index == nil then return end
+
+    if self.acc == SCAN_NO_SEED then
+        self.acc = value
+    else
+        self.acc = self.aggregator(self.acc, value)
+    end
+    return index, self.acc
+end
+
+local function scan_reset(self)
+    self.acc = self.seed
+    self.content:reset()
+end
+
+--- Returns a sequence of running accumulations.
+--- If no seed is given, the first element is emitted as-is and accumulation starts from the second.
+--- @param aggregator function
+--- @param seed any?
+--- @return LazyLuaqQuery
+function LazyLuaq:scan(aggregator, seed)
+    local initial = seed ~= nil and seed or SCAN_NO_SEED
+    local ret = {
+        content = self,
+        aggregator = aggregator,
+        seed = initial,
+        acc = initial,
+        move_next = scan_move_next,
+        reset = scan_reset
+    }
+    setmetatable(ret, LazyLuaq)
+    return ret
+end
+
 -- Materializes the upstream content and performs a single sort using all accumulated sort levels.
 -- Called on the first move_next of an ordered query.
 local function ordered_do_sort(self)
@@ -1686,18 +1887,10 @@ function LazyLuaq:order_by(selector, comparator)
 end
 
 --- Sorts the sequence in descending order.
+--- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
 --- @return LazyLuaqQuery
 function LazyLuaq:order_descending()
-    local array = self:to_array()
-
-    table.sort(
-        array,
-        function(a, b)
-            return a > b
-        end
-    )
-
-    return LazyLuaq.from(array)
+    return create_ordered_query(self, {{ selector = identity, descending = true }})
 end
 
 --- Sorts the sequence in descending order using the keys of the given selector function.<br>
@@ -1743,20 +1936,27 @@ end
 --- Functions returning new iterators
 --- -> Execution is immediate
 
-local function pair_table(value, index)
-    return {value, index}
-end
-
-local function unpack_pair_table(t)
-    return t[1], t[2]
-end
-
 --- Immediately executes the iterator and returns a new LazyLuaqQuery with the results.<br>
 --- Can be useful to cache the results of an expensive query that needs to be iterated multiple times.
 --- @return LazyLuaqQuery
 function LazyLuaq:cache_execution()
-    local arr = self:select(pair_table):to_array()
-    return LazyLuaq.from(arr):select(unpack_pair_table)
+    local indices = {}
+    local values = {}
+    for index, value in self:iterate() do
+        local pos = #indices + 1
+        indices[pos] = index
+        values[pos] = value
+    end
+    local ret = {
+        cache_indices = indices,
+        cache_values = values,
+        iterator_exhausted = true,
+        move_next = iterator_move_next,
+        reset = iterator_reset,
+        is_content_iterator = true
+    }
+    setmetatable(ret, LazyLuaq)
+    return ret
 end
 
 --- Sorts the sequence in ascending order.
@@ -1781,7 +1981,7 @@ function LazyLuaq:partial_sort(count)
     for _, element in self:iterate() do
         local inserted = false
         for i = 1, #ret do
-            if ret[i] < element then
+            if ret[i] > element then
                 table.insert(ret, i, element)
                 inserted = true
                 break
@@ -1814,7 +2014,7 @@ function LazyLuaq:partial_sort_by(count, selector)
         local key = selector(element, index)
         local inserted = false
         for i = 1, #ret do
-            if keys[i] < key then
+            if keys[i] > key then
                 table.insert(ret, i, element)
                 table.insert(keys, i, key)
                 inserted = true
@@ -1847,7 +2047,7 @@ function LazyLuaq:partial_sort_descending(count)
     for _, element in self:iterate() do
         local inserted = false
         for i = 1, #ret do
-            if ret[i] > element then
+            if ret[i] < element then
                 table.insert(ret, i, element)
                 inserted = true
                 break
@@ -1880,7 +2080,7 @@ function LazyLuaq:partial_sort_by_descending(count, selector)
         local key = selector(element, index)
         local inserted = false
         for i = 1, #ret do
-            if keys[i] > key then
+            if keys[i] < key then
                 table.insert(ret, i, element)
                 table.insert(keys, i, key)
                 inserted = true
@@ -1972,19 +2172,51 @@ function LazyLuaq:reverse()
     return ret
 end
 
+local function normalize_materialize(self)
+    local indices = {}
+    local values = {}
+    local sum = 0
+    for index, value in self.upstream:iterate() do
+        local pos = #values + 1
+        indices[pos] = index
+        values[pos] = value
+        sum = sum + value
+    end
+    self.mat_indices = indices
+    self.mat_values = values
+    self.sum = sum
+end
+
+local function normalize_move_next(self)
+    if not self.mat_indices then
+        normalize_materialize(self)
+    end
+    self.pos = self.pos + 1
+    local orig_index = self.mat_indices[self.pos]
+    if orig_index ~= nil then
+        local value = self.mat_values[self.pos]
+        return orig_index, self.sum > 0 and value / self.sum or value
+    end
+end
+
+local function normalize_reset(self)
+    self.pos = 0
+    self.mat_indices = nil
+    self.mat_values = nil
+end
+
 --- Normalizes the (numeric) sequence.<br>
---- Meaning the sum of all elements will be (close to) 1.
+--- Meaning the sum of all elements will be (close to) 1.<br>
+--- Materialization is deferred until first iteration.
 --- @return LazyLuaqQuery
 function LazyLuaq:normalize()
-    local sum = self:sum()
-
-    if sum > 0 then
-        return self:select(
-            function(element)
-                return element / sum
-            end
-        )
-    else
-        return self
-    end
+    local ret = {
+        upstream = self,
+        pos = 0,
+        is_content_iterator = true,
+        move_next = normalize_move_next,
+        reset = normalize_reset
+    }
+    setmetatable(ret, LazyLuaq)
+    return ret
 end

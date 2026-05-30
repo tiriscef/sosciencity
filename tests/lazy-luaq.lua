@@ -97,6 +97,52 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "from_iterator supports multiple passes via caching",
+    "lib.lazy-luaq",
+    function()
+        local calls = 0
+        local data = {10, 20, 30}
+        local function counting_iter(t, i)
+            calls = calls + 1
+            local next_i = i + 1
+            return data[next_i] and next_i or nil, data[next_i]
+        end
+
+        local query = LazyLuaq.from_iterator(counting_iter, nil, 0)
+        local first  = query:to_array()
+        local second = query:to_array()
+
+        Assert.equals(first, {10, 20, 30})
+        Assert.equals(second, {10, 20, 30})
+        -- iterator was called exactly 4 times (3 values + 1 nil to signal end), never again
+        Assert.equals(calls, 4)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "from_iterator caching works correctly after partial iteration",
+    "lib.lazy-luaq",
+    function()
+        local calls = 0
+        local data = {10, 20, 30, 40, 50}
+        local function counting_iter(t, i)
+            calls = calls + 1
+            local next_i = i + 1
+            return data[next_i] and next_i or nil, data[next_i]
+        end
+
+        local query = LazyLuaq.from_iterator(counting_iter, nil, 0)
+        local partial = query:take(2):to_array()  -- consumes 10, 20 from the real iterator
+        local full    = query:to_array()           -- should return all 5 from cache + real iterator
+
+        Assert.equals(partial, {10, 20})
+        Assert.equals(full, {10, 20, 30, 40, 50})
+        -- 2 from partial + 3 remaining + 1 nil = 6 real calls total
+        Assert.equals(calls, 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "from_keyset yields the keys of a lookup table as values",
     "lib.lazy-luaq",
     function()
@@ -282,6 +328,15 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "to_dictionary without selectors is equivalent to to_table",
+    "lib.lazy-luaq",
+    function()
+        local tbl = {a = 1, b = 2, c = 3}
+        Assert.equals(LazyLuaq.from(tbl):to_dictionary(), tbl)
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "to_dictionary creates a table with selectors",
     "lib.lazy-luaq",
     function()
@@ -292,6 +347,36 @@ Tirislib.Testing.add_test_case(
         )
         Assert.equals(result["x"], 10)
         Assert.equals(result["y"], 20)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "to_dictionary value_selector receives the original index, not the computed key",
+    "lib.lazy-luaq",
+    function()
+        -- value_selector uses the original numeric index; index_selector produces a string key.
+        -- A bug that passes the computed key to value_selector would put the string key as value instead.
+        local result = LazyLuaq.from({10, 20, 30}):to_dictionary(
+            function(v, i) return i end,
+            function(v, i) return "k" .. i end
+        )
+        Assert.equals(result["k1"], 1)
+        Assert.equals(result["k2"], 2)
+        Assert.equals(result["k3"], 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "order_descending is deferred and supports then_by chaining",
+    "lib.lazy-luaq",
+    function()
+        -- Previously order_descending returned a plain from()-query, so then_by would throw.
+        -- Now it returns an ordered query.
+        local result = LazyLuaq.from({3, 1, 3, 2})
+            :order_descending()
+            :then_by(function(v) return v end)
+            :to_array()
+        Assert.equals(result, {3, 3, 2, 1})
     end
 )
 
@@ -493,6 +578,19 @@ Tirislib.Testing.add_test_case(
         local data = {{items = {1, 2}}, {items = {3, 4}}}
         local result = LazyLuaq.from(data):select_many(function(v) return v.items end):to_array()
         Assert.equals(result, {1, 2, 3, 4})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "select_many handles mixed plain-table and LazyLuaqQuery results",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({{1, 2}, {3, 4}, {5, 6}}):select_many(
+            function(v, i)
+                return i % 2 == 0 and LazyLuaq.from(v) or v
+            end
+        ):to_array()
+        Assert.equals(result, {1, 2, 3, 4, 5, 6})
     end
 )
 
@@ -922,41 +1020,46 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+-- partial_sort should be equivalent to order():take(n) - the n smallest elements in ascending order.
+-- partial_sort_descending should be equivalent to order_descending():take(n) - the n largest in descending order.
+-- NOTE: the implementations are currently swapped - partial_sort returns top-n descending and
+-- partial_sort_descending returns bottom-n ascending. These four tests will fail until that is fixed.
+
 Tirislib.Testing.add_test_case(
-    "partial_sort returns top n ascending",
+    "partial_sort returns the n smallest elements in ascending order",
     "lib.lazy-luaq",
     function()
         local result = LazyLuaq.from({5, 3, 8, 1, 9, 2}):partial_sort(3):to_array()
-        Assert.equals(result, {9, 8, 5})
+        Assert.equals(result, {1, 2, 3}) -- currently returns {9, 8, 5}
     end
 )
 
 Tirislib.Testing.add_test_case(
-    "partial_sort_descending returns bottom n descending",
+    "partial_sort_descending returns the n largest elements in descending order",
     "lib.lazy-luaq",
     function()
         local result = LazyLuaq.from({5, 3, 8, 1, 9, 2}):partial_sort_descending(3):to_array()
-        Assert.equals(result, {1, 2, 3})
+        Assert.equals(result, {9, 8, 5}) -- currently returns {1, 2, 3}
     end
 )
 
 Tirislib.Testing.add_test_case(
-    "partial_sort_by returns top n by selector",
+    "partial_sort_by returns the n smallest elements by selector in ascending order",
     "lib.lazy-luaq",
     function()
         local data = {{name = "a", score = 5}, {name = "b", score = 3}, {name = "c", score = 8}, {name = "d", score = 1}}
         local result = LazyLuaq.from(data):partial_sort_by(2, function(v) return v.score end):select(function(v) return v.name end):to_array()
-        Assert.equals(result, {"c", "a"})
+        Assert.equals(result, {"d", "b"}) -- currently returns {"c", "a"}
     end
 )
 
 Tirislib.Testing.add_test_case(
-    "partial_sort_by_descending returns bottom n by selector",
+    "partial_sort_by_descending returns the n largest elements by selector in descending order",
     "lib.lazy-luaq",
     function()
         local data = {{name = "a", score = 5}, {name = "b", score = 3}, {name = "c", score = 8}, {name = "d", score = 1}}
         local result = LazyLuaq.from(data):partial_sort_by_descending(2, function(v) return v.score end):select(function(v) return v.name end):to_array()
-        Assert.equals(result, {"d", "b"})
+        Assert.equals(result, {"c", "a"}) -- currently returns {"d", "b"}
     end
 )
 
@@ -998,6 +1101,15 @@ Tirislib.Testing.add_test_case(
     function()
         local result = LazyLuaq.from({2, 3, 5}):normalize():to_array()
         Assert.equals(result, {0.2, 0.3, 0.5})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "normalize returns elements unchanged when sum is zero",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({0, 0, 0}):normalize():to_array()
+        Assert.equals(result, {0, 0, 0})
     end
 )
 
@@ -1113,5 +1225,303 @@ Tirislib.Testing.add_test_case(
         local query = LazyLuaq.from({1, 2, 3})
         Assert.equals(query:sum(), 6)
         Assert.equals(query:sum(), 6)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << tap >>
+
+Tirislib.Testing.add_test_case(
+    "tap calls side-effect without modifying the sequence",
+    "lib.lazy-luaq",
+    function()
+        local seen = {}
+        local result = LazyLuaq.from({1, 2, 3}):tap(function(v) seen[#seen + 1] = v end):to_array()
+        Assert.equals(result, {1, 2, 3})
+        Assert.equals(seen, {1, 2, 3})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "tap receives index",
+    "lib.lazy-luaq",
+    function()
+        local collected = {}
+        LazyLuaq.from({a = 10, b = 20}):tap(function(v, i) collected[i] = v end):to_table()
+        Assert.equals(collected, {a = 10, b = 20})
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << count_by >>
+
+Tirislib.Testing.add_test_case(
+    "count_by counts occurrences by selector",
+    "lib.lazy-luaq",
+    function()
+        local data = {"apple", "banana", "apple", "cherry", "banana", "apple"}
+        local result = LazyLuaq.from(data):count_by(function(v) return v end)
+        Assert.equals(result["apple"], 3)
+        Assert.equals(result["banana"], 2)
+        Assert.equals(result["cherry"], 1)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "count_by with selector on table elements",
+    "lib.lazy-luaq",
+    function()
+        local data = {{type = "a"}, {type = "b"}, {type = "a"}}
+        local result = LazyLuaq.from(data):count_by(function(v) return v.type end)
+        Assert.equals(result["a"], 2)
+        Assert.equals(result["b"], 1)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << element_at >>
+
+Tirislib.Testing.add_test_case(
+    "element_at returns the nth element",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({10, 20, 30, 40})
+        Assert.equals(query:element_at(1), 10)
+        Assert.equals(query:element_at(3), 30)
+        Assert.equals(query:element_at(4), 40)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "element_at returns nil when position is beyond the sequence",
+    "lib.lazy-luaq",
+    function()
+        Assert.is_nil(LazyLuaq.from({1, 2}):element_at(5))
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << single >>
+
+Tirislib.Testing.add_test_case(
+    "single returns the only element",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({42}):single(), 42)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single errors on empty sequence",
+    "lib.lazy-luaq",
+    function()
+        Assert.throws(function() LazyLuaq.from({}):single() end)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single errors when more than one element",
+    "lib.lazy-luaq",
+    function()
+        Assert.throws(function() LazyLuaq.from({1, 2}):single() end)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single with condition returns the matching element",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({1, 2, 3}):single(function(v) return v == 2 end), 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single with condition errors when multiple elements match",
+    "lib.lazy-luaq",
+    function()
+        Assert.throws(function()
+            LazyLuaq.from({2, 2, 3}):single(function(v) return v == 2 end)
+        end)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single with condition errors when no elements match",
+    "lib.lazy-luaq",
+    function()
+        Assert.throws(function()
+            LazyLuaq.from({1, 3, 5}):single(function(v) return v == 2 end)
+        end)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << select_many with LazyLuaqQuery >>
+
+Tirislib.Testing.add_test_case(
+    "select_many flattens LazyLuaqQuery results from selector",
+    "lib.lazy-luaq",
+    function()
+        local data = {{1, 2}, {3, 4}}
+        local result = LazyLuaq.from(data)
+            :select_many(function(v) return LazyLuaq.from(v) end)
+            :to_array()
+        Assert.equals(result, {1, 2, 3, 4})
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << window >>
+
+Tirislib.Testing.add_test_case(
+    "window returns sliding windows of given size",
+    "lib.lazy-luaq",
+    function()
+        local result = {}
+        for _, w in LazyLuaq.from({1, 2, 3, 4, 5}):window(3):iterate() do
+            result[#result + 1] = w:to_array()
+        end
+        Assert.equals(#result, 3)
+        Assert.equals(result[1], {1, 2, 3})
+        Assert.equals(result[2], {2, 3, 4})
+        Assert.equals(result[3], {3, 4, 5})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "window with size equal to sequence length returns one window",
+    "lib.lazy-luaq",
+    function()
+        local result = {}
+        for _, w in LazyLuaq.from({1, 2, 3}):window(3):iterate() do
+            result[#result + 1] = w:to_array()
+        end
+        Assert.equals(#result, 1)
+        Assert.equals(result[1], {1, 2, 3})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "window with size larger than sequence returns empty",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({1, 2}):window(5):count(), 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "window with size 1 yields each element as a single-element window",
+    "lib.lazy-luaq",
+    function()
+        local result = {}
+        for _, w in LazyLuaq.from({10, 20, 30}):window(1):iterate() do
+            result[#result + 1] = w:first()
+        end
+        Assert.equals(result, {10, 20, 30})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "window resets correctly for re-iteration",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({1, 2, 3}):window(2)
+        local first_pass = {}
+        for _, w in query:iterate() do first_pass[#first_pass + 1] = w:to_array() end
+        local second_pass = {}
+        for _, w in query:iterate() do second_pass[#second_pass + 1] = w:to_array() end
+        Assert.equals(first_pass, second_pass)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << scan >>
+
+Tirislib.Testing.add_test_case(
+    "scan produces running sum without seed",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.range(1, 5):scan(function(acc, v) return acc + v end):to_array()
+        Assert.equals(result, {1, 3, 6, 10, 15})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "scan with seed applies aggregator from the first element",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.range(1, 4):scan(function(acc, v) return acc + v end, 0):to_array()
+        Assert.equals(result, {1, 3, 6, 10})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "scan preserves original indices",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({1, 2, 3}):scan(function(acc, v) return acc + v end, 0):to_table()
+        Assert.equals(result[1], 1)
+        Assert.equals(result[2], 3)
+        Assert.equals(result[3], 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "scan on empty sequence produces empty sequence",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({}):scan(function(acc, v) return acc + v end):to_array(), {})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "scan on single-element sequence without seed emits the element as-is",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({42}):scan(function(acc, v) return acc + v end):to_array(), {42})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "scan on single-element sequence with seed applies aggregator once",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({10}):scan(function(acc, v) return acc + v end, 5):to_array(), {15})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "scan resets correctly for re-iteration",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.range(1, 3):scan(function(acc, v) return acc + v end)
+        Assert.equals(query:to_array(), {1, 3, 6})
+        Assert.equals(query:to_array(), {1, 3, 6})
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << normalize index preservation >>
+
+Tirislib.Testing.add_test_case(
+    "normalize preserves original indices",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({a = 2, b = 8}):normalize():to_table()
+        Assert.equals(result["a"], 0.2)
+        Assert.equals(result["b"], 0.8)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << for_each index >>
+
+Tirislib.Testing.add_test_case(
+    "for_each passes index to callback",
+    "lib.lazy-luaq",
+    function()
+        local collected = {}
+        LazyLuaq.from({a = 1, b = 2}):for_each(function(v, i) collected[i] = v end)
+        Assert.equals(collected, {a = 1, b = 2})
     end
 )
