@@ -17,19 +17,16 @@ Tirislib.LazyLuaq = LazyLuaq
 -- (index, value) pair - because that is what Lua's next() yields and discarding the index would
 -- make the library useless for dictionary-like tables.
 --
--- Operations fall into two camps:
---   Index-preserving - pass the original index through unchanged:
---     where, select (unless the selector returns a second value), choose, group_by, chunk, ...
---   Index-replacing - produce a fresh sequential integer index:
---     zip, pairwise, order, shuffle, range, concat, ...
+-- Index semantics: operations preserve the original index by default.
+-- Exceptions are marked "Index-replacing" in their docstrings:
+--   zip, pairwise    - merge two sequences into new composite elements.
+--   order*, shuffle  - position after reordering becomes the new index.
+--   partial_sort*    - same as above.
 --
 -- Terminal functions let you choose what to do with the index:
 --   to_array()  - discards indices, collects values into a consecutive array.
---   to_table()  - preserves the index->value mapping as-is.
---
--- Be aware that mixing index-preserving and index-replacing operations in one chain
--- can produce unexpected indices - for example, concat of two arrays that share key 1
--- will lose one element in to_table(), but to_array() will correctly return both values.
+--   to_table()  - preserves the index->value mapping as-is. 
+--                 Duplicate indices silently overwrite!
 
 -- A LazyLuaqQuery iteration cannot be iterated 'twice' at the same time.
 -- So nested iterations like this don't work:
@@ -351,6 +348,7 @@ function LazyLuaq:to_array()
 end
 
 --- Just dumps the (index, value)-pairs of the sequence into a new table.
+--- Duplicate indices silently overwrite!
 --- @return table
 function LazyLuaq:to_table()
     local ret = {}
@@ -620,10 +618,10 @@ function LazyLuaq:maxima(selector)
     for index, element in self:iterate() do
         local value = selector(element, index)
         if max_value == nil or value > max_value then
-            ret = {element}
+            ret = {[index] = element}
             max_value = value
         elseif value == max_value then
-            ret[#ret + 1] = element
+            ret[index] = element
         end
     end
 
@@ -678,10 +676,10 @@ function LazyLuaq:minima(selector)
     for index, element in self:iterate() do
         local value = selector(element, index)
         if min_value == nil or value < min_value then
-            ret = {element}
+            ret = {[index] = element}
             min_value = value
         elseif value == min_value then
-            ret[#ret + 1] = element
+            ret[index] = element
         end
     end
 
@@ -835,6 +833,7 @@ local function select_move_next(self)
 end
 
 --- Projects all elements of the sequence.
+--- If the selector returns a second value, it replaces the index.
 --- @param selector any
 --- @return LazyLuaqQuery
 function LazyLuaq:select(selector)
@@ -1645,6 +1644,7 @@ end
 
 --- Combines two sequences element-wise until one ends.<br>
 --- A selector function can be given. Otherwise returns an array with the 2 elements.
+--- Index-replacing: yields sequential integer indices.
 --- @param sequence LazyLuaqQuery|table|array
 --- @param selector function?
 --- @return LazyLuaqQuery
@@ -1690,6 +1690,7 @@ local function pairwise_reset(self)
 end
 
 --- Returns a sequence resulting from applying a function to each element with its previous element.
+--- Index-replacing: yields sequential integer indices.
 --- @param selector function?
 --- @return LazyLuaqQuery
 function LazyLuaq:pairwise(selector)
@@ -1882,6 +1883,7 @@ end
 
 --- Sorts the sequence in ascending order using the keys of the given selector function.<br>
 --- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
+--- Index-replacing: yields sequential integer indices.
 --- @param selector function
 --- @param comparator function?
 --- @return LazyLuaqQuery
@@ -1891,6 +1893,7 @@ end
 
 --- Sorts the sequence in descending order.
 --- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
+--- Index-replacing: yields sequential integer indices.
 --- @return LazyLuaqQuery
 function LazyLuaq:order_descending()
     return create_ordered_query(self, {{ selector = identity, descending = true }})
@@ -1898,6 +1901,7 @@ end
 
 --- Sorts the sequence in descending order using the keys of the given selector function.<br>
 --- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
+--- Index-replacing: yields sequential integer indices.
 --- @param selector function
 --- @return LazyLuaqQuery
 function LazyLuaq:order_by_descending(selector)
@@ -1963,6 +1967,7 @@ function LazyLuaq:cache_execution()
 end
 
 --- Sorts the sequence in ascending order.
+--- Index-replacing: yields sequential integer indices.
 --- @param comparator function?
 --- @return LazyLuaqQuery
 function LazyLuaq:order(comparator)
@@ -1976,6 +1981,7 @@ end
 --- Sorts the sequence in ascending order and only returns up to the given count of top elements.<br>
 --- This uses an insertion-sort-like approach and should be performant for small counts.<br>
 --- For big counts a combination of order and take should be better.
+--- Index-replacing: yields sequential integer indices.
 --- @param count integer
 --- @return LazyLuaqQuery
 function LazyLuaq:partial_sort(count)
@@ -2006,6 +2012,7 @@ end
 --- Sorts the sequence in ascending order using the keys generated by the given selector function and only returns up to the given count of top elements.<br>
 --- This uses an insertion-sort-like approach and should be performant for small counts.<br>
 --- For big counts a combination of order and take should be better.
+--- Index-replacing: yields sequential integer indices.
 --- @param count integer
 --- @param selector function
 --- @return LazyLuaqQuery
@@ -2042,6 +2049,7 @@ end
 --- Sorts the sequence in descending order and only returns up to the given count of elements.<br>
 --- This uses an insertion-sort-like approach and should be performant for small counts.<br>
 --- For big counts a combination of order and take should be better.
+--- Index-replacing: yields sequential integer indices.
 --- @param count integer
 --- @return LazyLuaqQuery
 function LazyLuaq:partial_sort_descending(count)
@@ -2072,6 +2080,7 @@ end
 --- Sorts the sequence in descending order using the keys generated by the given selector function and only returns up to the given count of top elements.<br>
 --- This uses an insertion-sort-like approach and should be performant for small counts.<br>
 --- For big counts a combination of order and take should be better.
+--- Index-replacing: yields sequential integer indices.
 --- @param count integer
 --- @param selector function
 --- @return LazyLuaqQuery
@@ -2132,6 +2141,8 @@ end
 local random = math.random
 
 --- Shuffles the elements of this sequence.
+--- Index-replacing: yields sequential integer indices.
+--- @return LazyLuaqQuery
 function LazyLuaq:shuffle()
     local array = self:to_array()
 

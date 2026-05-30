@@ -5,7 +5,6 @@ local Type = require("enums.type")
 
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
-local Housing = require("constants.housing")
 local Time = require("constants.time")
 
 --- Static class that handles the behaviour of the people.

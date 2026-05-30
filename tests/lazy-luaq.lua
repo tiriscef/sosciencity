@@ -422,11 +422,33 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "maxima preserves original indices",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({a = 5, b = 3, c = 5}):maxima():to_table()
+        Assert.equals(result["a"], 5)
+        Assert.equals(result["c"], 5)
+        Assert.is_nil(result["b"])
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "minima returns all minimum elements",
     "lib.lazy-luaq",
     function()
         local result = LazyLuaq.from({3, 1, 2, 1, 5}):minima():to_array()
         Assert.equals(result, {1, 1})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "minima preserves original indices",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({a = 3, b = 1, c = 1}):minima():to_table()
+        Assert.equals(result["b"], 1)
+        Assert.equals(result["c"], 1)
+        Assert.is_nil(result["a"])
     end
 )
 
