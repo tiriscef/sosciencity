@@ -261,6 +261,9 @@ EK.participating_inhabitants = 1400
 --- array of claimed target unit_numbers for slot-based buildings
 EK.slots = 1500
 
+--- array of blood donation slots for hospitals: {uid, work_done}
+EK.donation_slots = 1503
+
 -- farms (slot-based claim fields)
 
 --- unit_number of the pruning station that has claimed this farm, or nil

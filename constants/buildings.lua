@@ -532,6 +532,16 @@ Building.values = {
         speed = 20 / Time.second,
         eei = true
     },
+    ["test-hospital-workforce-no-power"] = {
+        type = Type.hospital,
+        range = 42,
+        slots = 5,
+        speed = 20 / Time.second,
+        workforce = {
+            count = 20,
+            castes = {Type.plasma}
+        }
+    },
     ["test-psych-ward"] = {
         type = Type.psych_ward,
         range = 42,

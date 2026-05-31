@@ -261,13 +261,12 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
         return
     end
 
-    -- remove any claims from hospitals that are no longer active
+    -- remove any claims from hospitals that no longer exist
     local claims = entry[EK.treatment_claims]
     if claims then
         for disease_id, claimers in pairs(claims) do
             for i = #claimers, 1, -1 do
-                local hospital = try_get(claimers[i])
-                if not hospital or not hospital[EK.active] then
+                if not try_get(claimers[i]) then
                     table.remove(claimers, i)
                 end
             end

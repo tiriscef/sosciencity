@@ -307,9 +307,8 @@ Tirislib.Testing.add_test_case(
         local accepted = Hospital.try_blood_donation(hospital, house)
 
         Assert.is_true(accepted, "should accept when active and instruments available")
-        Assert.equals(#hospital[EK.slots], 1, "one blood donation slot should be added")
-        Assert.is_true(hospital[EK.slots][1].blood_donation, "slot should be flagged as blood donation")
-        Assert.equals(hospital[EK.slots][1].uid, house[EK.unit_number], "slot uid should match house")
+        Assert.equals(#hospital[EK.donation_slots], 1, "one blood donation slot should be added")
+        Assert.equals(hospital[EK.donation_slots][1].uid, house[EK.unit_number], "slot uid should match house")
         local cost = InhabitantsConstants.blood_donation_medical_instruments_cost
         Assert.equals(inv.get_item_count("surgery-instruments"), 3 - cost, "surgery-instruments should be consumed")
     end,
@@ -331,9 +330,9 @@ Tirislib.Testing.add_test_case(
         inv.insert({name = "surgery-instruments", count = 5})
 
         hospital[EK.blood_donation_threshold] = 2
-        hospital[EK.slots][1] = {blood_donation = true, work_done = 0, uid = 0}
-        hospital[EK.slots][2] = {blood_donation = true, work_done = 0, uid = 0}
-        hospital[EK.slots][3] = {blood_donation = true, work_done = 0, uid = 0}
+        hospital[EK.donation_slots][1] = {work_done = 0, uid = 0}
+        hospital[EK.donation_slots][2] = {work_done = 0, uid = 0}
+        hospital[EK.donation_slots][3] = {work_done = 0, uid = 0}
 
         Assert.is_false(Hospital.try_blood_donation(hospital, house), "should refuse when free_slots <= threshold")
     end,
@@ -356,13 +355,13 @@ Tirislib.Testing.add_test_case(
         inv.insert({name = "surgery-instruments", count = 1})
 
         Hospital.try_blood_donation(hospital, house)
-        Assert.equals(#hospital[EK.slots], 1, "blood donation slot should exist before processing")
+        Assert.equals(#hospital[EK.donation_slots], 1, "blood donation slot should exist before processing")
 
         for _ = 1, 30 do
             Helpers.update_entry(hospital)
         end
 
-        Assert.equals(#hospital[EK.slots], 0, "completed slot should be removed immediately on completion")
+        Assert.equals(#hospital[EK.donation_slots], 0, "completed slot should be removed immediately on completion")
         Assert.equals(hospital[EK.blood_donations], 1, "blood_donations counter should be incremented")
         local item = InhabitantsConstants.blood_donation_item
         Assert.is_true(inv.get_item_count(item) > 0, "blood bag should be produced into hospital inventory")
@@ -383,7 +382,7 @@ Tirislib.Testing.add_test_case(
         source[EK.treatment_permissions] = {[DISEASE_WITH_ITEMS] = false}
         source[EK.blood_donations] = 7
         source[EK.blood_donation_threshold] = 2
-        source[EK.slots] = {{blood_donation = true, work_done = 0, uid = 0}}
+        source[EK.donation_slots] = {{work_done = 0, uid = 0}}
 
         local dest_entity = Helpers.create_unregistered(test_surface, "test-hospital-no-workforce", {10, 0})
         local dest = Register.clone(source, dest_entity)
@@ -392,7 +391,7 @@ Tirislib.Testing.add_test_case(
         Assert.is_false(dest[EK.treatment_permissions][DISEASE_WITH_ITEMS], "permission should be copied")
         Assert.equals(dest[EK.blood_donations], 7, "blood_donations should be copied")
         Assert.equals(dest[EK.blood_donation_threshold], 2, "blood_donation_threshold should be copied")
-        Assert.equals(#dest[EK.slots], 1, "slots should be copied")
+        Assert.equals(#dest[EK.donation_slots], 1, "donation slots should be copied")
     end,
     setup,
     teardown
@@ -436,6 +435,103 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << claim lifecycle: hospital destruction and inactivity >>
+
+local function make_hospital_with_workforce(position)
+    return Helpers.create_and_register(test_surface, "test-hospital-workforce-no-power", position)
+end
+
+Tirislib.Testing.add_test_case(
+    "destroying the hospital releases its claims from the housing entry",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local house = make_sick_house({5, 0}, DISEASE_NO_ITEMS, 1)
+        Helpers.update_entry(hospital)
+
+        Assert.not_nil(house[EK.treatment_claims], "claims should exist before destruction")
+
+        Helpers.destroy_entry(hospital)
+
+        local claims = house[EK.treatment_claims]
+        local disease_claims = claims and claims[DISEASE_NO_ITEMS]
+        Assert.is_true(
+            disease_claims == nil or #disease_claims == 0,
+            "destroyed hospital should no longer appear in housing claims"
+        )
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "hospital going inactive drops its slots on the next update",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital_with_workforce({0, 0})
+        local house = make_sick_house({5, 0}, DISEASE_NO_ITEMS, 1)
+
+        hospital[EK.worker_count] = 20
+        Helpers.update_entry(hospital)
+        Assert.equals(#hospital[EK.slots], 1, "slot should be claimed while active")
+
+        hospital[EK.worker_count] = 0
+        Helpers.update_entry(hospital)
+        Assert.equals(#hospital[EK.slots], 0, "slots should be cleared when hospital goes inactive")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "hospital going inactive releases its claims from housing",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital_with_workforce({0, 0})
+        local house = make_sick_house({5, 0}, DISEASE_NO_ITEMS, 1)
+
+        hospital[EK.worker_count] = 20
+        Helpers.update_entry(hospital)
+        Assert.not_nil(house[EK.treatment_claims], "claims should be set before inactivity")
+
+        hospital[EK.worker_count] = 0
+        Helpers.update_entry(hospital)
+
+        local claims = house[EK.treatment_claims]
+        local disease_claims = claims and claims[DISEASE_NO_ITEMS]
+        Assert.is_true(
+            disease_claims == nil or #disease_claims == 0,
+            "inactive hospital should no longer appear in housing claims"
+        )
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "hospital re-claims after recovering from inactivity",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital_with_workforce({0, 0})
+        local house = make_sick_house({5, 0}, DISEASE_NO_ITEMS, 1)
+
+        hospital[EK.worker_count] = 20
+        Helpers.update_entry(hospital)
+        Assert.equals(#hospital[EK.slots], 1, "slot claimed while active")
+
+        hospital[EK.worker_count] = 0
+        Helpers.update_entry(hospital)
+        Assert.equals(#hospital[EK.slots], 0, "slots dropped while inactive")
+
+        hospital[EK.worker_count] = 20
+        Helpers.update_entry(hospital)
+        Assert.equals(#hospital[EK.slots], 1, "slot re-claimed after recovering from inactivity")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
 -- << trim-to-capacity >>
 
 Tirislib.Testing.add_test_case(
@@ -449,12 +545,12 @@ Tirislib.Testing.add_test_case(
         local uid = house[EK.unit_number]
 
         for i = 1, 7 do
-            hospital[EK.slots][i] = {blood_donation = true, work_done = 0, uid = uid}
+            hospital[EK.donation_slots][i] = {work_done = 0, uid = uid}
         end
 
         Helpers.update_entry(hospital)
 
-        Assert.equals(#hospital[EK.slots], 5, "slots should be trimmed to building capacity")
+        Assert.equals(#hospital[EK.donation_slots], 5, "donation slots should be trimmed to building capacity")
     end,
     setup,
     teardown
