@@ -89,7 +89,9 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {theme = "plating", amount = 2},
         {theme = "plating2", amount = 2},
-    }
+    },
+    category = "sosciencity-handcrafting",
+    enabled = true
 }
 
 Tirislib.RecipeGenerator.create {
@@ -185,7 +187,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "cloth", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
-    name = "cloth",
     category = "sosciencity-pharma",
     energy_required = 10,
     allow_productivity = true,
@@ -202,7 +203,6 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "item", name = "salt", amount = 1}
     },
-    name = "clean-water",
     category = "sosciencity-pharma",
     energy_required = 2,
     do_index_fluid_ingredients = true,
@@ -219,7 +219,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    name = "phytofall-blossom",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -237,7 +236,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "amylum", amount = 1},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    name = "gingil-hemp",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -251,11 +249,10 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "potent-analgesics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "necrofall", amount = 1},
-        {type = "item", name = "amylum", amount = 1},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item", name = "mold", amount = 2},
+        {type = "fluid", name = "fatty-oil", amount = 20},
+        {type = "fluid", name = "ethanol", amount = 15}
     },
-    name = "necrofall",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -269,12 +266,12 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "anesthetics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "necrofall", amount = 5},
+        {type = "item", name = "molasses", amount = 5},
+        {type = "fluid", name = "pemtenn", amount = 20},
         {type = "fluid", name = "ethanol", amount = 10}
     },
-    name = "necrofall",
     category = "sosciencity-pharma",
-    energy_required = 3,
+    energy_required = 5,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "intensive-care",
@@ -290,7 +287,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sugar", amount = 3},
         {type = "fluid", name = "flinnum", amount = 10}
     },
-    name = "amylum",
     category = "sosciencity-pharma",
     energy_required = 3,
     allow_productivity = true,
@@ -309,9 +305,109 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "clean-water", amount = 10},
         {type = "fluid", name = "fatty-oil", amount = 10}
     },
-    name = "zetorn",
     category = "sosciencity-pharma",
     energy_required = 3,
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "hospital",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "nutritional-supplements", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "proteins", amount = 1},
+        {type = "item", name = "amylum", amount = 2},
+        {type = "item", name = "molasses", amount = 1}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 3,
+    allow_productivity = true,
+    unlock = "medbay",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "vitamine-supplements", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "liontooth", amount = 2},
+        {type = "item", name = "wild-algae", amount = 2},
+        {type = "fluid", name = "ethanol", amount = 15}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 3,
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "hospital",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antiemetics", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "ignivern", amount = 2},
+        {type = "item", name = "amylum", amount = 1},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 3,
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "medbay",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "huwan-hormones", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "proteins", amount = 2},
+        {type = "fluid", name = "pemtenn", amount = 20},
+        {type = "fluid", name = "ethanol", amount = 5}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 5,
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "hospital",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antitoxin", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "blood-bag", amount = 1},
+        {type = "item", name = "agarose", amount = 2},
+        {type = "fluid", name = "ethanol", amount = 15}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 5,
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "hospital",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antivirals", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "nucleobases", amount = 1},
+        {type = "fluid", name = "flinnum", amount = 20},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 5,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "hospital",
@@ -489,8 +585,6 @@ Tirislib.RecipeGenerator.create {
     }
 }
 
--- TODO: emergency ration needs a non-handcrafting recipe because I want to use it as a medicine item
-
 Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "sosciencity-medical-kit", amount = 1}
@@ -499,7 +593,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "blood-bag", amount = 1},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
-    name = "blood-bag",
     category = "sosciencity-pharma",
     auto_recycle = false
 }
@@ -513,7 +606,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "analgesics", amount = 1},
         {type = "item", name = "bandage", amount = 5}
     },
-    name = "blood-bag",
     category = "sosciencity-pharma",
     unlock = "medbay",
     auto_recycle = false

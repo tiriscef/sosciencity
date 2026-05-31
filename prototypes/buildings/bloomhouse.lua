@@ -21,7 +21,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "window", amount = 20},
         {type = "item", name = "architectural-concept", amount = 1}
     },
-    name = "window",
     default_theme_level = 2,
     unlock = "indoor-growing"
 }

@@ -44,7 +44,6 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "wild-flowers", amount = 10}
     },
-    name = "wild-flowers",
     unlock = "ember-caste",
     auto_recycle = false
 }
@@ -56,7 +55,6 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "chromafall", amount = 2}
     },
-    name = "chromafall",
     unlock = "orchid-caste",
     auto_recycle = false
 }
@@ -70,7 +68,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "ferrous-sulfate", amount = 1},
         {type = "item", name = "chromafall", amount = 2}
     },
-    name = "water",
     category = "chemistry",
     unlock = "clockwork-caste",
     auto_recycle = false
@@ -84,7 +81,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "dye", amount = 1}
     },
-    name = "wax",
     unlock = "ember-caste",
     auto_recycle = false
 }
@@ -120,7 +116,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "sugar", amount = 1}
     },
-    name = "crayons",
     unlock = "gunfire-caste",
     auto_recycle = false
 }
@@ -172,7 +167,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
-    name = "lumber",
     energy_required = 5,
     allow_productivity = true,
     unlock = "automation-science-pack"
@@ -187,7 +181,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sawdust", amount = 5},
         {type = "item", name = "gingil-hemp", amount = 5}
     },
-    name = "sawdust",
     category = "chemistry",
     energy_required = 5,
     allow_productivity = true,

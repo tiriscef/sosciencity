@@ -21,7 +21,6 @@ Tirislib.RecipeGenerator.create {
         {theme = "soil", amount = 100},
         {type = "item", name = "window", amount = 50}
     },
-    name = "window",
     default_theme_level = 3,
     unlock = "controlled-environment-farming"
 }
