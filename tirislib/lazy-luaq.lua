@@ -25,7 +25,7 @@ Tirislib.LazyLuaq = LazyLuaq
 --
 -- Terminal functions let you choose what to do with the index:
 --   to_array()  - discards indices, collects values into a consecutive array.
---   to_table()  - preserves the index->value mapping as-is. 
+--   to_table()  - preserves the index->value mapping as-is.
 --                 Duplicate indices silently overwrite!
 
 -- A LazyLuaqQuery iteration cannot be iterated 'twice' at the same time.
@@ -428,8 +428,8 @@ end
 --- @return boolean
 function LazyLuaq:any(condition)
     if condition then
-        for _, value in self:iterate() do
-            if condition(value) then
+        for index, value in self:iterate() do
+            if condition(value, index) then
                 return true
             end
         end
@@ -507,6 +507,28 @@ function LazyLuaq:first(condition)
     end
 end
 
+--- Returns the first element (that fulfills the given condition - if given), or the default value.
+--- @param default any
+--- @param condition function?
+--- @return any
+function LazyLuaq:first_or_default(default, condition)
+    if condition then
+        for index, value in self:iterate() do
+            if condition(value, index) then
+                return value
+            end
+        end
+        return default
+    else
+        self:reset()
+        local _, value = self:move_next()
+        if value ~= nil then
+            return value
+        end
+        return default
+    end
+end
+
 --- Returns the element at the given 1-based position, or nil if the sequence is shorter.
 --- @param n integer
 --- @return any
@@ -537,6 +559,67 @@ function LazyLuaq:last(condition)
             last_element = element
         end
         return last_element
+    end
+end
+
+--- Returns the last element (that fulfills the given condition - if given), or the default value.
+--- @param default any
+--- @param condition function?
+--- @return any
+function LazyLuaq:last_or_default(default, condition)
+    local result = default
+    if condition then
+        for index, value in self:iterate() do
+            if condition(value, index) then
+                result = value
+            end
+        end
+    else
+        for _, value in self:iterate() do
+            result = value
+        end
+    end
+    return result
+end
+
+--- Returns the index and value of the first element that fulfills the given condition.
+--- @param condition function
+--- @return any index
+--- @return any value
+function LazyLuaq:find(condition)
+    for index, value in self:iterate() do
+        if condition(value, index) then
+            return index, value
+        end
+    end
+end
+
+--- Returns the single element in the sequence (that fulfills the condition - if given), or the default value if no match.
+--- Errors if the sequence contains more than one matching element.
+--- @param default any
+--- @param condition function?
+--- @return any
+function LazyLuaq:single_or_default(default, condition)
+    self:reset()
+    if condition then
+        local result = default
+        local found = false
+        while true do
+            local index, value = self:move_next()
+            if index == nil then break end
+            if condition(value, index) then
+                if found then error("single_or_default: sequence contains more than one matching element") end
+                result = value
+                found = true
+            end
+        end
+        return result
+    else
+        local _, first = self:move_next()
+        if first == nil then return default end
+        local _, second = self:move_next()
+        if second ~= nil then error("single_or_default: sequence contains more than one element") end
+        return first
     end
 end
 
@@ -921,6 +1004,12 @@ function LazyLuaq:select_many(selector)
     return ret
 end
 
+--- Flattens a sequence of tables or queries into a single sequence.
+--- @return LazyLuaqQuery
+function LazyLuaq:flatten()
+    return self:select_many(identity)
+end
+
 local function choose_move_next(self)
     while true do
         local index, value = self._content:move_next()
@@ -1264,7 +1353,7 @@ local function distinct_by_move_next(self)
             return
         end
 
-        local valueKey = self._selector(value)
+        local valueKey = self._selector(value, index)
         if not self._seen[valueKey] then
             self._seen[valueKey] = true
             return index, value
@@ -1326,7 +1415,7 @@ local function duplicates_by_move_next(self)
             return
         end
 
-        local valueKey = self._selector(value)
+        local valueKey = self._selector(value, index)
         if self._seen[valueKey] then
             return index, value
         else
@@ -1394,8 +1483,8 @@ local function lookup_with_selector(elements, selector)
         return elements:select(selector):to_lookup()
     else
         local ret = {}
-        for _, value in pairs(elements) do
-            ret[selector(value)] = true
+        for index, value in pairs(elements) do
+            ret[selector(value, index)] = true
         end
         return ret
     end
@@ -1413,7 +1502,7 @@ local function except_by_move_next(self)
             return
         end
 
-        local valueKey = self._selector(value)
+        local valueKey = self._selector(value, index)
         if not self._lookup[valueKey] then
             return index, value
         end
@@ -1509,7 +1598,7 @@ local function intersect_by_move_next(self)
             return
         end
 
-        local valueKey = self._selector(value)
+        local valueKey = self._selector(value, index)
         if self._lookup[valueKey] then
             return index, value
         end
@@ -1805,8 +1894,11 @@ end
 -- Called on the first move_next of an ordered query.
 local function ordered_do_sort(self)
     local array = {}
-    for _, value in self._upstream:iterate() do
-        array[#array + 1] = value
+    local orig_indices = {}
+    for orig_index, value in self._upstream:iterate() do
+        local pos = #array + 1
+        array[pos] = value
+        orig_indices[pos] = orig_index
     end
 
     -- Compute keys for every sort level at once
@@ -1814,7 +1906,7 @@ local function ordered_do_sort(self)
     for l, level in pairs(self._sort_levels) do
         local keys = {}
         for i, value in pairs(array) do
-            keys[i] = level.selector(value)
+            keys[i] = level.selector(value, orig_indices[i])
         end
         all_keys[l] = keys
     end
@@ -1881,6 +1973,14 @@ local function create_ordered_query(upstream, sort_levels)
     return query
 end
 
+--- Sorts the sequence in ascending order.
+--- Index-replacing: yields sequential integer indices.
+--- @param comparator function?
+--- @return LazyLuaqQuery
+function LazyLuaq:order(comparator)
+    return create_ordered_query(self, {{selector = identity, comparator = comparator, descending = false}})
+end
+
 --- Sorts the sequence in ascending order using the keys of the given selector function.<br>
 --- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
 --- Index-replacing: yields sequential integer indices.
@@ -1888,7 +1988,7 @@ end
 --- @param comparator function?
 --- @return LazyLuaqQuery
 function LazyLuaq:order_by(selector, comparator)
-    return create_ordered_query(self, {{ selector = selector, comparator = comparator, descending = false }})
+    return create_ordered_query(self, {{selector = selector, comparator = comparator, descending = false}})
 end
 
 --- Sorts the sequence in descending order.
@@ -1896,7 +1996,7 @@ end
 --- Index-replacing: yields sequential integer indices.
 --- @return LazyLuaqQuery
 function LazyLuaq:order_descending()
-    return create_ordered_query(self, {{ selector = identity, descending = true }})
+    return create_ordered_query(self, {{selector = identity, descending = true}})
 end
 
 --- Sorts the sequence in descending order using the keys of the given selector function.<br>
@@ -1905,7 +2005,7 @@ end
 --- @param selector function
 --- @return LazyLuaqQuery
 function LazyLuaq:order_by_descending(selector)
-    return create_ordered_query(self, {{ selector = selector, descending = true }})
+    return create_ordered_query(self, {{selector = selector, descending = true}})
 end
 
 --- Adds a secondary ascending sort level to an ordered query. Can only be called after order_by or order_by_descending.
@@ -1913,13 +2013,14 @@ end
 --- @param comparator function?
 --- @return LazyLuaqQuery
 function LazyLuaq:then_by(selector, comparator)
-    assert(self._is_ordered_query, "then_by can only be called after order_by, order_by_descending, then_by, or then_by_descending")
+    assert(self._is_ordered_query,
+        "then_by can only be called after order_by, order_by_descending, then_by, or then_by_descending")
 
     local levels = {}
     for i, level in pairs(self._sort_levels) do
         levels[i] = level
     end
-    levels[#levels + 1] = { selector = selector, comparator = comparator, descending = false }
+    levels[#levels + 1] = {selector = selector, comparator = comparator, descending = false}
 
     return create_ordered_query(self._upstream, levels)
 end
@@ -1928,13 +2029,14 @@ end
 --- @param selector function
 --- @return LazyLuaqQuery
 function LazyLuaq:then_by_descending(selector)
-    assert(self._is_ordered_query, "then_by_descending can only be called after order_by, order_by_descending, then_by, or then_by_descending")
+    assert(self._is_ordered_query,
+        "then_by_descending can only be called after order_by, order_by_descending, then_by, or then_by_descending")
 
     local levels = {}
     for i, level in pairs(self._sort_levels) do
         levels[i] = level
     end
-    levels[#levels + 1] = { selector = selector, descending = true }
+    levels[#levels + 1] = {selector = selector, descending = true}
 
     return create_ordered_query(self._upstream, levels)
 end
@@ -1964,18 +2066,6 @@ function LazyLuaq:cache_execution()
     }
     setmetatable(ret, LazyLuaq)
     return ret
-end
-
---- Sorts the sequence in ascending order.
---- Index-replacing: yields sequential integer indices.
---- @param comparator function?
---- @return LazyLuaqQuery
-function LazyLuaq:order(comparator)
-    local array = self:to_array()
-
-    table.sort(array, comparator)
-
-    return LazyLuaq.from(array)
 end
 
 --- Sorts the sequence in ascending order and only returns up to the given count of top elements.<br>
@@ -2155,30 +2245,34 @@ function LazyLuaq:shuffle()
 end
 
 local function reverse_move_next(self)
-    local index = self._last_index
-    if index == nil then
-        index = #self._content
+    self._pos = self._pos - 1
+    if self._pos >= 1 then
+        return self._keys[self._pos], self._values[self._pos]
     end
+end
 
-    if index > 0 then
-        self._last_index = index - 2
-        return self._content[index], self._content[index - 1]
-    end
+local function reverse_reset(self)
+    self._pos = #self._keys + 1
 end
 
 --- Returns the sequence in reversed order.
 --- @return LazyLuaqQuery
 function LazyLuaq:reverse()
-    local array = {}
+    local keys = {}
+    local values = {}
 
     for k, v in self:iterate() do
-        array[#array + 1] = v
-        array[#array + 1] = k
+        local pos = #keys + 1
+        keys[pos] = k
+        values[pos] = v
     end
 
     local ret = {
-        _content = array,
+        _keys = keys,
+        _values = values,
+        _pos = #keys + 1,
         move_next = reverse_move_next,
+        reset = reverse_reset,
         _is_content_iterator = true
     }
     setmetatable(ret, LazyLuaq)

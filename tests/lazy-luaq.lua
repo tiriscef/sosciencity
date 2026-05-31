@@ -1547,3 +1547,334 @@ Tirislib.Testing.add_test_case(
         Assert.equals(collected, {a = 1, b = 2})
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << index passing >>
+
+Tirislib.Testing.add_test_case(
+    "any condition receives index",
+    "lib.lazy-luaq",
+    function()
+        local tbl = {a = 1, b = 2, c = 3}
+        Assert.is_true(LazyLuaq.from(tbl):any(function(v, i) return i == "b" end))
+        Assert.is_false(LazyLuaq.from(tbl):any(function(v, i) return i == "z" end))
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "distinct_by selector receives index",
+    "lib.lazy-luaq",
+    function()
+        -- All values are identical; only the index distinguishes elements.
+        -- If the selector only received the value, all keys would collapse to the same thing
+        -- and only one element would survive.
+        local result = LazyLuaq.from({a = 5, b = 5, c = 5}):distinct_by(
+            function(v, i) return i end
+        ):count()
+        Assert.equals(result, 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "duplicates_by selector receives index",
+    "lib.lazy-luaq",
+    function()
+        -- All values are identical but all indices are unique, so there are no duplicates.
+        local result = LazyLuaq.from({a = 5, b = 5, c = 5}):duplicates_by(
+            function(v, i) return i end
+        ):count()
+        Assert.equals(result, 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "except_by selector receives index on content side",
+    "lib.lazy-luaq",
+    function()
+        local left = {x = 0, y = 0, z = 0}
+        local right = LazyLuaq.from({x = 0, y = 0})
+        local result = LazyLuaq.from(left):except_by(right, function(v, i) return i end):to_table()
+        Assert.is_nil(result["x"])
+        Assert.is_nil(result["y"])
+        Assert.equals(result["z"], 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "except_by selector receives index for plain-table right side",
+    "lib.lazy-luaq",
+    function()
+        -- right is a plain table; selector keys by position, so indices 1-3 are excluded from left
+        local left = {"a", "b", "c", "d", "e"}
+        local right = {true, true, true}
+        local result = LazyLuaq.from(left):except_by(right, function(v, i) return i end):to_array()
+        Assert.equals(result, {"d", "e"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "intersect_by selector receives index on content side",
+    "lib.lazy-luaq",
+    function()
+        local left = {x = 10, y = 20, z = 30}
+        local right = LazyLuaq.from({x = 10, y = 20})
+        local result = LazyLuaq.from(left):intersect_by(right, function(v, i) return i end):to_table()
+        Assert.equals(result["x"], 10)
+        Assert.equals(result["y"], 20)
+        Assert.is_nil(result["z"])
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "intersect_by selector receives index for plain-table right side",
+    "lib.lazy-luaq",
+    function()
+        -- right is a plain table with 3 entries; selector keys by position, so only indices 1-3 are kept
+        local left = {"a", "b", "c", "d", "e"}
+        local right = {true, true, true}
+        local result = LazyLuaq.from(left):intersect_by(right, function(v, i) return i end):to_array()
+        Assert.equals(result, {"a", "b", "c"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "order_by selector receives original index",
+    "lib.lazy-luaq",
+    function()
+        -- Sorting by string key (index): a < b < c alphabetically.
+        -- a=3, b=2, c=1 → values in key-sorted order: {3, 2, 1}.
+        -- Sorting by value alone would give {1, 2, 3} instead.
+        local data = {c = 1, a = 3, b = 2}
+        local result = LazyLuaq.from(data):order_by(function(v, i) return i end):to_array()
+        Assert.equals(result, {3, 2, 1})
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << reverse (rewrite) >>
+
+Tirislib.Testing.add_test_case(
+    "reverse preserves original indices",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({a = 1, b = 2, c = 3}):reverse():to_table()
+        Assert.equals(result["a"], 1)
+        Assert.equals(result["b"], 2)
+        Assert.equals(result["c"], 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "reverse copy produces an independent query",
+    "lib.lazy-luaq",
+    function()
+        local original = LazyLuaq.from({1, 2, 3, 4}):reverse()
+        local copied = original:copy()
+        Assert.equals(copied:to_array(), {4, 3, 2, 1})
+        Assert.equals(original:to_array(), {4, 3, 2, 1})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "reverse re-iterates correctly",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({1, 2, 3}):reverse()
+        Assert.equals(query:to_array(), {3, 2, 1})
+        Assert.equals(query:to_array(), {3, 2, 1})
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << find >>
+
+Tirislib.Testing.add_test_case(
+    "find returns index and value of first matching element",
+    "lib.lazy-luaq",
+    function()
+        local index, value = LazyLuaq.from({a = 1, b = 2, c = 3}):find(function(v) return v == 2 end)
+        Assert.equals(index, "b")
+        Assert.equals(value, 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "find returns nil when no element matches",
+    "lib.lazy-luaq",
+    function()
+        local index, value = LazyLuaq.from({1, 2, 3}):find(function(v) return v > 10 end)
+        Assert.is_nil(index)
+        Assert.is_nil(value)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "find condition receives index",
+    "lib.lazy-luaq",
+    function()
+        local index, value = LazyLuaq.from({a = 10, b = 20}):find(function(v, i) return i == "a" end)
+        Assert.equals(index, "a")
+        Assert.equals(value, 10)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << first_or_default / last_or_default / single_or_default >>
+
+Tirislib.Testing.add_test_case(
+    "first_or_default returns first element when present",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({5, 10, 15}):first_or_default(99), 5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "first_or_default returns default on empty sequence",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({}):first_or_default(99), 99)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "first_or_default with condition returns first matching element",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({1, 2, 3, 4}):first_or_default(0, function(v) return v > 2 end)
+        Assert.equals(result, 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "first_or_default with condition returns default when no match",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({1, 2, 3}):first_or_default(0, function(v) return v > 10 end)
+        Assert.equals(result, 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "first_or_default handles false as default value",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({}):first_or_default(false), false)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "last_or_default returns last element when present",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({5, 10, 15}):last_or_default(99), 15)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "last_or_default returns default on empty sequence",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({}):last_or_default(99), 99)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "last_or_default with condition returns last matching element",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({1, 2, 3, 4, 5}):last_or_default(0, function(v) return v < 4 end)
+        Assert.equals(result, 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "last_or_default with condition returns default when no match",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({1, 2, 3}):last_or_default(0, function(v) return v > 10 end)
+        Assert.equals(result, 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single_or_default returns value for single element",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({42}):single_or_default(99), 42)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single_or_default returns default on empty sequence",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({}):single_or_default(99), 99)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single_or_default errors when sequence has more than one element",
+    "lib.lazy-luaq",
+    function()
+        Assert.throws(function() LazyLuaq.from({1, 2}):single_or_default(99) end)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single_or_default with condition returns matching element",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({1, 2, 3}):single_or_default(0, function(v) return v == 2 end), 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single_or_default with condition returns default when no match",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(LazyLuaq.from({1, 2, 3}):single_or_default(0, function(v) return v == 5 end), 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "single_or_default with condition errors on multiple matches",
+    "lib.lazy-luaq",
+    function()
+        Assert.throws(function()
+            LazyLuaq.from({2, 2, 3}):single_or_default(0, function(v) return v == 2 end)
+        end)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << flatten >>
+
+Tirislib.Testing.add_test_case(
+    "flatten flattens a sequence of tables",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({{1, 2}, {3, 4}, {5}}):flatten():to_array()
+        Assert.equals(result, {1, 2, 3, 4, 5})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "flatten is equivalent to select_many with identity",
+    "lib.lazy-luaq",
+    function()
+        local data = {{10, 20}, {30, 40}}
+        local via_flatten = LazyLuaq.from(data):flatten():to_array()
+        local via_select_many = LazyLuaq.from(data):select_many(function(v) return v end):to_array()
+        Assert.equals(via_flatten, via_select_many)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "flatten works with LazyLuaqQuery elements",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({LazyLuaq.range(1, 2), LazyLuaq.range(3, 4)}):flatten():to_array()
+        Assert.equals(result, {1, 2, 3, 4})
+    end
+)
