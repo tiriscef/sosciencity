@@ -593,3 +593,110 @@ Tirislib.Testing.add_test_case(
     function() test_surface = Helpers.create_test_surface() end,
     function() Helpers.clean_up() end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << Register.change_type >>
+
+Tirislib.Testing.add_test_case(
+    "Register.change_type updates counts, returns a correct new entry, and invalidates the old one",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        local unit_number = entry[EK.unit_number]
+        local original_tick = entry[EK.tick_of_creation]
+        local market_count_before = Register.get_type_count(Type.market)
+        local dumpster_count_before = Register.get_type_count(Type.dumpster)
+
+        local new_entry = Register.change_type(entry, Type.dumpster)
+
+        Assert.equals(Register.get_type_count(Type.market), market_count_before - 1, "market count should decrease")
+        Assert.equals(Register.get_type_count(Type.dumpster), dumpster_count_before + 1, "dumpster count should increase")
+        Assert.equals(new_entry[EK.type], Type.dumpster, "new entry should have the new type")
+        Assert.equals(new_entry[EK.unit_number], unit_number, "new entry should have the same unit_number")
+        Assert.equals(new_entry[EK.tick_of_creation], original_tick, "tick_of_creation should be preserved")
+        Assert.equals(Register.try_get(unit_number), new_entry, "try_get should return the new entry")
+        Assert.is_true(Register.is_stale(entry), "old entry should be stale after change_type")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Register.ever_had_type >>
+
+local saved_ever_had
+
+Tirislib.Testing.add_test_case(
+    "Register.ever_had_type returns false for a type with no entries",
+    "integration|integration.register",
+    function()
+        Assert.is_false(Register.ever_had_type(Type.market), "should return false when type was never registered")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+        saved_ever_had = storage.ever_had_type[Type.market]
+        storage.ever_had_type[Type.market] = nil
+    end,
+    function()
+        storage.ever_had_type[Type.market] = saved_ever_had
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.ever_had_type returns true after an entry is added",
+    "integration|integration.register",
+    function()
+        Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        Assert.is_true(Register.ever_had_type(Type.market), "should return true after adding an entry")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.ever_had_type persists as true after all entries of the type are removed",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        Register.remove_entry(entry, DeconstructionCause.unknown)
+
+        Assert.is_true(Register.ever_had_type(Type.market), "flag should persist even when count drops to 0")
+        Assert.equals(Register.get_type_count(Type.market), 0, "count should be 0 after removal")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+        saved_ever_had = storage.ever_had_type[Type.market]
+        storage.ever_had_type[Type.market] = nil
+    end,
+    function()
+        storage.ever_had_type[Type.market] = saved_ever_had
+        Helpers.clean_up()
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << Register.is_stale >>
+
+Tirislib.Testing.add_test_case(
+    "Register.is_stale returns false for a live entry",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        Assert.is_false(Register.is_stale(entry), "fresh entry should not be stale")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
+
+Tirislib.Testing.add_test_case(
+    "Register.is_stale returns true after the entry is removed",
+    "integration|integration.register",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        Register.remove_entry(entry, DeconstructionCause.unknown)
+        Assert.is_true(Register.is_stale(entry), "removed entry should be stale")
+    end,
+    function() test_surface = Helpers.create_test_surface() end,
+    function() Helpers.clean_up() end
+)
