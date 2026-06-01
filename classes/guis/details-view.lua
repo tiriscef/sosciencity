@@ -517,7 +517,7 @@ function Gui.DetailsView.create(player)
     display_flow.add {
         type = "sprite-button",
         name = "regenerate_button",
-        sprite = "utility/shuffle",
+        sprite = "sosciencity-shuffle-white",
         style = "frame_action_button",
         visible = false,
         tooltip = {"sosciencity.regenerate-name"},
@@ -526,7 +526,7 @@ function Gui.DetailsView.create(player)
     display_flow.add {
         type = "sprite-button",
         name = "edit_button",
-        sprite = "utility/rename_icon",
+        sprite = "sosciencity-rename-icon-white",
         style = "frame_action_button",
         tooltip = {"sosciencity.edit-name"},
         tags = {sosciencity_gui_event = "details_name_edit"}
@@ -534,7 +534,7 @@ function Gui.DetailsView.create(player)
     display_flow.add {
         type = "sprite-button",
         name = "overview_button",
-        sprite = "utility/map",
+        sprite = "sosciencity-map-white",
         style = "frame_action_button",
         visible = false,
         tooltip = {"sosciencity.back-to-overview"}

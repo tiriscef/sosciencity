@@ -130,3 +130,31 @@ Tirislib.Prototype.create {
     filename = "__sosciencity-graphics__/graphics/utility/sanity.png",
     size = 64
 }
+
+Tirislib.Prototype.create {
+    type = "sprite",
+    name = "sosciencity-rename-icon-white",
+    filename = "__sosciencity-graphics__/graphics/utility/rename-icon-white.png",
+    size = 32,
+    flags = {"icon"}
+}
+
+Tirislib.Prototype.create {
+    type = "sprite",
+    name = "sosciencity-map-white",
+    filename = "__sosciencity-graphics__/graphics/utility/map-white.png",
+    size = 32,
+    scale = 0.5,
+    mipmap_count = 2,
+    flags = {"gui-icon"}
+}
+
+Tirislib.Prototype.create {
+    type = "sprite",
+    name = "sosciencity-shuffle-white",
+    filename = "__sosciencity-graphics__/graphics/utility/shuffle-white.png",
+    size = 32,
+    scale = 0.5,
+    mipmap_count = 2,
+    flags = {"gui-icon"}
+}
