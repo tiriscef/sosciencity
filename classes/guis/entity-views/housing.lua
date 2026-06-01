@@ -1463,3 +1463,47 @@ for _, caste in pairs(Castes.all) do
         updater = update_housing_details
     })
 end
+
+local HEALTHY = DiseaseGroup.HEALTHY
+for _, caste in pairs(Castes.all) do
+    Gui.BuildingOverview.register_type(caste.name .. "-housing", {
+        types = {caste.type},
+        layout = "grid",
+        stats_creator = function(flow, entry)
+            local inhabitants = entry[EK.inhabitants]
+            local capacity = Inhabitants.HousingCore.get_capacity(entry)
+            flow.add {
+                type = "label",
+                caption = {"sosciencity.show-inhabitants", inhabitants, capacity}
+            }
+
+            local hhs = flow.add {type = "flow", direction = "horizontal"}
+            hhs.style.horizontal_spacing = 8
+
+            local happiness = round_to_step(entry[EK.happiness] or 0, 0.1)
+            local happiness_label = hhs.add {
+                type = "label",
+                caption = {"", {"sosciencity.happiness"}, ": ", happiness}
+            }
+            if happiness < caste.full_strike_threshold then
+                happiness_label.style.font_color = Color.red
+            elseif happiness < caste.strike_begin_threshold then
+                happiness_label.style.font_color = Color.orange
+            else
+                happiness_label.style.font_color = Color.green
+            end
+
+            hhs.add {type = "label", caption = {"", {"sosciencity.health"}, ": ", round_to_step(entry[EK.health] or 0, 0.1)}}
+            hhs.add {type = "label", caption = {"", {"sosciencity.sanity"}, ": ", round_to_step(entry[EK.sanity] or 0, 0.1)}}
+
+            local sick = inhabitants - (entry[EK.diseases][HEALTHY] or inhabitants)
+            if sick > 0 then
+                flow.add {type = "label", caption = {"sosciencity.sick-count", sick}}
+            end
+
+            if (entry[EK.employed] or 0) < inhabitants then
+                flow.add {type = "label", caption = {"sosciencity.unemployed"}}
+            end
+        end
+    })
+end

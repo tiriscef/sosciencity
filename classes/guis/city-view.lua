@@ -351,6 +351,7 @@ Gui.add_gui_closed_handler(
 )
 
 require("classes.guis.city-view-pages.report-pages")
+require("classes.guis.city-view-pages.buildings-pages")
 require("classes.guis.city-view-pages.data-pages")
 require("classes.guis.city-view-pages.caste-pages")
 require("classes.guis.city-view-pages.howto-pages")

@@ -127,6 +127,18 @@ end
 
 Gui.DetailsView.register_type(Type.market, {creater = create_market, updater = update_market})
 
+Gui.BuildingOverview.register_type("markets", {
+    types = {Type.market},
+    layout = "list",
+    stats_creator = function(flow, entry)
+        local kcal = round(Consumption.count_calories(Inventories.get_chest_inventory(entry)))
+        flow.add {
+            type = "label",
+            caption = {"sosciencity.value-with-unit", kcal, {"sosciencity.kcal"}}
+        }
+    end
+})
+
 ---------------------------------------------------------------------------------------------------
 -- << water distributer >>
 

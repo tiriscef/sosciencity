@@ -44,6 +44,13 @@ local function update_details_header(container, entry)
     display_flow.name_label.caption = Locale.entry(entry)
     display_flow.reset_button.visible = entry[EK.custom_name] ~= nil
     display_flow.regenerate_button.visible = get_building_details(entry).auto_name ~= nil
+
+    local overview_page = Gui.BuildingOverview.get_page_for_type(entry[EK.type])
+    local overview_button = display_flow.overview_button
+    overview_button.visible = overview_page ~= nil
+    if overview_page then
+        overview_button.tags = {sosciencity_gui_event = "open_page", category = "buildings", page = overview_page}
+    end
 end
 
 local function get_or_create_tabbed_pane(container) -- TODO this doesn't belong to this file
@@ -538,6 +545,14 @@ function Gui.DetailsView.create(player)
         tooltip = {"sosciencity.edit-name"},
         tags = {sosciencity_gui_event = "details_name_edit"}
     }
+    display_flow.add {
+        type = "sprite-button",
+        name = "overview_button",
+        sprite = "utility/map",
+        style = "frame_action_button",
+        visible = false,
+        tooltip = {"sosciencity.back-to-overview"}
+    }
 
     local edit_flow = header.add {
         type = "flow",
@@ -749,10 +764,10 @@ Gui.add_gui_closed_handler(
     end
 )
 
-require("classes.guis.details-view-types.housing")
-require("classes.guis.details-view-types.food-production")
-require("classes.guis.details-view-types.hospital")
-require("classes.guis.details-view-types.upbringing-station")
-require("classes.guis.details-view-types.waste-management")
-require("classes.guis.details-view-types.supply")
-require("classes.guis.details-view-types.misc")
+require("classes.guis.entity-views.housing")
+require("classes.guis.entity-views.food-production")
+require("classes.guis.entity-views.hospital")
+require("classes.guis.entity-views.upbringing-station")
+require("classes.guis.entity-views.waste-management")
+require("classes.guis.entity-views.supply")
+require("classes.guis.entity-views.misc")

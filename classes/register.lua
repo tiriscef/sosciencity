@@ -28,6 +28,9 @@ Register = {}
     storage.entry_counts:
         [type]: int (total number)
 
+    storage.ever_had_type:
+        [type]: true (set permanently when a type first gains an entry)
+
     storage.last_index_per_group: table
         [update_group]: int? (unit_number of the entry the last update cycle stopped on)
 ]]
@@ -38,6 +41,7 @@ local register
 local register_by_type
 local register_by_group
 local entry_counts
+local ever_had_type
 local last_index_per_group
 
 local type_definitions = Types.definitions
@@ -69,6 +73,7 @@ local function set_locals()
     register_by_type = storage.register_by_type
     register_by_group = storage.register_by_group
     entry_counts = storage.entry_counts
+    ever_had_type = storage.ever_had_type
     last_index_per_group = storage.last_index_per_group
 
     -- These systems are loaded after the register, so we local them during on_load
@@ -91,6 +96,7 @@ function Register.init()
     storage.register_by_type = {}
     storage.register_by_group = {}
     storage.entry_counts = {}
+    storage.ever_had_type = {}
     storage.last_index_per_group = {}
     set_locals()
 
@@ -364,6 +370,7 @@ local function add_entry_to_register(entry)
         entry_counts[_type] = 0
     end
     entry_counts[_type] = entry_counts[_type] + 1
+    ever_had_type[_type] = true
 end
 
 local function remove_entry_from_register(entry)
@@ -702,6 +709,11 @@ function Register.get_type_count(_type)
     return entry_counts[_type] or 0
 end
 local get_type_count = Register.get_type_count
+
+--- Returns true if at least one entry of the given type has ever been created, even if all are now destroyed.
+function Register.ever_had_type(_type)
+    return ever_had_type[_type] == true
+end
 
 local types_affected_by_clockwork = TypeGroup.affected_by_clockwork
 

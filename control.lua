@@ -477,6 +477,7 @@ local function on_configuration_change()
         -- Initialise group-based update cycle storage (replaces storage.last_index).
         storage.register_by_group = storage.register_by_group or {}
         storage.last_index_per_group = storage.last_index_per_group or {}
+        storage.ever_had_type = storage.ever_had_type or {}
         storage.last_index = nil
         if not storage.transport_eligible_houses then
             storage.transport_eligible_houses = Tirislib.LazyLuaq.from(Castes.all)

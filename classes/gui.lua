@@ -317,6 +317,7 @@ require("classes.guis.city-info")
 if DEV_MODE then
     require("classes.guis.debug-widgets")
 end
+require("classes.guis.building-overview")
 require("classes.guis.city-view")
 require("classes.guis.details-view")
 

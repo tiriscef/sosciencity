@@ -320,3 +320,16 @@ Gui.DetailsView.register_type(
     Type.improvised_hospital,
     {creater = create_hospital_details, updater = update_hospital_details}
 )
+
+Gui.BuildingOverview.register_type("hospitals", {
+    types = {Type.hospital, Type.improvised_hospital},
+    layout = "list",
+    stats_creator = function(flow, entry)
+        local used_slots = #entry[EK.slots]
+        local effective_slots = get_building_details(entry).slots
+        flow.add {
+            type = "label",
+            caption = {"sosciencity.show-slots", used_slots, effective_slots}
+        }
+    end
+})
