@@ -362,4 +362,5 @@ if DEV_MODE then
     require("classes.guis.city-view-pages.item-browser-page")
     require("classes.guis.city-view-pages.recipe-balancing-page")
     require("classes.guis.city-view-pages.housing-balancing-page")
+    require("classes.guis.city-view-pages.utility-sprite-browser")
 end
