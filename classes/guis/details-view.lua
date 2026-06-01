@@ -53,7 +53,7 @@ local function update_details_header(container, entry)
     end
 end
 
-local function get_or_create_tabbed_pane(container) -- TODO this doesn't belong to this file
+local function get_or_create_tabbed_pane(container)
     local tabpane = container.tabpane
     if container.tabpane then
         return tabpane
@@ -460,29 +460,6 @@ function Gui.DetailsView.register_type(type_id, spec)
     type_gui_specifications[type_id] = spec
 end
 
--- generic building types that only need the general view
-local generic_spec = {creater = Gui.DetailsView.create_general, updater = Gui.DetailsView.update_general}
-Gui.DetailsView.register_type(Type.mining_drill, generic_spec)
-Gui.DetailsView.register_type(Type.assembling_machine, generic_spec)
-Gui.DetailsView.register_type(Type.furnace, generic_spec)
-Gui.DetailsView.register_type(Type.rocket_silo, generic_spec)
-Gui.DetailsView.register_type(Type.caste_education_building, generic_spec)
-Gui.DetailsView.register_type(Type.composter_output, generic_spec)
-Gui.DetailsView.register_type(Type.egg_collector, generic_spec)
-Gui.DetailsView.register_type(Type.pharmacy, generic_spec)
-Gui.DetailsView.register_type(Type.psych_ward, generic_spec)
-Gui.DetailsView.register_type(Type.manufactory, generic_spec)
-Gui.DetailsView.register_type(Type.social_observatory, generic_spec)
-Gui.DetailsView.register_type(Type.nightclub, generic_spec)
-Gui.DetailsView.register_type(Type.animal_farm, generic_spec)
-
-local generic_overview_creator = Gui.BuildingOverview.generic_stats_creator
-Gui.BuildingOverview.register_type("nightclubs", {types = {Type.nightclub}, layout = "list", stats_creator = generic_overview_creator})
-Gui.BuildingOverview.register_type("egg-collectors", {types = {Type.egg_collector}, layout = "list", stats_creator = generic_overview_creator})
-Gui.BuildingOverview.register_type("manufactories", {types = {Type.manufactory}, layout = "list", stats_creator = generic_overview_creator})
-Gui.BuildingOverview.register_type("social-observatories", {types = {Type.social_observatory}, layout = "list", stats_creator = generic_overview_creator})
-Gui.BuildingOverview.register_type("caste-education-buildings", {types = {Type.caste_education_building}, layout = "list", stats_creator = generic_overview_creator})
-Gui.BuildingOverview.register_type("animal-farms", {types = {Type.animal_farm}, layout = "list", stats_creator = generic_overview_creator})
 
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
@@ -774,9 +751,19 @@ Gui.add_gui_closed_handler(
 )
 
 require("classes.guis.entity-views.housing")
-require("classes.guis.entity-views.food-production")
 require("classes.guis.entity-views.hospital")
 require("classes.guis.entity-views.upbringing-station")
-require("classes.guis.entity-views.waste-management")
-require("classes.guis.entity-views.supply")
-require("classes.guis.entity-views.misc")
+require("classes.guis.entity-views.composter")
+require("classes.guis.entity-views.farm")
+require("classes.guis.entity-views.salt-pond")
+require("classes.guis.entity-views.waterwell")
+require("classes.guis.entity-views.market")
+require("classes.guis.entity-views.water-distributer")
+require("classes.guis.entity-views.kitchen-for-all")
+require("classes.guis.entity-views.waste-dump")
+require("classes.guis.entity-views.dumpster")
+require("classes.guis.entity-views.immigration-port")
+require("classes.guis.entity-views.fertilization-station")
+require("classes.guis.entity-views.pruning-station")
+require("classes.guis.entity-views.cold-storage")
+require("classes.guis.entity-views.generic")
