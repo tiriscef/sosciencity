@@ -274,3 +274,44 @@ local function create_salt_pond(container, entry, player_id)
 end
 
 Gui.DetailsView.register_type(Type.salt_pond, {creater = create_salt_pond, updater = update_salt_pond})
+
+---------------------------------------------------------------------------------------------------
+-- << building overview registrations >>
+
+local BuildingOverview = Gui.BuildingOverview
+
+BuildingOverview.register_type("composters", {
+    types = {Type.composter},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("farms", {
+    types = {Type.farm},
+    layout = "list",
+    stats_creator = function(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
+        local recipe = entry[EK.entity].get_recipe()
+        if recipe then
+            flow.add {type = "label", caption = recipe.localised_name}
+        end
+    end
+})
+
+BuildingOverview.register_type("fisheries", {
+    types = {Type.fishery},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("hunting-huts", {
+    types = {Type.hunting_hut},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("salt-ponds", {
+    types = {Type.salt_pond},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})

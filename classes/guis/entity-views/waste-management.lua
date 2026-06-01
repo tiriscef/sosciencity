@@ -194,3 +194,20 @@ local function create_dumpster(container, entry, player_id)
 end
 
 Gui.DetailsView.register_type(Type.dumpster, {creater = create_dumpster, updater = update_dumpster})
+
+---------------------------------------------------------------------------------------------------
+-- << building overview registrations >>
+
+local BuildingOverview = Gui.BuildingOverview
+
+BuildingOverview.register_type("waste-dumps", {
+    types = {Type.waste_dump},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("dumpsters", {
+    types = {Type.dumpster},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})

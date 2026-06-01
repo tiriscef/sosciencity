@@ -225,3 +225,26 @@ Gui.DetailsView.register_type(
     Type.cold_storage,
     {creater = create_cold_storage, updater = Gui.DetailsView.update_general}
 )
+
+---------------------------------------------------------------------------------------------------
+-- << building overview registrations >>
+
+local BuildingOverview = Gui.BuildingOverview
+
+BuildingOverview.register_type("immigration-ports", {
+    types = {Type.immigration_port},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("fertilization-stations", {
+    types = {Type.fertilization_station},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("pruning-stations", {
+    types = {Type.pruning_station},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})

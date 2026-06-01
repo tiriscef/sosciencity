@@ -474,6 +474,15 @@ Gui.DetailsView.register_type(Type.psych_ward, generic_spec)
 Gui.DetailsView.register_type(Type.manufactory, generic_spec)
 Gui.DetailsView.register_type(Type.social_observatory, generic_spec)
 Gui.DetailsView.register_type(Type.nightclub, generic_spec)
+Gui.DetailsView.register_type(Type.animal_farm, generic_spec)
+
+local generic_overview_creator = Gui.BuildingOverview.generic_stats_creator
+Gui.BuildingOverview.register_type("nightclubs", {types = {Type.nightclub}, layout = "list", stats_creator = generic_overview_creator})
+Gui.BuildingOverview.register_type("egg-collectors", {types = {Type.egg_collector}, layout = "list", stats_creator = generic_overview_creator})
+Gui.BuildingOverview.register_type("manufactories", {types = {Type.manufactory}, layout = "list", stats_creator = generic_overview_creator})
+Gui.BuildingOverview.register_type("social-observatories", {types = {Type.social_observatory}, layout = "list", stats_creator = generic_overview_creator})
+Gui.BuildingOverview.register_type("caste-education-buildings", {types = {Type.caste_education_building}, layout = "list", stats_creator = generic_overview_creator})
+Gui.BuildingOverview.register_type("animal-farms", {types = {Type.animal_farm}, layout = "list", stats_creator = generic_overview_creator})
 
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>

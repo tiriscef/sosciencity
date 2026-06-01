@@ -256,3 +256,26 @@ local function create_kitchen_for_all(container, entry, player_id)
 end
 
 Gui.DetailsView.register_type(Type.kitchen_for_all, {creater = create_kitchen_for_all, updater = update_kitchen_for_all})
+
+---------------------------------------------------------------------------------------------------
+-- << building overview registrations >>
+
+local BuildingOverview = Gui.BuildingOverview
+
+BuildingOverview.register_type("waterwells", {
+    types = {Type.waterwell},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("water-distributers", {
+    types = {Type.water_distributer},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})
+
+BuildingOverview.register_type("kitchens-for-all", {
+    types = {Type.kitchen_for_all},
+    layout = "list",
+    stats_creator = BuildingOverview.generic_stats_creator
+})

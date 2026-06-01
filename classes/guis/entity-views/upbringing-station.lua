@@ -222,3 +222,9 @@ Gui.DetailsView.register_type(
     Type.upbringing_station,
     {creater = create_upbringing_station, updater = update_upbringing_station, always_update = true}
 )
+
+Gui.BuildingOverview.register_type("upbringing-stations", {
+    types = {Type.upbringing_station},
+    layout = "list",
+    stats_creator = Gui.BuildingOverview.generic_stats_creator
+})

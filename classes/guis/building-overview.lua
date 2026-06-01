@@ -3,10 +3,12 @@ Gui.BuildingOverview = {}
 local BuildingOverview = Gui.BuildingOverview
 
 local EK = require("enums.entry-key")
+local Buildings = require("constants.buildings")
 
 local Register = Register
 local Locale = Locale
 local floor = math.floor
+local get_building_details = Buildings.get
 
 local CAMERA_THRESHOLD = 30
 
@@ -28,6 +30,22 @@ end
 --- Returns the overview page name for the given type, or nil if none is registered.
 function BuildingOverview.get_page_for_type(_type)
     return type_to_page[_type]
+end
+
+--- Shows active state and worker fill. Custom stats_creators can call this first, then add extras.
+function BuildingOverview.generic_stats_creator(flow, entry)
+    local active = entry[EK.active]
+
+    if active ~= nil then
+        flow.add {type = "label", caption = active and {"sosciencity.active"} or {"sosciencity.inactive"}}
+    end
+
+    if get_building_details(entry).workforce then
+        flow.add {
+            type = "label",
+            caption = {"sosciencity.show-staff", entry[EK.worker_count], entry[EK.target_worker_count]}
+        }
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
