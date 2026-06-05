@@ -94,6 +94,11 @@ Gui.DetailsView.register_type(Type.composter, {creater = create_composter_detail
 
 Gui.BuildingOverview.register_type("composters", {
     types = {Type.composter},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local humus = round_to_step(entry[EK.humus] / 100, 1)
+        local capacity = round_to_step(get_building_details(entry).capacity / 100, 1)
+        flow.add {type = "label", caption = {"sosciencity.fraction", humus, capacity}}
+    end
 })

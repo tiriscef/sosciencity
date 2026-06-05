@@ -37,6 +37,6 @@ Gui.DetailsView.register_type(Type.waterwell, {creater = create_waterwell_detail
 
 Gui.BuildingOverview.register_type("waterwells", {
     types = {Type.waterwell},
-    layout = "list",
+    layout = "grid",
     stats_creator = Gui.BuildingOverview.generic_stats_creator
 })

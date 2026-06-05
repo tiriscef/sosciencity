@@ -56,6 +56,9 @@ Gui.DetailsView.register_type(
 
 Gui.BuildingOverview.register_type("fertilization-stations", {
     types = {Type.fertilization_station},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        flow.add {type = "label", caption = display_item_stack("humus", floor(entry[EK.humus_stored]))}
+    end
 })

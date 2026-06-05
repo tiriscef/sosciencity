@@ -31,6 +31,9 @@ Gui.DetailsView.register_type(Type.kitchen_for_all, {creater = create_kitchen_fo
 
 Gui.BuildingOverview.register_type("kitchens-for-all", {
     types = {Type.kitchen_for_all},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        flow.add {type = "label", caption = {"sosciencity.display-dependants", entry[EK.participating_inhabitants]}}
+    end
 })

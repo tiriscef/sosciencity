@@ -323,7 +323,7 @@ Gui.DetailsView.register_type(
 
 Gui.BuildingOverview.register_type("hospitals", {
     types = {Type.hospital, Type.improvised_hospital},
-    layout = "list",
+    layout = "grid",
     stats_creator = function(flow, entry)
         local used_slots = #entry[EK.slots]
         local effective_slots = get_building_details(entry).slots

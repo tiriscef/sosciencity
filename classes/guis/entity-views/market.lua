@@ -91,7 +91,7 @@ Gui.DetailsView.register_type(Type.market, {creater = create_market, updater = u
 
 Gui.BuildingOverview.register_type("markets", {
     types = {Type.market},
-    layout = "list",
+    layout = "grid",
     stats_creator = function(flow, entry)
         local kcal = round(Consumption.count_calories(Inventories.get_chest_inventory(entry)))
         flow.add {

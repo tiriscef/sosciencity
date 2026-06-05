@@ -4,10 +4,12 @@ local BuildingOverview = Gui.BuildingOverview
 
 local EK = require("enums.entry-key")
 local Buildings = require("constants.buildings")
+local Color = require("constants.color")
 
 local Register = Register
 local Locale = Locale
 local floor = math.floor
+local ceil = math.ceil
 local get_building_details = Buildings.get
 
 local CAMERA_THRESHOLD = 30
@@ -45,6 +47,16 @@ function BuildingOverview.generic_stats_creator(flow, entry)
             type = "label",
             caption = {"sosciencity.show-staff", entry[EK.worker_count], entry[EK.target_worker_count]}
         }
+    end
+
+    local performance = entry[EK.performance]
+    if performance then
+        local label = flow.add {
+            type = "label",
+            caption = performance > 0.1999 and {"sosciencity.percentage", ceil(performance * 100)} or {"sosciencity.not-working"}
+        }
+        label.style.font_color =
+            performance < 0.2 and Color.red or performance < 0.7 and Color.orange or Color.green
     end
 end
 

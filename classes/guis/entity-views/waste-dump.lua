@@ -113,6 +113,12 @@ Gui.DetailsView.register_type(Type.waste_dump, {creater = create_waste_dump, upd
 
 Gui.BuildingOverview.register_type("waste-dumps", {
     types = {Type.waste_dump},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        flow.add {
+            type = "label",
+            caption = {"sosciencity.fraction", Table.sum(entry[EK.stored_garbage]), get_building_details(entry).capacity}
+        }
+    end
 })

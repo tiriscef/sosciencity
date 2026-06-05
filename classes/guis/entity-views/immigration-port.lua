@@ -77,6 +77,10 @@ Gui.DetailsView.register_type(
 
 Gui.BuildingOverview.register_type("immigration-ports", {
     types = {Type.immigration_port},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local ticks_to_next = math.max(0, entry[EK.next_wave] - game.tick)
+        flow.add {type = "label", caption = display_time(ticks_to_next)}
+    end
 })

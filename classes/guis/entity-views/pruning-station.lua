@@ -83,6 +83,14 @@ Gui.DetailsView.register_type(
 
 Gui.BuildingOverview.register_type("pruning-stations", {
     types = {Type.pruning_station},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local max_slots = get_building_details(entry).slots
+        local effective_slots = Pruning.effective_slots(entry[EK.performance] or 0, max_slots)
+        flow.add {
+            type = "label",
+            caption = {"sosciencity.show-slots-capped", #entry[EK.slots], effective_slots, max_slots}
+        }
+    end
 })

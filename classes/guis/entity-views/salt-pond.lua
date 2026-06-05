@@ -44,6 +44,10 @@ Gui.DetailsView.register_type(Type.salt_pond, {creater = create_salt_pond, updat
 
 Gui.BuildingOverview.register_type("salt-ponds", {
     types = {Type.salt_pond},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local building_details = get_building_details(entry)
+        flow.add {type = "label", caption = {"sosciencity.fraction", entry[EK.water_tiles], building_details.water_tiles}}
+    end
 })

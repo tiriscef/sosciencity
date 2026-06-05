@@ -92,6 +92,15 @@ Gui.DetailsView.register_type(Type.dumpster, {creater = create_dumpster, updater
 
 Gui.BuildingOverview.register_type("dumpsters", {
     types = {Type.dumpster},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local inhabitant_count = 0
+        for _, caste in pairs(Castes.all) do
+            for _, house in Neighborhood.iterate_type(entry, caste.type) do
+                inhabitant_count = inhabitant_count + house[EK.inhabitants]
+            end
+        end
+        flow.add {type = "label", caption = {"sosciencity.display-dependants", inhabitant_count}}
+    end
 })

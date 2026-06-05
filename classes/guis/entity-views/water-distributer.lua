@@ -128,6 +128,13 @@ Gui.DetailsView.register_type(
 
 Gui.BuildingOverview.register_type("water-distributers", {
     types = {Type.water_distributer},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local water = entry[EK.water_name]
+        if water then
+            local amount = floor(entry[EK.entity].get_fluid_count(water))
+            flow.add {type = "label", caption = display_fluid_stack(water, amount)}
+        end
+    end
 })

@@ -144,7 +144,7 @@ Gui.DetailsView.register_type(Type.farm, {creater = create_farm, updater = updat
 
 Gui.BuildingOverview.register_type("farms", {
     types = {Type.farm},
-    layout = "list",
+    layout = "grid",
     stats_creator = function(flow, entry)
         Gui.BuildingOverview.generic_stats_creator(flow, entry)
         local recipe = entry[EK.entity].get_recipe()

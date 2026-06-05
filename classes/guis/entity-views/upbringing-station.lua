@@ -225,6 +225,16 @@ Gui.DetailsView.register_type(
 
 Gui.BuildingOverview.register_type("upbringing-stations", {
     types = {Type.upbringing_station},
-    layout = "list",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    layout = "grid",
+    stats_creator = function(flow, entry)
+        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        local mode = entry[EK.education_mode]
+        if mode and mode ~= Type.null then
+            flow.add {type = "label", caption = type_definitions[mode].localised_name}
+        end
+        local class_count = #entry[EK.classes]
+        if class_count > 0 then
+            flow.add {type = "label", caption = {"sosciencity.show-class-count", class_count}}
+        end
+    end
 })
