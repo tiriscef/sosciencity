@@ -1,6 +1,6 @@
 #!/bin/bash
 
-timeout 5s /opt/factorio/bin/x64/factorio \
+timeout 10s /opt/factorio/bin/x64/factorio \
     --start-server-load-scenario "sosciencity/export_sosciencity" \
     --server-settings "$CONFIG/server-settings.json" \
     --mod-directory "$MODS" \

@@ -1,6 +1,9 @@
 {
   "mods": [
     {"name": "base",                 "enabled": true},
+    {"name": "space-age",            "enabled": false},
+    {"name": "quality",              "enabled": false},
+    {"name": "elevated-rails",       "enabled": false},
     {"name": "sosciencity-graphics", "enabled": true},
     {"name": "sosciencity",          "enabled": true},
     {"name": "sosciencity-debug",    "enabled": true}
