@@ -96,7 +96,7 @@ Diseases.values = {
         name = "biter-bite",
         cure_items = {
             ["bandage"] = 2,
-            ["antibiotics"] = 1,
+            ["antimicrobials"] = 1,
             ["antitoxin"] = 1
         },
         curing_workload = 1,
@@ -186,7 +186,7 @@ Diseases.values = {
     [2001] = {
         name = "yeast-infection",
         cure_items = {
-            ["antimycotics"] = 2
+            ["antimicrobials"] = 2
         },
         curing_workload = 2,
         natural_recovery = 3 * Time.nauvis_day,
@@ -198,7 +198,7 @@ Diseases.values = {
     [2002] = {
         name = "riverhorse-like-flu",
         cure_items = {
-            ["antibiotics"] = 2
+            ["antimicrobials"] = 2
         },
         curing_workload = 1,
         lethality = 0.01,
@@ -243,11 +243,25 @@ Diseases.values = {
         work_effectivity = 0.2,
         reports_per_treatment = 0.5
     },
+    [2007] = {
+        name = "food-allergy",
+        cure_items = {
+            ["antihistamines"] = 1,
+            ["activated-carbon"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_week,
+        escalation = "anaphylaxis",
+        escalation_probability = 0.35,
+        work_effectivity = 0.65,
+        reports_per_treatment = 1
+    },
     -- 3000+: primarily escalation diseases
     [3000] = {
         name = "lung-infection",
         cure_items = {
-            ["antibiotics"] = 1,
+            ["antimicrobials"] = 1,
             ["analgesics"] = 1
         },
         curing_workload = 5,
@@ -259,13 +273,26 @@ Diseases.values = {
     [3001] = {
         name = "necrosis",
         cure_items = {
-            ["antibiotics"] = 2,
+            ["antimicrobials"] = 2,
             ["potent-analgesics"] = 1,
             ["bandage"] = 1
         },
         curing_workload = 10,
         lethality = 0.35,
         natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3002] = {
+        name = "anaphylaxis",
+        cure_items = {
+            ["antihistamines"] = 2,
+            ["antitoxin"] = 1
+        },
+        curing_workload = 3,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.85,
+        natural_recovery = 1 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 2
     },
@@ -332,11 +359,32 @@ Diseases.values = {
         work_effectivity = 0.3,
         reports_per_treatment = 1
     },
+    [4005] = {
+        name = "environmental-allergy",
+        cure_items = {
+            ["antihistamines"] = 3
+        },
+        curing_workload = 2,
+        work_effectivity = 0.8,
+        reports_per_treatment = 1
+    },
+    [4006] = {
+        name = "autoimmune-joint-disease",
+        cure_items = {
+            ["antihistamines"] = 2,
+            ["analgesics"] = 2
+        },
+        curing_workload = 5,
+        lethality = 0.6,
+        natural_recovery = 3 * Time.nauvis_month,
+        work_effectivity = 0.45,
+        reports_per_treatment = 2
+    },
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
         --cure_items = {
-        --["antibiotics"] = 1
+        --["antimicrobials"] = 1
         --},
         curing_workload = 2,
         lethality = 0.03,
@@ -448,7 +496,7 @@ Diseases.values = {
     [11001] = {
         name = "salmonella",
         cure_items = {
-            ["antibiotics"] = 1
+            ["antimicrobials"] = 1
         },
         curing_workload = 2,
         lethality = 0.15,
@@ -460,7 +508,7 @@ Diseases.values = {
         name = "botulism",
         cure_items = {
             ["antitoxin"] = 1,
-            ["antibiotics"] = 1
+            ["antimicrobials"] = 1
         },
         curing_workload = 3,
         lethality = 0.4,
@@ -471,7 +519,7 @@ Diseases.values = {
     [11003] = {
         name = "listeriosis",
         cure_items = {
-            ["antibiotics"] = 2
+            ["antimicrobials"] = 2
         },
         curing_workload = 3,
         lethality = 0.25,
@@ -482,7 +530,7 @@ Diseases.values = {
     [11004] = {
         name = "hepatitis-a",
         cure_items = {
-            ["antivirals"] = 2
+            ["antimicrobials"] = 2
         },
         curing_workload = 5,
         lethality = 0.1,
@@ -510,6 +558,17 @@ Diseases.values = {
     -- 21000+: primarily office work accident group
 
     -- 22000+: primarily moderate work accident group
+    [22000] = {
+        name = "allergic-reaction",
+        cure_items = {
+            ["antihistamines"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0.5,
+        reports_per_treatment = 0.5
+    },
 
     -- 30000+: fishing hut accident group
     [30000] = {
@@ -537,7 +596,7 @@ Diseases.values = {
         name = "animal-scratch",
         cure_items = {
             ["bandage"] = 1,
-            ["antibiotics"] = 1
+            ["antimicrobials"] = 1
         },
         curing_workload = 1,
         natural_recovery = 3 * Time.nauvis_day,
@@ -593,6 +652,7 @@ Diseases.categories = {
         ["diarrhea"] = 100,
         ["exhaustion"] = 500,
         ["kidney-stone"] = 300,
+        ["food-allergy"] = 100,
         ["lung-infection"] = 10,
         ["necrosis"] = 10,
         ["weak-heart"] = 5
@@ -619,7 +679,9 @@ Diseases.categories = {
         ["limb-loss"] = 100,
         ["weak-heart"] = 100,
         ["gender-dysphoria"] = 50,
-        ["huntingtons"] = 100
+        ["huntingtons"] = 100,
+        ["environmental-allergy"] = 300,
+        ["autoimmune-joint-disease"] = 50
     },
     [DiseaseCategory.zoonosis] = {
         ["real-riverhorse-flu"] = 100
@@ -659,10 +721,12 @@ Diseases.categories = {
         ["hematoma"] = 200,
         ["exhaustion"] = 400,
         ["depression"] = 50,
-        ["burnout"] = 50
+        ["burnout"] = 50,
+        ["allergic-reaction"] = 200
     },
     [DiseaseCategory.moderate_work] = {
-        ["limb-loss"] = 100 -- TODO: placeholder
+        ["limb-loss"] = 100, -- TODO: placeholder
+        ["allergic-reaction"] = 200
     },
     [DiseaseCategory.fishing_hut] = {
         ["nausea"] = 200,

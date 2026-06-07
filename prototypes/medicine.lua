@@ -44,12 +44,8 @@ local medicine_items = {
         sprite_variations = {name = "anesthetics-pile", count = 3}
     },
     {
-        name = "antibiotics",
-        sprite_variations = {name = "antibiotics-pile", count = 3}
-    },
-    {
-        name = "antimycotics",
-        sprite_variations = {name = "antimycotics-pile", count = 3}
+        name = "antimicrobials",
+        use_placeholder_icon = true
     },
     {
         name = "vitamine-supplements",
@@ -69,10 +65,6 @@ local medicine_items = {
     },
     {
         name = "antitoxin",
-        use_placeholder_icon = true
-    },
-    {
-        name = "antivirals",
         use_placeholder_icon = true
     },
     {
@@ -109,7 +101,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 4,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "medbay"
 }
@@ -126,7 +117,6 @@ Tirislib.RecipeGenerator.create {
     name = "activated-carbon-from-sawdust",
     category = "sosciencity-pharma",
     energy_required = 5,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "activated-carbon-filtering",
     auto_recycle = false
@@ -144,7 +134,6 @@ Tirislib.RecipeGenerator.create {
     name = "activated-carbon-from-sugar",
     category = "sosciencity-pharma",
     energy_required = 5,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "food-processing",
     auto_recycle = false
@@ -162,7 +151,6 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-pharma",
     energy_required = 10,
     default_theme_level = 1,
-    allow_productivity = true,
     unlock = "medbay"
 }
 
@@ -179,7 +167,6 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-pharma",
     energy_required = 20,
     default_theme_level = 4,
-    allow_productivity = true,
     unlock = "intensive-care"
 }
 
@@ -193,7 +180,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 10,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "medbay",
     auto_recycle = false
@@ -225,7 +211,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "psychiatry",
     auto_recycle = false
@@ -242,7 +227,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "medbay",
     auto_recycle = false
@@ -259,7 +243,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "intensive-care",
     auto_recycle = false
@@ -276,7 +259,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 5,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "intensive-care",
     auto_recycle = false
@@ -284,36 +266,49 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     results = {
-        {type = "item", name = "antibiotics", amount = 1}
+        {type = "item", name = "antimicrobials", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "amylum", amount = 1},
-        {type = "item", name = "sugar", amount = 3},
-        {type = "fluid", name = "flinnum", amount = 10}
+        {type = "item", name = "gingil-hemp", amount = 5},
+        {type = "item", name = "salt", amount = 5},
+        {type = "fluid", name = "ethanol", amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "hospital",
+    unlock = "medbay",
     auto_recycle = false
 }
 
 Tirislib.RecipeGenerator.create {
     results = {
-        {type = "item", name = "antimycotics", amount = 1}
+        {type = "item", name = "antimicrobials", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "zetorn", amount = 5},
-        {type = "fluid", name = "ethanol", amount = 10},
-        {type = "fluid", name = "clean-water", amount = 10},
-        {type = "fluid", name = "fatty-oil", amount = 10}
+        {type = "item", name = "amylum", amount = 1},
+        {type = "item", name = "sugar", amount = 10},
+        {type = "fluid", name = "flinnum", amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "hospital",
+    unlock = "basic-biotechnology",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antimicrobials", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "nucleobases", amount = 4},
+        {type = "fluid", name = "flinnum", amount = 20},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 5,
+    do_index_fluid_ingredients = true,
+    unlock = "intensive-care",
     auto_recycle = false
 }
 
@@ -328,7 +323,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     unlock = "medbay",
     auto_recycle = false
 }
@@ -344,7 +338,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "hospital",
     auto_recycle = false
@@ -361,7 +354,22 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "medbay",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antihistamines", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "wild-algae", amount = 2},
+        {type = "item", name = "amylum", amount = 1},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 3,
     do_index_fluid_ingredients = true,
     unlock = "medbay",
     auto_recycle = false
@@ -378,7 +386,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 5,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "hospital",
     auto_recycle = false
@@ -395,24 +402,6 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 5,
-    allow_productivity = true,
-    do_index_fluid_ingredients = true,
-    unlock = "hospital",
-    auto_recycle = false
-}
-
-Tirislib.RecipeGenerator.create {
-    results = {
-        {type = "item", name = "antivirals", amount = 1}
-    },
-    ingredients = {
-        {type = "item", name = "nucleobases", amount = 1},
-        {type = "fluid", name = "flinnum", amount = 20},
-        {type = "fluid", name = "ethanol", amount = 10}
-    },
-    category = "sosciencity-pharma",
-    energy_required = 5,
-    allow_productivity = true,
     do_index_fluid_ingredients = true,
     unlock = "hospital",
     auto_recycle = false
