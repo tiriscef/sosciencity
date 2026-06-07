@@ -74,6 +74,10 @@ local medicine_items = {
     {
         name = "antivirals",
         use_placeholder_icon = true
+    },
+    {
+        name = "antihistamines",
+        use_placeholder_icon = true
     }
 }
 

@@ -291,13 +291,9 @@ Diseases.values = {
     [4001] = {
         name = "gender-dysphoria",
         cure_items = {
-            ["edited-huwan-genome"] = 1,
-            ["blank-dna-virus"] = 1,
-            ["nucleobases"] = 1,
-            ["thermostable-dna-polymerase"] = 1
+            ["huwan-hormones"] = 3
         },
         curing_workload = 10,
-        --curing_facility = Type.gene_clinic,
         work_effectivity = 0.7,
         reports_per_treatment = 2
     },
@@ -526,6 +522,16 @@ Diseases.values = {
         work_effectivity = 0.25,
         reports_per_treatment = 0.25
     },
+    [30001] = {
+        name = "swimmers-itch",
+        cure_items = {
+            ["antihistamines"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 4 * Time.nauvis_day,
+        work_effectivity = 0.5,
+        reports_per_treatment = 0.25
+    },
     -- 31000+: hunting hut accident group
     [31000] = {
         name = "animal-scratch",
@@ -659,7 +665,13 @@ Diseases.categories = {
         ["limb-loss"] = 100 -- TODO: placeholder
     },
     [DiseaseCategory.fishing_hut] = {
-        ["nausea"] = 100
+        ["nausea"] = 200,
+        ["sunburn"] = 200,
+        ["deep-cuts"] = 150,
+        ["animal-scratch"] = 300,
+        ["water-poisoning"] = 100,
+        ["joint-dislocation"] = 100,
+        ["swimmers-itch"] = 150
     },
     [DiseaseCategory.hunting_hut] = {
         ["biter-bite"] = 50,
