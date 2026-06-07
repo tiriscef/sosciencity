@@ -8,6 +8,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 OUTPUT_DIR="sosciencity/0snapshot"
+rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR"
 
 echo "Building Docker image..."

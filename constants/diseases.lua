@@ -109,10 +109,13 @@ Diseases.values = {
     },
     [6] = {
         name = "joint-dislocation",
-        curing_workload = 1,
-        natural_recovery = 1 * Time.nauvis_day,
+        cure_items = {
+            ["analgesics"] = 1
+        },
+        curing_workload = 2,
+        natural_recovery = 1 * Time.nauvis_week,
         escalation = "limb-loss",
-        escalation_probability = 0.1,
+        escalation_probability = 0.2,
         work_effectivity = 0,
         reports_per_treatment = 0.5
     },
@@ -569,6 +572,30 @@ Diseases.values = {
         work_effectivity = 0.5,
         reports_per_treatment = 0.5
     },
+    [22001] = {
+        name = "repetitive-strain-injury",
+        cure_items = {
+            ["analgesics"] = 1
+        },
+        curing_workload = 2,
+        natural_recovery = 2 * Time.nauvis_week,
+        escalation = "joint-dislocation",
+        escalation_probability = 0.2,
+        work_effectivity = 0.6,
+        reports_per_treatment = 1
+    },
+    [22002] = {
+        name = "chemical-sensitivity",
+        cure_items = {
+            ["antihistamines"] = 1
+        },
+        curing_workload = 2,
+        natural_recovery = 1 * Time.nauvis_week,
+        escalation = "environmental-allergy",
+        escalation_probability = 0.25,
+        work_effectivity = 0.7,
+        reports_per_treatment = 0.5
+    },
 
     -- 30000+: fishing hut accident group
     [30000] = {
@@ -725,8 +752,12 @@ Diseases.categories = {
         ["allergic-reaction"] = 200
     },
     [DiseaseCategory.moderate_work] = {
-        ["limb-loss"] = 100, -- TODO: placeholder
-        ["allergic-reaction"] = 200
+        ["allergic-reaction"] = 200,
+        ["repetitive-strain-injury"] = 200,
+        ["chemical-sensitivity"] = 100,
+        ["exhaustion"] = 300,
+        ["headaches"] = 200,
+        ["hematoma"] = 200
     },
     [DiseaseCategory.fishing_hut] = {
         ["nausea"] = 200,

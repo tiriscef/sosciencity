@@ -45,7 +45,7 @@ local medicine_items = {
     },
     {
         name = "antimicrobials",
-        use_placeholder_icon = true
+        sprite_variations = {name = "antimicrobials-pile", count = 3}
     },
     {
         name = "vitamine-supplements",
@@ -65,7 +65,7 @@ local medicine_items = {
     },
     {
         name = "antitoxin",
-        use_placeholder_icon = true
+        sprite_variations = {name = "antitoxin-pile", count = 3}
     },
     {
         name = "antihistamines",
