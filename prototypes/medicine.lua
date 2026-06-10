@@ -26,7 +26,7 @@ local medicine_items = {
     },
     {name = "isotonic-saline-solution"},
     {name = "blood-bag"},
-    {name = "engineer-spinal-fluid", use_placeholder_icon = true},
+    {name = "engineer-spinal-fluid"},
     {
         name = "psychotropics",
         sprite_variations = {name = "psychotropics-pile", count = 3}
@@ -49,15 +49,15 @@ local medicine_items = {
     },
     {
         name = "vitamine-supplements",
-        use_placeholder_icon = true
+        sprite_variations = {name = "vitamine-supplements-pile", count = 3}
     },
     {
         name = "nutritional-supplements",
-        use_placeholder_icon = true
+        sprite_variations = {name = "nutritional-supplements-on-belt", count = 3}
     },
     {
         name = "huwan-hormones",
-        use_placeholder_icon = true
+        sprite_variations = {name = "huwan-hormones-pile", count = 3}
     },
     {
         name = "antiemetics",
@@ -69,7 +69,7 @@ local medicine_items = {
     },
     {
         name = "antihistamines",
-        use_placeholder_icon = true
+        sprite_variations = {name = "antihistamines-pile", count = 3}
     }
 }
 
@@ -83,7 +83,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "surgery-instruments", amount = 1}
     },
     ingredients = {
-        {theme = "plating", amount = 2},
+        {theme = "plating",  amount = 2},
         {theme = "plating2", amount = 2},
     },
     category = "sosciencity-handcrafting",
@@ -95,9 +95,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "surgery-instruments", amount = 2}
     },
     ingredients = {
-        {theme = "plating", amount = 2},
+        {theme = "plating",  amount = 2},
         {theme = "plating2", amount = 2},
-        {type = "fluid", name = "steam", amount = 200}
+        {type = "fluid",     name = "steam", amount = 200}
     },
     category = "sosciencity-pharma",
     energy_required = 4,
@@ -110,9 +110,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "activated-carbon", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "sawdust", amount = 10},
-        {type = "item", name = "salt", amount = 10},
-        {type = "fluid", name = "steam", amount = 300}
+        {type = "item",  name = "sawdust", amount = 10},
+        {type = "item",  name = "salt",    amount = 10},
+        {type = "fluid", name = "steam",   amount = 300}
     },
     name = "activated-carbon-from-sawdust",
     category = "sosciencity-pharma",
@@ -127,8 +127,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "activated-carbon", amount = 2}
     },
     ingredients = {
-        {type = "item", name = "sugar", amount = 10},
-        {type = "item", name = "salt", amount = 10},
+        {type = "item",  name = "sugar", amount = 10},
+        {type = "item",  name = "salt",  amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
     name = "activated-carbon-from-sugar",
@@ -144,8 +144,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "artificial-limb", amount = 1}
     },
     ingredients = {
-        {theme = "framework", amount = 2},
-        {theme = "wiring", amount = 1},
+        {theme = "framework",   amount = 2},
+        {theme = "wiring",      amount = 1},
         {theme = "electronics", amount = 1}
     },
     category = "sosciencity-pharma",
@@ -159,10 +159,10 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "artificial-heart", amount = 1}
     },
     ingredients = {
-        {theme = "casing", amount = 1},
-        {theme = "wiring", amount = 2},
+        {theme = "casing",      amount = 1},
+        {theme = "wiring",      amount = 2},
         {theme = "electronics", amount = 1},
-        {theme = "battery", amount = 1}
+        {theme = "battery",     amount = 1}
     },
     category = "sosciencity-pharma",
     energy_required = 20,
@@ -175,7 +175,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "bandage", amount = 15}
     },
     ingredients = {
-        {type = "item", name = "cloth", amount = 10},
+        {type = "item",  name = "cloth", amount = 10},
         {type = "fluid", name = "steam", amount = 300}
     },
     category = "sosciencity-pharma",
@@ -191,7 +191,7 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10},
-        {type = "item", name = "salt", amount = 1}
+        {type = "item",  name = "salt",        amount = 1}
     },
     category = "sosciencity-pharma",
     energy_required = 2,
@@ -205,9 +205,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "psychotropics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "phytofall-blossom", amount = 2},
-        {type = "item", name = "amylum", amount = 1},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "phytofall-blossom", amount = 2},
+        {type = "item",  name = "amylum",            amount = 1},
+        {type = "fluid", name = "ethanol",           amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -221,9 +221,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "analgesics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "gingil-hemp", amount = 1},
-        {type = "item", name = "amylum", amount = 1},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "gingil-hemp", amount = 1},
+        {type = "item",  name = "amylum",      amount = 1},
+        {type = "fluid", name = "ethanol",     amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -237,9 +237,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "potent-analgesics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "mold", amount = 2},
+        {type = "item",  name = "mold",      amount = 2},
         {type = "fluid", name = "fatty-oil", amount = 20},
-        {type = "fluid", name = "ethanol", amount = 15}
+        {type = "fluid", name = "ethanol",   amount = 15}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -253,9 +253,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "anesthetics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "molasses", amount = 5},
-        {type = "fluid", name = "pemtenn", amount = 20},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "molasses", amount = 5},
+        {type = "fluid", name = "pemtenn",  amount = 20},
+        {type = "fluid", name = "ethanol",  amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 5,
@@ -269,9 +269,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antimicrobials", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "gingil-hemp", amount = 5},
-        {type = "item", name = "salt", amount = 5},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "gingil-hemp", amount = 5},
+        {type = "item",  name = "salt",        amount = 5},
+        {type = "fluid", name = "ethanol",     amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -285,8 +285,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antimicrobials", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "amylum", amount = 1},
-        {type = "item", name = "sugar", amount = 10},
+        {type = "item",  name = "amylum",  amount = 1},
+        {type = "item",  name = "sugar",   amount = 10},
         {type = "fluid", name = "flinnum", amount = 10}
     },
     category = "sosciencity-pharma",
@@ -301,9 +301,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antimicrobials", amount = 2}
     },
     ingredients = {
-        {type = "item", name = "nucleobases", amount = 4},
-        {type = "fluid", name = "flinnum", amount = 20},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "nucleobases", amount = 4},
+        {type = "fluid", name = "flinnum",     amount = 20},
+        {type = "fluid", name = "ethanol",     amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 5,
@@ -318,7 +318,7 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {type = "item", name = "proteins", amount = 1},
-        {type = "item", name = "amylum", amount = 2},
+        {type = "item", name = "amylum",   amount = 2},
         {type = "item", name = "molasses", amount = 1}
     },
     category = "sosciencity-pharma",
@@ -332,9 +332,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "vitamine-supplements", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "liontooth", amount = 2},
-        {type = "item", name = "wild-algae", amount = 2},
-        {type = "fluid", name = "ethanol", amount = 15}
+        {type = "item",  name = "liontooth",  amount = 2},
+        {type = "item",  name = "wild-algae", amount = 2},
+        {type = "fluid", name = "ethanol",    amount = 15}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -348,9 +348,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antiemetics", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "ignivern", amount = 2},
-        {type = "item", name = "amylum", amount = 1},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "ignivern", amount = 2},
+        {type = "item",  name = "amylum",   amount = 1},
+        {type = "fluid", name = "ethanol",  amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -364,9 +364,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antihistamines", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "wild-algae", amount = 2},
-        {type = "item", name = "amylum", amount = 1},
-        {type = "fluid", name = "ethanol", amount = 10}
+        {type = "item",  name = "wild-algae", amount = 2},
+        {type = "item",  name = "amylum",     amount = 1},
+        {type = "fluid", name = "ethanol",    amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 3,
@@ -380,9 +380,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "huwan-hormones", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "proteins", amount = 2},
-        {type = "fluid", name = "pemtenn", amount = 20},
-        {type = "fluid", name = "ethanol", amount = 5}
+        {type = "item",  name = "proteins", amount = 2},
+        {type = "fluid", name = "pemtenn",  amount = 20},
+        {type = "fluid", name = "ethanol",  amount = 5}
     },
     category = "sosciencity-pharma",
     energy_required = 5,
@@ -396,9 +396,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antitoxin", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "blood-bag", amount = 1},
-        {type = "item", name = "agarose", amount = 2},
-        {type = "fluid", name = "ethanol", amount = 15}
+        {type = "item",  name = "blood-bag", amount = 1},
+        {type = "item",  name = "agarose",   amount = 2},
+        {type = "fluid", name = "ethanol",   amount = 15}
     },
     category = "sosciencity-pharma",
     energy_required = 5,
@@ -432,7 +432,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 3,
     ingredients = {
         {type = "item", name = "surgery-instruments", amount = 1},
-        {type = "item", name = "analgesics", amount = 1}
+        {type = "item", name = "analgesics",          amount = 1}
     },
     results = {
         {type = "item", name = "engineer-spinal-fluid", amount = 5}
@@ -583,7 +583,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sosciencity-medical-kit", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "blood-bag", amount = 1},
+        {type = "item", name = "blood-bag",   amount = 1},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
     category = "sosciencity-pharma",
@@ -595,9 +595,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sosciencity-medical-kit", amount = 5}
     },
     ingredients = {
-        {type = "item", name = "blood-bag", amount = 1},
+        {type = "item", name = "blood-bag",  amount = 1},
         {type = "item", name = "analgesics", amount = 1},
-        {type = "item", name = "bandage", amount = 5}
+        {type = "item", name = "bandage",    amount = 5}
     },
     category = "sosciencity-pharma",
     unlock = "medbay",

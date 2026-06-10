@@ -50,7 +50,7 @@ Tirislib.Entity.create {
                 scale = 6/7
             },
             {
-                filename = "__sosciencity-graphics__/graphics/icon/antibiotics.png",
+                filename = "__sosciencity-graphics__/graphics/icon/antimicrobials.png",
                 priority = "high",
                 width = 64,
                 height = 64,
