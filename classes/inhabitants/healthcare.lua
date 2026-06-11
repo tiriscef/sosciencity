@@ -33,8 +33,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << disease side effects >>
 
--- XXX: this part has magic numbers - but at the moment I don't know how to avoid them without overcomplicating stuff
 local special_sideeffect_fns = {
+    -- 4001 = gender dysphoria
     [4001] = function(entry, count, _)
         local gender_group = entry[EK.genders]
 

@@ -9,12 +9,12 @@ local Assert = Tirislib.Testing.Assert
 
 local Hospital = Entity.Hospital
 
--- Disease 6 (joint-dislocation): treatable, no cure items, workload 1 - ideal for slot/claim tests
--- Disease 3 (burnt-skin): treatable, cure_items = {bandage = 2}, workload 1
--- Disease 7 (hematoma): is_treatable = false
-local DISEASE_NO_ITEMS = 6
-local DISEASE_WITH_ITEMS = 3
-local DISEASE_UNTREATABLE = 7
+-- Disease 99001 (test-disease-simple): treatable, no cure items, workload 1
+-- Disease 99002 (test-disease-with-items): treatable, cure_items = {bandage = 1}, workload 1
+-- Disease 99003 (test-disease-untreatable): is_treatable = false
+local DISEASE_NO_ITEMS = 99001
+local DISEASE_WITH_ITEMS = 99002
+local DISEASE_UNTREATABLE = 99003
 
 local disease_no_items = Diseases.values[DISEASE_NO_ITEMS]
 local disease_with_items = Diseases.values[DISEASE_WITH_ITEMS]

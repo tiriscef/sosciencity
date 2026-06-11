@@ -836,6 +836,28 @@ Diseases.disease_causes = {
     [DiseaseCategory.hunting_hut] = DiseasedCause.workplace_accident
 }
 
+-- test diseases: only present when sosciencity-debug is active
+if DEBUG then
+    Diseases.values[99001] = {
+        name = "test-disease-simple",
+        curing_workload = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 0
+    }
+    Diseases.values[99002] = {
+        name = "test-disease-with-items",
+        cure_items = {["bandage"] = 1},
+        curing_workload = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 0
+    }
+    Diseases.values[99003] = {
+        name = "test-disease-untreatable",
+        is_treatable = false,
+        work_effectivity = 0
+    }
+end
+
 -- postprocessing
 do
     local function get_percentage(n)
