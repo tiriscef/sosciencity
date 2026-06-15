@@ -502,6 +502,18 @@ function Assert.not_nil(value, message)
     end
 end
 
+--- Asserts that a value is an empty table (no keys).
+--- @param tbl table The table to check
+--- @param message string? Optional failure message
+function Assert.is_table_empty(tbl, message)
+    local results = get_results()
+    log_assert_execution(results)
+
+    if type(tbl) ~= "table" or next(tbl) ~= nil then
+        log_failed_assert(results, format_failure(message, "an empty table", get_string_representation(tbl)))
+    end
+end
+
 --- Asserts that a value is an integer number.
 --- @param value any The value to check
 --- @param message string? Optional failure message
@@ -511,6 +523,20 @@ function Assert.is_integer(value, message)
 
     if type(value) ~= "number" or math.floor(value) ~= value then
         log_failed_assert(results, format_failure(message, "an integer", get_string_representation(value)))
+    end
+end
+
+--- Asserts that a value has a Factorio prototype type (e.g. "mining_drill", "furnace").
+--- @param value any The value to check
+--- @param type_name string The expected type string
+--- @param message string? Optional failure message
+function Assert.is_instance_of(value, type_name, message)
+    local results = get_results()
+    log_assert_execution(results)
+
+    if type(value) ~= "table" or value.type ~= type_name then
+        log_failed_assert(results,
+            format_failure(message, "a " .. type_name, get_string_representation(value)))
     end
 end
 
@@ -566,6 +592,23 @@ function Assert.less_than(value, threshold, message)
     end
 end
 
+--- Asserts that two numbers are within an epsilon of each other.
+--- @param actual number The actual value
+--- @param expected number The expected value
+--- @param epsilon number The maximum allowed difference (must be >= 0)
+--- @param message string? Optional failure message
+function Assert.is_number_close(actual, expected, epsilon, message)
+    local results = get_results()
+    log_assert_execution(results)
+
+    if math.abs(actual - expected) > epsilon then
+        log_failed_assert(results,
+            format_failure(message,
+                string.format("%.6g (within %.6g)", expected, epsilon),
+                get_string_representation(actual)))
+    end
+end
+
 --- Asserts that a function throws an error when called.
 --- @param fn function The function that should error
 --- @param message string? Optional failure message
@@ -576,6 +619,20 @@ function Assert.throws(fn, message)
     local ok, _ = pcall(fn)
     if ok then
         log_failed_assert(results, message or "Expected function to throw an error, but it returned successfully")
+    end
+end
+
+--- Asserts that a function does not throw an error when called.
+--- @param fn function The function that should succeed
+--- @param message string? Optional failure message
+function Assert.does_not_throw(fn, message)
+    local results = get_results()
+    log_assert_execution(results)
+
+    local ok, err = pcall(fn)
+    if not ok then
+        log_failed_assert(results,
+            format_failure(message, "no error", string.format("%s", err)))
     end
 end
 
