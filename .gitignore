@@ -1,8 +1,10 @@
 /0concept/
 /0snapshot/
+/0shape/
 /human-readable-wiki-pages/MarkupToFactorioLocaleConverter.exe
 /human-readable-wiki-pages/*-code
 /human-readable-wiki-pages/*-locale
 /human-readable-wiki-pages/__pycache__/
 /.vscode/
 /api-documentation/
+/api-documentation-2.0/
