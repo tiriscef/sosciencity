@@ -11,7 +11,7 @@ for tech_name, item_name in pairs(Unlocks.by_item_acquisition) do
 
     local research_trigger
     if mine_entity_triggers[item_name] then
-        research_trigger = {type = "mine-entity", entity = mine_entity_triggers[item_name]}
+        research_trigger = {type = "mine-entity", entities = {mine_entity_triggers[item_name]}}
     else
         research_trigger = {type = "craft-item", item = item_name, count = 1}
     end
