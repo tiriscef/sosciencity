@@ -316,7 +316,7 @@ Tirislib.Testing.add_test_case(
     "integration|integration.register",
     function()
         local entity = Helpers.create_unregistered(test_surface, "test-assembling-machine", {0, 0})
-        entity.active = false
+        entity.disabled_by_script = true
 
         local entry = Register.add(entity)
 
@@ -354,7 +354,7 @@ Tirislib.Testing.add_test_case(
         Assert.is_nil(entry[EK.externally_owned], "should start unflagged")
 
         -- Simulate another mod disabling the entity after registration
-        entry[EK.entity].active = false
+        entry[EK.entity].disabled_by_script = true
 
         Assert.is_true(Register.is_externally_owned(entry), "runtime divergence should flag the entry")
         Assert.is_true(entry[EK.externally_owned], "flag should be persisted on the entry")
@@ -369,11 +369,11 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
 
-        entry[EK.entity].active = false
+        entry[EK.entity].disabled_by_script = true
         Assert.is_true(Register.is_externally_owned(entry), "should flag on first divergence")
 
         -- External mod re-enables; flag must not auto-clear
-        entry[EK.entity].active = true
+        entry[EK.entity].disabled_by_script = false
         entry[EK.active] = true
 
         Assert.is_true(Register.is_externally_owned(entry), "flag should remain set (sticky)")

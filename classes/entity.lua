@@ -91,7 +91,7 @@ local function set_crafting_machine_performance(entry, performance, productivity
     local is_active = performance > 0.19999
 
     entry[EK.active] = is_active
-    entity.active = is_active
+    entity.disabled_by_script = not is_active
     Subentities.set_active(entry, is_active)
 
     if is_active then
@@ -115,7 +115,7 @@ local function set_active(entry, active, inactive_custom_status)
     local stored = entry[EK.active]
     if stored ~= active then
         entry[EK.active] = active
-        entry[EK.entity].active = active
+        entry[EK.entity].disabled_by_script = not active
         Subentities.set_active(entry, active)
 
         if active == false then

@@ -2,7 +2,7 @@ Events.set_on_init_handler(
     function()
         for _, surface in pairs(game.surfaces) do
             for _, entity in pairs(surface.find_entities_filtered {name = "fishwhirl"}) do
-                entity.active = false
+                entity.disabled_by_script = true
             end
         end
     end
@@ -11,6 +11,6 @@ Events.set_on_init_handler(
 Events.set_script_trigger_handler(
     "sosciencity-fishwhirl-creation",
     function(event)
-        event.source_entity.active = false
+        event.source_entity.disabled_by_script = true
     end
 )

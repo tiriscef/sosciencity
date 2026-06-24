@@ -452,7 +452,9 @@ local function consume_water(distributers, amount)
     for _, distributer in pairs(distributers) do
         local water_name = distributer[EK.water_name]
 
-        local consumed = distributer[EK.entity].remove_fluid {name = water_name, amount = to_consume}
+        -- the distributer is a storage-tank, so its single fluidbox has index 1
+        local removed = distributer[EK.entity].remove_fluid(1, to_consume)
+        local consumed = removed and removed.amount or 0
         log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[EK.water_quality]
         to_consume = to_consume - consumed

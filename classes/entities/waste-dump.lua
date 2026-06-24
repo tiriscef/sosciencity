@@ -127,7 +127,7 @@ local function update_waste_dump(entry, delta_ticks)
         garbagify(inventory, to_garbagify, non_garbage_items, stored_garbage)
     end
 
-    entry[EK.entity].minable = (garbage_count < 1000)
+    entry[EK.entity].minable_flag = (garbage_count < 1000)
 
     --- Garbagified items are stored and can exceed the capacity. This is not ideal but better than stopping the garbagification progress or spilling items.
     --- We try to output items if the capacity is exceeded.
