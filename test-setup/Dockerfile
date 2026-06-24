@@ -1,4 +1,4 @@
-FROM factoriotools/factorio
+FROM factoriotools/factorio:2.1
 
 # Build context is the directory containing sosciencity/ and sosciencity-graphics/ as siblings.
 # Local:  cd mods/ && docker build -t sosciencity-test -f sosciencity/test-setup/Dockerfile .

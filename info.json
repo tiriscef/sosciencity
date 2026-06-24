@@ -5,7 +5,7 @@
     "author": "tiriscef, Johanna Spieker, _traum",
     "contact": "tiriscef@protonmail.com",
     "homepage": "https://forums.factorio.com/viewtopic.php?f=190&t=75057",
-    "factorio_version": "2.0",
+    "factorio_version": "2.1",
     "dependencies": [
         "sosciencity-graphics >= 0.0.12",
         "?enable-all-feature-flags",
