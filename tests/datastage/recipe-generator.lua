@@ -904,7 +904,6 @@ Tirislib.Testing.add_test_case(
         }
 
         Assert.equals(recipe.localised_name[1], "my-wrapper-key")
-        Assert.is_false(recipe.show_amount_in_title)
     end,
     setup,
     teardown

@@ -213,7 +213,7 @@ end
 ---@field do_index_fluid_ingredients? boolean When true, fluid ingredient entries receive an explicit `fluidbox_index` after creation.
 ---@field do_index_fluid_results? boolean When true, fluid result entries receive an explicit `fluidbox_index` after creation.
 ---@field no_auto_catalyst? boolean When true, skips automatic catalyst detection. By default any result that also appears as an ingredient gets `ignored_by_productivity` set to `min(ingredient_amount, result_amount)`.
----@field localised_name_wrapper? string Locale key used to wrap the recipe name. Wraps `localised_name` if set, otherwise wraps the product's derived name. Result: `{wrapper, inner_name}`. Defaults `show_amount_in_title` to false unless explicitly set to true.
+---@field localised_name_wrapper? string Locale key used to wrap the recipe name. Wraps `localised_name` if set, otherwise wraps the product's derived name. Result: `{wrapper, inner_name}`.
 ---@field category? string Single category string, legacy support. Ignored when a `categories` array is given; otherwise auto-detected if both omitted.
 
 ---------------------------------------------------------------------------------------------------
@@ -319,10 +319,6 @@ local function derive_fields_from_product(prototype, product_entry, localised_na
         prototype.subgroup = prototype.subgroup or product.subgroup
         prototype.order = prototype.order or product.order
 
-        if prototype.always_show_products == nil then
-            prototype.always_show_products = (product.place_result == nil)
-        end
-
         if localised_name_wrapper then
             local inner = prototype.localised_name or product:get_localised_name()
             prototype.localised_name = {localised_name_wrapper, inner}
@@ -331,16 +327,11 @@ local function derive_fields_from_product(prototype, product_entry, localised_na
 
     -- localisation and icon derivation
     local has_custom_identity = prototype.localised_name or prototype.localised_description or prototype.icon or prototype.icons
-    local caller_set_name = prototype.localised_name ~= nil
 
     if has_custom_identity then
         if product then
             prototype.localised_name = prototype.localised_name or product:get_localised_name()
             prototype.localised_description = prototype.localised_description or product:get_localised_description()
-        end
-
-        if caller_set_name and prototype.show_amount_in_title == nil then
-            prototype.show_amount_in_title = false
         end
 
         if not prototype.icon and not prototype.icons then

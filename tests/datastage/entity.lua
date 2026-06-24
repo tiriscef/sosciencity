@@ -198,6 +198,20 @@ Tirislib.Testing.add_test_case(
     teardown
 )
 
+Tirislib.Testing.add_test_case(
+    "Entity:add_loot does not merge entries differing in quality",
+    "lib.entity",
+    function()
+        local entity = create_test_entity("test-ent-loot-quality")
+        entity:add_loot({name = "iron-plate", independent_probability = 1, amount_min = 1, amount_max = 1})
+        entity:add_loot({name = "iron-plate", independent_probability = 1, amount_min = 1, amount_max = 1, quality_min = "uncommon"})
+
+        Assert.equals(#entity.loot, 2)
+    end,
+    setup,
+    teardown
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << mining results >>
 

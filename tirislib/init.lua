@@ -17,6 +17,7 @@ if Tirislib.Utils.is_data_stage() then
     require("prototype")
     require("base-prototype")
     require("item-groups")
+    require("recipe-entry")
     require("recipe")
     require("item")
     require("entity")
