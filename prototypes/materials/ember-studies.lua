@@ -6,12 +6,12 @@ local ember_items = {
     {name = "sketch", use_placeholder_icon = true},
     {name = "mosaic", use_placeholder_icon = true},
     {name = "painting", sprite_variations = {name = "painting-on-belt", count = 7}},
-    {name = "statue"},
-    {name = "jewellery", use_placeholder_icon = true},
-    {name = "mixtape", use_placeholder_icon = true},
+    {name = "statue", sprite_variations = {name = "statue", count = 1}},
+    {name = "jewellery"},
+    {name = "mixtape"},
     {name = "novel", use_placeholder_icon = true},
     {name = "found-art", use_placeholder_icon = true},
-    {name = "kinetic-sculpture", use_placeholder_icon = true}
+    {name = "kinetic-sculpture"}
 }
 
 Tirislib.Item.batch_create(

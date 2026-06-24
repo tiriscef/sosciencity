@@ -18,7 +18,7 @@ local furniture_items = {
     },
     {
         name = "bathroom-furniture",
-        use_placeholder_icon = true
+        sprite_variations = {name = "bathroom-furniture", count = 4}
     },
     {
         name = "carpet"

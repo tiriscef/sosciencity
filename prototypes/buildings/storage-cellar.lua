@@ -35,15 +35,16 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        filename = "__sosciencity-graphics__/graphics/placeholder.png",
-        priority = "high",
-        width = 224,
-        height = 224,
-        scale = 4 / 7
-    },
+    picture = Tirislib.Entity.create_standard_picture {
+            path = "__sosciencity-graphics__/graphics/entity/storage-cellar/storage-cellar",
+            shift = {0.0, 0.0},
+            width = 4,
+            height = 6,
+            shadowmap = true,
+            glow = true
+        },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(4, 4):copy_icon_from_item()
+}:set_size(2, 4):copy_icon_from_item()
 Sosciencity.configure_building("storage-cellar")

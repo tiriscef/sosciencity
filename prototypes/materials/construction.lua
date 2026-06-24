@@ -46,7 +46,7 @@ local construction_items = {
     },
     {
         name = "power-tools",
-        use_placeholder_icon = true
+        sprite_variations = {name = "power-tools", count = 3, include_icon = true}
     },
     {
         name = "screw-set",
