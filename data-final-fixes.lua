@@ -21,4 +21,6 @@ require("integrations-updates")
 require("datastage-scripts.utility-sprite-names")
 require("datastage-scripts.debug-tests")
 
+require("datastage-scripts.recipe-categories")
+
 Tirislib.Prototype.finish()
