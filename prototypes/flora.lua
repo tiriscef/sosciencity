@@ -277,7 +277,7 @@ local function create_neogenesis_recipe(details)
     Tirislib.RecipeGenerator.merge_prototypes(details, {
         results = {
             {type = "item", name = product_name,       amount = 1, product = true},
-            {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.9}
+            {type = "item", name = "empty-hard-drive", amount = 1, independent_probability = 0.9}
         },
         ingredients = {
             {theme = "genetic_neogenesis", amount = 1},
@@ -303,7 +303,7 @@ create_perennial_recipe {
     product = "apple",
     output_multiplier = 1.4,
     ingredients = {{type = "fluid", name = "water", amount = 75}},
-    results = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "ortrot-wood", amount = 1, independent_probability = 0.2}},
     unlock = Unlocks.get_tech_name("apple")
 }
 
@@ -317,7 +317,7 @@ create_perennial_recipe {
     product = "avocado",
     output_multiplier = 0.8,
     ingredients = {{type = "fluid", name = "water", amount = 150}},
-    results = {{type = "item", name = "avocado-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "avocado-wood", amount = 1, independent_probability = 0.2}},
     unlock = Unlocks.get_tech_name("avocado")
 }
 
@@ -366,7 +366,7 @@ create_perennial_recipe {
     product = "cherry",
     output_multiplier = 1.6,
     ingredients = {{type = "fluid", name = "water", amount = 75}},
-    results = {{type = "item", name = "cherry-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "cherry-wood", amount = 1, independent_probability = 0.2}},
     unlock = Unlocks.get_tech_name("cherry")
 }
 
@@ -426,7 +426,7 @@ create_identification_recipe {
 create_perennial_recipe {
     product = "lemon",
     output_multiplier = 1.6,
-    results = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "zetorn-wood", amount = 1, independent_probability = 0.2}},
     unlock = Unlocks.get_tech_name("lemon")
 }
 
@@ -469,7 +469,7 @@ create_annual_bloomhouse_recipe {
 -- olive
 create_perennial_recipe {
     product = "olive",
-    results = {{type = "item", name = "olive-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "olive-wood", amount = 1, independent_probability = 0.2}},
     unlock = Unlocks.get_tech_name("olive")
 }
 
@@ -480,7 +480,7 @@ create_neogenesis_recipe {
 -- orange
 create_perennial_recipe {
     product = "orange",
-    results = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "zetorn-wood", amount = 1, independent_probability = 0.2}},
     unlock = Unlocks.get_tech_name("orange")
 }
 
@@ -493,7 +493,7 @@ create_neogenesis_recipe {
 create_perennial_recipe {
     product = "ortrot",
     ingredients = {{type = "fluid", name = "water", amount = 75}},
-    results = {{type = "item", name = "ortrot-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "ortrot-wood", amount = 1, independent_probability = 0.2}},
     unlock = "explore-alien-flora-2"
 }
 
@@ -606,7 +606,7 @@ create_annual_recipe {
 -- tiriscefing willow
 create_perennial_recipe {
     product = "tiriscefing-willow-wood",
-    results = {{type = "item", name = "fawoxylas", amount = 5, probability = 0.5}}
+    results = {{type = "item", name = "fawoxylas", amount = 5, independent_probability = 0.5}}
 }
 
 -- unnamed fruit
@@ -636,7 +636,7 @@ create_identification_recipe {
 -- zetorn
 create_perennial_recipe {
     product = "zetorn",
-    results = {{type = "item", name = "zetorn-wood", amount = 1, probability = 0.2}},
+    results = {{type = "item", name = "zetorn-wood", amount = 1, independent_probability = 0.2}},
     unlock = "explore-alien-flora-1"
 }
 

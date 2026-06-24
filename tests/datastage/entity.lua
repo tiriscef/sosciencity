@@ -159,10 +159,10 @@ Tirislib.Testing.add_test_case(
     "lib.entity",
     function()
         local entity = create_test_entity("test-ent-loot")
-        entity:add_loot({item = "iron-plate", probability = 1, count_min = 1, count_max = 2})
+        entity:add_loot({name = "iron-plate", independent_probability = 1, amount_min = 1, amount_max = 2})
 
         Assert.equals(#entity.loot, 1)
-        Assert.equals(entity.loot[1].item, "iron-plate")
+        Assert.equals(entity.loot[1].name, "iron-plate")
     end,
     setup,
     teardown
@@ -173,12 +173,12 @@ Tirislib.Testing.add_test_case(
     "lib.entity",
     function()
         local entity = create_test_entity("test-ent-loot-merge")
-        entity:add_loot({item = "iron-plate", probability = 1, count_min = 1, count_max = 2})
-        entity:add_loot({item = "iron-plate", probability = 1, count_min = 3, count_max = 4})
+        entity:add_loot({name = "iron-plate", independent_probability = 1, amount_min = 1, amount_max = 2})
+        entity:add_loot({name = "iron-plate", independent_probability = 1, amount_min = 3, amount_max = 4})
 
         Assert.equals(#entity.loot, 1)
-        Assert.equals(entity.loot[1].count_min, 4)
-        Assert.equals(entity.loot[1].count_max, 6)
+        Assert.equals(entity.loot[1].amount_min, 4)
+        Assert.equals(entity.loot[1].amount_max, 6)
     end,
     setup,
     teardown
@@ -189,8 +189,8 @@ Tirislib.Testing.add_test_case(
     "lib.entity",
     function()
         local entity = create_test_entity("test-ent-loot-diff")
-        entity:add_loot({item = "iron-plate", probability = 1, count_min = 1, count_max = 1})
-        entity:add_loot({item = "iron-plate", probability = 0.5, count_min = 1, count_max = 1})
+        entity:add_loot({name = "iron-plate", independent_probability = 1, amount_min = 1, amount_max = 1})
+        entity:add_loot({name = "iron-plate", independent_probability = 0.5, amount_min = 1, amount_max = 1})
 
         Assert.equals(#entity.loot, 2)
     end,

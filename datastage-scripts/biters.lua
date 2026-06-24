@@ -26,10 +26,10 @@ for _, unit in Tirislib.Entity.iterate(types) do
 
         unit:add_loot {
             type = "item",
-            item = "biter-meat",
-            probability = PROBABILITY,
-            count_min = count_min,
-            count_max = count_max
+            name = "biter-meat",
+            independent_probability = PROBABILITY,
+            amount_min = count_min,
+            amount_max = count_max
         }
     end
 end

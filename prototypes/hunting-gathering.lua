@@ -177,7 +177,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "leafage", amount = 2},
         {type = "item", name = "tiriscefing-willow-wood", amount = 3},
         {type = "item", name = "plemnemm-cotton", amount = 5},
-        {type = "item", name = "gingil-hemp", amount = 5, probability = 0.5}
+        {type = "item", name = "gingil-hemp", amount = 5, independent_probability = 0.5}
     },
     order = "000590"
 }
@@ -242,9 +242,9 @@ create_hunting_gathering_recipe {
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
     icon_size = 64,
     results = {
-        {type = "item", name = "river-horse", amount = 1, probability = 0.1},
-        {type = "item", name = "bonesnake", amount = 1, probability = 0.1},
-        {type = "item", name = "caddle", amount = 1, probability = 0.5},
+        {type = "item", name = "river-horse", amount = 1, independent_probability = 0.1},
+        {type = "item", name = "bonesnake", amount = 1, independent_probability = 0.1},
+        {type = "item", name = "caddle", amount = 1, independent_probability = 0.5},
         {type = "item", name = "biter-meat", amount_min = 0, amount_max = 20}
     },
     order = "000655",
@@ -258,12 +258,12 @@ create_hunting_gathering_recipe {
     icon = "__sosciencity-graphics__/graphics/icon/hunting.png",
     icon_size = 64,
     results = {
-        {type = "item", name = "primal-quackling", amount = 3, probability = 0.5},
-        {type = "item", name = "primal-quacker", amount = 2, probability = 0.5},
-        {type = "item", name = "nan-swanling", amount = 5, probability = 0.1},
-        {type = "item", name = "nan-swan", amount = 1, probability = 0.4},
-        {type = "item", name = "cabar", amount = 4, probability = 0.5},
-        {type = "item", name = "caddle", amount = 1, probability = 0.5}
+        {type = "item", name = "primal-quackling", amount = 3, independent_probability = 0.5},
+        {type = "item", name = "primal-quacker", amount = 2, independent_probability = 0.5},
+        {type = "item", name = "nan-swanling", amount = 5, independent_probability = 0.1},
+        {type = "item", name = "nan-swan", amount = 1, independent_probability = 0.4},
+        {type = "item", name = "cabar", amount = 4, independent_probability = 0.5},
+        {type = "item", name = "caddle", amount = 1, independent_probability = 0.5}
     },
     order = "000656",
     unlock = "hunting-fishing"
@@ -293,9 +293,9 @@ create_hunting_gathering_recipe {
         {type = "item", name = "shellscript", amount_min = 1, amount_max = 2},
         {type = "item", name = "boofish", amount_min = 10, amount_max = 16},
         {type = "item", name = "fupper", amount_min = 5, amount_max = 10},
-        {type = "item", name = "dodkopus", amount = 1, probability = 0.1},
-        {type = "item", name = "ultra-squibbel", amount = 2, probability = 0.1},
-        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.08}
+        {type = "item", name = "dodkopus", amount = 1, independent_probability = 0.1},
+        {type = "item", name = "ultra-squibbel", amount = 2, independent_probability = 0.1},
+        {type = "item", name = "miniscule-squibbel", amount = 1, independent_probability = 0.08}
     },
     order = "000756",
     unlock = "advanced-fishing"
@@ -308,11 +308,11 @@ create_hunting_gathering_recipe {
     icon = "__sosciencity-graphics__/graphics/icon/fishing.png",
     icon_size = 64,
     results = {
-        {type = "item", name = "petunial", amount = 1, probability = 0.06},
-        {type = "item", name = "hellfin", amount = 1, probability = 0.3},
-        {type = "item", name = "warnal", amount = 1, probability = 0.1},
+        {type = "item", name = "petunial", amount = 1, independent_probability = 0.06},
+        {type = "item", name = "hellfin", amount = 1, independent_probability = 0.3},
+        {type = "item", name = "warnal", amount = 1, independent_probability = 0.1},
         {type = "item", name = "ultra-squibbel", amount_min = 1, amount_max = 3},
-        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.4}
+        {type = "item", name = "miniscule-squibbel", amount = 1, independent_probability = 0.4}
     },
     order = "000757",
     unlock = "advanced-fishing"

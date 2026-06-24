@@ -103,7 +103,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "ultra-pure-water", amount = 50, product = true},
-        {type = "item", name = "semipermeable-membrane", amount = 1, probability = 0.8}
+        {type = "item", name = "semipermeable-membrane", amount = 1, independent_probability = 0.8}
     },
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 70},

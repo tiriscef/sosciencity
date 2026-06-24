@@ -9,7 +9,7 @@ local items_to_remove_from_recycling = {
 }
 
 for _, recipe in Tirislib.Recipe.iterate() do
-    if recipe.category == "recycling" then
+    if recipe:has_category("recycling") then
         for _, item_name in pairs(items_to_remove_from_recycling) do
             recipe:remove_result(item_name, "item")
         end

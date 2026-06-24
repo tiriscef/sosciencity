@@ -7,7 +7,7 @@ for _, entity in Tirislib.Entity.iterate("fish") do
         entity:add_mining_result {
             type = "item",
             name = "wild-algae",
-            probability = 0.5,
+            independent_probability = 0.5,
             amount_min = 1,
             amount_max = 3
         }

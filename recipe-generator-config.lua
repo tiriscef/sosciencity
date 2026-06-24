@@ -572,10 +572,10 @@ Tirislib.RecipeGenerator.add_themes {
 Tirislib.RecipeGenerator.add_result_themes {
     sediment = {
         [0] = {
-            {type = "item", name = "leafage", amount = 1, probability = 0.2},
-            {type = "item", name = "stone", amount = 1, probability = 0.3},
-            {type = "item", name = "wood", amount = 1, probability = 0.2},
-            {type = "item", name = "queen-algae", amount = 1, probability = 0.2}
+            {type = "item", name = "leafage", amount = 1, independent_probability = 0.2},
+            {type = "item", name = "stone", amount = 1, independent_probability = 0.3},
+            {type = "item", name = "wood", amount = 1, independent_probability = 0.2},
+            {type = "item", name = "queen-algae", amount = 1, independent_probability = 0.2}
         }
     }
 }

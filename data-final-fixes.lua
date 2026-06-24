@@ -21,9 +21,6 @@ require("integrations-updates")
 require("datastage-scripts.utility-sprite-names")
 require("datastage-scripts.debug-tests")
 
-require("datastage-scripts.recipe-categories")
-require("datastage-scripts.product-prototype-migration")
-
 Tirislib.Prototype.finish()
 
 require("datastage-scripts.export-prototype-shape")

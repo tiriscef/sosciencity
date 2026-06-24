@@ -491,7 +491,7 @@ create_husbandry_recipe {
     product = "young-petunial",
     results = {
         {type = "item", name = "young-petunial", amount_min = 0, amount_max = 2, product = true},
-        {type = "item", name = "petunial", amount = 2, probability = 0.95}
+        {type = "item", name = "petunial", amount = 2, independent_probability = 0.95}
     },
     ingredients = {
         {type = "item", name = "petunial", amount = 2}
@@ -566,7 +566,7 @@ create_husbandry_recipe {
     results = {
         {type = "item", name = "ultra-squibbel", amount_min = 12, amount_max = 16, product = true},
         {type = "item", name = "miniscule-squibbel", amount = 2},
-        {type = "item", name = "miniscule-squibbel", amount = 1, probability = 0.2}
+        {type = "item", name = "miniscule-squibbel", amount = 1, independent_probability = 0.2}
     },
     ingredients = {
         {type = "item", name = "ultra-squibbel", amount = 10},

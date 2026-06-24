@@ -6,7 +6,7 @@ for _, tree in Tirislib.Entity.iterate("tree") do
     tree:add_mining_result {
         type = "item",
         name = "wild-fungi",
-        probability = 0.2,
+        independent_probability = 0.2,
         amount_min = 1,
         amount_max = 2
     }
@@ -15,7 +15,7 @@ for _, tree in Tirislib.Entity.iterate("tree") do
         tree:add_mining_result {
             type = "item",
             name = "wild-edible-plants",
-            probability = 0.5,
+            independent_probability = 0.5,
             amount_min = 1,
             amount_max = 3
         }

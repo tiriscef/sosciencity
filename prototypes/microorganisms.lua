@@ -91,7 +91,7 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    results = {{type = "fluid", name = "solfaen", amount = 10, probability = 0.2}},
+    results = {{type = "fluid", name = "solfaen", amount = 10, independent_probability = 0.2}},
     ingredients = {
         {type = "fluid", name = "clean-water", amount = 10}
     },
@@ -128,7 +128,7 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    results = {{type = "fluid", name = "flinnum", amount = 10, probability = 0.2}},
+    results = {{type = "fluid", name = "flinnum", amount = 10, independent_probability = 0.2}},
     ingredients = {
         {type = "fluid", name = "sugar-medium", amount = 10},
         {type = "item", name = "mold", amount = 2}
@@ -147,7 +147,7 @@ create_pure_culture_recipe {
 }
 
 create_enrichment_recipe {
-    results = {{type = "fluid", name = "fiicorum", amount = 10, probability = 0.2}},
+    results = {{type = "fluid", name = "fiicorum", amount = 10, independent_probability = 0.2}},
     ingredients = {
         {theme = "soil", amount = 2},
         {type = "fluid", name = "sugar-medium", amount = 10},

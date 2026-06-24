@@ -2,7 +2,7 @@ local all_recipes = Tirislib.Recipe.all()
 
 for index, recipe in pairs(all_recipes) do
     -- filter out recipes created by transport drones and the void crushing recipes of krastorio2
-    if recipe.is_hack or Tirislib.String.begins_with(recipe.name, "request-") or recipe.category == "void-crushing" then
+    if recipe.is_hack or Tirislib.String.begins_with(recipe.name, "request-") or recipe:has_category("void-crushing") then
         all_recipes[index] = nil
     end
 end

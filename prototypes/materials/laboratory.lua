@@ -246,7 +246,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "blank-dna-virus", amount = 1, product = true},
-        {type = "item", name = "empty-hard-drive", amount = 1, probability = 0.95}
+        {type = "item", name = "empty-hard-drive", amount = 1, independent_probability = 0.95}
     },
     ingredients = {
         {type = "item", name = "proteins", amount = 1},

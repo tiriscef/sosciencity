@@ -387,9 +387,9 @@ function Tirislib.Entity:add_loot(loot)
     end
 
     for _, current_loot in pairs(self.loot) do
-        if current_loot.item == loot.item and current_loot.probability == loot.probability then
-            current_loot.count_min = (current_loot.count_min or 1) + (loot.count_min or 1)
-            current_loot.count_max = (current_loot.count_max or 1) + (loot.count_max or 1)
+        if current_loot.name == loot.name and current_loot.independent_probability == loot.independent_probability then
+            current_loot.amount_min = (current_loot.amount_min or 1) + (loot.amount_min or 1)
+            current_loot.amount_max = (current_loot.amount_max or 1) + (loot.amount_max or 1)
 
             return self
         end

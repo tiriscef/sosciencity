@@ -592,7 +592,7 @@ Tirislib.Testing.add_test_case(
             }
         }
 
-        Assert.equals(recipe.category, "crafting-with-fluid")
+        Assert.equals(recipe.categories, {"crafting-with-fluid"})
     end,
     setup,
     teardown
@@ -610,7 +610,44 @@ Tirislib.Testing.add_test_case(
             results = {{type = "item", name = "test-rg-cfp-ecat-product", amount = 1}}
         }
 
-        Assert.equals(recipe.category, "smelting")
+        Assert.equals(recipe.categories, {"smelting"})
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "create keeps an explicit categories array instead of auto-detecting",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-cfp-cats-product")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-cfp-cats-recipe",
+            categories = {"smelting", "crafting"},
+            results = {{type = "item", name = "test-rg-cfp-cats-product", amount = 1}}
+        }
+
+        Assert.equals(recipe.categories, {"smelting", "crafting"})
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "create prefers an explicit categories array over the legacy category field",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-cfp-catprec-product")
+
+        local recipe = Tirislib.RecipeGenerator.create {
+            name = "test-rg-cfp-catprec-recipe",
+            categories = {"smelting"},
+            category = "crafting-with-fluid",
+            results = {{type = "item", name = "test-rg-cfp-catprec-product", amount = 1}}
+        }
+
+        Assert.equals(recipe.categories, {"smelting"})
     end,
     setup,
     teardown

@@ -203,7 +203,7 @@ end
 --- - One entry in `results` may be marked with `product = true` to identify the main product for
 ---   field derivation (name, subgroup, order, icon, localisation). Falls back to `results[1]`.
 --- - `unlock`, `default_theme_level`, `do_index_fluid_ingredients`, `do_index_fluid_results`,
----   and `localised_name_wrapper` are extra keys consumed by `create` and never
+---   `localised_name_wrapper` and `category` are extra keys consumed by `create` and never
 ---   forwarded to the underlying Factorio prototype.
 ---@class ExtendedRecipePrototype : data.RecipePrototype
 ---@field ingredients? (data.IngredientPrototype | ThemeEntry)[] Regular ingredient entries and/or inline theme expansions.
@@ -214,6 +214,7 @@ end
 ---@field do_index_fluid_results? boolean When true, fluid result entries receive an explicit `fluidbox_index` after creation.
 ---@field no_auto_catalyst? boolean When true, skips automatic catalyst detection. By default any result that also appears as an ingredient gets `ignored_by_productivity` set to `min(ingredient_amount, result_amount)`.
 ---@field localised_name_wrapper? string Locale key used to wrap the recipe name. Wraps `localised_name` if set, otherwise wraps the product's derived name. Result: `{wrapper, inner_name}`. Defaults `show_amount_in_title` to false unless explicitly set to true.
+---@field category? string Single category string, legacy support. Ignored when a `categories` array is given; otherwise auto-detected if both omitted.
 
 ---------------------------------------------------------------------------------------------------
 
@@ -416,6 +417,7 @@ function Tirislib.RecipeGenerator.create(prototype)
 
     -- track caller-provided values before creation
     local explicit_category = prototype.category
+    prototype.category = nil
     local explicit_always_show_made_in = prototype.always_show_made_in
 
     -- create the recipe
@@ -459,11 +461,12 @@ function Tirislib.RecipeGenerator.create(prototype)
         recipe:add_unlock(unlock)
     end
 
-    -- category (auto-detect after themes are expanded so fluid ingredients are known)
-    local category = explicit_category or get_standard_category(recipe)
-    recipe:set_field("category", category)
+    -- categories: an explicit `categories` array wins; the singular `category` field is legacy
+    -- support being phased out; otherwise auto-detect (after themes so fluid ingredients are known)
+    local categories = recipe.categories or {explicit_category or get_standard_category(recipe)}
+    recipe:set_field("categories", categories)
     if explicit_always_show_made_in == nil then
-        recipe:set_field("always_show_made_in", category ~= "crafting")
+        recipe:set_field("always_show_made_in", categories[1] ~= "crafting")
     end
 
     -- post-processing

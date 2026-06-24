@@ -76,7 +76,7 @@ Tirislib.Testing.add_test_case(
     "RecipeEntry.get_average_yield with probability",
     "lib.recipe-entry",
     function()
-        local entry = {name = "test", type = "item", amount = 10, probability = 0.5}
+        local entry = {name = "test", type = "item", amount = 10, independent_probability = 0.5}
         Assert.equals(Tirislib.RecipeEntry.get_average_yield(entry), 5)
     end
 )
@@ -148,7 +148,7 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Tirislib.RecipeEntry.create_product_prototype("iron-plate", 0.25)
         Assert.equals(entry.amount, 1)
-        Assert.equals(entry.probability, 0.25)
+        Assert.equals(entry.independent_probability, 0.25)
     end
 )
 

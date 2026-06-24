@@ -130,7 +130,6 @@ Tirislib.Testing.add_test_case(
     function()
         local recipe = create_recipe("test-r-getfield")
 
-        Assert.equals(recipe:get_field("category"), "crafting")
         Assert.equals(recipe:get_field("emissions_multiplier"), 1)
     end,
     setup,

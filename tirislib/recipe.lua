@@ -70,7 +70,7 @@ end
 --- @param entry RecipeEntryPrototype
 --- @return number yield
 function Tirislib.RecipeEntry.get_average_yield(entry)
-    local probability = entry.probability or 1
+    local probability = entry.independent_probability or 1
 
     if entry.amount_min then
         return (entry.amount_min + entry.amount_max) * 0.5 * probability
@@ -90,7 +90,7 @@ end
 --- @param entry RecipeEntryPrototype
 --- @return number
 function Tirislib.RecipeEntry.get_probability(entry)
-    return entry.probability or 1
+    return entry.independent_probability or 1
 end
 
 function Tirislib.RecipeEntry.get_percent_spoiled(entry)
@@ -170,7 +170,7 @@ function Tirislib.RecipeEntry.create_product_prototype(product, amount, _type)
 
         if amount < 1 then
             ret.amount = 1
-            ret.probability = amount
+            ret.independent_probability = amount
         elseif math.floor(amount) == amount then -- amount doesn't have decimals
             ret.amount = amount
         else
@@ -314,7 +314,6 @@ end
 
 --- Default values for some possible keys.
 local default_values = {
-    category = "crafting",
     energy_required = 0.5,
     emissions_multiplier = 1,
     requester_paste_multiplier = 30,
@@ -650,7 +649,7 @@ function Tirislib.Recipe:add_catalyst(name, _type, amount, retrieval)
             amount = amount,
             ignored_by_stats = amount,
             ignored_by_productivity = amount,
-            probability = retrieval
+            independent_probability = retrieval
         }
     )
 
@@ -775,6 +774,15 @@ function Tirislib.Recipe:get_result_count(name, _type)
     return amount
 end
 
+--- Checks if the recipe belongs to the given crafting category.
+--- @param category_name string
+--- @return boolean
+function Tirislib.Recipe:has_category(category_name)
+    local categories = self.categories
+
+    return categories ~= nil and Tirislib.Tables.contains(categories, category_name)
+end
+
 --- Checks if the recipe has the ingredient with the given name and type.
 --- @param name string
 --- @param _type string? defaults to 'item'
@@ -862,7 +870,7 @@ function Tirislib.Recipe:pair_result_with_result(name, _type, pairing_name, pair
             type = pairing_type,
             name = pairing_name,
             amount = math.ceil(amount),
-            probability = probability
+            independent_probability = probability
         }
     )
 
@@ -892,7 +900,7 @@ function Tirislib.Recipe:pair_ingredient_with_result(name, _type, pairing_name, 
             type = pairing_type,
             name = pairing_name,
             amount = math.ceil(amount),
-            probability = probability
+            independent_probability = probability
         }
     )
 
