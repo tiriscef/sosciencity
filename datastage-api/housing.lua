@@ -178,7 +178,7 @@ end
 --- @param house_name string
 --- @param details table Prototype details: picture, width, height, tech_level; optionally icon, main_entity,
 ---   mining_result, description_prefix, open_sound, close_sound, stack_size, item_fields.
---- @param house_def table? House definition; looked up in constants/housing.lua by house_name if nil
+--- @param house_def HouseDefinition? House definition; looked up in constants/housing.lua by house_name if nil
 function Sosciencity.create_house(house_name, details, house_def)
     house_def = house_def or Housing.values[house_name]
     if not house_def then
@@ -198,7 +198,7 @@ end
 --- @param house_name string
 --- @param details table Prototype details: picture, width, height; optionally icon, main_entity,
 ---   mining_result, description_prefix, open_sound, close_sound.
---- @param house_def table? House definition; looked up in constants/housing.lua by house_name if nil
+--- @param house_def HouseDefinition? House definition; looked up in constants/housing.lua by house_name if nil
 function Sosciencity.create_house_entity(house_name, details, house_def)
     house_def = house_def or Housing.values[house_name]
     if not house_def then

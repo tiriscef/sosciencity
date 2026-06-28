@@ -99,7 +99,7 @@ end
 --- after postprocessing (disease_frequency_fully_staffed per-minute-fully-staffed → disease_frequency per-tick-per-worker).
 --- power_usage must be in J/tick; use Unit.kW to express in kilowatts (e.g. 50 * Unit.kW).
 --- @param name string Entity name
---- @param def table? Building definition; looked up in constants/buildings.lua by name if nil
+--- @param def BuildingDefinition? Building definition; looked up in constants/buildings.lua by name if nil
 function Sosciencity.configure_building(name, def)
     if def then
         Building.postprocess(def)

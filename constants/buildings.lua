@@ -11,13 +11,15 @@ local Housing = require("constants.housing")
 local Building = {}
 
 --- Definition table for a Custom Building
---- @class CustomBuildingDefinition
+--- @class BuildingDefinition
 --- @field type Type
 --- @field range integer|string tiles in every direction or 'global'
 --- @field power_usage number in J/tick
 --- @field speed number in 1/tick, depends on type
 --- @field workforce WorkforceDefinition
 --- @field auto_name string? name of the auto-naming scheme in AutoNames (see classes/auto-names.lua); omit to skip auto-naming
+--- @field eei boolean? if true, an EEI is registered so the building can consume power
+--- @field inhabitant_count integer? number of inhabitants the building needs to function (shown as a tooltip)
 
 --- Definition table for a building's workforce
 --- @class WorkforceDefinition
@@ -718,7 +720,7 @@ local buildings = Building.values
 
 --- Applies unit conversions to a building definition in place.
 --- disease_frequency_fully_staffed: per-minute for full crew to disease_frequency per-worker-per-tick.
---- @param def CustomBuildingDefinition
+--- @param def BuildingDefinition
 function Building.postprocess(def)
     if def.workforce and def.workforce.disease_frequency_fully_staffed then
         def.workforce.disease_frequency = def.workforce.disease_frequency_fully_staffed / def.workforce.count

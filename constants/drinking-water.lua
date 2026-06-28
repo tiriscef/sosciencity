@@ -1,6 +1,12 @@
 --- Things that people like (and need) to drink.
 local DrinkingWater = {}
 
+--- @class DrinkingWaterDefinition
+--- @field name string internal fluid name
+--- @field localised_name LocalisedString
+--- @field localised_description LocalisedString
+--- @field healthiness number health effect of drinking this water; negative values harm health
+
 DrinkingWater.values = {
     ["clean-water"] = {
         healthiness = 2

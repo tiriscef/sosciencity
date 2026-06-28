@@ -1,4 +1,4 @@
---- tiriscef's small testing framework.
+--- tirisabella's small testing framework.
 Tirislib.Testing = {}
 
 Tirislib.Testing.tests = {}

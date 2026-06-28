@@ -1,6 +1,17 @@
 local HousingTrait = require("enums.housing-trait")
 
 --- @class HouseDefinition
+--- @field name string internal entity name
+--- @field localised_name LocalisedString
+--- @field localised_description LocalisedString
+--- @field room_count number number of rooms; the inhabitant capacity of the house
+--- @field comfort number base comfort level (0–10) before upgrades
+--- @field starting_comfort number comfort level the house has right after being built
+--- @field max_comfort number highest comfort level reachable through furniture upgrades
+--- @field traits HousingTrait[] housing traits influencing caste preferences (sorted in postprocessing)
+--- @field is_improvised boolean whether this is improvised housing (a hut); defaults to false in postprocessing
+--- @field one_room_per_inhabitant boolean? if true, each inhabitant occupies a full room regardless of room_count math
+--- @field alternatives string[]? other entity names that share this definition (e.g. graphical variants)
 
 --- Things that people live in.
 local Housing = {}
