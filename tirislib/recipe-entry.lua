@@ -17,7 +17,8 @@ local default_values = {
     affected_by_quality = true,
     always_fresh = false,
     reset_freshness_on_craft = false,
-    spoil_weight = 1
+    spoil_weight = 1,
+    extra_count_fraction = 0
 }
 
 --- Returns the value of the given field, falling back to the field's default if it isn't set.
@@ -37,6 +38,8 @@ end
 --- @param min integer
 --- @param max integer?
 function Tirislib.RecipeEntry.set_product_amount(entry, min, max)
+    -- Clear any leftover fractional amount so the new amount isn't silently inflated by it.
+    entry.extra_count_fraction = nil
     if not max then
         entry.amount = min
         entry.amount_min = nil
@@ -98,19 +101,29 @@ end
 --- @return number yield
 function Tirislib.RecipeEntry.get_average_yield(entry)
     local probability = Tirislib.RecipeEntry.get_field(entry, "independent_probability")
+    local extra = Tirislib.RecipeEntry.get_field(entry, "extra_count_fraction")
 
+    local base
     if entry.amount_min then
-        return (entry.amount_min + entry.amount_max) * 0.5 * probability
+        base = (entry.amount_min + entry.amount_max) * 0.5
     else
-        return entry.amount * probability
+        base = entry.amount
     end
+
+    return base * probability + extra
 end
 
 --- Returns the maximum yield of the given RecipeEntryPrototype, assuming it's a ProductPrototype.
 --- @param entry RecipeEntryPrototype
 --- @return number yield
 function Tirislib.RecipeEntry.get_max_yield(entry)
-    return entry.amount_max or entry.amount
+    local base = entry.amount_max or entry.amount
+
+    if Tirislib.RecipeEntry.get_field(entry, "extra_count_fraction") > 0 then
+        base = base + 1
+    end
+
+    return base
 end
 
 --- Fields compared (via get_field, so an explicit value equal to its default still matches an

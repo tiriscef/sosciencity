@@ -59,6 +59,17 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+Tirislib.Testing.add_test_case(
+    "RecipeEntry.set_product_amount clears a leftover extra_count_fraction",
+    "lib.recipe-entry",
+    function()
+        local entry = {name = "test", type = "item", amount = 3, extra_count_fraction = 0.5}
+        Tirislib.RecipeEntry.set_product_amount(entry, 10)
+        Assert.equals(entry.amount, 10)
+        Assert.is_nil(entry.extra_count_fraction)
+    end
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << RecipeEntry.add_amount >>
 
@@ -110,6 +121,51 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = {name = "test", type = "item", amount = 10, independent_probability = 0.5}
         Assert.equals(Tirislib.RecipeEntry.get_average_yield(entry), 5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "RecipeEntry.get_average_yield includes extra_count_fraction",
+    "lib.recipe-entry",
+    function()
+        local entry = {name = "test", type = "item", amount = 2, extra_count_fraction = 0.5}
+        Assert.equals(Tirislib.RecipeEntry.get_average_yield(entry), 2.5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "RecipeEntry.get_average_yield round-trips a fractional create_product_prototype",
+    "lib.recipe-entry",
+    function()
+        local entry = Tirislib.RecipeEntry.create_product_prototype("iron-plate", 3.5)
+        Assert.equals(Tirislib.RecipeEntry.get_average_yield(entry), 3.5)
+
+        local sub_one = Tirislib.RecipeEntry.create_product_prototype("iron-plate", 0.25)
+        Assert.equals(Tirislib.RecipeEntry.get_average_yield(sub_one), 0.25)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << RecipeEntry.get_max_yield >>
+
+Tirislib.Testing.add_test_case(
+    "RecipeEntry.get_max_yield returns the upper bound",
+    "lib.recipe-entry",
+    function()
+        Assert.equals(Tirislib.RecipeEntry.get_max_yield({name = "test", type = "item", amount = 7}), 7)
+        Assert.equals(
+            Tirislib.RecipeEntry.get_max_yield({name = "test", type = "item", amount_min = 2, amount_max = 8}),
+            8
+        )
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "RecipeEntry.get_max_yield counts the extra_count_fraction product",
+    "lib.recipe-entry",
+    function()
+        local entry = {name = "test", type = "item", amount = 3, extra_count_fraction = 0.5}
+        Assert.equals(Tirislib.RecipeEntry.get_max_yield(entry), 4)
     end
 )
 
