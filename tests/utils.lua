@@ -420,3 +420,54 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+
+---------------------------------------------------------------------------------------------------
+-- << mix_seeds >>
+
+Tirislib.Testing.add_test_case(
+    "mix_seeds is deterministic",
+    "lib.utils",
+    function()
+        Assert.equals(Utils.mix_seeds(1234, 42), Utils.mix_seeds(1234, 42))
+        Assert.equals(Utils.mix_seeds(7), Utils.mix_seeds(7))
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "mix_seeds returns an integer in [0, 2^32)",
+    "lib.utils",
+    function()
+        for _, args in pairs({{0}, {1, 2}, {999999, 0, 7}}) do
+            local result = Utils.mix_seeds(table.unpack(args))
+            Assert.is_integer(result)
+            Assert.is_true(result >= 0 and result < 4294967296)
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "mix_seeds depends on argument order",
+    "lib.utils",
+    function()
+        Assert.unequal(Utils.mix_seeds(3, 7), Utils.mix_seeds(7, 3))
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "mix_seeds avalanches: adjacent inputs give unrelated, collision-free outputs",
+    "lib.utils",
+    function()
+        local seen = {}
+        local collisions = 0
+        for unit = 1, 100 do
+            for bucket = 0, 100 do
+                local seed = Utils.mix_seeds(unit, bucket)
+                if seen[seed] then
+                    collisions = collisions + 1
+                end
+                seen[seed] = true
+            end
+        end
+        Assert.equals(collisions, 0)
+    end
+)

@@ -4,6 +4,8 @@ local max = math.max
 local min = math.min
 local ceil = math.ceil
 local floor = math.floor
+local bxor = bit32.bxor
+local rshift = bit32.rshift
 
 ---------------------------------------------------------------------------------------------------
 --- Just some helper functions
@@ -263,6 +265,40 @@ function Tirislib.Utils.random_different(value_min, value_max, n)
     else
         return ret
     end
+end
+
+--- Multiplies two uint32s modulo 2^32. Doing it via 16-bit halves keeps every product
+--- below 2^48, so the double-based arithmetic stays exact (a direct uint32*uint32 would
+--- overflow 2^53 and silently lose its low bits).
+local function mul32(a, b)
+    local a_lo = a % 65536
+    local a_hi = floor(a / 65536) % 65536
+    return (a_lo * b + (a_hi * b % 65536) * 65536) % 4294967296
+end
+
+--- Murmur3 finalizer: full avalanche over a single uint32 (a bijection, so no collisions).
+local function fmix32(h)
+    h = bxor(h, rshift(h, 16))
+    h = mul32(h, 0x85ebca6b)
+    h = bxor(h, rshift(h, 13))
+    h = mul32(h, 0xc2b2ae35)
+    h = bxor(h, rshift(h, 16))
+    return h
+end
+
+--- Combines any number of integers into a single, well-distributed 32-bit value.<br>
+--- Handy as a deterministic seed for a LuaRandomGenerator: that generator maps nearby seeds
+--- to similar sequences (and seeds 0..341 to identical ones), so raw or adjacent inputs make
+--- poor seeds. Here inputs that differ by even a single bit produce completely unrelated
+--- outputs. The argument order matters: mix_seeds(a, b) is not the same as mix_seeds(b, a).
+--- @param ... integer non-negative integers to combine
+--- @return integer hash a value in [0, 2^32)
+function Tirislib.Utils.mix_seeds(...)
+    local seed = 0x9E3779B9
+    for i = 1, select("#", ...) do
+        seed = fmix32(bxor(seed, (select(i, ...))))
+    end
+    return seed
 end
 
 --- Returns the probability of at least one success after n tries.
