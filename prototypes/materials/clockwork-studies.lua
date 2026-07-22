@@ -4,8 +4,14 @@
 local clockwork_items = {
     {name = "invention"},
     {name = "technical-drawing", use_placeholder_icon = true},
-    {name = "contraption", use_placeholder_icon = true},
-    {name = "prototype-component", use_placeholder_icon = true}
+    {
+        name = "contraption",
+        sprite_variations = {name = "contraption", count = 3, include_icon = true}
+    },
+    {
+        name = "prototype-component",
+        sprite_variations = {name = "prototype-component", count = 3, include_icon = true}
+    }
 }
 
 Tirislib.Item.batch_create(

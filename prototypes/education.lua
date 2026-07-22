@@ -1,6 +1,7 @@
 Tirislib.RecipeGenerator.create {
     name = "education-plasma",
     category = "sosciencity-medical-school",
+    raise_on_crafted = true,
     enabled = true,
     energy_required = 60,
     ingredients = {
@@ -21,6 +22,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     name = "education-gunfire",
     category = "sosciencity-military-school",
+    raise_on_crafted = true,
     enabled = true,
     energy_required = 60,
     ingredients = {
@@ -41,6 +43,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     name = "education-foundry",
     category = "sosciencity-natural-sciences-faculty",
+    raise_on_crafted = true,
     enabled = true,
     energy_required = 60,
     ingredients = {
@@ -62,6 +65,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     name = "education-foundry-advanced",
     category = "sosciencity-natural-sciences-faculty",
+    raise_on_crafted = true,
     enabled = true,
     energy_required = 60,
     ingredients = {
@@ -86,6 +90,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     name = "education-gleam",
     category = "sosciencity-huwanities-faculty",
+    raise_on_crafted = true,
     enabled = true,
     energy_required = 60,
     ingredients = {
@@ -106,6 +111,7 @@ Tirislib.RecipeGenerator.create {
 Tirislib.RecipeGenerator.create {
     name = "education-gleam-advanced",
     category = "sosciencity-huwanities-faculty",
+    raise_on_crafted = true,
     enabled = true,
     energy_required = 60,
     ingredients = {

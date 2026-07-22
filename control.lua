@@ -721,6 +721,13 @@ script.on_event(defines.events.on_player_died, on_player_died)
 script.on_event(defines.events.on_player_crafted_item, on_player_crafted)
 script.on_event(defines.events.on_pre_player_crafted_item, on_player_queued_craft)
 
+-- caste education: graduate students when an education recipe finishes crafting
+for _, recipe in pairs(prototypes.recipe) do
+    if recipe.on_crafted_event and Entity.CasteEducation.is_education_recipe(recipe) then
+        script.on_event(recipe.on_crafted_event, Entity.CasteEducation.on_recipe_crafted)
+    end
+end
+
 -- trigger events
 script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
 

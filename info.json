@@ -7,6 +7,7 @@
     "homepage": "https://forums.factorio.com/viewtopic.php?f=190&t=75057",
     "factorio_version": "2.1",
     "dependencies": [
+        "base >= 2.1.12",
         "sosciencity-graphics >= 0.0.12",
         "?enable-all-feature-flags",
         "(?)quality"
