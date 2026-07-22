@@ -118,11 +118,12 @@ local function update_general_building_details(container, entry, player_id)
 
     local worker_specification = get_building_details(entry).workforce
     if worker_specification then
+        local type_id = entry[EK.type]
         local target_count = entry[EK.target_worker_count]
         Datalist.set_kv_pair_value(
             building_data,
             "staff",
-            {"sosciencity.show-staff", entry[EK.worker_count], target_count}
+            {Types.workforce_key(type_id, worker_specification, "show-"), entry[EK.worker_count], target_count}
         )
 
         building_data["staff-target"].slider_value = target_count
@@ -136,7 +137,7 @@ local function update_general_building_details(container, entry, player_id)
             building_data,
             "staff-performance",
             staff_performance >= 0.2 and {"sosciencity.staff-performance", ceil(staff_performance * 100)} or
-                {"sosciencity.not-enough-staff", ceil(0.2 * worker_specification.count)}
+                {Types.workforce_key(type_id, worker_specification, "not-enough-"), ceil(0.2 * worker_specification.count)}
         )
 
         local worker_data = tab.workers
@@ -249,9 +250,14 @@ local function create_general_building_details(container, entry, player_id)
 
     local worker_specification = building_details.workforce
     if worker_specification then
-        Datalist.add_kv_pair(building_data, "staff", {"sosciencity.staff"})
+        local type_id = entry[EK.type]
+        Datalist.add_kv_pair(building_data, "staff", {Types.workforce_key(type_id, worker_specification, "")})
 
-        Datalist.add_key_label(building_data, "staff-target-label", {"sosciencity.target-staff"})
+        Datalist.add_key_label(
+            building_data,
+            "staff-target-label",
+            {Types.workforce_key(type_id, worker_specification, "target-")}
+        )
         local staff_input = building_data.add {
             type = "textfield",
             name = "staff-target-input",
@@ -285,7 +291,7 @@ local function create_general_building_details(container, entry, player_id)
         )
         Datalist.add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
 
-        Gui.Elements.Label.header_label(tab, "worker-header", {"sosciencity.staff"})
+        Gui.Elements.Label.header_label(tab, "worker-header", {Types.workforce_key(type_id, worker_specification, "")})
         Datalist.create(tab, "workers")
     end
 

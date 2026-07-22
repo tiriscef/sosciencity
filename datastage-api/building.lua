@@ -1,6 +1,7 @@
 local Building = require("constants.buildings")
 local Castes = require("constants.castes")
 local Time = require("constants.time")
+local Types = require("constants.types")
 local Type = require("enums.type")
 
 local range_descriptions = {
@@ -54,7 +55,7 @@ local function apply_building_description(name, def)
             entity.localised_description,
             "\n\n",
             {
-                "sosciencity-util.workforce",
+                "sosciencity-util.workforce-" .. Types.get_workforce_noun(def.type, def.workforce),
                 tostring(def.workforce.count),
                 castes
             }

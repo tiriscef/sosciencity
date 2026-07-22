@@ -4,6 +4,7 @@ local BuildingOverview = Gui.BuildingOverview
 
 local EK = require("enums.entry-key")
 local Buildings = require("constants.buildings")
+local Types = require("constants.types")
 local Color = require("constants.color")
 
 local Register = Register
@@ -42,10 +43,15 @@ function BuildingOverview.generic_stats_creator(flow, entry)
         flow.add {type = "label", caption = active and {"sosciencity.active"} or {"sosciencity.inactive"}}
     end
 
-    if get_building_details(entry).workforce then
+    local workforce = get_building_details(entry).workforce
+    if workforce then
         flow.add {
             type = "label",
-            caption = {"sosciencity.show-staff", entry[EK.worker_count], entry[EK.target_worker_count]}
+            caption = {
+                Types.workforce_key(entry[EK.type], workforce, "show-"),
+                entry[EK.worker_count],
+                entry[EK.target_worker_count]
+            }
         }
     end
 

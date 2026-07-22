@@ -29,6 +29,7 @@ local Building = {}
 --- @field disease_frequency_fully_staffed number? disease progress per tick for a fully staffed building; postprocess divides by count to derive disease_frequency
 --- @field disease_frequency number disease progress per worker per tick
 --- @field happiness_weight number how much worker happiness affects this building's performance (0 = none, 1 = full effect)
+--- @field noun string? stem for the workforce labels (e.g. "recruits"); overrides the type-level default, which itself falls back to "staff". Requires locale keys <noun>, target-<noun>, show-<noun>, not-enough-<noun> (and sosciencity-util.workforce-<noun> for the entity tooltip)
 
 --- The standard range for connections where the huwans are supposed to walk to the entity.
 local range_by_foot = 50
@@ -61,7 +62,8 @@ Building.values = {
             castes = {Type.clockwork, Type.gleam, Type.foundry},
             disease_category = DiseaseCategory.office_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "architects"
         }
     },
     ["atelier"] = {
@@ -71,7 +73,8 @@ Building.values = {
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "artists"
         }
     },
     ["bloomhouse"] = {
@@ -81,7 +84,8 @@ Building.values = {
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "gardeners"
         },
         accepts_plant_care = true
     },
@@ -107,7 +111,8 @@ Building.values = {
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
             disease_frequency_fully_staffed = 0.2 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "miners"
         }
     },
     ["clockwork-quarry"] = {
@@ -118,7 +123,8 @@ Building.values = {
             castes = {Type.clockwork},
             disease_category = DiseaseCategory.hard_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "miners"
         }
     },
     ["composting-silo"] = {
@@ -148,7 +154,8 @@ Building.values = {
             castes = {Type.ember},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "artists"
         }
     },
     ["experimental-workshop"] = {
@@ -159,7 +166,8 @@ Building.values = {
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "researchers"
         }
     },
     ["farm"] = {
@@ -182,7 +190,8 @@ Building.values = {
             castes = {Type.orchid},
             disease_category = DiseaseCategory.fishing_hut,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "gatherers"
         }
     },
     ["foundry-hq"] = {
@@ -193,7 +202,8 @@ Building.values = {
             castes = {Type.foundry},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "researchers"
         }
     },
     ["gene-clinic"] = {
@@ -209,7 +219,8 @@ Building.values = {
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "researchers"
         }
     },
     ["greenhouse"] = {
@@ -267,7 +278,8 @@ Building.values = {
             castes = {Type.orchid},
             disease_category = DiseaseCategory.hunting_hut,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "gatherers"
         }
     },
     ["huwanities-faculty"] = {
@@ -337,7 +349,8 @@ Building.values = {
             castes = {Type.ember, Type.orchid, Type.clockwork},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.01 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "recruits"
         },
         result_caste = Type.gunfire
     },
@@ -376,7 +389,8 @@ Building.values = {
             castes = {Type.orchid},
             disease_category = DiseaseCategory.moderate_work,
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "cooks"
         }
     },
     ["orchid-hq"] = {
@@ -417,7 +431,8 @@ Building.values = {
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
             disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "researchers"
         }
     },
     ["robo-pruning-station"] = {
@@ -440,7 +455,8 @@ Building.values = {
             castes = {Type.gleam},
             disease_category = DiseaseCategory.office_work,
             disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "researchers"
         },
         target_population = 200,
         min_castes = 3,
@@ -459,7 +475,8 @@ Building.values = {
             castes = {Type.foundry},
             disease_category = DiseaseCategory.office_work,
             disease_frequency_fully_staffed = 0.05 * Unit.per_minute,
-            happiness_weight = 1
+            happiness_weight = 1,
+            noun = "researchers"
         }
     },
     ["tinkering-workshop"] = {

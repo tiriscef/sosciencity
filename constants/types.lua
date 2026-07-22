@@ -235,7 +235,8 @@ Types.definitions = {
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
         subscriptions = hospital_subscriptions,
-        is_civil = true
+        is_civil = true,
+        workforce_noun = "doctors"
     },
     [Type.improvised_hospital] = {
         localised_name = {"sosciencity.hospital"},
@@ -253,7 +254,8 @@ Types.definitions = {
             [Type.aurora] = ConnectionType.bidirectional,
             [Type.plasma] = ConnectionType.bidirectional
         },
-        is_civil = true
+        is_civil = true,
+        workforce_noun = "medics"
     },
     [Type.psych_ward] = {
         localised_name = {"item-name.psych-ward"},
@@ -394,10 +396,28 @@ Types.definitions = {
         localised_description = {"sosciencity.explain-caste-education-building"},
         is_civil = true,
         signature_color = Color.white,
-        has_subscriptions = true
+        has_subscriptions = true,
+        workforce_noun = "students"
     }
 }
 local definitions = Types.definitions
+
+--- Resolves the workforce noun-stem: building override -> type override -> "staff".
+--- @param type_id Type
+--- @param workforce WorkforceDefinition
+--- @return string
+function Types.get_workforce_noun(type_id, workforce)
+    return workforce.noun or definitions[type_id].workforce_noun or "staff"
+end
+
+--- Builds a workforce locale key for a given prefix ("", "show-", "target-", "not-enough-").
+--- @param type_id Type
+--- @param workforce WorkforceDefinition
+--- @param prefix string
+--- @return string
+function Types.workforce_key(type_id, workforce, prefix)
+    return "sosciencity." .. prefix .. Types.get_workforce_noun(type_id, workforce)
+end
 
 for _, type in pairs(TypeGroup.affected_by_clockwork) do
     definitions[type].affected_by_clockwork = true
