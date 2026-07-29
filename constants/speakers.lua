@@ -5,7 +5,7 @@ local standard_delay = 3 * Time.second
 local Speakers = {}
 
 Speakers["tiriscef."] = {
-    ["b"] = 150,
+    ["b"] = 161,
     ["roadkill"] = 8,
     ["report-begin"] = 2,
     ["report-end"] = 2,
@@ -87,7 +87,14 @@ Speakers["tiriscef."] = {
         ["b139"] = standard_delay,
         ["b141"] = standard_delay,
         ["b149"] = standard_delay,
-        ["b150"] = standard_delay
+        ["b150"] = standard_delay,
+        ["b152"] = standard_delay,
+        ["b154"] = standard_delay,
+        ["b155"] = standard_delay,
+        ["b157"] = standard_delay,
+        ["b158"] = standard_delay,
+        ["b161"] = standard_delay,
+        ["b161f"] = standard_delay
     },
     index = 0
 }
