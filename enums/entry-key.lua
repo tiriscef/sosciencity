@@ -50,12 +50,13 @@ EK.target_worker_count = 52
 
 --- the current power usage of this entry's eei
 EK.power_usage = 100
---- the current speed bonus of this entry's beacon
-EK.speed_bonus = 101
---- the current productivity bonus of this entry's beacon
-EK.productivity_bonus = 102
---- if this entry's beacon has a penalty module
-EK.has_penalty_module = 103
+
+-- effect stuff (see classes/effects.lua)
+
+--- (101 and 102 were speed_bonus and productivity_bonus, which written_effect covers)
+--- (103 was has_penalty_module, which the hidden beacon needed to express slowdowns)
+--- the local effect values sosciencity contributed last, to tell our own share from other mods'
+EK.written_effect = 104
 
 -- item requests
 

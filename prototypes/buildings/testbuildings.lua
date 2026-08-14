@@ -227,7 +227,7 @@ local function create_test_assembling_machine(name, categories, energy_source)
         open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
         close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
         module_slots = 2,
-        allowed_effects = {"productivity", "consumption", "speed", "pollution"},
+        allowed_effects = {"productivity", "speed"},
         graphics_set = {
             animation = {
                 filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",

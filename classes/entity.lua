@@ -30,7 +30,7 @@ local floor = math.floor
 local get_building_details = Buildings.get
 
 local has_power = Subentities.has_power
-local set_beacon_effects = Subentities.set_beacon_effects
+local set_effects = Effects.set
 
 local evaluate_workforce = Inhabitants.evaluate_workforce
 
@@ -56,11 +56,11 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general helper functions >>
 
---- Converts a performance value (0-1+) to a beacon speed bonus.
+--- Converts a performance value (0-1+) to a speed bonus percentage.
 --- @param performance number
 --- @return integer
 local function get_speed_from_performance(performance)
-    return floor(100 * performance - 20)
+    return floor(100 * (performance - 1))
 end
 Entity.get_speed_from_performance = get_speed_from_performance
 
@@ -78,8 +78,13 @@ local function multiply_percentages(...)
 end
 Entity.multiply_percentages = multiply_percentages
 
---- Sets the performance of a crafting machine entry, updating its active status and beacon effects.
---- Deactivates the entity if performance is below 0.2.
+--- Performance below this is treated as a standstill instead of a very slow crawl.
+--- The value is nudged down a bit so that a performance of exactly 0.05 still counts as active.
+local MINIMUM_PERFORMANCE = 0.049999
+Entity.MINIMUM_PERFORMANCE = MINIMUM_PERFORMANCE
+
+--- Sets the performance of a crafting machine entry, updating its active status and effects.
+--- Deactivates the entity if performance is below MINIMUM_PERFORMANCE.
 --- @param entry Entry
 --- @param performance number 0-1+ performance factor
 --- @param productivity integer? optional productivity bonus percentage
@@ -88,14 +93,14 @@ local function set_crafting_machine_performance(entry, performance, productivity
 
     local entity = entry[EK.entity]
 
-    local is_active = performance > 0.19999
+    local is_active = performance > MINIMUM_PERFORMANCE
 
     entry[EK.active] = is_active
     entity.disabled_by_script = not is_active
     Subentities.set_active(entry, is_active)
 
     if is_active then
-        set_beacon_effects(entry, get_speed_from_performance(performance), productivity or 0, true)
+        set_effects(entry, {speed = get_speed_from_performance(performance), productivity = productivity})
     end
 end
 Entity.set_crafting_machine_performance = set_crafting_machine_performance

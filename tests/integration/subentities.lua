@@ -105,16 +105,18 @@ Tirislib.Testing.add_test_case(
     "get_or_create creates on first call, returns existing on second",
     "integration|integration.subentities",
     function()
-        local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
+        -- test-psych-ward has power_usage = 50 in its building definition, so it has an eei prototype
+        local entry = Helpers.create_and_register(test_surface, "test-psych-ward", {0, 0})
+        entry[EK.subentities][SubentityType.eei].destroy()
 
-        local beacon1, was_new1 = Subentities.get_or_create(entry, SubentityType.beacon)
-        Assert.not_nil(beacon1, "should return a subentity")
+        local eei1, was_new1 = Subentities.get_or_create(entry, SubentityType.eei)
+        Assert.not_nil(eei1, "should return a subentity")
         Assert.is_true(was_new1, "should be new on first call")
-        Assert.is_true(beacon1.valid, "beacon should be valid")
+        Assert.is_true(eei1.valid, "eei should be valid")
 
-        local beacon2, was_new2 = Subentities.get_or_create(entry, SubentityType.beacon)
+        local eei2, was_new2 = Subentities.get_or_create(entry, SubentityType.eei)
         Assert.is_false(was_new2, "should not be new on second call")
-        Assert.equals(beacon1, beacon2, "should return the same subentity")
+        Assert.equals(eei1, eei2, "should return the same subentity")
     end,
     function()
         test_surface = Helpers.create_test_surface()

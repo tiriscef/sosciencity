@@ -560,6 +560,8 @@ function Register.remove_entry(entry, cause, event, keep_valid)
     destroy_custom_building(entry)
     on_destruction(_type, entry, cause, event)
     remove_subentities(entry)
+    -- local effects live on the entity itself, so they outlast the entry unless we take them back
+    Effects.clear(entry)
     unsubscribe_neighborhood(entry)
     remove_notifications(entry)
 

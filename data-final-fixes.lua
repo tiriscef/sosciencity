@@ -5,7 +5,6 @@ Tirislib.Prototype.default_icon_path = "__sosciencity-graphics__/graphics/icon/"
 
 -- Call scripts that make changes to prototypes that belong to other mods.
 
-require("datastage-scripts.allowed-effects")
 require("datastage-scripts.biters")
 require("datastage-scripts.science-pack-ingredients")
 require("datastage-scripts.gunfire-techs")

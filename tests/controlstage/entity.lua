@@ -4,18 +4,18 @@ local Assert = Tirislib.Testing.Assert
 -- << get_speed_from_performance >>
 
 Tirislib.Testing.add_test_case(
-    "get_speed_from_performance: full performance 1.0 gives bonus 80",
+    "get_speed_from_performance: full performance 1.0 gives no bonus",
     "entity|entity.math",
     function()
-        Assert.equals(Entity.get_speed_from_performance(1.0), 80)
+        Assert.equals(Entity.get_speed_from_performance(1.0), 0)
     end
 )
 
 Tirislib.Testing.add_test_case(
-    "get_speed_from_performance: threshold performance 0.2 gives bonus 0",
+    "get_speed_from_performance: the minimum active performance stays above the engine's floor",
     "entity|entity.math",
     function()
-        Assert.equals(Entity.get_speed_from_performance(0.2), 0)
+        Assert.greater_than(Entity.get_speed_from_performance(Entity.MINIMUM_PERFORMANCE), -100)
     end
 )
 
@@ -23,9 +23,9 @@ Tirislib.Testing.add_test_case(
     "get_speed_from_performance: maps linearly across the range",
     "entity|entity.math",
     function()
-        Assert.equals(Entity.get_speed_from_performance(0.0), -20)
-        Assert.equals(Entity.get_speed_from_performance(0.5), 30)
-        Assert.equals(Entity.get_speed_from_performance(1.5), 130)
+        Assert.equals(Entity.get_speed_from_performance(0.0), -100)
+        Assert.equals(Entity.get_speed_from_performance(0.5), -50)
+        Assert.equals(Entity.get_speed_from_performance(1.5), 50)
     end
 )
 

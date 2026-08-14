@@ -41,15 +41,35 @@ Tirislib.Testing.add_test_case(
 -- << update >>
 
 Tirislib.Testing.add_test_case(
-    "Assembling machine update applies clockwork beacon speed effects",
+    "Assembling machine update applies the clockwork bonus as a local effect",
     "integration|integration.machines",
     function()
+        storage.caste_bonuses[Type.clockwork] = 25
         local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
 
         Helpers.update_entry(entry)
 
-        -- set_beacon_effects stores the applied speed in EK.speed_bonus
-        Assert.not_nil(entry[EK.speed_bonus], "speed_bonus should be set after update (beacon effects applied)")
+        Assert.equals(
+            entry[EK.entity].local_effect.speed,
+            0.25,
+            "the bonus should be applied to the entity as a local effect"
+        )
+    end,
+    setup,
+    clean_up
+)
+
+Tirislib.Testing.add_test_case(
+    "A negative clockwork bonus doesn't slow down foreign machines",
+    "integration|integration.machines",
+    function()
+        storage.caste_bonuses[Type.clockwork] = -25
+        local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
+
+        Helpers.update_entry(entry)
+
+        -- the engine leaves zeroed values out of the effect it hands back
+        Assert.equals(entry[EK.entity].local_effect.speed or 0, 0, "no slowdown should reach the machine")
     end,
     setup,
     clean_up
@@ -81,12 +101,12 @@ Tirislib.Testing.add_test_case(
 ---------------------------------------------------------------------------------------------------
 -- << rocket silo: distinct updater >>
 -- update_rocket_silo differs from update_machine: it incorporates both clockwork and aurora
--- caste bonuses, and switches to a penalty module when clockwork bonus goes negative.
+-- caste bonuses, and it takes the clockwork malus instead of clamping it away.
 -- We register a test-assembling-machine entity as Type.rocket_silo to exercise this path
 -- without needing a rocket silo prototype.
 
 Tirislib.Testing.add_test_case(
-    "Rocket silo update with non-negative clockwork bonus applies speed and aurora productivity",
+    "Rocket silo update applies clockwork speed and aurora productivity",
     "integration|integration.machines",
     function()
         storage.caste_bonuses[Type.clockwork] = 10
@@ -95,16 +115,16 @@ Tirislib.Testing.add_test_case(
 
         Helpers.update_entry(entry)
 
-        Assert.equals(entry[EK.speed_bonus], 10, "speed_bonus should equal clockwork bonus")
-        Assert.equals(entry[EK.productivity_bonus], 5, "productivity_bonus should equal aurora bonus")
-        Assert.is_false(entry[EK.has_penalty_module], "no penalty module when clockwork bonus is non-negative")
+        local effect = entry[EK.entity].local_effect
+        Assert.equals(effect.speed, 0.1, "clockwork bonus should reach the entity")
+        Assert.equals(effect.productivity, 0.05, "aurora bonus should reach the entity")
     end,
     setup,
     clean_up
 )
 
 Tirislib.Testing.add_test_case(
-    "Rocket silo update with negative clockwork bonus adds penalty module and offsets speed by 80",
+    "Rocket silo update passes a negative clockwork bonus through as a slowdown",
     "integration|integration.machines",
     function()
         storage.caste_bonuses[Type.clockwork] = -5
@@ -112,9 +132,7 @@ Tirislib.Testing.add_test_case(
 
         Helpers.update_entry(entry)
 
-        -- penalty path: clockwork_bonus = -5 + 80 = 75, has_penalty_module = true
-        Assert.equals(entry[EK.speed_bonus], 75, "speed_bonus should be clockwork_bonus + 80 in penalty path")
-        Assert.is_true(entry[EK.has_penalty_module], "penalty module should be used when clockwork bonus is negative")
+        Assert.equals(entry[EK.entity].local_effect.speed, -0.05, "the malus should reach the entity")
     end,
     setup,
     clean_up

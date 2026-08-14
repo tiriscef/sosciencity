@@ -78,8 +78,7 @@ If the game gives you an error message, then send that to me. If not or if you t
 # Known Problems
 
  - Entities like houses or the upbringing station that consume power show up on the "Production" side of the power statistics, despite not actually producing power. Sosciencity simulates their energy usage with hidden EEI entities, which the Factorio engine handles in a weird way. I made a feature request for that.
-- You can break Sosciencity's entities by teleporting them (e.g. with Picker Dollies). For example the neighborhood connections or the speed/productivity manipulation will break. Because there is no teleporting of entities in the base game, I didn't implement any teleport detection to save on everyone's UPS.
-- If you have another mod installed which adds true speed/productivity modules (meaning modules that provide a bonus without a consumption or pollution malus), you can place them in beacons and have them affect Sosciencity's manufactory/farm type entities. That's not intended, but there's nothing I can do about it. Internally, my mod is placing invisible beacons under those entities as a hacky way to control these stats during control stage. So disallowing these effects isn't an option.
+- You can break Sosciencity's entities by teleporting them (e.g. with Picker Dollies). For example the neighborhood connections or the hidden power consumption entities will break. Because there is no teleporting of entities in the base game, I didn't implement any teleport detection to save on everyone's UPS.
 - You can insert Saplings into Mining Drills (and then they'll do nothing).
 - The mod doesn't work with multiple player forces. I don't know what will happen, I never played PvP. But not caring about Forces saved myself a lot of headaches.
 
@@ -125,7 +124,7 @@ Sosciencity.configure_building("your-manufactory", {
 })
 ```
 
-Also available: `make_existing_item_food` (retrofit an existing item into a food item) and `create_house` (item + recipe + entity in one call). See `datastage-api/CLAUDE.md` for the full list and the exact arguments of each helper.
+Also available: `make_existing_item_food` (retrofit an existing item into a food item) and `create_house` (item + recipe + entity in one call).
 
 The building example above uses `Unit` and `Type`. These are plain Lua tables you can pull in from Sosciencity so you express quantities the same way the base mod does (`Unit` converts human-readable values like kW to Factorio's per-tick units; `Type` maps building types to their internal IDs):
 

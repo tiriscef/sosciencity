@@ -93,8 +93,57 @@ local function apply_building_description(name, def)
     end
 end
 
+--- Factorio prototype types whose entities can receive effects.
+local CRAFTING_MACHINE_TYPES = {
+    ["assembling-machine"] = true,
+    ["furnace"] = true,
+    ["mining-drill"] = true,
+    ["rocket-silo"] = true
+}
+
+--- Sosciencity drives the speed and productivity of its citizen-run buildings through
+--- LuaEntity::local_effect, which the engine adds on top of module and beacon effects. A building
+--- whose output is set by its workers shouldn't also be set by its surroundings.
+local CITIZEN_RUN_RECEIVER = {
+    uses_beacon_effects = false,
+    uses_surface_effects = false
+}
+
+--- The lowest limit the engine accepts. Citizen-run buildings need it to get past the default -80%
+--- floor, so a barely staffed building can crawl instead of stopping short.
+local LOWEST_LIMIT = -0.9999
+
+--- Gives a citizen-run building the effect receiver its runtime logic needs. Fields that the
+--- prototype declares itself win, so a building can opt back into beacons by writing
+--- `effect_receiver = {uses_beacon_effects = true}`.
+--- @param name string
+--- @param def BuildingDefinition
+local function apply_effect_receiver(name, def)
+    -- catch-all types are ordinary machines that only take the clockwork bonus - modules and
+    -- beacons are supposed to work on those just like on any vanilla machine
+    if Types.definitions[def.type].is_catch_all then
+        return
+    end
+
+    local entity, found = Tirislib.Entity.get_by_name(name)
+    if not found or not CRAFTING_MACHINE_TYPES[entity.type] then
+        return
+    end
+
+    local receiver = Tirislib.Tables.set_fields_passively(entity.effect_receiver or {}, CITIZEN_RUN_RECEIVER)
+
+    -- merged one level deep, so a building that raises a limit's ceiling doesn't silently drop
+    -- the floor along with it
+    for _, limit in pairs {"speed_limits", "productivity_limits"} do
+        receiver[limit] = Tirislib.Tables.set_fields_passively(receiver[limit] or {}, {low = LOWEST_LIMIT})
+    end
+
+    entity.effect_receiver = receiver
+end
+
 --- Applies sosciencity-specific configuration to an already-registered building entity:
---- description fields (power usage, workforce, range) and EEI registration.
+--- description fields (power usage, workforce, range), the effect receiver of citizen-run
+--- buildings, and EEI registration.
 --- For sosciencity's own buildings the name must already be in constants/buildings.lua.
 --- For external buildings pass the definition explicitly; it will be stored in Building.values
 --- after postprocessing (disease_frequency_fully_staffed per-minute-fully-staffed → disease_frequency per-tick-per-worker).
@@ -113,6 +162,7 @@ function Sosciencity.configure_building(name, def)
     end
 
     apply_building_description(name, def)
+    apply_effect_receiver(name, def)
 
     if def.eei then
         Sosciencity.Config.add_eei(name)

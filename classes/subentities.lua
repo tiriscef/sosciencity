@@ -13,7 +13,6 @@ Subentities = {}
 -- local often used globals for extreme performance gains
 
 Subentities.subentity_name_lookup = {
-    [SubentityType.beacon] = "sosciencity-hidden-beacon",
     [SubentityType.turret_gunfire] = "gunfire-hq-turret",
     [SubentityType.turret_gunfire_hq1] = "gunfire-hq-turret",
     [SubentityType.turret_gunfire_hq2] = "gunfire-hq-turret",
@@ -29,74 +28,6 @@ local get_building_details = require("constants.buildings").get
 local max = math.max
 local get_subtbl = Tirislib.Tables.get_subtbl
 local get_or_create_subentity
-
----------------------------------------------------------------------------------------------------
--- << hidden beacons >>
-
-local SPEED_MODULE_NAME = "-sosciencity-speed"
-local PRODUCTIVITY_MODULE_NAME = "-sosciencity-productivity"
-local PENALTY_MODULE_NAME = "sosciencity-penalty"
-
-local MAX_MODULE_STRENGTH = 14
-
---- Inserts modules with the given name until their combined bonus sum to the given value.
---- @param beacon_inventory LuaInventory
---- @param module_name string
---- @param value integer
-local function set_binary_modules(beacon_inventory, module_name, value)
-    local new_value = value
-    local strength = 0
-
-    while value > 0 and strength <= MAX_MODULE_STRENGTH do
-        new_value = math.floor(value / 2)
-
-        if new_value * 2 ~= value then
-            beacon_inventory.insert {
-                name = strength .. module_name,
-                count = 1
-            }
-        end
-
-        strength = strength + 1
-        value = new_value
-    end
-end
-
---- Sets the transmitted effects of the hidden beacon. Speed and productivity need to be positive.
---- @param entry Entry
---- @param speed integer
---- @param productivity integer
---- @param add_penalty boolean
-function Subentities.set_beacon_effects(entry, speed, productivity, add_penalty)
-    local beacon, new = get_or_create_subentity(entry, SubentityType.beacon)
-
-    -- we don't update the beacon if nothing has changed to avoid unnecessary API calls
-    if
-        not new and speed == entry[EK.speed_bonus] and productivity == entry[EK.productivity_bonus] and
-            add_penalty == entry[EK.has_penalty_module]
-     then
-        return
-    end
-
-    local beacon_inventory = beacon.get_module_inventory()
-    beacon_inventory.clear()
-
-    if speed and speed > 0 then
-        set_binary_modules(beacon_inventory, SPEED_MODULE_NAME, speed)
-    end
-    if productivity and productivity > 0 then
-        set_binary_modules(beacon_inventory, PRODUCTIVITY_MODULE_NAME, productivity)
-    end
-
-    if add_penalty then
-        beacon_inventory.insert {name = PENALTY_MODULE_NAME}
-    end
-
-    -- save the current beacon settings
-    entry[EK.speed_bonus] = speed
-    entry[EK.productivity_bonus] = productivity
-    entry[EK.has_penalty_module] = add_penalty
-end
 
 ---------------------------------------------------------------------------------------------------
 -- << hidden electric energy interface >>
@@ -348,8 +279,6 @@ local subentity_types_where_active_status_makes_sense = {
 --
 -- Each entry in `state_handlers` is { serialize = fn(subentity) -> state, restore = fn(subentity, state) }.
 -- Subentity types that are intentionally absent:
---   * `beacon` - self-restoring; the entity updater calls set_beacon_effects from
---     EK.speed_bonus / EK.productivity_bonus on the next tick after rebuild.
 --   * `turret_gunfire` and the HQ variants - these turrets currently don't use ammo
 
 Subentities.state_handlers = {
