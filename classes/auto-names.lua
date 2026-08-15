@@ -61,7 +61,12 @@ local nightclub_names = {
     "Fusion Ignition",
     "The Power Surge",
     "Infinite Fusion",
-    "The Sabotage"
+    "The Sabotage",
+    "The Main Bass",
+    "Deconstruction",
+    "Wavelength Love",
+    "Short Circuit",
+    "Factory Must Rave"
 }
 
 generators["nightclub"] = function(_entry)
@@ -95,6 +100,10 @@ local ember_hq_names = {
     "The Team Building",
     "The Brainstorm",
     "The Clocked-Out Collective",
+    "Kindling Collective",
+    "Spark Notes",
+    "Untitled (Studio #4)",
+    "The Still Life"
 }
 
 generators["ember-hq"] = function(_entry)
@@ -135,6 +144,11 @@ local kitchen_for_all_names = {
     "Tofu Towerz",
     "Rice and Shine",
     "The Open Diner",
+    "The Manifesto",
+    "The Plenary Seszion",
+    "First Come, First Served (Equally)",
+    "Eat the Riches",
+    "Fork the System"
 }
 
 generators["kitchen-for-all"] = function(_entry)
