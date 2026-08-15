@@ -8,6 +8,11 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 
+local Entity = require("classes.entity")
+local Inhabitants = require("classes.inhabitants")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+
 local min = math.min
 local max = math.max
 

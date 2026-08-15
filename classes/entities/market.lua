@@ -3,6 +3,10 @@ local Type = require("enums.type")
 
 local Food = require("constants.food")
 
+local Entity = require("classes.entity")
+local Inventories = require("classes.inventories")
+local Register = require("classes.register")
+
 Entity.Market = {}
 local Market = Entity.Market
 

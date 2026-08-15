@@ -3,6 +3,10 @@ local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
 
+local Inhabitants = require("classes.inhabitants")
+local Inventories = require("classes.inventories")
+local Register = require("classes.register")
+
 local get_building_details = Buildings.get
 local random = math.random
 

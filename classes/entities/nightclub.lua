@@ -5,6 +5,11 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
+local Entity = require("classes.entity")
+local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
+local Subentities = require("classes.subentities")
+
 local has_power = Subentities.has_power
 local evaluate_workforce = Inhabitants.evaluate_workforce
 

@@ -1,6 +1,8 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Register = require("classes.register")
+
 local population_signals = {
     ["signal-ember"] = Type.ember,
     ["signal-orchid"] = Type.orchid,

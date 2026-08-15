@@ -1,6 +1,8 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Register = require("classes.register")
+
 local function create_animal_farm(entry)
     entry[EK.houses_animals] = false
 end

@@ -5,6 +5,13 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 
+local Entity = require("classes.entity")
+local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+local Statistics = require("classes.statistics")
+local Subentities = require("classes.subentities")
+
 local get_building_details = Buildings.get
 local has_power = Subentities.has_power
 local log_item = Statistics.log_item

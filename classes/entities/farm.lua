@@ -9,6 +9,11 @@ local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 
+local Entity = require("classes.entity")
+local Inhabitants = require("classes.inhabitants")
+local Inventories = require("classes.inventories")
+local Register = require("classes.register")
+
 local get_building_details = Buildings.get
 local evaluate_workforce = Inhabitants.evaluate_workforce
 local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness

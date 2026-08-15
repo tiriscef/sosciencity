@@ -7,6 +7,9 @@ local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
 
+local Entity = require("classes.entity")
+local Register = require("classes.register")
+
 local get_building_details = Buildings.get
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local get_water_tiles = Entity.get_water_tiles

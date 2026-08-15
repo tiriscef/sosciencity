@@ -7,6 +7,10 @@ local Buildings = require("constants.buildings")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 
+local Inventories = require("classes.inventories")
+local Register = require("classes.register")
+local Statistics = require("classes.statistics")
+
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
 local log_item = Statistics.log_item

@@ -3,6 +3,9 @@ local Type = require("enums.type")
 
 local DrinkingWater = require("constants.drinking-water")
 
+local Entity = require("classes.entity")
+local Register = require("classes.register")
+
 local water_values = DrinkingWater.values
 local is_active = Entity.check_is_active
 

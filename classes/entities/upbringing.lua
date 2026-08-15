@@ -9,6 +9,15 @@ local Castes = require("constants.castes")
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
+local Communication = require("classes.communication")
+local Consumption = require("classes.consumption")
+local Entity = require("classes.entity")
+local Inhabitants = require("classes.inhabitants")
+local Locale = require("classes.locale")
+local Register = require("classes.register")
+local Subentities = require("classes.subentities")
+local Technologies = require("classes.technologies")
+
 local get_building_details = Buildings.get
 local is_active = Entity.check_is_active
 local circuit_wires = Entity.circuit_wires

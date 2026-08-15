@@ -344,6 +344,14 @@ local Dim = require("enums.performance-dimension")
 local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 
+local Communication = require("classes.communication")
+local Entity = require("classes.entity")
+local Inhabitants = require("classes.inhabitants")
+local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+local Subentities = require("classes.subentities")
+
 local function build_hospital_report(entry)
     if not has_power(entry) then
         return {

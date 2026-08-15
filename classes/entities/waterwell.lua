@@ -5,6 +5,11 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
+local Entity = require("classes.entity")
+local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local create_active_machine_status = Entity.create_active_machine_status
 local update_active_machine_status = Entity.update_active_machine_status

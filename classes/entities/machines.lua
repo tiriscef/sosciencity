@@ -1,6 +1,10 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Effects = require("classes.effects")
+local Entity = require("classes.entity")
+local Register = require("classes.register")
+
 local set_effects = Effects.set
 
 local create_active_machine_status = Entity.create_active_machine_status

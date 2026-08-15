@@ -6,6 +6,11 @@ local Buildings = require("constants.buildings")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 
+local Entity = require("classes.entity")
+local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
 local floor = math.floor

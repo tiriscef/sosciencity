@@ -347,6 +347,14 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << per-type entity files >>
 
+-- The submodules below are required at file scope and read fields off Entity at
+-- their own file scope. Registering the (by now fully populated) table here lets
+-- them `require("classes.entity")` instead of re-entering this file, which would
+-- recurse until Lua runs out of C stack levels.
+-- Factorio keys package.loaded by resolved path, not by the string passed to
+-- require, so this has to be spelled out in full.
+package.loaded["__sosciencity__/classes/entity.lua"] = Entity
+
 require("classes.entities.machines")
 require("classes.entities.animal-farm")
 require("classes.entities.caste-education")
