@@ -371,3 +371,5 @@ require("classes.entities.waste-dump")
 require("classes.entities.water-distributer")
 require("classes.entities.waterwell")
 require("classes.entities.fishwhirl")
+
+return Entity

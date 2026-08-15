@@ -402,3 +402,5 @@ function Visualisation.remove_mouseover_highlights(player_id)
 
     highlights[player_id] = nil
 end
+
+return Visualisation

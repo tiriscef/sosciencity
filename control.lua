@@ -48,40 +48,14 @@ else
 end
 
 ---------------------------------------------------------------------------------------------------
--- << Events >>
-
---- Static class for registering event handlers.
-Events = {}
-
-local on_init_handlers = {}
-
---- Adds a function to be called during the init-Phase.
---- @param fn function
-function Events.set_on_init_handler(fn)
-    Tirislib.Utils.desync_protection()
-    on_init_handlers[#on_init_handlers + 1] = fn
-end
-
-local on_script_trigger_handlers = {}
-
---- Adds a function to be called when a script trigger with a specified id is being... triggered.
---- @param id string
---- @param fn function
-function Events.set_script_trigger_handler(id, fn)
-    Tirislib.Utils.desync_protection()
-    if on_script_trigger_handlers[id] then
-        error("Duplicate script_trigger handler registration for id '" .. tostring(id) .. "'")
-    end
-    on_script_trigger_handlers[id] = fn
-end
-
----------------------------------------------------------------------------------------------------
 -- << constants >>
 
 local Types = require("constants.types")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
+
+local Events = require("classes.events")
 
 require("classes.locale")
 require("classes.scheduler")
@@ -339,9 +313,7 @@ local function init()
 
     on_load()
 
-    for _, fn in pairs(on_init_handlers) do
-        fn()
-    end
+    Events.run_on_init_handlers()
 end
 
 local function on_entity_built(event)
@@ -601,14 +573,6 @@ local function on_player_queued_craft(event)
     on_handcrafting_queue(player_id, name, count)
 end
 
-local function on_script_trigger(event)
-    local fn = on_script_trigger_handlers[event.effect_id]
-
-    if fn then
-        fn(event)
-    end
-end
-
 local function on_player_setup_blueprint(event)
     local blueprint = event.stack or event.record
     if not blueprint then
@@ -730,7 +694,7 @@ for _, recipe in pairs(prototypes.recipe) do
 end
 
 -- trigger events
-script.on_event(defines.events.on_script_trigger_effect, on_script_trigger)
+script.on_event(defines.events.on_script_trigger_effect, Events.run_script_trigger_handler)
 
 -- player creates a blueprint
 script.on_event(defines.events.on_player_setup_blueprint, on_player_setup_blueprint)

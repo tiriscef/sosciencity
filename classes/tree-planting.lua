@@ -207,3 +207,5 @@ function TreePlanting.on_area_selected(event)
 
     plant_in_area(player, event.surface, event.area)
 end
+
+return TreePlanting

@@ -1,3 +1,5 @@
+local Events = require("classes.events")
+
 Events.set_on_init_handler(
     function()
         for _, surface in pairs(game.surfaces) do
