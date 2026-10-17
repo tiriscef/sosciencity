@@ -66,6 +66,22 @@ As the architect of the city you need to fulfill several responsibilities in ord
 
 
 
+# On the Use of AI
+
+I do use AI tools while working on Sosciencity.
+
+Sosciencity has been my hobby project for years, and it's full of ideas I've been carrying around for a long time. AI just helps me actually get them into the game. To me, it's a tool like Blender or Git or an Assembling machine 2. What makes something slop in my eyes isn't the tool, it's when nobody actually cares about the result. I care about this mod a lot.
+
+Sosciencity is a big project that I struggled a lot to maintain in my spare time. AI takes a lot of the tedious parts off my hands - boilerplate, refactoring, writing tests, digging through API docs - and it has encouraged me to learn things I would otherwise have avoided, like new techniques in Blender or CI pipelines.
+
+The graphics are made with a very mixed workflow: most are entirely hand-made, some models and textures started out AI-generated (image-to-3D, generated textures), some come from photogrammetry, and sometimes an AI agent helps me build things in Blender. In the end, everything is assembled, tweaked, and rendered by me in Blender until I'm happy with it.
+
+I (try to) review and test every change before it ships, and I don't use AI in ways I find unethical, e.g. to copy other people's work or get around licenses.
+
+If you prefer to avoid mods made with AI assistance, I understand and respect that - this note is here so you can make an informed choice.
+
+
+
 # Bugs
 
 **Please have a look at the Known Problems list before reporting.**
