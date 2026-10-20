@@ -532,7 +532,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "precious-ore", amount = 2}
     },
     ingredients = {},
-    category = "sosciencity-clockwork-mines",
+    category = "sosciencity-clockwork-mine",
     energy_required = 5,
     allow_productivity = true
 }
@@ -542,7 +542,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "gemstone", amount = 1}
     },
     ingredients = {},
-    category = "sosciencity-clockwork-mines",
+    category = "sosciencity-clockwork-mine",
     energy_required = 8,
     allow_productivity = true
 }
@@ -559,7 +559,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-tinkering-workshop",
     energy_required = 8,
-    unlock = "clockwork-mines"
+    unlock = "clockwork-mine"
 }:add_number_layer(1)
 
 Tirislib.RecipeGenerator.create {
@@ -590,7 +590,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-tinkering-workshop",
     energy_required = 6,
-    unlock = "clockwork-mines"
+    unlock = "clockwork-mine"
 }:add_number_layer(1)
 
 Tirislib.RecipeGenerator.create {

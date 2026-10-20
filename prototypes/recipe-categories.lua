@@ -73,7 +73,7 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
-        name = "sosciencity-clockwork-mines"
+        name = "sosciencity-clockwork-mine"
     },
     {
         type = "recipe-category",

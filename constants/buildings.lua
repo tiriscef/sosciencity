@@ -103,7 +103,7 @@ Building.values = {
             happiness_weight = 1
         }
     },
-    ["clockwork-mines"] = {
+    ["clockwork-mine"] = {
         type = Type.manufactory,
         profits_from_mining_productivity = true,
         workforce = {

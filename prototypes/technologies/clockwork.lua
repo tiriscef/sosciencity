@@ -27,7 +27,7 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
-    name = "clockwork-mines",
+    name = "clockwork-mine",
     icon = Tirislib.Prototype.placeholder_icon,
     icon_size = 64,
     prerequisites = {"clockwork-caste", "chemical-science-pack"},
@@ -46,7 +46,7 @@ Tirislib.Technology.create {
     name = "precious-metalworking",
     icon = Tirislib.Prototype.placeholder_icon,
     icon_size = 64,
-    prerequisites = {"clockwork-mines", "foundry-caste"},
+    prerequisites = {"clockwork-mine", "foundry-caste"},
     unit = {
         count = 150,
         ingredients = {
