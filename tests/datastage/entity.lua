@@ -292,3 +292,88 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << create_animation_from_sprite_data >>
+
+local function sprite_data_sheet(name)
+    return {
+        width = 30,
+        height = 20,
+        shift = {0.5, -0.25},
+        line_length = 4,
+        lines_per_file = 2,
+        filenames = {"__test__/" .. name .. ".png"}
+    }
+end
+
+Tirislib.Testing.add_test_case(
+    "Entity.create_animation_from_sprite_data creates one layer per map in drawing order",
+    "lib.entity",
+    function()
+        local animation = Tirislib.Entity.create_animation_from_sprite_data {
+            frame_count = 8,
+            maps = {
+                glow = sprite_data_sheet("glow"),
+                diffuse = sprite_data_sheet("diffuse"),
+                shadowmap = sprite_data_sheet("shadowmap")
+            }
+        }
+
+        local layers = animation.layers
+        Assert.equals(#layers, 3)
+        Assert.equals(layers[1].filenames, {"__test__/diffuse.png"})
+        Assert.equals(layers[2].filenames, {"__test__/shadowmap.png"})
+        Assert.is_true(layers[2].draw_as_shadow)
+        Assert.equals(layers[3].filenames, {"__test__/glow.png"})
+        Assert.is_true(layers[3].draw_as_glow)
+        Assert.is_nil(layers[1].draw_as_shadow)
+        Assert.is_nil(layers[1].draw_as_glow)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Entity.create_animation_from_sprite_data copies frame data to every layer and sheet data per map",
+    "lib.entity",
+    function()
+        local shadow = sprite_data_sheet("shadowmap")
+        shadow.width = 50
+        shadow.shift = {1, 2}
+        local animation = Tirislib.Entity.create_animation_from_sprite_data {
+            frame_count = 3,
+            animation_speed = 20 / 60,
+            frame_sequence = {1, 2, 2, 3},
+            maps = {diffuse = sprite_data_sheet("diffuse"), shadowmap = shadow}
+        }
+
+        for _, layer in pairs(animation.layers) do
+            Assert.equals(layer.frame_count, 3)
+            Assert.equals(layer.animation_speed, 20 / 60)
+            Assert.equals(layer.frame_sequence, {1, 2, 2, 3})
+            Assert.equals(layer.line_length, 4)
+            Assert.equals(layer.lines_per_file, 2)
+            Assert.equals(layer.scale, 0.5)
+        end
+        Assert.equals(animation.layers[1].width, 30)
+        Assert.equals(animation.layers[1].shift, {0.5, -0.25})
+        Assert.equals(animation.layers[2].width, 50)
+        Assert.equals(animation.layers[2].shift, {1, 2})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Entity.create_animation_from_sprite_data makes a single frame without frame data",
+    "lib.entity",
+    function()
+        local static = sprite_data_sheet("static")
+        static.line_length = nil
+        static.lines_per_file = nil
+        local animation = Tirislib.Entity.create_animation_from_sprite_data {maps = {diffuse = static}}
+
+        local layer = animation.layers[1]
+        Assert.equals(layer.frame_count, 1)
+        Assert.equals(layer.lines_per_file, 1)
+        Assert.is_nil(layer.frame_sequence)
+        Assert.is_nil(layer.animation_speed)
+    end
+)

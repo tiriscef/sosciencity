@@ -345,6 +345,50 @@ function Tirislib.Entity.create_standard_picture(details)
     return {layers = layers}
 end
 
+-- sprite-data map keys in drawing order, with the layer flags they need
+local SPRITE_DATA_MAPS = {
+    {"diffuse", {}},
+    {"shadowmap", {draw_as_shadow = true}},
+    {"lightmap", {draw_as_light = true}},
+    {"glow", {draw_as_glow = true}}
+}
+
+--- Creates an animation from one part of a sprite-data.lua, which the sosciencity-blender-tools
+--- export writes next to the sprites.\
+--- A part has **frame_count**, **animation_speed** and **frame_sequence** (all optional) and
+--- **maps**: one entry per map (diffuse, shadowmap, lightmap, glow) with its own **width**,
+--- **height**, **shift**, **filenames**, **line_length** and **lines_per_file** in px at 64 px/tile.
+--- @param part table
+--- @return AnimationPrototype
+function Tirislib.Entity.create_animation_from_sprite_data(part)
+    local layers = {}
+
+    for _, map in pairs(SPRITE_DATA_MAPS) do
+        local sheet = part.maps[map[1]]
+        if sheet then
+            local layer = {
+                filenames = sheet.filenames,
+                lines_per_file = sheet.lines_per_file or 1,
+                line_length = sheet.line_length,
+                frame_count = part.frame_count or 1,
+                animation_speed = part.animation_speed,
+                frame_sequence = part.frame_sequence,
+                priority = "high",
+                width = sheet.width,
+                height = sheet.height,
+                shift = sheet.shift,
+                scale = 0.5
+            }
+            for key, value in pairs(map[2]) do
+                layer[key] = value
+            end
+            layers[#layers + 1] = layer
+        end
+    end
+
+    return {layers = layers}
+end
+
 --- Creates the standard impact sound.
 --- @return SoundPrototype
 function Tirislib.Entity.get_standard_impact_sound()
