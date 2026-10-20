@@ -64,5 +64,5 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.15},
         drain = "0W"
     }
-}:set_size(6, 6):copy_icon_from_item()
+}:set_size(7, 7):copy_icon_from_item()
 Sosciencity.configure_building("clockwork-quarry")
