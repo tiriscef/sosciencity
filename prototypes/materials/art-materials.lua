@@ -14,7 +14,7 @@ local art_material_items = {
         name = "wax",
         sprite_variations = {name = "wax", count = 3, include_icon = true},
         fuel_value = "1MJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "crayons",

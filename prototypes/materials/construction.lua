@@ -7,7 +7,7 @@ local construction_items = {
         name = "sawdust",
         sprite_variations = {name = "sawdust", count = 2, include_icon = true},
         fuel_value = "200kJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "marble",

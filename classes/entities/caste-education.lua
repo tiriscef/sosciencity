@@ -51,7 +51,7 @@ Register.set_entity_updater(Type.caste_education_building, update_caste_educatio
 
 --- Graduates the students working in a caste education building into its result
 --- caste. Called when one of the building's education recipes finishes crafting.
---- @param event OnRecipeCraftedData
+--- @param event RecipeCraftedEvent
 function CasteEducation.on_recipe_crafted(event)
     local entry = try_get(event.entity.unit_number)
     if not entry or entry[EK.type] ~= Type.caste_education_building then

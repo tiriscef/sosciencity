@@ -9,7 +9,7 @@ local flora_items = {
         name = "leafage",
         sprite_variations = {name = "leafage", count = 3, include_icon = true},
         fuel_value = "500kJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "hardcorn-punk",
@@ -89,7 +89,7 @@ local flora_items = {
 for _, item in pairs(flora_items) do
     if item.wood then
         item.fuel_value = "2MJ"
-        item.fuel_category = "chemical"
+        item.fuel_categories = {"chemical"}
     end
 end
 

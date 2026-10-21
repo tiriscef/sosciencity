@@ -7,28 +7,28 @@ local garbage_items = {
     {
         name = "garbage",
         fuel_value = "2MJ",
-        fuel_category = "garbage",
+        fuel_categories = {"garbage"},
         auto_recycle = false,
         sprite_variations = {name = "garbage", count = 3, include_icon = true}
     },
     {
         name = "food-leftovers",
         fuel_value = "1MJ",
-        fuel_category = "garbage",
+        fuel_categories = {"garbage"},
         auto_recycle = false,
         sprite_variations = {name = "food-leftovers", count = 2, include_icon = true}
     },
     {
         name = "slaughter-waste",
         fuel_value = "500kJ",
-        fuel_category = "garbage",
+        fuel_categories = {"garbage"},
         auto_recycle = false,
         sprite_variations = {name = "slaughter-waste", count = 1, include_icon = true}
     },
     {
         name = "expired-food",
         fuel_value = "1MJ",
-        fuel_category = "garbage",
+        fuel_categories = {"garbage"},
         auto_recycle = false
     }
 }

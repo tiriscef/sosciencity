@@ -45,7 +45,7 @@ local biology_items = {
     {
         name = "solid-fat",
         fuel_value = "500kJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "proteins",
