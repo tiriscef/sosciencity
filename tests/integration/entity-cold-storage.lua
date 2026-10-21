@@ -1,4 +1,6 @@
 local EK = require("enums.entry-key")
+local Type = require("enums.type")
+local Building = require("constants.buildings")
 local Food = require("constants.food")
 
 local Helpers = require("tests.integration.helpers")
@@ -186,6 +188,21 @@ Tirislib.Testing.add_test_case(
         Assert.equals(food_stack_1.spoil_tick, initial_1 + expected, "first food stack should be extended")
         Assert.equals(food_stack_2.spoil_tick, initial_2 + expected, "second food stack should be extended")
         Assert.equals(nonfood_stack.spoil_tick, initial_nonfood, "non-food stack should not change")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Logistic cold storage warehouses register as cold storage",
+    "integration|integration.entity",
+    function()
+        for i, mode in pairs(Building.cold_storage_logistic_modes) do
+            local entry = Helpers.create_and_register(test_surface, mode .. "-cold-storage-warehouse", {i * 10, 0})
+
+            Assert.equals(entry[EK.type], Type.cold_storage, mode .. " variant should be a cold storage")
+            Assert.not_nil(Inventories.get_chest_inventory(entry), mode .. " variant should have a chest inventory")
+        end
     end,
     setup,
     teardown

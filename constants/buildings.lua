@@ -735,6 +735,14 @@ Building.values = {
 }
 local buildings = Building.values
 
+--- Logistic modes the cold storage warehouse has a logistic system variant for.
+--- The variants are named like the vanilla chests ("passive-provider-cold-storage-warehouse")
+--- and keep food fresh exactly like the plain warehouse.
+Building.cold_storage_logistic_modes = {"passive-provider", "active-provider", "storage", "buffer", "requester"}
+for _, mode in pairs(Building.cold_storage_logistic_modes) do
+    buildings[mode .. "-cold-storage-warehouse"] = Tirislib.Tables.copy(buildings["cold-storage-warehouse"])
+end
+
 --- Applies unit conversions to a building definition in place.
 --- disease_frequency_fully_staffed: per-minute for full crew to disease_frequency per-worker-per-tick.
 --- @param def BuildingDefinition

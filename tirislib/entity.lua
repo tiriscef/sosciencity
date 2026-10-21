@@ -284,7 +284,8 @@ end
 --- **shift**: table\
 --- **shadowmap**: boolean\
 --- **lightmap**: boolean\
---- **glow**: boolean
+--- **glow**: boolean\
+--- **mask_tint**: Color? - adds the grey "-mask" layer on top, tinted with this colour
 --- @param details table
 --- @return PicturePrototype
 function Tirislib.Entity.create_standard_picture(details)
@@ -305,6 +306,19 @@ function Tirislib.Entity.create_standard_picture(details)
             scale = 0.5 * scale
         }
     }
+
+    if details.mask_tint then
+        layers[#layers + 1] = {
+            filename = path .. "-mask.png",
+            frame_count = 1,
+            priority = "high",
+            width = width * PIXEL_PER_TILE,
+            height = height * PIXEL_PER_TILE,
+            shift = shift,
+            scale = 0.5 * scale,
+            tint = details.mask_tint
+        }
+    end
 
     if details.shadowmap then
         layers[#layers + 1] = {
