@@ -1,7 +1,5 @@
 local Building = require("constants.buildings")
 
--- TODO: graphics are a blockout render for now
-
 local GRAPHICS_PATH = "__sosciencity-graphics__/graphics/entity/cold-storage-warehouse/cold-storage-warehouse"
 
 --- Roof band colour of the plain warehouse.
@@ -76,6 +74,7 @@ local function create_entity(name, tint, fields)
             height = 8,
             shift = {0, 0},
             shadowmap = true,
+            lightmap = true,
             mask_tint = tint
         },
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
