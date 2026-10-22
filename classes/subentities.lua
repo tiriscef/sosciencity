@@ -23,7 +23,10 @@ local subentity_names = Subentities.subentity_name_lookup
 
 local get_type = require("constants.types").get
 
-local get_building_details = require("constants.buildings").get
+local Buildings = require("constants.buildings")
+local get_building_details = Buildings.get
+local get_recipe_visualisation_sprite = Buildings.get_recipe_visualisation_sprite
+local recipe_visualisation_maps = Buildings.recipe_visualisation_maps
 
 local max = math.max
 local get_subtbl = Tirislib.Tables.get_subtbl
@@ -150,6 +153,65 @@ function Subentities.remove_common_sprite(entry, render_type)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << recipe visualisation >>
+
+--- Render object slot per map of a recipe visualisation variant.
+local recipe_visualisation_renderings = {
+    diffuse = RenderingType.recipe_visualisation,
+    glow = RenderingType.recipe_visualisation_glow,
+    lightmap = RenderingType.recipe_visualisation_light
+}
+
+--- Sprite path -> whether the sprite exists. Variants don't need every map.
+local sprite_exists = {}
+
+local function has_sprite(path)
+    local exists = sprite_exists[path]
+    if exists == nil then
+        exists = helpers.is_valid_sprite_path(path)
+        sprite_exists[path] = exists
+    end
+    return exists
+end
+
+--- Draws the variant of the active recipe on top of the building, one render object per map the variant has.
+--- @param entry Entry of a crafting machine
+--- @param visualisation RecipeVisualisationDefinition
+function Subentities.update_recipe_visualisation(entry, visualisation)
+    local entity = entry[EK.entity]
+    local recipe = entity.get_recipe()
+    local variant = recipe and visualisation.by_recipe[recipe.name] or visualisation.default
+    local renders = get_subtbl(entry, EK.attached_renderings)
+
+    for map, render_type in pairs(recipe_visualisation_renderings) do
+        local sprite = get_recipe_visualisation_sprite(entry[EK.name], variant, map)
+        local render = renders[render_type]
+
+        if has_sprite(sprite) then
+            if render and render.valid then
+                if render.sprite ~= sprite then
+                    render.sprite = sprite
+                end
+            else
+                renders[render_type] =
+                    rendering.draw_sprite {
+                    sprite = sprite,
+                    target = entity,
+                    surface = entity.surface,
+                    render_layer = "object",
+                    light_mode = recipe_visualisation_maps[map].light_mode
+                }
+            end
+        elseif render then
+            if render.valid then
+                render.destroy()
+            end
+            renders[render_type] = nil
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << creation >>
 
 local function get_subentity_name(entry, _type)
@@ -203,6 +265,11 @@ function Subentities.add_all_for(entry)
         for _, _type in pairs(subentities) do
             add(entry, _type)
         end
+    end
+
+    local recipe_visualisation = building_details.recipe_visualisation
+    if recipe_visualisation then
+        Subentities.update_recipe_visualisation(entry, recipe_visualisation)
     end
 
     local type_definition = get_type(entry)

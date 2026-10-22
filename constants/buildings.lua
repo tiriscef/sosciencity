@@ -20,6 +20,7 @@ local Building = {}
 --- @field auto_name string? name of the auto-naming scheme in AutoNames (see classes/auto-names.lua); omit to skip auto-naming
 --- @field eei boolean? if true, an EEI is registered so the building can consume power
 --- @field inhabitant_count integer? number of inhabitants the building needs to function (shown as a tooltip)
+--- @field recipe_visualisation RecipeVisualisationDefinition? shows what the building is currently working on (crafting machines only)
 
 --- Definition table for a building's workforce
 --- @class WorkforceDefinition
@@ -30,6 +31,13 @@ local Building = {}
 --- @field disease_frequency number disease progress per worker per tick
 --- @field happiness_weight number how much worker happiness affects this building's performance (0 = none, 1 = full effect)
 --- @field noun string? stem for the workforce labels (e.g. "recruits"); overrides the type-level default, which itself falls back to "staff". Requires locale keys <noun>, target-<noun>, show-<noun>, not-enough-<noun> (and sosciencity-util.workforce-<noun> for the entity tooltip)
+
+--- A sprite on top of the building that follows the active recipe
+--- (the atelier's focus corner shows the piece the artists are working on).
+--- Each variant needs sprite prototypes named by Building.get_recipe_visualisation_sprite.
+--- @class RecipeVisualisationDefinition
+--- @field default string variant shown when no recipe is set or the recipe has no variant of its own
+--- @field by_recipe table<string, string> recipe name -> variant
 
 --- The standard range for connections where the huwans are supposed to walk to the entity.
 local range_by_foot = 50
@@ -75,6 +83,13 @@ Building.values = {
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1,
             noun = "artists"
+        },
+        recipe_visualisation = {
+            default = "idle",
+            by_recipe = {
+                ["painting"] = "painting",
+                ["statue"] = "statue"
+            }
         }
     },
     ["bloomhouse"] = {
@@ -762,6 +777,34 @@ local housing_details = {
     range = range_by_foot, -- range 'by foot'
     power_usage = 1 * Unit.kW -- Will be set dynamically, depending on the number of inhabitants. This dummy value will assure the eei is spawned upon placement.
 }
+
+--- The maps a recipe visualisation variant can have (as in the sosciencity-blender-tools sprite-data.lua),
+--- with the sprite name suffix and how the control stage draws them.
+Building.recipe_visualisation_maps = {
+    diffuse = {suffix = "", light_mode = "occluder"},
+    glow = {suffix = "-glow", light_mode = "glow"},
+    lightmap = {suffix = "-light", light_mode = "light"}
+}
+
+--- Name of the sprite prototype that shows the given map of a recipe visualisation variant.
+--- @param building string entity name
+--- @param variant string
+--- @param map string key of Building.recipe_visualisation_maps
+--- @return string
+function Building.get_recipe_visualisation_sprite(building, variant, map)
+    return building .. "-recipe-visualisation-" .. variant .. Building.recipe_visualisation_maps[map].suffix
+end
+
+--- Returns all variants of a recipe visualisation (the default and every recipe's variant).
+--- @param visualisation RecipeVisualisationDefinition
+--- @return table<string, boolean> set of variant names
+function Building.get_recipe_visualisation_variants(visualisation)
+    local variants = {[visualisation.default] = true}
+    for _, variant in pairs(visualisation.by_recipe) do
+        variants[variant] = true
+    end
+    return variants
+end
 
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
 function Building.get(entry)

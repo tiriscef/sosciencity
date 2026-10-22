@@ -3,6 +3,8 @@ local SubentityType = require("enums.subentity-type")
 local RenderingType = require("enums.rendering-type")
 local DeconstructionCause = require("enums.deconstruction-cause")
 
+local Buildings = require("constants.buildings")
+
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
 
@@ -312,6 +314,127 @@ Tirislib.Testing.add_test_case(
         local new_eei = entry[EK.subentities][SubentityType.eei]
         Assert.not_nil(new_eei, "new EEI should exist")
         Assert.is_true(new_eei.valid, "new EEI should be valid")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << recipe visualisation >>
+
+local function get_recipe_visualisation(entry)
+    return entry[EK.attached_renderings][RenderingType.recipe_visualisation]
+end
+
+local function expected_sprite(variant)
+    return Buildings.get_recipe_visualisation_sprite("atelier", variant, "diffuse")
+end
+
+Tirislib.Testing.add_test_case(
+    "Atelier shows the default recipe visualisation right after placement",
+    "integration|integration.subentities|integration.recipe-visualisation",
+    function()
+        local atelier = Helpers.create_and_register(test_surface, "atelier", {0, 0})
+        local default = Buildings.values["atelier"].recipe_visualisation.default
+
+        local render = get_recipe_visualisation(atelier)
+        Assert.is_true(render and render.valid, "the visualisation should exist right after placement")
+        Assert.equals(render.sprite, expected_sprite(default))
+        Assert.equals(render.target.entity, atelier[EK.entity], "it should be drawn on the atelier")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Atelier recipe visualisation follows the active recipe",
+    "integration|integration.subentities|integration.recipe-visualisation",
+    function()
+        local atelier = Helpers.create_and_register(test_surface, "atelier", {0, 0})
+        local entity = atelier[EK.entity]
+        local visualisation = Buildings.values["atelier"].recipe_visualisation
+        local render = get_recipe_visualisation(atelier)
+
+        local function shown_sprite()
+            Helpers.update_entry(atelier)
+            return get_recipe_visualisation(atelier).sprite
+        end
+
+        for recipe, variant in pairs(visualisation.by_recipe) do
+            entity.set_recipe(recipe)
+            Assert.equals(shown_sprite(), expected_sprite(variant), "recipe " .. recipe)
+        end
+        Assert.equals(get_recipe_visualisation(atelier), render, "switching should reuse the render object")
+
+        for name, recipe in pairs(prototypes.get_recipe_filtered {{filter = "category", category = "sosciencity-atelier"}}) do
+            if not visualisation.by_recipe[name] then
+                entity.set_recipe(recipe)
+                Assert.equals(
+                    shown_sprite(),
+                    expected_sprite(visualisation.default),
+                    "a recipe without its own variant (" .. name .. ") should show the default"
+                )
+                break
+            end
+        end
+
+        entity.set_recipe(nil)
+        Assert.equals(shown_sprite(), expected_sprite(visualisation.default), "no recipe should show the default")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Atelier recipe visualisation is redrawn when it got lost",
+    "integration|integration.subentities|integration.recipe-visualisation",
+    function()
+        local atelier = Helpers.create_and_register(test_surface, "atelier", {0, 0})
+        local recipe, variant = next(Buildings.values["atelier"].recipe_visualisation.by_recipe)
+        atelier[EK.entity].set_recipe(recipe)
+
+        get_recipe_visualisation(atelier).destroy()
+        Helpers.update_entry(atelier)
+
+        local render = get_recipe_visualisation(atelier)
+        Assert.is_true(render and render.valid, "the visualisation should be redrawn")
+        Assert.equals(render.sprite, expected_sprite(variant), "and show the active recipe")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Atelier recipe visualisation is removed with the atelier",
+    "integration|integration.subentities|integration.recipe-visualisation",
+    function()
+        local atelier = Helpers.create_and_register(test_surface, "atelier", {0, 0})
+        local renders = {}
+        for _, render in pairs(atelier[EK.attached_renderings]) do
+            renders[#renders + 1] = render
+        end
+
+        Helpers.destroy_entry(atelier)
+
+        for _, render in pairs(renders) do
+            Assert.is_false(render.valid, "every render object should be destroyed with the atelier")
+        end
     end,
     function()
         test_surface = Helpers.create_test_surface()
