@@ -3,14 +3,14 @@
 
 local ember_items = {
     {name = "artistic-insight"},
-    {name = "sketch", use_placeholder_icon = true},
-    {name = "mosaic", use_placeholder_icon = true},
+    {name = "sketch", sprite_variations = {name = "sketch-on-belt", count = 6}},
+    {name = "mosaic", sprite_variations = {name = "mosaic-on-belt", count = 6}},
     {name = "painting", sprite_variations = {name = "painting-on-belt", count = 7}},
     {name = "statue", sprite_variations = {name = "statue", count = 1}},
     {name = "jewellery"},
     {name = "mixtape"},
     {name = "novel", use_placeholder_icon = true},
-    {name = "found-art", use_placeholder_icon = true},
+    {name = "found-art"},
     {name = "kinetic-sculpture"}
 }
 
