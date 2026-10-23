@@ -87,8 +87,14 @@ Building.values = {
         recipe_visualisation = {
             default = "idle",
             by_recipe = {
+                ["sketch"] = "sketch",
+                ["mosaic"] = "mosaic",
                 ["painting"] = "painting",
-                ["statue"] = "statue"
+                ["statue"] = "statue",
+                ["jewellery"] = "jewellery",
+                ["mixtape"] = "mixtape",
+                ["found-art"] = "found-art",
+                ["kinetic-sculpture"] = "kinetic-sculpture"
             }
         }
     },
