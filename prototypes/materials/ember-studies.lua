@@ -142,6 +142,17 @@ Tirislib.RecipeGenerator.create {
     unlock = "production-science-pack"
 }
 
+Tirislib.RecipeGenerator.create {
+    results = {{type = "item", name = "novel", amount = 1}},
+    ingredients = {
+        {type = "item", name = "paper", amount = 5},
+        {type = "item", name = "artistic-insight", amount = 2}
+    },
+    category = "sosciencity-atelier",
+    energy_required = 6,
+    unlock = "gleam-caste"
+}
+
 -- Ember HQ
 
 Tirislib.RecipeGenerator.create {
@@ -166,19 +177,5 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-ember",
     energy_required = 8,
     unlock = "atelier",
-    auto_recycle = false
-}
-
-Tirislib.RecipeGenerator.create {
-    results = {
-        {type = "item", name = "novel", amount = 1}
-    },
-    ingredients = {
-        {type = "item", name = "paper", amount = 5},
-        {type = "item", name = "artistic-insight", amount = 2}
-    },
-    category = "sosciencity-caste-ember",
-    energy_required = 6,
-    unlock = "gleam-caste",
     auto_recycle = false
 }

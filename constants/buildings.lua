@@ -94,7 +94,8 @@ Building.values = {
                 ["jewellery"] = "jewellery",
                 ["mixtape"] = "mixtape",
                 ["found-art"] = "found-art",
-                ["kinetic-sculpture"] = "kinetic-sculpture"
+                ["kinetic-sculpture"] = "kinetic-sculpture",
+                ["novel"] = "novel"
             }
         }
     },
