@@ -1254,7 +1254,7 @@ local function format_recipe_inline(recipe_name)
         if amt == 0 then amt = 1 end
         prods[#prods + 1] = string.format("%g×%s", amt, prod.name)
     end
-    local cat = recipe.category or "crafting"
+    local cat = table.concat(recipe.categories, "/")
     local time = recipe.energy or 0.5
     return string.format("`%s`: %s → %s (%s, %ss)",
         recipe_name,
