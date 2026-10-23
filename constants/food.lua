@@ -81,7 +81,7 @@ Food.values = {
         food_category = "meat",
         taste_category = Taste.soily,
         appeal = 4,
-        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fiber_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
         item_weight = 1,
         group = "insect-meat"
     },

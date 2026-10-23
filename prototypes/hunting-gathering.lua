@@ -152,6 +152,20 @@ create_hunting_gathering_recipe {
 }
 
 create_hunting_gathering_recipe {
+    name = "gathering-insects",
+    category = "sosciencity-hunting",
+    energy_required = 5,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/insect-meat.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "insect-meat", amount_min = 0, amount_max = 4}
+    },
+    order = "000580"
+}
+
+create_hunting_gathering_recipe {
     name = "gathering-algae",
     category = "sosciencity-fishery-hand",
     energy_required = 5,
