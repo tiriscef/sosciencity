@@ -284,7 +284,7 @@ Food.values = {
         healthiness = 6,
         food_category = "alien-fruit",
         taste_category = Taste.fruity,
-        appeal = 4,
+        appeal = 2,
         nutrition_tags = {[NutritionTag.vitamin_rich] = true, [NutritionTag.lucidin_rich] = true},
         item_weight = 1,
         group = "zetorn"
@@ -416,7 +416,7 @@ Food.values = {
         healthiness = 4,
         food_category = "alien-vegetable",
         taste_category = Taste.spicy,
-        appeal = 5,
+        appeal = 3,
         nutrition_tags = {[NutritionTag.lucidin_rich] = true},
         item_weight = 1,
         group = "ignivern"

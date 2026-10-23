@@ -28,16 +28,15 @@ InhabitantsConstants.dehydration = {
 --- @field conception_rate_factor number multiplier on the conception rate when the tag is covered by the diet
 
 --- Effects of each nutrition tag. Omitted fields fall back to nutrition_tag_effect_defaults.
---- TODO: balancing of the new tags
 --- @type table<NutritionTag, NutritionTagEffect>
 InhabitantsConstants.nutrition_tag_effects = {
-    [NutritionTag.protein_rich]  = {health_bonus = 1, health_malus = -2},
-    [NutritionTag.fat_rich]      = {health_bonus = 1, health_malus = -2},
-    [NutritionTag.carb_rich]     = {health_bonus = 1, health_malus = -2},
-    [NutritionTag.vitamin_rich]  = {health_bonus = 1, health_malus = -2},
-    [NutritionTag.fiber_rich]    = {health_bonus = 1, health_malus = -2},
-    [NutritionTag.mineral_rich]  = {health_bonus = 1, health_malus = -2},
-    [NutritionTag.lucidin_rich]  = {sanity_bonus = 2},
+    [NutritionTag.protein_rich]  = {health_bonus = 1, health_malus = -2.5},
+    [NutritionTag.fat_rich]      = {health_bonus = 1, health_malus = -2.5},
+    [NutritionTag.carb_rich]     = {health_bonus = 1, health_malus = -2.5},
+    [NutritionTag.vitamin_rich]  = {health_bonus = 1, health_malus = -2.5},
+    [NutritionTag.fiber_rich]    = {health_bonus = 1, health_malus = -2.5},
+    [NutritionTag.mineral_rich]  = {health_bonus = 1, health_malus = -2.5, conception_rate_factor = 1.25},
+    [NutritionTag.lucidin_rich]  = {sanity_bonus = 3},
     [NutritionTag.purpurin_rich] = {health_bonus = 2},
     [NutritionTag.ovolin_rich]   = {conception_rate_factor = 1.5},
 }

@@ -42,7 +42,7 @@ Foods can carry one or more **nutrition tags** like *protein-rich*, *fat-rich* o
 - Every caste has a set of **essential** tags. Each missing essential tag gives a health malus. Later castes need more of them.
 - Each covered tag gives its bonus, essential or not.
 
-The basic tags are *protein-rich*, *fat-rich*, *carb-rich*, *vitamin-rich*, *fiber-rich* and *mineral-rich*. They are good for the body.
+The basic tags are *protein-rich*, *fat-rich*, *carb-rich*, *vitamin-rich*, *fiber-rich* and *mineral-rich*. They are good for the body. Minerals are mostly calcium for eggshells, so they also make inhabitants lay eggs a bit more often.
 
 Huwans also need a few nutrients that humans don't. No caste counts them as essential, but they come with special perks:
 
