@@ -69,7 +69,7 @@ Food.values = {
         food_category = "meat",
         taste_category = Taste.acidic,
         appeal = 5,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.vitamin_rich] = true},
         item_weight = 1,
         group = "biter-meat"
     },
@@ -81,7 +81,7 @@ Food.values = {
         food_category = "meat",
         taste_category = Taste.soily,
         appeal = 4,
-        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fiber_rich] = true},
         item_weight = 1,
         group = "insect-meat"
     },
@@ -93,7 +93,7 @@ Food.values = {
         food_category = "meat",
         taste_category = Taste.salty,
         appeal = 6,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.mineral_rich] = true},
         item_weight = 1,
         group = "fish-meat"
     },
@@ -105,7 +105,7 @@ Food.values = {
         food_category = "meat",
         taste_category = Taste.umami,
         appeal = 5,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.purpurin_rich] = true},
         item_weight = 1,
         group = "offal"
     },
@@ -129,7 +129,7 @@ Food.values = {
         food_category = "egg",
         taste_category = Taste.sulfuric,
         appeal = 4,
-        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.ovolin_rich] = true},
         item_weight = 1,
         group = "egg"
     },
@@ -141,7 +141,7 @@ Food.values = {
         food_category = "egg",
         taste_category = Taste.sulfuric,
         appeal = 4,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.mineral_rich] = true},
         item_weight = 1,
         group = "egg"
     },
@@ -153,7 +153,7 @@ Food.values = {
         food_category = "alien-fruit",
         taste_category = Taste.varying,
         appeal = 2,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.fiber_rich] = true},
         item_weight = 2.2,
         group = "plant-mix"
     },
@@ -165,7 +165,7 @@ Food.values = {
         food_category = "alien-fungus",
         taste_category = Taste.varying,
         appeal = 3,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.vitamin_rich] = true},
         item_weight = 3.8,
         group = "fungi-mix"
     },
@@ -177,7 +177,7 @@ Food.values = {
         food_category = "alien-algae",
         taste_category = Taste.varying,
         appeal = 3,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.mineral_rich] = true},
         item_weight = 2,
         group = "algae-mix"
     },
@@ -189,7 +189,7 @@ Food.values = {
         food_category = "alien-fruit",
         taste_category = Taste.neutral,
         appeal = 2,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.vitamin_rich] = true},
         item_weight = 1,
         group = "unnamed-fruit"
     },
@@ -201,7 +201,7 @@ Food.values = {
         food_category = "alien-fruit",
         taste_category = Taste.soily,
         appeal = 3,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.vitamin_rich] = true},
         item_weight = 1,
         group = "weird-berry"
     },
@@ -213,7 +213,7 @@ Food.values = {
         food_category = "alien-vegetable",
         taste_category = Taste.umami,
         appeal = 3,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.vitamin_rich] = true},
         item_weight = 5,
         group = "brutal-pumpkin"
     },
@@ -225,7 +225,7 @@ Food.values = {
         food_category = "alien-fruit",
         taste_category = Taste.weirdly_chemical,
         appeal = 2,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.carb_rich] = true},
         item_weight = 1,
         group = "ortrot"
     },
@@ -237,7 +237,7 @@ Food.values = {
         food_category = "fruit",
         taste_category = Taste.fruity,
         appeal = 6,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.fiber_rich] = true},
         item_weight = 1,
         group = "apple"
     },
@@ -261,7 +261,7 @@ Food.values = {
         food_category = "fruit",
         taste_category = Taste.fruity,
         appeal = 7,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.vitamin_rich] = true},
         item_weight = 1,
         group = "orange"
     },
@@ -273,7 +273,7 @@ Food.values = {
         food_category = "fruit",
         taste_category = Taste.acidic,
         appeal = 7,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.vitamin_rich] = true},
         item_weight = 1,
         group = "lemon"
     },
@@ -285,7 +285,7 @@ Food.values = {
         food_category = "alien-fruit",
         taste_category = Taste.fruity,
         appeal = 4,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.vitamin_rich] = true, [NutritionTag.lucidin_rich] = true},
         item_weight = 1,
         group = "zetorn"
     },
@@ -321,7 +321,7 @@ Food.values = {
         food_category = "vegetable",
         taste_category = Taste.spicy,
         appeal = 6,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.vitamin_rich] = true},
         item_weight = 2.5,
         group = "bell-pepper"
     },
@@ -345,7 +345,7 @@ Food.values = {
         food_category = "seed",
         taste_category = Taste.umami,
         appeal = 7,
-        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true, [NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.fat_rich] = true},
         item_weight = 0.2,
         group = "sesame"
     },
@@ -357,7 +357,7 @@ Food.values = {
         food_category = "vegetable",
         taste_category = Taste.umami,
         appeal = 5,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.vitamin_rich] = true},
         item_weight = 2.5,
         group = "tomato"
     },
@@ -369,7 +369,7 @@ Food.values = {
         food_category = "vegetable",
         taste_category = Taste.umami,
         appeal = 5,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.fiber_rich] = true},
         item_weight = 2.5,
         group = "eggplant"
     },
@@ -381,7 +381,7 @@ Food.values = {
         food_category = "alien-fungus",
         taste_category = Taste.umami,
         appeal = 6,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.fiber_rich] = true},
         item_weight = 2.5,
         group = "fawoxylas"
     },
@@ -393,7 +393,7 @@ Food.values = {
         food_category = "vegetable",
         taste_category = Taste.neutral,
         appeal = 8,
-        nutrition_tags = {[NutritionTag.fat_rich] = true},
+        nutrition_tags = {[NutritionTag.fat_rich] = true, [NutritionTag.fiber_rich] = true},
         item_weight = 1,
         group = "avocado"
     },
@@ -417,7 +417,7 @@ Food.values = {
         food_category = "alien-vegetable",
         taste_category = Taste.spicy,
         appeal = 5,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.lucidin_rich] = true},
         item_weight = 1,
         group = "ignivern"
     },
@@ -453,7 +453,7 @@ Food.values = {
         food_category = "alien-legume",
         taste_category = Taste.umami,
         appeal = 4,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fiber_rich] = true},
         item_weight = 1,
         group = "razha-bean"
     },
@@ -465,7 +465,7 @@ Food.values = {
         food_category = "processed",
         taste_category = Taste.neutral,
         appeal = 6,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.mineral_rich] = true},
         item_weight = 1,
         group = "processed-razha"
     },
@@ -489,7 +489,7 @@ Food.values = {
         food_category = "alien-vegetable",
         taste_category = Taste.spicy,
         appeal = 3,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.purpurin_rich] = true},
         item_weight = 2,
         group = "liontooth"
     },
@@ -513,7 +513,7 @@ Food.values = {
         food_category = "alien-vegetable",
         taste_category = Taste.fruity,
         appeal = 1,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.lucidin_rich] = true},
         item_weight = 1,
         group = "tello"
     },
@@ -537,7 +537,7 @@ Food.values = {
         food_category = "processed",
         taste_category = Taste.fruity,
         appeal = 6,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.fiber_rich] = true},
         item_weight = 1,
         group = "bread"
     },
@@ -549,7 +549,7 @@ Food.values = {
         food_category = "alien-algae",
         taste_category = Taste.fruity,
         appeal = 3,
-        nutrition_tags = {[NutritionTag.carb_rich] = true},
+        nutrition_tags = {[NutritionTag.carb_rich] = true, [NutritionTag.ovolin_rich] = true},
         item_weight = 2.5,
         group = "algae"
     },
@@ -561,7 +561,7 @@ Food.values = {
         food_category = "alien-underwater-plant",
         taste_category = Taste.acidic,
         appeal = 3,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.mineral_rich] = true},
         item_weight = 2.5,
         group = "endower-flower"
     },
@@ -573,7 +573,7 @@ Food.values = {
         food_category = "alien-algae",
         taste_category = Taste.neutral,
         appeal = 3,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.mineral_rich] = true, [NutritionTag.purpurin_rich] = true},
         item_weight = 2.5,
         group = "algae"
     },
@@ -597,7 +597,7 @@ Food.values = {
         food_category = "alien-fungus",
         taste_category = Taste.spicy,
         appeal = 5,
-        nutrition_tags = {},
+        nutrition_tags = {[NutritionTag.vitamin_rich] = true},
         item_weight = 2.5,
         group = "red-hatty"
     },
@@ -609,7 +609,7 @@ Food.values = {
         food_category = "alien-fungus",
         taste_category = Taste.salty,
         appeal = 6,
-        nutrition_tags = {[NutritionTag.protein_rich] = true},
+        nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.purpurin_rich] = true},
         item_weight = 2.5,
         group = "birdsnake"
     },
