@@ -683,6 +683,17 @@ Food.values = {
         taste_category = Taste.umami, appeal = 5,
         nutrition_tags = {},
         item_weight = 1, group = "test-food-h"
+    },
+    ["test-food-neutral-huwan-nutrients"] = {
+        fat = 5, carbohydrates = 5, proteins = 5,
+        healthiness = 5, food_category = "processed",
+        taste_category = Taste.neutral, appeal = 5,
+        nutrition_tags = {
+            [NutritionTag.lucidin_rich] = true,
+            [NutritionTag.purpurin_rich] = true,
+            [NutritionTag.ovolin_rich] = true
+        },
+        item_weight = 1, group = "test-food-i"
     }
 }
 

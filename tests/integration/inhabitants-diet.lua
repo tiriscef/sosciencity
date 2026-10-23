@@ -59,12 +59,12 @@ local function run_evaluate_diet(house, delta_ticks)
 end
 
 local tag_effects = InhabitantsConstants.nutrition_tag_effects
-local carb_bonus = tag_effects[NutritionTag.carb_rich].bonus
-local protein_bonus = tag_effects[NutritionTag.protein_rich].bonus
-local fat_bonus = tag_effects[NutritionTag.fat_rich].bonus
-local protein_malus = tag_effects[NutritionTag.protein_rich].malus
-local fat_malus = tag_effects[NutritionTag.fat_rich].malus
-local carb_malus = tag_effects[NutritionTag.carb_rich].malus
+local carb_bonus = tag_effects[NutritionTag.carb_rich].health_bonus
+local protein_bonus = tag_effects[NutritionTag.protein_rich].health_bonus
+local fat_bonus = tag_effects[NutritionTag.fat_rich].health_bonus
+local protein_malus = tag_effects[NutritionTag.protein_rich].health_malus
+local fat_malus = tag_effects[NutritionTag.fat_rich].health_malus
+local carb_malus = tag_effects[NutritionTag.carb_rich].health_malus
 local full_tag_bonus = carb_bonus + protein_bonus + fat_bonus
 
 local clockwork = Castes.values[Type.clockwork]
@@ -260,6 +260,41 @@ Tirislib.Testing.add_test_case(
     end,
     setup_carb_only_clockwork,
     teardown_carb_only_clockwork
+)
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet applies the sanity, health and conception effects of huwan-specific nutrients",
+    "integration|integration.inhabitants",
+    function()
+        -- test-food-neutral-huwan-nutrients carries lucidin, purpurin and ovolin, none of them essential.
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        local inventory = Inventories.get_chest_inventory(house)
+        inventory.insert {name = "test-food-umami-carb", count = 100}
+        inventory.insert {name = "test-food-neutral-huwan-nutrients", count = 100}
+
+        local hs, _, ths, _, ss = run_evaluate_diet(house, Time.minute)
+
+        local huwan_tags = {NutritionTag.lucidin_rich, NutritionTag.purpurin_rich, NutritionTag.ovolin_rich}
+        local expected_health = carb_bonus + protein_malus + fat_malus
+        local expected_sanity = 0
+        local expected_conception_factor = 1
+        for _, tag in pairs(huwan_tags) do
+            expected_health = expected_health + tag_effects[tag].health_bonus
+            expected_sanity = expected_sanity + tag_effects[tag].sanity_bonus
+            expected_conception_factor = expected_conception_factor * tag_effects[tag].conception_rate_factor
+        end
+
+        Assert.equals(ths[HealthSummand.nutrients], expected_health,
+            "huwan-specific nutrients should add their health bonuses")
+        Assert.equals(ss[SanitySummand.nutrients], expected_sanity,
+            "huwan-specific nutrients should add their sanity bonuses")
+        Assert.equals(house[EK.conception_rate_factor], expected_conception_factor,
+            "huwan-specific nutrients should multiply the conception rate")
+        Assert.equals(hs[HappinessSummand.nutrition_tags], 4 * clockwork.happiness_per_nutrition_tag,
+            "health-conscious eater should get nutrition tag happiness for carb and the three huwan nutrients")
+    end,
+    setup,
+    teardown
 )
 
 Tirislib.Testing.add_test_case(

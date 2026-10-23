@@ -261,6 +261,8 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     local health_factors = entry[EK.health_factors]
     local sanity = entry[EK.sanity_summands]
 
+    entry[EK.conception_rate_factor] = 1
+
     if #diet == 0 then
         happiness_factors[HappinessFactor.hunger] = InhabitantsConstants.starvation.happiness_factor
         health_factors[HealthFactor.hunger] = InhabitantsConstants.starvation.health_factor
@@ -346,15 +348,24 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
         end
     end
 
-    -- health: every covered tag gives its bonus, every missing essential tag its malus
+    -- nutrition tags: every covered tag gives its bonuses, every missing essential tag its malus
     local nutrients_health = 0
+    local nutrients_sanity = 0
+    local conception_rate_factor = 1
     for tag in pairs(covered_tags) do
-        nutrients_health = nutrients_health + nutrition_tag_effects[tag].bonus
+        local effect = nutrition_tag_effects[tag]
+        nutrients_health = nutrients_health + effect.health_bonus
+        nutrients_sanity = nutrients_sanity + effect.sanity_bonus
+        conception_rate_factor = conception_rate_factor * effect.conception_rate_factor
     end
     for _, tag in pairs(caste.essential_nutrition_tags) do
         if not covered_tags[tag] then
-            nutrients_health = nutrients_health + nutrition_tag_effects[tag].malus
+            nutrients_health = nutrients_health + nutrition_tag_effects[tag].health_malus
         end
+    end
+    entry[EK.conception_rate_factor] = conception_rate_factor
+    if nutrients_sanity ~= 0 then
+        sanity[SanitySummand.nutrients] = nutrients_sanity
     end
     if nutrients_health ~= 0 then
         health[HealthSummand.nutrients] = nutrients_health

@@ -9,5 +9,6 @@ SanitySummand.taste = 4
 SanitySummand.favorite_taste = 5
 SanitySummand.disliked_taste = 7
 SanitySummand.fear = 10
+SanitySummand.nutrients = 11
 
 return SanitySummand

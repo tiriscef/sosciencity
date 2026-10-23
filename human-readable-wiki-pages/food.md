@@ -37,11 +37,18 @@ Every food has an **appeal** value that reflects how pleasant it is to eat, inde
 
 ##Nutrition Tags
 
-Foods can carry one or more **nutrition tags** like *protein-rich*, *fat-rich* or *carb-rich*. A well-rounded diet covers all three.
+Foods can carry one or more **nutrition tags** like *protein-rich*, *fat-rich* or *carb-rich*.
 
-- Each covered tag type gives a health bonus.
-- Every caste has a set of **essential** tags. Each missing essential tag gives a health malus.
-- How important nutritional balance is varies by caste.
+- Every caste has a set of **essential** tags. Each missing essential tag gives a health malus. Later castes need more of them.
+- Each covered tag gives its bonus, essential or not.
+
+The basic tags are *protein-rich*, *fat-rich*, *carb-rich*, *vitamin-rich*, *fiber-rich* and *mineral-rich*. They are good for the body.
+
+Huwans also need a few nutrients that humans don't. No caste counts them as essential, but they come with special perks:
+
+- *Lucidin* keeps the mind clear and gives a sanity bonus. Plants use it as a bitter defense compound, so foods rich in it usually taste awful.
+- *Purpurin* is the building block of Purple Blood Cells and gives an extra health bonus.
+- *Ovolin* helps the body build eggshells. Inhabitants who get enough of it lay eggs more often.
 
 When building a diet, the eating behavior tries to cover all essential tags before adding purely variety-boosting foods. A single food can cover multiple tags if it carries them.
 

@@ -156,6 +156,8 @@ EK.is_sanatorium = 239
 EK.unclaimed_disease_ticks = 240
 --- array of moving cohorts: {count, healthy, expires} for inhabitants currently settling in
 EK.moving_cohorts = 241
+--- conception rate multiplier from the nutrition tags of the current diet
+EK.conception_rate_factor = 242
 
 -- water distributer
 

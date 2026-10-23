@@ -220,7 +220,8 @@ local function social_meeting(entry, meeting_count)
         local available_partners = floor(get_partner_rate(environment) * ga_count)
         available_partners = available_partners - past_conceptions
         local fertile_ga_count = ga_count - past_conceptions
-        local conceptions = coin_flips(Inhabitants.conception_rate, meeting_count, 5)
+        local conception_rate = min(1, Inhabitants.conception_rate * entry[EK.conception_rate_factor])
+        local conceptions = coin_flips(conception_rate, meeting_count, 5)
 
         local actual_conceptions = min(fertile_ga_count, available_partners, conceptions)
         if actual_conceptions > 0 then

@@ -393,7 +393,8 @@ if Sosciencity.Config.DEBUG then
         "test-food-salty-protein",
         "test-food-spicy-alltags",
         "test-food-umami-carb",
-        "test-food-umami-notag"
+        "test-food-umami-notag",
+        "test-food-neutral-huwan-nutrients"
     }
 
     local test_food_items = {}

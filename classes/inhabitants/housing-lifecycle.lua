@@ -122,6 +122,7 @@ function Inhabitants.create_house(entry)
 
     entry[EK.social_progress] = 0
     entry[EK.ga_conceptions] = 0
+    entry[EK.conception_rate_factor] = 1
 
     entry[EK.blood_donation_progress] = 0.4 * random()
 

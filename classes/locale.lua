@@ -196,6 +196,12 @@ function Locale.nutrition_tag(tag)
     return nutrition_tag_locales[tag]
 end
 
+local nutrition_tag_description_locales = build_locale_lookup(NutritionTag, "nutrition-tag-description")
+
+function Locale.nutrition_tag_description(tag)
+    return nutrition_tag_description_locales[tag]
+end
+
 local EatingBehavior = require("enums.eating-behavior")
 local eating_behavior_locales = build_locale_lookup(EatingBehavior, "eating-behavior")
 local eating_behavior_description_locales = build_locale_lookup(EatingBehavior, "eating-behavior-description")

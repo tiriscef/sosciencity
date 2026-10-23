@@ -21,14 +21,44 @@ InhabitantsConstants.dehydration = {
     health_factor = 0.5
 }
 
---- Health effect per nutrition tag: bonus when the tag is covered by the diet,
---- malus when it is one of the caste's essential_nutrition_tags and missing.
---- @type table<NutritionTag, {bonus: number, malus: number}>
+--- @class NutritionTagEffect
+--- @field health_bonus number health summand when the tag is covered by the diet
+--- @field health_malus number health summand when the tag is one of the caste's essential_nutrition_tags and missing
+--- @field sanity_bonus number sanity summand when the tag is covered by the diet
+--- @field conception_rate_factor number multiplier on the conception rate when the tag is covered by the diet
+
+--- Effects of each nutrition tag. Omitted fields fall back to nutrition_tag_effect_defaults.
+--- TODO: balancing of the new tags
+--- @type table<NutritionTag, NutritionTagEffect>
 InhabitantsConstants.nutrition_tag_effects = {
-    [NutritionTag.protein_rich] = {bonus = 1, malus = -2},
-    [NutritionTag.fat_rich]     = {bonus = 1, malus = -2},
-    [NutritionTag.carb_rich]    = {bonus = 1, malus = -2},
+    [NutritionTag.protein_rich]  = {health_bonus = 1, health_malus = -2},
+    [NutritionTag.fat_rich]      = {health_bonus = 1, health_malus = -2},
+    [NutritionTag.carb_rich]     = {health_bonus = 1, health_malus = -2},
+    [NutritionTag.vitamin_rich]  = {health_bonus = 1, health_malus = -2},
+    [NutritionTag.fiber_rich]    = {health_bonus = 1, health_malus = -2},
+    [NutritionTag.mineral_rich]  = {health_bonus = 1, health_malus = -2},
+    [NutritionTag.lucidin_rich]  = {sanity_bonus = 2},
+    [NutritionTag.purpurin_rich] = {health_bonus = 2},
+    [NutritionTag.ovolin_rich]   = {conception_rate_factor = 1.5},
 }
+
+InhabitantsConstants.nutrition_tag_effect_defaults = {
+    health_bonus = 0,
+    health_malus = 0,
+    sanity_bonus = 0,
+    conception_rate_factor = 1,
+}
+
+-- postprocessing: every tag gets an effect table with all fields set
+for _, tag in pairs(NutritionTag) do
+    local effect = InhabitantsConstants.nutrition_tag_effects[tag] or {}
+    for field, default in pairs(InhabitantsConstants.nutrition_tag_effect_defaults) do
+        if effect[field] == nil then
+            effect[field] = default
+        end
+    end
+    InhabitantsConstants.nutrition_tag_effects[tag] = effect
+end
 
 --- Move causes that trigger the relocation penalty.
 --- @type table<MoveCause, boolean>

@@ -46,11 +46,11 @@ end
 local assembling_machine_output = defines.inventory.crafter_output
 
 local tag_effects = InhabitantsConstants.nutrition_tag_effects
-local carb_bonus = tag_effects[NutritionTag.carb_rich].bonus
-local protein_bonus = tag_effects[NutritionTag.protein_rich].bonus
-local fat_bonus = tag_effects[NutritionTag.fat_rich].bonus
-local protein_malus = tag_effects[NutritionTag.protein_rich].malus
-local fat_malus = tag_effects[NutritionTag.fat_rich].malus
+local carb_bonus = tag_effects[NutritionTag.carb_rich].health_bonus
+local protein_bonus = tag_effects[NutritionTag.protein_rich].health_bonus
+local fat_bonus = tag_effects[NutritionTag.fat_rich].health_bonus
+local protein_malus = tag_effects[NutritionTag.protein_rich].health_malus
+local fat_malus = tag_effects[NutritionTag.fat_rich].health_malus
 local full_tag_bonus = carb_bonus + protein_bonus + fat_bonus
 
 local ember = Castes.values[Type.ember]

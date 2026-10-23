@@ -263,42 +263,51 @@ Gui.CityView.add_page {
             container,
             {
                 {"city-view.food-text21"},
-                {"city-view.food-text22"},
-                {"city-view.food-text23"}
+                {"city-view.food-text22"}
             }
         )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text23"})
         Gui.Elements.Label.paragraph(container, {"city-view.food-text24"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text25"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text26"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.food-text27"},
-                {"city-view.food-text28"},
-                {"city-view.food-text29"}
+                {"city-view.food-text25"},
+                {"city-view.food-text26"},
+                {"city-view.food-text27"}
             }
         )
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text30"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text31"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text28"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text29"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text30"})
         Gui.Elements.Label.list(
             container,
             {
+                {"city-view.food-text31"},
                 {"city-view.food-text32"},
                 {"city-view.food-text33"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text34"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text34"})
         Gui.Elements.Label.paragraph(container, {"city-view.food-text35"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text36"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text37"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.food-text38"},
-                {"city-view.food-text39"}
+                {"city-view.food-text36"},
+                {"city-view.food-text37"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text40"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text38"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text39"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text40"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text41"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text42"},
+                {"city-view.food-text43"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text44"})
         -- END GENERATED: food
     end
 }

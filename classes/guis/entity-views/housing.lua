@@ -9,6 +9,7 @@ local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
 local HealthSummand = require("enums.health-summand")
 local HealthFactor = require("enums.health-factor")
+local NutritionTag = require("enums.nutrition-tag")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
 
@@ -1125,13 +1126,21 @@ local function update_housing_diet_tab(tabbed_pane, entry)
         end
     end
 
-    -- nutrition tag coverage
+    -- nutrition tag coverage: essential tags always, other tags only when covered
     local nutrition_flow = flow["diet-nutrition"]
-    for _, tag in pairs(castes[entry[EK.type]].essential_nutrition_tags) do
+    local essential_tags = Tirislib.Tables.to_lookup(castes[entry[EK.type]].essential_nutrition_tags)
+    for _, tag in pairs(NutritionTag) do
         local label = nutrition_flow[tostring(tag)]
         local covered = info.covered_tags[tag]
-        label.caption = {"", covered and "✓ " or "✗ ", Locale.nutrition_tag(tag)}
-        label.style.font_color = covered and Color.green or Color.red
+        if essential_tags[tag] then
+            label.visible = true
+            label.caption = {"", covered and "✓ " or "✗ ", Locale.nutrition_tag(tag)}
+            label.style.font_color = covered and Color.green or Color.red
+        else
+            label.visible = covered == true
+            label.caption = {"", "+ ", Locale.nutrition_tag(tag)}
+            label.style.font_color = Color.light_teal
+        end
     end
 end
 
@@ -1164,8 +1173,8 @@ local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
     -- dynamic: nutrition tag coverage
     Gui.Elements.Label.header_label(flow, "diet-nutrition-header", {"sosciencity.diet-nutrition"})
     local nutrition_flow = flow.add {type = "flow", name = "diet-nutrition", direction = "vertical"}
-    for _, tag in pairs(caste.essential_nutrition_tags) do
-        nutrition_flow.add {type = "label", name = tostring(tag)}
+    for _, tag in pairs(NutritionTag) do
+        nutrition_flow.add {type = "label", name = tostring(tag), tooltip = Locale.nutrition_tag_description(tag)}
     end
 
     update_housing_diet_tab(tabbed_pane, entry)
