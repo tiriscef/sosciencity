@@ -1,6 +1,7 @@
 local EatingBehavior = require("enums.eating-behavior")
 local Gender = require("enums.gender")
 local HousingTrait = require("enums.housing-trait")
+local NutritionTag = require("enums.nutrition-tag")
 local Taste = require("enums.taste")
 local Type = require("enums.type")
 
@@ -27,13 +28,14 @@ local Castes = {}
 --- @field no_power_malus number happiness summand when power is insufficient (negative)
 --- @field garbage_coefficient number garbage items produced per inhabitant per tick
 --- @field water_demand number fluid units consumed per inhabitant per tick
---- @field eating_behavior EatingBehavior diet construction personality (minimalist/mixed/foodie)
+--- @field eating_behavior EatingBehavior diet construction personality (health-conscious/mixed/foodie)
 --- @field favored_taste Taste preferred taste (one of the 4 designable tastes: fruity, salty, umami, spicy)
 --- @field least_favored_taste Taste disliked taste (one of the 4 designable tastes: fruity, salty, umami, spicy)
 --- @field minimum_food_count integer minimum distinct food groups needed to avoid variety penalty
---- @field happiness_per_favored_food number happiness summand per favored food in the diet (0 for minimalists, who don't select by taste)
+--- @field happiness_per_favored_food number happiness summand per favored food in the diet (0 for health-conscious eaters, who don't select by taste)
 --- @field happiness_per_disliked_food number happiness summand per forced disliked food (negative; 0 for foodies who never eat disliked)
---- @field happiness_per_nutrition_tag number happiness summand per required nutrition tag that is covered (primarily for minimalists)
+--- @field essential_nutrition_tags NutritionTag[] tags whose absence costs health; mixed eaters pick foods to cover them, health-conscious eaters eat disliked food for them (order = display order)
+--- @field happiness_per_nutrition_tag number happiness summand per covered nutrition tag (any tag for health-conscious eaters, essential tags otherwise)
 --- @field happiness_per_missing_food number happiness malus per food group below minimum_food_count (negative; multiplied by the shortage count)
 --- @field food_distress_factor number happiness factor applied when the caste is forced to eat outside their normal diet behavior (0–1)
 --- @field required_room_count number room requirement for housing comfort calculation
@@ -71,15 +73,16 @@ Castes.values = {
         no_power_malus = -2,
         garbage_coefficient = 0.1 / Time.minute, -- garbage produced per inhabitant per tick
         water_demand = 4 / Time.minute,
-        eating_behavior = EatingBehavior.minimalist,
+        eating_behavior = EatingBehavior.health_conscious,
         favored_taste = Taste.umami,
         least_favored_taste = Taste.spicy,
         minimum_food_count = 1,
         happiness_per_favored_food = 0,
         happiness_per_disliked_food = -1,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 2,
         happiness_per_missing_food = -1,
-        food_distress_factor = 0.80, -- minimalist, early game
+        food_distress_factor = 0.80, -- health-conscious, early game
         required_room_count = 1,
         minimum_comfort = 0,
         social_coefficient = 1,
@@ -130,6 +133,7 @@ Castes.values = {
         minimum_food_count = 5,
         happiness_per_favored_food = 3,
         happiness_per_disliked_food = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -3,
         food_distress_factor = 0.70, -- foodie, early game
@@ -175,15 +179,16 @@ Castes.values = {
         no_power_malus = -1,
         garbage_coefficient = 0.04 / Time.minute,
         water_demand = 3 / Time.minute,
-        eating_behavior = EatingBehavior.minimalist,
+        eating_behavior = EatingBehavior.health_conscious,
         favored_taste = Taste.umami,
         least_favored_taste = Taste.fruity,
         minimum_food_count = 1,
         happiness_per_favored_food = 0,
         happiness_per_disliked_food = -1,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 2,
         happiness_per_missing_food = -1,
-        food_distress_factor = 0.75, -- minimalist, mid game
+        food_distress_factor = 0.75, -- health-conscious, mid game
         required_room_count = 0.5,
         minimum_comfort = 0,
         social_coefficient = 0.5,
@@ -236,6 +241,7 @@ Castes.values = {
         minimum_food_count = 3,
         happiness_per_favored_food = 2,
         happiness_per_disliked_food = -2,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -2,
         food_distress_factor = 0.75, -- mixed, early game
@@ -284,6 +290,7 @@ Castes.values = {
         minimum_food_count = 6,
         happiness_per_favored_food = 2,
         happiness_per_disliked_food = -2,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -2,
         food_distress_factor = 0.65, -- mixed, late game
@@ -340,6 +347,7 @@ Castes.values = {
         minimum_food_count = 7,
         happiness_per_favored_food = 3,
         happiness_per_disliked_food = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -3,
         food_distress_factor = 0.60, -- foodie, late game
@@ -394,6 +402,7 @@ Castes.values = {
         minimum_food_count = 9,
         happiness_per_favored_food = 3,
         happiness_per_disliked_food = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -3,
         food_distress_factor = 0.55, -- foodie, very late game
@@ -450,6 +459,7 @@ Castes.values = {
         minimum_food_count = 4,
         happiness_per_favored_food = 2,
         happiness_per_disliked_food = -2,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -2,
         food_distress_factor = 0.70, -- mixed, mid game

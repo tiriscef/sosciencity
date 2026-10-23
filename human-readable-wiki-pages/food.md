@@ -5,11 +5,11 @@ Food keeps your inhabitants alive and in good spirits. What they eat affects the
 
 ##Eating Behaviors
 
-Every caste is either a minimalist, a foodie or a mixed eater. This governs which foods end up in their diet.
+Every caste is either health-conscious, a foodie or a mixed eater. This governs which foods end up in their diet.
 
-###Minimalist
+###Health-conscious
 
-Minimalists don't eat for pleasure. They choose foods strictly to cover their nutritional needs, preferring favored-tasting foods first, neutral foods second and disliked foods as a last resort. They stop picking foods once all nutrition tags are covered. Taste perks like appeal still apply, but they won't eat extra foods just for variety.
+Health-conscious eaters don't eat for pleasure. Every food they pick has to add a nutrition tag they don't have yet - favored-tasting foods first, then neutral ones. They only touch disliked foods as a last resort, and only to cover an **essential** tag (one whose absence makes them sick). They enjoy every nutrition tag they cover, essential or not. Taste perks like appeal still apply, but they won't eat extra foods just for variety.
 
 ###Foodie
 
@@ -40,10 +40,10 @@ Every food has an **appeal** value that reflects how pleasant it is to eat, inde
 Foods can carry one or more **nutrition tags** like *protein-rich*, *fat-rich* or *carb-rich*. A well-rounded diet covers all three.
 
 - Each covered tag type gives a health bonus.
-- Each missing tag type gives a health malus.
+- Every caste has a set of **essential** tags. Each missing essential tag gives a health malus.
 - How important nutritional balance is varies by caste.
 
-When building a diet, the eating behavior tries to cover all three tags before adding purely variety-boosting foods. A single food can cover multiple tags if it carries them.
+When building a diet, the eating behavior tries to cover all essential tags before adding purely variety-boosting foods. A single food can cover multiple tags if it carries them.
 
 
 ##Variety
@@ -59,7 +59,7 @@ Each caste has a **minimum food count** - the number of different foods they exp
 
 When no food matches the caste's normal eating behavior but some food is available, the inhabitants enter **food distress**. They fall back to whatever is on hand:
 
-- *Minimalists* and *mixed eaters* pick the most appealing available foods.
+- *Health-conscious* and *mixed eaters* pick the most appealing available foods.
 - *Foodies* are stuck eating their disliked foods.
 
 During food distress all taste-based happiness effects are suppressed - there's no point tracking taste when you have no choice. Instead a caste-specific **distress factor** applies a multiplicative penalty to happiness. Castes later in the progression have stricter distress factors and are less forgiving of a poorly stocked pantry.

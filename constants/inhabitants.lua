@@ -21,11 +21,8 @@ InhabitantsConstants.dehydration = {
     health_factor = 0.5
 }
 
---- The set of nutrition tags that contribute to health when covered by the diet.
---- Order determines display and iteration order.
-InhabitantsConstants.required_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich}
-
---- Health effect per nutrition tag. bonus applies when the tag is covered by the diet, malus when it is missing.
+--- Health effect per nutrition tag: bonus when the tag is covered by the diet,
+--- malus when it is one of the caste's essential_nutrition_tags and missing.
 --- @type table<NutritionTag, {bonus: number, malus: number}>
 InhabitantsConstants.nutrition_tag_effects = {
     [NutritionTag.protein_rich] = {bonus = 1, malus = -2},

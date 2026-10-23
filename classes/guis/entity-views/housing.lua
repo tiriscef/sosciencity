@@ -18,13 +18,11 @@ local Color = require("constants.color")
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 local Housing = require("constants.housing")
-local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
-local required_nutrition_tags = InhabitantsConstants.required_nutrition_tags
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
@@ -1129,7 +1127,7 @@ local function update_housing_diet_tab(tabbed_pane, entry)
 
     -- nutrition tag coverage
     local nutrition_flow = flow["diet-nutrition"]
-    for _, tag in pairs(required_nutrition_tags) do
+    for _, tag in pairs(castes[entry[EK.type]].essential_nutrition_tags) do
         local label = nutrition_flow[tostring(tag)]
         local covered = info.covered_tags[tag]
         label.caption = {"", covered and "✓ " or "✗ ", Locale.nutrition_tag(tag)}
@@ -1166,7 +1164,7 @@ local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
     -- dynamic: nutrition tag coverage
     Gui.Elements.Label.header_label(flow, "diet-nutrition-header", {"sosciencity.diet-nutrition"})
     local nutrition_flow = flow.add {type = "flow", name = "diet-nutrition", direction = "vertical"}
-    for _, tag in pairs(required_nutrition_tags) do
+    for _, tag in pairs(caste.essential_nutrition_tags) do
         nutrition_flow.add {type = "label", name = tostring(tag)}
     end
 

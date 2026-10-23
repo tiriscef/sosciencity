@@ -3,7 +3,7 @@
 --- @enum EatingBehavior
 local EatingBehavior = {}
 
-EatingBehavior.minimalist = 1 -- picks only foods needed to cover nutrition tags
+EatingBehavior.health_conscious = 1 -- picks foods by the nutrition tags they add; disliked foods only for essential tags
 EatingBehavior.mixed = 2 -- includes all favored-taste foods, then fills missing tags and minimum_food_count by quality
 EatingBehavior.foodie = 3 -- includes all favored and neutral foods; never eats disliked foods
 

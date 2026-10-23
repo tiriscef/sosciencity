@@ -4,6 +4,7 @@ local HappinessFactor = require("enums.happiness-factor")
 local HappinessSummand = require("enums.happiness-summand")
 local HealthFactor = require("enums.health-factor")
 local HealthSummand = require("enums.health-summand")
+local NutritionTag = require("enums.nutrition-tag")
 local RenderingType = require("enums.rendering-type")
 local SanitySummand = require("enums.sanity-summand")
 local Type = require("enums.type")
@@ -15,8 +16,8 @@ local InhabitantsConstants = require("constants.inhabitants")
 
 local castes = Castes.values
 local food_values = Food.values
-local required_nutrition_tags = InhabitantsConstants.required_nutrition_tags
 local nutrition_tag_effects = InhabitantsConstants.nutrition_tag_effects
+local all_nutrition_tags = Tirislib.Tables.values(NutritionTag)
 local log_fluid = Statistics.log_fluid
 local assembling_machine_output = defines.inventory.crafter_output
 
@@ -87,24 +88,24 @@ local function update_covered_tags(diet, covered_tags)
     end
 end
 
---- Returns true if all required nutrition tags are covered.
-local function all_tags_covered(covered_tags)
-    for _, tag in pairs(required_nutrition_tags) do
+--- Returns true if all of the given nutrition tags are covered.
+local function all_tags_covered(covered_tags, tags)
+    for _, tag in pairs(tags) do
         if not covered_tags[tag] then return false end
     end
 
     return true
 end
 
---- Iterates food_list and adds each food to diet if it covers at least one uncovered tag.
+--- Iterates food_list and adds each food to diet if it covers at least one uncovered tag of wanted_tags.
 --- Updates covered_tags in place. Returns the number of foods added.
-local function add_tag_covering_foods(food_list, diet, covered_tags)
+local function add_tag_covering_foods(food_list, diet, covered_tags, wanted_tags)
     local added = 0
     for _, item_name in pairs(food_list) do
-        if all_tags_covered(covered_tags) then break end
+        if all_tags_covered(covered_tags, wanted_tags) then break end
         local food = food_values[item_name]
-        for tag in pairs(food.nutrition_tags) do
-            if not covered_tags[tag] then
+        for _, tag in pairs(wanted_tags) do
+            if food.nutrition_tags[tag] and not covered_tags[tag] then
                 diet[#diet + 1] = item_name
                 -- mark all of this food's tags as covered
                 for t in pairs(food.nutrition_tags) do
@@ -118,16 +119,17 @@ local function add_tag_covering_foods(food_list, diet, covered_tags)
     return added
 end
 
---- Minimalist: covers nutrition tags using favored foods first, then neutral, then disliked as a
---- last resort. No fill step - eating only what is nutritionally necessary.
+--- Health-conscious: covers every nutrition tag it can get from favored foods first, then neutral.
+--- Disliked foods are only eaten as a last resort to cover essential tags. No fill step - every
+--- food has to bring a tag.
 --- @return string[] diet, integer disliked_count, table covered_tags
-local function build_diet_minimalist(favored, neutral, disliked)
+local function build_diet_health_conscious(favored, neutral, disliked, essential_tags)
     local diet = {}
     local covered_tags = {}
 
-    add_tag_covering_foods(favored, diet, covered_tags)
-    add_tag_covering_foods(neutral, diet, covered_tags)
-    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags)
+    add_tag_covering_foods(favored, diet, covered_tags, all_nutrition_tags)
+    add_tag_covering_foods(neutral, diet, covered_tags, all_nutrition_tags)
+    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags, essential_tags)
 
     return diet, disliked_count, covered_tags
 end
@@ -135,7 +137,7 @@ end
 --- Mixed: includes all favored foods, covers missing tags from neutral then disliked,
 --- then fills to minimum_food_count with the most appealing neutral foods not yet in the diet.
 --- @return string[] diet, integer disliked_count, table covered_tags
-local function build_diet_mixed(favored, neutral, disliked, minimum_food_count)
+local function build_diet_mixed(favored, neutral, disliked, minimum_food_count, essential_tags)
     local diet = {}
     local covered_tags = {}
 
@@ -144,8 +146,8 @@ local function build_diet_mixed(favored, neutral, disliked, minimum_food_count)
     end
     update_covered_tags(diet, covered_tags)
 
-    add_tag_covering_foods(neutral, diet, covered_tags)
-    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags)
+    add_tag_covering_foods(neutral, diet, covered_tags, essential_tags)
+    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags, essential_tags)
 
     if #diet < minimum_food_count then
         local diet_set = Tirislib.Tables.to_lookup(diet)
@@ -184,18 +186,18 @@ local function build_diet_foodie(favored, neutral)
     return diet, 0, covered_tags
 end
 
---- Constructs the diet for the given eating behavior.
---- @param behavior EatingBehavior
+--- Constructs the diet for the caste's eating behavior.
+--- @param caste CasteDefinition
 --- @param favored string[] foods with favored taste
 --- @param neutral string[] foods with neutral taste
 --- @param disliked string[] foods with disliked taste
---- @param minimum_food_count integer
 --- @return string[] diet, integer disliked_count, table covered_tags
-local function build_diet(behavior, favored, neutral, disliked, minimum_food_count)
-    if behavior == EatingBehavior.minimalist then
-        return build_diet_minimalist(favored, neutral, disliked)
+local function build_diet(caste, favored, neutral, disliked)
+    local behavior = caste.eating_behavior
+    if behavior == EatingBehavior.health_conscious then
+        return build_diet_health_conscious(favored, neutral, disliked, caste.essential_nutrition_tags)
     elseif behavior == EatingBehavior.mixed then
-        return build_diet_mixed(favored, neutral, disliked, minimum_food_count)
+        return build_diet_mixed(favored, neutral, disliked, caste.minimum_food_count, caste.essential_nutrition_tags)
     elseif behavior == EatingBehavior.foodie then
         return build_diet_foodie(favored, neutral)
     else
@@ -206,8 +208,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << fallback diet (food distress) >>
 
---- Fallback for minimalists: steps through taste tiers and returns the first non-empty one.
-local function build_fallback_diet_minimalist(favored, neutral, disliked)
+--- Fallback for health-conscious eaters: steps through taste tiers and returns the first non-empty one.
+local function build_fallback_diet_health_conscious(favored, neutral, disliked)
     if #favored > 0 then return favored end
     if #neutral > 0 then return neutral end
     return disliked
@@ -238,8 +240,8 @@ end
 --- Builds a fallback diet when the primary behavior produced an empty result but food is available.
 --- @return string[] diet
 local function build_fallback_diet(behavior, favored, neutral, disliked, minimum_food_count)
-    if behavior == EatingBehavior.minimalist then
-        return build_fallback_diet_minimalist(favored, neutral, disliked)
+    if behavior == EatingBehavior.health_conscious then
+        return build_fallback_diet_health_conscious(favored, neutral, disliked)
     elseif behavior == EatingBehavior.mixed then
         return build_fallback_diet_mixed(disliked, minimum_food_count)
     elseif behavior == EatingBehavior.foodie then
@@ -329,8 +331,11 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
             happiness[HappinessSummand.food_variety] = (-variety) * caste.happiness_per_missing_food
         end
         if caste.happiness_per_nutrition_tag ~= 0 then
+            -- health-conscious eaters enjoy every covered tag, the others only their essential ones
+            local rewarded_tags = (caste.eating_behavior == EatingBehavior.health_conscious)
+                and all_nutrition_tags or caste.essential_nutrition_tags
             local nutrition_happiness = 0
-            for _, tag in pairs(required_nutrition_tags) do
+            for _, tag in pairs(rewarded_tags) do
                 if covered_tags[tag] then
                     nutrition_happiness = nutrition_happiness + caste.happiness_per_nutrition_tag
                 end
@@ -341,14 +346,14 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
         end
     end
 
-    -- health
+    -- health: every covered tag gives its bonus, every missing essential tag its malus
     local nutrients_health = 0
-    for _, tag in pairs(required_nutrition_tags) do
-        local effect = nutrition_tag_effects[tag]
-        if covered_tags[tag] then
-            nutrients_health = nutrients_health + effect.bonus
-        elseif effect.malus ~= 0 then
-            nutrients_health = nutrients_health + effect.malus
+    for tag in pairs(covered_tags) do
+        nutrients_health = nutrients_health + nutrition_tag_effects[tag].bonus
+    end
+    for _, tag in pairs(caste.essential_nutrition_tags) do
+        if not covered_tags[tag] then
+            nutrients_health = nutrients_health + nutrition_tag_effects[tag].malus
         end
     end
     if nutrients_health ~= 0 then
@@ -375,8 +380,7 @@ function Inhabitants.get_diet_info(entry)
     local available_foods = get_available_foods(inventories)
     local favored, neutral, disliked = classify_by_taste(available_foods, caste)
 
-    local diet, _, covered_tags = build_diet(
-        caste.eating_behavior, favored, neutral, disliked, caste.minimum_food_count)
+    local diet, _, covered_tags = build_diet(caste, favored, neutral, disliked)
 
     local is_distress = false
     if #diet == 0 and #available_foods > 0 then
@@ -411,8 +415,7 @@ function Inhabitants.evaluate_diet(entry, delta_ticks)
     local available_foods = get_available_foods(inventories)
     local favored, neutral, disliked = classify_by_taste(available_foods, caste)
 
-    local diet, disliked_count, covered_tags = build_diet(
-        caste.eating_behavior, favored, neutral, disliked, caste.minimum_food_count)
+    local diet, disliked_count, covered_tags = build_diet(caste, favored, neutral, disliked)
 
     local is_distress = false
     if #diet == 0 and #available_foods > 0 then
