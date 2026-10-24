@@ -1,6 +1,7 @@
 local Building = require("constants.buildings")
 
 local GRAPHICS_PATH = "__sosciencity-graphics__/graphics/entity/cold-storage-warehouse/cold-storage-warehouse"
+local ICON_PATH = "__sosciencity-graphics__/graphics/icon/cold-storage-warehouse"
 
 --- Roof band colour of the plain warehouse.
 local NEUTRAL_TINT = {0.62, 0.64, 0.67}
@@ -39,12 +40,15 @@ local logistic_variants = {
     }
 }
 
-local function create_item(name, order)
+--- The icon gets the same tinted roof band as the entity.
+local function create_item(name, order, tint)
     return Tirislib.Item.create {
         type = "item",
         name = name,
-        icon = Tirislib.Prototype.placeholder_icon,
-        icon_size = 64,
+        icons = {
+            {icon = ICON_PATH .. ".png", icon_size = 64},
+            {icon = ICON_PATH .. "-mask.png", icon_size = 64, tint = tint}
+        },
         subgroup = "sosciencity-food-buildings",
         order = order,
         place_result = name,
@@ -89,7 +93,7 @@ local function create_entity(name, tint, fields)
     Sosciencity.configure_building(name)
 end
 
-create_item("cold-storage-warehouse", "daa")
+create_item("cold-storage-warehouse", "daa", NEUTRAL_TINT)
 
 Tirislib.RecipeGenerator.create {
     results = {
@@ -109,7 +113,7 @@ for _, mode in pairs(Building.cold_storage_logistic_modes) do
     local name = mode .. "-cold-storage-warehouse"
     local chest = mode .. "-chest"
 
-    create_item(name, variant.order):add_ingredient_layer(chest)
+    create_item(name, variant.order, variant.tint):add_ingredient_layer(chest)
 
     Tirislib.RecipeGenerator.create {
         results = {

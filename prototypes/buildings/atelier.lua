@@ -6,7 +6,7 @@ local sprites = require("__sosciencity-graphics__.graphics.entity.atelier.sprite
 Tirislib.Item.create {
     type = "item",
     name = "atelier",
-    icon = Tirislib.Prototype.placeholder_icon,
+    icon = "__sosciencity-graphics__/graphics/icon/atelier.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "aab",
