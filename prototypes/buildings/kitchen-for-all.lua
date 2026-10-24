@@ -1,4 +1,3 @@
--- TODO: recipe, unlock
 Tirislib.Item.create {
     type = "item",
     name = "kitchen-for-all",

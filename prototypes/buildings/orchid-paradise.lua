@@ -1,4 +1,3 @@
--- TODO: recipe
 Tirislib.Item.create {
     type = "item",
     name = "orchid-paradise",
