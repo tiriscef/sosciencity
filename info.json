@@ -11,7 +11,7 @@
         "sosciencity-graphics >= 0.0.12",
         "?enable-all-feature-flags",
         "+minime",
-        "(?)quality"
+        "(?)recycler"
     ],
     "description": "Factorio: Skylines. Adds citizens to the game. Attract various castes to your city in order to progress the game."
 }
