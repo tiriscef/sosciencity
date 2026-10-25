@@ -66,6 +66,13 @@ As the architect of the city you need to fulfill several responsibilities in ord
 
 
 
+# Recommended Mods
+
+- **[miniMAXIme](https://mods.factorio.com/mod/minime):** Sosciencity's buildings are scaled so their doors are about one tile tall - the vanilla engineer is a freaking giant next to them. If that bothers you, I recommend miniMAXIme that shrink him to a size that fits the city.
+- **[Transport Drones](https://mods.factorio.com/mod/Transport_Drones):** Not a gameplay recommendation, just a personal one: it adds roads and little cars as a new transport system, and seeing them drive through a city makes me really happy.
+
+
+
 # On the Use of AI
 
 I do use AI tools while working on Sosciencity.
