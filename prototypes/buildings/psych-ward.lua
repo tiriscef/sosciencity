@@ -1,3 +1,5 @@
+local sprites = require("__sosciencity-graphics__.graphics.entity.psych-ward.sprite-data")
+
 Tirislib.Item.create {
     type = "item",
     name = "psych-ward",
@@ -36,15 +38,7 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = Tirislib.Entity.create_standard_picture {
-        path = "__sosciencity-graphics__/graphics/entity/psych-ward/psych-ward",
-        width = 17,
-        height = 10,
-        shift = {3.504, -0.806}, -- same canvas and camera as the hospital, so they line up side by side
-        shadowmap = true,
-        lightmap = true,
-        glow = true
-    },
+    picture = Tirislib.Entity.create_picture_from_sprite_data(sprites.static),
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
