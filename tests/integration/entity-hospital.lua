@@ -265,6 +265,30 @@ Tirislib.Testing.add_test_case(
     teardown
 )
 
+Tirislib.Testing.add_test_case(
+    "every patient pays cure items, even when a house has more patients than the hospital has slots",
+    "integration|integration.hospital",
+    function()
+        -- test-hospital-no-workforce has 5 slots; 7 patients need two rounds of claims
+        local patients = 7
+        local spare = 3
+        local hospital = make_hospital({0, 0})
+        local house = make_sick_house({5, 0}, DISEASE_WITH_ITEMS, patients)
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        local cost = disease_with_items.cure_items["bandage"]
+        inv.insert({name = "bandage", count = patients * cost + spare})
+
+        for _ = 1, 10 do
+            Helpers.update_entry(hospital)
+        end
+
+        Assert.equals(house[EK.diseases][DISEASE_WITH_ITEMS] or 0, 0, "all patients should be cured")
+        Assert.equals(inv.get_item_count("bandage"), spare, "cure items should be paid once per patient")
+    end,
+    setup,
+    teardown
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << Hospital.try_blood_donation >>
 

@@ -112,41 +112,41 @@ local function disease_slot_is_valid(hospital, slot, unit_number)
     return true
 end
 
---- Treats one specific disease in a housing entry using one hospital slot's work budget for one tick.
---- Cure items were consumed when the slot was claimed; this only accumulates work and cures.
+--- Treats one patient in a housing entry using one hospital slot's work budget for one tick.
+--- A slot holds exactly one patient, whose cure items were consumed when the slot was claimed;
+--- this only accumulates work and cures.
 --- @param housing Entry
 --- @param slot table {uid, disease_id, work_done}
 --- @param inventories LuaInventory[]
 --- @param available_work number work budget for this slot this tick
 --- @param statistics table hospital[EK.treated]
+--- @return boolean finished whether the slot is done and should be released
 local function treat_disease_slot(housing, slot, inventories, available_work, statistics)
     local disease_id = slot.disease_id
     local disease_group = housing[EK.diseases]
     local count = disease_group[disease_id]
-    if not count or count == 0 then return end
+    if not count or count == 0 then return true end
 
     local disease = disease_values[disease_id]
     local work_done = (slot.work_done or 0) + available_work
 
-    if work_done >= disease.curing_workload then
-        cure(disease_group, disease_id, 1)
-
-        local reports = coin_flips_overcrit(disease.reports_per_treatment, 1, 5)
-        if reports > 0 then
-            Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports)
-        end
-
-        apply_cure_side_effects(housing, disease_id, 1, true)
-        statistics[disease_id] = (statistics[disease_id] or 0) + 1
-        Communication.report_treatment(disease_id, 1)
-
-        work_done = work_done - disease.curing_workload
+    if work_done < disease.curing_workload then
+        slot.work_done = work_done
+        return false
     end
 
-    if work_done > disease.curing_workload then
-        work_done = disease.curing_workload
+    cure(disease_group, disease_id, 1)
+
+    local reports = coin_flips_overcrit(disease.reports_per_treatment, 1, 5)
+    if reports > 0 then
+        Inventories.try_insert_into_inventory_range(inventories, "medical-report", reports)
     end
-    slot.work_done = work_done
+
+    apply_cure_side_effects(housing, disease_id, 1, true)
+    statistics[disease_id] = (statistics[disease_id] or 0) + 1
+    Communication.report_treatment(disease_id, 1)
+
+    return true
 end
 
 --- Processes one in-progress blood donation slot.
@@ -304,21 +304,17 @@ local function update_hospital(entry, delta_ticks)
         end
     end
 
-    -- treat each disease slot; prune completed/cured slots immediately so capacity is
-    -- freed within this update rather than waiting for the next validation pass
+    -- treat each disease slot; release finished slots immediately so the next patient
+    -- has to be claimed (and paid for) anew
     local work_per_slot = performance * delta_ticks * building_details.speed
     local statistics = entry[EK.treated]
 
     for i = #slots, 1, -1 do
         local slot = slots[i]
         local housing = try_get(slot.uid)
-        if housing then
-            treat_disease_slot(housing, slot, inventories, work_per_slot, statistics)
-            local disease_count = housing[EK.diseases][slot.disease_id]
-            if not disease_count or disease_count == 0 then
-                release_claim(housing, slot.disease_id, unit_number)
-                table.remove(slots, i)
-            end
+        if housing and treat_disease_slot(housing, slot, inventories, work_per_slot, statistics) then
+            release_claim(housing, slot.disease_id, unit_number)
+            table.remove(slots, i)
         end
     end
 
