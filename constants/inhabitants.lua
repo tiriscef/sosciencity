@@ -3,6 +3,7 @@ local MoveCause = require("enums.move-cause")
 local NutritionTag = require("enums.nutrition-tag")
 
 local Time = require("constants.time")
+local Unit = require("constants.unit")
 
 local InhabitantsConstants = {}
 
@@ -95,6 +96,18 @@ InhabitantsConstants.moving_downtime = {
     [MoveCause.house_destroyed]        = 1 * Time.minute,
     [MoveCause.copy]                   = 0,
 }
+
+--- Disease cases per inhabitant, before the caste's susceptibility and the house's stats.
+--- Health, sanity and accident rates are divided by (stat + 1), so these are the rates at a stat of 0
+--- (e.g. 0.036 per minute at health 10: 0.036 / 11 = one case per inhabitant every ~5 hours).
+InhabitantsConstants.health_disease_rate = 0.036 * Unit.per_minute
+InhabitantsConstants.sanity_disease_rate = 0.036 * Unit.per_minute
+InhabitantsConstants.accident_disease_rate = 0.036 * Unit.per_minute
+--- Multiplied with the square root of the number of active animal farms.
+InhabitantsConstants.zoonosis_disease_rate = 0.00072 * Unit.per_minute
+--- Only while the house has no food / no water.
+InhabitantsConstants.malnutrition_disease_rate = 0.036 * Unit.per_minute
+InhabitantsConstants.dehydration_disease_rate = 0.036 * Unit.per_minute
 
 --- Probability per consumed food item that it produces a food-leftovers item.
 InhabitantsConstants.food_leftovers_chance = 0.125

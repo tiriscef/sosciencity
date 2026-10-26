@@ -48,9 +48,9 @@ local Castes = {}
 --- @field full_strike_worker_fraction number minimum fraction of workers willing to work even at full strike
 --- @field immigration_genders table<Gender, number> gender weight distribution for arriving immigrants
 --- @field housing_preferences table<HousingTrait, number> preference modifiers keyed by housing trait
---- @field accident_disease_resilience number multiplier reducing accident disease probability
---- @field health_disease_resilience number multiplier reducing health disease probability
---- @field sanity_disease_resilience number multiplier reducing sanity disease probability
+--- @field accident_disease_susceptibility number multiplier on the accident disease frequency (higher = more cases)
+--- @field health_disease_susceptibility number multiplier on the health disease frequency (higher = more cases)
+--- @field sanity_disease_susceptibility number multiplier on the sanity disease frequency (higher = more cases)
 --- @field relocation_penalty {shock: number, factor: number}? happiness shock and factor applied on relocation (nil if caste has no penalty)
 --- @field type Type set in postprocessing from the table key
 
@@ -105,9 +105,9 @@ Castes.values = {
             [HousingTrait.green] = -1,
             [HousingTrait.pompous] = -1
         },
-        accident_disease_resilience = 0.7,
-        health_disease_resilience = 0.65,
-        sanity_disease_resilience = 0.35
+        accident_disease_susceptibility = 0.7,
+        health_disease_susceptibility = 0.65,
+        sanity_disease_susceptibility = 0.35
     },
     [Type.orchid] = {
         name = "orchid",
@@ -157,9 +157,9 @@ Castes.values = {
             [HousingTrait.technical] = -3,
             [HousingTrait.compact] = -1
         },
-        accident_disease_resilience = 0.35,
-        health_disease_resilience = 0.2,
-        sanity_disease_resilience = 0.65
+        accident_disease_susceptibility = 0.35,
+        health_disease_susceptibility = 0.2,
+        sanity_disease_susceptibility = 0.65
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -213,9 +213,9 @@ Castes.values = {
             [HousingTrait.pompous] = -1,
             [HousingTrait.tall] = -1
         },
-        accident_disease_resilience = 1,
-        health_disease_resilience = 0.2,
-        sanity_disease_resilience = 1
+        accident_disease_susceptibility = 1,
+        health_disease_susceptibility = 0.2,
+        sanity_disease_susceptibility = 1
     },
     [Type.ember] = {
         name = "ember",
@@ -262,9 +262,9 @@ Castes.values = {
             [HousingTrait.tall] = 3,
             [HousingTrait.simple] = -2
         },
-        accident_disease_resilience = 0.1,
-        health_disease_resilience = 0.8,
-        sanity_disease_resilience = 0.6
+        accident_disease_susceptibility = 0.1,
+        health_disease_susceptibility = 0.8,
+        sanity_disease_susceptibility = 0.6
     },
     [Type.foundry] = {
         name = "foundry",
@@ -315,9 +315,9 @@ Castes.values = {
             [HousingTrait.individualistic] = -1,
             [HousingTrait.low] = -2
         },
-        accident_disease_resilience = 0.5,
-        health_disease_resilience = 1,
-        sanity_disease_resilience = 1,
+        accident_disease_susceptibility = 0.5,
+        health_disease_susceptibility = 1,
+        sanity_disease_susceptibility = 1,
         relocation_penalty = {
             shock = 3,
             factor = 0.8
@@ -370,9 +370,9 @@ Castes.values = {
             [HousingTrait.technical] = -2,
             [HousingTrait.cheap] = -3
         },
-        accident_disease_resilience = 0.2,
-        health_disease_resilience = 2,
-        sanity_disease_resilience = 2,
+        accident_disease_susceptibility = 0.2,
+        health_disease_susceptibility = 2,
+        sanity_disease_susceptibility = 2,
         relocation_penalty = {
             shock = 3,
             factor = 0.8
@@ -431,9 +431,9 @@ Castes.values = {
             [HousingTrait.copy_paste] = -2,
             [HousingTrait.cheap] = -5
         },
-        accident_disease_resilience = 0.2,
-        health_disease_resilience = 1.5,
-        sanity_disease_resilience = 1
+        accident_disease_susceptibility = 0.2,
+        health_disease_susceptibility = 1.5,
+        sanity_disease_susceptibility = 1
     },
     [Type.plasma] = {
         name = "plasma",
@@ -484,9 +484,9 @@ Castes.values = {
             [HousingTrait.simple] = -1,
             [HousingTrait.cheap] = -3
         },
-        accident_disease_resilience = 0.2,
-        health_disease_resilience = 0.2,
-        sanity_disease_resilience = 1.5
+        accident_disease_susceptibility = 0.2,
+        health_disease_susceptibility = 0.2,
+        sanity_disease_susceptibility = 1.5
     }
 }
 

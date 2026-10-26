@@ -5,7 +5,8 @@ Re-implements the disease progress functions of classes/inhabitants/healthcare.l
 
 Inputs:
 - diseases and disease categories from constants/diseases.lua
-- disease resiliences from constants/castes.lua (a multiplier on the frequency: higher = more cases)
+- base disease rates from constants/inhabitants.lua
+- disease susceptibilities from constants/castes.lua (a multiplier on the frequency: higher = more cases)
 - workplace disease rates from constants/buildings.lua
 - bed speed from constants/buildings.lua (the hospital's speed; every bed building should have the same)
 
@@ -90,6 +91,17 @@ def parse_categories():
     return categories
 
 
+def parse_rates():
+    """Returns the base disease rates per inhabitant per tick by category name."""
+    src = (MOD / "constants" / "inhabitants.lua").read_text()
+    return {
+        category: float(per_minute) / TICKS_PER_MINUTE
+        for category, per_minute in re.findall(
+            r"InhabitantsConstants\.(\w+)_disease_rate = ([\d.]+) \* Unit\.per_minute", src
+        )
+    }
+
+
 def parse_castes():
     src = (MOD / "constants" / "castes.lua").read_text()
     castes = {}
@@ -98,7 +110,7 @@ def parse_castes():
         if re.search(r"\n\s+enabled = false", body):
             continue
         castes[name] = {
-            category: float(re.search(rf"{category}_disease_resilience = ([\d.]+)", body).group(1))
+            category: float(re.search(rf"{category}_disease_susceptibility = ([\d.]+)", body).group(1))
             for category in POPULATION_CATEGORIES
         }
     return castes
@@ -131,10 +143,10 @@ def parse_buildings():
     return {category: rate / jobs for category, rate in cases.items()}, speed
 
 
-def population_rate(category, resilience, health, sanity):
+def population_rate(base_rate, susceptibility, category, health, sanity):
     """Cases per inhabitant per minute, see get_*_disease_progress in healthcare.lua."""
     divisor = {"health": health + 1, "sanity": sanity + 1, "accident": health + sanity + 1}[category]
-    return TICKS_PER_MINUTE / 100000 / divisor * resilience
+    return TICKS_PER_MINUTE * base_rate / divisor * susceptibility
 
 
 def split_by_disease(category_rates, categories):
@@ -164,25 +176,25 @@ def bed_demand(cases, diseases, speed):
     return demand
 
 
-def city_cases(args, castes, categories, work_rates):
+def city_cases(args, castes, base_rates, work_rates):
     category_rates = defaultdict(float)
     for caste_name in args.castes:
-        resilience = castes[caste_name]
+        susceptibility = castes[caste_name]
         for category in POPULATION_CATEGORIES:
-            rate = population_rate(category, resilience[category], args.health, args.sanity)
+            rate = population_rate(base_rates[category], susceptibility[category], category, args.health, args.sanity)
             category_rates[category] += args.population * rate
     workers = args.population * len(args.castes) * args.employed
     for category, rate in work_rates.items():
         category_rates[category] += workers * rate
     if args.animal_farms:
-        zoonosis = TICKS_PER_MINUTE * math.sqrt(args.animal_farms) / 5000000
+        zoonosis = TICKS_PER_MINUTE * math.sqrt(args.animal_farms) * base_rates["zoonosis"]
         category_rates["zoonosis"] += args.population * len(args.castes) * zoonosis
     return category_rates
 
 
-def print_city(args, castes, categories, diseases, work_rates, speed):
+def print_city(args, castes, base_rates, categories, diseases, work_rates, speed):
     population = args.population * len(args.castes)
-    category_rates = city_cases(args, castes, categories, work_rates)
+    category_rates = city_cases(args, castes, base_rates, work_rates)
     cases = split_by_disease(category_rates, categories)
     demand = bed_demand(cases, diseases, speed)
 
@@ -206,7 +218,7 @@ def print_city(args, castes, categories, diseases, work_rates, speed):
         row = []
         for sanity in levels:
             sweep = argparse.Namespace(**{**vars(args), "health": health, "sanity": sanity})
-            d = bed_demand(split_by_disease(city_cases(sweep, castes, categories, work_rates), categories), diseases, speed)
+            d = bed_demand(split_by_disease(city_cases(sweep, castes, base_rates, work_rates), categories), diseases, speed)
             general = d[GENERAL] / population * 1000
             wards = sum(v for k, v in d.items() if k != GENERAL) / population * 1000
             row.append(f"{general:5.1f} / {wards:4.1f}")
@@ -266,7 +278,7 @@ def main():
     if args.diseases:
         print_diseases(diseases, categories)
     else:
-        print_city(args, castes, categories, diseases, work_rates, speed)
+        print_city(args, castes, parse_rates(), categories, diseases, work_rates, speed)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
 
 local castes = Castes.values
 local disease_values = Diseases.values
@@ -109,8 +110,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + entry[EK.sanity] + 1) *
-        castes[entry[EK.type]].accident_disease_resilience
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.accident_disease_rate /
+        (entry[EK.health] + entry[EK.sanity] + 1) * castes[entry[EK.type]].accident_disease_susceptibility
 end
 
 --- Returns the disease progress for health-based diseases.
@@ -118,8 +119,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_health_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + 1) *
-        castes[entry[EK.type]].health_disease_resilience
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.health_disease_rate / (entry[EK.health] + 1) *
+        castes[entry[EK.type]].health_disease_susceptibility
 end
 
 --- Returns the disease progress for sanity-based diseases.
@@ -127,8 +128,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.sanity] + 1) *
-        castes[entry[EK.type]].sanity_disease_resilience
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.sanity_disease_rate / (entry[EK.sanity] + 1) *
+        castes[entry[EK.type]].sanity_disease_susceptibility
 end
 
 --- Returns the disease progress for zoonosis (from animal farms).
@@ -136,7 +137,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) / 5000000
+    return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) *
+        InhabitantsConstants.zoonosis_disease_rate
 end
 
 --- Returns the disease progress for malnutrition.
@@ -145,7 +147,7 @@ end
 --- @return number
 function Inhabitants.get_malnutrition_disease_progress(entry, delta_ticks)
     if entry[EK.has_food] then return 0 end
-    return entry[EK.inhabitants] * delta_ticks / 100000
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.malnutrition_disease_rate
 end
 
 --- Returns the disease progress for dehydration.
@@ -154,7 +156,7 @@ end
 --- @return number
 function Inhabitants.get_dehydration_disease_progress(entry, delta_ticks)
     if entry[EK.has_water] then return 0 end
-    return entry[EK.inhabitants] * delta_ticks / 100000
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.dehydration_disease_rate
 end
 
 --- Returns the disease progress from workplace accidents of the given category.
