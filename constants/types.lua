@@ -32,13 +32,16 @@ local inhabitant_subscriptions = {
     [Type.animal_farm] = ConnectionType.from_neighbor
 }
 
+-- the types that share their inventory with the hospital get added after the definitions
 local hospital_subscriptions = {}
-for _, _type in pairs(TypeGroup.hospital_complements) do
-    hospital_subscriptions[_type] = ConnectionType.from_neighbor
-end
 for _, caste in pairs(Castes.all) do
     hospital_subscriptions[caste.type] = ConnectionType.bidirectional
 end
+
+-- the ward's own range decides, matching the hospital's from_neighbor subscription to its wards
+local ward_subscriptions = {
+    [Type.hospital] = ConnectionType.to_neighbor
+}
 
 --- Type definitions\
 --- **alt_mode_sprite:** name of the sprite that should be shown in altmode\
@@ -50,7 +53,11 @@ end
 --- **is_catch_all:** does this type map to a broad Factorio prototype type (so entries can come from any mod) - drives external-ownership detection\
 --- **signature_color:** color for this entity, for displaying purposes\
 --- **localised_name:** localised name for this type\
---- **localised_description:** localised description for this type
+--- **localised_description:** localised description for this type\
+--- **shares_hospital_inventory:** a connected hospital uses this building's inventory as its own\
+--- **is_hospital_ward:** has beds that a connected hospital admits patients into\
+--- **treats_general_medicine:** its beds take diseases without a curing facility and blood donors\
+--- **admits_patients:** looks for patients in its range and admits them into its own and its wards' beds
 Types.definitions = {
     [Type.empty_house] = {
         alt_mode_sprite = "empty-caste",
@@ -226,7 +233,8 @@ Types.definitions = {
     [Type.pharmacy] = {
         localised_name = {"sosciencity.pharmacy"},
         localised_description = {"sosciencity.explain-pharmacy"},
-        is_civil = true
+        is_civil = true,
+        shares_hospital_inventory = true
     },
     [Type.hospital] = {
         localised_name = {"sosciencity.hospital"},
@@ -236,7 +244,9 @@ Types.definitions = {
         signature_color = Color.darkish_red,
         subscriptions = hospital_subscriptions,
         is_civil = true,
-        workforce_noun = "doctors"
+        workforce_noun = "doctors",
+        treats_general_medicine = true,
+        admits_patients = true
     },
     [Type.improvised_hospital] = {
         localised_name = {"sosciencity.hospital"},
@@ -255,25 +265,58 @@ Types.definitions = {
             [Type.plasma] = ConnectionType.bidirectional
         },
         is_civil = true,
-        workforce_noun = "medics"
+        workforce_noun = "medics",
+        treats_general_medicine = true,
+        admits_patients = true
+    },
+    [Type.general_ward] = {
+        localised_name = {"entity-name.general-ward"},
+        localised_description = {"entity-description.general-ward"},
+        treats_general_medicine = true,
+        localised_speed_name = {"sosciencity.rate"},
+        localised_speed_key = "sosciencity.show-hospital-rate",
+        signature_color = Color.darkish_red,
+        subscriptions = ward_subscriptions,
+        is_civil = true,
+        workforce_noun = "doctors",
+        shares_hospital_inventory = true,
+        is_hospital_ward = true
     },
     [Type.psych_ward] = {
         localised_name = {"item-name.psych-ward"},
         localised_description = {"item-description.psych-ward"},
+        localised_speed_name = {"sosciencity.rate"},
+        localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
-        is_civil = true
+        subscriptions = ward_subscriptions,
+        is_civil = true,
+        workforce_noun = "doctors",
+        shares_hospital_inventory = true,
+        is_hospital_ward = true
     },
     [Type.intensive_care_unit] = {
         localised_name = {"item-name.intensive-care-unit"},
         localised_description = {"item-description.intensive-care-unit"},
+        localised_speed_name = {"sosciencity.rate"},
+        localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
-        is_civil = true
+        subscriptions = ward_subscriptions,
+        is_civil = true,
+        workforce_noun = "doctors",
+        shares_hospital_inventory = true,
+        is_hospital_ward = true
     },
     [Type.gene_clinic] = {
         localised_name = {"item-name.gene-clinic"},
         localised_description = {"item-description.gene-clinic"},
+        localised_speed_name = {"sosciencity.rate"},
+        localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
-        is_civil = true
+        subscriptions = ward_subscriptions,
+        is_civil = true,
+        workforce_noun = "doctors",
+        shares_hospital_inventory = true,
+        is_hospital_ward = true
     },
     [Type.waterwell] = {
         localised_name = {"sosciencity.waterwell"},
@@ -402,6 +445,12 @@ Types.definitions = {
 }
 local definitions = Types.definitions
 
+for type_id, definition in pairs(definitions) do
+    if definition.shares_hospital_inventory then
+        hospital_subscriptions[type_id] = ConnectionType.from_neighbor
+    end
+end
+
 --- Resolves the workforce noun-stem: building override -> type override -> "staff".
 --- @param type_id Type
 --- @param workforce WorkforceDefinition
@@ -452,6 +501,20 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << type functions >>
+
+--- Returns an array of all the types whose definition has the given field set.
+--- Meant to be cached at file scope, not to be called in hot code.
+--- @param field string
+--- @return Type[]
+function Types.select(field)
+    local ret = {}
+    for type_id, definition in pairs(definitions) do
+        if definition[field] then
+            ret[#ret + 1] = type_id
+        end
+    end
+    return ret
+end
 
 --- Returns the internal type for the given entity.
 function Types.get_entity_type(entity)

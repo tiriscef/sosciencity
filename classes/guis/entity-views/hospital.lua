@@ -9,8 +9,9 @@ local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
-local TypeGroup = require("constants.type-groups")
-local type_definitions = require("constants.types").definitions
+local Types = require("constants.types")
+local type_definitions = Types.definitions
+local facility_types = Types.select("shares_hospital_inventory")
 
 local get_building_details = Buildings.get
 
@@ -181,7 +182,7 @@ local function update_hospital_details(container, entry, player_id)
 
     local facility_flow = Datalist.get_kv_value_element(building_data, "facilities")
     facility_flow.clear()
-    for _, _type in pairs(TypeGroup.hospital_complements) do
+    for _, _type in pairs(facility_types) do
         local has_one = false
         for _, facility in Neighborhood.iterate_type(entry, _type) do
             if Entity.is_active(facility) then

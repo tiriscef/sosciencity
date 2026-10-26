@@ -228,9 +228,34 @@ Building.values = {
             noun = "researchers"
         }
     },
+    ["general-ward"] = {
+        type = Type.general_ward,
+        range = 7,
+        slots = 5,
+        speed = 2 / Time.second,
+        workforce = {
+            count = 5,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 50 * Unit.kW,
+        eei = true
+    },
     ["gene-clinic"] = {
         type = Type.gene_clinic,
         range = 7,
+        slots = 2,
+        speed = 2 / Time.second,
+        workforce = {
+            count = 4,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 200 * Unit.kW,
         eei = true
     },
     ["gleam-hq"] = {
@@ -323,6 +348,16 @@ Building.values = {
     ["intensive-care-unit"] = {
         type = Type.intensive_care_unit,
         range = 7,
+        slots = 3,
+        speed = 2 / Time.second,
+        workforce = {
+            count = 8,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 150 * Unit.kW,
         eei = true
     },
     ["kitchen-for-all"] = {
@@ -443,7 +478,18 @@ Building.values = {
     },
     ["psych-ward"] = {
         type = Type.psych_ward,
-        range = 7
+        range = 7,
+        slots = 5,
+        speed = 2 / Time.second,
+        workforce = {
+            count = 5,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 50 * Unit.kW,
+        eei = true
     },
     ["psychology-institute"] = {
         type = Type.manufactory,
@@ -586,7 +632,23 @@ Building.values = {
     ["test-psych-ward"] = {
         type = Type.psych_ward,
         range = 42,
+        slots = 5,
+        speed = 20 / Time.second,
         power_usage = 50 * Unit.kW,
+        eei = true
+    },
+    ["test-psych-ward-no-workforce"] = {
+        type = Type.psych_ward,
+        range = 42,
+        slots = 2,
+        speed = 20 / Time.second,
+        eei = true
+    },
+    ["test-general-ward-no-workforce"] = {
+        type = Type.general_ward,
+        range = 42,
+        slots = 2,
+        speed = 20 / Time.second,
         eei = true
     },
     ["test-night-club"] = {

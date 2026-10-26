@@ -345,6 +345,7 @@ Diseases.values = {
             ["thermostable-dna-polymerase"] = 1
         },
         curing_workload = 4,
+        curing_facility = Type.gene_clinic,
         natural_recovery = 3 * Time.nauvis_month,
         lethality = 1,
         work_effectivity = 0.6,
@@ -855,6 +856,13 @@ if DEBUG then
         name = "test-disease-untreatable",
         is_treatable = false,
         work_effectivity = 0
+    }
+    Diseases.values[99004] = {
+        name = "test-disease-psych-ward",
+        curing_workload = 1,
+        curing_facility = Type.psych_ward,
+        work_effectivity = 0,
+        reports_per_treatment = 1
     }
 end
 

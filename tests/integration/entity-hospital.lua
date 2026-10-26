@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Buildings = require("constants.buildings")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 
@@ -575,6 +576,232 @@ Tirislib.Testing.add_test_case(
         Helpers.update_entry(hospital)
 
         Assert.equals(#hospital[EK.donation_slots], 5, "donation slots should be trimmed to building capacity")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << wards >>
+
+-- Disease 99004 (test-disease-psych-ward): needs a psych ward, no cure items, workload 1, one report
+local DISEASE_PSYCH_WARD = 99004
+
+-- creates a ward and updates it once so it becomes active
+local function make_ward(name, position)
+    local ward = Helpers.create_and_register(test_surface, name, position)
+    Helpers.update_entry(ward)
+    return ward
+end
+
+local function make_psych_ward(position)
+    return make_ward("test-psych-ward-no-workforce", position)
+end
+
+local function make_general_ward(position)
+    return make_ward("test-general-ward-no-workforce", position)
+end
+
+Tirislib.Testing.add_test_case(
+    "hospital admits a patient that needs a psych ward into a connected psych ward",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local ward = make_psych_ward({0, 10})
+        local house = make_sick_house({5, 0}, DISEASE_PSYCH_WARD, 1)
+
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#hospital[EK.slots], 0, "hospital's own beds should not take the patient")
+        Assert.equals(#ward[EK.slots], 1, "psych ward should take the patient")
+        Assert.equals(house[EK.treatment_claims][DISEASE_PSYCH_WARD][1], ward[EK.unit_number], "claim should point at the ward")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "hospital without a psych ward cannot treat a patient that needs one",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        make_sick_house({5, 0}, DISEASE_PSYCH_WARD, 1)
+
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#hospital[EK.slots], 0, "patient should not be admitted")
+        Assert.is_false(Hospital.can_treat(hospital, DISEASE_PSYCH_WARD), "can_treat without psych ward")
+
+        make_psych_ward({0, 10})
+        Assert.is_true(Hospital.can_treat(hospital, DISEASE_PSYCH_WARD), "can_treat with psych ward")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "hospital does not admit into a ward that is not active",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        -- never updated, so it is not active yet
+        local ward = Helpers.create_and_register(test_surface, "test-psych-ward-no-workforce", {0, 10})
+        make_sick_house({5, 0}, DISEASE_PSYCH_WARD, 1)
+
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#ward[EK.slots], 0, "inactive ward should get no patients")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "ward treats its patient and puts the medical reports into the hospital's inventory",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local ward = make_psych_ward({0, 10})
+        local house = make_sick_house({5, 0}, DISEASE_PSYCH_WARD, 1)
+        Helpers.update_entry(hospital)
+
+        -- speed = 20/60 per tick, workload 1: three updates
+        for _ = 1, 3 do
+            Helpers.update_entry(ward)
+        end
+
+        Assert.equals(house[EK.diseases][DISEASE_PSYCH_WARD] or 0, 0, "patient should be cured")
+        Assert.equals(#ward[EK.slots], 0, "bed should be free again")
+        Assert.equals(ward[EK.treated][DISEASE_PSYCH_WARD], 1, "ward should count the treatment")
+        local hospital_inventory = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        Assert.equals(hospital_inventory.get_item_count("medical-report"), 1, "report should go to the hospital")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "ward finishes the treatment after its hospital is gone and keeps the reports itself",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local ward = make_psych_ward({0, 10})
+        local house = make_sick_house({5, 0}, DISEASE_PSYCH_WARD, 1)
+        Helpers.update_entry(hospital)
+        Helpers.destroy_entry(hospital)
+
+        for _ = 1, 3 do
+            Helpers.update_entry(ward)
+        end
+
+        Assert.equals(house[EK.diseases][DISEASE_PSYCH_WARD] or 0, 0, "patient should be cured")
+        local ward_inventory = ward[EK.entity].get_inventory(defines.inventory.chest)
+        Assert.equals(ward_inventory.get_item_count("medical-report"), 1, "report should stay in the ward")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "hospital fills its own beds first, then general wards",
+    "integration|integration.hospital",
+    function()
+        -- test-hospital-no-workforce has 5 beds, the general ward 2; one patient per house
+        local hospital = make_hospital({0, 0})
+        local ward = make_general_ward({0, 10})
+        for i = 1, 6 do
+            make_sick_house({5 * i, 0}, DISEASE_NO_ITEMS, 1)
+        end
+
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#hospital[EK.slots], 5, "hospital's own beds should be full")
+        Assert.equals(#ward[EK.slots], 1, "the rest should go to the general ward")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "specialised wards do not take general patients",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local ward = make_psych_ward({0, 10})
+        for i = 1, 6 do
+            make_sick_house({5 * i, 0}, DISEASE_NO_ITEMS, 1)
+        end
+
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#hospital[EK.slots], 5, "hospital's own beds should be full")
+        Assert.equals(#ward[EK.slots], 0, "psych ward should not take general patients")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "patient in treatment stays when the treatment permission is switched off",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        make_sick_house({5, 0}, DISEASE_NO_ITEMS, 1)
+        Helpers.update_entry(hospital)
+        Assert.equals(#hospital[EK.slots], 1, "patient should be admitted")
+
+        hospital[EK.treatment_permissions][DISEASE_NO_ITEMS] = false
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#hospital[EK.slots], 1, "patient should stay in the bed")
+    end,
+    setup,
+    teardown
+)
+
+local function fill_with_donors(entry, house)
+    for i = #entry[EK.donation_slots] + 1, Buildings.get(entry).slots do
+        entry[EK.donation_slots][i] = {work_done = 0, uid = house[EK.unit_number]}
+    end
+end
+
+Tirislib.Testing.add_test_case(
+    "blood donor goes into a general ward when the hospital's beds are full",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local ward = make_general_ward({0, 10})
+        local house = Helpers.create_and_register(test_surface, "test-house", {5, 0})
+        Helpers.update_entry(hospital)
+        fill_with_donors(hospital, house)
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        inv.insert({name = "surgery-instruments", count = 5})
+
+        Assert.is_true(Hospital.try_blood_donation(hospital, house), "donation should be accepted")
+        Assert.equals(#ward[EK.donation_slots], 1, "donor should be in the general ward")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "blood donation threshold counts the free beds of general wards",
+    "integration|integration.hospital",
+    function()
+        -- the hospital is full, the general ward has 2 free beds
+        local hospital = make_hospital({0, 0})
+        make_general_ward({0, 10})
+        local house = Helpers.create_and_register(test_surface, "test-house", {5, 0})
+        Helpers.update_entry(hospital)
+        fill_with_donors(hospital, house)
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        inv.insert({name = "surgery-instruments", count = 5})
+
+        hospital[EK.blood_donation_threshold] = 2
+        Assert.is_false(Hospital.try_blood_donation(hospital, house), "2 free beds are not above threshold 2")
+
+        hospital[EK.blood_donation_threshold] = 1
+        Assert.is_true(Hospital.try_blood_donation(hospital, house), "2 free beds are above threshold 1")
     end,
     setup,
     teardown

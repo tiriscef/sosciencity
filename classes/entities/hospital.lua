@@ -5,11 +5,12 @@ local Castes = require("constants.castes")
 local Buildings = require("constants.buildings")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
-local TypeGroup = require("constants.type-groups")
+local Types = require("constants.types")
 
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
 local disease_values = Diseases.values
+local type_definitions = Types.definitions
 local has_power = Subentities.has_power
 local evaluate_workforce = Inhabitants.evaluate_workforce
 local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
@@ -20,19 +21,30 @@ local Table = Tirislib.Tables
 local Utils = Tirislib.Utils
 local coin_flips_overcrit = Utils.coin_flips_overcrit
 local HEALTHY = DiseaseGroup.HEALTHY
-local floor = math.floor
+local max = math.max
 
 --- Static class for hospital-specific mechanics.
 Entity.Hospital = {}
 local Hospital = Entity.Hospital
 
---- Returns the LuaInventory of the given hospital and all hospital complement buildings connected to it.
+local inventory_sharing_types = Types.select("shares_hospital_inventory")
+local ward_types = Types.select("is_hospital_ward")
+
+--- Wards that take blood donors (blood donations are general medicine).
+local donation_ward_types = {}
+for _, _type in pairs(ward_types) do
+    if type_definitions[_type].treats_general_medicine then
+        donation_ward_types[#donation_ward_types + 1] = _type
+    end
+end
+
+--- Returns the LuaInventory of the given hospital and all the connected buildings that share their inventory.
 --- @param entry Entry hospital
 --- @return LuaInventory[]
 function Hospital.get_inventories(entry)
     local ret = {get_chest_inventory(entry)}
 
-    for _, _type in pairs(TypeGroup.hospital_complements) do
+    for _, _type in pairs(inventory_sharing_types) do
         for _, building in Neighborhood.iterate_type(entry, _type) do
             ret[#ret + 1] = get_chest_inventory(building)
         end
@@ -57,34 +69,52 @@ local function release_claim(housing, disease_id, bed_uid)
     end
 end
 
-local function has_facility(hospital, facility_type)
-    for _, facility in Neighborhood.iterate_type(hospital, facility_type) do
-        if Entity.is_active(facility) then
-            return true
-        end
-    end
-
-    return false
-end
-
---- Returns whether the beds of the given bed building currently accept the given disease.
---- Checks treatment permissions and required facility availability.
+--- Returns whether the beds of the given bed building take the given disease:
+--- specialised wards take the diseases that need them as curing facility, general beds take the rest.
 --- @param entry Entry bed building
 --- @param disease_id integer
 --- @return boolean
 local function bed_accepts(entry, disease_id)
-    if entry[EK.treatment_permissions][disease_id] == false then return false end
     local facility = disease_values[disease_id].curing_facility
-    return not facility or has_facility(entry, facility)
+    if facility then
+        return entry[EK.type] == facility
+    end
+    return type_definitions[entry[EK.type]].treats_general_medicine == true
+end
+
+--- Returns the bed buildings the given hub admits into: the hub itself first, then its active wards
+--- of the given types.
+--- @param hub Entry
+--- @param ward_types Type[]
+--- @return Entry[]
+local function get_bed_buildings(hub, ward_types)
+    local ret = {hub}
+    for _, _type in pairs(ward_types) do
+        for _, ward in Neighborhood.iterate_type(hub, _type) do
+            if ward[EK.active] then
+                ret[#ret + 1] = ward
+            end
+        end
+    end
+    return ret
 end
 
 --- Returns whether the given hospital can currently treat the given disease.
---- Checks treatability, required facility availability, and treatment permissions.
+--- Checks treatability, treatment permissions, and whether the hospital or one of its active wards
+--- has the right kind of beds (free or not).
 --- @param hospital Entry
 --- @param disease_id integer
 --- @return boolean
 function Hospital.can_treat(hospital, disease_id)
-    return disease_values[disease_id].is_treatable and bed_accepts(hospital, disease_id)
+    if not disease_values[disease_id].is_treatable then return false end
+    if hospital[EK.treatment_permissions][disease_id] == false then return false end
+
+    for _, bed_building in pairs(get_bed_buildings(hospital, ward_types)) do
+        if bed_accepts(bed_building, disease_id) then
+            return true
+        end
+    end
+    return false
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -148,7 +178,8 @@ end
 
 --- Returns whether a disease slot is still valid for this bed building.
 --- Checks: patient exists, disease still present, this bed building is the claimer,
---- the beds still accept the disease.
+--- the beds take the disease (only fails for patients left over from before the wards had beds).
+--- Treatment permissions are not checked: they only matter at admission.
 --- @param entry Entry bed building
 --- @param slot table {uid, disease_id, work_done}
 --- @return boolean
@@ -321,27 +352,52 @@ local function try_pay(inventories, contents, items)
     return true
 end
 
---- Scans the hub's neighborhood for unclaimed disease cases and admits them into free beds,
---- paying the cure items upfront. Admits at most one case per (house, disease) pair per update.
+--- Returns the index of the first bed building that takes the given disease and has a free bed.
+--- @param bed_buildings Entry[]
+--- @param free_beds integer[] free bed count per bed building
+--- @param disease_id integer
+--- @return integer?
+local function find_free_bed(bed_buildings, free_beds, disease_id)
+    for i = 1, #bed_buildings do
+        if free_beds[i] > 0 and bed_accepts(bed_buildings[i], disease_id) then
+            return i
+        end
+    end
+end
+
+--- Scans the hub's neighborhood for unclaimed disease cases and admits them into free beds of the hub
+--- and its active wards, paying the cure items upfront. Admits at most one case per (house, disease)
+--- pair per update.
 --- @param hub Entry
 --- @param inventories LuaInventory[] where the cure items are taken from
 local function admit_patients(hub, inventories)
-    local free_beds = get_free_bed_count(hub)
-    if free_beds <= 0 then return end
+    local bed_buildings = get_bed_buildings(hub, ward_types)
+    local free_beds = {}
+    local total_free_beds = 0
+    for i = 1, #bed_buildings do
+        local free = max(0, get_free_bed_count(bed_buildings[i]))
+        free_beds[i] = free
+        total_free_beds = total_free_beds + free
+    end
+    if total_free_beds == 0 then return end
 
     local contents = Inventories.get_combined_contents(inventories)
+    local permissions = hub[EK.treatment_permissions]
 
     for _, caste in pairs(Castes.all) do
         for _, housing in Neighborhood.iterate_type(hub, caste.type) do
             for disease_id, count in pairs(housing[EK.diseases]) do
-                if disease_id ~= HEALTHY and count > 0 and Hospital.can_treat(hub, disease_id) then
+                local disease = disease_values[disease_id]
+                if disease_id ~= HEALTHY and count > 0 and disease.is_treatable and permissions[disease_id] ~= false then
                     local claims = housing[EK.treatment_claims]
                     local current_claims = (claims and claims[disease_id]) and #claims[disease_id] or 0
+                    local index = current_claims < count and find_free_bed(bed_buildings, free_beds, disease_id)
 
-                    if current_claims < count and try_pay(inventories, contents, disease_values[disease_id].cure_items) then
-                        admit_patient(hub, housing, disease_id)
-                        free_beds = free_beds - 1
-                        if free_beds == 0 then return end
+                    if index and try_pay(inventories, contents, disease.cure_items) then
+                        admit_patient(bed_buildings[index], housing, disease_id)
+                        free_beds[index] = free_beds[index] - 1
+                        total_free_beds = total_free_beds - 1
+                        if total_free_beds == 0 then return end
                     end
                 end
             end
@@ -379,7 +435,19 @@ local function set_custom_status(entry, filled, capacity, active)
     }
 end
 
-local function update_hospital(entry, delta_ticks)
+--- Returns where a ward puts its medical reports and blood bags: the inventories of a connected hospital,
+--- or its own chest if no hospital is connected.
+--- @param ward Entry
+--- @return LuaInventory[]
+local function get_ward_output_inventories(ward)
+    for _, hospital in Neighborhood.iterate_type(ward, Type.hospital) do
+        return Hospital.get_inventories(hospital)
+    end
+    return {get_chest_inventory(ward)}
+end
+
+--- Updater for every bed building. Hubs also admit new patients; wards only treat the ones they were given.
+local function update_bed_building(entry, delta_ticks)
     local performance = evaluate_workforce(entry) * evaluate_worker_happiness(entry)
     if not has_power(entry) then
         performance = 0
@@ -397,15 +465,23 @@ local function update_hospital(entry, delta_ticks)
 
     validate_beds(entry)
 
-    local inventories = Hospital.get_inventories(entry)
-    admit_patients(entry, inventories)
+    local inventories
+    if type_definitions[entry[EK.type]].admits_patients then
+        inventories = Hospital.get_inventories(entry)
+        admit_patients(entry, inventories)
+    else
+        inventories = get_ward_output_inventories(entry)
+    end
     treat_beds(entry, performance * delta_ticks * get_building_details(entry).speed, inventories)
 
     set_custom_status(entry, bed_count - get_free_bed_count(entry), bed_count, true)
 end
 
-Register.set_entity_updater(Type.hospital, update_hospital)
-Register.set_entity_updater(Type.improvised_hospital, update_hospital)
+Register.set_entity_updater(Type.hospital, update_bed_building)
+Register.set_entity_updater(Type.improvised_hospital, update_bed_building)
+for _, _type in pairs(ward_types) do
+    Register.set_entity_updater(_type, update_bed_building)
+end
 
 local Comb = require("enums.performance-combination")
 local Dim = require("enums.performance-dimension")
@@ -451,9 +527,13 @@ local function build_hospital_report(entry)
 end
 Entity.set_performance_report_builder(Type.hospital, build_hospital_report)
 Entity.set_performance_report_builder(Type.improvised_hospital, build_hospital_report)
+for _, _type in pairs(ward_types) do
+    Entity.set_performance_report_builder(_type, build_hospital_report)
+end
 
---- Accepts a blood donation from a housing entry if the hospital has capacity and resources.
---- Consumes one surgery-instruments item upfront and claims a donation slot.
+--- Accepts a blood donation from a housing entry if the hospital and its general wards have capacity
+--- and resources. Consumes the medical instruments upfront and puts the donor into a free bed, the
+--- hospital's own beds first.
 --- Returns true if accepted, false if refused (inactive, at threshold, or missing items).
 --- @param hospital Entry
 --- @param housing Entry
@@ -461,7 +541,12 @@ Entity.set_performance_report_builder(Type.improvised_hospital, build_hospital_r
 function Hospital.try_blood_donation(hospital, housing)
     if not hospital[EK.active] then return false end
 
-    if get_free_bed_count(hospital) <= hospital[EK.blood_donation_threshold] then return false end
+    local bed_buildings = get_bed_buildings(hospital, donation_ward_types)
+    local free_beds = 0
+    for _, bed_building in pairs(bed_buildings) do
+        free_beds = free_beds + max(0, get_free_bed_count(bed_building))
+    end
+    if free_beds == 0 or free_beds <= hospital[EK.blood_donation_threshold] then return false end
 
     local inventories = Hospital.get_inventories(hospital)
     local contents = Inventories.get_combined_contents(inventories)
@@ -470,9 +555,12 @@ function Hospital.try_blood_donation(hospital, housing)
     if (contents["surgery-instruments"] or 0) < cost then return false end
 
     Inventories.remove_item_range_from_inventory_range(inventories, {["surgery-instruments"] = cost})
-    admit_donor(hospital, housing)
-
-    return true
+    for _, bed_building in pairs(bed_buildings) do
+        if get_free_bed_count(bed_building) > 0 then
+            admit_donor(bed_building, housing)
+            return true
+        end
+    end
 end
 
 local function create_hospital(entry)
@@ -496,6 +584,7 @@ Register.set_entity_creation_handler(Type.improvised_hospital, create_hospital)
 
 Register.set_entity_destruction_handler(Type.hospital, release_all_beds)
 Register.set_entity_destruction_handler(Type.improvised_hospital, release_all_beds)
+
 
 local function copy_hospital(source, destination)
     destination[EK.treated] = Table.copy(source[EK.treated])
@@ -541,3 +630,29 @@ Register.set_settings_paste_handler(Type.hospital, Type.hospital, paste_hospital
 Register.set_settings_paste_handler(Type.hospital, Type.improvised_hospital, paste_hospital_settings)
 Register.set_settings_paste_handler(Type.improvised_hospital, Type.hospital, paste_hospital_settings)
 Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_hospital, paste_hospital_settings)
+
+---------------------------------------------------------------------------------------------------
+-- << wards >>
+
+local function create_ward(entry)
+    entry[EK.slots] = {}
+    entry[EK.donation_slots] = {}
+    entry[EK.treated] = {}
+    entry[EK.blood_donations] = 0
+end
+
+local function copy_ward(source, destination)
+    -- wards from before they had beds have nothing to copy; the creation handler's defaults stay
+    if not source[EK.slots] then return end
+
+    destination[EK.slots] = Tirislib.Tables.recursive_copy(source[EK.slots])
+    destination[EK.donation_slots] = Tirislib.Tables.recursive_copy(source[EK.donation_slots])
+    destination[EK.treated] = Table.copy(source[EK.treated])
+    destination[EK.blood_donations] = source[EK.blood_donations]
+end
+
+for _, _type in pairs(ward_types) do
+    Register.set_entity_creation_handler(_type, create_ward)
+    Register.set_entity_destruction_handler(_type, release_all_beds)
+    Register.set_entity_copy_handler(_type, copy_ward)
+end

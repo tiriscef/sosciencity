@@ -31,6 +31,7 @@ Type.hospital = 200
 Type.psych_ward = 201
 Type.intensive_care_unit = 202
 Type.gene_clinic = 203
+Type.general_ward = 204
 Type.improvised_hospital = 230
 Type.caste_education_building = 231
 
