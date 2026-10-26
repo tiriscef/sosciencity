@@ -1,19 +1,16 @@
---- Details view for hospitals.
+--- Details views for hospitals and their wards.
 
 -- enums
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 -- constants
-local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 local Types = require("constants.types")
 local type_definitions = Types.definitions
-local facility_types = Types.select("shares_hospital_inventory")
-
-local get_building_details = Buildings.get
+local ward_types = Types.select("is_hospital_ward")
 
 local diseases = Diseases.values
 local Entity = Entity
@@ -26,9 +23,86 @@ local Table = Tirislib.Tables
 local Datalist = Gui.Elements.Datalist
 
 ---------------------------------------------------------------------------------------------------
+-- << beds >>
+
+local function add_bed_card(flow, name, housing, caption, tooltip, work_done, workload)
+    local housing_type_details = type_definitions[housing[EK.type]]
+    local pos = housing[EK.entity].position
+
+    local card = flow.add {type = "frame", name = name, direction = "vertical", style = "sosciencity_card_frame"}
+    card.style.horizontally_stretchable = true
+
+    local label = card.add {
+        type = "label",
+        name = "label",
+        caption = {"", {"sosciencity.slot-house", housing_type_details.localised_name, floor(pos.x), floor(pos.y)}, "  ", caption},
+        tooltip = tooltip
+    }
+    label.style.single_line = false
+
+    local progress = math.min(work_done / workload, 1)
+    local progressbar = card.add {
+        type = "progressbar",
+        name = "progress",
+        value = progress,
+        tooltip = {"sosciencity.slot-progress", floor(progress * 100), workload}
+    }
+    progressbar.style.horizontally_stretchable = true
+end
+
+--- Adds a card with the patient and the progress for every occupied bed of the given bed building.
+local function add_bed_cards(flow, bed_building)
+    for i, slot in pairs(bed_building[EK.slots]) do
+        local housing = Register.try_get(slot.uid)
+        if housing then
+            local disease = diseases[slot.disease_id]
+            add_bed_card(
+                flow,
+                "slot-" .. i,
+                housing,
+                disease.localised_name,
+                disease.localised_description,
+                slot.work_done or 0,
+                disease.curing_workload
+            )
+        end
+    end
+
+    for i, slot in pairs(bed_building[EK.donation_slots]) do
+        local housing = Register.try_get(slot.uid)
+        if housing then
+            add_bed_card(
+                flow,
+                "donation-" .. i,
+                housing,
+                {"sosciencity.blood-donation-slot"},
+                nil,
+                slot.work_done or 0,
+                InhabitantsConstants.blood_donation_workload
+            )
+        end
+    end
+end
+
+local function get_bed_caption(bed_building)
+    return {"sosciencity.show-beds", Entity.Hospital.get_occupied_bed_count(bed_building), Entity.Hospital.get_bed_count(bed_building)}
+end
+
+---------------------------------------------------------------------------------------------------
 -- << hospital >>
 
-local function update_disease_catalogue(container, entry)
+--- Returns all the wards connected to the given hospital, active or not.
+local function get_connected_wards(hospital)
+    local ret = {}
+    for _, _type in pairs(ward_types) do
+        for _, ward in Neighborhood.iterate_type(hospital, _type) do
+            ret[#ret + 1] = ward
+        end
+    end
+    return ret
+end
+
+local function update_disease_catalogue(container, entry, wards)
     local tabbed_pane = container.tabpane
     local data_list = Gui.Elements.Tabs.get_content(tabbed_pane, "diseases").diseases
 
@@ -36,7 +110,11 @@ local function update_disease_catalogue(container, entry)
     local permissions = entry[EK.treatment_permissions]
 
     for id, disease in pairs(Diseases.values) do
-        data_list[tostring(id)].caption = statistics[id] or 0
+        local treated = statistics[id] or 0
+        for _, ward in pairs(wards) do
+            treated = treated + (ward[EK.treated][id] or 0)
+        end
+        data_list[tostring(id)].caption = treated
 
         if disease.is_treatable then
             data_list[format(Gui.unique_prefix_builder, "treatment-permission", tostring(id))].state =
@@ -125,48 +203,37 @@ local function find_all_neighborhood_diseases(entry)
     return ret
 end
 
-local function update_treatment_slots(general, entry)
+local function update_hospital_treatments(general, entry, wards)
     local treatments = general.treatments
     treatments.clear()
 
-    local slots = entry[EK.slots]
-    for i, slot in pairs(slots) do
-        local housing = Register.try_get(slot.uid)
-        if housing then
-            local housing_type_details = type_definitions[housing[EK.type]]
-            local pos = housing[EK.entity].position
+    add_bed_cards(treatments, entry)
 
-            local workload, slot_caption, slot_tooltip
-            if slot.blood_donation then
-                workload = InhabitantsConstants.blood_donation_workload
-                slot_caption = {"sosciencity.blood-donation-slot"}
-            else
-                local disease = diseases[slot.disease_id]
-                workload = disease.curing_workload
-                slot_caption = disease.localised_name
-                slot_tooltip = disease.localised_description
-            end
-
-            local card = treatments.add {type = "frame", name = "slot-" .. i, direction = "vertical", style = "sosciencity_card_frame"}
-            card.style.horizontally_stretchable = true
-
-            local label = card.add {
-                type = "label",
-                name = "label-" .. i,
-                caption = {"", {"sosciencity.slot-house", housing_type_details.localised_name, floor(pos.x), floor(pos.y)}, "  ", slot_caption},
-                tooltip = slot_tooltip
+    for _, ward in pairs(wards) do
+        local unit_number = ward[EK.unit_number]
+        local pos = ward[EK.entity].position
+        local caption = {
+            "",
+            {
+                "sosciencity.ward-beds",
+                type_definitions[ward[EK.type]].localised_name,
+                floor(pos.x),
+                floor(pos.y),
+                Entity.Hospital.get_occupied_bed_count(ward),
+                Entity.Hospital.get_bed_count(ward)
             }
-            label.style.single_line = false
-
-            local progress = math.min((slot.work_done or 0) / workload, 1)
-            local progressbar = card.add {
-                type = "progressbar",
-                name = "progress-" .. i,
-                value = progress,
-                tooltip = {"sosciencity.slot-progress", floor(progress * 100), workload}
-            }
-            progressbar.style.horizontally_stretchable = true
+        }
+        if not ward[EK.active] then
+            caption[#caption + 1] = " "
+            caption[#caption + 1] = {"sosciencity.ward-inactive"}
         end
+
+        local heading = treatments.add {type = "label", name = "ward-" .. unit_number, caption = caption}
+        heading.style.font = "default-bold"
+        heading.style.top_margin = 8
+
+        local ward_flow = treatments.add {type = "flow", name = "ward-beds-" .. unit_number, direction = "vertical"}
+        add_bed_cards(ward_flow, ward)
     end
 end
 
@@ -177,24 +244,18 @@ local function update_hospital_details(container, entry, player_id)
     local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
-    local effective_slots = get_building_details(entry).slots
-    Datalist.set_kv_pair_value(building_data, "capacity", {"sosciencity.show-slots", #entry[EK.slots], effective_slots})
+    local wards = get_connected_wards(entry)
 
-    local facility_flow = Datalist.get_kv_value_element(building_data, "facilities")
-    facility_flow.clear()
-    for _, _type in pairs(facility_types) do
-        local has_one = false
-        for _, facility in Neighborhood.iterate_type(entry, _type) do
-            if Entity.is_active(facility) then
-                has_one = true
-                break
-            end
-        end
+    Datalist.set_kv_pair_value(building_data, "capacity", get_bed_caption(entry))
 
-        if has_one then
+    -- one label per ward type with at least one active ward
+    local ward_flow = Datalist.get_kv_value_element(building_data, "wards")
+    ward_flow.clear()
+    for _, ward in pairs(wards) do
+        local _type = ward[EK.type]
+        if ward[EK.active] and not ward_flow[tostring(_type)] then
             local type_details = type_definitions[_type]
-
-            facility_flow.add {
+            ward_flow.add {
                 type = "label",
                 name = tostring(_type),
                 caption = type_details.localised_name,
@@ -202,8 +263,13 @@ local function update_hospital_details(container, entry, player_id)
             }
         end
     end
+    Datalist.set_kv_pair_visibility(building_data, "wards", #ward_flow.children > 0)
 
-    Datalist.set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
+    local blood_donations = entry[EK.blood_donations]
+    for _, ward in pairs(wards) do
+        blood_donations = blood_donations + ward[EK.blood_donations]
+    end
+    Datalist.set_kv_pair_value(building_data, "blood_donations", blood_donations)
 
     local patients = general.patients
     patients.clear()
@@ -218,8 +284,8 @@ local function update_hospital_details(container, entry, player_id)
         end
     end
 
-    update_treatment_slots(general, entry)
-    update_disease_catalogue(container, entry)
+    update_hospital_treatments(general, entry, wards)
+    update_disease_catalogue(container, entry, wards)
 end
 
 local function create_hospital_debug_tab(tabbed_pane)
@@ -240,10 +306,7 @@ local function create_hospital_details(container, entry, player_id)
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
-    Datalist.add_kv_flow(building_data, "facilities", {"sosciencity.facilities"})
-    if (entry[EK.type] == Type.improvised_hospital) then
-        Datalist.set_kv_pair_visibility(building_data, "facilities", false)
-    end
+    Datalist.add_kv_flow(building_data, "wards", {"sosciencity.wards"})
 
     Datalist.add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
     Datalist.set_kv_pair_visibility(building_data, "blood_donations", storage.technologies["transfusion-medicine"])
@@ -291,25 +354,20 @@ if DEV_MODE then
         function(event)
             local entry = Register.try_get(storage.details_view[event.player_index])
             if not entry then return end
-            local slots = entry[EK.slots]
-            local statistics = entry[EK.treated]
+
+            -- fill up the work of every bed, the next updates of the bed buildings finish them
             local completed = 0
-            for i = #slots, 1, -1 do
-                local slot = slots[i]
-                if slot.blood_donation then
-                    slot.done = true
-                else
-                    local housing = Register.try_get(slot.uid)
-                    if housing then
-                        local disease_id = slot.disease_id
-                        DiseaseGroup.cure(housing[EK.diseases], disease_id, 1)
-                        Inhabitants.apply_cure_side_effects(housing, disease_id, 1, true)
-                        statistics[disease_id] = (statistics[disease_id] or 0) + 1
-                        Communication.report_treatment(disease_id, 1)
-                    end
+            local bed_buildings = get_connected_wards(entry)
+            bed_buildings[#bed_buildings + 1] = entry
+            for _, bed_building in pairs(bed_buildings) do
+                for _, slot in pairs(bed_building[EK.slots]) do
+                    slot.work_done = diseases[slot.disease_id].curing_workload
+                    completed = completed + 1
                 end
-                table.remove(slots, i)
-                completed = completed + 1
+                for _, slot in pairs(bed_building[EK.donation_slots]) do
+                    slot.work_done = InhabitantsConstants.blood_donation_workload
+                    completed = completed + 1
+                end
             end
             game.players[event.player_index].print({"city-view.debug-hospital-complete-done", completed})
         end
@@ -322,15 +380,78 @@ Gui.DetailsView.register_type(
     {creater = create_hospital_details, updater = update_hospital_details}
 )
 
+---------------------------------------------------------------------------------------------------
+-- << wards >>
+
+local function update_ward_details(container, entry, player_id)
+    Gui.DetailsView.update_general(container, entry, player_id)
+
+    local general = Gui.Elements.Tabs.get_content(container.tabpane, "general")
+    local building_data = general.building
+
+    Datalist.set_kv_pair_value(building_data, "capacity", get_bed_caption(entry))
+    Datalist.set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
+
+    local hospital_flow = Datalist.get_kv_value_element(building_data, "hospitals")
+    hospital_flow.clear()
+    for _, hospital in Neighborhood.iterate_type(entry, Type.hospital) do
+        local pos = hospital[EK.entity].position
+        hospital_flow.add {
+            type = "label",
+            name = tostring(hospital[EK.unit_number]),
+            caption = {"sosciencity.slot-house", type_definitions[Type.hospital].localised_name, floor(pos.x), floor(pos.y)}
+        }
+    end
+    if #hospital_flow.children == 0 then
+        hospital_flow.add {type = "label", name = "none", caption = {"sosciencity.no-connected-hospital"}}
+    end
+
+    local treatments = general.treatments
+    treatments.clear()
+    add_bed_cards(treatments, entry)
+end
+
+local function create_ward_details(container, entry, player_id)
+    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+
+    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local building_data = general.building
+
+    Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
+    Datalist.add_kv_flow(building_data, "hospitals", {"sosciencity.connected-hospitals"})
+
+    Datalist.add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
+    Datalist.set_kv_pair_visibility(
+        building_data,
+        "blood_donations",
+        type_definitions[entry[EK.type]].treats_general_medicine == true and storage.technologies["transfusion-medicine"] ~= nil
+    )
+
+    Gui.Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
+    general.add {type = "flow", name = "treatments", direction = "vertical"}
+
+    update_ward_details(container, entry, player_id)
+end
+
+for _, _type in pairs(ward_types) do
+    Gui.DetailsView.register_type(_type, {creater = create_ward_details, updater = update_ward_details})
+end
+
+---------------------------------------------------------------------------------------------------
+-- << building overview >>
+
+local overview_types = {Type.hospital, Type.improvised_hospital}
+for _, _type in pairs(ward_types) do
+    overview_types[#overview_types + 1] = _type
+end
+
 Gui.BuildingOverview.register_type("hospitals", {
-    types = {Type.hospital, Type.improvised_hospital},
+    types = overview_types,
     layout = "grid",
     stats_creator = function(flow, entry)
-        local used_slots = #entry[EK.slots]
-        local effective_slots = get_building_details(entry).slots
         flow.add {
             type = "label",
-            caption = {"sosciencity.show-slots", used_slots, effective_slots}
+            caption = get_bed_caption(entry)
         }
     end
 })

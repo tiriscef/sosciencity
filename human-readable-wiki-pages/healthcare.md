@@ -36,15 +36,18 @@ The **[entity=hospital]** is the serious option. Larger coverage, higher treatme
 Both facilities need trained Plasma Caste workers to function. An understaffed hospital treats nobody.
 
 
-## Specialist Facilities
+## Wards
 
-Some diseases require more than a standard medical setup. Place these next to a hospital to unlock the relevant treatments:
+The beds of a hospital are for general medicine. Some conditions need a specialised bed. Those beds are in the wards - separate buildings you place next to a hospital:
 
-- **[entity=psych-ward]** - required for mental health conditions: depression, schizophrenia, and similar.
-- **[entity=intensive-care-unit]** - required for critical physical conditions.
-- **[entity=gene-clinic]** - required for genetic diseases.
+- **[entity=psych-ward]** - for mental health conditions: depression, schizophrenia, and similar.
+- **[entity=intensive-care-unit]** - for critical physical conditions.
+- **[entity=gene-clinic]** - for genetic diseases.
+- **[entity=general-ward]** - additional beds for general medicine.
 
-These do nothing next to a med bay. They only function as extensions of a full hospital.
+The hospital finds the patients and assigns them a bed - its own first, then the wards'. Each ward has its own staff of Plasma Caste workers and needs power. An unstaffed ward has no beds to offer.
+
+Wards do nothing next to a med bay. They only work as extensions of a full hospital.
 
 
 ## Medicines and the Pharmacy
@@ -56,18 +59,18 @@ The **[entity=pharmacy]** is an additional storage building. Place it near a hos
 
 ## Treatment Capacity
 
-A hospital has a fixed number of patients it can treat at the same time. When all available beds are in use, new cases in range simply wait. You can see the current occupancy by opening the hospital.
+A hospital has a fixed number of patients it can treat at the same time - its own beds plus those of its wards. When all fitting beds are in use, new cases in range simply wait. You can see the current occupancy by opening the hospital.
 
-If your hospital is frequently full, you have a few options: build an additional facility, adjust which diseases you're treating, or improve throughput with better staffing and happier workers.
+If your hospital is frequently full, you have a few options: build more wards of the kind that is full, adjust which diseases you're treating, or improve throughput with better staffing and happier workers.
 
-From the hospital interface you can also toggle **treatment permissions** per disease. This lets you exclude specific diseases from treatment - useful if you're rationing a particular medicine, or if you want to deliberately redirect certain cases.
+From the hospital interface you can also toggle **treatment permissions** per disease. This lets you exclude specific diseases from treatment - useful if you're rationing a particular medicine, or if you want to deliberately redirect certain cases. Patients who already have a bed keep it.
 
 
 ## Blood Donations
 
-This is a bonus, not a priority, but worth mentioning. Healthy huwans in good health will occasionally donate blood to a nearby hospital. The hospital uses some surgical supplies and one treatment slot to process the donation and produce a [item=blood-bag] for later use.
+This is a bonus, not a priority, but worth mentioning. Healthy huwans in good health will occasionally donate blood to a nearby hospital. The hospital uses some surgical supplies and one general medicine bed to process the donation and produce a [item=blood-bag] for later use.
 
-You can set a minimum number of free treatment slots that must remain available before the hospital accepts donations. I recommend setting this so that actual patients are never displaced for a blood draw.
+You can set a minimum number of free beds that must remain available before the hospital accepts donations. I recommend setting this so that actual patients are never displaced for a blood draw.
 
 
 ## Outposts and Sanatoriums
@@ -84,6 +87,6 @@ A few things to keep in mind:
 - **The hospital still needs to be able to treat the disease.** A sanatorium near a hospital without a psych ward will not help your mentally ill patients - they'll need to find a different sanatorium near a hospital that has one.
 - **Local healthcare still matters.** Sick huwans don't travel immediately. They wait a while first - long enough for a local med bay to step in if one is available. A med bay at your outpost will handle common cases on the spot and only send the serious ones to the sanatorium. This is the intended setup. Don't skip the outpost med bay and expect the sanatorium to do everything.
 
-To summarize the intended layout: outpost has a med bay for routine care; main city has a hospital with all the specialist facilities; one or two houses near that hospital are marked as sanatoriums. Sick huwans who can be treated locally are treated locally. The ones who can't make the trip.
+To summarize the intended layout: outpost has a med bay for routine care; main city has a hospital with all the wards; one or two houses near that hospital are marked as sanatoriums. Sick huwans who can be treated locally are treated locally. The ones who can't make the trip.
 
 That is a functional healthcare system. Build that, keep the medicine stocked, keep your Plasma workers happy, and your city will be fine.

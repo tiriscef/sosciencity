@@ -127,6 +127,13 @@ end
 local function get_bed_count(entry)
     return get_building_details(entry).slots
 end
+Hospital.get_bed_count = get_bed_count
+
+--- @param entry Entry bed building
+--- @return integer
+function Hospital.get_occupied_bed_count(entry)
+    return #entry[EK.slots] + #entry[EK.donation_slots]
+end
 
 --- @param entry Entry bed building
 --- @return integer
