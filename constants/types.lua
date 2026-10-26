@@ -203,8 +203,8 @@ Types.definitions = {
         is_civil = true
     },
     [Type.kitchen_for_all] = {
-        localised_name = {"item-name.kitchen-for-all"},
-        localised_description = {"item-description.kitchen-for-all"},
+        localised_name = {"entity-name.kitchen-for-all"},
+        localised_description = {"entity-description.kitchen-for-all"},
         signature_color = Color.purple,
         subscriptions = {
             [Type.clockwork] = ConnectionType.from_neighbor,
@@ -283,8 +283,8 @@ Types.definitions = {
         is_hospital_ward = true
     },
     [Type.psych_ward] = {
-        localised_name = {"item-name.psych-ward"},
-        localised_description = {"item-description.psych-ward"},
+        localised_name = {"entity-name.psych-ward"},
+        localised_description = {"entity-description.psych-ward"},
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
@@ -295,8 +295,8 @@ Types.definitions = {
         is_hospital_ward = true
     },
     [Type.intensive_care_unit] = {
-        localised_name = {"item-name.intensive-care-unit"},
-        localised_description = {"item-description.intensive-care-unit"},
+        localised_name = {"entity-name.intensive-care-unit"},
+        localised_description = {"entity-description.intensive-care-unit"},
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
@@ -307,8 +307,8 @@ Types.definitions = {
         is_hospital_ward = true
     },
     [Type.gene_clinic] = {
-        localised_name = {"item-name.gene-clinic"},
-        localised_description = {"item-description.gene-clinic"},
+        localised_name = {"entity-name.gene-clinic"},
+        localised_description = {"entity-description.gene-clinic"},
         localised_speed_name = {"sosciencity.rate"},
         localised_speed_key = "sosciencity.show-hospital-rate",
         signature_color = Color.darkish_red,
@@ -328,8 +328,8 @@ Types.definitions = {
         is_civil = true
     },
     [Type.salt_pond] = {
-        localised_name = {"item-name.salt-pond"},
-        localised_description = {"item-description.salt-pond"},
+        localised_name = {"entity-name.salt-pond"},
+        localised_description = {"entity-description.salt-pond"},
         signature_color = Color.light_blue
     },
     [Type.fishery] = {
@@ -354,7 +354,7 @@ Types.definitions = {
         is_civil = true
     },
     [Type.social_observatory] = {
-        localised_name = {"item-name.social-observatory"},
+        localised_name = {"entity-name.social-observatory"},
         localised_description = {"sosciencity.explain-social-observatory"},
         subscriptions = {
             [Type.clockwork] = ConnectionType.from_neighbor,
@@ -426,8 +426,8 @@ Types.definitions = {
         signature_color = Color.yellowish_green
     },
     [Type.cold_storage] = {
-        localised_name = {"item-name.cold-storage-warehouse"},
-        localised_description = {"item-description.cold-storage-warehouse"}
+        localised_name = {"entity-name.cold-storage-warehouse"},
+        localised_description = {"entity-description.cold-storage-warehouse"}
     },
     [Type.waste_dump] = {
         localised_name = {"sosciencity.waste-dump"},
