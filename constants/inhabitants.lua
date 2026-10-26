@@ -101,7 +101,7 @@ InhabitantsConstants.moving_downtime = {
 --- Health, sanity and accident rates are divided by (stat + 1), so these are the rates at a stat of 0
 --- (e.g. 0.036 per minute at health 10: 0.036 / 11 = one case per inhabitant every ~5 hours).
 InhabitantsConstants.health_disease_rate = 0.036 * Unit.per_minute
-InhabitantsConstants.sanity_disease_rate = 0.036 * Unit.per_minute
+InhabitantsConstants.sanity_disease_rate = 0.009 * Unit.per_minute
 InhabitantsConstants.accident_disease_rate = 0.036 * Unit.per_minute
 --- Multiplied with the square root of the number of active animal farms.
 InhabitantsConstants.zoonosis_disease_rate = 0.00072 * Unit.per_minute

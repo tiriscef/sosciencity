@@ -24,6 +24,7 @@ Usage, from the mod folder:
     python3 balancing-scripts/disease_rates.py
     python3 balancing-scripts/disease_rates.py -c plasma -H 20 -S 15 --employed 0.6
     python3 balancing-scripts/disease_rates.py --diseases
+    python3 balancing-scripts/disease_rates.py --rate sanity=0.5 --workload depression=10
 """
 import argparse
 import math
@@ -186,6 +187,8 @@ def city_cases(args, castes, base_rates, work_rates):
     workers = args.population * len(args.castes) * args.employed
     for category, rate in work_rates.items():
         category_rates[category] += workers * rate
+    for category, factor in args.rate.items():
+        category_rates[category] *= factor
     if args.animal_farms:
         zoonosis = TICKS_PER_MINUTE * math.sqrt(args.animal_farms) * base_rates["zoonosis"]
         category_rates["zoonosis"] += args.population * len(args.castes) * zoonosis
@@ -263,6 +266,12 @@ def main():
     parser.add_argument("-S", "--sanity", type=float, default=10, help="average sanity (default 10)")
     parser.add_argument("--employed", type=float, default=0.5, help="share of inhabitants with a job (default 0.5)")
     parser.add_argument("--animal-farms", type=int, default=0, help="active animal farms, for zoonosis")
+    parser.add_argument(
+        "--rate", action="append", default=[], metavar="CATEGORY=FACTOR", help="try a factor on a category's rate"
+    )
+    parser.add_argument(
+        "--workload", action="append", default=[], metavar="DISEASE=OPS", help="try another workload for a disease"
+    )
     parser.add_argument("--diseases", action="store_true", help="list every disease instead of the city estimate")
     args = parser.parse_args()
 
@@ -270,6 +279,10 @@ def main():
     categories = parse_categories()
     castes = parse_castes()
     work_rates, speed = parse_buildings()
+    args.rate = {k: float(v) for k, v in (item.split("=") for item in args.rate)}
+    for item in args.workload:
+        name, ops = item.split("=")
+        diseases[name]["workload"] = float(ops)
     args.castes = args.castes or list(castes)
     unknown = set(args.castes) - set(castes)
     if unknown:

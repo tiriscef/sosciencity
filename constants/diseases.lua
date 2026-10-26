@@ -131,7 +131,7 @@ Diseases.values = {
         cure_items = {
             ["psychotropics"] = 4
         },
-        curing_workload = 15,
+        curing_workload = 10,
         curing_facility = Type.psych_ward,
         lethality = 0.1,
         work_effectivity = 0.5,
@@ -142,7 +142,7 @@ Diseases.values = {
         cure_items = {
             ["psychotropics"] = 10
         },
-        curing_workload = 15,
+        curing_workload = 10,
         curing_facility = Type.psych_ward,
         lethality = 0.2,
         work_effectivity = 0.3,
@@ -155,7 +155,7 @@ Diseases.values = {
         },
         curing_workload = 10,
         curing_facility = Type.psych_ward,
-        natural_recovery = 1 * Time.nauvis_week,
+        natural_recovery = 2 * Time.nauvis_week,
         work_effectivity = 0.3,
         reports_per_treatment = 1
     },
