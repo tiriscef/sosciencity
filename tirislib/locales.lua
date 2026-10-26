@@ -117,6 +117,24 @@ function Tirislib.Locales.display_time(ticks)
     return create_enumeration(points, ", ", {"sosciencity.and"})
 end
 
+--- Creates a localisation for a rough real world time: one unit, rounded to a whole number - seconds below
+--- 2 minutes, minutes below 2 hours, hours above. Meant for estimates, where an exact time would only
+--- pretend precision.
+--- - Needs Sosciencity's locales
+--- @param ticks number
+--- @return locale
+function Tirislib.Locales.display_rough_time(ticks)
+    local seconds = ticks / 60
+    if seconds < 120 then
+        return {"sosciencity.xseconds", round(seconds)}
+    end
+    local minutes = seconds / 60
+    if minutes < 120 then
+        return {"sosciencity.xminutes", round(minutes)}
+    end
+    return {"sosciencity.xhours", round(minutes / 60)}
+end
+
 --- Creates a localisation for the ingame time for the given ticks.
 --- - Needs Sosciencity's locales
 --- @param ticks integer
@@ -143,6 +161,22 @@ function Tirislib.Locales.display_ingame_time(ticks)
     end
 
     return create_enumeration(points, ", ", {"sosciencity.and"})
+end
+
+--- Creates a localisation for how often something happens, in the form that reads best:
+--- "N things per minute" when it happens at least once a minute, "one thing every <rough time>" when it's rarer.
+--- - Needs Sosciencity's locales
+--- @param per_tick number how often it happens per tick
+--- @param count_key string locale key for a number of the things, with the number as first parameter
+--- (like "sosciencity.xoperations")
+--- @return locale
+function Tirislib.Locales.display_rate(per_tick, count_key)
+    local per_minute = per_tick * 3600
+    if per_minute >= 1 or per_minute <= 0 then
+        return {"sosciencity.rate-per-minute", {count_key, round(per_minute * 10) / 10}}
+    end
+
+    return {"sosciencity.rate-every", {count_key, 1}, Tirislib.Locales.display_rough_time(1 / per_tick)}
 end
 
 --- Creates a localisation for the given item stack.

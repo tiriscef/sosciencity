@@ -57,7 +57,9 @@ local ward_subscriptions = {
 --- **shares_hospital_inventory:** a connected hospital uses this building's inventory as its own\
 --- **is_hospital_ward:** has beds that a connected hospital admits patients into\
 --- **treats_general_medicine:** its beds take diseases without a curing facility and blood donors\
---- **admits_patients:** looks for patients in its range and admits them into its own and its wards' beds
+--- **admits_patients:** looks for patients in its range and admits them into its own and its wards' beds\
+--- **localised_speed_name:** label of the speed row in the details view, for buildings with a speed\
+--- **localised_speed_unit:** locale key for a number of the things the speed counts (see Tirislib.Locales.display_rate)
 Types.definitions = {
     [Type.empty_house] = {
         alt_mode_sprite = "empty-caste",
@@ -240,7 +242,7 @@ Types.definitions = {
         localised_name = {"sosciencity.hospital"},
         localised_description = {"sosciencity.explain-hospital"},
         localised_speed_name = {"sosciencity.rate"},
-        localised_speed_key = "sosciencity.show-hospital-rate",
+        localised_speed_unit = "sosciencity.xoperations",
         signature_color = Color.darkish_red,
         subscriptions = hospital_subscriptions,
         is_civil = true,
@@ -252,7 +254,7 @@ Types.definitions = {
         localised_name = {"sosciencity.hospital"},
         localised_description = {"", {"sosciencity.explain-hospital"}, "\n", {"sosciencity.no-facilities"}},
         localised_speed_name = {"sosciencity.rate"},
-        localised_speed_key = "sosciencity.show-hospital-rate",
+        localised_speed_unit = "sosciencity.xoperations",
         signature_color = Color.darkish_red,
         subscriptions = {
             [Type.clockwork] = ConnectionType.bidirectional,
@@ -274,7 +276,7 @@ Types.definitions = {
         localised_description = {"entity-description.general-ward"},
         treats_general_medicine = true,
         localised_speed_name = {"sosciencity.rate"},
-        localised_speed_key = "sosciencity.show-hospital-rate",
+        localised_speed_unit = "sosciencity.xoperations",
         signature_color = Color.darkish_red,
         subscriptions = ward_subscriptions,
         is_civil = true,
@@ -286,7 +288,7 @@ Types.definitions = {
         localised_name = {"entity-name.psych-ward"},
         localised_description = {"entity-description.psych-ward"},
         localised_speed_name = {"sosciencity.rate"},
-        localised_speed_key = "sosciencity.show-hospital-rate",
+        localised_speed_unit = "sosciencity.xoperations",
         signature_color = Color.darkish_red,
         subscriptions = ward_subscriptions,
         is_civil = true,
@@ -298,7 +300,7 @@ Types.definitions = {
         localised_name = {"entity-name.intensive-care-unit"},
         localised_description = {"entity-description.intensive-care-unit"},
         localised_speed_name = {"sosciencity.rate"},
-        localised_speed_key = "sosciencity.show-hospital-rate",
+        localised_speed_unit = "sosciencity.xoperations",
         signature_color = Color.darkish_red,
         subscriptions = ward_subscriptions,
         is_civil = true,
@@ -310,7 +312,7 @@ Types.definitions = {
         localised_name = {"entity-name.gene-clinic"},
         localised_description = {"entity-description.gene-clinic"},
         localised_speed_name = {"sosciencity.rate"},
-        localised_speed_key = "sosciencity.show-hospital-rate",
+        localised_speed_unit = "sosciencity.xoperations",
         signature_color = Color.darkish_red,
         subscriptions = ward_subscriptions,
         is_civil = true,
@@ -417,8 +419,6 @@ Types.definitions = {
     [Type.pruning_station] = {
         localised_name = {"sosciencity.pruning-station"},
         localised_description = {"sosciencity.explain-pruning-station"},
-        localised_speed_name = {"sosciencity.work-rate"},
-        localised_speed_key = "sosciencity.display-work-rate",
         is_civil = true,
         subscriptions = {
             [Type.farm] = ConnectionType.to_neighbor

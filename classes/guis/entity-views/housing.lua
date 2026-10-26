@@ -28,12 +28,11 @@ local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
 local Register = Register
-local ceil = math.ceil
 local floor = math.floor
 local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step
 local display_item_stack = Tirislib.Locales.display_item_stack
-local display_time = Tirislib.Locales.display_time
+local display_rate = Tirislib.Locales.display_rate
 local Datalist = Gui.Elements.Datalist
 
 local upgradeable_tags = Tirislib.Tables.get_keyset(Housing.tag_costs)
@@ -719,11 +718,10 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         local updater = Inhabitants.disease_progress_updaters[category_id]
         if updater then
             local progress_per_tick = updater(entry, 1)
-            local ticks_till_disease = ceil(1 / progress_per_tick)
             local label = disease_progress_flow[tostring(category_id)]
             label.caption = {
                 "sosciencity.show-disease-rate",
-                display_time(ticks_till_disease),
+                display_rate(progress_per_tick, "sosciencity.xcases"),
                 {"disease-category-name." .. category_name}
             }
             label.visible = (progress_per_tick > 0)

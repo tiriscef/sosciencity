@@ -28,7 +28,7 @@ local ceil = math.ceil
 local floor = math.floor
 local min = math.min
 local max = math.max
-local round = Tirislib.Utils.round
+local display_rate = Tirislib.Locales.display_rate
 local round_to_step = Tirislib.Utils.round_to_step
 local tonumber = tonumber
 local tostring = tostring
@@ -146,9 +146,8 @@ local function update_general_building_details(container, entry, player_id)
 
     local performance = entry[EK.performance]
     if building_details.speed then
-        -- convert to x / minute, with one decimal place
-        local speed = round(building_details.speed * Time.minute * (entry[EK.performance] or 1) * 10) / 10
-        Datalist.set_kv_pair_value(building_data, "speed", {type_details.localised_speed_key, speed})
+        local speed = building_details.speed * (entry[EK.performance] or 1)
+        Datalist.set_kv_pair_value(building_data, "speed", display_rate(speed, type_details.localised_speed_unit))
     elseif performance then
         Datalist.set_kv_pair_value(
             building_data,
