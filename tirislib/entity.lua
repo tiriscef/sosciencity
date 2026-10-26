@@ -403,6 +403,34 @@ function Tirislib.Entity.create_animation_from_sprite_data(part)
     return {layers = layers}
 end
 
+--- Creates a picture from the static part of a sprite-data.lua, for entities that take a Sprite
+--- instead of an Animation (e.g. containers). Uses the first frame of every map.
+--- @param part table
+--- @return SpritePrototype
+function Tirislib.Entity.create_picture_from_sprite_data(part)
+    local layers = {}
+
+    for _, map in pairs(SPRITE_DATA_MAPS) do
+        local sheet = part.maps[map[1]]
+        if sheet then
+            local layer = {
+                filename = sheet.filenames[1],
+                priority = "high",
+                width = sheet.width,
+                height = sheet.height,
+                shift = sheet.shift,
+                scale = 0.5
+            }
+            for key, value in pairs(map[2]) do
+                layer[key] = value
+            end
+            layers[#layers + 1] = layer
+        end
+    end
+
+    return {layers = layers}
+end
+
 --- Creates the standard impact sound.
 --- @return SoundPrototype
 function Tirislib.Entity.get_standard_impact_sound()
