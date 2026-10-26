@@ -146,8 +146,8 @@ local function update_general_building_details(container, entry, player_id)
 
     local performance = entry[EK.performance]
     if building_details.speed then
-        -- convert to x / minute
-        local speed = round(building_details.speed * Time.minute * (entry[EK.performance] or 1))
+        -- convert to x / minute, with one decimal place
+        local speed = round(building_details.speed * Time.minute * (entry[EK.performance] or 1) * 10) / 10
         Datalist.set_kv_pair_value(building_data, "speed", {type_details.localised_speed_key, speed})
     elseif performance then
         Datalist.set_kv_pair_value(

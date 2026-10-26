@@ -100,7 +100,7 @@ InhabitantsConstants.moving_downtime = {
 InhabitantsConstants.food_leftovers_chance = 0.125
 
 --- Operations needed to complete one blood donation.
-InhabitantsConstants.blood_donation_workload = 10
+InhabitantsConstants.blood_donation_workload = 1
 --- Item produced by a successful blood donation.
 InhabitantsConstants.blood_donation_item = "blood-bag"
 --- Medical-instruments consumed per blood donation.
