@@ -1,9 +1,9 @@
--- TODO: actual graphics
+local sprites = require("__sosciencity-graphics__.graphics.entity.gene-clinic.sprite-data")
 
 Tirislib.Item.create {
     type = "item",
     name = "gene-clinic",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
+    icon = "__sosciencity-graphics__/graphics/icon/gene-clinic.png",
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "fac",
@@ -25,8 +25,6 @@ Tirislib.RecipeGenerator.create {
 Tirislib.Entity.create {
     type = "container",
     name = "gene-clinic",
-    icon = "__sosciencity-graphics__/graphics/icon/test-house.png",
-    icon_size = 64,
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "gene-clinic"},
     max_health = 200,
@@ -37,16 +35,9 @@ Tirislib.Entity.create {
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
-    picture = {
-        filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
-        priority = "high",
-        width = 192,
-        height = 192,
-        scale = 0.5,
-        frame_count = 1
-    },
+    picture = Tirislib.Entity.create_picture_from_sprite_data(sprites.static),
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(3, 3)
+}:set_size(7, 7):copy_icon_from_item()
 Sosciencity.configure_building("gene-clinic")
