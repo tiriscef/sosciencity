@@ -78,6 +78,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 1 * Time.nauvis_week,
+        escalation = "severe-burns",
+        escalation_probability = 0.1,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -124,6 +126,51 @@ Diseases.values = {
         is_treatable = false,
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0.5
+    },
+    [8] = {
+        name = "head-trauma",
+        cure_items = {
+            ["surgery-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["potent-analgesics"] = 1
+        },
+        curing_workload = 6,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.3,
+        natural_recovery = 3 * Time.nauvis_week,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2
+    },
+    [9] = {
+        name = "train-collision",
+        cure_items = {
+            ["surgery-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["blood-bag"] = 2,
+            ["bandage"] = 3
+        },
+        curing_workload = 8,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.7,
+        natural_recovery = 4 * Time.nauvis_week,
+        complication = "limb-loss",
+        complication_probability = 0.2,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [10] = {
+        name = "spitter-acid-burns",
+        cure_items = {
+            ["bandage"] = 2,
+            ["antitoxin"] = 1,
+            ["potent-analgesics"] = 1
+        },
+        curing_workload = 3,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.3,
+        natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 1
     },
     -- 1000+: primarily mental health related
     [1000] = {
@@ -268,8 +315,10 @@ Diseases.values = {
             ["analgesics"] = 1
         },
         curing_workload = 5,
-        lethality = 0.1,
+        lethality = 0.05,
         natural_recovery = 2 * Time.nauvis_week,
+        escalation = "sepsis",
+        escalation_probability = 0.15,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -281,8 +330,10 @@ Diseases.values = {
             ["bandage"] = 1
         },
         curing_workload = 10,
-        lethality = 0.35,
+        lethality = 0.15,
         natural_recovery = 2 * Time.nauvis_week,
+        escalation = "sepsis",
+        escalation_probability = 0.3,
         work_effectivity = 0,
         reports_per_treatment = 2
     },
@@ -298,6 +349,60 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 2
+    },
+    [3003] = {
+        name = "sepsis",
+        cure_items = {
+            ["antimicrobials"] = 2,
+            ["isotonic-saline-solution"] = 2,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.6,
+        natural_recovery = 1 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3004] = {
+        name = "severe-burns",
+        cure_items = {
+            ["bandage"] = 4,
+            ["potent-analgesics"] = 1,
+            ["isotonic-saline-solution"] = 2
+        },
+        curing_workload = 5,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.4,
+        natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3005] = {
+        name = "respiratory-failure",
+        cure_items = {
+            ["antitoxin"] = 1,
+            ["anesthetics"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.7,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3006] = {
+        name = "vector-rejection",
+        cure_items = {
+            ["antihistamines"] = 3,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 3,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.3,
+        natural_recovery = 1 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 1
     },
     -- 4000+: primarily birth defects
     [4000] = {
@@ -348,6 +453,8 @@ Diseases.values = {
         curing_facility = Type.gene_clinic,
         natural_recovery = 3 * Time.nauvis_month,
         lethality = 1,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
         work_effectivity = 0.6,
         reports_per_treatment = 2
     },
@@ -382,6 +489,85 @@ Diseases.values = {
         lethality = 0.6,
         natural_recovery = 3 * Time.nauvis_month,
         work_effectivity = 0.45,
+        reports_per_treatment = 2
+    },
+    [4007] = {
+        name = "engineer-syndrome",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["psychotropics"] = 2
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.8,
+        natural_recovery = 1 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 1.5,
+        reports_per_treatment = 2
+    },
+    [4008] = {
+        name = "purple-surplus",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.6,
+        natural_recovery = 1 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 1.3,
+        reports_per_treatment = 2
+    },
+    [4009] = {
+        name = "hemophilia",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.5,
+        reports_per_treatment = 2
+    },
+    [4010] = {
+        name = "sickle-cell-disease",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.5,
+        natural_recovery = 2 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.4,
+        reports_per_treatment = 2
+    },
+    [4011] = {
+        name = "mirror-metabolism",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nutritional-supplements"] = 2
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.5,
         reports_per_treatment = 2
     },
     -- 5000+: primarily zoonoses
@@ -517,8 +703,10 @@ Diseases.values = {
             ["antimicrobials"] = 1
         },
         curing_workload = 3,
-        lethality = 0.4,
+        lethality = 0.2,
         natural_recovery = 5 * Time.nauvis_day,
+        escalation = "respiratory-failure",
+        escalation_probability = 0.3,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -544,6 +732,19 @@ Diseases.values = {
         work_effectivity = 0.2,
         reports_per_treatment = 1
     },
+    [11005] = {
+        name = "ergotism",
+        cure_items = {
+            ["activated-carbon"] = 1,
+            ["psychotropics"] = 1
+        },
+        curing_workload = 2,
+        natural_recovery = 3 * Time.nauvis_day,
+        escalation = "reality-loss",
+        escalation_probability = 0.3,
+        work_effectivity = 0.3,
+        reports_per_treatment = 1
+    },
     -- 12000+: primarily waterborne diseases
     [12000] = {
         name = "gastroenteritis",
@@ -559,9 +760,57 @@ Diseases.values = {
         work_effectivity = 0.4,
         reports_per_treatment = 1
     },
+    [12001] = {
+        name = "cholera",
+        cure_items = {
+            ["isotonic-saline-solution"] = 3,
+            ["antimicrobials"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.2,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "severe-dehydration",
+        escalation_probability = 0.4,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [12002] = {
+        name = "giardiasis",
+        cure_items = {
+            ["antimicrobials"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0.6,
+        reports_per_treatment = 0.5
+    },
+    [12003] = {
+        name = "heavy-metal-poisoning",
+        cure_items = {
+            ["activated-carbon"] = 3,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.2,
+        natural_recovery = 3 * Time.nauvis_week,
+        work_effectivity = 0.5,
+        reports_per_treatment = 1
+    },
     -- 20000+: primarily hard work accident group
 
     -- 21000+: primarily office work accident group
+    [21000] = {
+        name = "caffeine-overload",
+        cure_items = {
+            ["activated-carbon"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 1.25,
+        reports_per_treatment = 0.5
+    },
 
     -- 22000+: primarily moderate work accident group
     [22000] = {
@@ -701,7 +950,9 @@ Diseases.categories = {
         ["deep-cuts"] = 300,
         ["biter-bite"] = 50,
         ["joint-dislocation"] = 400,
-        ["hematoma"] = 400
+        ["hematoma"] = 400,
+        ["head-trauma"] = 30,
+        ["train-collision"] = 5
     },
     [DiseaseCategory.birth_defect] = {
         ["lack-of-purple-blood-cells"] = 600,
@@ -711,7 +962,12 @@ Diseases.categories = {
         ["gender-dysphoria"] = 50,
         ["huntingtons"] = 100,
         ["environmental-allergy"] = 300,
-        ["autoimmune-joint-disease"] = 50
+        ["autoimmune-joint-disease"] = 50,
+        ["engineer-syndrome"] = 50,
+        ["purple-surplus"] = 100,
+        ["hemophilia"] = 100,
+        ["sickle-cell-disease"] = 100,
+        ["mirror-metabolism"] = 50
     },
     [DiseaseCategory.zoonosis] = {
         ["real-riverhorse-flu"] = 100
@@ -735,12 +991,16 @@ Diseases.categories = {
         ["salmonella"] = 100,
         ["listeriosis"] = 50,
         ["hepatitis-a"] = 50,
-        ["botulism"] = 20
+        ["botulism"] = 20,
+        ["ergotism"] = 30
     },
     [DiseaseCategory.waterborne] = {
         ["gastroenteritis"] = 300,
         ["diarrhea"] = 200,
-        ["hepatitis-a"] = 50
+        ["hepatitis-a"] = 50,
+        ["cholera"] = 50,
+        ["giardiasis"] = 150,
+        ["heavy-metal-poisoning"] = 50
     },
     [DiseaseCategory.hard_work] = {
         ["limb-loss"] = 100,
@@ -750,7 +1010,9 @@ Diseases.categories = {
         ["biter-bite"] = 50,
         ["joint-dislocation"] = 400,
         ["hematoma"] = 400,
-        ["exhaustion"] = 400
+        ["exhaustion"] = 400,
+        ["head-trauma"] = 50,
+        ["train-collision"] = 20
     },
     [DiseaseCategory.office_work] = {
         ["rare-cold"] = 100,
@@ -759,7 +1021,8 @@ Diseases.categories = {
         ["exhaustion"] = 400,
         ["depression"] = 50,
         ["burnout"] = 50,
-        ["allergic-reaction"] = 200
+        ["allergic-reaction"] = 200,
+        ["caffeine-overload"] = 150
     },
     [DiseaseCategory.moderate_work] = {
         ["allergic-reaction"] = 200,
@@ -782,7 +1045,8 @@ Diseases.categories = {
         ["biter-bite"] = 50,
         ["broken-bone"] = 200,
         ["joint-dislocation"] = 400,
-        ["limb-loss"] = 50
+        ["limb-loss"] = 50,
+        ["spitter-acid-burns"] = 30
     }
 }
 

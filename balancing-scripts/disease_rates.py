@@ -253,15 +253,22 @@ def print_diseases(diseases, categories):
         for name in weights:
             direct[name].append(category)
     escalation_of = defaultdict(list)
+    complication_of = defaultdict(list)
     for name, disease in diseases.items():
         if disease["escalation"]:
             escalation_of[disease["escalation"]].append(name)
+        if disease["complication"]:
+            complication_of[disease["complication"]].append(name)
 
     print(f"{'disease':<28}{'bed':<13}{'ops':>4}{'recovery':>10}{'lethal':>8}  sources")
     for name, disease in sorted(diseases.items(), key=lambda x: x[1]["id"]):
         recovery = f"{disease['recovery_minutes']:.0f} min" if disease["recovery_minutes"] else "never"
         workload = f"{disease['workload']:g}" if disease["treatable"] else "-"
-        sources = direct[name] + [f"escalation of {e}" for e in escalation_of[name]]
+        sources = (
+            direct[name]
+            + [f"escalation of {e}" for e in escalation_of[name]]
+            + [f"complication of {c}" for c in complication_of[name]]
+        )
         flag = ""
         # design rule: specialised diseases need a long natural recovery or have to be preventable escalations
         # the ICU is exempt: acute emergencies are its nature
