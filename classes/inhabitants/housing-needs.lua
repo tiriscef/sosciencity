@@ -11,11 +11,13 @@ local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
 local Castes = require("constants.castes")
+local DrinkingWater = require("constants.drinking-water")
 local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 
 local castes = Castes.values
 local food_values = Food.values
+local water_values = DrinkingWater.values
 local nutrition_tag_effects = InhabitantsConstants.nutrition_tag_effects
 local all_nutrition_tags = Tirislib.Tables.values(NutritionTag)
 local log_fluid = Statistics.log_fluid
@@ -262,6 +264,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     local sanity = entry[EK.sanity_summands]
 
     entry[EK.conception_rate_factor] = 1
+    entry[EK.food_poisoning_risk] = 0
 
     if #diet == 0 then
         happiness_factors[HappinessFactor.hunger] = InhabitantsConstants.starvation.happiness_factor
@@ -275,6 +278,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     local favored_taste = caste.favored_taste
     local least_favored_taste = caste.least_favored_taste
     local intrinsic_healthiness = 0
+    local poisoning_risk = 0
     local favored_food_count = 0
     local taste_counts = {}
     local appeals = {}
@@ -283,6 +287,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     for _, item_name in pairs(diet) do
         local food = food_values[item_name]
         intrinsic_healthiness = intrinsic_healthiness + food.healthiness
+        poisoning_risk = poisoning_risk + food.poisoning_risk
         local taste = food.taste_category
         taste_counts[taste] = (taste_counts[taste] or 0) + 1
         appeals[#appeals + 1] = food.appeal
@@ -293,6 +298,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     end
 
     intrinsic_healthiness = intrinsic_healthiness / #diet
+    entry[EK.food_poisoning_risk] = poisoning_risk / #diet
 
     -- top-3 appeal average
     table.sort(appeals, function(a, b) return a > b end)
@@ -459,9 +465,11 @@ end
 --- @param amount number
 --- @return number satisfaction a factor from 0 to 1 how much of the given amound was actually consumed
 --- @return number quality the average quality of the consumes drinking water
+--- @return number contamination the average contamination of the consumed drinking water
 local function consume_water(distributers, amount)
     local to_consume = amount
     local quality = 0
+    local contamination = 0
 
     for _, distributer in pairs(distributers) do
         local water_name = distributer[EK.water_name]
@@ -471,6 +479,7 @@ local function consume_water(distributers, amount)
         local consumed = removed and removed.amount or 0
         log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[EK.water_quality]
+        contamination = contamination + consumed * water_values[water_name].contamination
         to_consume = to_consume - consumed
 
         if to_consume < 0.0001 then
@@ -478,7 +487,7 @@ local function consume_water(distributers, amount)
         end
     end
 
-    return (amount - to_consume) / amount, quality / amount
+    return (amount - to_consume) / amount, quality / amount, contamination / amount
 end
 
 --- Evaluates if the house has access to drinking water, consumes it, and evaluates the effects.
@@ -501,9 +510,10 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
 
     local water_to_consume = castes[entry[EK.type]].water_demand * entry[EK.inhabitants] * delta_ticks
     local satisfaction, quality
+    local contamination = 0
 
     if water_to_consume > 0 then
-        satisfaction, quality = consume_water(distributers, water_to_consume)
+        satisfaction, quality, contamination = consume_water(distributers, water_to_consume)
 
         if satisfaction < 0.1 then
             Subentities.add_common_sprite(entry, RenderingType.water_warning)
@@ -538,4 +548,5 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
     end
 
     entry[EK.has_water] = satisfaction >= 0.9
+    entry[EK.water_contamination] = contamination
 end

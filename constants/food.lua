@@ -14,6 +14,7 @@ local Food = {}
 --- @field calories number total kcal per item (fat + carbohydrates + proteins) * 10 * item_weight
 --- @field density number kcal per 100g independent of item_weight; used to weight item consumption rate
 --- @field healthiness number intrinsic health quality of this food (1–10)
+--- @field poisoning_risk number multiplier on the food poisoning disease rate (0–1); absent means 0
 --- @field food_category string broad category (meat, egg, fruit, vegetable, legume, processed, alien-*, seed, etc.)
 --- @field taste_category Taste taste profile of this food
 --- @field appeal number overall desirability of this food (combining former taste quality and luxury) (1–10)
@@ -30,6 +31,7 @@ Food.values = {
         carbohydrates = 0.2,
         proteins = 19.6,
         healthiness = 4,
+        poisoning_risk = 0.4,
         food_category = "meat",
         taste_category = Taste.umami,
         appeal = 7,
@@ -42,6 +44,7 @@ Food.values = {
         carbohydrates = 0.1,
         proteins = 20.6,
         healthiness = 6,
+        poisoning_risk = 0.6,
         food_category = "meat",
         taste_category = Taste.neutral,
         appeal = 6,
@@ -54,6 +57,7 @@ Food.values = {
         carbohydrates = 1,
         proteins = 21,
         healthiness = 1,
+        poisoning_risk = 0.8,
         food_category = "meat",
         taste_category = Taste.salty,
         appeal = 4,
@@ -66,6 +70,7 @@ Food.values = {
         carbohydrates = 0.7,
         proteins = 22,
         healthiness = 5,
+        poisoning_risk = 0.5,
         food_category = "meat",
         taste_category = Taste.acidic,
         appeal = 5,
@@ -78,6 +83,7 @@ Food.values = {
         carbohydrates = 2.7,
         proteins = 53.2,
         healthiness = 6,
+        poisoning_risk = 0.3,
         food_category = "meat",
         taste_category = Taste.soily,
         appeal = 4,
@@ -90,6 +96,7 @@ Food.values = {
         carbohydrates = 0.6,
         proteins = 18.4,
         healthiness = 3,
+        poisoning_risk = 0.5,
         food_category = "meat",
         taste_category = Taste.salty,
         appeal = 6,
@@ -102,6 +109,7 @@ Food.values = {
         carbohydrates = 3.8,
         proteins = 26,
         healthiness = 7,
+        poisoning_risk = 0.7,
         food_category = "meat",
         taste_category = Taste.umami,
         appeal = 5,
@@ -114,6 +122,7 @@ Food.values = {
         carbohydrates = 2,
         proteins = 12.8,
         healthiness = 5,
+        poisoning_risk = 0.3,
         food_category = "egg",
         taste_category = Taste.sulfuric,
         appeal = 6,
@@ -126,6 +135,7 @@ Food.values = {
         carbohydrates = 0.9,
         proteins = 13.0,
         healthiness = 6,
+        poisoning_risk = 0.3,
         food_category = "egg",
         taste_category = Taste.sulfuric,
         appeal = 4,
@@ -138,6 +148,7 @@ Food.values = {
         carbohydrates = 3,
         proteins = 13.5,
         healthiness = 5,
+        poisoning_risk = 0.2,
         food_category = "egg",
         taste_category = Taste.sulfuric,
         appeal = 4,
@@ -150,6 +161,7 @@ Food.values = {
         carbohydrates = 8,
         proteins = 2.6,
         healthiness = 4,
+        poisoning_risk = 0.2,
         food_category = "alien-fruit",
         taste_category = Taste.varying,
         appeal = 2,
@@ -162,6 +174,7 @@ Food.values = {
         carbohydrates = 2.4,
         proteins = 2.6,
         healthiness = 4,
+        poisoning_risk = 0.4,
         food_category = "alien-fungus",
         taste_category = Taste.varying,
         appeal = 3,
@@ -174,6 +187,7 @@ Food.values = {
         carbohydrates = 5.8,
         proteins = 2.1,
         healthiness = 6,
+        poisoning_risk = 0.2,
         food_category = "alien-algae",
         taste_category = Taste.varying,
         appeal = 3,
@@ -618,6 +632,7 @@ Food.values = {
         carbohydrates = 15,
         proteins = 15,
         healthiness = 8,
+        poisoning_risk = 0.2,
         food_category = "processed",
         taste_category = Taste.umami,
         appeal = 7,
@@ -658,7 +673,7 @@ Food.values = {
     },
     ["test-food-salty-protein"] = {
         fat = 5, carbohydrates = 5, proteins = 20,
-        healthiness = 5, food_category = "processed",
+        healthiness = 5, poisoning_risk = 0.6, food_category = "processed",
         taste_category = Taste.salty, appeal = 6,
         nutrition_tags = {[NutritionTag.protein_rich] = true},
         item_weight = 1, group = "test-food-e"
@@ -707,6 +722,7 @@ Food.energy_density_proteins = 3.7
 -- values postprocessing
 for name, food_definition in pairs(Food.values) do
     food_definition.name = name
+    food_definition.poisoning_risk = food_definition.poisoning_risk or 0
 
     -- convert nutrients from g per 100g to kcal per 100g
     food_definition.fat = food_definition.fat * Food.energy_density_fat

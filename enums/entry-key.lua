@@ -158,6 +158,10 @@ EK.unclaimed_disease_ticks = 240
 EK.moving_cohorts = 241
 --- conception rate multiplier from the nutrition tags of the current diet
 EK.conception_rate_factor = 242
+--- average poisoning risk of the current diet
+EK.food_poisoning_risk = 243
+--- average contamination of the water drunk in the last update
+EK.water_contamination = 244
 
 -- water distributer
 

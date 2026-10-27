@@ -108,6 +108,10 @@ InhabitantsConstants.zoonosis_disease_rate = 0.00072 * Unit.per_minute
 --- Only while the house has no food / no water.
 InhabitantsConstants.malnutrition_disease_rate = 0.036 * Unit.per_minute
 InhabitantsConstants.dehydration_disease_rate = 0.036 * Unit.per_minute
+--- Multiplied with the average poisoning risk of the house's diet.
+InhabitantsConstants.food_poisoning_disease_rate = 0.003 * Unit.per_minute
+--- Multiplied with the average contamination of the drunk water.
+InhabitantsConstants.waterborne_disease_rate = 0.004 * Unit.per_minute
 
 --- Probability per consumed food item that it produces a food-leftovers item.
 InhabitantsConstants.food_leftovers_chance = 0.125

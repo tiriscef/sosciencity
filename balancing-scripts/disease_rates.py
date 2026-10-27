@@ -8,23 +8,27 @@ Inputs:
 - base disease rates from constants/inhabitants.lua
 - disease susceptibilities from constants/castes.lua (a multiplier on the frequency: higher = more cases)
 - workplace disease rates from constants/buildings.lua
+- water contamination from constants/drinking-water.lua
 - bed speed from constants/buildings.lua (the hospital's speed; every bed building should have the same)
 
 Model:
 - New cases per minute come from the health, sanity and accident categories of every inhabitant, and from
   the workplaces of the employed ones (an average job, as if there was one of every workplace).
+- Food poisoning and waterborne diseases come from the diet's average poisoning risk (--food-risk) and the
+  contamination of the drinking water (--water), the same for every house.
 - Bed demand is the bed-minutes those cases need per minute, assuming every treatable case gets a bed
   right away. That's an upper bound: natural recovery only cuts it short for patients who wait.
   Complications of treatments are added (one level deep); escalations are left out, because they only
   happen to untreated cases.
 - Not modelled: malnutrition/dehydration (only without food/water), birth defects (per birth), infections
-  (social contagion), food and water poisoning, zoonosis unless --animal-farms is given.
+  (social contagion), zoonosis unless --animal-farms is given.
 
 Usage, from the mod folder:
     python3 balancing-scripts/disease_rates.py
     python3 balancing-scripts/disease_rates.py -c plasma -H 20 -S 15 --employed 0.6
     python3 balancing-scripts/disease_rates.py --diseases
     python3 balancing-scripts/disease_rates.py --rate sanity=0.5 --workload depression=10
+    python3 balancing-scripts/disease_rates.py --food-risk 0.3 --water drinkable-water
 """
 import argparse
 import math
@@ -100,6 +104,15 @@ def parse_rates():
         for category, per_minute in re.findall(
             r"InhabitantsConstants\.(\w+)_disease_rate = ([\d.]+) \* Unit\.per_minute", src
         )
+    }
+
+
+def parse_water_contamination():
+    """Returns the contamination by drinking water name."""
+    src = (MOD / "constants" / "drinking-water.lua").read_text()
+    return {
+        name: float(value)
+        for name, value in re.findall(r'\["([\w-]+)"\] = \{[^}]*?contamination = ([\d.]+)', src)
     }
 
 
@@ -187,11 +200,16 @@ def city_cases(args, castes, base_rates, work_rates):
     workers = args.population * len(args.castes) * args.employed
     for category, rate in work_rates.items():
         category_rates[category] += workers * rate
-    for category, factor in args.rate.items():
-        category_rates[category] *= factor
+    population = args.population * len(args.castes)
     if args.animal_farms:
         zoonosis = TICKS_PER_MINUTE * math.sqrt(args.animal_farms) * base_rates["zoonosis"]
-        category_rates["zoonosis"] += args.population * len(args.castes) * zoonosis
+        category_rates["zoonosis"] += population * zoonosis
+    if args.food_risk:
+        category_rates["food_poisoning"] += population * TICKS_PER_MINUTE * args.food_risk * base_rates["food_poisoning"]
+    if args.contamination:
+        category_rates["waterborne"] += population * TICKS_PER_MINUTE * args.contamination * base_rates["waterborne"]
+    for category, factor in args.rate.items():
+        category_rates[category] *= factor
     return category_rates
 
 
@@ -203,6 +221,7 @@ def print_city(args, castes, base_rates, categories, diseases, work_rates, speed
 
     print(f"City: {args.population} inhabitants each of {', '.join(args.castes)} ({population} total)")
     print(f"health {args.health}, sanity {args.sanity}, {args.employed:.0%} employed, bed speed {speed:g} op/min")
+    print(f"diet poisoning risk {args.food_risk:g}, drinking {args.water}")
     print()
     print("New cases per minute by category:")
     for category, rate in sorted(category_rates.items(), key=lambda x: -x[1]):
@@ -267,6 +286,12 @@ def main():
     parser.add_argument("--employed", type=float, default=0.5, help="share of inhabitants with a job (default 0.5)")
     parser.add_argument("--animal-farms", type=int, default=0, help="active animal farms, for zoonosis")
     parser.add_argument(
+        "--food-risk", type=float, default=0, help="average poisoning risk of the diet, for food poisoning (default 0)"
+    )
+    parser.add_argument(
+        "--water", default="clean-water", help="drinking water, for waterborne diseases (default clean-water)"
+    )
+    parser.add_argument(
         "--rate", action="append", default=[], metavar="CATEGORY=FACTOR", help="try a factor on a category's rate"
     )
     parser.add_argument(
@@ -284,6 +309,10 @@ def main():
         name, ops = item.split("=")
         diseases[name]["workload"] = float(ops)
     args.castes = args.castes or list(castes)
+    contamination = parse_water_contamination()
+    if args.water not in contamination:
+        parser.error(f"unknown drinking water: {args.water} (known: {', '.join(contamination)})")
+    args.contamination = contamination[args.water]
     unknown = set(args.castes) - set(castes)
     if unknown:
         parser.error(f"unknown or disabled castes: {', '.join(sorted(unknown))}")

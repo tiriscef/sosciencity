@@ -516,7 +516,7 @@ Diseases.values = {
         },
         curing_workload = 3,
         lethality = 0.4,
-        natural_recovery = 2 * Time.nauvis_day,
+        natural_recovery = 5 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -527,7 +527,7 @@ Diseases.values = {
         },
         curing_workload = 3,
         lethality = 0.25,
-        natural_recovery = 2 * Time.nauvis_day,
+        natural_recovery = 5 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -728,10 +728,17 @@ Diseases.categories = {
         ["extreme-dehydration"] = 10
     },
     [DiseaseCategory.food_poisoning] = {
-        ["diarrhea"] = 100
+        ["food-poisoning"] = 300,
+        ["diarrhea"] = 200,
+        ["salmonella"] = 100,
+        ["listeriosis"] = 50,
+        ["hepatitis-a"] = 50,
+        ["botulism"] = 20
     },
     [DiseaseCategory.waterborne] = {
-        ["diarrhea"] = 100
+        ["gastroenteritis"] = 300,
+        ["diarrhea"] = 200,
+        ["hepatitis-a"] = 50
     },
     [DiseaseCategory.hard_work] = {
         ["limb-loss"] = 100,

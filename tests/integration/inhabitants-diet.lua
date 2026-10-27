@@ -8,6 +8,7 @@ local SanitySummand = require("enums.sanity-summand")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
+local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
@@ -27,7 +28,7 @@ local Assert = Tirislib.Testing.Assert
 --   test-food-fruity-fat          fruity   fat                     appeal 6
 --   test-food-neutral-protein-fat neutral  protein+fat             appeal 7
 --   test-food-neutral-carb        neutral  carb                    appeal 5
---   test-food-salty-protein       salty    protein                 appeal 6
+--   test-food-salty-protein       salty    protein                 appeal 6   poisoning risk 0.6
 --   test-food-spicy-alltags       spicy    protein+fat+carb        appeal 8
 --   test-food-umami-carb          umami    carb                    appeal 5
 --   test-food-umami-notag         umami    (none)                  appeal 5
@@ -507,6 +508,50 @@ Tirislib.Testing.add_test_case(
             "disliked_food happiness summand should be suppressed in distress state")
         Assert.is_nil(hf[HappinessFactor.hunger],
             "hunger factor should not fire when fallback provides food")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << food poisoning risk >>
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet stores the average poisoning risk of the diet",
+    "integration|integration.inhabitants",
+    function()
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        local inventory = Inventories.get_chest_inventory(house)
+        inventory.insert {name = "test-food-umami-carb", count = 100}
+        inventory.insert {name = "test-food-salty-protein", count = 100}
+
+        local diet = Inhabitants.get_diet_info(house).diet
+        local expected_risk = 0
+        for _, item_name in pairs(diet) do
+            expected_risk = expected_risk + Food.values[item_name].poisoning_risk
+        end
+        expected_risk = expected_risk / #diet
+
+        run_evaluate_diet(house, Time.minute)
+
+        Assert.greater_than(expected_risk, 0, "the diet should contain the risky test food")
+        Assert.equals(house[EK.food_poisoning_risk], expected_risk,
+            "the poisoning risk should be the average over the diet")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet resets the poisoning risk when no food is available",
+    "integration|integration.inhabitants",
+    function()
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        house[EK.food_poisoning_risk] = 0.5
+
+        run_evaluate_diet(house, Time.minute)
+
+        Assert.equals(house[EK.food_poisoning_risk], 0, "without food there should be no poisoning risk")
     end,
     setup,
     teardown

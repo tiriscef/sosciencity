@@ -186,3 +186,45 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << contamination >>
+
+Tirislib.Testing.add_test_case(
+    "evaluate_water stores the contamination averaged over the consumed water",
+    "integration|integration.inhabitants",
+    function()
+        local house = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
+        house[EK.inhabitants] = 10
+
+        -- the better water is drunk first: 20 of the 40 units, the rest is untreated water
+        create_water_distributer({5, 0}, "drinkable-water", 20)
+        create_water_distributer({-5, 0}, "water")
+
+        run_evaluate_water(house, Time.minute)
+
+        local expected = (DrinkingWater.values["drinkable-water"].contamination + DrinkingWater.values["water"].contamination) / 2
+        Assert.is_number_close(house[EK.water_contamination], expected, 0.0001,
+            "contamination should be weighted by the consumed amounts")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "evaluate_water resets the contamination when no water is available",
+    "integration|integration.inhabitants",
+    function()
+        local house = Inhabitants.try_allow_for_caste(
+            Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
+        house[EK.inhabitants] = 10
+        house[EK.water_contamination] = 0.5
+
+        run_evaluate_water(house, Time.minute)
+
+        Assert.equals(house[EK.water_contamination], 0, "without water there should be no contamination")
+    end,
+    setup,
+    teardown
+)

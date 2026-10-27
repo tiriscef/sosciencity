@@ -159,6 +159,24 @@ function Inhabitants.get_dehydration_disease_progress(entry, delta_ticks)
     return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.dehydration_disease_rate
 end
 
+--- Returns the disease progress for food poisoning from the risky foods in the diet.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_food_poisoning_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks * entry[EK.food_poisoning_risk] *
+        InhabitantsConstants.food_poisoning_disease_rate
+end
+
+--- Returns the disease progress for waterborne diseases from contaminated drinking water.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_waterborne_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks * entry[EK.water_contamination] *
+        InhabitantsConstants.waterborne_disease_rate
+end
+
 --- Returns the disease progress from workplace accidents of the given category.
 --- @param entry Entry
 --- @param delta_ticks integer
@@ -213,7 +231,9 @@ Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.fishing_hut] = Inhabitants.get_fishing_hut_accident_progress,
     [DiseaseCategory.hunting_hut] = Inhabitants.get_hunting_hut_accident_progress,
     [DiseaseCategory.malnutrition] = Inhabitants.get_malnutrition_disease_progress,
-    [DiseaseCategory.dehydration] = Inhabitants.get_dehydration_disease_progress
+    [DiseaseCategory.dehydration] = Inhabitants.get_dehydration_disease_progress,
+    [DiseaseCategory.food_poisoning] = Inhabitants.get_food_poisoning_disease_progress,
+    [DiseaseCategory.waterborne] = Inhabitants.get_waterborne_disease_progress
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 
