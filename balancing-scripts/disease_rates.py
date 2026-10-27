@@ -264,8 +264,9 @@ def print_diseases(diseases, categories):
         sources = direct[name] + [f"escalation of {e}" for e in escalation_of[name]]
         flag = ""
         # design rule: specialised diseases need a long natural recovery or have to be preventable escalations
+        # the ICU is exempt: acute emergencies are its nature
         if (
-            disease["bed"] != GENERAL
+            disease["bed"] not in (GENERAL, BED_KINDS["intensive_care_unit"])
             and direct[name]
             and disease["recovery_minutes"]
             and disease["recovery_minutes"] < 60

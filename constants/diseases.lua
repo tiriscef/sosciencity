@@ -435,6 +435,7 @@ Diseases.values = {
             ["blood-bag"] = 1
         },
         curing_workload = 5,
+        curing_facility = Type.intensive_care_unit,
         lethality = 1,
         natural_recovery = 5 * Time.nauvis_day,
         work_effectivity = 0,
@@ -477,6 +478,7 @@ Diseases.values = {
             ["blood-bag"] = 1
         },
         curing_workload = 5,
+        curing_facility = Type.intensive_care_unit,
         lethality = 1,
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0,
