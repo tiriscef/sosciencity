@@ -909,10 +909,10 @@ do
             }
         end
 
-        if disease.complication_disease then
+        if disease.complication then
             points[#points + 1] = {
                 "sosciencity.complication",
-                {"disease-name." .. disease.complication_disease},
+                {"disease-name." .. disease.complication},
                 get_percentage(disease.complication_probability)
             }
         end
