@@ -542,9 +542,9 @@ Diseases.values = {
         work_effectivity = 0.2,
         reports_per_treatment = 1
     },
-    -- 12000+: primarily polluted water
+    -- 12000+: primarily waterborne diseases
     [12000] = {
-        name = "water-poisoning",
+        name = "gastroenteritis",
         cure_items = {
             ["activated-carbon"] = 1,
             ["isotonic-saline-solution"] = 1
@@ -730,7 +730,7 @@ Diseases.categories = {
     [DiseaseCategory.food_poisoning] = {
         ["diarrhea"] = 100
     },
-    [DiseaseCategory.water_poisoning] = {
+    [DiseaseCategory.waterborne] = {
         ["diarrhea"] = 100
     },
     [DiseaseCategory.hard_work] = {
@@ -765,7 +765,7 @@ Diseases.categories = {
         ["sunburn"] = 200,
         ["deep-cuts"] = 150,
         ["animal-scratch"] = 300,
-        ["water-poisoning"] = 100,
+        ["gastroenteritis"] = 100,
         ["joint-dislocation"] = 100,
         ["swimmers-itch"] = 150
     },
@@ -829,7 +829,7 @@ Diseases.disease_causes = {
     [DiseaseCategory.malnutrition] = DiseasedCause.malnutrition,
     [DiseaseCategory.dehydration] = DiseasedCause.dehydration,
     [DiseaseCategory.food_poisoning] = DiseasedCause.food_poisoning,
-    [DiseaseCategory.water_poisoning] = DiseasedCause.water_poisoning,
+    [DiseaseCategory.waterborne] = DiseasedCause.waterborne,
     [DiseaseCategory.hard_work] = DiseasedCause.workplace_accident,
     [DiseaseCategory.office_work] = DiseasedCause.workplace_accident,
     [DiseaseCategory.moderate_work] = DiseasedCause.workplace_accident,

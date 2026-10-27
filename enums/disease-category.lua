@@ -24,8 +24,8 @@ DiseaseCategory.malnutrition = 9
 DiseaseCategory.dehydration = 10
 --- diseases that are a consequence of providing unsafe food
 DiseaseCategory.food_poisoning = 11
---- diseases that are a consequence of not providing enough drinking water
-DiseaseCategory.water_poisoning = 12
+--- diseases that are a consequence of drinking contaminated water
+DiseaseCategory.waterborne = 12
 
 -- Categories for work-related diseases
 
