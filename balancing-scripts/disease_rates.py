@@ -25,8 +25,8 @@ Model:
 
 Contagion model (--contagion), re-implements social_meeting in classes/inhabitants/housing-environment.lua
 and InhabitantGroup.make_sick in classes/inhabitants.lua:
-- A house has 0.36 * V^0.3 social meetings per minute (V = inhabitants * caste social coefficient of its
-  social environment). Per meeting, every sick huwan infects with the disease's contagiousness, and the
+- A house has K * V^EXPONENT social meetings per minute (V = inhabitants * caste social coefficient of its
+  social environment; K and EXPONENT from the meeting constants in constants/inhabitants.lua). Per meeting, every sick huwan infects with the disease's contagiousness, and the
   infection lands with the chance susceptible / healthy. So per sick huwan: beta = meetings * contagiousness.
 - That gives an SIR model where the success chance is S / (S + R), not S / N:
       dS = -beta*I*S/(S+R) + w*R,  dI = beta*I*S/(S+R) - gamma*I,  dR = gamma*I - w*R
@@ -151,11 +151,18 @@ def parse_castes():
     return castes
 
 
-def parse_meeting_coefficient():
-    """Returns the social meetings per tick per unit of social value^0.3."""
-    src = (MOD / "classes" / "inhabitants" / "housing-environment.lua").read_text()
-    numerator, denominator = re.search(r"local social_coefficient = ([\d.]+) / ([\d.]+)", src).groups()
-    return float(numerator) / float(denominator)
+def parse_meeting_curve():
+    """Returns (meetings per tick per social value^exponent, exponent), derived like the postprocessing of
+    constants/inhabitants.lua."""
+    src = (MOD / "constants" / "inhabitants.lua").read_text()
+
+    def constant(name):
+        return re.search(rf"InhabitantsConstants\.{name} = ([^\n]+)", src).group(1).strip()
+
+    meetings_per_day = float(re.fullmatch(r"([\d.]+) / Time\.nauvis_day", constant("reference_meeting_rate")).group(1))
+    exponent = float(constant("meeting_exponent"))
+    reference = float(constant("reference_social_value"))
+    return meetings_per_day / TIME["nauvis_day"] / reference ** exponent, exponent
 
 
 def parse_buildings():
@@ -313,9 +320,10 @@ def print_diseases(diseases, categories):
         )
 
 
-def meetings_per_minute(neighbours, social_coefficient, meeting_coefficient):
+def meetings_per_minute(neighbours, social_coefficient, meeting_curve):
     """Social meetings per minute of a house whose social environment holds the given inhabitants."""
-    return TICKS_PER_MINUTE * meeting_coefficient * (neighbours * social_coefficient) ** 0.3
+    coefficient, exponent = meeting_curve
+    return TICKS_PER_MINUTE * coefficient * (neighbours * social_coefficient) ** exponent
 
 
 def simulate_wave(beta, gamma, w, minutes=20000, dt=0.05):
@@ -348,9 +356,9 @@ def steady_infected(r0, gamma, w):
     return (w / gamma) / (r0 / (r0 - 1) + w / gamma)
 
 
-def print_contagion(args, diseases, castes, meeting_coefficient):
+def print_contagion(args, diseases, castes, meeting_curve):
     social = sum(castes[c]["social"] for c in args.castes) / len(args.castes)
-    meetings = meetings_per_minute(args.neighbours, social, meeting_coefficient)
+    meetings = meetings_per_minute(args.neighbours, social, meeting_curve)
     contagious = sorted(
         (item for item in diseases.items() if item[1]["contagiousness"]), key=lambda x: x[1]["id"]
     )
@@ -405,7 +413,7 @@ def print_contagion(args, diseases, castes, meeting_coefficient):
     print(f"{'disease':<24}" + "".join(f"{size:>8}" for size in sizes))
     for name, disease in contagious:
         gamma = 1 / disease["recovery_minutes"]
-        r0s = [meetings_per_minute(size, social, meeting_coefficient) * disease["contagiousness"] / gamma
+        r0s = [meetings_per_minute(size, social, meeting_curve) * disease["contagiousness"] / gamma
                for size in sizes]
         print(f"{name:<24}" + "".join(f"{r0:>8.2f}" for r0 in r0s))
 
@@ -476,7 +484,7 @@ def main():
     if args.diseases:
         print_diseases(diseases, categories)
     elif args.contagion:
-        print_contagion(args, diseases, castes, parse_meeting_coefficient())
+        print_contagion(args, diseases, castes, parse_meeting_curve())
     else:
         print_city(args, castes, parse_rates(), categories, diseases, work_rates, speed)
 

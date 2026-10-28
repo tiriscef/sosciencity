@@ -1,18 +1,18 @@
-"""Estimates how fast huwans conceive eggs under the planned reproduction rework.
+"""Estimates how fast huwans conceive eggs.
 
-Models the rules agreed in memory/project_reproduction.md, not the current code: conceptions happen per ga
-instead of per house meeting. Once the rework is in classes/inhabitants/housing-environment.lua, this script
-re-implements social_meeting there, so keep it in sync with that logic.
+Re-implements social_meeting and evaluate_social_environment of classes/inhabitants/housing-environment.lua
+and the reproduction postprocessing of constants/inhabitants.lua. Keep it in sync when that logic changes.
 
 Inputs:
+- birth rate target, reference social value, reference meeting rate and meeting exponent from
+  constants/inhabitants.lua (overridable with the flags below)
 - egg gender distributions from constants/inhabitants.lua (egg_data)
 - caste social coefficients from constants/castes.lua
 - nutrition conception factors from constants/inhabitants.lua
 
 Model:
 - A house has meetings at a rate of K * V^EXPONENT, V = inhabitants * social coefficient of its social
-  environment. K is set so that the reference environment (200 inhabitants with coefficient 1) keeps
-  today's meeting rate, so contagion at the reference stays the same.
+  environment. K is set so that the reference social value has the reference meeting rate.
 - Per meeting, every ga that has a partner and hasn't conceived this cycle (1 nauvis day) conceives with
   the chance p. The partner rate is min(fale / ga, pachin / ga, 1) of the environment.
 - p is derived from the target: the natural huwan-egg gender mix in the reference environment conceives
@@ -23,7 +23,7 @@ Model:
 
 Usage, from the mod folder:
     python3 balancing-scripts/reproduction.py
-    python3 balancing-scripts/reproduction.py --target 0.02 --exponent 0.3
+    python3 balancing-scripts/reproduction.py --target 0.02 --exponent 0.3 --meetings 20
     python3 balancing-scripts/reproduction.py --mix 0.1,0.3,0.3,0.3
 """
 import argparse
@@ -36,10 +36,6 @@ MOD = Path(__file__).resolve().parent.parent
 TICKS_PER_DAY = 25000
 TICKS_PER_HOUR = 216000
 GENDERS = ["agender", "fale", "pachin", "ga"]
-
-REFERENCE_NEIGHBOURS = 200
-# today's meeting rate: social_coefficient * V^0.3 per tick (classes/inhabitants/housing-environment.lua)
-CURRENT_EXPONENT = 0.3
 
 SIZES = [4, 20, 50, 200, 500, 2000, 5000]
 
@@ -66,11 +62,24 @@ def parse_social_coefficients():
     return coefficients
 
 
-def parse_current_meeting_coefficient():
-    """Returns today's meetings per tick per unit of V^0.3."""
-    src = (MOD / "classes" / "inhabitants" / "housing-environment.lua").read_text()
-    numerator, denominator = re.search(r"local social_coefficient = ([\d.]+) / ([\d.]+)", src).groups()
-    return float(numerator) / float(denominator)
+def parse_reproduction_constants():
+    """Returns the reproduction targets of constants/inhabitants.lua, rates per nauvis day."""
+    src = (MOD / "constants" / "inhabitants.lua").read_text()
+
+    def constant(name):
+        return re.search(rf"InhabitantsConstants\.{name} = ([^\n]+)", src).group(1).strip()
+
+    def per_day(name):
+        return float(re.fullmatch(r"([\d.]+) / Time\.nauvis_day", constant(name)).group(1))
+
+    if constant("ga_reproduction_cycle") != "Time.nauvis_day":
+        raise SystemExit("the model assumes a ga reproduction cycle of one nauvis day")
+    return {
+        "reference": float(constant("reference_social_value")),
+        "meetings": per_day("reference_meeting_rate"),
+        "exponent": float(constant("meeting_exponent")),
+        "target": per_day("birth_rate"),
+    }
 
 
 def parse_max_conception_factor():
@@ -104,13 +113,23 @@ def doubling_hours(rate):
 
 
 def main():
+    constants = parse_reproduction_constants()
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument(
-        "--target", type=float, default=0.01, help="eggs per inhabitant per nauvis day in the reference (default 0.01)"
+        "--target", type=float, default=constants["target"],
+        help=f"eggs per inhabitant per nauvis day in the reference (mod: {constants['target']:g})"
     )
-    parser.add_argument("--exponent", type=float, default=0.2, help="exponent of the meeting curve (default 0.2)")
     parser.add_argument(
-        "--meetings", type=float, help="meetings per nauvis day in the reference environment (default: today's rate)"
+        "--exponent", type=float, default=constants["exponent"],
+        help=f"exponent of the meeting curve (mod: {constants['exponent']:g})"
+    )
+    parser.add_argument(
+        "--meetings", type=float, default=constants["meetings"],
+        help=f"meetings per nauvis day in the reference environment (mod: {constants['meetings']:g})"
+    )
+    parser.add_argument(
+        "--reference", type=float, default=constants["reference"],
+        help=f"reference social value (mod: {constants['reference']:g})"
     )
     parser.add_argument(
         "--mix", action="append", default=[], metavar="A,F,P,G",
@@ -128,9 +147,9 @@ def main():
         total = sum(shares)
         shown[f"custom {item}"] = {gender: share / total for gender, share in zip(GENDERS, shares)}
 
-    current = parse_current_meeting_coefficient()
-    reference_meetings = args.meetings or current * REFERENCE_NEIGHBOURS ** CURRENT_EXPONENT * TICKS_PER_DAY
-    k = reference_meetings / REFERENCE_NEIGHBOURS ** args.exponent
+    reference = args.reference
+    reference_meetings = args.meetings
+    k = reference_meetings / reference ** args.exponent
 
     def meetings(v):
         return k * v ** args.exponent
@@ -141,19 +160,19 @@ def main():
         parser.error(f"target {args.target} is unreachable: only {eligible:.0%} of the natural mix are gas with a partner")
     p = 1 - (1 - per_ga) ** (1 / reference_meetings)
 
-    print(f"Reference: {REFERENCE_NEIGHBOURS} inhabitants (social coefficient 1), "
+    print(f"Reference: {reference:g} inhabitants (social coefficient 1), "
           f"{reference_meetings:.1f} meetings per nauvis day, curve V^{args.exponent:g}")
     print(f"Target: {args.target:.2%} eggs per inhabitant per nauvis day for the natural huwan-egg mix")
     print(f"-> {eligible:.0%} of the natural mix are gas with a partner, each conceives with {per_ga:.1%} per cycle")
     print(f"-> conception chance per meeting: p = {p:.4f}")
-    print(f"   (in the mod: per tick social_coefficient = {k / TICKS_PER_DAY:.3g}, conception_rate = {p:.4g})")
+    print(f"   (in the mod: meeting_coefficient = {k / TICKS_PER_DAY:.3g} per tick, conception_rate = {p:.4g})")
     print()
 
     print("Eggs per 100 inhabitants per nauvis day, by social environment size (inhabitants * social coefficient):")
     print(f"{'gender mix':<32}" + "".join(f"{size:>7}" for size in SIZES) + f"{'doubling':>10}")
     for name, mix in shown.items():
         rates = [births_per_day(mix, meetings(size), p) for size in SIZES]
-        doubling = doubling_hours(births_per_day(mix, meetings(REFERENCE_NEIGHBOURS), p))
+        doubling = doubling_hours(births_per_day(mix, meetings(reference), p))
         doubling_text = f"{doubling:.1f} h" if math.isfinite(doubling) else "never"
         print(f"{name:<32}" + "".join(f"{rate * 100:>7.2f}" for rate in rates) + f"{doubling_text:>10}")
     print(f"{'meetings per day':<32}" + "".join(f"{meetings(size):>7.1f}" for size in SIZES))
@@ -161,14 +180,14 @@ def main():
     print()
 
     factor = parse_max_conception_factor()
-    best = births_per_day(shown["best lab mix"], meetings(REFERENCE_NEIGHBOURS), p, factor)
+    best = births_per_day(shown["best lab mix"], meetings(reference), p, factor)
     print(f"Fully optimised (best lab mix, conception factor {factor:g} from the diet, reference environment): "
           f"{best:.2%} per day, doubling in {doubling_hours(best):.1f} h")
     print()
 
-    print(f"Natural mix in an environment of {REFERENCE_NEIGHBOURS} inhabitants of one caste:")
+    print(f"Natural mix in an environment of {reference:g} inhabitants of one caste:")
     for caste, coefficient in sorted(parse_social_coefficients().items(), key=lambda x: x[1]):
-        rate = births_per_day(natural, meetings(REFERENCE_NEIGHBOURS * coefficient), p)
+        rate = births_per_day(natural, meetings(reference * coefficient), p)
         print(f"  {caste:<12} social coefficient {coefficient:<4g} {rate:.2%} per day")
 
 

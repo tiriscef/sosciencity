@@ -11,7 +11,7 @@ local WarningType = require("enums.warning-type")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local Housing = require("constants.housing")
-local Time = require("constants.time")
+local InhabitantsConstants = require("constants.inhabitants")
 local TypeGroup = require("constants.type-groups")
 
 local castes = Castes.values
@@ -22,6 +22,7 @@ local try_get = Register.try_get
 local Tables = Tirislib.Tables
 local Utils = Tirislib.Utils
 local coin_flips = Utils.coin_flips
+local occurrence_probability = Utils.occurrence_probability
 local make_sick = InhabitantGroup.make_sick
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor
@@ -143,11 +144,13 @@ function Inhabitants.social_environment_change()
     storage.last_social_change = game.tick
 end
 
---- the time a ga reproduction cycle lasts
-Inhabitants.ga_reproduction_cycle = Time.nauvis_day
+local ga_reproduction_cycle = InhabitantsConstants.ga_reproduction_cycle
+local meeting_coefficient = InhabitantsConstants.meeting_coefficient
+local meeting_exponent = InhabitantsConstants.meeting_exponent
+local conception_rate = InhabitantsConstants.conception_rate
 
 local function get_ga_reproduction_cycle(tick)
-    return floor(tick / Inhabitants.ga_reproduction_cycle)
+    return floor(tick / ga_reproduction_cycle)
 end
 
 local function build_social_environment(entry)
@@ -169,6 +172,7 @@ local function build_social_environment(entry)
 end
 Inhabitants.build_social_environment = build_social_environment
 
+--- Returns the social value of the given social environment: its inhabitants weighted by their caste's social coefficient.
 local function get_social_value(environment)
     local value = 0
 
@@ -181,7 +185,7 @@ local function get_social_value(environment)
         end
     end
 
-    return value ^ 0.3
+    return value
 end
 
 local function get_partner_rate(environment)
@@ -208,25 +212,29 @@ local function get_partner_rate(environment)
     return min(fale_count / ga_count, pachin_count / ga_count, 1)
 end
 
-Inhabitants.conception_rate = 0.3
-
 local function social_meeting(entry, meeting_count)
     local ga_count = entry[EK.genders][Gender.ga]
     local past_conceptions = entry[EK.ga_conceptions]
     local environment = entry[EK.social_environment]
 
-    -- reproduction
+    -- reproduction: every ga with a partner that hasn't conceived this cycle can conceive in every meeting
     if ga_count > past_conceptions then
-        local available_partners = floor(get_partner_rate(environment) * ga_count)
-        available_partners = available_partners - past_conceptions
-        local fertile_ga_count = ga_count - past_conceptions
-        local conception_rate = min(1, Inhabitants.conception_rate * entry[EK.conception_rate_factor])
-        local conceptions = coin_flips(conception_rate, meeting_count, 5)
+        -- rounded randomly, so that the gas of small houses get a partner as often as they should
+        local exact_partners = get_partner_rate(environment) * ga_count
+        local partnered = floor(exact_partners)
+        if random() < exact_partners - partnered then
+            partnered = partnered + 1
+        end
 
-        local actual_conceptions = min(fertile_ga_count, available_partners, conceptions)
-        if actual_conceptions > 0 then
-            Consumption.output_eggs(entry, actual_conceptions)
-            entry[EK.ga_conceptions] = past_conceptions + actual_conceptions
+        local eligible = partnered - past_conceptions
+        if eligible > 0 then
+            local chance = min(1, conception_rate * entry[EK.conception_rate_factor])
+            local conceptions = coin_flips(occurrence_probability(chance, meeting_count), eligible, 5)
+
+            if conceptions > 0 then
+                Consumption.output_eggs(entry, conceptions)
+                entry[EK.ga_conceptions] = past_conceptions + conceptions
+            end
         end
     end
 
@@ -249,7 +257,6 @@ local function social_meeting(entry, meeting_count)
     end
 end
 
-local social_coefficient = 1 / 10000 -- TODO balancing
 local function evaluate_social_environment(entry, sanity_summands, delta_ticks)
     if get_ga_reproduction_cycle(entry[EK.last_update]) ~= get_ga_reproduction_cycle(game.tick) then
         -- a new ga cycle started, the gas are fertile again
@@ -262,9 +269,10 @@ local function evaluate_social_environment(entry, sanity_summands, delta_ticks)
 
     local environment = entry[EK.social_environment]
     local social_value = get_social_value(environment)
-    sanity_summands[SanitySummand.social_environment] = social_value
+    sanity_summands[SanitySummand.social_environment] = social_value ^ 0.3
 
-    local social_progress = entry[EK.social_progress] + social_value * delta_ticks * social_coefficient
+    local meeting_rate = meeting_coefficient * social_value ^ meeting_exponent
+    local social_progress = entry[EK.social_progress] + meeting_rate * delta_ticks
     if social_progress >= 1 then
         local event_count = floor(social_progress)
         social_meeting(entry, event_count)

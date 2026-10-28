@@ -1,5 +1,8 @@
 local Assert = Tirislib.Testing.Assert
 local EK = require("enums.entry-key")
+local Gender = require("enums.gender")
+
+local InhabitantsConstants = require("constants.inhabitants")
 
 local Table = Tirislib.Tables
 
@@ -845,5 +848,36 @@ Tirislib.Testing.add_test_case(
 
         Assert.equals(taken[EK.immunities].recovered[IMMUNITY_DISEASE], 2)
         Assert.equals(group[EK.immunities].recovered[IMMUNITY_DISEASE], 4)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << reproduction constants >>
+
+Tirislib.Testing.add_test_case(
+    "The meeting coefficient gives the reference meeting rate in the reference environment",
+    "inhabitants",
+    function()
+        local C = InhabitantsConstants
+        local rate = C.meeting_coefficient * C.reference_social_value ^ C.meeting_exponent
+
+        Assert.is_number_close(rate, C.reference_meeting_rate, 1e-12)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "The conception rate reaches the birth rate for naturally conceived eggs in the reference environment",
+    "inhabitants",
+    function()
+        local C = InhabitantsConstants
+        local genders = C.egg_data[C.egg_fertile].genders
+        local ga = genders[Gender.ga]
+        local eligible_share = ga * math.min(genders[Gender.fale] / ga, genders[Gender.pachin] / ga, 1)
+
+        local meetings_per_cycle = C.reference_meeting_rate * C.ga_reproduction_cycle
+        local chance_per_cycle = 1 - (1 - C.conception_rate) ^ meetings_per_cycle
+        local births_per_tick = eligible_share * chance_per_cycle / C.ga_reproduction_cycle
+
+        Assert.is_number_close(births_per_tick / C.birth_rate, 1, 1e-9)
     end
 )

@@ -123,6 +123,19 @@ InhabitantsConstants.blood_donation_item = "blood-bag"
 --- Medical-instruments consumed per blood donation.
 InhabitantsConstants.blood_donation_medical_instruments_cost = 1
 
+--- Time a ga needs after a conception until they can conceive again.
+InhabitantsConstants.ga_reproduction_cycle = Time.nauvis_day
+
+--- Social value (inhabitants * caste social coefficient of a house's social environment) that the
+--- meeting and birth rates below are balanced for.
+InhabitantsConstants.reference_social_value = 200
+--- Social meetings per tick of a house in the reference social environment.
+InhabitantsConstants.reference_meeting_rate = 12 / Time.nauvis_day
+--- How strongly the meeting rate grows with the social value: meetings ~ social value ^ meeting_exponent.
+InhabitantsConstants.meeting_exponent = 0.2
+--- Eggs conceived per inhabitant per tick by the gender mix of naturally conceived eggs in the reference social environment.
+InhabitantsConstants.birth_rate = 0.01 / Time.nauvis_day
+
 --- Calorific cost an inhabitant pays to lay one fertile egg.
 InhabitantsConstants.egg_calories = 2000
 
@@ -202,5 +215,24 @@ InhabitantsConstants.egg_data = {
         birth_defect_probability = 0.25
     }
 }
+
+-- postprocessing: derive the meeting coefficient and the conception chance per meeting from the targets
+do
+    local C = InhabitantsConstants
+
+    --- Meetings per tick of a house per social value ^ meeting_exponent.
+    C.meeting_coefficient = C.reference_meeting_rate / C.reference_social_value ^ C.meeting_exponent
+
+    -- share of the inhabitants that are gas with a partner, for the gender mix of naturally conceived eggs
+    local genders = C.egg_data[C.egg_fertile].genders
+    local ga = genders[Gender.ga]
+    local eligible_share = ga * math.min(genders[Gender.fale] / ga, genders[Gender.pachin] / ga, 1)
+
+    local chance_per_cycle = C.birth_rate * C.ga_reproduction_cycle / eligible_share
+    local meetings_per_cycle = C.reference_meeting_rate * C.ga_reproduction_cycle
+
+    --- Chance that a ga with a partner conceives during one social meeting.
+    C.conception_rate = 1 - (1 - chance_per_cycle) ^ (1 / meetings_per_cycle)
+end
 
 return InhabitantsConstants
