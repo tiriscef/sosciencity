@@ -438,11 +438,9 @@ for egg_name in pairs(InhabitantsConstants.egg_data) do
         },
         category = "sosciencity-fermentation-tank",
         energy_required = 30,
-        icon = "__sosciencity-graphics__/graphics/icon/" .. egg_name .. ".png",
-        icon_size = 64,
         unlock = "vaccination",
         auto_recycle = false
-    }
+    }:add_ingredient_layer(egg_name)
 end
 
 Tirislib.RecipeGenerator.create {
