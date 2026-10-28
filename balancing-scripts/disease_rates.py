@@ -98,6 +98,7 @@ def parse_diseases():
             "escalation_probability": field(r"escalation_probability = ([\d.]+)", float) or 0,
             "complication": field(r'complication = "([\w-]+)"'),
             "complication_probability": field(r"complication_probability = ([\d.]+)", float) or 0,
+            "complication_lethality": field(r"complication_lethality = ([\d.]+)", float),
             "contagiousness": field(r"contagiousness = ([\d.]+)", float),
             "immunity_minutes": evaluate_time(immunity) / TICKS_PER_MINUTE if immunity else None,
             "vaccine_immunity_minutes": evaluate_time(vaccine_immunity) / TICKS_PER_MINUTE if vaccine_immunity else None,
