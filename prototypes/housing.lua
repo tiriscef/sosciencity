@@ -60,9 +60,9 @@ local housing_prototype_details = {
         height = 6,
         tech_level = 3,
     },]]
-    ["khrushchyovka"] = {
+    ["panel-block"] = {
         picture = Tirislib.Entity.create_standard_picture {
-            path = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka",
+            path = "__sosciencity-graphics__/graphics/entity/panel-block/panel-block",
             width = 13,
             height = 13,
             shift = {3.0, -3.5},

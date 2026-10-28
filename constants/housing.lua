@@ -122,7 +122,7 @@ Housing.values = {
         max_comfort = 8,
         traits = {HousingTrait.cheap, HousingTrait.simple, HousingTrait.copy_paste}
     },]]
-    ["khrushchyovka"] = {
+    ["panel-block"] = {
         room_count = 40,
         comfort = 4,
         starting_comfort = 0,
