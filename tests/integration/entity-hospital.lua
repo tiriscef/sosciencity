@@ -307,7 +307,7 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "try_blood_donation returns false when no surgery-instruments available",
+    "try_blood_donation returns false when no medical-instruments available",
     "integration|integration.hospital",
     function()
         local hospital = make_hospital({0, 0})
@@ -320,14 +320,14 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "try_blood_donation accepts, adds slot, and consumes surgery-instruments",
+    "try_blood_donation accepts, adds slot, and consumes medical-instruments",
     "integration|integration.hospital",
     function()
         local hospital = make_hospital({0, 0})
         local house = Helpers.create_and_register(test_surface, "test-house", {5, 0})
         Helpers.update_entry(hospital)
         local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
-        inv.insert({name = "surgery-instruments", count = 3})
+        inv.insert({name = "medical-instruments", count = 3})
 
         local accepted = Hospital.try_blood_donation(hospital, house)
 
@@ -335,7 +335,7 @@ Tirislib.Testing.add_test_case(
         Assert.equals(#hospital[EK.donation_slots], 1, "one blood donation slot should be added")
         Assert.equals(hospital[EK.donation_slots][1].uid, house[EK.unit_number], "slot uid should match house")
         local cost = InhabitantsConstants.blood_donation_medical_instruments_cost
-        Assert.equals(inv.get_item_count("surgery-instruments"), 3 - cost, "surgery-instruments should be consumed")
+        Assert.equals(inv.get_item_count("medical-instruments"), 3 - cost, "medical-instruments should be consumed")
     end,
     setup,
     teardown
@@ -352,7 +352,7 @@ Tirislib.Testing.add_test_case(
         local house = Helpers.create_and_register(test_surface, "test-house", {5, 0})
         Helpers.update_entry(hospital)
         local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
-        inv.insert({name = "surgery-instruments", count = 5})
+        inv.insert({name = "medical-instruments", count = 5})
 
         hospital[EK.blood_donation_threshold] = 2
         hospital[EK.donation_slots][1] = {work_done = 0, uid = 0}
@@ -377,7 +377,7 @@ Tirislib.Testing.add_test_case(
         local house = Helpers.create_and_register(test_surface, "test-house", {5, 0})
         Helpers.update_entry(hospital) -- sets active = true
         local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
-        inv.insert({name = "surgery-instruments", count = 1})
+        inv.insert({name = "medical-instruments", count = 1})
 
         Hospital.try_blood_donation(hospital, house)
         Assert.equals(#hospital[EK.donation_slots], 1, "blood donation slot should exist before processing")
@@ -775,7 +775,7 @@ Tirislib.Testing.add_test_case(
         Helpers.update_entry(hospital)
         fill_with_donors(hospital, house)
         local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
-        inv.insert({name = "surgery-instruments", count = 5})
+        inv.insert({name = "medical-instruments", count = 5})
 
         Assert.is_true(Hospital.try_blood_donation(hospital, house), "donation should be accepted")
         Assert.equals(#ward[EK.donation_slots], 1, "donor should be in the general ward")
@@ -795,7 +795,7 @@ Tirislib.Testing.add_test_case(
         Helpers.update_entry(hospital)
         fill_with_donors(hospital, house)
         local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
-        inv.insert({name = "surgery-instruments", count = 5})
+        inv.insert({name = "medical-instruments", count = 5})
 
         hospital[EK.blood_donation_threshold] = 2
         Assert.is_false(Hospital.try_blood_donation(hospital, house), "2 free beds are not above threshold 2")

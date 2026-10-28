@@ -6,7 +6,7 @@ Tirislib.RecipeGenerator.create {
     energy_required = 60,
     ingredients = {
         {type = "item", name = "medical-report", amount = 10},
-        {type = "item", name = "surgery-instruments", amount = 10},
+        {type = "item", name = "medical-instruments", amount = 10},
         {type = "item", name = "bandage", amount = 10},
         {type = "item", name = "anatomical-study", amount = 5}
     },

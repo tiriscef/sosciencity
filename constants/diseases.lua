@@ -141,7 +141,7 @@ Diseases.values = {
     [8] = {
         name = "head-trauma",
         cure_items = {
-            ["surgery-instruments"] = 1,
+            ["medical-instruments"] = 1,
             ["anesthetics"] = 1,
             ["potent-analgesics"] = 1
         },
@@ -155,7 +155,7 @@ Diseases.values = {
     [9] = {
         name = "train-collision",
         cure_items = {
-            ["surgery-instruments"] = 1,
+            ["medical-instruments"] = 1,
             ["anesthetics"] = 1,
             ["blood-bag"] = 2,
             ["bandage"] = 3
@@ -966,7 +966,7 @@ Diseases.values = {
         name = "skin-cancer",
         cure_items = {
             -- the idea is: it's a local surgery, so no chemo
-            ["surgery-instruments"] = 1,
+            ["medical-instruments"] = 1,
             ["potent-analgesics"] = 1,
             ["bandage"] = 1
         },

@@ -682,9 +682,9 @@ function Hospital.try_blood_donation(hospital, housing)
     local contents = Inventories.get_combined_contents(inventories)
     local cost = InhabitantsConstants.blood_donation_medical_instruments_cost
 
-    if (contents["surgery-instruments"] or 0) < cost then return false end
+    if (contents["medical-instruments"] or 0) < cost then return false end
 
-    Inventories.remove_item_range_from_inventory_range(inventories, {["surgery-instruments"] = cost})
+    Inventories.remove_item_range_from_inventory_range(inventories, {["medical-instruments"] = cost})
     for _, bed_building in pairs(bed_buildings) do
         if get_free_bed_count(bed_building) > 0 then
             admit_donor(bed_building, housing)

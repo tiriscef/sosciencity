@@ -11,7 +11,7 @@ local medicine_items = {
         sprite_variations = {name = "medical-report", count = 3, include_icon = true}
     },
     {
-        name = "surgery-instruments",
+        name = "medical-instruments",
         use_placeholder_icon = true
     },
     {
@@ -118,7 +118,7 @@ end
 
 Tirislib.RecipeGenerator.create {
     results = {
-        {type = "item", name = "surgery-instruments", amount = 1}
+        {type = "item", name = "medical-instruments", amount = 1}
     },
     ingredients = {
         {theme = "plating",  amount = 2},
@@ -130,7 +130,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     results = {
-        {type = "item", name = "surgery-instruments", amount = 2}
+        {type = "item", name = "medical-instruments", amount = 2}
     },
     ingredients = {
         {theme = "plating",  amount = 2},
@@ -497,7 +497,7 @@ Tirislib.RecipeGenerator.create {
     enabled = true,
     energy_required = 3,
     ingredients = {
-        {type = "item", name = "surgery-instruments", amount = 1}
+        {type = "item", name = "medical-instruments", amount = 1}
     },
     results = {
         {type = "item", name = "blood-bag", amount = 1}
@@ -515,7 +515,7 @@ Tirislib.RecipeGenerator.create {
     enabled = false,
     energy_required = 3,
     ingredients = {
-        {type = "item", name = "surgery-instruments", amount = 1},
+        {type = "item", name = "medical-instruments", amount = 1},
         {type = "item", name = "analgesics",          amount = 1}
     },
     results = {
