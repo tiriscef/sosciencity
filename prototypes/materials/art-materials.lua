@@ -25,7 +25,7 @@ local art_material_items = {
     },
     {
         name = "musical-instruments",
-        use_placeholder_icon = true
+        sprite_variations = {name = "musical-instruments", count = 5}
     }
 }
 
