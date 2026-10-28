@@ -53,8 +53,6 @@ Inhabitants = {}
     storage.starting_clockwork_points: number
 
     storage.passive_redistribution_enabled: bool
-
-    storage.ages_keyed_by_hatch_day: bool (set when the AgeGroups use hatch days as keys, see migrate_ages)
 ]]
 -- local often used globals for enormous performance gains
 
@@ -110,7 +108,6 @@ function Inhabitants.init()
     storage.caste_bonuses = new_caste_table()
     storage.immigration = new_caste_table()
     storage.passive_redistribution_enabled = true
-    storage.ages_keyed_by_hatch_day = true
 
     for _, caste in pairs(Castes.all) do
         storage.housing_capacity[caste.type] = {[true] = 0, [false] = 0}
@@ -139,13 +136,10 @@ function Inhabitants.migrate_immunities()
 end
 
 --- Converts the AgeGroups of saves from before ages were keyed by hatch day. Those were keyed by age in
---- nauvis weeks, and houses shifted them every week (EK.last_age_shift). Homeless groups never aged.
---- Call during on_configuration_changed, before entries get copied.
+--- nauvis weeks, and houses shifted them every week (EK.last_age_shift). Homeless groups never aged.<br>
+--- Called by the 0.2.6 migration script, which the engine runs once per save - homeless groups have no marker of
+--- their own, so a second call would age them again. Also runs on new games, where it finds nothing to convert.
 function Inhabitants.migrate_ages()
-    if storage.ages_keyed_by_hatch_day then
-        return
-    end
-
     local today = AgeGroup.current_day()
 
     local function convert(ages, days_since_shift)
@@ -168,8 +162,6 @@ function Inhabitants.migrate_ages()
     for _, group in pairs(storage.homeless) do
         group[EK.ages] = convert(group[EK.ages], 0)
     end
-
-    storage.ages_keyed_by_hatch_day = true
 end
 
 --- Sets local references during on_load

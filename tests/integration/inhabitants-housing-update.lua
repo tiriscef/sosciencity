@@ -229,7 +229,6 @@ Tirislib.Testing.add_test_case(
         entry[EK.ages] = {[0] = 4, [2] = 6}
         entry[EK.last_age_shift] = game.tick - 3 * Time.nauvis_day
         homeless[EK.ages] = {[5] = 2}
-        storage.ages_keyed_by_hatch_day = nil
 
         Inhabitants.migrate_ages()
 
@@ -237,16 +236,14 @@ Tirislib.Testing.add_test_case(
         Assert.equals(entry[EK.ages][today - 17], 6, "age 2 weeks + 3 days since the shift")
         Assert.is_nil(entry[EK.last_age_shift], "the shift marker should be removed")
         Assert.equals(homeless[EK.ages][today - 35], 2, "homeless never aged, 5 weeks = 35 days")
-        Assert.is_true(storage.ages_keyed_by_hatch_day, "the migration flag should be set")
 
-        -- a second call must not convert again
+        -- houses are marked by EK.last_age_shift, so a second call leaves them alone
         Inhabitants.migrate_ages()
-        Assert.equals(homeless[EK.ages][today - 35], 2, "the migration should only run once")
+        Assert.equals(entry[EK.ages][today - 17], 6, "converted houses should not be converted again")
     end,
     setup,
     function()
         storage.homeless[Type.clockwork][EK.ages] = AgeGroup.new(storage.homeless[Type.clockwork][EK.inhabitants])
-        storage.ages_keyed_by_hatch_day = true
         teardown()
     end
 )
