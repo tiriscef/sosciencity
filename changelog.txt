@@ -36,7 +36,7 @@ Date: 2024.03.07
     - New Building: Sorting Machine (graphics by _traum)
 
   Bugfixes:
-    - Fixed that Hardcorn Punk didn't have an identification recipe for some copy-paste-and-forget reason. 
+    - Fixed that Hardcorn Punk didn't have an identification recipe for some copy-paste-and-forget reason.
     - Fixed that empty Water Towers sometimes prevented inhabitants from consuming water from other Water Towers with a water quality of <= 0.
 
   Changes:
@@ -118,7 +118,7 @@ Date: 2024.02.27
     - Fixed that the alt mode sprite of houses sometimes didn't get destroyed when their caste changed
 
   Changes:
-    - The Gui of Hospitals now have a patients list with all  
+    - The Gui of Hospitals now have a patients list with all
     - Small changes to the GUIs of Markets and Water Distributers
     - Increased the range of Water Towers from 50 to 70
     - Decreased the frequency of reports to every 20 minutes
@@ -192,7 +192,7 @@ Date: 2024.02.11
   Bugfixes:
     - Fixed that it was possible to rotate the Foundry HQ and the Waste Incinerator even though there are no rotated graphics.
     - Fixed that the Salt Pond had a too small range for its water tile needs.
-    - Fixed that negative Gleam, Gunfire or Foundry caste points result in a basically infinite caste bonus. 
+    - Fixed that negative Gleam, Gunfire or Foundry caste points result in a basically infinite caste bonus.
 
   Changes:
     - Changed the prerequisites of some early game technologies.
@@ -245,7 +245,7 @@ Date: 2022.12.22
     - Added an effect description to the caste efficiency technologies that points to their higher upbringing chance.
     - Orchid Caste now has Open Environment Farming as prerequisite (instead of Clockwork caste).
     - Sosciencity will no longer add Productivity as an allowed effect to all crafting machines, because it didn't use that before.
-    - Fermenting Biter Meat no longer needs Pemtenn. 
+    - Fermenting Biter Meat no longer needs Pemtenn.
     - Salt Pond gets unlocked with Fermentation instead of Basic Biotechnology.
 
   Factory-Breaking Changes:
@@ -307,7 +307,7 @@ Date: 2022.12.16
     - Drying Unit recipes scaled up to last 5 seconds.
 
   Factory-Breaking Changes:
-    - Older maps won't load with this version. I saved the headaches of writing migration scripts for this version, because there was some time since the last update. 
+    - Older maps won't load with this version. I saved the headaches of writing migration scripts for this version, because there was some time since the last update.
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.15
