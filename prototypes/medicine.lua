@@ -73,31 +73,31 @@ local medicine_items = {
     },
     {
         name = "ovoculture",
-        use_placeholder_icon = true
+        sprite_variations = {name = "ovoculture-pile", count = 3}
     },
     {
         name = "riverhorse-flu-vaccine",
-        use_placeholder_icon = true
+        sprite_variations = {name = "riverhorse-flu-vaccine-pile", count = 3}
     },
     {
         name = "purple-pox-vaccine",
-        use_placeholder_icon = true
+        sprite_variations = {name = "purple-pox-vaccine-pile", count = 3}
     },
     {
         name = "whooping-cough-vaccine",
-        use_placeholder_icon = true
+        sprite_variations = {name = "whooping-cough-vaccine-pile", count = 3}
     },
     {
         name = "tetanus-vaccine",
-        use_placeholder_icon = true
+        sprite_variations = {name = "tetanus-vaccine-pile", count = 3}
     },
     {
         name = "flu-vaccine",
-        use_placeholder_icon = true
+        sprite_variations = {name = "flu-vaccine-pile", count = 3}
     },
     {
         name = "tetanus-whooping-cough-vaccine",
-        use_placeholder_icon = true
+        sprite_variations = {name = "tetanus-whooping-cough-vaccine-pile", count = 3}
     }
 }
 
