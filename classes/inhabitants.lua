@@ -1,3 +1,4 @@
+local AgeLink = require("enums.age-link")
 local DeathCause = require("enums.death-cause")
 local EK = require("enums.entry-key")
 local MoveCause = require("enums.move-cause")
@@ -463,6 +464,72 @@ function AgeGroup.take(group, to_take, total_count)
     return ret
 end
 
+--- Takes the given count of people from the oldest or youngest end of the given AgeGroup and returns the
+--- AgeGroup of the taken people.
+--- @param group AgeGroup
+--- @param to_take integer
+--- @param link AgeLink which end to take from
+--- @return AgeGroup
+function AgeGroup.take_extreme(group, to_take, link)
+    local hatch_days = Tables.get_keyset(group)
+    if link == AgeLink.oldest then
+        table.sort(hatch_days)
+    else
+        table.sort(hatch_days, function(a, b) return a > b end)
+    end
+
+    local ret = {}
+    for _, hatch_day in pairs(hatch_days) do
+        if to_take <= 0 then
+            break
+        end
+
+        local current_count = group[hatch_day]
+        local current_take = min(current_count, to_take)
+        if current_take > 0 then
+            ret[hatch_day] = current_take
+            to_take = to_take - current_take
+        end
+        group[hatch_day] = (current_count ~= current_take) and current_count - current_take or nil
+    end
+
+    return ret
+end
+
+--- Takes the ages of people with the given diseases. People with an age-linked disease are taken from the
+--- matching end of the AgeGroup, the rest proportionally. Returns the AgeGroup of the taken people.
+--- @param group AgeGroup
+--- @param diseases DiseaseGroup diseases of the taken people
+--- @param to_take integer
+--- @param total_count integer? count of people in the AgeGroup
+--- @return AgeGroup
+function AgeGroup.take_for_diseases(group, diseases, to_take, total_count)
+    total_count = total_count or Tables.sum(group)
+
+    local oldest = 0
+    local youngest = 0
+    for disease_id, count in pairs(diseases) do
+        local link = disease_id ~= HEALTHY and Diseases.values[disease_id].age_link
+        if link == AgeLink.oldest then
+            oldest = oldest + count
+        elseif link == AgeLink.youngest then
+            youngest = youngest + count
+        end
+    end
+
+    if oldest + youngest == 0 then
+        return AgeGroup.take(group, to_take, total_count)
+    end
+
+    local ret = AgeGroup.take_extreme(group, min(oldest, to_take), AgeLink.oldest)
+    AgeGroup.merge(ret, AgeGroup.take_extreme(group, min(youngest, to_take - Tables.sum(ret)), AgeLink.youngest))
+
+    local linked_count = Tables.sum(ret)
+    AgeGroup.merge(ret, AgeGroup.take(group, to_take - linked_count, total_count - linked_count))
+
+    return ret
+end
+
 --- Subtracts the counts in rh from lh. Errors if lh has fewer people of any hatch day than rh.
 --- @param lh AgeGroup
 --- @param rh AgeGroup
@@ -867,6 +934,8 @@ function InhabitantGroup.take_specific(group, count, diseases, genders, ages, im
     end
     if ages then
         AgeGroup.subtract(group[EK.ages], ages)
+    elseif diseases then
+        ages = AgeGroup.take_for_diseases(group[EK.ages], diseases, taken_count, existing_count)
     end
     if immunities then
         ImmunityGroup.subtract(group[EK.immunities], immunities)
@@ -883,6 +952,20 @@ function InhabitantGroup.take_specific(group, count, diseases, genders, ages, im
         ages or AgeGroup.take(group[EK.ages], taken_count, existing_count),
         immunities or ImmunityGroup.take(group[EK.immunities], taken_count, existing_count)
     )
+end
+
+--- Takes the given count of inhabitants that died of the given disease. They have to be bookkept as healthy
+--- already, like after InhabitantGroup.cure. Their ages depend on the disease's age link.
+--- @param group InhabitantGroup
+--- @param count integer
+--- @param disease_id DiseaseID
+--- @return InhabitantGroup
+function InhabitantGroup.take_deceased(group, count, disease_id)
+    local link = Diseases.values[disease_id].age_link
+    -- take_specific subtracts the given ages, so they are only selected on a copy here
+    local ages = link and AgeGroup.take_extreme(Tables.copy(group[EK.ages]), count, link)
+
+    return InhabitantGroup.take_specific(group, count, {[HEALTHY] = count}, nil, ages)
 end
 
 --- Tries to make the given number of people sick with the given disease, respecting their immunities.

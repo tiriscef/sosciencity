@@ -248,3 +248,52 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << age links >>
+
+-- test-disease-oldest / test-disease-youngest: lethality 1, see the test diseases in constants/diseases.lua
+local OLDEST_DISEASE = 99007
+local YOUNGEST_DISEASE = 99008
+
+Tirislib.Testing.add_test_case(
+    "Huwans dying of an oldest-linked disease are the oldest",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        local today = AgeGroup.current_day()
+        entry[EK.ages] = {[today - 100] = 2, [today - 50] = 3, [today] = 5}
+        DiseaseGroup.make_sick(entry[EK.diseases], OLDEST_DISEASE, 2)
+
+        DiseaseGroup.cure(entry[EK.diseases], OLDEST_DISEASE, 2)
+        Inhabitants.apply_cure_side_effects(entry, OLDEST_DISEASE, 2, false)
+
+        Assert.equals(entry[EK.inhabitants], 8, "both should have died")
+        Assert.is_nil(entry[EK.ages][today - 100], "the oldest should have died")
+        Assert.equals(entry[EK.ages][today - 50], 3)
+        Assert.equals(entry[EK.ages][today], 5)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Huwans dying of a youngest-linked disease are the youngest",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        local today = AgeGroup.current_day()
+        entry[EK.ages] = {[today - 100] = 2, [today - 50] = 3, [today] = 5}
+        DiseaseGroup.make_sick(entry[EK.diseases], YOUNGEST_DISEASE, 3)
+
+        DiseaseGroup.cure(entry[EK.diseases], YOUNGEST_DISEASE, 3)
+        Inhabitants.apply_cure_side_effects(entry, YOUNGEST_DISEASE, 3, false)
+
+        Assert.equals(entry[EK.inhabitants], 7, "all three should have died")
+        Assert.equals(entry[EK.ages][today], 2, "the youngest should have died")
+        Assert.equals(entry[EK.ages][today - 100], 2)
+        Assert.equals(entry[EK.ages][today - 50], 3)
+    end,
+    setup,
+    teardown
+)

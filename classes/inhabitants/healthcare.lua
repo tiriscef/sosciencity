@@ -23,7 +23,7 @@ local make_sick_randomly = InhabitantGroup.make_sick_randomly
 local grant_immunity = ImmunityGroup.grant
 local wane_immunities = ImmunityGroup.wane
 local cure = DiseaseGroup.cure
-local take_specific_inhabitants = InhabitantGroup.take_specific
+local take_deceased = InhabitantGroup.take_deceased
 local floor = math.floor
 
 -- set during load
@@ -65,7 +65,7 @@ local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
     if lethal_probability then
         dead_count = coin_flips(lethal_probability, count)
         if dead_count > 0 then
-            take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
+            take_deceased(entry, dead_count, disease_id)
             Communication.report_disease_death(dead_count, disease_id)
         end
     end

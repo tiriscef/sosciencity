@@ -1,6 +1,8 @@
 local Assert = Tirislib.Testing.Assert
+local AgeLink = require("enums.age-link")
 local EK = require("enums.entry-key")
 local Gender = require("enums.gender")
+local Type = require("enums.type")
 
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
@@ -320,6 +322,126 @@ Tirislib.Testing.add_test_case(
     function()
         Assert.equals(AgeGroup.get_age(80, 100), 20)
         Assert.equals(AgeGroup.get_age(AgeGroup.current_day() - 7), 7)
+    end
+)
+
+-- test-disease-oldest / test-disease-youngest, see the test diseases in constants/diseases.lua
+local OLDEST_DISEASE = 99007
+local YOUNGEST_DISEASE = 99008
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_extreme takes the oldest first",
+    "inhabitants",
+    function()
+        local group = {[30] = 2, [10] = 1, [20] = 4}
+        local taken = AgeGroup.take_extreme(group, 4, AgeLink.oldest)
+
+        Assert.equals(taken[10], 1)
+        Assert.equals(taken[20], 3)
+        Assert.is_nil(taken[30])
+        Assert.is_nil(group[10])
+        Assert.equals(group[20], 1)
+        Assert.equals(group[30], 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_extreme takes the youngest first",
+    "inhabitants",
+    function()
+        local group = {[30] = 2, [10] = 1, [20] = 4}
+        local taken = AgeGroup.take_extreme(group, 3, AgeLink.youngest)
+
+        Assert.equals(taken[30], 2)
+        Assert.equals(taken[20], 1)
+        Assert.equals(group[20], 3)
+        Assert.equals(group[10], 1)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_extreme takes at most everyone",
+    "inhabitants",
+    function()
+        local group = {[30] = 2, [10] = 1}
+        local taken = AgeGroup.take_extreme(group, 10, AgeLink.oldest)
+
+        Assert.equals(Table.sum(taken), 3)
+        Assert.equals(Table.sum(group), 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_for_diseases takes linked diseases from their end and the rest proportionally",
+    "inhabitants",
+    function()
+        local group = {[10] = 2, [20] = 6, [30] = 2}
+        local diseases = {[HEALTHY] = 2, [OLDEST_DISEASE] = 2, [YOUNGEST_DISEASE] = 1}
+        local taken = AgeGroup.take_for_diseases(group, diseases, 5, 10)
+
+        Assert.equals(Table.sum(taken), 5)
+        Assert.equals(Table.sum(taken) + Table.sum(group), 10)
+        Assert.equals(taken[10], 2, "the two oldest should be taken for the oldest-linked disease")
+        Assert.greater_than(taken[30] or 0, 0, "the youngest should be taken for the youngest-linked disease")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_for_diseases without linked diseases is proportional",
+    "inhabitants",
+    function()
+        local group = {[10] = 5, [20] = 5}
+        local taken = AgeGroup.take_for_diseases(group, {[HEALTHY] = 4}, 4, 10)
+
+        Assert.equals(taken[10], 2)
+        Assert.equals(taken[20], 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_specific takes the ages of age-linked diseases",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        group[EK.ages] = {[10] = 3, [20] = 4, [30] = 3}
+        DiseaseGroup.make_sick(group[EK.diseases], YOUNGEST_DISEASE, 3)
+
+        local taken = InhabitantGroup.take_specific(group, 3, {[YOUNGEST_DISEASE] = 3})
+
+        Assert.equals(taken[EK.ages][30], 3, "the youngest should leave with the disease")
+        Assert.is_nil(group[EK.ages][30])
+        Assert.equals(Table.sum(group[EK.ages]), 7)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased takes the ages of the disease's age link",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        group[EK.ages] = {[10] = 3, [20] = 4, [30] = 3}
+
+        local dead = InhabitantGroup.take_deceased(group, 2, OLDEST_DISEASE)
+
+        Assert.equals(dead[EK.ages][10], 2, "the oldest should die of an oldest-linked disease")
+        Assert.equals(group[EK.ages][10], 1)
+        Assert.equals(group[EK.inhabitants], 8)
+        Assert.equals(Table.sum(group[EK.ages]), 8, "ages should be subtracted only once")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased takes proportional ages for unlinked diseases",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        group[EK.ages] = {[10] = 5, [20] = 5}
+
+        local dead = InhabitantGroup.take_deceased(group, 4, 1)
+
+        Assert.equals(dead[EK.ages][10], 2)
+        Assert.equals(dead[EK.ages][20], 2)
+        Assert.equals(Table.sum(group[EK.ages]), 6)
     end
 )
 

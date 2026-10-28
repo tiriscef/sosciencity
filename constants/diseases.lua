@@ -1,3 +1,4 @@
+local AgeLink = require("enums.age-link")
 local DiseaseCategory = require("enums.disease-category")
 local DiseasedCause = require("enums.diseased-cause")
 local Type = require("enums.type")
@@ -34,6 +35,7 @@ local Diseases = {}
 --- @field complication_lethality number
 --- @field work_effectivity number
 --- @field reports_per_treatment number
+--- @field age_link AgeLink
 
 --- Disease definitions<br>
 --- **name:** prototype name of the disease<br>
@@ -58,6 +60,8 @@ local Diseases = {}
 --- **work_effectivity:** The percentage of the normal points the inhabitants provide<br>
 --- **is_treatable:** false when no hospital can treat the disease; absent means treatable<br>
 --- **reports_per_treatment:** The count of medical reports that a treatment of this disease produces<br>
+--- **age_link:** which inhabitants of a house have this disease when some of them leave it (death, transport) -
+--- the bookkeeping doesn't know who has which disease; nil means any age<br>
 Diseases.values = {
     -- 1+: primarily accidents
     [1] = {
@@ -528,7 +532,8 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         lethality = 0.1,
         work_effectivity = 0.3,
-        reports_per_treatment = 1
+        reports_per_treatment = 1,
+        age_link = AgeLink.youngest
     },
     [4005] = {
         name = "environmental-allergy",
@@ -565,7 +570,8 @@ Diseases.values = {
         complication = "vector-rejection",
         complication_probability = 0.1,
         work_effectivity = 1.5,
-        reports_per_treatment = 2
+        reports_per_treatment = 2,
+        age_link = AgeLink.youngest
     },
     [4008] = {
         name = "purple-surplus",
@@ -581,7 +587,8 @@ Diseases.values = {
         complication = "vector-rejection",
         complication_probability = 0.1,
         work_effectivity = 1.3,
-        reports_per_treatment = 2
+        reports_per_treatment = 2,
+        age_link = AgeLink.youngest
     },
     [4009] = {
         name = "hemophilia",
@@ -614,7 +621,8 @@ Diseases.values = {
         complication = "vector-rejection",
         complication_probability = 0.1,
         work_effectivity = 0.4,
-        reports_per_treatment = 2
+        reports_per_treatment = 2,
+        age_link = AgeLink.youngest
     },
     [4011] = {
         name = "mirror-metabolism",
@@ -1227,6 +1235,22 @@ if DEBUG then
         vaccine_immunity_duration = math.huge,
         work_effectivity = 0,
         reports_per_treatment = 0
+    }
+    Diseases.values[99007] = {
+        name = "test-disease-oldest",
+        curing_workload = 1,
+        lethality = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 0,
+        age_link = AgeLink.oldest
+    }
+    Diseases.values[99008] = {
+        name = "test-disease-youngest",
+        curing_workload = 1,
+        lethality = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 0,
+        age_link = AgeLink.youngest
     }
 end
 
