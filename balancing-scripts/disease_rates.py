@@ -20,13 +20,26 @@ Model:
   right away. That's an upper bound: natural recovery only cuts it short for patients who wait.
   Complications of treatments are added (one level deep); escalations are left out, because they only
   happen to untreated cases.
-- Not modelled: malnutrition/dehydration (only without food/water), birth defects (per birth), infections
-  (social contagion), zoonosis unless --animal-farms is given.
+- Not modelled: malnutrition/dehydration (only without food/water), birth defects (per birth),
+  zoonosis unless --animal-farms is given.
+
+Contagion model (--contagion), re-implements social_meeting in classes/inhabitants/housing-environment.lua
+and InhabitantGroup.make_sick in classes/inhabitants.lua:
+- A house has 0.36 * V^0.3 social meetings per minute (V = inhabitants * caste social coefficient of its
+  social environment). Per meeting, every sick huwan infects with the disease's contagiousness, and the
+  infection lands with the chance susceptible / healthy. So per sick huwan: beta = meetings * contagiousness.
+- That gives an SIR model where the success chance is S / (S + R), not S / N:
+      dS = -beta*I*S/(S+R) + w*R,  dI = beta*I*S/(S+R) - gamma*I,  dR = gamma*I - w*R
+  with gamma = 1 / natural recovery, w = 1 / immunity duration and R0 = beta / gamma.
+- Without immunity the success chance is always 1, so a disease with R0 > 1 infects everyone. With waning
+  immunity it settles at a steady infected share of (w/gamma) / (R0/(R0-1) + w/gamma).
+- Worst case: untreated, no deaths or escalations, no randomness that ends small outbreaks early.
 
 Usage, from the mod folder:
     python3 balancing-scripts/disease_rates.py
     python3 balancing-scripts/disease_rates.py -c plasma -H 20 -S 15 --employed 0.6
     python3 balancing-scripts/disease_rates.py --diseases
+    python3 balancing-scripts/disease_rates.py --contagion --neighbours 500 --immunity rare-cold=300
     python3 balancing-scripts/disease_rates.py --rate sanity=0.5 --workload depression=10
     python3 balancing-scripts/disease_rates.py --food-risk 0.3 --water drinkable-water
 """
@@ -52,7 +65,9 @@ POPULATION_CATEGORIES = ["health", "sanity", "accident"]
 
 
 def evaluate_time(expression):
-    """Evaluates expressions like '3 * Time.nauvis_week' to ticks."""
+    """Evaluates expressions like '3 * Time.nauvis_week' to ticks. math.huge is infinite."""
+    if expression.strip() == "math.huge":
+        return math.inf
     m = re.fullmatch(r"([\d.]+) \* Time\.(\w+)", expression.strip())
     return float(m.group(1)) * TIME[m.group(2)]
 
@@ -70,6 +85,8 @@ def parse_diseases():
 
         name = field(r'name = "([\w-]+)"')
         recovery = field(r"natural_recovery = ([^,\n]+)")
+        immunity = field(r"\n\s+immunity_duration = ([^,\n]+)")
+        vaccine_immunity = field(r"vaccine_immunity_duration = ([^,\n]+)")
         diseases[name] = {
             "id": int(disease_id),
             "workload": field(r"curing_workload = ([\d.]+)", float),
@@ -81,6 +98,9 @@ def parse_diseases():
             "escalation_probability": field(r"escalation_probability = ([\d.]+)", float) or 0,
             "complication": field(r'complication = "([\w-]+)"'),
             "complication_probability": field(r"complication_probability = ([\d.]+)", float) or 0,
+            "contagiousness": field(r"contagiousness = ([\d.]+)", float),
+            "immunity_minutes": evaluate_time(immunity) / TICKS_PER_MINUTE if immunity else None,
+            "vaccine_immunity_minutes": evaluate_time(vaccine_immunity) / TICKS_PER_MINUTE if vaccine_immunity else None,
         }
     return diseases
 
@@ -127,7 +147,15 @@ def parse_castes():
             category: float(re.search(rf"{category}_disease_susceptibility = ([\d.]+)", body).group(1))
             for category in POPULATION_CATEGORIES
         }
+        castes[name]["social"] = float(re.search(r"social_coefficient = ([\d.]+)", body).group(1))
     return castes
+
+
+def parse_meeting_coefficient():
+    """Returns the social meetings per tick per unit of social value^0.3."""
+    src = (MOD / "classes" / "inhabitants" / "housing-environment.lua").read_text()
+    numerator, denominator = re.search(r"local social_coefficient = ([\d.]+) / ([\d.]+)", src).groups()
+    return float(numerator) / float(denominator)
 
 
 def parse_buildings():
@@ -285,6 +313,103 @@ def print_diseases(diseases, categories):
         )
 
 
+def meetings_per_minute(neighbours, social_coefficient, meeting_coefficient):
+    """Social meetings per minute of a house whose social environment holds the given inhabitants."""
+    return TICKS_PER_MINUTE * meeting_coefficient * (neighbours * social_coefficient) ** 0.3
+
+
+def simulate_wave(beta, gamma, w, minutes=20000, dt=0.05):
+    """Simulates the first outbreak from 0.1% infected. Returns (peak infected share, minutes to peak)."""
+    s, i, r = 0.999, 0.001, 0.0
+    peak, peak_time = i, 0.0
+    t = 0.0
+    while t < minutes:
+        healthy = s + r
+        infections = beta * i * s / healthy if healthy > 0 else 0
+        recoveries = gamma * i
+        waning = w * r
+        s += (waning - infections) * dt
+        i += (infections - recoveries) * dt
+        r += (recoveries - waning) * dt
+        t += dt
+        if i > peak:
+            peak, peak_time = i, t
+        elif i < peak / 100:
+            break
+    return peak, peak_time
+
+
+def steady_infected(r0, gamma, w):
+    """Infected share once the outbreak has settled; None means everyone stays infected."""
+    if r0 <= 1:
+        return 0.0
+    if w is None:
+        return None
+    return (w / gamma) / (r0 / (r0 - 1) + w / gamma)
+
+
+def print_contagion(args, diseases, castes, meeting_coefficient):
+    social = sum(castes[c]["social"] for c in args.castes) / len(args.castes)
+    meetings = meetings_per_minute(args.neighbours, social, meeting_coefficient)
+    contagious = sorted(
+        (item for item in diseases.items() if item[1]["contagiousness"]), key=lambda x: x[1]["id"]
+    )
+
+    print(f"Social environment: {args.neighbours} inhabitants of {', '.join(args.castes)} "
+          f"-> {meetings:.2f} meetings per minute per house")
+    print("Worst case: untreated, no deaths or escalations.")
+    print()
+    print(f"{'disease':<24}{'R0':>6}{'recovery':>10}{'immunity':>10}{'peak':>8}{'at':>9}"
+          f"{'steady':>8}{'herd':>7}{'vacc/min':>10}")
+    for name, disease in contagious:
+        gamma = 1 / disease["recovery_minutes"]
+        beta = meetings * disease["contagiousness"]
+        r0 = beta / gamma
+        immunity = disease["immunity_minutes"]
+        w = None if immunity is None else (0.0 if math.isinf(immunity) else 1 / immunity)
+        immunity_text = "none" if immunity is None else ("life" if math.isinf(immunity) else f"{immunity:.0f}m")
+
+        steady = steady_infected(r0, gamma, w)
+        if r0 <= 1:
+            peak_text, at_text = "-", "-"
+        else:
+            peak, peak_time = simulate_wave(beta, gamma, w or 0.0) if w is not None else (1.0, None)
+            peak_text = f"{peak:.0%}"
+            at_text = f"{peak_time:.0f}m" if peak_time is not None else "-"
+        steady_text = "all" if steady is None else f"{steady:.1%}"
+
+        herd = max(0.0, 1 - 1 / r0)
+        vaccine = disease["vaccine_immunity_minutes"]
+        if vaccine is None:
+            vaccinations = "-"
+        elif math.isinf(vaccine):
+            vaccinations = "births"
+        else:
+            vaccinations = f"{herd * 1000 / vaccine:.2f}"
+
+        flag = ""
+        if steady is None and r0 > 1:
+            flag = "  <- no immunity, infects everyone"
+        elif steady > args.max_endemic:
+            flag = "  <- endemic"
+        print(f"{name:<24}{r0:>6.2f}{disease['recovery_minutes']:>9.0f}m{immunity_text:>10}{peak_text:>8}"
+              f"{at_text:>9}{steady_text:>8}{herd:>7.0%}{vaccinations:>10}{flag}")
+    print()
+    print("peak/at: first wave from 0.1% infected; steady: infected share once settled;")
+    print("herd: immune share of the healthy that stops the spread; vacc/min: vaccinations per minute")
+    print("per 1000 inhabitants to hold it (births: lifelong vaccine, only newcomers need it)")
+    print()
+
+    sizes = [20, 100, 500, 2000]
+    print("R0 by social environment size (inhabitants):")
+    print(f"{'disease':<24}" + "".join(f"{size:>8}" for size in sizes))
+    for name, disease in contagious:
+        gamma = 1 / disease["recovery_minutes"]
+        r0s = [meetings_per_minute(size, social, meeting_coefficient) * disease["contagiousness"] / gamma
+               for size in sizes]
+        print(f"{name:<24}" + "".join(f"{r0:>8.2f}" for r0 in r0s))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("-p", "--population", type=int, default=1000, help="inhabitants per caste (default 1000)")
@@ -306,6 +431,23 @@ def main():
         "--workload", action="append", default=[], metavar="DISEASE=OPS", help="try another workload for a disease"
     )
     parser.add_argument("--diseases", action="store_true", help="list every disease instead of the city estimate")
+    parser.add_argument(
+        "--contagion", action="store_true", help="model the spread of the contagious diseases instead"
+    )
+    parser.add_argument(
+        "--neighbours", type=int, default=200, help="inhabitants in a house's social environment (default 200)"
+    )
+    parser.add_argument(
+        "--max-endemic", type=float, default=0.05, help="steady infected share that gets flagged (default 0.05)"
+    )
+    parser.add_argument(
+        "--immunity", action="append", default=[], metavar="DISEASE=MINUTES",
+        help="try another immunity duration for a disease (0 = none, inf = lifelong)"
+    )
+    parser.add_argument(
+        "--contagiousness", action="append", default=[], metavar="DISEASE=X",
+        help="try another contagiousness for a disease"
+    )
     args = parser.parse_args()
 
     diseases = parse_diseases()
@@ -316,6 +458,12 @@ def main():
     for item in args.workload:
         name, ops = item.split("=")
         diseases[name]["workload"] = float(ops)
+    for item in args.immunity:
+        name, minutes = item.split("=")
+        diseases[name]["immunity_minutes"] = float(minutes) or None
+    for item in args.contagiousness:
+        name, value = item.split("=")
+        diseases[name]["contagiousness"] = float(value)
     args.castes = args.castes or list(castes)
     contamination = parse_water_contamination()
     if args.water not in contamination:
@@ -327,6 +475,8 @@ def main():
 
     if args.diseases:
         print_diseases(diseases, categories)
+    elif args.contagion:
+        print_contagion(args, diseases, castes, parse_meeting_coefficient())
     else:
         print_city(args, castes, parse_rates(), categories, diseases, work_rates, speed)
 
