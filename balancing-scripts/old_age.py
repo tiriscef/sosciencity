@@ -10,7 +10,8 @@ Inputs:
 - the old age parameters below (overridable with flags)
 
 Model, per huwan of age a (nauvis days) in a house with health H and sanity S:
-- Onset O = onset + health_shift * (H - 10) + sanity_shift * (S - 10). For a Gompertz curve, delaying the onset
+- Onset O = onset + health_shift * (H - 10) + sanity_shift * (S - 10), with H and S capped at shift_cap (40).
+  Realistic good cities reach about 25, 40 is hard to reach. For a Gompertz curve, delaying the onset
   by X days is the same as dividing the hazards by 2^(X / D), so this is the only knob health and sanity need.
 - Frailty f(a) = 2^((a - O) / D): doubles every D days.
 - Natural death ("passed away in their sleep"): natural_rate * f(a) per day, no hospital involved.
@@ -45,20 +46,21 @@ MAX_AGE = 2000
 
 # proposals, phase 4 moves them into constants/inhabitants.lua
 PROPOSED = {
-    "onset": 160,  # days; frailty is 1 at this age (health = sanity = 10)
-    "doubling": 35,  # days until frailty doubles
+    "onset": 170,  # days; frailty is 1 at this age (health = sanity = 10)
+    "doubling": 45,  # days until frailty doubles
     "health_shift": 3,  # days of later onset per health point above 10
     "sanity_shift": 1.5,  # days of later onset per sanity point above 10
-    "natural_rate": 0.0002,  # natural deaths per huwan per day at the onset
-    "old_age_rate": 0.01,  # old age disease cases per huwan per day at the onset
+    "shift_cap": 40,  # health and sanity above this count as this for the onset
+    "natural_rate": 0.001,  # natural deaths per huwan per day at the onset
+    "old_age_rate": 0.005,  # old age disease cases per huwan per day at the onset
     "old_age_lethality": 0.8,
-    "old_age_complication_lethality": 0.04,
+    "old_age_complication_lethality": 0.08,
     "default_complication_lethality": 0.01,  # for diseases that don't define one
     "old_age_workload": 4,  # operations to treat the generic old age disease
 }
 
 CAUSES = ["natural", "old age disease", "other diseases"]
-SWEEP = [0, 5, 10, 15, 20, 30]
+SWEEP = [0, 5, 10, 15, 20, 25, 30, 40, 50]
 
 
 def death_chance(base, frailty):
@@ -106,7 +108,8 @@ def life_table(params, health, sanity, care, data):
     """Returns (survival by age, deaths by age and cause, old age cases by age per living huwan)."""
     diseases = data["diseases"]
     cases = ordinary_cases_per_day(params, health, sanity, data)
-    onset = params.onset + params.health_shift * (health - 10) + params.sanity_shift * (sanity - 10)
+    cap = params.shift_cap
+    onset = params.onset + params.health_shift * (min(health, cap) - 10) + params.sanity_shift * (min(sanity, cap) - 10)
     old_age_base = params.old_age_complication_lethality if care else params.old_age_lethality
 
     survival = [1.0]
@@ -248,7 +251,7 @@ def main():
     birth_rate = params.birth_rate or reproduction.parse_reproduction_constants()["target"]
 
     print("Old age: onset {onset:g} days, frailty doubles every {doubling:g} days, onset +{health_shift:g} days per "
-          "health and +{sanity_shift:g} per sanity point above 10".format(**vars(params)))
+          "health and +{sanity_shift:g} per sanity point above 10 (counted up to {shift_cap:g})".format(**vars(params)))
     print("At the onset: natural deaths {natural_rate:g}, old age cases {old_age_rate:g} per huwan per day; "
           "old age disease lethality {old_age_lethality:g} untreated, {old_age_complication_lethality:g} treated; "
           "default complication lethality {default_complication_lethality:g}".format(**vars(params)))
