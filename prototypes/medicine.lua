@@ -12,7 +12,7 @@ local medicine_items = {
     },
     {
         name = "medical-instruments",
-        use_placeholder_icon = true
+        sprite_variations = {name = "medical-instruments", count = 5}
     },
     {
         name = "activated-carbon",
