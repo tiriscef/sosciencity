@@ -68,8 +68,8 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "vaccination",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/vaccination.png",
+    icon_size = 256,
     prerequisites = {"transfusion-medicine"},
     effects = {
         {
@@ -90,8 +90,8 @@ Tirislib.Technology.create {
 
 Tirislib.Technology.create {
     name = "combined-vaccines",
-    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
-    icon_size = 128,
+    icon = "__sosciencity-graphics__/graphics/technology/combined-vaccines.png",
+    icon_size = 256,
     prerequisites = {"vaccination"},
     unit = {
         count = 250,
