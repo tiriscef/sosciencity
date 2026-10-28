@@ -100,6 +100,8 @@ Diseases.values = {
         curing_workload = 1,
         lethality = 0.15,
         natural_recovery = 1 * Time.nauvis_week,
+        escalation = "tetanus",
+        escalation_probability = 0.1,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -262,7 +264,10 @@ Diseases.values = {
         },
         curing_workload = 1,
         lethality = 0.01,
+        contagiousness = 0.04,
         natural_recovery = 3 * Time.nauvis_day,
+        immunity_duration = 60 * Time.nauvis_day,
+        vaccine_immunity_duration = 60 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.5,
@@ -315,6 +320,37 @@ Diseases.values = {
         escalation = "anaphylaxis",
         escalation_probability = 0.35,
         work_effectivity = 0.65,
+        reports_per_treatment = 1
+    },
+    [2008] = {
+        name = "purple-pox",
+        cure_items = {
+            ["antimicrobials"] = 1,
+            ["analgesics"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.02,
+        contagiousness = 0.08,
+        natural_recovery = 4 * Time.nauvis_day,
+        immunity_duration = math.huge,
+        vaccine_immunity_duration = math.huge,
+        work_effectivity = 0.2,
+        reports_per_treatment = 1
+    },
+    [2009] = {
+        name = "whooping-cough",
+        cure_items = {
+            ["antimicrobials"] = 2
+        },
+        curing_workload = 2,
+        lethality = 0.01,
+        contagiousness = 0.025,
+        natural_recovery = 10 * Time.nauvis_day,
+        immunity_duration = 200 * Time.nauvis_day,
+        vaccine_immunity_duration = 100 * Time.nauvis_day,
+        escalation = "lung-infection",
+        escalation_probability = 0.1,
+        work_effectivity = 0.4,
         reports_per_treatment = 1
     },
     -- 3000+: primarily escalation diseases
@@ -413,6 +449,20 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         work_effectivity = 0,
         reports_per_treatment = 1
+    },
+    [3007] = {
+        name = "tetanus",
+        cure_items = {
+            ["antitoxin"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.5,
+        natural_recovery = 2 * Time.nauvis_week,
+        vaccine_immunity_duration = 300 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2
     },
     -- 4000+: primarily birth defects
     [4000] = {
@@ -766,7 +816,9 @@ Diseases.values = {
         },
         curing_workload = 2,
         lethality = 0.05,
+        contagiousness = 0.06,
         natural_recovery = 2 * Time.nauvis_day,
+        immunity_duration = 25 * Time.nauvis_day,
         escalation = "diarrhea",
         escalation_probability = 0.5,
         work_effectivity = 0.4,
@@ -891,6 +943,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 3 * Time.nauvis_day,
+        escalation = "tetanus",
+        escalation_probability = 0.05,
         work_effectivity = 0.5,
         reports_per_treatment = 0.5
     },
@@ -944,6 +998,8 @@ Diseases.categories = {
         ["rare-cold"] = 100,
         ["yeast-infection"] = 100,
         ["riverhorse-like-flu"] = 100,
+        ["purple-pox"] = 30,
+        ["whooping-cough"] = 30,
         ["headaches"] = 100,
         ["diarrhea"] = 100,
         ["exhaustion"] = 500,

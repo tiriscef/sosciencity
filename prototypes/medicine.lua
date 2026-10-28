@@ -78,6 +78,26 @@ local medicine_items = {
     {
         name = "riverhorse-flu-vaccine",
         use_placeholder_icon = true
+    },
+    {
+        name = "purple-pox-vaccine",
+        use_placeholder_icon = true
+    },
+    {
+        name = "whooping-cough-vaccine",
+        use_placeholder_icon = true
+    },
+    {
+        name = "tetanus-vaccine",
+        use_placeholder_icon = true
+    },
+    {
+        name = "flu-vaccine",
+        use_placeholder_icon = true
+    },
+    {
+        name = "tetanus-whooping-cough-vaccine",
+        use_placeholder_icon = true
     }
 }
 
@@ -443,21 +463,33 @@ for egg_name in pairs(InhabitantsConstants.egg_data) do
     }:add_ingredient_layer(egg_name)
 end
 
-Tirislib.RecipeGenerator.create {
-    results = {
-        {type = "item", name = "riverhorse-flu-vaccine", amount = 5}
-    },
-    ingredients = {
-        {type = "item",  name = "ovoculture", amount = 1},
-        {type = "item",  name = "agarose",    amount = 2},
-        {type = "fluid", name = "ethanol",    amount = 10}
-    },
-    category = "sosciencity-pharma",
-    energy_required = 10,
-    do_index_fluid_ingredients = true,
-    unlock = "vaccination",
-    auto_recycle = false
+-- every vaccine is grown in an ovoculture; combined vaccines protect against more diseases per egg
+local vaccine_unlocks = {
+    ["riverhorse-flu-vaccine"] = "vaccination",
+    ["purple-pox-vaccine"] = "vaccination",
+    ["whooping-cough-vaccine"] = "vaccination",
+    ["tetanus-vaccine"] = "vaccination",
+    ["flu-vaccine"] = "combined-vaccines",
+    ["tetanus-whooping-cough-vaccine"] = "combined-vaccines"
 }
+
+for vaccine_name, unlock in pairs(vaccine_unlocks) do
+    Tirislib.RecipeGenerator.create {
+        results = {
+            {type = "item", name = vaccine_name, amount = 5}
+        },
+        ingredients = {
+            {type = "item",  name = "ovoculture", amount = 1},
+            {type = "item",  name = "agarose",    amount = 2},
+            {type = "fluid", name = "ethanol",    amount = 10}
+        },
+        energy_required = 10,
+        category = "sosciencity-pharma",
+        do_index_fluid_ingredients = true,
+        unlock = unlock,
+        auto_recycle = false
+    }
+end
 
 Tirislib.RecipeGenerator.create {
     name = "donate-blood",

@@ -11,6 +11,22 @@ local Vaccines = {}
 Vaccines.values = {
     ["riverhorse-flu-vaccine"] = {
         diseases = {"real-riverhorse-flu"}
+    },
+    ["purple-pox-vaccine"] = {
+        diseases = {"purple-pox"}
+    },
+    ["whooping-cough-vaccine"] = {
+        diseases = {"whooping-cough"}
+    },
+    ["tetanus-vaccine"] = {
+        diseases = {"tetanus"}
+    },
+    -- combined vaccines
+    ["flu-vaccine"] = {
+        diseases = {"real-riverhorse-flu", "riverhorse-like-flu"}
+    },
+    ["tetanus-whooping-cough-vaccine"] = {
+        diseases = {"tetanus", "whooping-cough"}
     }
 }
 
