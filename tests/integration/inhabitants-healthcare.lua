@@ -211,3 +211,40 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << immunity >>
+
+-- test-disease-immunity: recovers after ~60 ticks, immunity lasts ~600 ticks
+local IMMUNITY_DISEASE = 99005
+
+Tirislib.Testing.add_test_case(
+    "Natural recovery grants immunity",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        DiseaseGroup.make_sick(entry[EK.diseases], IMMUNITY_DISEASE, 5)
+
+        Inhabitants.update_diseases(entry, 1200)
+
+        Assert.is_nil(entry[EK.diseases][IMMUNITY_DISEASE], "everyone should have recovered")
+        Assert.equals(entry[EK.immunities].recovered[IMMUNITY_DISEASE], 5, "the recovered should be immune")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Immunity after recovery wanes over time",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        ImmunityGroup.grant(entry[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        Inhabitants.update_diseases(entry, 20000)
+
+        Assert.is_nil(entry[EK.immunities].recovered[IMMUNITY_DISEASE], "immunity should have waned")
+    end,
+    setup,
+    teardown
+)

@@ -18,8 +18,10 @@ local coin_flips = Utils.coin_flips
 local occurence_probability = Utils.occurrence_probability
 local update_progress = Utils.update_progress
 local HEALTHY = DiseaseGroup.HEALTHY
-local make_sick = DiseaseGroup.make_sick
-local make_sick_randomly = DiseaseGroup.make_sick_randomly
+local make_sick = InhabitantGroup.make_sick
+local make_sick_randomly = InhabitantGroup.make_sick_randomly
+local grant_immunity = ImmunityGroup.grant
+local wane_immunities = ImmunityGroup.wane
 local cure = DiseaseGroup.cure
 local take_specific_inhabitants = InhabitantGroup.take_specific
 local floor = math.floor
@@ -70,6 +72,11 @@ local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
 
     -- the following effects cannot occur when the persons died
     count = count - dead_count
+
+    -- living through the disease grants immunity, even when it escalates
+    if disease.immunity_duration and count > 0 then
+        grant_immunity(entry[EK.immunities], "recovered", disease_id, count, entry[EK.inhabitants])
+    end
 
     local escalation_disease = disease.escalation
     local escalation_count = 0
@@ -240,7 +247,7 @@ local disease_progress_updaters = Inhabitants.disease_progress_updaters
 ---------------------------------------------------------------------------------------------------
 -- << disease case creation and treatment >>
 
-local function create_disease_cases(entry, disease_group, delta_ticks)
+local function create_disease_cases(entry, delta_ticks)
     local progresses = entry[EK.disease_progress]
 
     for disease_category, updater in pairs(disease_progress_updaters) do
@@ -249,7 +256,7 @@ local function create_disease_cases(entry, disease_group, delta_ticks)
         if progress >= 1 then
             local new_diseases = floor(progress)
 
-            make_sick_randomly(disease_group, disease_category, new_diseases)
+            make_sick_randomly(entry, disease_category, new_diseases)
 
             progress = progress - new_diseases
         end
@@ -271,9 +278,8 @@ end
 function Inhabitants.apply_cure_side_effects(entry, disease_id, count, cured)
     local new_diseases = {}
     cure_side_effects(entry, disease_id, count, cured, new_diseases)
-    local disease_group = entry[EK.diseases]
     for nd_id, nd_count in pairs(new_diseases) do
-        make_sick(disease_group, nd_id, nd_count)
+        make_sick(entry, nd_id, nd_count)
     end
 end
 
@@ -317,7 +323,7 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
     end
 
     for disease_id, count in pairs(new_diseases) do
-        make_sick(disease_group, disease_id, count)
+        make_sick(entry, disease_id, count)
     end
 end
 
@@ -331,7 +337,8 @@ end
 local function update_diseases(entry, delta_ticks)
     local disease_group = entry[EK.diseases]
 
-    create_disease_cases(entry, disease_group, delta_ticks)
+    wane_immunities(entry[EK.immunities], delta_ticks)
+    create_disease_cases(entry, delta_ticks)
     update_disease_cases(entry, disease_group, delta_ticks)
     update_unclaimed_disease_ticks(entry, delta_ticks)
 end

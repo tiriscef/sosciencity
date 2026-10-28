@@ -162,6 +162,8 @@ EK.conception_rate_factor = 242
 EK.food_poisoning_risk = 243
 --- average contamination of the water drunk in the last update
 EK.water_contamination = 244
+--- the immunities of the inhabitants as an ImmunityGroup object
+EK.immunities = 245
 
 -- water distributer
 

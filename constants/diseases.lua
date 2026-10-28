@@ -23,6 +23,10 @@ local Diseases = {}
 --- @field contagiousness number
 --- @field lethality number
 --- @field natural_recovery number
+--- @field immunity_duration number
+--- @field vaccine_immunity_duration number
+--- @field immunity_waning_rate number
+--- @field vaccine_immunity_waning_rate number
 --- @field escalation DiseaseID
 --- @field escalation_probability number
 --- @field complication DiseaseID
@@ -41,6 +45,11 @@ local Diseases = {}
 --- **contagiousness:** probability that the disease infects someone else during a social meeting<br>
 --- **lethality:** probability that the person doesn't survive the disease<br>
 --- **natural_recovery:** average time till recovery - will be translated to the probability per tick during runtime<br>
+--- **immunity_duration:** average time a person stays immune after living through the disease; nil means no immunity,
+--- math.huge lifelong immunity<br>
+--- **vaccine_immunity_duration:** like immunity_duration, but for immunity from a vaccine<br>
+--- **immunity_waning_rate:** probability per tick of losing the immunity from immunity_duration (0 for lifelong) - set during postprocessing<br>
+--- **vaccine_immunity_waning_rate:** like immunity_waning_rate, for vaccine_immunity_duration - set during postprocessing<br>
 --- **escalation:** the disease that this disease can escalate to when it doesn't get cured<br>
 --- **escalation_probability:** the probability that the disease escalates<br>
 --- **complication:** the disease that this disease can transform to, even if it gets cured<br>
@@ -228,6 +237,7 @@ Diseases.values = {
         curing_workload = 1,
         contagiousness = 0.1,
         natural_recovery = 2 * Time.nauvis_day,
+        immunity_duration = 20 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.25,
@@ -580,6 +590,7 @@ Diseases.values = {
         lethality = 0.03,
         contagiousness = 0.15,
         natural_recovery = 6 * Time.nauvis_day,
+        immunity_duration = 30 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.2,
         work_effectivity = 0,
@@ -1137,6 +1148,15 @@ if DEBUG then
         work_effectivity = 0,
         reports_per_treatment = 1
     }
+    Diseases.values[99005] = {
+        name = "test-disease-immunity",
+        curing_workload = 1,
+        natural_recovery = 60,
+        immunity_duration = 600,
+        vaccine_immunity_duration = math.huge,
+        work_effectivity = 0,
+        reports_per_treatment = 0
+    }
 end
 
 -- postprocessing
@@ -1252,6 +1272,11 @@ do
 
         -- convert recovery from ticks till recovery to progress per tick
         disease.natural_recovery = disease.natural_recovery and 1 / disease.natural_recovery or nil
+
+        -- derive the probability per tick of losing the immunity from the immunity durations (0 for lifelong)
+        disease.immunity_waning_rate = disease.immunity_duration and 1 / disease.immunity_duration or nil
+        disease.vaccine_immunity_waning_rate =
+            disease.vaccine_immunity_duration and 1 / disease.vaccine_immunity_duration or nil
 
         -- exchange escalation and complication diseases with their ID for efficient lookups
         disease.escalation = disease.escalation and get_disease_id(disease.escalation) or nil

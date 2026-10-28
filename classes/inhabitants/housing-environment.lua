@@ -22,7 +22,7 @@ local try_get = Register.try_get
 local Tables = Tirislib.Tables
 local Utils = Tirislib.Utils
 local coin_flips = Utils.coin_flips
-local make_sick = DiseaseGroup.make_sick
+local make_sick = InhabitantGroup.make_sick
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor
 local max = math.max
@@ -240,7 +240,7 @@ local function social_meeting(entry, meeting_count)
                 if infections > 0 then
                     local random_house = try_get(environment[random(#environment)])
                     if random_house then
-                        local infected = make_sick(random_house[EK.diseases], disease_id, infections)
+                        local infected = make_sick(random_house, disease_id, infections)
                         Communication.report_diseased(disease_id, infected, DiseasedCause.infection)
                     end
                 end

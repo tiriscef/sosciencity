@@ -458,6 +458,7 @@ local function on_configuration_change()
                 :to_table()
         end
         Register.load()
+        Inhabitants.migrate_immunities()
 
         -- Rebuild entries
         local old_register = Tirislib.Tables.copy(storage.register)

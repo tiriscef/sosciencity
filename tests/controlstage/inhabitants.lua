@@ -616,3 +616,234 @@ Tirislib.Testing.add_test_case(
         Assert.equals(Table.sum(taken), 0)
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << ImmunityGroup tests >>
+
+-- test-disease-immunity: short immunity after recovery, lifelong immunity from the vaccine
+local IMMUNITY_DISEASE = 99005
+
+--- Returns an ImmunityGroup with the given recovered and vaccinated counts for IMMUNITY_DISEASE.
+local function immunity_group(recovered, vaccinated)
+    local group = ImmunityGroup.new()
+    group.recovered[IMMUNITY_DISEASE] = recovered
+    group.vaccinated[IMMUNITY_DISEASE] = vaccinated
+    return group
+end
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.merge combines both kinds and empties rh",
+    "inhabitants",
+    function()
+        local lh = immunity_group(2, nil)
+        local rh = immunity_group(3, 4)
+
+        ImmunityGroup.merge(lh, rh)
+
+        Assert.equals(lh.recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(lh.vaccinated[IMMUNITY_DISEASE], 4)
+        Assert.is_table_empty(rh.recovered, "rh should be emptied")
+        Assert.is_table_empty(rh.vaccinated, "rh should be emptied")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.merge with keep_rh preserves rh",
+    "inhabitants",
+    function()
+        local lh = ImmunityGroup.new()
+        local rh = immunity_group(3, 4)
+
+        ImmunityGroup.merge(lh, rh, true)
+
+        Assert.equals(lh.recovered[IMMUNITY_DISEASE], 3)
+        Assert.equals(rh.recovered[IMMUNITY_DISEASE], 3)
+        Assert.equals(rh.vaccinated[IMMUNITY_DISEASE], 4)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.take takes the proportional share",
+    "inhabitants",
+    function()
+        local group = immunity_group(10, 4)
+
+        local taken = ImmunityGroup.take(group, 10, 20)
+
+        Assert.equals(taken.recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(taken.vaccinated[IMMUNITY_DISEASE], 2)
+        Assert.equals(group.recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(group.vaccinated[IMMUNITY_DISEASE], 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.take never takes more than exists and conserves the total",
+    "inhabitants",
+    function()
+        for _ = 1, 50 do
+            local group = immunity_group(3, nil)
+            local taken = ImmunityGroup.take(group, 7, 10)
+
+            local taken_count = taken.recovered[IMMUNITY_DISEASE] or 0
+            local remaining = group.recovered[IMMUNITY_DISEASE] or 0
+            Assert.equals(taken_count + remaining, 3, "immune people should neither appear nor vanish")
+            Assert.less_than(taken_count, 4, "should not take more than exists")
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.take of everyone takes all immunities",
+    "inhabitants",
+    function()
+        local group = immunity_group(3, 2)
+
+        local taken = ImmunityGroup.take(group, 15, 10)
+
+        Assert.equals(taken.recovered[IMMUNITY_DISEASE], 3)
+        Assert.equals(taken.vaccinated[IMMUNITY_DISEASE], 2)
+        Assert.is_table_empty(group.recovered)
+        Assert.is_table_empty(group.vaccinated)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.subtract errors on incompatible groups",
+    "inhabitants",
+    function()
+        local lh = immunity_group(2, nil)
+        local rh = immunity_group(3, nil)
+
+        Assert.throws(function()
+            ImmunityGroup.subtract(lh, rh)
+        end)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.get_immune sums both kinds and caps at the group size",
+    "inhabitants",
+    function()
+        local group = immunity_group(6, 3)
+
+        Assert.equals(ImmunityGroup.get_immune(group, IMMUNITY_DISEASE, 20), 9)
+        Assert.equals(ImmunityGroup.get_immune(group, IMMUNITY_DISEASE, 5), 5)
+        Assert.equals(ImmunityGroup.get_immune(group, 1, 20), 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.grant caps at the group size",
+    "inhabitants",
+    function()
+        local group = immunity_group(4, nil)
+
+        ImmunityGroup.grant(group, "recovered", IMMUNITY_DISEASE, 10, 8)
+
+        Assert.equals(group.recovered[IMMUNITY_DISEASE], 8)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.wane removes temporary immunity but keeps lifelong immunity",
+    "inhabitants",
+    function()
+        local group = immunity_group(10, 10)
+
+        ImmunityGroup.wane(group, 100000)
+
+        Assert.is_nil(group.recovered[IMMUNITY_DISEASE], "temporary immunity should wane")
+        Assert.equals(group.vaccinated[IMMUNITY_DISEASE], 10, "lifelong immunity should never wane")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.wane drops immunities to diseases that grant none",
+    "inhabitants",
+    function()
+        local group = ImmunityGroup.new()
+        group.recovered[1] = 5
+
+        ImmunityGroup.wane(group, 1)
+
+        Assert.is_nil(group.recovered[1])
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << InhabitantGroup immunity tests >>
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.make_sick sickens nobody when every healthy inhabitant is immune",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        local sickened = InhabitantGroup.make_sick(group, IMMUNITY_DISEASE, 5)
+
+        Assert.equals(sickened, 0)
+        Assert.equals(group[EK.diseases][HEALTHY], 10)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.make_sick without immunities sickens like DiseaseGroup.make_sick",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+
+        local sickened = InhabitantGroup.make_sick(group, IMMUNITY_DISEASE, 3)
+
+        Assert.equals(sickened, 3)
+        Assert.equals(group[EK.diseases][IMMUNITY_DISEASE], 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.make_sick never sickens more than the susceptible inhabitants",
+    "inhabitants",
+    function()
+        for _ = 1, 20 do
+            local group = InhabitantGroup.new(TEST_CASTE, 10)
+            ImmunityGroup.grant(group[EK.immunities], "vaccinated", IMMUNITY_DISEASE, 8, 10)
+
+            local sickened = InhabitantGroup.make_sick(group, IMMUNITY_DISEASE, 10)
+
+            Assert.less_than(sickened, 3, "only 2 inhabitants are susceptible")
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.merge and take carry the immunities",
+    "inhabitants",
+    function()
+        local lh = InhabitantGroup.new(TEST_CASTE, 10)
+        local rh = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(rh[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        InhabitantGroup.merge(lh, rh)
+        Assert.equals(lh[EK.immunities].recovered[IMMUNITY_DISEASE], 10)
+        Assert.is_table_empty(rh[EK.immunities].recovered)
+
+        local taken = InhabitantGroup.take(lh, 10)
+        Assert.equals(taken[EK.immunities].recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(lh[EK.immunities].recovered[IMMUNITY_DISEASE], 5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_specific subtracts the given immunities",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 6, 10)
+
+        local taken = InhabitantGroup.take_specific(group, 2, nil, nil, nil, immunity_group(2, nil))
+
+        Assert.equals(taken[EK.immunities].recovered[IMMUNITY_DISEASE], 2)
+        Assert.equals(group[EK.immunities].recovered[IMMUNITY_DISEASE], 4)
+    end
+)
