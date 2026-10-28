@@ -53,6 +53,8 @@ Inhabitants = {}
     storage.starting_clockwork_points: number
 
     storage.passive_redistribution_enabled: bool
+
+    storage.ages_keyed_by_hatch_day: bool (set when the AgeGroups use hatch days as keys, see migrate_ages)
 ]]
 -- local often used globals for enormous performance gains
 
@@ -108,6 +110,7 @@ function Inhabitants.init()
     storage.caste_bonuses = new_caste_table()
     storage.immigration = new_caste_table()
     storage.passive_redistribution_enabled = true
+    storage.ages_keyed_by_hatch_day = true
 
     for _, caste in pairs(Castes.all) do
         storage.housing_capacity[caste.type] = {[true] = 0, [false] = 0}
@@ -133,6 +136,40 @@ function Inhabitants.migrate_immunities()
     for _, group in pairs(storage.homeless) do
         group[EK.immunities] = group[EK.immunities] or ImmunityGroup.new()
     end
+end
+
+--- Converts the AgeGroups of saves from before ages were keyed by hatch day. Those were keyed by age in
+--- nauvis weeks, and houses shifted them every week (EK.last_age_shift). Homeless groups never aged.
+--- Call during on_configuration_changed, before entries get copied.
+function Inhabitants.migrate_ages()
+    if storage.ages_keyed_by_hatch_day then
+        return
+    end
+
+    local today = AgeGroup.current_day()
+
+    local function convert(ages, days_since_shift)
+        local converted = {}
+        for weeks, count in pairs(ages) do
+            local hatch_day = today - 7 * weeks - days_since_shift
+            converted[hatch_day] = (converted[hatch_day] or 0) + count
+        end
+        return converted
+    end
+
+    for _, entry in pairs(storage.register) do
+        local last_shift = entry[EK.last_age_shift]
+        if entry[EK.ages] and last_shift then
+            entry[EK.ages] = convert(entry[EK.ages], floor((game.tick - last_shift) / Time.nauvis_day))
+            entry[EK.last_age_shift] = nil
+        end
+    end
+
+    for _, group in pairs(storage.homeless) do
+        group[EK.ages] = convert(group[EK.ages], 0)
+    end
+
+    storage.ages_keyed_by_hatch_day = true
 end
 
 --- Sets local references during on_load
@@ -314,44 +351,62 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant ages >>
 
---- Object class for holding the Ages of an InhabitantGroup
+--- Object class for holding the Ages of an InhabitantGroup.<br>
+--- Keys are hatch days (nauvis days since the start of the game), values the count of inhabitants hatched on
+--- that day. Keys are absolute, so groups can be merged without adjustment and never need to be shifted.
 --- @class AgeGroup
 AgeGroup = {}
 
+--- Returns the current day, in nauvis days since the start of the game.
+--- @return integer
+function AgeGroup.current_day()
+    return floor(game.tick / Time.nauvis_day)
+end
+
+--- Returns the age in nauvis days of the inhabitants hatched on the given day.
+--- @param hatch_day integer
+--- @param today integer? the current day, to avoid recalculating it in loops
+--- @return integer
+function AgeGroup.get_age(hatch_day, today)
+    return (today or AgeGroup.current_day()) - hatch_day
+end
+
 --- Returns a new AgeGroup table with fixed ages.
 --- @param count integer
---- @param age integer?
+--- @param age integer? age in nauvis days, defaults to 0
 function AgeGroup.new(count, age)
     local ret = {}
 
     if count > 0 then
-        ret[age or 0] = count
+        ret[AgeGroup.current_day() - (age or 0)] = count
     end
 
     return ret
 end
 
+-- immigration is disabled, so these ages aren't tuned to anything
 local function get_immigrant_age()
     local r1 = random() ^ 2
     local r2 = (random() < 0.5) and 1 or -1
 
-    return round(50 + r1 * r2 * 30)
+    return round(7 * (50 + r1 * r2 * 30))
 end
 
 --- Returns a new AgeGroup table with random ages.
 --- @param count integer
---- @param age_function function
+--- @param age_function function returns an age in nauvis days
 function AgeGroup.random_new(count, age_function)
     local ret = {}
 
     if count > 0 then
+        local today = AgeGroup.current_day()
         local rolls = min(count, 10)
         local count_per_roll = floor(count / rolls)
         local modulo = count % rolls
 
         for i = 1, rolls do
-            local rolled = age_function()
-            ret[rolled] = (ret[rolled] or 0) + count_per_roll + (i <= modulo and 1 or 0)
+            local hatch_day = today - age_function()
+            ret[hatch_day] = (ret[hatch_day] or 0) + count_per_roll + (i <= modulo and 1 or 0)
         end
     end
 
@@ -370,8 +425,8 @@ end
 --- @param rh AgeGroup
 --- @param keep_rh boolean?
 function AgeGroup.merge(lh, rh, keep_rh)
-    for age, count in pairs(rh) do
-        lh[age] = (lh[age] or 0) + count
+    for hatch_day, count in pairs(rh) do
+        lh[hatch_day] = (lh[hatch_day] or 0) + count
     end
 
     if not keep_rh then
@@ -379,7 +434,7 @@ function AgeGroup.merge(lh, rh, keep_rh)
     end
 end
 
---- Takes the given count of people from the given age group and returns the age group of the taken people.
+--- Takes the given count of people from the given AgeGroup and returns the AgeGroup of the taken people.
 --- @param group AgeGroup
 --- @param to_take integer
 --- @param total_count integer?
@@ -392,7 +447,7 @@ function AgeGroup.take(group, to_take, total_count)
 
     while to_take > 0 do
         local made_progress = false
-        for age, current_count in pairs(group) do
+        for hatch_day, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
             local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
 
@@ -403,8 +458,8 @@ function AgeGroup.take(group, to_take, total_count)
             total_count = total_count - current_take
             to_take = to_take - current_take
 
-            ret[age] = (ret[age] or 0) + current_take
-            group[age] = (current_count ~= current_take) and current_count - current_take or nil
+            ret[hatch_day] = (ret[hatch_day] or 0) + current_take
+            group[hatch_day] = (current_count ~= current_take) and current_count - current_take or nil
 
             if to_take == 0 then
                 return ret
@@ -416,30 +471,18 @@ function AgeGroup.take(group, to_take, total_count)
     return ret
 end
 
---- Subtracts the age counts in rh from lh. Errors if lh has fewer people of any age than rh.
+--- Subtracts the counts in rh from lh. Errors if lh has fewer people of any hatch day than rh.
 --- @param lh AgeGroup
 --- @param rh AgeGroup
 function AgeGroup.subtract(lh, rh)
-    for age, count in pairs(rh) do
-        local new_count = lh[age] - count
+    for hatch_day, count in pairs(rh) do
+        local new_count = lh[hatch_day] - count
 
         if new_count < 0 then
             error("Sosciencity tried to subtract two incompatible AgeGroup objects.")
         end
 
-        lh[age] = (new_count > 0) and new_count or nil
-    end
-end
-
---- Shifts all ages in the group forward by the given time increment.
---- @param group AgeGroup
---- @param time integer
-function AgeGroup.shift(group, time)
-    local copy = Tables.copy(group)
-    Tables.empty(group)
-
-    for age, count in pairs(copy) do
-        group[age + time] = count
+        lh[hatch_day] = (new_count > 0) and new_count or nil
     end
 end
 

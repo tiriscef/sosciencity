@@ -566,8 +566,14 @@ local function update_ages_list(flow, entry)
     local ages_list = flow.ages
 
     ages_list.clear()
-    for age, count in pairs(entry[EK.ages]) do
-        Datalist.add_operand_entry(ages_list, age, {"sosciencity.show-age", age}, count)
+    local ages = entry[EK.ages]
+    -- descending hatch days = youngest first
+    local hatch_days = Tirislib.Tables.get_keyset(ages)
+    table.sort(hatch_days, function(a, b) return a > b end)
+    local today = AgeGroup.current_day()
+    for _, hatch_day in pairs(hatch_days) do
+        local age = AgeGroup.get_age(hatch_day, today)
+        Datalist.add_operand_entry(ages_list, hatch_day, {"sosciencity.show-age", age}, ages[hatch_day])
     end
 
     local visible = (entry[EK.inhabitants] > 0)

@@ -97,8 +97,6 @@ function Inhabitants.create_house(entry)
     entry[EK.official_inhabitants] = 0
     entry[EK.caste_points] = 0
 
-    entry[EK.last_age_shift] = game.tick
-
     entry[EK.happiness_summands] = {}
     entry[EK.happiness_factors] = {}
 
@@ -148,7 +146,6 @@ end
 --- @param destination Entry
 function Inhabitants.copy_house(source, destination)
     add_to_house(destination, source, MoveCause.copy, true)
-    destination[EK.last_age_shift] = source[EK.last_age_shift]
     destination[EK.disease_progress] = Tables.copy(source[EK.disease_progress])
     destination[EK.housing_priority] = source[EK.housing_priority] or 0
     destination[EK.current_comfort] = source[EK.current_comfort] or get_housing_details(source).starting_comfort

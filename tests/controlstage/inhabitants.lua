@@ -3,6 +3,7 @@ local EK = require("enums.entry-key")
 local Gender = require("enums.gender")
 
 local InhabitantsConstants = require("constants.inhabitants")
+local Time = require("constants.time")
 
 local Table = Tirislib.Tables
 
@@ -200,7 +201,7 @@ Tirislib.Testing.add_test_case(
     "inhabitants",
     function()
         local group = AgeGroup.new(5, 30)
-        Assert.equals(group[30], 5)
+        Assert.equals(group[AgeGroup.current_day() - 30], 5)
     end
 )
 
@@ -209,7 +210,7 @@ Tirislib.Testing.add_test_case(
     "inhabitants",
     function()
         local group = AgeGroup.new(3)
-        Assert.equals(group[0], 3)
+        Assert.equals(group[AgeGroup.current_day()], 3)
     end
 )
 
@@ -226,9 +227,8 @@ Tirislib.Testing.add_test_case(
     "AgeGroup.merge combines two groups",
     "inhabitants",
     function()
-        local lh = AgeGroup.new(3, 20)
-        local rh = AgeGroup.new(2, 20)
-        rh[30] = 1
+        local lh = {[20] = 3}
+        local rh = {[20] = 2, [30] = 1}
 
         AgeGroup.merge(lh, rh)
 
@@ -244,8 +244,8 @@ Tirislib.Testing.add_test_case(
     "AgeGroup.merge with keep_rh preserves rh",
     "inhabitants",
     function()
-        local lh = AgeGroup.new(3, 20)
-        local rh = AgeGroup.new(2, 30)
+        local lh = {[20] = 3}
+        local rh = {[30] = 2}
 
         AgeGroup.merge(lh, rh, true)
 
@@ -307,16 +307,19 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "AgeGroup.shift advances all ages",
+    "AgeGroup.current_day counts nauvis days since the start of the game",
     "inhabitants",
     function()
-        local group = {[20] = 3, [30] = 2}
-        AgeGroup.shift(group, 5)
+        Assert.equals(AgeGroup.current_day(), math.floor(game.tick / Time.nauvis_day))
+    end
+)
 
-        Assert.is_nil(group[20])
-        Assert.is_nil(group[30])
-        Assert.equals(group[25], 3)
-        Assert.equals(group[35], 2)
+Tirislib.Testing.add_test_case(
+    "AgeGroup.get_age is the difference between today and the hatch day",
+    "inhabitants",
+    function()
+        Assert.equals(AgeGroup.get_age(80, 100), 20)
+        Assert.equals(AgeGroup.get_age(AgeGroup.current_day() - 7), 7)
     end
 )
 
@@ -326,6 +329,15 @@ Tirislib.Testing.add_test_case(
     function()
         local group = AgeGroup.random_new(50, function() return 25 end)
         Assert.equals(Table.sum(group), 50)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.random_new keys the rolled ages by hatch day",
+    "inhabitants",
+    function()
+        local group = AgeGroup.random_new(10, function() return 25 end)
+        Assert.equals(group[AgeGroup.current_day() - 25], 10)
     end
 )
 

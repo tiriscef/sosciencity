@@ -126,7 +126,7 @@ EK.recovery_progress = 224
 EK.genders = 225
 --- the ages of the inhabitants
 EK.ages = 226
---- the tick of the last age shift
+--- the tick of the last age shift - ages are keyed by hatch day now, only read by Inhabitants.migrate_ages
 EK.last_age_shift = 227
 --- the entries that make up the social environment as an array of unit_numbers
 EK.social_environment = 228
