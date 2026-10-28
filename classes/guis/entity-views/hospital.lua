@@ -82,6 +82,21 @@ local function add_bed_cards(flow, bed_building)
             )
         end
     end
+
+    for i, slot in pairs(bed_building[EK.vaccination_slots]) do
+        local housing = Register.try_get(slot.uid)
+        if housing then
+            add_bed_card(
+                flow,
+                "vaccination-" .. i,
+                housing,
+                {"sosciencity.vaccination-slot", {"item-name." .. slot.vaccine}},
+                nil,
+                slot.work_done or 0,
+                InhabitantsConstants.vaccination_workload
+            )
+        end
+    end
 end
 
 local function get_bed_caption(bed_building)
@@ -266,10 +281,13 @@ local function update_hospital_details(container, entry, player_id)
     Datalist.set_kv_pair_visibility(building_data, "wards", #ward_flow.children > 0)
 
     local blood_donations = entry[EK.blood_donations]
+    local vaccinations = entry[EK.vaccinations]
     for _, ward in pairs(wards) do
         blood_donations = blood_donations + ward[EK.blood_donations]
+        vaccinations = vaccinations + ward[EK.vaccinations]
     end
     Datalist.set_kv_pair_value(building_data, "blood_donations", blood_donations)
+    Datalist.set_kv_pair_value(building_data, "vaccinations", vaccinations)
 
     local patients = general.patients
     patients.clear()
@@ -310,6 +328,9 @@ local function create_hospital_details(container, entry, player_id)
 
     Datalist.add_kv_pair(building_data, "blood_donations", {"sosciencity.blood-donations"})
     Datalist.set_kv_pair_visibility(building_data, "blood_donations", storage.technologies["transfusion-medicine"])
+
+    Datalist.add_kv_pair(building_data, "vaccinations", {"sosciencity.vaccinations"})
+    Datalist.set_kv_pair_visibility(building_data, "vaccinations", storage.technologies["vaccination"])
 
     local textfield =
         Datalist.add_kv_textfield(
@@ -368,6 +389,10 @@ if DEV_MODE then
                     slot.work_done = InhabitantsConstants.blood_donation_workload
                     completed = completed + 1
                 end
+                for _, slot in pairs(bed_building[EK.vaccination_slots]) do
+                    slot.work_done = InhabitantsConstants.vaccination_workload
+                    completed = completed + 1
+                end
             end
             game.players[event.player_index].print({"city-view.debug-hospital-complete-done", completed})
         end
@@ -391,6 +416,7 @@ local function update_ward_details(container, entry, player_id)
 
     Datalist.set_kv_pair_value(building_data, "capacity", get_bed_caption(entry))
     Datalist.set_kv_pair_value(building_data, "blood_donations", entry[EK.blood_donations])
+    Datalist.set_kv_pair_value(building_data, "vaccinations", entry[EK.vaccinations])
 
     local hospital_flow = Datalist.get_kv_value_element(building_data, "hospitals")
     hospital_flow.clear()
@@ -425,6 +451,13 @@ local function create_ward_details(container, entry, player_id)
         building_data,
         "blood_donations",
         type_definitions[entry[EK.type]].treats_general_medicine == true and storage.technologies["transfusion-medicine"] ~= nil
+    )
+
+    Datalist.add_kv_pair(building_data, "vaccinations", {"sosciencity.vaccinations"})
+    Datalist.set_kv_pair_visibility(
+        building_data,
+        "vaccinations",
+        type_definitions[entry[EK.type]].treats_general_medicine == true and storage.technologies["vaccination"] ~= nil
     )
 
     Gui.Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})

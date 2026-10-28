@@ -588,6 +588,44 @@ local function update_genders_list(flow, entry)
     flow["header-genders"].visible = visible
 end
 
+local function update_immunities_list(flow, entry)
+    local immunities_list = flow.immunities
+    local immunities = entry[EK.immunities]
+    local inhabitants = entry[EK.inhabitants]
+
+    immunities_list.clear()
+
+    local disease_ids = {}
+    for _, counts in pairs(immunities) do
+        for disease_id in pairs(counts) do
+            disease_ids[disease_id] = true
+        end
+    end
+
+    for disease_id in pairs(disease_ids) do
+        local immune = ImmunityGroup.get_immune(immunities, disease_id, inhabitants)
+        if immune > 0 then
+            local disease = diseases[disease_id]
+            local key = format("immunity-%d", disease_id)
+            Datalist.add_operand_entry(immunities_list, key, disease.localised_name, immune)
+            Datalist.set_kv_pair_tooltip(
+                immunities_list,
+                key,
+                {
+                    "sosciencity.explain-immunity",
+                    immunities.recovered[disease_id] or 0,
+                    immunities.vaccinated[disease_id] or 0
+                }
+            )
+        end
+    end
+
+    local visible = #immunities_list.children > 0
+    immunities_list.visible = visible
+    flow["header-immunities"].visible = visible
+    flow["separator-immunities"].visible = visible
+end
+
 local function update_housing_general_info_tab(tabbed_pane, entry)
     local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
 
@@ -1025,6 +1063,7 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
     update_occupations_list(flow, entry)
     update_ages_list(flow, entry)
     update_genders_list(flow, entry)
+    update_immunities_list(flow, entry)
 end
 
 
@@ -1085,6 +1124,11 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
 
     Gui.Elements.Label.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
     Datalist.create(flow, "genders")
+
+    Gui.Elements.Utils.separator_line(flow, "separator-immunities")
+
+    Gui.Elements.Label.header_label(flow, "header-immunities", {"sosciencity.immunities"})
+    Datalist.create(flow, "immunities")
 
     -- call the update function to set the values
     update_housing_detailed_info_tab(tabbed_pane, entry)

@@ -1219,6 +1219,18 @@ do
         return Tirislib.Locales.create_enumeration(points, "\n")
     end
 
+    --- Returns a locale for an immunity duration, using lifelong_key for math.huge and key otherwise.
+    local function get_localised_immunity(duration, key, lifelong_key)
+        if duration == math.huge then
+            return {lifelong_key}
+        end
+        return {
+            key,
+            Tirislib.Locales.display_ingame_time(duration),
+            Tirislib.Locales.display_time(math.ceil(duration / 3600) * 3600)
+        }
+    end
+
     local function get_localised_properties(disease)
         local points = {
             disease.natural_recovery
@@ -1250,6 +1262,22 @@ do
 
         if disease.contagiousness then
             points[#points + 1] = {"sosciencity.contagious", get_percentage(disease.contagiousness)}
+        end
+
+        if disease.immunity_duration then
+            points[#points + 1] = get_localised_immunity(
+                disease.immunity_duration,
+                "sosciencity.immunity",
+                "sosciencity.immunity-lifelong"
+            )
+        end
+
+        if disease.vaccine_immunity_duration then
+            points[#points + 1] = get_localised_immunity(
+                disease.vaccine_immunity_duration,
+                "sosciencity.vaccine-immunity",
+                "sosciencity.vaccine-immunity-lifelong"
+            )
         end
 
         if disease.escalation then

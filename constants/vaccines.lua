@@ -36,4 +36,20 @@ for vaccine_name, vaccine in pairs(Vaccines.values) do
     vaccine.diseases = disease_ids
 end
 
+-- every disease that promises vaccine immunity needs a vaccine
+do
+    local covered = {}
+    for _, vaccine in pairs(Vaccines.values) do
+        for _, disease_id in pairs(vaccine.diseases) do
+            covered[disease_id] = true
+        end
+    end
+
+    for disease_id, disease in pairs(Diseases.values) do
+        if disease.vaccine_immunity_waning_rate and not covered[disease_id] then
+            error("Disease " .. disease.name .. " has a vaccine_immunity_duration, but no vaccine covers it.")
+        end
+    end
+end
+
 return Vaccines

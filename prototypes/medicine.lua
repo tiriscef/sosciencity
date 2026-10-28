@@ -1,6 +1,7 @@
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
+local Vaccines = require("constants.vaccines")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -74,14 +75,32 @@ local medicine_items = {
     {
         name = "ovoculture",
         use_placeholder_icon = true
-    },
-    {
-        name = "riverhorse-flu-vaccine",
-        use_placeholder_icon = true
     }
 }
 
 Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
+
+for vaccine_name, vaccine in pairs(Vaccines.values) do
+    Tirislib.Item.create {
+        name = vaccine_name,
+        use_placeholder_icon = true,
+        subgroup = "sosciencity-medicine",
+        stack_size = 50,
+        custom_tooltip_fields = {
+            {
+                name = {"sosciencity.protects-against"},
+                value = Tirislib.Locales.create_enumeration(
+                    Tirislib.Luaq.from(vaccine.diseases):select(
+                        function(disease_id)
+                            return Diseases.values[disease_id].localised_name
+                        end
+                    ):to_array(),
+                    ", "
+                )
+            }
+        }
+    }
+end
 
 -- test vaccine for the vaccination tests, see constants/vaccines.lua
 if Sosciencity.Config.DEBUG then
