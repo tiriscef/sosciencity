@@ -806,3 +806,126 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << vaccinations >>
+
+-- test-vaccine covers 99005 (test-disease-immunity) and 99006 (test-disease-immunity-2), see constants/vaccines.lua
+local TEST_VACCINE = "test-vaccine"
+local VACCINE_DISEASES = {99005, 99006}
+
+local function make_healthy_house(position, count)
+    local entry = Helpers.create_inhabited_house(test_surface, position, Type.clockwork, count)
+    entry[EK.has_food] = true
+    entry[EK.has_water] = true
+    return entry
+end
+
+Tirislib.Testing.add_test_case(
+    "a hospital vaccinates the healthy huwans of a house with the vaccines in stock",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local house = make_healthy_house({5, 0}, 3)
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        inv.insert({name = TEST_VACCINE, count = 5})
+
+        for _ = 1, 10 do
+            Helpers.update_entry(hospital)
+        end
+
+        for _, disease_id in pairs(VACCINE_DISEASES) do
+            Assert.equals(house[EK.immunities].vaccinated[disease_id], 3, "everyone should be vaccinated against both diseases")
+        end
+        Assert.equals(inv.get_item_count(TEST_VACCINE), 2, "one dose per huwan should be used")
+        Assert.equals(hospital[EK.vaccinations], 3)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "a hospital doesn't vaccinate a house that is already immune",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local house = make_healthy_house({5, 0}, 3)
+        for _, disease_id in pairs(VACCINE_DISEASES) do
+            ImmunityGroup.grant(house[EK.immunities], "recovered", disease_id, 3, 3)
+        end
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        inv.insert({name = TEST_VACCINE, count = 5})
+
+        for _ = 1, 5 do
+            Helpers.update_entry(hospital)
+        end
+
+        Assert.equals(inv.get_item_count(TEST_VACCINE), 5, "no vaccine should be used")
+        Assert.equals(#hospital[EK.vaccination_slots], 0)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "patients get the free beds before vaccinations",
+    "integration|integration.hospital",
+    function()
+        -- test-hospital-no-workforce has 5 beds; one patient per house is admitted per update
+        local hospital = make_hospital({0, 0})
+        for i = 1, 5 do
+            local house = make_healthy_house({5 * i, 0}, 2)
+            DiseaseGroup.make_sick(house[EK.diseases], DISEASE_NO_ITEMS, 1)
+        end
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        inv.insert({name = TEST_VACCINE, count = 5})
+
+        Helpers.update_entry(hospital)
+
+        Assert.equals(#hospital[EK.slots], 5, "the patients should get every bed")
+        Assert.equals(inv.get_item_count(TEST_VACCINE), 5, "no vaccine should be used while the beds are full")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "a dose that nobody can use any more goes back into the inventory",
+    "integration|integration.hospital",
+    function()
+        local hospital = make_hospital({0, 0})
+        local house = make_healthy_house({5, 0}, 3)
+        Helpers.update_entry(hospital)
+        for _, disease_id in pairs(VACCINE_DISEASES) do
+            ImmunityGroup.grant(house[EK.immunities], "recovered", disease_id, 3, 3)
+        end
+        hospital[EK.vaccination_slots][1] = {uid = house[EK.unit_number], vaccine = TEST_VACCINE, work_done = 0}
+
+        Helpers.update_entry(hospital)
+
+        local inv = hospital[EK.entity].get_inventory(defines.inventory.chest)
+        Assert.equals(#hospital[EK.vaccination_slots], 0, "the slot should be released")
+        Assert.equals(inv.get_item_count(TEST_VACCINE), 1, "the unused dose should be returned")
+        Assert.equals(hospital[EK.vaccinations], 0)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "clone copies vaccination slots and the vaccination counter",
+    "integration|integration.hospital",
+    function()
+        local source = make_hospital({0, 0})
+        source[EK.vaccination_slots] = {{uid = 0, vaccine = TEST_VACCINE, work_done = 0}}
+        source[EK.vaccinations] = 4
+
+        local dest_entity = Helpers.create_unregistered(test_surface, "test-hospital-no-workforce", {10, 0})
+        local dest = Register.clone(source, dest_entity)
+
+        Assert.equals(#dest[EK.vaccination_slots], 1, "vaccination slots should be copied")
+        Assert.equals(dest[EK.vaccinations], 4, "vaccinations should be copied")
+    end,
+    setup,
+    teardown
+)

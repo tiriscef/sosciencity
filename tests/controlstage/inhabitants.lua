@@ -881,3 +881,73 @@ Tirislib.Testing.add_test_case(
         Assert.is_number_close(births_per_tick / C.birth_rate, 1, 1e-9)
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << vaccination >>
+
+-- test-disease-immunity-2: like test-disease-immunity, for vaccines against two diseases
+local IMMUNITY_DISEASE_2 = 99006
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.get_vaccinable counts the healthy inhabitants susceptible to one of the diseases",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        DiseaseGroup.make_sick(group[EK.diseases], 1, 2)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 6, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE_2, 3, 10)
+
+        Assert.equals(InhabitantGroup.get_vaccinable(group, {IMMUNITY_DISEASE}), 2)
+        Assert.equals(InhabitantGroup.get_vaccinable(group, {IMMUNITY_DISEASE, IMMUNITY_DISEASE_2}), 5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate grants one vaccinated immunity per dose",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+
+        Assert.is_true(InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE}))
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], 1)
+        Assert.is_nil(group[EK.immunities].recovered[IMMUNITY_DISEASE])
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate refuses when nobody can use the dose",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        Assert.is_false(InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE}))
+        Assert.is_nil(group[EK.immunities].vaccinated[IMMUNITY_DISEASE])
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate against two diseases makes a non-immune huwan immune to both",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+
+        InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE, IMMUNITY_DISEASE_2})
+
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], 1)
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE_2], 1)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate against two diseases still helps when one of them is covered",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        Assert.is_true(InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE, IMMUNITY_DISEASE_2}))
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE_2], 1)
+        Assert.is_nil(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], "nobody is susceptible to the covered disease")
+    end
+)

@@ -136,6 +136,9 @@ InhabitantsConstants.meeting_exponent = 0.2
 --- Eggs conceived per inhabitant per tick by the gender mix of naturally conceived eggs in the reference social environment.
 InhabitantsConstants.birth_rate = 0.01 / Time.nauvis_day
 
+--- Operations a bed needs to give one vaccine dose (one operation is one minute of a bed at full performance).
+InhabitantsConstants.vaccination_workload = 0.1
+
 --- Calorific cost an inhabitant pays to lay one fertile egg.
 InhabitantsConstants.egg_calories = 2000
 

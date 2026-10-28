@@ -221,6 +221,8 @@ EK.treatment_permissions = 901
 EK.blood_donation_threshold = 902
 --- The count of blood donations at this hospital
 EK.blood_donations = 903
+--- The count of vaccine doses given at this bed building
+EK.vaccinations = 904
 
 -- upbringing station
 
@@ -267,6 +269,9 @@ EK.slots = 1500
 
 --- array of blood donation slots for hospitals: {uid, work_done}
 EK.donation_slots = 1503
+
+--- array of vaccination slots for bed buildings: {uid, vaccine, work_done}
+EK.vaccination_slots = 1504
 
 -- farms (slot-based claim fields)
 

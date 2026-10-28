@@ -70,10 +70,24 @@ local medicine_items = {
     {
         name = "antihistamines",
         sprite_variations = {name = "antihistamines-pile", count = 3}
+    },
+    {
+        name = "riverhorse-flu-vaccine",
+        use_placeholder_icon = true
     }
 }
 
 Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
+
+-- test vaccine for the vaccination tests, see constants/vaccines.lua
+if Sosciencity.Config.DEBUG then
+    Tirislib.Item.create {
+        name = "test-vaccine",
+        use_placeholder_icon = true,
+        subgroup = "sosciencity-medicine",
+        stack_size = 50
+    }
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
@@ -404,6 +418,22 @@ Tirislib.RecipeGenerator.create {
     energy_required = 5,
     do_index_fluid_ingredients = true,
     unlock = "hospital",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "riverhorse-flu-vaccine", amount = 5}
+    },
+    ingredients = {
+        {type = "item",  name = "huwan-egg", amount = 1},
+        {type = "item",  name = "agarose",   amount = 2},
+        {type = "fluid", name = "ethanol",   amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 10,
+    do_index_fluid_ingredients = true,
+    unlock = "vaccination",
     auto_recycle = false
 }
 

@@ -591,6 +591,7 @@ Diseases.values = {
         contagiousness = 0.055,
         natural_recovery = 6 * Time.nauvis_day,
         immunity_duration = 100 * Time.nauvis_day,
+        vaccine_immunity_duration = 100 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.2,
         work_effectivity = 0,
@@ -932,6 +933,11 @@ local function get_disease_id(disease_name)
     error("Diseases looked for the ID of a nonexistant disease: " .. disease_name)
 end
 
+--- Returns the DiseaseID of the disease with the given name. Errors if there is none.
+--- @param disease_name string
+--- @return DiseaseID
+Diseases.get_id = get_disease_id
+
 --- Defines which diseases belong to the categories and with which frequency. Contains the DiseaseID as keys and a frequency as value.
 Diseases.categories = {
     [DiseaseCategory.health] = {
@@ -1150,6 +1156,15 @@ if DEBUG then
     }
     Diseases.values[99005] = {
         name = "test-disease-immunity",
+        curing_workload = 1,
+        natural_recovery = 60,
+        immunity_duration = 600,
+        vaccine_immunity_duration = math.huge,
+        work_effectivity = 0,
+        reports_per_treatment = 0
+    }
+    Diseases.values[99006] = {
+        name = "test-disease-immunity-2",
         curing_workload = 1,
         natural_recovery = 60,
         immunity_duration = 600,

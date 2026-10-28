@@ -6,10 +6,12 @@ local Buildings = require("constants.buildings")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 local Types = require("constants.types")
+local Vaccines = require("constants.vaccines")
 
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
 local disease_values = Diseases.values
+local vaccine_values = Vaccines.values
 local type_definitions = Types.definitions
 local has_power = Subentities.has_power
 local evaluate_workforce = Inhabitants.evaluate_workforce
@@ -119,8 +121,9 @@ end
 
 ---------------------------------------------------------------------------------------------------
 -- << beds >>
--- A bed building owns disease slots (EK.slots) and blood donation slots (EK.donation_slots), one patient
--- per slot, and treats the patients in them. Patients are admitted by a hub, which pays the cure items.
+-- A bed building owns disease slots (EK.slots), blood donation slots (EK.donation_slots) and vaccination
+-- slots (EK.vaccination_slots), one patient per slot, and treats the patients in them. Patients are admitted
+-- by a hub, which pays the cure items or the vaccine.
 
 --- @param entry Entry bed building
 --- @return integer
@@ -132,13 +135,13 @@ Hospital.get_bed_count = get_bed_count
 --- @param entry Entry bed building
 --- @return integer
 function Hospital.get_occupied_bed_count(entry)
-    return #entry[EK.slots] + #entry[EK.donation_slots]
+    return #entry[EK.slots] + #entry[EK.donation_slots] + #entry[EK.vaccination_slots]
 end
 
 --- @param entry Entry bed building
 --- @return integer
 local function get_free_bed_count(entry)
-    return get_bed_count(entry) - #entry[EK.slots] - #entry[EK.donation_slots]
+    return get_bed_count(entry) - #entry[EK.slots] - #entry[EK.donation_slots] - #entry[EK.vaccination_slots]
 end
 
 --- Puts a patient into a free bed and marks the disease case as claimed by this bed building.
@@ -171,6 +174,15 @@ local function admit_donor(entry, housing)
     donation_slots[#donation_slots + 1] = {uid = housing[EK.unit_number], work_done = 0}
 end
 
+--- Puts a huwan who gets vaccinated into a free bed. The vaccine must already be paid.
+--- @param entry Entry bed building
+--- @param housing Entry
+--- @param vaccine string item name of the vaccine
+local function admit_vaccination(entry, housing, vaccine)
+    local vaccination_slots = entry[EK.vaccination_slots]
+    vaccination_slots[#vaccination_slots + 1] = {uid = housing[EK.unit_number], vaccine = vaccine, work_done = 0}
+end
+
 --- Empties all beds and releases their claims on the housing entries.
 --- @param entry Entry bed building
 local function release_all_beds(entry)
@@ -181,6 +193,7 @@ local function release_all_beds(entry)
     end
     entry[EK.slots] = {}
     entry[EK.donation_slots] = {}
+    entry[EK.vaccination_slots] = {}
 end
 
 --- Returns whether a disease slot is still valid for this bed building.
@@ -218,6 +231,7 @@ local function validate_beds(entry)
     local unit_number = entry[EK.unit_number]
     local slots = entry[EK.slots]
     local donation_slots = entry[EK.donation_slots]
+    local vaccination_slots = entry[EK.vaccination_slots]
 
     for i = #slots, 1, -1 do
         local slot = slots[i]
@@ -228,18 +242,25 @@ local function validate_beds(entry)
         end
     end
 
-    -- donation slots are only invalid when the donor's house is gone
+    -- donation and vaccination slots are only invalid when the huwan's house is gone
     for i = #donation_slots, 1, -1 do
         if not try_get(donation_slots[i].uid) then
             table.remove(donation_slots, i)
         end
     end
+    for i = #vaccination_slots, 1, -1 do
+        if not try_get(vaccination_slots[i].uid) then
+            table.remove(vaccination_slots, i)
+        end
+    end
 
     -- trim to capacity (guards against unexpected slot count reductions)
-    -- donation slots are trimmed first to preserve treatment capacity
+    -- vaccination and donation slots are trimmed first to preserve treatment capacity
     local bed_count = get_bed_count(entry)
-    while #slots + #donation_slots > bed_count do
-        if #donation_slots > 0 then
+    while #slots + #donation_slots + #vaccination_slots > bed_count do
+        if #vaccination_slots > 0 then
+            vaccination_slots[#vaccination_slots] = nil
+        elseif #donation_slots > 0 then
             donation_slots[#donation_slots] = nil
         else
             local slot = slots[#slots]
@@ -307,11 +328,37 @@ local function process_blood_donation_slot(entry, slot, inventories, available_w
     return true
 end
 
+--- Processes one in-progress vaccination slot.
+--- The vaccine was paid when the huwan was admitted; if nobody in the house can use it any more when the
+--- work is done, it goes back into the inventories.
+--- @param entry Entry bed building
+--- @param slot table {uid, vaccine, work_done}
+--- @param inventories LuaInventory[] where unused vaccines go back to
+--- @param available_work number
+--- @return boolean finished whether the slot is done and should be released
+local function process_vaccination_slot(entry, slot, inventories, available_work)
+    local work_done = (slot.work_done or 0) + available_work
+
+    if work_done < InhabitantsConstants.vaccination_workload then
+        slot.work_done = work_done
+        return false
+    end
+
+    local housing = try_get(slot.uid)
+    local vaccine = vaccine_values[slot.vaccine]
+    if housing and vaccine and InhabitantGroup.vaccinate(housing, vaccine.diseases) then
+        entry[EK.vaccinations] = entry[EK.vaccinations] + 1
+    else
+        Inventories.try_insert_into_inventory_range(inventories, slot.vaccine, 1)
+    end
+    return true
+end
+
 --- Works on every occupied bed and releases the finished ones immediately, so the next patient
 --- has to be admitted (and paid for) anew.
 --- @param entry Entry bed building
 --- @param work_per_bed number
---- @param inventories LuaInventory[] where medical reports and blood bags go
+--- @param inventories LuaInventory[] where medical reports, blood bags and unused vaccines go
 local function treat_beds(entry, work_per_bed, inventories)
     local unit_number = entry[EK.unit_number]
     local slots = entry[EK.slots]
@@ -330,6 +377,13 @@ local function treat_beds(entry, work_per_bed, inventories)
     for i = #donation_slots, 1, -1 do
         if process_blood_donation_slot(entry, donation_slots[i], inventories, work_per_bed) then
             table.remove(donation_slots, i)
+        end
+    end
+
+    local vaccination_slots = entry[EK.vaccination_slots]
+    for i = #vaccination_slots, 1, -1 do
+        if process_vaccination_slot(entry, vaccination_slots[i], inventories, work_per_bed) then
+            table.remove(vaccination_slots, i)
         end
     end
 end
@@ -412,6 +466,74 @@ local function admit_patients(hub, inventories)
     end
 end
 
+--- Returns the number of pending vaccinations per (house unit_number, vaccine) in the given bed buildings.
+--- @param bed_buildings Entry[]
+--- @return table<integer, table<string, integer>>
+local function get_pending_vaccinations(bed_buildings)
+    local pending = {}
+    for _, bed_building in pairs(bed_buildings) do
+        for _, slot in pairs(bed_building[EK.vaccination_slots]) do
+            local per_vaccine = pending[slot.uid]
+            if not per_vaccine then
+                per_vaccine = {}
+                pending[slot.uid] = per_vaccine
+            end
+            per_vaccine[slot.vaccine] = (per_vaccine[slot.vaccine] or 0) + 1
+        end
+    end
+    return pending
+end
+
+--- Vaccinates healthy huwans in the hub's neighborhood with the vaccines in stock, using the free beds of the
+--- hub and its general medicine wards. Call after admit_patients, so the sick get the beds first. Gives at most
+--- one dose per (house, vaccine) pair per update, and never more doses than the house can use.
+--- @param hub Entry
+--- @param inventories LuaInventory[] where the vaccines are taken from
+local function admit_vaccinations(hub, inventories)
+    local contents = Inventories.get_combined_contents(inventories)
+    local in_stock = {}
+    for vaccine_name in pairs(vaccine_values) do
+        if (contents[vaccine_name] or 0) > 0 then
+            in_stock[#in_stock + 1] = vaccine_name
+        end
+    end
+    if #in_stock == 0 then return end
+
+    local bed_buildings = get_bed_buildings(hub, donation_ward_types)
+    local free_beds = {}
+    local total_free_beds = 0
+    for i = 1, #bed_buildings do
+        local free = max(0, get_free_bed_count(bed_buildings[i]))
+        free_beds[i] = free
+        total_free_beds = total_free_beds + free
+    end
+    if total_free_beds == 0 then return end
+
+    local pending = get_pending_vaccinations(bed_buildings)
+    local index = 1
+
+    for _, caste in pairs(Castes.all) do
+        for _, housing in Neighborhood.iterate_type(hub, caste.type) do
+            local pending_here = pending[housing[EK.unit_number]]
+
+            for _, vaccine_name in pairs(in_stock) do
+                local vaccinable = InhabitantGroup.get_vaccinable(housing, vaccine_values[vaccine_name].diseases)
+                local already_pending = pending_here and pending_here[vaccine_name] or 0
+
+                if vaccinable > already_pending and try_pay(inventories, contents, {[vaccine_name] = 1}) then
+                    while free_beds[index] == 0 do
+                        index = index + 1
+                    end
+                    admit_vaccination(bed_buildings[index], housing, vaccine_name)
+                    free_beds[index] = free_beds[index] - 1
+                    total_free_beds = total_free_beds - 1
+                    if total_free_beds == 0 then return end
+                end
+            end
+        end
+    end
+end
+
 ---------------------------------------------------------------------------------------------------
 -- << hospital >>
 
@@ -476,6 +598,7 @@ local function update_bed_building(entry, delta_ticks)
     if type_definitions[entry[EK.type]].admits_patients then
         inventories = Hospital.get_inventories(entry)
         admit_patients(entry, inventories)
+        admit_vaccinations(entry, inventories)
     else
         inventories = get_ward_output_inventories(entry)
     end
@@ -573,6 +696,8 @@ end
 local function create_hospital(entry)
     entry[EK.slots] = {}
     entry[EK.donation_slots] = {}
+    entry[EK.vaccination_slots] = {}
+    entry[EK.vaccinations] = 0
     entry[EK.treated] = {}
     entry[EK.treatment_permissions] = {}
     -- threshold: minimum free slots required before accepting blood donations (0 = always accept)
@@ -597,6 +722,9 @@ local function copy_hospital(source, destination)
     destination[EK.treated] = Table.copy(source[EK.treated])
     destination[EK.treatment_permissions] = Table.copy(source[EK.treatment_permissions])
     destination[EK.blood_donations] = source[EK.blood_donations]
+    destination[EK.vaccinations] = source[EK.vaccinations] or 0
+    destination[EK.vaccination_slots] =
+        source[EK.vaccination_slots] and Tirislib.Tables.recursive_copy(source[EK.vaccination_slots]) or {}
 
     if source[EK.slots] then
         if source[EK.donation_slots] then
@@ -644,8 +772,10 @@ Register.set_settings_paste_handler(Type.improvised_hospital, Type.improvised_ho
 local function create_ward(entry)
     entry[EK.slots] = {}
     entry[EK.donation_slots] = {}
+    entry[EK.vaccination_slots] = {}
     entry[EK.treated] = {}
     entry[EK.blood_donations] = 0
+    entry[EK.vaccinations] = 0
 end
 
 local function copy_ward(source, destination)
@@ -656,6 +786,9 @@ local function copy_ward(source, destination)
     destination[EK.donation_slots] = Tirislib.Tables.recursive_copy(source[EK.donation_slots])
     destination[EK.treated] = Table.copy(source[EK.treated])
     destination[EK.blood_donations] = source[EK.blood_donations]
+    destination[EK.vaccinations] = source[EK.vaccinations] or 0
+    destination[EK.vaccination_slots] =
+        source[EK.vaccination_slots] and Tirislib.Tables.recursive_copy(source[EK.vaccination_slots]) or {}
 end
 
 for _, _type in pairs(ward_types) do

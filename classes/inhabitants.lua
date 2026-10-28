@@ -884,6 +884,51 @@ function InhabitantGroup.make_sick_randomly(group, disease_category, count, actu
     sicken_randomly(make_group_sick, group, disease_category, count, actual_count, suppress_logging)
 end
 
+--- Returns the number of healthy people that are not immune to the given disease.
+--- @param group InhabitantGroup
+--- @param disease_id DiseaseID
+--- @return integer
+local function get_susceptible(group, disease_id)
+    local immune = ImmunityGroup.get_immune(group[EK.immunities], disease_id, group[EK.inhabitants])
+    return max(0, group[EK.diseases][HEALTHY] - immune)
+end
+
+--- Returns the number of healthy people that a vaccine against the given diseases would still protect.<br>
+--- Assumes the susceptible people of the different diseases overlap as much as possible (people that were
+--- vaccinated together are immune together), so it is the most people susceptible to one of the diseases.
+--- @param group InhabitantGroup
+--- @param disease_ids DiseaseID[]
+--- @return integer
+function InhabitantGroup.get_vaccinable(group, disease_ids)
+    local vaccinable = 0
+    for _, disease_id in pairs(disease_ids) do
+        vaccinable = max(vaccinable, get_susceptible(group, disease_id))
+    end
+    return vaccinable
+end
+
+--- Gives one healthy person a vaccine dose against the given diseases.<br>
+--- With the same overlap assumption as get_vaccinable, the dose goes to someone susceptible to every covered
+--- disease that anybody is still susceptible to, so it makes them immune to all of those.
+--- Returns false if nobody could use the dose.
+--- @param group InhabitantGroup
+--- @param disease_ids DiseaseID[]
+--- @return boolean vaccinated
+function InhabitantGroup.vaccinate(group, disease_ids)
+    local inhabitants = group[EK.inhabitants]
+    local immunities = group[EK.immunities]
+    local vaccinated = false
+
+    for _, disease_id in pairs(disease_ids) do
+        if get_susceptible(group, disease_id) > 0 then
+            ImmunityGroup.grant(immunities, "vaccinated", disease_id, 1, inhabitants)
+            vaccinated = true
+        end
+    end
+
+    return vaccinated
+end
+
 --- Merges the given number of inhabitants from the right InhabitantGroup in to the left one.
 --- @param lh InhabitantGroup
 --- @param rh InhabitantGroup
