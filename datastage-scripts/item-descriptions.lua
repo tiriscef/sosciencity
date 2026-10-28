@@ -1,5 +1,6 @@
 local Diseases = require("constants.diseases")
 local ItemConstants = require("constants.item-constants")
+local Vaccines = require("constants.vaccines")
 
 -- Compostable items
 
@@ -41,6 +42,24 @@ for medicine_item, diseases in pairs(medicine_items) do
     if found then
         item:add_custom_tooltip {
             name = {"sosciencity-util.used-to-cure"},
+            value = Tirislib.Locales.create_enumeration(diseases, ", ")
+        }
+    end
+end
+
+-- Vaccines and the diseases they make immune against
+
+for vaccine_name, vaccine in pairs(Vaccines.values) do
+    local item, found = Tirislib.Item.get_by_name(vaccine_name)
+
+    if found then
+        local diseases = {}
+        for _, disease_id in pairs(vaccine.diseases) do
+            diseases[#diseases + 1] = {"sosciencity-util.in-green", Diseases.values[disease_id].localised_name}
+        end
+
+        item:add_custom_tooltip {
+            name = {"sosciencity-util.protects-against"},
             value = Tirislib.Locales.create_enumeration(diseases, ", ")
         }
     end
