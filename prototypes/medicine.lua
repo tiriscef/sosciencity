@@ -72,6 +72,10 @@ local medicine_items = {
         sprite_variations = {name = "antihistamines-pile", count = 3}
     },
     {
+        name = "ovoculture",
+        use_placeholder_icon = true
+    },
+    {
         name = "riverhorse-flu-vaccine",
         use_placeholder_icon = true
     }
@@ -421,14 +425,34 @@ Tirislib.RecipeGenerator.create {
     auto_recycle = false
 }
 
+-- every kind of huwan egg can grow an ovoculture, so the vaccines don't depend on one kind
+for egg_name in pairs(InhabitantsConstants.egg_data) do
+    Tirislib.RecipeGenerator.create {
+        name = "ovoculture-from-" .. egg_name,
+        results = {
+            {type = "item", name = "ovoculture", amount = 1}
+        },
+        ingredients = {
+            {type = "item",  name = egg_name,      amount = 1},
+            {type = "fluid", name = "clean-water", amount = 20}
+        },
+        category = "sosciencity-fermentation-tank",
+        energy_required = 30,
+        icon = "__sosciencity-graphics__/graphics/icon/" .. egg_name .. ".png",
+        icon_size = 64,
+        unlock = "vaccination",
+        auto_recycle = false
+    }
+end
+
 Tirislib.RecipeGenerator.create {
     results = {
         {type = "item", name = "riverhorse-flu-vaccine", amount = 5}
     },
     ingredients = {
-        {type = "item",  name = "huwan-egg", amount = 1},
-        {type = "item",  name = "agarose",   amount = 2},
-        {type = "fluid", name = "ethanol",   amount = 10}
+        {type = "item",  name = "ovoculture", amount = 1},
+        {type = "item",  name = "agarose",    amount = 2},
+        {type = "fluid", name = "ethanol",    amount = 10}
     },
     category = "sosciencity-pharma",
     energy_required = 10,
