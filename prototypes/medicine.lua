@@ -61,7 +61,7 @@ local medicine_items = {
     },
     {
         name = "antiemetics",
-        use_placeholder_icon = true
+        sprite_variations = {name = "antiemetics-pile", count = 3}
     },
     {
         name = "antitoxin",
