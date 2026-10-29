@@ -56,7 +56,8 @@ local Diseases = {}
 --- **escalation_probability:** the probability that the disease escalates<br>
 --- **complication:** the disease that this disease can transform to, even if it gets cured<br>
 --- **complication_probability:** the probability of a complication<br>
---- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured<br>
+--- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured
+--- (defaults to the lethality, capped at Diseases.default_complication_lethality - set during postprocessing)<br>
 --- **work_effectivity:** The percentage of the normal points the inhabitants provide<br>
 --- **is_treatable:** false when no hospital can treat the disease; absent means treatable<br>
 --- **reports_per_treatment:** The count of medical reports that a treatment of this disease produces<br>
@@ -1254,6 +1255,10 @@ if DEBUG then
     }
 end
 
+--- Death chance of treated cases for diseases that don't define a complication_lethality. Capped by the lethality,
+--- so diseases that can't kill untreated stay harmless when treated.
+Diseases.default_complication_lethality = 0.01
+
 -- postprocessing
 do
     local function get_percentage(n)
@@ -1386,6 +1391,10 @@ do
     end
 
     for id, disease in pairs(Diseases.values) do
+        if disease.lethality and not disease.complication_lethality then
+            disease.complication_lethality = math.min(disease.lethality, Diseases.default_complication_lethality)
+        end
+
         disease.localised_name = {"disease-name." .. disease.name}
         disease.localised_description = get_localised_description(disease)
         disease.id = id

@@ -4,6 +4,7 @@ local EK = require("enums.entry-key")
 local Gender = require("enums.gender")
 local Type = require("enums.type")
 
+local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
@@ -328,6 +329,18 @@ Tirislib.Testing.add_test_case(
 -- test-disease-oldest / test-disease-youngest, see the test diseases in constants/diseases.lua
 local OLDEST_DISEASE = 99007
 local YOUNGEST_DISEASE = 99008
+
+Tirislib.Testing.add_test_case(
+    "Diseases without complication_lethality get the default, capped by their lethality",
+    "inhabitants",
+    function()
+        Assert.equals(Diseases.values[OLDEST_DISEASE].complication_lethality, Diseases.default_complication_lethality)
+        Assert.is_nil(
+            Diseases.values[99001].complication_lethality,
+            "a disease that can't kill untreated should stay harmless when treated"
+        )
+    end
+)
 
 Tirislib.Testing.add_test_case(
     "AgeGroup.take_extreme takes the oldest first",

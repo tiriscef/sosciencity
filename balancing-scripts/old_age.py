@@ -74,7 +74,9 @@ def case_death_chance(name, diseases, frailty, care, default_complication_lethal
     def own(d):
         if care and d["treatable"]:
             lethality = d["complication_lethality"]
-            return death_chance(default_complication_lethality if lethality is None else lethality, frailty)
+            if lethality is None:
+                lethality = min(d["lethality"], default_complication_lethality)
+            return death_chance(lethality, frailty)
         if d["recovery_minutes"] is None:
             return 0.0  # never ends untreated
         return death_chance(d["lethality"], frailty)

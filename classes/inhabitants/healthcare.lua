@@ -60,7 +60,13 @@ local special_sideeffect_fns = {
 local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
     local disease = disease_values[disease_id]
 
-    local lethal_probability = cured and disease.complication_lethality or disease.lethality
+    -- no and/or idiom here: a nil complication_lethality must not fall back to the lethality
+    local lethal_probability
+    if cured then
+        lethal_probability = disease.complication_lethality
+    else
+        lethal_probability = disease.lethality
+    end
     local dead_count = 0
     if lethal_probability then
         dead_count = coin_flips(lethal_probability, count)
