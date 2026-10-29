@@ -1,13 +1,16 @@
 """Estimates how long huwans live and what they die of, once old age exists.
 
-Models the old age design of memory/project_old_age.md before it is implemented in the mod. The parameters
-are proposals (PROPOSED below); when phase 4 moves them into constants/inhabitants.lua, read them from
-there instead. Ordinary disease cases come from disease_rates.py, the birth rate from reproduction.py.
+Models the old age design of memory/project_old_age.md. Frailty and natural death are read from
+constants/inhabitants.lua, the default complication lethality from constants/diseases.lua. The old age disease
+doesn't exist in the mod yet, its parameters are proposals (PROPOSED below). Ordinary disease cases come from
+disease_rates.py, the birth rate from reproduction.py. Keep it in sync with the frailty logic in
+classes/inhabitants/healthcare.lua.
 
 Inputs:
 - diseases, disease categories, base rates, caste susceptibilities, workplaces and bed speed via disease_rates.py
 - the birth rate target from constants/inhabitants.lua via reproduction.py
-- the old age parameters below (overridable with flags)
+- frailty, natural death and the default complication lethality from the mod, the old age disease proposals
+  below (all overridable with flags)
 
 Model, per huwan of age a (nauvis days) in a house with health H and sanity S:
 - Onset O = onset + health_shift * (H - 10) + sanity_shift * (S - 10), with H and S capped at shift_cap (40).
@@ -34,6 +37,7 @@ Usage, from the mod folder:
 """
 import argparse
 import math
+import re
 from collections import defaultdict
 
 import disease_rates
@@ -46,18 +50,37 @@ MAX_AGE = 2000
 
 # proposals, phase 4 moves them into constants/inhabitants.lua
 PROPOSED = {
-    "onset": 170,  # days; frailty is 1 at this age (health = sanity = 10)
-    "doubling": 45,  # days until frailty doubles
-    "health_shift": 3,  # days of later onset per health point above 10
-    "sanity_shift": 1.5,  # days of later onset per sanity point above 10
-    "shift_cap": 40,  # health and sanity above this count as this for the onset
-    "natural_rate": 0.001,  # natural deaths per huwan per day at the onset
     "old_age_rate": 0.005,  # old age disease cases per huwan per day at the onset
     "old_age_lethality": 0.8,
     "old_age_complication_lethality": 0.08,
-    "default_complication_lethality": 0.01,  # for diseases that don't define one
     "old_age_workload": 4,  # operations to treat the generic old age disease
 }
+
+
+def parse_old_age_constants():
+    """Returns the old age parameters of the mod, rates per nauvis day."""
+    src = (disease_rates.MOD / "constants" / "inhabitants.lua").read_text()
+
+    def constant(name):
+        return re.search(rf"InhabitantsConstants\.{name} = ([^\n]+)", src).group(1).strip()
+
+    if float(constant("frailty_neutral_value")) != 10:
+        raise SystemExit("the model assumes a neutral health and sanity of 10")
+    natural_rate = re.fullmatch(r"([\d.]+) / Time\.nauvis_day", constant("natural_death_rate")).group(1)
+    diseases_src = (disease_rates.MOD / "constants" / "diseases.lua").read_text()
+    return {
+        "onset": float(constant("frailty_onset")),  # days; frailty is 1 at this age (health = sanity = 10)
+        "doubling": float(constant("frailty_doubling")),  # days until frailty doubles
+        "health_shift": float(constant("frailty_health_shift")),  # days of later onset per health point above 10
+        "sanity_shift": float(constant("frailty_sanity_shift")),  # days of later onset per sanity point above 10
+        "shift_cap": float(constant("frailty_shift_cap")),  # health and sanity above this count as this
+        "natural_rate": float(natural_rate),  # natural deaths per huwan per day at the onset
+        # for diseases that don't define one, capped by their lethality
+        "default_complication_lethality": float(
+            re.search(r"Diseases\.default_complication_lethality = ([\d.]+)", diseases_src).group(1)
+        ),
+    }
+
 
 CAUSES = ["natural", "old age disease", "other diseases"]
 SWEEP = [0, 5, 10, 15, 20, 25, 30, 40, 50]
@@ -226,8 +249,9 @@ def print_sweep(params, data):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    for key, value in PROPOSED.items():
-        parser.add_argument(f"--{key.replace('_', '-')}", type=float, default=value, help=f"(proposal: {value:g})")
+    for source, values in (("mod", parse_old_age_constants()), ("proposal", PROPOSED)):
+        for key, value in values.items():
+            parser.add_argument(f"--{key.replace('_', '-')}", type=float, default=value, help=f"({source}: {value:g})")
     parser.add_argument("-H", "--health", type=float, default=10, help="average health (default 10)")
     parser.add_argument("-S", "--sanity", type=float, default=10, help="average sanity (default 10)")
     parser.add_argument("-c", "--castes", nargs="+", help="castes in the city (default: all enabled)")

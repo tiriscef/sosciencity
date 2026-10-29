@@ -136,6 +136,22 @@ InhabitantsConstants.meeting_exponent = 0.2
 --- Eggs conceived per inhabitant per tick by the gender mix of naturally conceived eggs in the reference social environment.
 InhabitantsConstants.birth_rate = 0.01 / Time.nauvis_day
 
+--- Age in nauvis days at which the frailty of a huwan in a house with neutral health and sanity reaches 1.
+--- Frailty is 2 ^ ((age - onset) / doubling), so it is negligible for young huwans.
+InhabitantsConstants.frailty_onset = 170
+--- Nauvis days until the frailty doubles.
+InhabitantsConstants.frailty_doubling = 45
+--- Health and sanity at which the onset isn't shifted.
+InhabitantsConstants.frailty_neutral_value = 10
+--- Nauvis days the onset moves per health point above (or below) the neutral value.
+InhabitantsConstants.frailty_health_shift = 3
+--- Nauvis days the onset moves per sanity point above (or below) the neutral value.
+InhabitantsConstants.frailty_sanity_shift = 1.5
+--- Health and sanity above this value count as this value for the onset.
+InhabitantsConstants.frailty_shift_cap = 40
+--- Natural deaths per inhabitant per tick at a frailty of 1.
+InhabitantsConstants.natural_death_rate = 0.001 / Time.nauvis_day
+
 --- Operations a bed needs to give one vaccine dose (one operation is one minute of a bed at full performance).
 InhabitantsConstants.vaccination_workload = 0.1
 
