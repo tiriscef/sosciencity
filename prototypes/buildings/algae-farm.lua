@@ -43,11 +43,9 @@ Tirislib.Entity.create {
     graphics_set = {
         animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.static),
         working_visualisations = {
-            -- basin water and glass tube contents; always drawn so they don't vanish while idle
-            Tirislib.Entity.create_working_visualisation_from_sprite_data(
-                sprites.flow,
-                {always_draw = true, constant_speed = true}
-            )
+            -- basin water and glass tube contents: always drawn, so they stay visible (frozen) while idle;
+            -- without constant_speed the flow follows the machine speed and stops when it doesn't craft
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(sprites.flow, {always_draw = true})
         }
     },
     crafting_speed = 1,
