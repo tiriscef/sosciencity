@@ -14,7 +14,7 @@ local furniture_items = {
     },
     {
         name = "kitchen-furniture",
-        use_placeholder_icon = true
+        sprite_variations = {name = "kitchen-furniture", count = 3, include_icon = true}
     },
     {
         name = "bathroom-furniture",
