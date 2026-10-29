@@ -367,14 +367,10 @@ local SPRITE_DATA_MAPS = {
     {"glow", {draw_as_glow = true}}
 }
 
---- Creates an animation from one part of a sprite-data.lua, which the sosciencity-blender-tools
---- export writes next to the sprites.\
---- A part has **frame_count**, **animation_speed** and **frame_sequence** (all optional) and
---- **maps**: one entry per map (diffuse, shadowmap, lightmap, glow) with its own **width**,
---- **height**, **shift**, **filenames**, **line_length** and **lines_per_file** in px at 64 px/tile.
+--- Animation of one direction of a sprite-data part.
 --- @param part table
 --- @return AnimationPrototype
-function Tirislib.Entity.create_animation_from_sprite_data(part)
+local function animation_from_sprite_data(part)
     local layers = {}
 
     for _, map in pairs(SPRITE_DATA_MAPS) do
@@ -401,6 +397,49 @@ function Tirislib.Entity.create_animation_from_sprite_data(part)
     end
 
     return {layers = layers}
+end
+
+local SPRITE_DATA_DIRECTIONS = {"north", "east", "south", "west"}
+
+--- Creates an animation from one part of a sprite-data.lua, which the sosciencity-blender-tools
+--- export writes next to the sprites.\
+--- A part has **frame_count**, **animation_speed** and **frame_sequence** (all optional) and
+--- **maps**: one entry per map (diffuse, shadowmap, lightmap, glow) with its own **width**,
+--- **height**, **shift**, **filenames**, **line_length** and **lines_per_file** in px at 64 px/tile.\
+--- Parts of rotatable entities hold one such entry per direction (**north**, **east**, **south**,
+--- **west**) and become an Animation4Way.
+--- @param part table
+--- @return AnimationPrototype|Animation4Way
+function Tirislib.Entity.create_animation_from_sprite_data(part)
+    if not part.north then
+        return animation_from_sprite_data(part)
+    end
+
+    local animation = {}
+    for _, direction in pairs(SPRITE_DATA_DIRECTIONS) do
+        animation[direction] = animation_from_sprite_data(part[direction])
+    end
+    return animation
+end
+
+--- Creates a working visualisation from one part of a sprite-data.lua. Working visualisations don't
+--- take an Animation4Way, so parts of rotatable entities fill **north_animation**, **east_animation**,
+--- ... instead of **animation**.
+--- @param part table
+--- @param properties table|nil further fields of the working visualisation (always_draw, ...)
+--- @return WorkingVisualisation
+function Tirislib.Entity.create_working_visualisation_from_sprite_data(part, properties)
+    local visualisation = Tirislib.Tables.copy(properties or {})
+
+    if part.north then
+        for _, direction in pairs(SPRITE_DATA_DIRECTIONS) do
+            visualisation[direction .. "_animation"] = animation_from_sprite_data(part[direction])
+        end
+    else
+        visualisation.animation = animation_from_sprite_data(part)
+    end
+
+    return visualisation
 end
 
 --- Creates a picture from the static part of a sprite-data.lua, for entities that take a Sprite

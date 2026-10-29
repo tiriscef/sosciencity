@@ -377,3 +377,52 @@ Tirislib.Testing.add_test_case(
         Assert.is_nil(layer.animation_speed)
     end
 )
+
+local function directional_sprite_data()
+    local part = {}
+    for _, direction in pairs({"north", "east", "south", "west"}) do
+        part[direction] = {frame_count = 2, maps = {diffuse = sprite_data_sheet(direction)}}
+    end
+    return part
+end
+
+Tirislib.Testing.add_test_case(
+    "Entity.create_animation_from_sprite_data makes an Animation4Way from a rotatable entity's part",
+    "lib.entity",
+    function()
+        local animation = Tirislib.Entity.create_animation_from_sprite_data(directional_sprite_data())
+
+        Assert.is_nil(animation.layers)
+        for _, direction in pairs({"north", "east", "south", "west"}) do
+            Assert.equals(animation[direction].layers[1].filenames, {"__test__/" .. direction .. ".png"})
+            Assert.equals(animation[direction].layers[1].frame_count, 2)
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Entity.create_working_visualisation_from_sprite_data fills animation or the per-direction animations",
+    "lib.entity",
+    function()
+        local properties = {always_draw = true}
+        local single = Tirislib.Entity.create_working_visualisation_from_sprite_data(
+            {maps = {diffuse = sprite_data_sheet("single")}},
+            properties
+        )
+        Assert.is_true(single.always_draw)
+        Assert.equals(single.animation.layers[1].filenames, {"__test__/single.png"})
+        Assert.is_nil(single.north_animation)
+
+        local rotatable =
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(directional_sprite_data(), properties)
+        Assert.is_true(rotatable.always_draw)
+        Assert.is_nil(rotatable.animation)
+        for _, direction in pairs({"north", "east", "south", "west"}) do
+            Assert.equals(
+                rotatable[direction .. "_animation"].layers[1].filenames,
+                {"__test__/" .. direction .. ".png"}
+            )
+        end
+        Assert.is_nil(properties.animation, "the properties table stays untouched")
+    end
+)
