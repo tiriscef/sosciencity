@@ -17,12 +17,22 @@ Huwans get sick. It is a fact of life. The categories of diseases you will encou
 - **Birth defects** - some huwans arrive with these. Difficult to treat and they do not heal naturally.
 - **Escalations** - a disease left untreated can progress into something worse. This is avoidable. Treat your sick.
 - **Complications** - occasionally a treatment doesn't go cleanly and produces a secondary condition. This is rare, but worth knowing.
+- **Old age** - weak hearts, brittle bones, cancers. They come with a long life. See below.
 
 Some diseases resolve on their own over time. Others do not, and a small number are contagious - meaning they will spread to healthy huwans who interact with the sick. Early treatment is almost always better than waiting.
 
 Sick huwans can still work, but at reduced capacity. They will not pull full shifts in a factory. You want them healthy.
 
 [linked-page=data/diseases]
+
+
+## Growing Old
+
+Huwans do not live forever. I wish I could tell you otherwise.
+
+From a certain age, a huwan becomes frail, and frailty doubles every few weeks. Frail huwans fall ill with the diseases of old age, and every disease - old age or not - becomes more dangerous for them. Eventually, even the healthiest huwan passes away peacefully in their sleep. No hospital can prevent that, and none should try.
+
+What you can influence is when it happens. Good health and good sanity delay the onset of frailty. And a treated old huwan survives far more often than an untreated one: a city with good healthcare gives its huwans many additional days.
 
 
 ## The Med Bay and the Hospital
