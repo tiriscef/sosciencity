@@ -108,7 +108,7 @@ local construction_items = {
     },
     {
         name = "tirinite",
-        use_placeholder_icon = true
+        sprite_variations = {name = "tirinite", count = 3, include_icon = true}
     }
 }
 
