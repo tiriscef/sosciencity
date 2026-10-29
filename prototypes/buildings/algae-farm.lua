@@ -25,12 +25,13 @@ Tirislib.RecipeGenerator.create {
 Sosciencity.Config.remove_quality_multipliers("algae-farm")
 
 local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
-local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures {"south", "north"}
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures()
+local sprites = require("__sosciencity-graphics__.graphics.entity.algae-farm.sprite-data")
 
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "algae-farm",
-    flags = {"placeable-neutral", "player-creation", "not-rotatable"},
+    flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "algae-farm"},
     max_health = 200,
     corpse = "small-remnants",
@@ -40,15 +41,13 @@ Tirislib.Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     graphics_set = {
-        animation = Tirislib.Entity.create_standard_picture {
-            path = "__sosciencity-graphics__/graphics/entity/algae-farm/algae-farm",
-            center = {2.5, 3.0},
-            width = 8,
-            height = 5,
-            scale = 1.5,
-            shadowmap = true,
-            glow = true,
-            lightmap = true
+        animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.static),
+        working_visualisations = {
+            -- basin water and glass tube contents; always drawn so they don't vanish while idle
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(
+                sprites.flow,
+                {always_draw = true, constant_speed = true}
+            )
         }
     },
     crafting_speed = 1,
@@ -66,7 +65,7 @@ Tirislib.Entity.create {
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {
-                {position = {-3.0, -1.0}, flow_direction = "input", direction = defines.direction.north}
+                {position = {-3.0, -2.0}, flow_direction = "input", direction = defines.direction.north}
             },
             production_type = "input"
         },
@@ -74,7 +73,7 @@ Tirislib.Entity.create {
             volume = 1000,
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
-            pipe_connections = {{position = {2.0, -1.0}, flow_direction = "input", direction = defines.direction.north}},
+            pipe_connections = {{position = {-2.0, -2.0}, flow_direction = "input", direction = defines.direction.north}},
             production_type = "input"
         },
         {
@@ -82,7 +81,7 @@ Tirislib.Entity.create {
             pipe_covers = pipe_covers,
             pipe_picture = pipe_pictures,
             pipe_connections = {
-                {position = {3.0, -1.0}, flow_direction = "output", direction = defines.direction.north}
+                {position = {3.0, -2.0}, flow_direction = "output", direction = defines.direction.north}
             },
             production_type = "output"
         }
@@ -106,5 +105,5 @@ Tirislib.Entity.create {
         fade_in_ticks = 4,
         fade_out_ticks = 20
     }
-}:set_size(9, 3):copy_icon_from_item()
+}:set_size(7, 5):copy_icon_from_item()
 Sosciencity.configure_building("algae-farm")
