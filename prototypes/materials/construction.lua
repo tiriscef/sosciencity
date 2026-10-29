@@ -25,7 +25,10 @@ local construction_items = {
         name = "soda",
         sprite_variations = {name = "soda", count = 3, include_icon = true}
     },
-    {name = "lye", use_placeholder_icon = true},
+    {
+        name = "lye",
+        sprite_variations = {name = "lye", count = 3, include_icon = true}
+    },
     {name = "glass"},
     {name = "glass-mixture"},
     {
@@ -85,7 +88,7 @@ local construction_items = {
     {name = "ferrous-sulfate"},
     {
         name = "granite",
-        use_placeholder_icon = true
+        sprite_variations = {name = "granite", count = 3, include_icon = true}
     },
     {
         name = "precious-ore",
@@ -97,7 +100,7 @@ local construction_items = {
     },
     {
         name = "gemstone",
-        use_placeholder_icon = true
+        sprite_variations = {name = "gemstone", count = 3, include_icon = true}
     },
     {
         name = "polished-gemstone",
