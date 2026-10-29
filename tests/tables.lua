@@ -565,3 +565,42 @@ Tirislib.Testing.add_test_case(
         Assert.contains(result, 4)
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << pick_random_key_weighted >>
+
+Tirislib.Testing.add_test_case(
+    "pick_random_key_weighted returns a key of the table",
+    "lib.tables",
+    function()
+        local weights = {[10] = 1, [20] = 2, a = 3}
+        for _ = 1, 20 do
+            Assert.not_nil(weights[Tables.pick_random_key_weighted(weights)])
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "pick_random_key_weighted never returns a key with zero weight",
+    "lib.tables",
+    function()
+        local weights = {[5] = 0, [7] = 1, [9] = 0}
+        for _ = 1, 20 do
+            Assert.equals(Tables.pick_random_key_weighted(weights), 7)
+            Assert.equals(Tables.pick_random_key_weighted(weights, 1), 7)
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "pick_random_key_weighted throws when all weights are zero",
+    "lib.tables",
+    function()
+        Assert.throws(function()
+            Tables.pick_random_key_weighted({a = 0, b = 0})
+        end)
+        Assert.throws(function()
+            Tables.pick_random_key_weighted({})
+        end)
+    end
+)

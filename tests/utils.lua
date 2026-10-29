@@ -163,44 +163,6 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << weighted_random >>
-
-Tirislib.Testing.add_test_case(
-    "weighted_random returns a valid index",
-    "lib.utils",
-    function()
-        local weights = {1, 2, 3, 4}
-        for _ = 1, 20 do
-            local idx = Utils.weighted_random(weights)
-            Assert.greater_than(idx, 0)
-            Assert.less_than(idx, 5)
-            Assert.is_integer(idx)
-        end
-    end
-)
-
-Tirislib.Testing.add_test_case(
-    "weighted_random always returns the only non-zero index",
-    "lib.utils",
-    function()
-        local weights = {0, 0, 1, 0}
-        for _ = 1, 10 do
-            Assert.equals(Utils.weighted_random(weights), 3)
-        end
-    end
-)
-
-Tirislib.Testing.add_test_case(
-    "weighted_random throws when all weights are zero",
-    "lib.utils",
-    function()
-        Assert.throws(function()
-            Utils.weighted_random({0, 0, 0})
-        end)
-    end
-)
-
----------------------------------------------------------------------------------------------------
 -- << coin_flips >>
 
 Tirislib.Testing.add_test_case(

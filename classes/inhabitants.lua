@@ -487,15 +487,10 @@ function AgeGroup.take_random(group, to_take, total_count)
 
     local ret = {}
     for _ = 1, to_take do
-        local roll = random(total_count)
-        for hatch_day, count in pairs(group) do
-            roll = roll - count
-            if roll <= 0 then
-                ret[hatch_day] = (ret[hatch_day] or 0) + 1
-                group[hatch_day] = (count > 1) and count - 1 or nil
-                break
-            end
-        end
+        local hatch_day = Tables.pick_random_key_weighted(group, total_count)
+        local count = group[hatch_day]
+        ret[hatch_day] = (ret[hatch_day] or 0) + 1
+        group[hatch_day] = (count > 1) and count - 1 or nil
         total_count = total_count - 1
     end
 

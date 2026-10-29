@@ -70,6 +70,33 @@ function Tirislib.Arrays.sum(tbl)
     return ret
 end
 
+--- Chooses a random index of the given weights array.
+--- - The sum of all weights can be given to avoid calculating it multiple times.
+--- @param weights array
+--- @param sum number|nil
+--- @return integer
+function Tirislib.Arrays.weighted_random(weights, sum)
+    if sum == nil then
+        sum = 0
+        for i = 1, #weights do
+            sum = sum + weights[i]
+        end
+    end
+
+    if sum == 0 then
+        error("weighted_random called with all-zero weights")
+    end
+
+    local random_index = random() * sum
+    local index = 0
+
+    repeat
+        index = index + 1
+        random_index = random_index - weights[index]
+    until random_index <= 0
+
+    return index
+end
 --- Calculates the product of all elements in the given array.
 --- @param tbl array
 --- @return number

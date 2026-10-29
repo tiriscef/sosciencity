@@ -124,34 +124,7 @@ function Tirislib.Utils.sgn(x)
     end
 end
 
---- Chooses a random index of the given weights array.
---- - The sum of all weights can be given to avoid calculating it multiple times.
---- @param weights array
---- @param sum number|nil
---- @return integer
-function Tirislib.Utils.weighted_random(weights, sum)
-    if sum == nil then
-        sum = 0
-        for i = 1, #weights do
-            sum = sum + weights[i]
-        end
-    end
-
-    if sum == 0 then
-        error("weighted_random called with all-zero weights")
-    end
-
-    local random_index = random() * sum
-    local index = 0
-
-    repeat
-        index = index + 1
-        random_index = random_index - weights[index]
-    until random_index <= 0
-
-    return index
-end
-local weighted_random = Tirislib.Utils.weighted_random
+local weighted_random = Tirislib.Arrays.weighted_random
 
 --- Generates the weights array, key-lookup array, result array and the weights sum for the given dice.
 --- @param dice table

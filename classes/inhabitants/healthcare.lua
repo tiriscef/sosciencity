@@ -14,6 +14,7 @@ local disease_values = Diseases.values
 local get_building_details = Buildings.get
 local try_get = Register.try_get
 local Arrays = Tirislib.Arrays
+local Tables = Tirislib.Tables
 local Utils = Tirislib.Utils
 local coin_flips = Utils.coin_flips
 local occurence_probability = Utils.occurrence_probability
@@ -44,7 +45,7 @@ local special_sideeffect_fns = {
         local gender_group = entry[EK.genders]
 
         for _ = 1, count do
-            local gender_before = Utils.weighted_random(gender_group)
+            local gender_before = Tables.pick_random_key_weighted(gender_group)
             local gender_after = Utils.random_different(1, 4, gender_before)
 
             gender_group[gender_before] = gender_group[gender_before] - 1

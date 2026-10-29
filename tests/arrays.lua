@@ -300,3 +300,41 @@ Tirislib.Testing.add_test_case(
         Assert.equals(Arrays.sequence(10, 1, 3), {10, 7, 4, 1})
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << weighted_random >>
+
+Tirislib.Testing.add_test_case(
+    "weighted_random returns a valid index",
+    "lib.arrays",
+    function()
+        local weights = {1, 2, 3, 4}
+        for _ = 1, 20 do
+            local idx = Arrays.weighted_random(weights)
+            Assert.greater_than(idx, 0)
+            Assert.less_than(idx, 5)
+            Assert.is_integer(idx)
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "weighted_random always returns the only non-zero index",
+    "lib.arrays",
+    function()
+        local weights = {0, 0, 1, 0}
+        for _ = 1, 10 do
+            Assert.equals(Arrays.weighted_random(weights), 3)
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "weighted_random throws when all weights are zero",
+    "lib.arrays",
+    function()
+        Assert.throws(function()
+            Arrays.weighted_random({0, 0, 0})
+        end)
+    end
+)

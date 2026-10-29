@@ -400,6 +400,32 @@ function Tirislib.Tables.pick_random_subtable_weighted_by_key(tbl, key, weight_s
     error("pick_random_subtable_weighted_by_key failed to pick a subtable, most likely due to a wrong weight_sum")
 end
 
+--- Returns a random key out of the given table. The value behind each key is its probability weight.
+--- - The sum of all weights can be given to avoid calculating it multiple times.
+--- @param tbl table
+--- @param weight_sum number|nil
+--- @return any key
+function Tirislib.Tables.pick_random_key_weighted(tbl, weight_sum)
+    weight_sum = weight_sum or sum(tbl)
+
+    if weight_sum == 0 then
+        error("pick_random_key_weighted called with all-zero weights")
+    end
+
+    local random_index = random() * weight_sum
+
+    -- strictly below zero, so keys with a weight of zero never get picked
+    for key, weight in pairs(tbl) do
+        random_index = random_index - weight
+
+        if random_index < 0 then
+            return key
+        end
+    end
+
+    error("pick_random_key_weighted failed to pick a key, most likely due to a wrong weight_sum")
+end
+
 --- Gets or creates the subtable with the given key.
 --- @param tbl table
 --- @param key any
