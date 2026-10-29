@@ -434,27 +434,106 @@ Tirislib.Testing.add_test_case(
         local group = InhabitantGroup.new(Type.clockwork, 10)
         group[EK.ages] = {[10] = 3, [20] = 4, [30] = 3}
 
-        local dead = InhabitantGroup.take_deceased(group, 2, OLDEST_DISEASE)
+        local dead = InhabitantGroup.take_deceased(group, 2, OLDEST_DISEASE, 1)
 
-        Assert.equals(dead[EK.ages][10], 2, "the oldest should die of an oldest-linked disease")
-        Assert.equals(group[EK.ages][10], 1)
+        Assert.equals(dead, 2)
+        Assert.equals(group[EK.ages][10], 1, "the oldest should die of an oldest-linked disease")
         Assert.equals(group[EK.inhabitants], 8)
+        Assert.equals(group[EK.diseases][HEALTHY], 8)
         Assert.equals(Table.sum(group[EK.ages]), 8, "ages should be subtracted only once")
     end
 )
 
 Tirislib.Testing.add_test_case(
-    "InhabitantGroup.take_deceased takes proportional ages for unlinked diseases",
+    "InhabitantGroup.take_deceased takes random ages for unlinked diseases",
     "inhabitants",
     function()
         local group = InhabitantGroup.new(Type.clockwork, 10)
         group[EK.ages] = {[10] = 5, [20] = 5}
 
-        local dead = InhabitantGroup.take_deceased(group, 4, 1)
+        local dead = InhabitantGroup.take_deceased(group, 4, 1, 1)
 
-        Assert.equals(dead[EK.ages][10], 2)
-        Assert.equals(dead[EK.ages][20], 2)
+        Assert.equals(dead, 4)
+        Assert.equals(group[EK.inhabitants], 6)
         Assert.equals(Table.sum(group[EK.ages]), 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased raises the lethality with frailty",
+    "inhabitants",
+    function()
+        local today = AgeGroup.current_day()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        -- frailty 2^10 far past the onset, so even a tiny lethality is capped at 1
+        local onset = InhabitantGroup.get_frailty_onset(group)
+        group[EK.ages] = {[today - onset - 10 * InhabitantsConstants.frailty_doubling] = 10}
+
+        Assert.equals(InhabitantGroup.take_deceased(group, 10, 1, 0.01), 10)
+        Assert.equals(group[EK.inhabitants], 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased kills no one without lethality",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+
+        Assert.equals(InhabitantGroup.take_deceased(group, 10, 1, 0), 0)
+        Assert.equals(group[EK.inhabitants], 10)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_random takes the given count",
+    "inhabitants",
+    function()
+        local group = {[10] = 1, [20] = 1, [30] = 1}
+        local taken = AgeGroup.take_random(group, 2)
+
+        Assert.equals(Table.sum(taken), 2)
+        Assert.equals(Table.sum(group), 1)
+        for hatch_day, count in pairs(taken) do
+            Assert.equals(count, 1)
+            Assert.is_nil(group[hatch_day])
+        end
+        Assert.equals(Table.sum(AgeGroup.take_random(group, 5)), 1, "should take at most everyone")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.get_frailty is 1 at the onset and doubles every doubling time",
+    "inhabitants",
+    function()
+        local doubling = InhabitantsConstants.frailty_doubling
+        Assert.is_number_close(AgeGroup.get_frailty(0, 100, 100), 1, 1e-9)
+        Assert.is_number_close(AgeGroup.get_frailty(0, 100 + doubling, 100), 2, 1e-9)
+        Assert.is_number_close(AgeGroup.get_frailty(doubling, 100, 100), 0.5, 1e-9)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.get_frailty_onset is delayed by health and sanity up to the cap",
+    "inhabitants",
+    function()
+        local C = InhabitantsConstants
+        local group = InhabitantGroup.new(Type.clockwork, 1)
+        group[EK.health] = C.frailty_neutral_value
+        group[EK.sanity] = C.frailty_neutral_value
+        Assert.equals(InhabitantGroup.get_frailty_onset(group), C.frailty_onset)
+
+        group[EK.health] = C.frailty_neutral_value + 2
+        Assert.is_number_close(InhabitantGroup.get_frailty_onset(group), C.frailty_onset + 2 * C.frailty_health_shift, 1e-9)
+
+        group[EK.health] = C.frailty_shift_cap + 100
+        group[EK.sanity] = C.frailty_shift_cap + 100
+        local capped = C.frailty_shift_cap - C.frailty_neutral_value
+        Assert.is_number_close(
+            InhabitantGroup.get_frailty_onset(group),
+            C.frailty_onset + capped * (C.frailty_health_shift + C.frailty_sanity_shift),
+            1e-9
+        )
     end
 )
 

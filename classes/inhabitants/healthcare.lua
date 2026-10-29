@@ -69,9 +69,8 @@ local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
     end
     local dead_count = 0
     if lethal_probability then
-        dead_count = coin_flips(lethal_probability, count)
+        dead_count = take_deceased(entry, count, disease_id, lethal_probability)
         if dead_count > 0 then
-            take_deceased(entry, dead_count, disease_id)
             Communication.report_disease_death(dead_count, disease_id)
         end
     end

@@ -6,6 +6,7 @@ local Type = require("enums.type")
 
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 --- Static class that handles the behaviour of the people.
@@ -364,6 +365,16 @@ function AgeGroup.get_age(hatch_day, today)
     return (today or AgeGroup.current_day()) - hatch_day
 end
 
+--- Returns the frailty of the inhabitants hatched on the given day. It is 1 at the onset age and doubles every
+--- InhabitantsConstants.frailty_doubling days, so it is negligible for young inhabitants.
+--- @param hatch_day integer
+--- @param today integer
+--- @param onset number age in nauvis days at which the frailty is 1, see InhabitantGroup.get_frailty_onset
+--- @return number
+function AgeGroup.get_frailty(hatch_day, today, onset)
+    return 2 ^ ((today - hatch_day - onset) / InhabitantsConstants.frailty_doubling)
+end
+
 --- Returns a new AgeGroup table with fixed ages.
 --- @param count integer
 --- @param age integer? age in nauvis days, defaults to 0
@@ -459,6 +470,33 @@ function AgeGroup.take(group, to_take, total_count)
             end
         end
         if not made_progress then break end
+    end
+
+    return ret
+end
+
+--- Takes the given count of people at random from the given AgeGroup and returns the AgeGroup of the taken people.
+--- Unlike AgeGroup.take, every person has the same chance to be taken, even when only a few are taken.
+--- @param group AgeGroup
+--- @param to_take integer
+--- @param total_count integer?
+--- @return AgeGroup
+function AgeGroup.take_random(group, to_take, total_count)
+    total_count = total_count or Tables.sum(group)
+    to_take = min(to_take, total_count)
+
+    local ret = {}
+    for _ = 1, to_take do
+        local roll = random(total_count)
+        for hatch_day, count in pairs(group) do
+            roll = roll - count
+            if roll <= 0 then
+                ret[hatch_day] = (ret[hatch_day] or 0) + 1
+                group[hatch_day] = (count > 1) and count - 1 or nil
+                break
+            end
+        end
+        total_count = total_count - 1
     end
 
     return ret
@@ -954,18 +992,57 @@ function InhabitantGroup.take_specific(group, count, diseases, genders, ages, im
     )
 end
 
---- Takes the given count of inhabitants that died of the given disease. They have to be bookkept as healthy
---- already, like after InhabitantGroup.cure. Their ages depend on the disease's age link.
+--- Returns the age in nauvis days at which the frailty of the given group's inhabitants is 1. Good health and
+--- sanity delay it.
+--- @param group InhabitantGroup
+--- @return number
+function InhabitantGroup.get_frailty_onset(group)
+    local C = InhabitantsConstants
+    local neutral = C.frailty_neutral_value
+    local cap = C.frailty_shift_cap
+
+    return C.frailty_onset + C.frailty_health_shift * (min(group[EK.health], cap) - neutral) +
+        C.frailty_sanity_shift * (min(group[EK.sanity], cap) - neutral)
+end
+
+--- Rolls which of the given count of inhabitants with the given disease don't survive it and takes them out of
+--- the group. They have to be bookkept as healthy already, like after InhabitantGroup.cure. The lethality rises
+--- with their frailty. Their ages depend on the disease's age link: the oldest or youngest for linked diseases,
+--- random ones otherwise. Returns the number of dead.
 --- @param group InhabitantGroup
 --- @param count integer
 --- @param disease_id DiseaseID
---- @return InhabitantGroup
-function InhabitantGroup.take_deceased(group, count, disease_id)
+--- @param lethality number death chance of a case at a frailty of 1 or less
+--- @return integer
+function InhabitantGroup.take_deceased(group, count, disease_id, lethality)
     local link = Diseases.values[disease_id].age_link
-    -- take_specific subtracts the given ages, so they are only selected on a copy here
-    local ages = link and AgeGroup.take_extreme(Tables.copy(group[EK.ages]), count, link)
+    -- the ages of the cases are only chosen on a copy, because take_specific subtracts the ages of the dead
+    local ages = Tables.copy(group[EK.ages])
+    local case_ages
+    if link then
+        case_ages = AgeGroup.take_extreme(ages, count, link)
+    else
+        case_ages = AgeGroup.take_random(ages, count, group[EK.inhabitants])
+    end
 
-    return InhabitantGroup.take_specific(group, count, {[HEALTHY] = count}, nil, ages)
+    local today = AgeGroup.current_day()
+    local onset = InhabitantGroup.get_frailty_onset(group)
+    local dead_ages = {}
+    local dead_count = 0
+    for hatch_day, case_count in pairs(case_ages) do
+        local frailty = AgeGroup.get_frailty(hatch_day, today, onset)
+        local dead = coin_flips(min(1, lethality * max(1, frailty)), case_count)
+        if dead > 0 then
+            dead_ages[hatch_day] = dead
+            dead_count = dead_count + dead
+        end
+    end
+
+    if dead_count > 0 then
+        InhabitantGroup.take_specific(group, dead_count, {[HEALTHY] = dead_count}, nil, dead_ages)
+    end
+
+    return dead_count
 end
 
 --- Tries to make the given number of people sick with the given disease, respecting their immunities.
