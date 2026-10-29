@@ -1,16 +1,15 @@
 """Estimates how long huwans live and what they die of, once old age exists.
 
-Models the old age design of memory/project_old_age.md. Frailty and natural death are read from
-constants/inhabitants.lua, the default complication lethality from constants/diseases.lua. The old age disease
-doesn't exist in the mod yet, its parameters are proposals (PROPOSED below). Ordinary disease cases come from
-disease_rates.py, the birth rate from reproduction.py. Keep it in sync with the frailty logic in
-classes/inhabitants/healthcare.lua.
+Models the old age design of memory/project_old_age.md. Frailty, natural death and the old age disease rate are
+read from constants/inhabitants.lua, the old age diseases and the default complication lethality from
+constants/diseases.lua. Ordinary disease cases come from disease_rates.py, the birth rate from reproduction.py.
+Keep it in sync with the frailty logic in classes/inhabitants.lua and classes/inhabitants/healthcare.lua.
 
 Inputs:
 - diseases, disease categories, base rates, caste susceptibilities, workplaces and bed speed via disease_rates.py
 - the birth rate target from constants/inhabitants.lua via reproduction.py
-- frailty, natural death and the default complication lethality from the mod, the old age disease proposals
-  below (all overridable with flags)
+- frailty, natural death, the old age disease rate and the default complication lethality from the mod
+  (all overridable with flags)
 
 Model, per huwan of age a (nauvis days) in a house with health H and sanity S:
 - Onset O = onset + health_shift * (H - 10) + sanity_shift * (S - 10), with H and S capped at shift_cap (40).
@@ -18,7 +17,7 @@ Model, per huwan of age a (nauvis days) in a house with health H and sanity S:
   by X days is the same as dividing the hazards by 2^(X / D), so this is the only knob health and sanity need.
 - Frailty f(a) = 2^((a - O) / D): doubles every D days.
 - Natural death ("passed away in their sleep"): natural_rate * f(a) per day, no hospital involved.
-- Old age disease: old_age_rate * f(a) cases per day, one generic disease until real ones exist.
+- Old age diseases: old_age_rate * f(a) cases per day, split by the shares of the old_age category.
 - Age-scaled lethality: every death chance of a disease case is min(1, base * max(1, f(a))).
   No care: base = lethality, rolled when a disease with natural recovery ends; diseases without natural
   recovery never end untreated. One level of escalation and complication is added.
@@ -32,7 +31,7 @@ Model, per huwan of age a (nauvis days) in a house with health H and sanity S:
 Usage, from the mod folder:
     python3 balancing-scripts/old_age.py
     python3 balancing-scripts/old_age.py -H 20 -S 15
-    python3 balancing-scripts/old_age.py --onset 100 --doubling 15 --old-age-complication-lethality 0.3
+    python3 balancing-scripts/old_age.py --onset 100 --doubling 15 --old-age-rate 0.003
     python3 balancing-scripts/old_age.py --sweep
 """
 import argparse
@@ -49,14 +48,6 @@ MINUTES_PER_DAY = TICKS_PER_DAY / disease_rates.TICKS_PER_MINUTE
 MAX_AGE = 2000
 
 # proposals, phase 4 moves them into constants/inhabitants.lua
-PROPOSED = {
-    "old_age_rate": 0.005,  # old age disease cases per huwan per day at the onset
-    "old_age_lethality": 0.8,
-    "old_age_complication_lethality": 0.08,
-    "old_age_workload": 4,  # operations to treat the generic old age disease
-}
-
-
 def parse_old_age_constants():
     """Returns the old age parameters of the mod, rates per nauvis day."""
     src = (disease_rates.MOD / "constants" / "inhabitants.lua").read_text()
@@ -66,7 +57,10 @@ def parse_old_age_constants():
 
     if float(constant("frailty_neutral_value")) != 10:
         raise SystemExit("the model assumes a neutral health and sanity of 10")
-    natural_rate = re.fullmatch(r"([\d.]+) / Time\.nauvis_day", constant("natural_death_rate")).group(1)
+    def per_day(name):
+        return float(re.fullmatch(r"([\d.]+) / Time\.nauvis_day", constant(name)).group(1))
+
+    natural_rate = per_day("natural_death_rate")
     diseases_src = (disease_rates.MOD / "constants" / "diseases.lua").read_text()
     return {
         "onset": float(constant("frailty_onset")),  # days; frailty is 1 at this age (health = sanity = 10)
@@ -75,6 +69,7 @@ def parse_old_age_constants():
         "sanity_shift": float(constant("frailty_sanity_shift")),  # days of later onset per sanity point above 10
         "shift_cap": float(constant("frailty_shift_cap")),  # health and sanity above this count as this
         "natural_rate": float(natural_rate),  # natural deaths per huwan per day at the onset
+        "old_age_rate": per_day("old_age_disease_rate"),  # old age disease cases per huwan per day at the onset
         # for diseases that don't define one, capped by their lethality
         "default_complication_lethality": float(
             re.search(r"Diseases\.default_complication_lethality = ([\d.]+)", diseases_src).group(1)
@@ -82,7 +77,7 @@ def parse_old_age_constants():
     }
 
 
-CAUSES = ["natural", "old age disease", "other diseases"]
+CAUSES = ["natural", "old age diseases", "other diseases"]
 SWEEP = [0, 5, 10, 15, 20, 25, 30, 40, 50]
 
 
@@ -135,7 +130,7 @@ def life_table(params, health, sanity, care, data):
     cases = ordinary_cases_per_day(params, health, sanity, data)
     cap = params.shift_cap
     onset = params.onset + params.health_shift * (min(health, cap) - 10) + params.sanity_shift * (min(sanity, cap) - 10)
-    old_age_base = params.old_age_complication_lethality if care else params.old_age_lethality
+    old_age_shares = data["old_age_shares"]
 
     survival = [1.0]
     deaths = []
@@ -144,7 +139,10 @@ def life_table(params, health, sanity, care, data):
         frailty = 2 ** ((age - onset) / params.doubling)
         hazards = {
             "natural": params.natural_rate * frailty,
-            "old age disease": params.old_age_rate * frailty * death_chance(old_age_base, frailty),
+            "old age diseases": params.old_age_rate * frailty * sum(
+                share * case_death_chance(name, diseases, frailty, care, params.default_complication_lethality)
+                for name, share in old_age_shares.items()
+            ),
             "other diseases": sum(
                 rate * case_death_chance(name, diseases, frailty, care, params.default_complication_lethality)
                 for name, rate in cases.items()
@@ -225,14 +223,24 @@ def print_scenarios(params, data, birth_rate):
               f"deaths {death_rate:.2%} per day; stationary population: deaths {1 / life_expectancy(survival):.2%} per day")
         if care:
             per_thousand = cases * 1000
-            demand = disease_rates.bed_demand(
-                {"old-age-disease": per_thousand / MINUTES_PER_DAY},
-                {"old-age-disease": {"treatable": True, "bed": disease_rates.GENERAL, "workload": params.old_age_workload,
-                                     "complication": None}},
+            old_age = disease_rates.bed_demand(
+                {name: per_thousand * share / MINUTES_PER_DAY for name, share in data["old_age_shares"].items()},
+                data["diseases"],
                 data["speed"],
             )
-            print(f"             old age cases per 1000 huwans: {per_thousand:.1f} per day, "
-                  f"busy beds: {demand[disease_rates.GENERAL]:.2f} ({params.old_age_workload:g} operations each)")
+            ordinary = disease_rates.bed_demand(
+                {name: rate * 1000 / MINUTES_PER_DAY
+                 for name, rate in ordinary_cases_per_day(params, params.health, params.sanity, data).items()},
+                data["diseases"],
+                data["speed"],
+            )
+            print(f"             old age cases per 1000 huwans: {per_thousand:.1f} per day, busy beds per 1000 "
+                  "(old age / ordinary diseases):")
+            for bed in sorted(set(old_age) | set(ordinary), key=lambda b: -ordinary.get(b, 0)):
+                extra = old_age.get(bed, 0)
+                base = ordinary.get(bed, 0)
+                increase = f" (+{extra / base:.0%})" if base else ""
+                print(f"               {bed:<12} {extra:6.2f} / {base:6.2f}{increase}")
             share_old = sum(p for a, p in enumerate(pyramid) if a >= params.onset) / total
             print(f"             share of huwans older than the onset: {share_old:.1%}")
 
@@ -249,9 +257,8 @@ def print_sweep(params, data):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    for source, values in (("mod", parse_old_age_constants()), ("proposal", PROPOSED)):
-        for key, value in values.items():
-            parser.add_argument(f"--{key.replace('_', '-')}", type=float, default=value, help=f"({source}: {value:g})")
+    for key, value in parse_old_age_constants().items():
+        parser.add_argument(f"--{key.replace('_', '-')}", type=float, default=value, help=f"(mod: {value:g})")
     parser.add_argument("-H", "--health", type=float, default=10, help="average health (default 10)")
     parser.add_argument("-S", "--sanity", type=float, default=10, help="average sanity (default 10)")
     parser.add_argument("-c", "--castes", nargs="+", help="castes in the city (default: all enabled)")
@@ -266,9 +273,12 @@ def main():
     if unknown:
         parser.error(f"unknown or disabled castes: {', '.join(sorted(unknown))}")
     work_rates, speed = disease_rates.parse_buildings()
+    categories = disease_rates.parse_categories()
+    old_age_weights = categories["old_age"]
     data = {
         "diseases": disease_rates.parse_diseases(),
-        "categories": disease_rates.parse_categories(),
+        "categories": categories,
+        "old_age_shares": {name: w / sum(old_age_weights.values()) for name, w in old_age_weights.items()},
         "base_rates": disease_rates.parse_rates(),
         "castes": castes,
         "work_rates": work_rates,
@@ -278,8 +288,7 @@ def main():
 
     print("Old age: onset {onset:g} days, frailty doubles every {doubling:g} days, onset +{health_shift:g} days per "
           "health and +{sanity_shift:g} per sanity point above 10 (counted up to {shift_cap:g})".format(**vars(params)))
-    print("At the onset: natural deaths {natural_rate:g}, old age cases {old_age_rate:g} per huwan per day; "
-          "old age disease lethality {old_age_lethality:g} untreated, {old_age_complication_lethality:g} treated; "
+    print("At the onset: natural deaths {natural_rate:g}, old age disease cases {old_age_rate:g} per huwan per day; "
           "default complication lethality {default_complication_lethality:g}".format(**vars(params)))
     print()
     if params.sweep:
