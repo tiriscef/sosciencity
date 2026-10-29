@@ -2,12 +2,27 @@
 -- << items >>
 
 local orchid_items = {
-    {name = "environmental-study", use_placeholder_icon = true},
+    {
+        name = "environmental-study",
+        sprite_variations = {name = "environmental-study", count = 3, include_icon = true}
+    },
     {name = "botanical-study", sprite_variations = {name = "botanical-study", count = 4}},
-    {name = "zoological-study", use_placeholder_icon = true},
-    {name = "soil-study", use_placeholder_icon = true},
-    {name = "microorganism-study", use_placeholder_icon = true},
-    {name = "anatomical-study", use_placeholder_icon = true}
+    {
+        name = "zoological-study",
+        sprite_variations = {name = "zoological-study", count = 3, include_icon = true}
+    },
+    {
+        name = "soil-study",
+        sprite_variations = {name = "soil-study", count = 3, include_icon = true}
+    },
+    {
+        name = "microorganism-study",
+        sprite_variations = {name = "microorganism-study", count = 3, include_icon = true}
+    },
+    {
+        name = "anatomical-study",
+        sprite_variations = {name = "anatomical-study", count = 3, include_icon = true}
+    }
 }
 
 Tirislib.Item.batch_create(
