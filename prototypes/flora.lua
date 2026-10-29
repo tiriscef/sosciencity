@@ -82,7 +82,7 @@ local flora_items = {
     },
     {
         name = "ignivern",
-        use_placeholder_icon = true
+        sprite_variations = {name = "ignivern", count = 3, include_icon = true}
     }
 }
 
