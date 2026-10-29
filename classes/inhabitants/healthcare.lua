@@ -1,3 +1,4 @@
+local DeathCause = require("enums.death-cause")
 local DiseaseCategory = require("enums.disease-category")
 local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
@@ -24,6 +25,7 @@ local grant_immunity = ImmunityGroup.grant
 local wane_immunities = ImmunityGroup.wane
 local cure = DiseaseGroup.cure
 local take_deceased = InhabitantGroup.take_deceased
+local take_natural_deaths = InhabitantGroup.take_natural_deaths
 local floor = math.floor
 
 -- set during load
@@ -333,9 +335,22 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << natural deaths >>
+
+--- Lets old inhabitants pass away in their sleep. No hospital can prevent it, only good health and sanity delay it.
+--- @param entry Entry
+--- @param delta_ticks integer
+local function update_natural_deaths(entry, delta_ticks)
+    local dead_count = take_natural_deaths(entry, delta_ticks)
+    if dead_count > 0 then
+        Communication.report_death(dead_count, DeathCause.natural)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << main disease update >>
 
---- Updates diseases for a housing entry: creates new cases and treats existing ones.
+--- Updates diseases for a housing entry: natural deaths, new cases and natural recovery.
 --- Employment correction is handled by validate_employment_capacity in update_house.
 --- @param entry Entry
 --- @param delta_ticks integer
@@ -343,6 +358,7 @@ local function update_diseases(entry, delta_ticks)
     local disease_group = entry[EK.diseases]
 
     wane_immunities(entry[EK.immunities], delta_ticks)
+    update_natural_deaths(entry, delta_ticks)
     create_disease_cases(entry, delta_ticks)
     update_disease_cases(entry, disease_group, delta_ticks)
     update_unclaimed_disease_ticks(entry, delta_ticks)

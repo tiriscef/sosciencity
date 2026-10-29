@@ -1045,6 +1045,34 @@ function InhabitantGroup.take_deceased(group, count, disease_id, lethality)
     return dead_count
 end
 
+--- Rolls which inhabitants of the group die a natural death during the given ticks and takes them out of the
+--- group. The chance follows their frailty, so it is negligible for young inhabitants. Returns the number of dead.
+--- @param group InhabitantGroup
+--- @param delta_ticks integer
+--- @return integer
+function InhabitantGroup.take_natural_deaths(group, delta_ticks)
+    local today = AgeGroup.current_day()
+    local onset = InhabitantGroup.get_frailty_onset(group)
+    local rate = InhabitantsConstants.natural_death_rate
+    local dead_ages = {}
+    local dead_count = 0
+
+    for hatch_day, count in pairs(group[EK.ages]) do
+        local rate_per_tick = min(1, rate * AgeGroup.get_frailty(hatch_day, today, onset))
+        local dead = coin_flips(occurrence_probability(rate_per_tick, delta_ticks), count)
+        if dead > 0 then
+            dead_ages[hatch_day] = dead
+            dead_count = dead_count + dead
+        end
+    end
+
+    if dead_count > 0 then
+        InhabitantGroup.take_specific(group, dead_count, nil, nil, dead_ages)
+    end
+
+    return dead_count
+end
+
 --- Tries to make the given number of people sick with the given disease, respecting their immunities.
 --- Every case hits an immune person with the probability of the immune share of the healthy people.
 --- Returns the number of people that were actually sickened.

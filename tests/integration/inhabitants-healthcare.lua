@@ -250,6 +250,27 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << natural deaths >>
+
+Tirislib.Testing.add_test_case(
+    "Very old huwans pass away in their sleep during the disease update",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        local today = AgeGroup.current_day()
+        local very_old = today - 10000
+        entry[EK.ages] = {[very_old] = 3, [today] = 7}
+
+        Inhabitants.update_diseases(entry, 60)
+
+        Assert.is_nil(entry[EK.ages][very_old], "the very old should have died")
+        Assert.equals(entry[EK.inhabitants], 7)
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
 -- << age links >>
 
 -- test-disease-oldest / test-disease-youngest: lethality 1, see the test diseases in constants/diseases.lua

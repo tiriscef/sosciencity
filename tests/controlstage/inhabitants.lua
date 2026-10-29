@@ -486,6 +486,26 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_natural_deaths takes the very old",
+    "inhabitants",
+    function()
+        local today = AgeGroup.current_day()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        local onset = InhabitantGroup.get_frailty_onset(group)
+        local very_old = today - onset - 20 * InhabitantsConstants.frailty_doubling
+        group[EK.ages] = {[very_old] = 4, [today] = 6}
+
+        local dead = InhabitantGroup.take_natural_deaths(group, Time.nauvis_day)
+
+        Assert.equals(dead, 4)
+        Assert.is_nil(group[EK.ages][very_old])
+        Assert.equals(group[EK.ages][today], 6, "the newly hatched should survive")
+        Assert.equals(group[EK.inhabitants], 6)
+        Assert.equals(Table.sum(group[EK.genders]), 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "AgeGroup.take_random takes the given count",
     "inhabitants",
     function()
@@ -524,7 +544,11 @@ Tirislib.Testing.add_test_case(
         Assert.equals(InhabitantGroup.get_frailty_onset(group), C.frailty_onset)
 
         group[EK.health] = C.frailty_neutral_value + 2
-        Assert.is_number_close(InhabitantGroup.get_frailty_onset(group), C.frailty_onset + 2 * C.frailty_health_shift, 1e-9)
+        Assert.is_number_close(
+            InhabitantGroup.get_frailty_onset(group),
+            C.frailty_onset + 2 * C.frailty_health_shift,
+            1e-9
+        )
 
         group[EK.health] = C.frailty_shift_cap + 100
         group[EK.sanity] = C.frailty_shift_cap + 100
