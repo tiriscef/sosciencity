@@ -197,6 +197,14 @@ end
 --- @param delta_ticks integer
 --- @param disease_category DiseaseCategory
 --- @return number
+--- Returns the disease progress for old age diseases.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_old_age_disease_progress(entry, delta_ticks)
+    return InhabitantGroup.get_frailty_sum(entry) * delta_ticks * InhabitantsConstants.old_age_disease_rate
+end
+
 local function get_workplace_accident_progress(entry, delta_ticks, disease_category)
     local progress = 0
     for unit_number, count in pairs(entry[EK.employments]) do
@@ -248,7 +256,8 @@ Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.malnutrition] = Inhabitants.get_malnutrition_disease_progress,
     [DiseaseCategory.dehydration] = Inhabitants.get_dehydration_disease_progress,
     [DiseaseCategory.food_poisoning] = Inhabitants.get_food_poisoning_disease_progress,
-    [DiseaseCategory.waterborne] = Inhabitants.get_waterborne_disease_progress
+    [DiseaseCategory.waterborne] = Inhabitants.get_waterborne_disease_progress,
+    [DiseaseCategory.old_age] = Inhabitants.get_old_age_disease_progress
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 

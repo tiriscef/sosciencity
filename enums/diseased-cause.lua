@@ -14,6 +14,7 @@ DiseasedCause.malnutrition = 9
 DiseasedCause.dehydration = 10
 DiseasedCause.food_poisoning = 11
 DiseasedCause.waterborne = 12
+DiseasedCause.old_age = 13
 DiseasedCause.workplace_accident = 20
 
 return DiseasedCause

@@ -656,6 +656,98 @@ Diseases.values = {
         work_effectivity = 0,
         reports_per_treatment = 0.5
     },
+    -- 6000+: old age
+    [6000] = {
+        name = "eggshell-bones",
+        cure_items = {
+            ["bandage"] = 2,
+            ["analgesics"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.3,
+        natural_recovery = 3 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 1,
+        age_link = AgeLink.oldest
+    },
+    [6001] = {
+        name = "elderly-pneumonia",
+        cure_items = {
+            ["antimicrobials"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.3,
+        natural_recovery = 1 * Time.nauvis_week,
+        escalation = "respiratory-failure",
+        escalation_probability = 0.3,
+        work_effectivity = 0.2,
+        reports_per_treatment = 1,
+        age_link = AgeLink.oldest
+    },
+    [6002] = {
+        name = "tired-heart",
+        cure_items = {
+            ["artificial-heart"] = 1,
+            ["anesthetics"] = 1
+        },
+        curing_workload = 6,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.9,
+        complication_lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [6003] = {
+        name = "stroke",
+        cure_items = {
+            ["anesthetics"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.8,
+        complication = "hatching-nostalgia",
+        complication_probability = 0.3,
+        complication_lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [6004] = {
+        name = "hatching-nostalgia",
+        cure_items = {
+            ["psychotropics"] = 3
+        },
+        curing_workload = 8,
+        curing_facility = Type.psych_ward,
+        lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0,
+        reports_per_treatment = 1,
+        age_link = AgeLink.oldest
+    },
+    [6005] = {
+        name = "purple-fade",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.7,
+        natural_recovery = 1 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.3,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
     -- 9000+: primarily malnutrition
     [9000] = {
         name = "malnutrition",
@@ -984,6 +1076,58 @@ Diseases.values = {
         natural_recovery = 10 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
+    },
+    [40001] = {
+        name = "colon-cancer",
+        cure_items = {
+            ["medical-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["potent-analgesics"] = 1,
+            ["bandage"] = 2
+        },
+        curing_workload = 6,
+        lethality = 0.9,
+        complication_lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [40002] = {
+        name = "shell-gland-carcinoma",
+        cure_items = {
+            ["medical-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["potent-analgesics"] = 1,
+            ["bandage"] = 2
+        },
+        curing_workload = 6,
+        lethality = 0.85,
+        complication_lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [40003] = {
+        name = "purple-leukemia",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 6,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.85,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        complication_lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
     }
 }
 
@@ -1123,6 +1267,17 @@ Diseases.categories = {
         ["joint-dislocation"] = 100,
         ["swimmers-itch"] = 150
     },
+    [DiseaseCategory.old_age] = {
+        ["eggshell-bones"] = 25,
+        ["elderly-pneumonia"] = 20,
+        ["tired-heart"] = 13,
+        ["stroke"] = 12,
+        ["purple-fade"] = 8,
+        ["shell-gland-carcinoma"] = 7,
+        ["colon-cancer"] = 6,
+        ["hatching-nostalgia"] = 5,
+        ["purple-leukemia"] = 4
+    },
     [DiseaseCategory.hunting_hut] = {
         ["biter-bite"] = 50,
         ["broken-bone"] = 200,
@@ -1185,6 +1340,7 @@ Diseases.disease_causes = {
     [DiseaseCategory.dehydration] = DiseasedCause.dehydration,
     [DiseaseCategory.food_poisoning] = DiseasedCause.food_poisoning,
     [DiseaseCategory.waterborne] = DiseasedCause.waterborne,
+    [DiseaseCategory.old_age] = DiseasedCause.old_age,
     [DiseaseCategory.hard_work] = DiseasedCause.workplace_accident,
     [DiseaseCategory.office_work] = DiseasedCause.workplace_accident,
     [DiseaseCategory.moderate_work] = DiseasedCause.workplace_accident,

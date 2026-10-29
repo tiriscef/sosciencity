@@ -1,5 +1,6 @@
 local Assert = Tirislib.Testing.Assert
 local AgeLink = require("enums.age-link")
+local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local Gender = require("enums.gender")
 local Type = require("enums.type")
@@ -502,6 +503,37 @@ Tirislib.Testing.add_test_case(
         Assert.equals(group[EK.ages][today], 6, "the newly hatched should survive")
         Assert.equals(group[EK.inhabitants], 6)
         Assert.equals(Table.sum(group[EK.genders]), 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.get_frailty_sum adds up the frailty of every inhabitant",
+    "inhabitants",
+    function()
+        local today = AgeGroup.current_day()
+        local group = InhabitantGroup.new(Type.clockwork, 5)
+        local onset = InhabitantGroup.get_frailty_onset(group)
+        local at_onset = today - math.floor(onset)
+        group[EK.ages] = {[at_onset] = 3, [today] = 2}
+
+        local expected =
+            3 * AgeGroup.get_frailty(at_onset, today, onset) + 2 * AgeGroup.get_frailty(today, today, onset)
+        Assert.is_number_close(InhabitantGroup.get_frailty_sum(group), expected, 1e-9)
+        Assert.less_than(AgeGroup.get_frailty(today, today, onset), 0.1, "the newly hatched should barely count")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Old age diseases are linked to the oldest inhabitants",
+    "inhabitants",
+    function()
+        local count = 0
+        for disease_id in pairs(Diseases.categories[DiseaseCategory.old_age]) do
+            Assert.not_nil(Diseases.values[disease_id])
+            Assert.equals(Diseases.values[disease_id].age_link, AgeLink.oldest)
+            count = count + 1
+        end
+        Assert.greater_than(count, 0)
     end
 )
 

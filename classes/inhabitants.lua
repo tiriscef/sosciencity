@@ -1040,6 +1040,21 @@ function InhabitantGroup.take_deceased(group, count, disease_id, lethality)
     return dead_count
 end
 
+--- Returns the summed frailty of the group's inhabitants, which scales everything that comes with old age.
+--- @param group InhabitantGroup
+--- @return number
+function InhabitantGroup.get_frailty_sum(group)
+    local today = AgeGroup.current_day()
+    local onset = InhabitantGroup.get_frailty_onset(group)
+    local ret = 0
+
+    for hatch_day, count in pairs(group[EK.ages]) do
+        ret = ret + count * AgeGroup.get_frailty(hatch_day, today, onset)
+    end
+
+    return ret
+end
+
 --- Rolls which inhabitants of the group die a natural death during the given ticks and takes them out of the
 --- group. The chance follows their frailty, so it is negligible for young inhabitants. Returns the number of dead.
 --- @param group InhabitantGroup

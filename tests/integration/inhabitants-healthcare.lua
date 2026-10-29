@@ -2,6 +2,8 @@ local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local InhabitantsConstants = require("constants.inhabitants")
+
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
 
@@ -265,6 +267,31 @@ Tirislib.Testing.add_test_case(
 
         Assert.is_nil(entry[EK.ages][very_old], "the very old should have died")
         Assert.equals(entry[EK.inhabitants], 7)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Old huwans get old age diseases, newly hatched ones barely",
+    "integration|integration.healthcare",
+    function()
+        local old_house = create_healthy_house({0, 0}, 10)
+        local young_house = create_healthy_house({10, 0}, 10)
+        local today = AgeGroup.current_day()
+        local old_age = math.floor(InhabitantGroup.get_frailty_onset(old_house)) + InhabitantsConstants.frailty_doubling
+        old_house[EK.ages] = {[today - old_age] = 10}
+
+        local old_progress = Inhabitants.get_old_age_disease_progress(old_house, 1000)
+        local young_progress = Inhabitants.get_old_age_disease_progress(young_house, 1000)
+
+        Assert.is_number_close(
+            old_progress,
+            10 * 1000 * InhabitantsConstants.old_age_disease_rate *
+                AgeGroup.get_frailty(today - old_age, today, InhabitantGroup.get_frailty_onset(old_house)),
+            1e-9
+        )
+        Assert.less_than(young_progress, old_progress / 10)
     end,
     setup,
     teardown

@@ -151,6 +151,8 @@ InhabitantsConstants.frailty_sanity_shift = 1.5
 InhabitantsConstants.frailty_shift_cap = 40
 --- Natural deaths per inhabitant per tick at a frailty of 1.
 InhabitantsConstants.natural_death_rate = 0.001 / Time.nauvis_day
+--- Old age disease cases per inhabitant per tick at a frailty of 1.
+InhabitantsConstants.old_age_disease_rate = 0.005 / Time.nauvis_day
 
 --- Operations a bed needs to give one vaccine dose (one operation is one minute of a bed at full performance).
 InhabitantsConstants.vaccination_workload = 0.1
