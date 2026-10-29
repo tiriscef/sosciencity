@@ -1,9 +1,7 @@
--- TODO: graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "storage-cellar",
-    icon = Tirislib.Prototype.placeholder_icon,
+    icon = "__sosciencity-graphics__/graphics/icon/storage-cellar.png",
     icon_size = 64,
     subgroup = "sosciencity-food-buildings",
     order = "daa",
@@ -29,7 +27,7 @@ Tirislib.Entity.create {
     flags = {"placeable-neutral", "player-creation"},
     minable = {mining_time = 0.5, result = "storage-cellar"},
     max_health = 200,
-    inventory_size = 80,
+    inventory_size = 90,
     corpse = "small-remnants",
     vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
@@ -37,14 +35,15 @@ Tirislib.Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     picture = Tirislib.Entity.create_standard_picture {
             path = "__sosciencity-graphics__/graphics/entity/storage-cellar/storage-cellar",
-            shift = {0.0, 0.0},
-            width = 4,
-            height = 6,
+            shift = {1.058, -0.331},
+            width = 6,
+            height = 5,
             shadowmap = true,
+            lightmap = true,
             glow = true
         },
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13
-}:set_size(2, 4):copy_icon_from_item()
+}:set_size(3, 3):copy_icon_from_item()
 Sosciencity.configure_building("storage-cellar")
