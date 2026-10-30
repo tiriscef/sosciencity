@@ -590,7 +590,7 @@ if settings.startup["sosciencity-modify-environment"].value then
             mining_time = 0.4,
             results = {
                 {type = "item", name = "boofish", amount_min = 5, amount_max = 15},
-                {type = "item", name = "fupper", amount = 4, amount_max = 10}
+                {type = "item", name = "fupper", amount_min = 4, amount_max = 10}
             }
         },
         max_health = 40,
