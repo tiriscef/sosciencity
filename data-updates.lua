@@ -12,5 +12,6 @@ require("datastage-scripts.technology-descriptions")
 require("datastage-scripts.handcrafting")
 require("datastage-scripts.placement-range-highlights")
 require("datastage-scripts.recycling-result-cleanup")
+require("datastage-scripts.mirroring")
 
 Tirislib.Prototype.finish()
