@@ -51,7 +51,26 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-prototype-owner")
 
         local proto = Tirislib.Prototype.get("item", "test-prototype-owner")
-        Assert.equals(proto.owner, Tirislib.Prototype.modname)
+        Assert.equals(Tirislib.Prototype.get_owner(proto), Tirislib.Prototype.modname)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Prototype.create hides its own data from the unused prototype data check",
+    "lib.prototype",
+    function()
+        create_test_item("test-prototype-plain")
+        create_test_item("test-prototype-hack", {tirislib = {is_hack = true}})
+
+        local plain = Tirislib.Prototype.get("item", "test-prototype-plain")
+        local hack = Tirislib.Prototype.get("item", "test-prototype-hack")
+        Assert.equals(plain.tirislib.ignore, true)
+        Assert.equals(hack.tirislib.ignore, true)
+        Assert.equals(Tirislib.Prototype.is_hack(plain), false)
+        Assert.equals(Tirislib.Prototype.is_hack(hack), true)
+        Assert.equals(Tirislib.Prototype.get_owner(hack), Tirislib.Prototype.modname)
     end,
     setup,
     teardown

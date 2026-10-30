@@ -3,7 +3,7 @@
 -- A building opts out by setting use_mirroring = false in its own prototype, e.g. if its sprite looks wrong when flipped.
 
 for _, entity in Tirislib.Entity.iterate({"assembling-machine", "furnace"}) do
-    if entity.owner == "sosciencity" and entity.fluid_boxes and entity.use_mirroring == nil then
+    if Tirislib.Prototype.get_owner(entity) == "sosciencity" and entity.fluid_boxes and entity.use_mirroring == nil then
         entity.use_mirroring = true
     end
 end

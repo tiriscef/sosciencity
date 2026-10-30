@@ -80,11 +80,39 @@ function Tirislib.Prototype.get(prototype_type, name, mt)
     end
 end
 
+--- Tirislib keeps its own unofficial fields in the 'tirislib' table of a prototype:
+--- - owner: name of the mod that created the prototype
+--- - is_hack: the prototype is a technical helper, not actual game content
+--- 'ignore = true' makes Factorio skip the table when checking for unused prototype data
+--- (--check-unused-prototype-data), so typos in the official fields aren't drowned out.
+local function get_tirislib_data(prototype)
+    -- rawget, so dummy prototypes don't hand out their 'nothing' function
+    return rawget(prototype, "tirislib") or {}
+end
+
+--- Returns the name of the mod that created the given prototype with Tirislib, or nil.
+--- @param prototype Prototype
+--- @return string|nil
+function Tirislib.Prototype.get_owner(prototype)
+    return get_tirislib_data(prototype).owner
+end
+
+--- Checks if the given prototype is a technical helper instead of actual game content.
+--- Set by creating it with 'tirislib = {is_hack = true}'.
+--- @param prototype Prototype
+--- @return boolean
+function Tirislib.Prototype.is_hack(prototype)
+    return get_tirislib_data(prototype).is_hack == true
+end
+
 --- Creates the given prototype and adds it to data.raw.
 --- @param prototype table
 --- @return Prototype Prototype
 function Tirislib.Prototype.create(prototype)
-    prototype.owner = prototype.owner or Tirislib.Prototype.modname
+    local tirislib_data = get_tirislib_data(prototype)
+    tirislib_data.ignore = true
+    tirislib_data.owner = tirislib_data.owner or Tirislib.Prototype.modname
+    prototype.tirislib = tirislib_data
 
     data:extend {prototype}
 
