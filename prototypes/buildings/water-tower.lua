@@ -49,7 +49,7 @@ Tirislib.Entity.create {
             {position = {-1, 0}, direction = defines.direction.west}
         }
     },
-    impact_category = "metal",
+    impact_category = "metal-large",
     pictures = {
         picture = {
             sheets = {

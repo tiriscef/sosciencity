@@ -158,7 +158,7 @@ local function create_entity(house_name, house_def, details)
         close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7},
         inventory_size = get_inventory_size(house_def),
         inventory_type = "with_filters_and_bar",
-        impact_category = "metal",
+        impact_category = details.impact_category or "stone",
         picture = details.picture,
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
@@ -174,7 +174,7 @@ end
 --- Creates a full house prototype: item, recipe, and entity.
 --- @param house_name string
 --- @param details table Prototype details: picture, width, height, tech_level; optionally icon, main_entity,
----   mining_result, description_prefix, open_sound, close_sound, stack_size, item_fields.
+---   mining_result, description_prefix, open_sound, close_sound, impact_category (default "stone"), stack_size, item_fields.
 --- @param house_def HouseDefinition? House definition; looked up in constants/housing.lua by house_name if nil
 function Sosciencity.create_house(house_name, details, house_def)
     house_def = house_def or Housing.values[house_name]
@@ -194,7 +194,7 @@ end
 --- Set details.main_entity to the shared house name to inherit its localised_name and mining result.
 --- @param house_name string
 --- @param details table Prototype details: picture, width, height; optionally icon, main_entity,
----   mining_result, description_prefix, open_sound, close_sound.
+---   mining_result, description_prefix, open_sound, close_sound, impact_category (default "stone").
 --- @param house_def HouseDefinition? House definition; looked up in constants/housing.lua by house_name if nil
 function Sosciencity.create_house_entity(house_name, details, house_def)
     house_def = house_def or Housing.values[house_name]

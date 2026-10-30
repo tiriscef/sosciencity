@@ -36,7 +36,7 @@ Tirislib.Entity.create {
     inventory_size = 20,
     inventory_type = "with_filters_and_bar",
     corpse = "small-remnants",
-    impact_category = "metal",
+    impact_category = "stone",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},

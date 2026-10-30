@@ -32,7 +32,7 @@ Tirislib.Entity.create {
     max_health = 200,
     corpse = "medium-remnants",
     inventory_size = 10,
-    impact_category = "metal",
+    impact_category = "metal-large",
     picture = {
         layers = {
             {

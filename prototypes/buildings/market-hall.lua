@@ -33,7 +33,7 @@ Tirislib.Entity.create {
     corpse = "small-remnants",
     inventory_size = 30,
     inventory_type = "with_filters_and_bar",
-    impact_category = "metal",
+    impact_category = "stone",
     picture = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall",
         shift = {1.0, 0.0},

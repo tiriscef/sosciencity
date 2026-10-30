@@ -37,7 +37,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "orchid-food-factory"},
     max_health = 200,
     corpse = "small-remnants",
-    impact_category = "metal",
+    impact_category = "metal-large",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
