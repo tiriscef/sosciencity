@@ -451,8 +451,7 @@ function Tirislib.Recipe:add_catalyst(name, _type, amount, retrieval)
             type = _type,
             name = name,
             amount = amount,
-            ignored_by_stats = amount,
-            ignored_by_productivity = amount
+            ignored_by_stats = amount
         }
     )
     Tirislib.Recipe.add_result(

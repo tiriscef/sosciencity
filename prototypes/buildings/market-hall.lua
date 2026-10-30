@@ -33,10 +33,7 @@ Tirislib.Entity.create {
     corpse = "small-remnants",
     inventory_size = 30,
     inventory_type = "with_filters_and_bar",
-    vehicle_impact_sound = {
-        filename = "__base__/sound/car-metal-impact.ogg",
-        volume = 0.65
-    },
+    impact_category = "metal",
     picture = Tirislib.Entity.create_standard_picture {
         path = "__sosciencity-graphics__/graphics/entity/market-hall/market-hall",
         shift = {1.0, 0.0},

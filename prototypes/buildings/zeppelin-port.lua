@@ -32,10 +32,7 @@ Tirislib.Entity.create {
     max_health = 200,
     corpse = "medium-remnants",
     inventory_size = 10,
-    vehicle_impact_sound = {
-        filename = "__base__/sound/car-metal-impact.ogg",
-        volume = 0.65
-    },
+    impact_category = "metal",
     picture = {
         layers = {
             {

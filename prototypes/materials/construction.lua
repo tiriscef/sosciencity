@@ -79,7 +79,6 @@ local construction_items = {
         name = "water-filter",
         type = "module",
         effect = {},
-        limitation = {"clean-water-from-ground"},
         category = "sosciencity-water-filter",
         tier = 1,
         subgroup = "sosciencity-drinking-water",

@@ -158,10 +158,7 @@ local function create_entity(house_name, house_def, details)
         close_sound = details.close_sound or {filename = "__base__/sound/metallic-chest-close.ogg", volume = 0.7},
         inventory_size = get_inventory_size(house_def),
         inventory_type = "with_filters_and_bar",
-        vehicle_impact_sound = {
-            filename = "__base__/sound/car-metal-impact.ogg",
-            volume = 0.65
-        },
+        impact_category = "metal",
         picture = details.picture,
         circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
         circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,

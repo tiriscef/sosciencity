@@ -37,7 +37,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "orangery"},
     max_health = 200,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
@@ -109,7 +109,6 @@ Tirislib.Entity.create {
     },
     working_sound = {
         sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
-        apparent_volume = 1.5
     }
 }:set_size(15, 15)
 Sosciencity.configure_building("orangery")

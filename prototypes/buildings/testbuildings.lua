@@ -29,10 +29,7 @@ local function create_test_container(name)
         max_health = 500,
         corpse = "small-remnants",
         inventory_size = 64,
-        vehicle_impact_sound = {
-            filename = "__base__/sound/car-metal-impact.ogg",
-            volume = 0.65
-        },
+        impact_category = "metal",
         picture = {
             filename = "__sosciencity-graphics__/graphics/entity/placeholder.png",
             priority = "high",
@@ -125,7 +122,7 @@ Tirislib.Entity.create {
         gas_flow = Tirislib.Entity.get_empty_animation()
     },
     flow_length_in_ticks = 60,
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     localised_name = "test-water-distributer",
     window_bounding_box = Tirislib.Entity.get_selection_box(0, 0),
 }:set_size(3, 3)
@@ -182,7 +179,7 @@ Tirislib.Entity.create {
         gas_flow = Tirislib.Entity.get_empty_animation()
     },
     flow_length_in_ticks = 60,
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     localised_name = "test-water-distributer-powered",
     window_bounding_box = Tirislib.Entity.get_selection_box(0, 0),
 }:set_size(3, 3)
@@ -224,7 +221,7 @@ local function create_test_assembling_machine(name, categories, energy_source)
         minable = {mining_time = 0.5, result = "test-" .. name},
         max_health = 400,
         --corpse = "arboretum-remnants",
-        vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+        impact_category = "metal",
         repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
         open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
         close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},

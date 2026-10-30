@@ -32,7 +32,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "burner-water-heater"},
     max_health = 200,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
@@ -53,7 +53,6 @@ Tirislib.Entity.create {
     energy_usage = "1800kW",
     energy_source = {
         type = "burner",
-        usage_priority = "secondary-input",
         emissions_per_minute = {pollution = 1},
         fuel_inventory_size = 1,
         smoke = {

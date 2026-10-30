@@ -49,7 +49,7 @@ Tirislib.Entity.create {
             {position = {-1, 0}, direction = defines.direction.west}
         }
     },
-    vehicle_impact_sound = Tirislib.Entity.get_standard_impact_sound(),
+    impact_category = "metal",
     pictures = {
         picture = {
             sheets = {

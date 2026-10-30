@@ -19,7 +19,7 @@ Tirislib.Entity.create {
     max_health = 200,
     inventory_size = 20,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
@@ -30,7 +30,6 @@ Tirislib.Entity.create {
         center = {2.5, 3.5},
         shadowmap = true
     },
-    render_layer = "transport-belt",
     circuit_wire_connection_point = circuit_connector_definitions["chest"].points, -- TODO think about something for them
     circuit_connector_sprites = circuit_connector_definitions["chest"].sprites,
     circuit_wire_max_distance = 13

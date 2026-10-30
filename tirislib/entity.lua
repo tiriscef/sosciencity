@@ -298,7 +298,6 @@ function Tirislib.Entity.create_standard_picture(details)
     local layers = {
         {
             filename = path .. ".png",
-            frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
@@ -310,7 +309,6 @@ function Tirislib.Entity.create_standard_picture(details)
     if details.mask_tint then
         layers[#layers + 1] = {
             filename = path .. "-mask.png",
-            frame_count = 1,
             priority = "high",
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
@@ -323,7 +321,6 @@ function Tirislib.Entity.create_standard_picture(details)
     if details.shadowmap then
         layers[#layers + 1] = {
             filename = path .. "-shadowmap.png",
-            frame_count = 1,
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
@@ -335,7 +332,6 @@ function Tirislib.Entity.create_standard_picture(details)
     if details.lightmap then
         layers[#layers + 1] = {
             filename = path .. "-lightmap.png",
-            frame_count = 1,
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
@@ -347,7 +343,6 @@ function Tirislib.Entity.create_standard_picture(details)
     if details.glow then
         layers[#layers + 1] = {
             filename = path .. "-glow.png",
-            frame_count = 1,
             width = width * PIXEL_PER_TILE,
             height = height * PIXEL_PER_TILE,
             shift = shift,
@@ -468,15 +463,6 @@ function Tirislib.Entity.create_picture_from_sprite_data(part)
     end
 
     return {layers = layers}
-end
-
---- Creates the standard impact sound.
---- @return SoundPrototype
-function Tirislib.Entity.get_standard_impact_sound()
-    return {
-        filename = "__base__/sound/car-metal-impact.ogg",
-        volume = 0.65
-    }
 end
 
 --- Adds the given crafting category to the entity.

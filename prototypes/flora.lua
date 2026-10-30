@@ -25,28 +25,23 @@ local flora_items = {
     },
     {
         name = "cherry-wood",
-        wood = true,
-        unlock = Unlocks.get_tech_name("cherry")
+        wood = true
     },
     {
         name = "olive-wood",
-        wood = true,
-        unlock = Unlocks.get_tech_name("olive")
+        wood = true
     },
     {
         name = "ortrot-wood",
-        wood = true,
-        unlock = "explore-alien-flora-2"
+        wood = true
     },
     {
         name = "avocado-wood",
-        wood = true,
-        unlock = Unlocks.get_tech_name("avocado")
+        wood = true
     },
     {
         name = "zetorn-wood",
-        wood = true,
-        unlock = "explore-alien-flora-1"
+        wood = true
     },
     {
         name = "sugar-cane",
@@ -90,6 +85,7 @@ for _, item in pairs(flora_items) do
     if item.wood then
         item.fuel_value = "2MJ"
         item.fuel_categories = {"chemical"}
+        item.wood = nil
     end
 end
 
@@ -900,37 +896,30 @@ Tirislib.Prototype.create {
 local saplings = {
     {
         name = "apple-sapling",
-        limitation = {"farming-perennial-apple"},
         effect = {}
     },
     {
         name = "avocado-sapling",
-        limitation = {"farming-perennial-avocado"},
         effect = {}
     },
     {
         name = "cherry-sapling",
-        limitation = {"farming-perennial-cherry"},
         effect = {}
     },
     {
         name = "lemon-sapling",
-        limitation = {"farming-perennial-lemon"},
         effect = {}
     },
     {
         name = "orange-sapling",
-        limitation = {"farming-perennial-orange"},
         effect = {}
     },
     {
         name = "ortrot-sapling",
-        limitation = {"farming-perennial-ortrot"},
         effect = {}
     },
     {
         name = "zetorn-sapling",
-        limitation = {"farming-perennial-zetorn"},
         effect = {}
     }
 }

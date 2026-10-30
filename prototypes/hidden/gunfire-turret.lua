@@ -143,7 +143,6 @@ Tirislib.Entity.create {
     name = "gunfire-hq-turret",
     icon = "__base__/graphics/icons/gun-turret.png",
     icon_size = 64,
-    icon_mipmaps = 4,
     flags = {"placeable-player", "player-creation", "placeable-off-grid"},
     selection_box = {{-1, -0.5}, {1, 0.5}},
     damaged_trigger_effect = hit_effects.entity(),
@@ -152,7 +151,6 @@ Tirislib.Entity.create {
     preparing_sound = sounds.gun_turret_activate,
     folding_sound = sounds.gun_turret_deactivate,
     folding_speed = 0.08,
-    automated_ammo_count = 10,
     attacking_speed = 0.5,
     alert_when_attacking = true,
     open_sound = sounds.machine_open,
@@ -203,7 +201,7 @@ Tirislib.Entity.create {
             gun_turret_extension_mask {run_mode = "backward"}
         }
     },
-    vehicle_impact_sound = sounds.generic_impact,
+    impact_category = "metal",
     attack_parameters = {
         type = "projectile",
         ammo_category = "bullet",
@@ -223,7 +221,6 @@ Tirislib.Entity.create {
         range = 18,
         sound = sounds.gun_turret_gunshot,
         ammo_type = {
-            category = "bullet",
             action = {
                 type = "direct",
                 action_delivery = {
@@ -262,6 +259,5 @@ Tirislib.Entity.create {
         rotate = false,
         orientation_to_variation = false
     },
-    base_picture_render_layer = "higher-object-under",
     gun_animation_render_layer = "higher-object-under"
 }

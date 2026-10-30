@@ -2,7 +2,6 @@ Tirislib.Item.create {
     type = "item",
     name = "city-combinator",
     icon = "__base__/graphics/icons/constant-combinator.png",
-    icon_mipmaps = 4,
     icon_size = 64,
     subgroup = "sosciencity-infrastructure",
     order = "yyaa",
@@ -357,27 +356,6 @@ Tirislib.Entity.create {
             }
         }
     },
-    vehicle_impact_sound = {
-        {
-            filename = "__base__/sound/car-metal-impact-2.ogg",
-            volume = 0.5
-        },
-        {
-            filename = "__base__/sound/car-metal-impact-3.ogg",
-            volume = 0.5
-        },
-        {
-            filename = "__base__/sound/car-metal-impact-4.ogg",
-            volume = 0.5
-        },
-        {
-            filename = "__base__/sound/car-metal-impact-5.ogg",
-            volume = 0.5
-        },
-        {
-            filename = "__base__/sound/car-metal-impact-6.ogg",
-            volume = 0.5
-        }
-    }
+    impact_category = "metal"
 }
 Sosciencity.configure_building("city-combinator")
