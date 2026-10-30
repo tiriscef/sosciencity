@@ -29,6 +29,6 @@ for entity_name in pairs(Sosciencity.Config.eei_needing_buildings) do
         },
         collision_mask = {layers = {}},
         --collision_mask = {},
-        tirislib = {is_hack = true}
+        mod_metadata = {is_hack = true}
     }
 end

@@ -62,12 +62,12 @@ Tirislib.Testing.add_test_case(
     "lib.prototype",
     function()
         create_test_item("test-prototype-plain")
-        create_test_item("test-prototype-hack", {tirislib = {is_hack = true}})
+        create_test_item("test-prototype-hack", {mod_metadata = {is_hack = true}})
 
         local plain = Tirislib.Prototype.get("item", "test-prototype-plain")
         local hack = Tirislib.Prototype.get("item", "test-prototype-hack")
-        Assert.equals(plain.tirislib.ignore, true)
-        Assert.equals(hack.tirislib.ignore, true)
+        Assert.equals(plain.mod_metadata.ignore, true)
+        Assert.equals(hack.mod_metadata.ignore, true)
         Assert.equals(Tirislib.Prototype.is_hack(plain), false)
         Assert.equals(Tirislib.Prototype.is_hack(hack), true)
         Assert.equals(Tirislib.Prototype.get_owner(hack), Tirislib.Prototype.modname)
