@@ -7,7 +7,7 @@ local ember_items = {
     {name = "mosaic", sprite_variations = {name = "mosaic-on-belt", count = 6}},
     {name = "painting", sprite_variations = {name = "painting-on-belt", count = 7}},
     {name = "statue", sprite_variations = {name = "statue", count = 1}},
-    {name = "jewellery"},
+    {name = "jewellery", sprite_variations = {name = "jewellery-on-belt", count = 3, include_icon = true}},
     {name = "mixtape"},
     {name = "novel", sprite_variations = {name = "novel-on-belt", count = 4}},
     {name = "found-art"},
