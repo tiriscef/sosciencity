@@ -1,4 +1,3 @@
--- TODO: graphics, most everything
 
 Tirislib.Item.create {
     type = "item",
@@ -23,6 +22,8 @@ Tirislib.RecipeGenerator.create {
     unlock = "gunfire-caste"
 }
 
+local sprites = require("__sosciencity-graphics__.graphics.entity.military-school.sprite-data")
+
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "military-school",
@@ -36,24 +37,19 @@ Tirislib.Entity.create {
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"speed"},
     graphics_set = {
-        animation = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                    priority = "high",
-                    width = 224,
-                    height = 224,
-                    scale = 6/7
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/plasma-caste.png",
-                    priority = "high",
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    frame_count = 1
-                }
-            }
+        animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.static),
+        -- constant_speed: the animations don't speed up with the crafting speed (modules, maintenance bonus)
+        working_visualisations = {
+            -- flags wave and the pop-up targets stay visible (frozen) while the school is idle
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(
+                sprites["school-flag"], {always_draw = true, constant_speed = true}),
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(
+                sprites["tower-flag"], {always_draw = true, constant_speed = true}),
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(
+                sprites.popups, {always_draw = true, constant_speed = true}),
+            -- shooting (muzzle flashes, dust on the berm) only while the school trains recruits
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(sprites.muzzles, {constant_speed = true}),
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(sprites.impacts, {constant_speed = true})
         }
     },
     crafting_speed = 1,
@@ -65,5 +61,5 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.15},
         drain = "0W"
     }
-}:set_size(6, 6):copy_icon_from_item()
+}:set_size(8, 8):copy_icon_from_item()
 Sosciencity.configure_building("military-school")
