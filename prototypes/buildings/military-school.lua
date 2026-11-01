@@ -2,7 +2,7 @@
 Tirislib.Item.create {
     type = "item",
     name = "military-school",
-    icon = Tirislib.Prototype.placeholder_icon,
+    icon = "__sosciencity-graphics__/graphics/icon/military-school.png",
     icon_size = 64,
     subgroup = "sosciencity-education-buildings",
     order = "aaa",
