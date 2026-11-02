@@ -5,7 +5,8 @@ local mine_entity_triggers = {
     ["fupper"] = "fishwhirl",
 }
 
-for tech_name, item_name in pairs(Unlocks.by_item_acquisition) do
+for tech_name, details in pairs(Unlocks.by_item_acquisition) do
+    local item_name = details.item
     local item = Tirislib.Item.get_by_name(item_name)
     local localised_name = item:get_localised_name()
 
@@ -20,6 +21,7 @@ for tech_name, item_name in pairs(Unlocks.by_item_acquisition) do
         name = tech_name,
         icon = Tirislib.String.insert(item.icon, "-hr", -5),
         icon_size = 128,
+        prerequisites = {details.prerequisite},
         effects = {},
         research_trigger = research_trigger,
         upgrade = false,
