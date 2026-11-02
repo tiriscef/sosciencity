@@ -217,6 +217,22 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     results = {
+        {type = "item", name = "power-tools", amount = 2}
+    },
+    ingredients = {
+        {theme = "electronics", amount = 3},
+        {theme = "battery", amount = 3},
+        {type = "item", name = "steel-plate", amount = 6}
+    },
+    energy_required = 4,
+    default_theme_level = 3,
+    unlock = "tinkering-workshop"
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "power-tools-workshop",
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
+    results = {
         {type = "item", name = "power-tools", amount = 1}
     },
     ingredients = {
@@ -227,7 +243,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-tinkering-workshop",
     default_theme_level = 3,
     unlock = "tinkering-workshop"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.screw-set-copper"},
