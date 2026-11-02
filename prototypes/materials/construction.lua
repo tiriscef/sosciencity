@@ -194,12 +194,26 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "tools", amount = 1}
     },
     ingredients = {
+        {type = "item", name = "lumber", amount = 3},
+        {type = "item", name = "iron-plate", amount = 3}
+    },
+    energy_required = 2,
+    unlock = "clockwork-quarry"
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "tools-workshop",
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
+    results = {
+        {type = "item", name = "tools", amount = 1}
+    },
+    ingredients = {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "iron-plate", amount = 2}
     },
     category = "sosciencity-tinkering-workshop",
     unlock = "tinkering-workshop"
-}
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create {
     results = {
