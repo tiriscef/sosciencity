@@ -260,7 +260,7 @@ Sosciencity.configure_building("test-animal-farm")
 
 -- No ingredients so the machine is always working once the recipe is set.
 Tirislib.RecipeGenerator.create {
-    name = "sos-husbandry-null",
+    name = "test-husbandry-null",
     category = "sosciencity-animal-farming",
     results = {{type = "item", name = "raw-fish", amount = 1}}
 }

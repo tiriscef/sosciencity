@@ -52,7 +52,7 @@ Tirislib.Testing.add_test_case(
     "integration|integration.animal-farm",
     function()
         local entry = Helpers.create_and_register(test_surface, "test-animal-farm", {0, 0})
-        entry[EK.entity].set_recipe("sos-husbandry-null")
+        entry[EK.entity].set_recipe("test-husbandry-null")
         Helpers.update_entry(entry)
 
         Assert.equals(entry[EK.houses_animals], true)
