@@ -323,6 +323,22 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antimicrobials", amount = 1}
     },
     ingredients = {
+        {type = "item",  name = "heliofall", amount = 3},
+        {type = "item",  name = "amylum",    amount = 1},
+        {type = "fluid", name = "ethanol",   amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 3,
+    do_index_fluid_ingredients = true,
+    unlock = "explore-alien-flora-1",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antimicrobials", amount = 1}
+    },
+    ingredients = {
         {type = "item",  name = "amylum",  amount = 1},
         {type = "item",  name = "sugar",   amount = 10},
         {type = "fluid", name = "flinnum", amount = 10}

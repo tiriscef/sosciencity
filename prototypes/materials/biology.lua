@@ -209,6 +209,19 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     results = {
+        {type = "fluid", name = "fatty-oil", amount = 25}
+    },
+    ingredients = {
+        {type = "item", name = "heliofall", amount = 5}
+    },
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    energy_required = 1.6,
+    unlock = "explore-alien-flora-1",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
         {type = "fluid", name = "fatty-oil", amount = 30}
     },
     ingredients = {
