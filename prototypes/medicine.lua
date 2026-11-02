@@ -1,3 +1,5 @@
+local Unlocks = require("constants.unlocks")
+
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
@@ -330,7 +332,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-pharma",
     energy_required = 3,
     do_index_fluid_ingredients = true,
-    unlock = "explore-alien-flora-1",
+    unlock = Unlocks.get_tech_name("heliofall"),
     auto_recycle = false
 }
 

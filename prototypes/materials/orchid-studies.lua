@@ -1,3 +1,5 @@
+local Unlocks = require("constants.unlocks")
+
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 
@@ -52,7 +54,7 @@ Tirislib.RecipeGenerator.create {
     subgroup = "sosciencity-ideas-by-hand",
     order = "00001",
     main_product = "",
-    unlock = "orchid-caste",
+    unlock = Unlocks.get_tech_name("phytofall-blossom"),
     auto_recycle = false
 }
 
@@ -90,7 +92,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "phytofall-blossom", amount = 1},
         {type = "item", name = "necrofall", amount = 1}
     },
-    unlock = "orchid-caste",
+    unlock = Unlocks.get_tech_name("phytofall-blossom"),
     auto_recycle = false
 }
 

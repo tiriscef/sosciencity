@@ -12,10 +12,17 @@ for tech_name, details in pairs(Unlocks.by_item_acquisition) do
         research_trigger = {type = "craft-item", item = item_name, count = 1}
     end
 
+    local icon, icon_size
+    if details.no_hr_icon then
+        icon, icon_size = item.icon, item.icon_size or 64
+    else
+        icon, icon_size = Tirislib.String.insert(item.icon, "-hr", -5), 128
+    end
+
     Tirislib.Technology.create {
         name = tech_name,
-        icon = Tirislib.String.insert(item.icon, "-hr", -5),
-        icon_size = 128,
+        icon = icon,
+        icon_size = icon_size,
         prerequisites = {details.prerequisite},
         effects = {},
         research_trigger = research_trigger,

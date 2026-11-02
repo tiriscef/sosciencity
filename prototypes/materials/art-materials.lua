@@ -1,3 +1,5 @@
+local Unlocks = require("constants.unlocks")
+
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 
@@ -55,7 +57,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "chromafall", amount = 2}
     },
-    unlock = "orchid-caste",
+    unlock = Unlocks.get_tech_name("chromafall"),
     auto_recycle = false
 }
 

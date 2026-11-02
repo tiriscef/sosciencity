@@ -116,7 +116,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.milling,
     energy_required = 1,
-    unlock = "food-processing",
+    unlock = Unlocks.get_tech_name("hardcorn-punk"),
     auto_recycle = false
 }
 
@@ -205,7 +205,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
-    unlock = "explore-alien-flora-1",
+    unlock = Unlocks.get_tech_name("weird-berry"),
     auto_recycle = false
 }
 
@@ -218,7 +218,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
-    unlock = "explore-alien-flora-1",
+    unlock = Unlocks.get_tech_name("heliofall"),
     auto_recycle = false
 }
 

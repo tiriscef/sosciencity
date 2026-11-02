@@ -345,7 +345,7 @@ create_annual_recipe {
 -- brutal pumpkin
 create_annual_recipe {
     product = "brutal-pumpkin",
-    unlock = "explore-alien-flora-2"
+    unlock = Unlocks.get_tech_name("brutal-pumpkin")
 }
 
 create_identification_recipe {
@@ -422,7 +422,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "hardcorn-punk",
     ingredients = {{type = "fluid", name = "water", amount = 1000}},
-    unlock = "food-processing"
+    unlock = Unlocks.get_tech_name("hardcorn-punk")
 }
 
 create_identification_recipe {
@@ -475,7 +475,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "manok",
     ingredients = {{type = "fluid", name = "water", amount = 1000}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("manok")
 }
 
 create_identification_recipe {
@@ -523,7 +523,7 @@ create_perennial_recipe {
     product = "ortrot",
     ingredients = {{type = "fluid", name = "water", amount = 75}},
     results = {{type = "item", name = "ortrot-wood", amount = 1, independent_probability = 0.2}},
-    unlock = "explore-alien-flora-2"
+    unlock = Unlocks.get_tech_name("ortrot")
 }
 
 create_identification_recipe {
@@ -609,7 +609,7 @@ create_neogenesis_recipe {
 create_annual_recipe {
     product = "tello-fruit",
     ingredients = {{type = "fluid", name = "water", amount = 500}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("tello-fruit")
 }
 
 create_identification_recipe {
@@ -659,7 +659,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "weird-berry",
     ingredients = {{type = "fluid", name = "water", amount = 500}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("weird-berry")
 }
 
 create_identification_recipe {
@@ -676,7 +676,7 @@ create_identification_recipe {
 create_perennial_recipe {
     product = "zetorn",
     results = {{type = "item", name = "zetorn-wood", amount = 1, independent_probability = 0.2}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("zetorn")
 }
 
 create_identification_recipe {
@@ -1087,7 +1087,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item",  name = "ortrot", amount = 10}
     },
     category = "sosciencity-plant-upbringing",
-    unlock = "explore-alien-flora-2",
+    unlock = Unlocks.get_tech_name("ortrot"),
     auto_recycle = false
 }
 
@@ -1101,7 +1101,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item",  name = "zetorn", amount = 10}
     },
     category = "sosciencity-plant-upbringing",
-    unlock = "explore-alien-flora-1",
+    unlock = Unlocks.get_tech_name("zetorn"),
     auto_recycle = false
 }
 
