@@ -11,22 +11,23 @@ end
 --- Technologies that are researched by aquiring a given item.
 --- The prerequisite is the technology that first makes the item obtainable, so that the trigger technology
 --- doesn't show up in the tech tree before the player can do anything about it.
+--- Items that the player only gets by mining an entity name it as `mined_from`, because mining doesn't count as crafting.
 Unlocks.by_item_acquisition = {
     [get_tech_name("apple")] = {item = "apple", prerequisite = "ortrot-variations"},
     [get_tech_name("avocado")] = {item = "avocado", prerequisite = "genetic-neogenesis"},
     [get_tech_name("bell-pepper")] = {item = "bell-pepper", prerequisite = "nightshades"},
     [get_tech_name("birdsnake")] = {item = "birdsnake", prerequisite = "mushroom-farming"},
     [get_tech_name("bonesnake")] = {item = "bonesnake", prerequisite = "hunting-fishing"},
-    [get_tech_name("boofish")] = {item = "boofish", prerequisite = "hunting-fishing"},
+    [get_tech_name("boofish")] = {item = "boofish", prerequisite = "hunting-fishing", mined_from = "fishwhirl"},
     [get_tech_name("cabar")] = {item = "cabar", prerequisite = "hunting-fishing"},
     [get_tech_name("caddle")] = {item = "caddle", prerequisite = "hunting-fishing"},
     [get_tech_name("cherry")] = {item = "cherry", prerequisite = "genetic-neogenesis"},
     [get_tech_name("dodkopus")] = {item = "dodkopus", prerequisite = "advanced-fishing"},
     [get_tech_name("eggplant")] = {item = "eggplant", prerequisite = "nightshades"},
-    [get_tech_name("fupper")] = {item = "fupper", prerequisite = "hunting-fishing"},
+    [get_tech_name("fupper")] = {item = "fupper", prerequisite = "hunting-fishing", mined_from = "fishwhirl"},
     [get_tech_name("hellfin")] = {item = "hellfin", prerequisite = "advanced-fishing"},
     [get_tech_name("lemon")] = {item = "lemon", prerequisite = "zetorn-variations"},
-    [get_tech_name("necrofall")] = {item = "necrofall", prerequisite = "indoor-growing"},
+    [get_tech_name("necrofall")] = {item = "necrofall", prerequisite = "composting-silo", mined_from = "necrofall-circle"},
     [get_tech_name("nan-swan")] = {item = "nan-swan", prerequisite = "hunting-fishing"},
     [get_tech_name("olive")] = {item = "olive", prerequisite = "genetic-neogenesis"},
     [get_tech_name("orange")] = {item = "orange", prerequisite = "zetorn-variations"},

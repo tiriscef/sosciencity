@@ -1,18 +1,13 @@
 local Unlocks = require("constants.unlocks")
 
-local mine_entity_triggers = {
-    ["boofish"] = "fishwhirl",
-    ["fupper"] = "fishwhirl",
-}
-
 for tech_name, details in pairs(Unlocks.by_item_acquisition) do
     local item_name = details.item
     local item = Tirislib.Item.get_by_name(item_name)
     local localised_name = item:get_localised_name()
 
     local research_trigger
-    if mine_entity_triggers[item_name] then
-        research_trigger = {type = "mine-entity", entities = {mine_entity_triggers[item_name]}}
+    if details.mined_from then
+        research_trigger = {type = "mine-entity", entities = {details.mined_from}}
     else
         research_trigger = {type = "craft-item", item = item_name, count = 1}
     end
