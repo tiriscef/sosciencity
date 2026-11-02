@@ -243,8 +243,7 @@ create_hunting_gathering_recipe {
     icon_size = 64,
     results = {
         {type = "item", name = "phytofall-blossom", amount = 2},
-        {type = "item", name = "chromafall", amount = 1, independent_probability = 0.2},
-        {type = "item", name = "heliofall", amount = 1, independent_probability = 0.2},
+        {type = "item", name = "wild-flowers", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000595",

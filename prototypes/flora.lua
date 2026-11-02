@@ -389,6 +389,16 @@ create_annual_bloomhouse_recipe {
     ingredients = {{type = "fluid", name = "water", amount = 200}}
 }
 
+create_identification_recipe {
+    product = "chromafall",
+    ingredients = {
+        {type = "item", name = "wild-flowers",    amount = 20},
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "humus",           amount = 40}
+    },
+    unlock = "explore-alien-flora-1"
+}
+
 -- eggplant
 create_annual_recipe {
     product = "eggplant",
@@ -429,6 +439,16 @@ create_identification_recipe {
 create_annual_bloomhouse_recipe {
     product = "heliofall",
     ingredients = {{type = "fluid", name = "water", amount = 300}}
+}
+
+create_identification_recipe {
+    product = "heliofall",
+    ingredients = {
+        {type = "item", name = "wild-flowers",    amount = 20},
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "humus",           amount = 40}
+    },
+    unlock = "explore-alien-flora-1"
 }
 
 -- lemon
