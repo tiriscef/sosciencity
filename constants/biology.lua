@@ -154,6 +154,22 @@ Biology.flora = {
         --wrong_humidity_coefficient = 0.7,
         recipes = {"farming-annual-chickpea"}
     },
+    ["chromafall"] = {
+        persistent = false,
+        growth_coefficient = 1.5,
+        growth_variance = {
+            max_value = 1,
+            min_value = 0.5,
+            hold_time_max = 7 * Time.minute,
+            slope_down_time = Time.minute,
+            hold_time_min = 5 * Time.minute,
+            slope_up_time = Time.minute,
+            time_offset = 4 * Time.minute
+        },
+        recipes = {
+            "farming-annual-bloomhouse-chromafall"
+        }
+    },
     ["eggplant"] = {
         persistent = false,
         growth_coefficient = 2,
@@ -243,6 +259,22 @@ Biology.flora = {
         --preferred_humidity = Humidity.moderate,
         --wrong_humidity_coefficient = 0.8,
         recipes = {"farming-annual-hardcorn-punk"}
+    },
+    ["heliofall"] = {
+        persistent = false,
+        growth_coefficient = 1,
+        growth_variance = {
+            max_value = 1,
+            min_value = 0.55,
+            hold_time_max = 8 * Time.minute,
+            slope_down_time = 2 * Time.minute,
+            hold_time_min = 6 * Time.minute,
+            slope_up_time = Time.minute,
+            time_offset = 10 * Time.minute
+        },
+        recipes = {
+            "farming-annual-bloomhouse-heliofall"
+        }
     },
     ["ignivern"] = {
         persistent = true,

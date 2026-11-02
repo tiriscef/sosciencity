@@ -67,13 +67,14 @@ local flora_items = {
         name = "chromafall",
         sprite_variations = {name = "chromafall-pile", count = 4}
     },
+    -- chronofall is on hold until perfume is in scope (after the alpha)
+    -- {
+    --     name = "chronofall",
+    --     sprite_variations = {name = "chronofall-pile", count = 4}
+    -- },
     {
-        name = "chronofall",
-        sprite_variations = {name = "chronofall-pile", count = 4}
-    },
-    {
-        name = "chamofall",
-        sprite_variations = {name = "chamofall-pile", count = 4}
+        name = "heliofall",
+        sprite_variations = {name = "heliofall-pile", count = 4}
     },
     {
         name = "ignivern",
@@ -382,6 +383,12 @@ create_neogenesis_recipe {
     unlock = "hummus"
 }
 
+-- chromafall
+create_annual_bloomhouse_recipe {
+    product = "chromafall",
+    ingredients = {{type = "fluid", name = "water", amount = 200}}
+}
+
 -- eggplant
 create_annual_recipe {
     product = "eggplant",
@@ -416,6 +423,12 @@ create_identification_recipe {
         {type = "item", name = "leafage",            amount = 200}
     },
     unlock = "food-processing"
+}
+
+-- heliofall
+create_annual_bloomhouse_recipe {
+    product = "heliofall",
+    ingredients = {{type = "fluid", name = "water", amount = 300}}
 }
 
 -- lemon
