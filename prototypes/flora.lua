@@ -1013,6 +1013,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("apple"),
     auto_recycle = false
 }
 
@@ -1027,6 +1028,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 1,
+    unlock = Unlocks.get_tech_name("avocado"),
     auto_recycle = false
 }
 
@@ -1041,6 +1043,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 1,
+    unlock = Unlocks.get_tech_name("cherry"),
     auto_recycle = false
 }
 
@@ -1055,6 +1058,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("lemon"),
     auto_recycle = false
 }
 
@@ -1069,6 +1073,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("orange"),
     auto_recycle = false
 }
 

@@ -20,7 +20,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {theme = "building", amount = 1},
         {type = "item", name = "architectural-concept", amount = 1}
-    }
+    },
+    unlock = "clockwork-mine"
 }
 
 Tirislib.Entity.create {

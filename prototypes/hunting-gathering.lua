@@ -124,7 +124,7 @@ end
 
 create_hunting_gathering_recipe {
     name = "gathering-food",
-    category = "sosciencity-hunting",
+    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
     energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-food-1.png"}
@@ -148,7 +148,8 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "wild-fungi", amount_min = 0, amount_max = 6}
     },
-    order = "000575"
+    order = "000575",
+    unlock = "infrastructure-1"
 }
 
 create_hunting_gathering_recipe {
@@ -162,7 +163,8 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "insect-meat", amount_min = 0, amount_max = 4}
     },
-    order = "000580"
+    order = "000580",
+    unlock = "infrastructure-1"
 }
 
 create_hunting_gathering_recipe {
@@ -176,12 +178,13 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "wild-algae", amount_min = 0, amount_max = 6}
     },
-    order = "000585"
+    order = "000585",
+    unlock = "infrastructure-1"
 }
 
 create_hunting_gathering_recipe {
     name = "gathering-materials",
-    category = "sosciencity-hunting",
+    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
     energy_required = 3,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-materials.png"}
@@ -206,7 +209,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "tiriscefing-willow-wood", amount = 3},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000592"
+    order = "000592",
+    unlock = "infrastructure-1"
 }
 
 create_hunting_gathering_recipe {
@@ -219,12 +223,13 @@ create_hunting_gathering_recipe {
         {type = "item", name = "plemnemm-cotton", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000593"
+    order = "000593",
+    unlock = "infrastructure-1"
 }
 
 create_hunting_gathering_recipe {
     name = "gathering-hemp",
-    category = "sosciencity-hunting",
+    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
     energy_required = 3,
     icon = "__sosciencity-graphics__/graphics/icon/gingil-hemp.png",
     icon_size = 64,

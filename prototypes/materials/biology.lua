@@ -147,6 +147,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
+    unlock = Unlocks.get_tech_name("sugar-beet"),
     auto_recycle = false
 }
 
@@ -162,6 +163,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
+    unlock = Unlocks.get_tech_name("sugar-cane"),
     auto_recycle = false
 }
 
@@ -229,6 +231,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
+    unlock = Unlocks.get_tech_name("avocado"),
     auto_recycle = false
 }
 
@@ -241,6 +244,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
+    unlock = Unlocks.get_tech_name("olive"),
     auto_recycle = false
 }
 

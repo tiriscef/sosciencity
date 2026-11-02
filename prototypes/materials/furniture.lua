@@ -58,7 +58,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item",   name = "lumber",    amount = 1},
         {type = "item",   name = "screw-set", amount = 1}
     },
-    unlock = "infrastucture-1"
+    unlock = "infrastructure-1"
 }
 
 Tirislib.RecipeGenerator.create {
