@@ -18,7 +18,7 @@ data:extend {
         name = "sosciencity-agriculture-pollution",
         order = "aac",
         setting_type = "startup",
-        default_value = true
+        default_value = false
     },
     {
         type = "bool-setting",
