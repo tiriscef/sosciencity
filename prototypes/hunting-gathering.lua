@@ -239,10 +239,9 @@ create_hunting_gathering_recipe {
     name = "gathering-flowers",
     category = "sosciencity-hunting",
     energy_required = 3,
-    icon = "__sosciencity-graphics__/graphics/icon/phytofall-blossom.png",
+    icon = "__sosciencity-graphics__/graphics/icon/wild-flowers.png",
     icon_size = 64,
     results = {
-        {type = "item", name = "phytofall-blossom", amount = 2},
         {type = "item", name = "wild-flowers", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },

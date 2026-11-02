@@ -542,6 +542,16 @@ create_annual_bloomhouse_recipe {
     ingredients = {{type = "fluid", name = "water", amount = 200}}
 }
 
+create_identification_recipe {
+    product = "phytofall-blossom",
+    ingredients = {
+        {type = "item", name = "wild-flowers",    amount = 20},
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "humus",           amount = 40}
+    },
+    unlock = "orchid-caste"
+}
+
 -- potato
 create_annual_recipe {
     product = "potato",

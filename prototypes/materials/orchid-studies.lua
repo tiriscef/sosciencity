@@ -56,6 +56,27 @@ Tirislib.RecipeGenerator.create {
     auto_recycle = false
 }
 
+Tirislib.RecipeGenerator.create {
+    name = "botanical-study-wild-flowers-handcraft",
+    category = "sosciencity-handcrafting",
+    enabled = false,
+    energy_required = 5,
+    ingredients = {
+        {type = "item", name = "paper", amount = 1},
+        {type = "item", name = "wild-flowers", amount = 4}
+    },
+    results = {
+        {type = "item", name = "botanical-study", amount = 1}
+    },
+    icon = "__sosciencity-graphics__/graphics/icon/botanical-study.png",
+    icon_size = 64,
+    subgroup = "sosciencity-ideas-by-hand",
+    order = "00002",
+    main_product = "",
+    unlock = "orchid-caste",
+    auto_recycle = false
+}
+
 -- Orchid Paradise
 
 Tirislib.RecipeGenerator.create {
