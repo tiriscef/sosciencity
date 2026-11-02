@@ -32,7 +32,6 @@ Unlocks.by_item_acquisition = {
     [get_tech_name("olive")] = {item = "olive", prerequisite = "genetic-neogenesis"},
     [get_tech_name("orange")] = {item = "orange", prerequisite = "zetorn-variations"},
     [get_tech_name("petunial")] = {item = "petunial", prerequisite = "advanced-fishing"},
-    [get_tech_name("phytofall-blossom")] = {item = "phytofall-blossom", prerequisite = "orchid-caste"},
     [get_tech_name("potato")] = {item = "potato", prerequisite = "nightshades"},
     [get_tech_name("primal-quacker")] = {item = "primal-quacker", prerequisite = "hunting-fishing"},
     [get_tech_name("river-horse")] = {item = "river-horse", prerequisite = "hunting-fishing"},
