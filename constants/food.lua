@@ -628,16 +628,16 @@ Food.values = {
         group = "birdsnake"
     },
     ["potluck"] = {
-        fat = 15, -- TODO: values
-        carbohydrates = 15,
-        proteins = 15,
+        fat = 3,
+        carbohydrates = 9,
+        proteins = 4,
         healthiness = 8,
         poisoning_risk = 0.2,
         food_category = "processed",
         taste_category = Taste.umami,
         appeal = 7,
         nutrition_tags = {[NutritionTag.protein_rich] = true, [NutritionTag.fat_rich] = true, [NutritionTag.carb_rich] = true},
-        item_weight = 1,
+        item_weight = 4,
         group = "potluck"
     },
 
