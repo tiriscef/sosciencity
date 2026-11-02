@@ -12,7 +12,6 @@ end
 --- The prerequisite is the technology that first makes the item obtainable, so that the trigger technology
 --- doesn't show up in the tech tree before the player can do anything about it.
 --- Items that the player only gets by mining an entity name it as `mined_from`, because mining doesn't count as crafting.
---- `no_hr_icon` uses the normal item icon for items whose 128px '-hr' icon doesn't exist yet.
 --- Crops that get identified follow the base game's pattern: the identification recipe comes with a research, the
 --- trigger tech for the identified crop then unlocks what the player can do with it (farming, processing).
 Unlocks.by_item_acquisition = {
@@ -26,12 +25,12 @@ Unlocks.by_item_acquisition = {
     [get_tech_name("cabar")] = {item = "cabar", prerequisite = "hunting-fishing"},
     [get_tech_name("caddle")] = {item = "caddle", prerequisite = "hunting-fishing"},
     [get_tech_name("cherry")] = {item = "cherry", prerequisite = "genetic-neogenesis"},
-    [get_tech_name("chromafall")] = {item = "chromafall", prerequisite = "explore-alien-flora-1", no_hr_icon = true},
+    [get_tech_name("chromafall")] = {item = "chromafall", prerequisite = "explore-alien-flora-1"},
     [get_tech_name("dodkopus")] = {item = "dodkopus", prerequisite = "advanced-fishing"},
     [get_tech_name("eggplant")] = {item = "eggplant", prerequisite = "nightshades"},
     [get_tech_name("fupper")] = {item = "fupper", prerequisite = "hunting-fishing", mined_from = "fishwhirl"},
     [get_tech_name("hardcorn-punk")] = {item = "hardcorn-punk", prerequisite = "food-processing"},
-    [get_tech_name("heliofall")] = {item = "heliofall", prerequisite = "explore-alien-flora-1", no_hr_icon = true},
+    [get_tech_name("heliofall")] = {item = "heliofall", prerequisite = "explore-alien-flora-1"},
     [get_tech_name("hellfin")] = {item = "hellfin", prerequisite = "advanced-fishing"},
     [get_tech_name("lemon")] = {item = "lemon", prerequisite = "zetorn-variations"},
     [get_tech_name("manok")] = {item = "manok", prerequisite = "explore-alien-flora-1"},
