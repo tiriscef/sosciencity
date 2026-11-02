@@ -164,3 +164,21 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+---------------------------------------------------------------------------------------------------
+-- << postponed calls >>
+
+Tirislib.Testing.add_test_case(
+    "Prototype.describe_postponed names the function and its arguments",
+    "lib.prototype",
+    function()
+        local saved = Tirislib.Prototype.postponed_functions
+        Tirislib.Prototype.postponed_functions = {}
+
+        Tirislib.Prototype.postpone(Tirislib.Recipe.add_unlock, {name = "test-recipe"}, "test-missing-tech")
+        local descriptions = Tirislib.Prototype.describe_postponed()
+
+        Tirislib.Prototype.postponed_functions = saved
+        Assert.equals(descriptions, {"Recipe.add_unlock(test-recipe, test-missing-tech)"})
+    end
+)

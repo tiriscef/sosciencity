@@ -169,6 +169,40 @@ function Tirislib.Prototype.finish_postponed()
 end
 
 --- Boilerplate function. Has to be called at the end of a data stage.
+--- Returns a readable description of every postponed call that is still waiting, e.g.
+--- "Recipe.add_unlock(window, infrastucture-1)". After finish_postponed, these are calls that reference
+--- a prototype which never got created, mostly typos.
+--- @return string[]
+function Tirislib.Prototype.describe_postponed()
+    local descriptions = {}
+
+    for _, postponed in pairs(Tirislib.Prototype.postponed_functions) do
+        local function_name = "<unknown function>"
+        for class_name, class in pairs(Tirislib) do
+            if type(class) == "table" then
+                for name, fn in pairs(class) do
+                    if fn == postponed.fn then
+                        function_name = class_name .. "." .. name
+                    end
+                end
+            end
+        end
+
+        local arguments = {}
+        for _, argument in pairs(postponed.arg) do
+            if type(argument) == "table" then
+                arguments[#arguments + 1] = tostring(argument.name or argument.type or "<table>")
+            else
+                arguments[#arguments + 1] = tostring(argument)
+            end
+        end
+
+        descriptions[#descriptions + 1] = string.format("%s(%s)", function_name, table.concat(arguments, ", "))
+    end
+
+    return descriptions
+end
+
 function Tirislib.Prototype.finish()
     Tirislib.Prototype.finish_postponed()
 
