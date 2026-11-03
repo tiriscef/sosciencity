@@ -39,6 +39,20 @@ Inhabitants.get_caste_bonus_multiplier = get_caste_bonus_multiplier
 ---------------------------------------------------------------------------------------------------
 -- << caste bonus calculations >>
 
+--- Gets the points available for maintenance: Clockwork caste points plus the free startup points.
+--- @param points number? clockwork caste points, defaults to storage value
+--- @return number
+local function get_maintenance_points(points)
+    return (points or storage.caste_points[Type.clockwork]) + storage.starting_clockwork_points
+end
+Inhabitants.get_maintenance_points = get_maintenance_points
+
+--- Whether there are enough maintenance points for all active machines (always true if maintenance is disabled).
+--- @return boolean
+function Inhabitants.has_sufficient_maintenance()
+    return not storage.maintenance_enabled or storage.active_machine_count <= get_maintenance_points()
+end
+
 --- Gets the Clockwork caste bonus.
 --- @param points number? clockwork caste points, defaults to storage value
 --- @param maintenance_cost integer? active machine count, defaults to storage value
@@ -48,7 +62,7 @@ local function get_clockwork_bonus(points, maintenance_cost)
     maintenance_cost = maintenance_cost or storage.active_machine_count
 
     if storage.maintenance_enabled then
-        local maintenance_points = points + storage.starting_clockwork_points
+        local maintenance_points = get_maintenance_points(points)
 
         if maintenance_cost > maintenance_points then
             return floor(map_range(maintenance_cost, maintenance_points, max(1, 2 * maintenance_points), 0, -60))

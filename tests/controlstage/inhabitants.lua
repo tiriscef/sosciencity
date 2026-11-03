@@ -1233,3 +1233,50 @@ Tirislib.Testing.add_test_case(
         Assert.is_nil(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], "nobody is susceptible to the covered disease")
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << maintenance >>
+
+local saved_maintenance
+
+local function save_maintenance_state()
+    saved_maintenance = {
+        enabled = storage.maintenance_enabled,
+        active = storage.active_machine_count,
+        points = storage.caste_points[Type.clockwork],
+        starting = storage.starting_clockwork_points
+    }
+end
+
+local function restore_maintenance_state()
+    storage.maintenance_enabled = saved_maintenance.enabled
+    storage.active_machine_count = saved_maintenance.active
+    storage.caste_points[Type.clockwork] = saved_maintenance.points
+    storage.starting_clockwork_points = saved_maintenance.starting
+end
+
+Tirislib.Testing.add_test_case(
+    "Maintenance points include the startup points and decide whether maintenance is sufficient",
+    "inhabitants",
+    function()
+        storage.maintenance_enabled = true
+        storage.caste_points[Type.clockwork] = 7.5
+        storage.starting_clockwork_points = 10
+
+        Assert.equals(Inhabitants.get_maintenance_points(), 17.5)
+        Assert.equals(Inhabitants.get_maintenance_points(2), 12)
+
+        storage.active_machine_count = 17
+        Assert.is_true(Inhabitants.has_sufficient_maintenance(), "17 machines, 17.5 points")
+        Assert.greater_than(Inhabitants.get_clockwork_bonus(), -1, "no breakdown penalty when sufficient")
+
+        storage.active_machine_count = 18
+        Assert.is_false(Inhabitants.has_sufficient_maintenance(), "18 machines, 17.5 points")
+        Assert.less_than(Inhabitants.get_clockwork_bonus(), 0, "breakdown penalty when insufficient")
+
+        storage.maintenance_enabled = false
+        Assert.is_true(Inhabitants.has_sufficient_maintenance(), "always sufficient when disabled")
+    end,
+    save_maintenance_state,
+    restore_maintenance_state
+)

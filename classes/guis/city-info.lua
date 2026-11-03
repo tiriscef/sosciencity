@@ -23,6 +23,7 @@ local castes = Castes.values
 local Gui = Gui
 local Register = Register
 local Inhabitants = Inhabitants
+local floor = math.floor
 local max = math.max
 local min = math.min
 local round_to_step = Tirislib.Utils.round_to_step
@@ -45,6 +46,24 @@ local function update_population_flow(container)
         "sosciencity.tooltip-machines",
         storage.active_machine_count
     }
+
+    local maintenance_shown = storage.maintenance_enabled
+    local maintenance_label = datalist.maintenance
+    maintenance_label.visible = maintenance_shown
+    datalist["key-maintenance"].visible = maintenance_shown
+    if maintenance_shown then
+        local active_machines = storage.active_machine_count
+        local maintenance_points = floor(Inhabitants.get_maintenance_points())
+        local sufficient = Inhabitants.has_sufficient_maintenance()
+
+        maintenance_label.caption = {"sosciencity.fraction", active_machines, maintenance_points}
+        maintenance_label.style.font_color = sufficient and Color.yellowish_green or Color.red
+        maintenance_label.tooltip = {
+            "",
+            {"sosciencity.tooltip-maintenance", active_machines, maintenance_points},
+            sufficient and "" or {"sosciencity.tooltip-maintenance-insufficient"}
+        }
+    end
 
     datalist.turret_count.caption = Register.get_type_count(Type.turret)
 end
@@ -157,6 +176,7 @@ local function create_population_flow(container, player_index)
 
     add_city_info_entry(datalist, "population", {"sosciencity.population"})
     add_city_info_entry(datalist, "machine_count", {"sosciencity.machines"})
+    add_city_info_entry(datalist, "maintenance", {"sosciencity.maintenance"})
     add_city_info_entry(datalist, "turret_count", {"sosciencity.turrets"})
 
     create_advanced_placement_section(flow, player_index)
