@@ -329,7 +329,8 @@ local function derive_fields_from_product(prototype, product_entry, localised_na
     local has_custom_identity = prototype.localised_name or prototype.localised_description or prototype.icon or prototype.icons
 
     if has_custom_identity then
-        if product then
+        -- an empty main_product means the recipe has an identity of its own (recipe-name.<name>)
+        if product and prototype.main_product ~= "" then
             prototype.localised_name = prototype.localised_name or product:get_localised_name()
             prototype.localised_description = prototype.localised_description or product:get_localised_description()
         end
