@@ -169,7 +169,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
-    energy_required = 5,
+    energy_required = 2,
     allow_productivity = true,
     unlock = "automation-science-pack"
 }

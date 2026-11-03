@@ -28,8 +28,8 @@ Tirislib.RecipeGenerator.create {
     name = "brainstorm",
     category = "sosciencity-handcrafting",
     enabled = true,
-    energy_required = 5,
-    ingredients = {{type = "item", name = "paper", amount = 2}},
+    energy_required = 2,
+    ingredients = {{type = "item", name = "paper", amount = 1}},
     results = {
         {type = "item", name = "artistic-insight", amount_min = 2, amount_max = 4}
     },
