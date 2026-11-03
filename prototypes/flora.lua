@@ -1277,5 +1277,7 @@ Tirislib.Prototype.create {
     icon_size = 64,
     small_icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
     small_icon_size = 64,
-    technology_to_unlock = "indoor-growing"
+    technology_to_unlock = "indoor-growing",
+    -- otherwise it stays unlocked in every new game once it was researched in any save
+    unavailable_until_unlocked = true
 }
