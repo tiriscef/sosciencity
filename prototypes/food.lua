@@ -18,7 +18,7 @@ local foods = {
     },
     {
         name = "insect-meat",
-        spoil_ticks = 10 * Time.minute,
+        spoil_ticks = 30 * Time.minute,
         spoil_result = "expired-food"
     },
     {
@@ -269,19 +269,19 @@ local foods = {
     },
     {
         name = "wild-edible-plants",
-        spoil_ticks = 15 * Time.minute,
+        spoil_ticks = 45 * Time.minute,
         spoil_result = "expired-food",
         sprite_variations = {name = "wild-edible-plants", count = 7, include_icon = true}
     },
     {
         name = "wild-fungi",
-        spoil_ticks = 15 * Time.minute,
+        spoil_ticks = 45 * Time.minute,
         spoil_result = "expired-food",
         sprite_variations = {name = "wild-fungi", count = 7, include_icon = true}
     },
     {
         name = "wild-algae",
-        spoil_ticks = 15 * Time.minute,
+        spoil_ticks = 45 * Time.minute,
         spoil_result = "expired-food",
         sprite_variations = {name = "wild-algae", count = 7, include_icon = true}
     },
