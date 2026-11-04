@@ -877,7 +877,14 @@ end
 
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
 function Building.get(entry)
-    local name = entry[EK.name]
+    return Building.get_by_name(entry[EK.name])
+end
+
+--- Returns the Custom Building specification of the entity with this name, houses included,
+--- or an empty table if it isn't an actual Custom Building.
+--- @param name string entity name
+--- @return table
+function Building.get_by_name(name)
     return buildings[name] or (houses[name] and housing_details) or {}
 end
 
