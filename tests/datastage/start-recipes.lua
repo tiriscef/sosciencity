@@ -6,6 +6,7 @@ local Assert = Tirislib.Testing.Assert
 local intended_start_recipes = {
     ["lumber"] = true,
     ["sawdust"] = true,
+    ["lumber-from-tiriscefing-willow-wood"] = true, -- willow wood comes from gathering materials
     ["gathering-food"] = true,
     ["gathering-hemp"] = true,
     ["gathering-materials"] = true,
@@ -51,5 +52,39 @@ Tirislib.Testing.add_test_case(
             end
         end
         Assert.is_true(unlocks_iron_stick, "infrastructure-1 unlocks iron-stick")
+    end
+)
+
+--- Whether some technology unlocks the given recipe.
+local function is_unlocked_by_technology(recipe_name)
+    for _, technology in Tirislib.Technology.iterate() do
+        for _, effect in pairs(technology.effects or {}) do
+            if effect.type == "unlock-recipe" and effect.recipe == recipe_name then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+Tirislib.Testing.add_test_case(
+    "Every Sosciencity wood can be turned into lumber once it is obtainable",
+    "content.start-recipes",
+    function()
+        local missing = {}
+
+        for _, item in Tirislib.Item.iterate() do
+            if Tirislib.Prototype.get_owner(item) == "sosciencity" and item.name:sub(-5) == "-wood" then
+                local recipe, found = Tirislib.Recipe.get_by_name("lumber-from-" .. item.name)
+                if not found then
+                    missing[#missing + 1] = item.name .. " (no recipe)"
+                elseif recipe.enabled == false and not is_unlocked_by_technology(recipe.name) then
+                    missing[#missing + 1] = item.name .. " (never unlocked)"
+                end
+            end
+        end
+
+        table.sort(missing)
+        Assert.is_table_empty(missing, "no lumber for: " .. table.concat(missing, ", "))
     end
 )
