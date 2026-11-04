@@ -503,6 +503,172 @@ function Tirislib.Recipe:add_unlock(technology_name)
     return self
 end
 
+--- Requests of add_unlock_with_item that aren't resolved yet: array of {recipe = name, item = name, type = type}.
+Tirislib.Recipe.pending_item_unlocks = {}
+
+--- Unlocks this recipe together with the given item: by the technologies that unlock the recipes producing it,
+--- or right from the start if one of those recipes is available from the start.
+--- Resolved by Tirislib.Recipe.resolve_item_unlocks at the end of the data stage, when all unlocks are known.
+--- Until then the recipe is disabled, so an item without any producing recipe leaves it locked instead of
+--- silently available.
+--- @param item_name string
+--- @param _type string? "item" (default) or "fluid"
+--- @return RecipePrototype itself
+function Tirislib.Recipe:add_unlock_with_item(item_name, _type)
+    Tirislib.Recipe.set_field(self, "enabled", false)
+
+    local pending = Tirislib.Recipe.pending_item_unlocks
+    pending[#pending + 1] = {recipe = self.name, item = item_name, type = _type or "item"}
+
+    return self
+end
+
+--- Returns a set of all technologies that are (direct or indirect) prerequisites of the given one.
+--- @param technology_name string
+--- @param cache table technology name -> ancestor set, shared between calls
+--- @return table<string, boolean>
+local function get_ancestors(technology_name, cache)
+    local cached = cache[technology_name]
+    if cached then
+        return cached
+    end
+
+    local ancestors = {}
+    cache[technology_name] = ancestors -- guards against cycles
+
+    local technology = data.raw["technology"][technology_name]
+    for _, prerequisite in pairs(technology and technology.prerequisites or {}) do
+        ancestors[prerequisite] = true
+        for ancestor in pairs(get_ancestors(prerequisite, cache)) do
+            ancestors[ancestor] = true
+        end
+    end
+
+    return ancestors
+end
+
+--- Removes the technologies that have another technology of the set among their prerequisites,
+--- because the earlier one already unlocks the recipe.
+--- @param technologies table<string, boolean>
+--- @param cache table
+--- @return table<string, boolean>
+local function remove_later_technologies(technologies, cache)
+    local earliest = {}
+
+    for technology_name in pairs(technologies) do
+        local ancestors = get_ancestors(technology_name, cache)
+        local has_earlier = false
+        for other in pairs(technologies) do
+            if other ~= technology_name and ancestors[other] then
+                has_earlier = true
+                break
+            end
+        end
+        if not has_earlier then
+            earliest[technology_name] = true
+        end
+    end
+
+    return earliest
+end
+
+--- Resolves the requests of add_unlock_with_item. A request waits while one of the item's producing recipes is
+--- waiting itself, so chains resolve in order. Requests without any producing recipe stay pending; the next data
+--- stage tries them again, see describe_unresolved_item_unlocks.
+function Tirislib.Recipe.resolve_item_unlocks()
+    local pending = Tirislib.Recipe.pending_item_unlocks
+    if #pending == 0 then
+        return
+    end
+
+    -- recipe name -> technology names that unlock it
+    local unlocked_by = {}
+    for _, technology in pairs(data.raw["technology"] or {}) do
+        for _, effect in pairs(technology.effects or {}) do
+            if effect.type == "unlock-recipe" then
+                local technologies = unlocked_by[effect.recipe] or {}
+                technologies[#technologies + 1] = technology.name
+                unlocked_by[effect.recipe] = technologies
+            end
+        end
+    end
+
+    local ancestor_cache = {}
+    local progress = true
+
+    while progress do
+        progress = false
+
+        local waiting = {}
+        for _, request in pairs(pending) do
+            waiting[request.recipe] = true
+        end
+
+        local still_pending = {}
+        for _, request in pairs(pending) do
+            local recipe = data.raw["recipe"][request.recipe]
+            local sources = {}
+            local blocked = false
+
+            for _, source in pairs(data.raw["recipe"]) do
+                if source.name ~= request.recipe and not source.hidden
+                    and Tirislib.Recipe.has_result(source, request.item, request.type) then
+                    if waiting[source.name] then
+                        blocked = true
+                    end
+                    sources[#sources + 1] = source
+                end
+            end
+
+            if not recipe then
+                progress = true -- the recipe got removed, nothing to unlock
+            elseif blocked or #sources == 0 then
+                still_pending[#still_pending + 1] = request
+            else
+                local available_at_start = false
+                local technologies = {}
+
+                for _, source in pairs(sources) do
+                    if source.enabled ~= false then
+                        available_at_start = true
+                    end
+                    for _, technology_name in pairs(unlocked_by[source.name] or {}) do
+                        technologies[technology_name] = true
+                    end
+                end
+
+                if available_at_start then
+                    recipe.enabled = true
+                else
+                    for technology_name in pairs(remove_later_technologies(technologies, ancestor_cache)) do
+                        Tirislib.Technology.get_by_name(technology_name):add_unlock(request.recipe)
+                        local technologies_of_recipe = unlocked_by[request.recipe] or {}
+                        technologies_of_recipe[#technologies_of_recipe + 1] = technology_name
+                        unlocked_by[request.recipe] = technologies_of_recipe
+                    end
+                end
+                progress = true
+            end
+        end
+
+        pending = still_pending
+    end
+
+    Tirislib.Recipe.pending_item_unlocks = pending
+end
+
+--- Returns a readable description of every add_unlock_with_item request that couldn't be resolved,
+--- e.g. "lumber-from-cherry-wood with cherry-wood". After the last data stage these are items that no visible
+--- recipe produces (mined or scripted items, or typos).
+--- @return string[]
+function Tirislib.Recipe.describe_unresolved_item_unlocks()
+    local descriptions = {}
+    for _, request in pairs(Tirislib.Recipe.pending_item_unlocks) do
+        descriptions[#descriptions + 1] = request.recipe .. " with " .. request.item
+    end
+    return descriptions
+end
+
 --- Transforms all ingredient entries with the given function.
 --- @param fn function
 --- @return RecipePrototype itself

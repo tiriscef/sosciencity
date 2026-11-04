@@ -205,6 +205,8 @@ end
 
 function Tirislib.Prototype.finish()
     Tirislib.Prototype.finish_postponed()
+    -- after the postponed calls, because they can add the unlocks that these requests copy
+    Tirislib.Recipe.resolve_item_unlocks()
 
     remove_metatables()
 end

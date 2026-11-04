@@ -914,38 +914,8 @@ Tirislib.RecipeGenerator.create {
 ---------------------------------------------------------------------------------------------------
 -- << processing recipes >>
 
---- Unlocks the lumber recipe of a wood together with the recipes that produce that wood.
---- Stays enabled if the wood is obtainable from the start (e.g. willow wood from gathering).
---- Postponed, because the unlocks of the producing recipes may be postponed themselves.
---- @param lumber_recipe RecipePrototype
---- @param wood_name string
-local function unlock_with_wood_sources(lumber_recipe, wood_name)
-    local technologies = {}
-
-    for _, source in Tirislib.Recipe.iterate() do
-        if source.name ~= lumber_recipe.name and not source.hidden and Tirislib.Recipe.has_result(source, wood_name) then
-            if source.enabled ~= false then
-                return
-            end
-
-            for _, technology in Tirislib.Technology.iterate() do
-                for _, effect in pairs(technology.effects or {}) do
-                    if effect.type == "unlock-recipe" and effect.recipe == source.name then
-                        technologies[technology.name] = true
-                    end
-                end
-            end
-        end
-    end
-
-    for technology_name in pairs(technologies) do
-        Tirislib.Recipe.add_unlock(lumber_recipe, technology_name)
-    end
-end
-
 for _, wood_name in pairs(wood_items) do
-    local lumber_recipe =
-        Tirislib.RecipeGenerator.create {
+    Tirislib.RecipeGenerator.create {
         name = "lumber-from-" .. wood_name,
         results = {
             {type = "item", name = "lumber",  amount = 3, product = true},
@@ -955,11 +925,10 @@ for _, wood_name in pairs(wood_items) do
             {type = "item", name = wood_name, amount = 1}
         },
         category = "sosciencity-wood-processing",
+        unlock_with_item = wood_name,
         allow_productivity = true,
         auto_recycle = false
     }:add_ingredient_layer(wood_name)
-
-    Tirislib.Prototype.postpone(unlock_with_wood_sources, lumber_recipe, wood_name)
 end
 
 ---------------------------------------------------------------------------------------------------
