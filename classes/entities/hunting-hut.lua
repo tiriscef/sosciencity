@@ -57,6 +57,11 @@ local function get_hunting_competition(entry)
     local effective_count = same_count + different_recipe_weight * other_count
     return (effective_count + 1) ^ (-0.35), same_count, other_count
 end
+--- Share of the needed trees that are in range. More trees than needed don't make the hut faster.
+local function get_forest_performance(tree_count, building_details)
+    return min(1, tree_count / building_details.tree_count)
+end
+
 local function update_hunting_hut(entry)
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)
@@ -64,7 +69,7 @@ local function update_hunting_hut(entry)
 
     local worker_performance = evaluate_workforce(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
-    local forest_performance = tree_count / building_details.tree_count
+    local forest_performance = get_forest_performance(tree_count, building_details)
     local competition, _, _ = get_hunting_competition(entry)
 
     set_crafting_machine_performance(entry, min(worker_performance, forest_performance) * competition * worker_happiness)
@@ -76,7 +81,7 @@ local function build_hunting_hut_report(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
     local building_details = get_building_details(entry)
     local tree_count = entry[EK.tree_count] or 0
-    local forest_performance = tree_count / building_details.tree_count
+    local forest_performance = get_forest_performance(tree_count, building_details)
     local competition, same_count, other_count = get_hunting_competition(entry)
     local performance = min(worker_performance, forest_performance) * competition * worker_happiness
 

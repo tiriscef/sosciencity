@@ -1,3 +1,4 @@
+local Buildings = require("constants.buildings")
 local EK = require("enums.entry-key")
 local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
@@ -128,6 +129,23 @@ Tirislib.Testing.add_test_case(
         local report = Entity.build_performance_report(entry)
         local trees_effect = find_effect(report, PE.trees)
         Assert.greater_than(trees_effect[PK.value], 0, "injected tree count should raise trees effect above 0")
+    end,
+    setup_surface,
+    clean_up
+)
+
+Tirislib.Testing.add_test_case(
+    "More trees than needed don't push the trees effect above 100%",
+    "integration|integration.hunting-hut",
+    function()
+        local entry = create_hunting_hut()
+        Helpers.update_entry(entry)
+
+        entry[EK.tree_count] = 3 * Buildings.get(entry).tree_count
+        Helpers.update_entry(entry)
+
+        local report = Entity.build_performance_report(entry)
+        Assert.equals(find_effect(report, PE.trees)[PK.value], 1, "surplus trees should cap at 100%")
     end,
     setup_surface,
     clean_up

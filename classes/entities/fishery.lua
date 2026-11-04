@@ -47,10 +47,15 @@ local function get_fishing_competition(entry)
 end
 Fishery.get_fishing_competition = get_fishing_competition
 
+--- Share of the needed water tiles that are in range. More water than needed doesn't make the fishery faster.
+local function get_water_performance(water_tiles, building_details)
+    return min(1, water_tiles / building_details.water_tiles)
+end
+
 local function update_fishery(entry)
     local building_details = get_building_details(entry)
     local water_tiles = get_water_tiles(entry, building_details)
-    local water_performance = water_tiles / building_details.water_tiles
+    local water_performance = get_water_performance(water_tiles, building_details)
     local worker_performance = evaluate_workforce(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
     local competition, _, _ = get_fishing_competition(entry)
@@ -63,7 +68,7 @@ local function build_fishery_report(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
     local building_details = get_building_details(entry)
     local water_tiles = entry[EK.water_tiles] or 0
-    local water_performance = water_tiles / building_details.water_tiles
+    local water_performance = get_water_performance(water_tiles, building_details)
     local competition, same_count, other_count = get_fishing_competition(entry)
     local performance = min(worker_performance, water_performance) * competition * worker_happiness
 

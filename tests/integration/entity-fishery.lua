@@ -1,3 +1,4 @@
+local Buildings = require("constants.buildings")
 local EK = require("enums.entry-key")
 local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
@@ -142,6 +143,23 @@ Tirislib.Testing.add_test_case(
         local report = Entity.build_performance_report(entry)
         local water_effect = find_effect(report, PE.water_tiles)
         Assert.greater_than(water_effect[PK.value], 0, "injected water tiles should raise water_tiles effect above 0")
+    end,
+    setup_surface,
+    clean_up
+)
+
+Tirislib.Testing.add_test_case(
+    "More water tiles than needed don't push the water_tiles effect above 100%",
+    "integration|integration.fishery",
+    function()
+        local entry = create_fishery()
+        Helpers.update_entry(entry)
+
+        entry[EK.water_tiles] = 3 * Buildings.get(entry).water_tiles
+        Helpers.update_entry(entry)
+
+        local report = Entity.build_performance_report(entry)
+        Assert.equals(find_effect(report, PE.water_tiles)[PK.value], 1, "surplus water tiles should cap at 100%")
     end,
     setup_surface,
     clean_up
