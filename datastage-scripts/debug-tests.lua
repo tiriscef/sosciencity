@@ -2,8 +2,9 @@ if not mods["sosciencity-debug"] then
     return
 end
 
-require("tests.load-tests")
-require("tests.datastage.load-tests")
+require("tests.tirislib.load-tests")
+require("tests.tirislib.datastage.load-tests")
+require("tests.content.load-tests")
 
 local summary, results = Tirislib.Testing.run_all()
 log(summary)

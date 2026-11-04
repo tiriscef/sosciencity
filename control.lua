@@ -113,7 +113,7 @@ remote.add_interface("sosciencity", {
 })
 
 if DEBUG then
-    require("tests.load-tests")
+    require("tests.tirislib.load-tests")
     require("tests.controlstage.load-tests")
     require("tests.integration.load-tests")
     local IntegrationHelpers = require("tests.integration.helpers")

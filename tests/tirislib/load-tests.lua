@@ -1,0 +1,8 @@
+-- Stage-independent tirislib tests (run in both data stage and control stage)
+require("tests.tirislib.testing")
+require("tests.tirislib.utils")
+require("tests.tirislib.string")
+require("tests.tirislib.tables")
+require("tests.tirislib.arrays")
+require("tests.tirislib.locales")
+require("tests.tirislib.lazy-luaq")
