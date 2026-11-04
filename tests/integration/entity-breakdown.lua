@@ -1,26 +1,29 @@
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
-local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
 
-local floor = math.floor
 local test_surface
 
-local BREAKDOWN_CYCLE_LENGTH = 10 * Time.second
-local BREAKDOWN_LOCAL_JITTER = 10
-local BREAKDOWN_LOCATION_CHUNK_SIZE = 16
-
-local function compute_effective_phase(entity)
-    local position = entity.position
-    local phase =
-        (entity.unit_number % BREAKDOWN_LOCAL_JITTER
-            + floor(position.x / BREAKDOWN_LOCATION_CHUNK_SIZE)
-            + floor(position.y / BREAKDOWN_LOCATION_CHUNK_SIZE)) % 100
-    local time_index = floor(game.tick / BREAKDOWN_CYCLE_LENGTH)
-    return (phase + time_index) % 100
-end
+Tirislib.Testing.add_test_case(
+    "breakdown offset: machines in one spot spread over many phases",
+    "integration|integration.breakdown",
+    function()
+        -- consecutive unit numbers in the same area should not share a narrow band of phases,
+        -- otherwise most of an area breaks down at once (regression: 10 phases gave over 60% at -6%)
+        local offsets = {}
+        local distinct = 0
+        for unit_number = 1000, 1059 do
+            local offset = Entity.get_breakdown_offset(unit_number, {x = 0, y = 0})
+            if not offsets[offset] then
+                offsets[offset] = true
+                distinct = distinct + 1
+            end
+        end
+        Assert.greater_than(distinct, 25, "60 machines in one spot should use more than 25 phases")
+    end
+)
 
 Tirislib.Testing.add_test_case(
     "breakdown verdict: non-negative clockwork bonus never breaks any entry",
@@ -48,7 +51,7 @@ Tirislib.Testing.add_test_case(
         local entry = Helpers.create_and_register(test_surface, "test-assembling-machine", {0, 0})
         local saved_bonus = storage.caste_bonuses[Type.clockwork]
 
-        local effective_phase = compute_effective_phase(entry[EK.entity])
+        local effective_phase = Entity.get_breakdown_phase(entry)
 
         -- threshold = effective_phase + 1 → effective_phase < threshold → broken
         storage.caste_bonuses[Type.clockwork] = -(effective_phase + 1)
@@ -80,7 +83,7 @@ Tirislib.Testing.add_test_case(
         local entity = entry[EK.entity]
         local saved_bonus = storage.caste_bonuses[Type.clockwork]
 
-        local effective_phase = compute_effective_phase(entity)
+        local effective_phase = Entity.get_breakdown_phase(entry)
 
         -- Force a malus that breaks this specific entry's phase
         storage.caste_bonuses[Type.clockwork] = -(effective_phase + 1)
@@ -118,7 +121,7 @@ Tirislib.Testing.add_test_case(
         -- Mark the entry as externally owned (mimics another mod controlling it)
         entry[EK.externally_owned] = true
 
-        local effective_phase = compute_effective_phase(entity)
+        local effective_phase = Entity.get_breakdown_phase(entry)
 
         -- Even though the breakdown verdict would fire, update_machine must skip the active write
         storage.caste_bonuses[Type.clockwork] = -(effective_phase + 1)

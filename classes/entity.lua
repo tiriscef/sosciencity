@@ -153,9 +153,40 @@ local function set_breakdown_state(entry, is_broken)
 end
 Entity.set_breakdown_state = set_breakdown_state
 
+-- Breakdowns rotate through 100 phases, one step per cycle. Each machine has a fixed offset into
+-- that rotation: its area (in steps of BREAKDOWN_LOCATION_CHUNK_SIZE tiles) gives the regional part,
+-- so the mechanics visibly work through the factory area by area, and a hash of the unit number
+-- spreads the machines of one area over BREAKDOWN_LOCAL_JITTER phases.
+-- The jitter caps how much of one area is down at once: at -N% about N / BREAKDOWN_LOCAL_JITTER
+-- of an area's machines are broken while the breakdown passes through it (10 gave over 60% at -6%).
 local BREAKDOWN_CYCLE_LENGTH = 10 * Time.second
-local BREAKDOWN_LOCAL_JITTER = 10
+local BREAKDOWN_PHASE_COUNT = 100
+local BREAKDOWN_LOCAL_JITTER = 30
 local BREAKDOWN_LOCATION_CHUNK_SIZE = 16
+-- prime, so consecutive unit numbers spread over all jitter values instead of forming stripes
+local BREAKDOWN_HASH_MULTIPLIER = 7919
+
+--- Fixed offset of a machine in the breakdown rotation.
+--- @param unit_number integer
+--- @param position MapPosition
+--- @return integer offset in [0, BREAKDOWN_PHASE_COUNT)
+local function get_breakdown_offset(unit_number, position)
+    return ((unit_number * BREAKDOWN_HASH_MULTIPLIER) % BREAKDOWN_LOCAL_JITTER
+        + floor(position.x / BREAKDOWN_LOCATION_CHUNK_SIZE)
+        + floor(position.y / BREAKDOWN_LOCATION_CHUNK_SIZE)) % BREAKDOWN_PHASE_COUNT
+end
+Entity.get_breakdown_offset = get_breakdown_offset
+
+--- Current phase of the entry in the breakdown rotation. Machines with a phase below the
+--- breakdown threshold (the negated clockwork bonus) are broken.
+--- @param entry Entry
+--- @return integer phase in [0, BREAKDOWN_PHASE_COUNT)
+local function get_breakdown_phase(entry)
+    local entity = entry[EK.entity]
+    local time_index = floor(game.tick / BREAKDOWN_CYCLE_LENGTH)
+    return (get_breakdown_offset(entity.unit_number, entity.position) + time_index) % BREAKDOWN_PHASE_COUNT
+end
+Entity.get_breakdown_phase = get_breakdown_phase
 
 --- Verdict for whether the entry is currently in the broken-down phase due to insufficient
 --- clockwork maintenance. Pure: returns a boolean derived from clockwork_bonus, the entry's
@@ -168,17 +199,7 @@ local function get_breakdown_state(entry)
         return false
     end
 
-    local entity = entry[EK.entity]
-    local position = entity.position
-    local phase =
-        (entity.unit_number % BREAKDOWN_LOCAL_JITTER
-            + floor(position.x / BREAKDOWN_LOCATION_CHUNK_SIZE)
-            + floor(position.y / BREAKDOWN_LOCATION_CHUNK_SIZE)) % 100
-    local time_index = floor(game.tick / BREAKDOWN_CYCLE_LENGTH)
-    local effective_phase = (phase + time_index) % 100
-    local broken_threshold = -clockwork_bonus
-
-    return effective_phase < broken_threshold
+    return get_breakdown_phase(entry) < -clockwork_bonus
 end
 Entity.get_breakdown_state = get_breakdown_state
 
