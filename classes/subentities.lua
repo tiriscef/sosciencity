@@ -98,7 +98,7 @@ local common_sprites = {
     [RenderingType.food_warning] = "virtual-signal/alert-no-food",
     [RenderingType.water_warning] = "virtual-signal/alert-no-water",
     [RenderingType.no_workers] = "virtual-signal/alert-not-enough-workers",
-    [RenderingType.breakdown_warning] = "virtual-signal/alert-red" -- TODO: replace placeholder
+    [RenderingType.breakdown_warning] = "virtual-signal/alert-breakdown"
 }
 local common_sprite_offsets = {
     [RenderingType.food_warning] = {x = 1.25, y = 0},

@@ -96,6 +96,22 @@ local function update_worker_list(list, entry)
     end
 end
 
+--- Describes how the clockwork maintenance affects this machine right now.
+--- Machines break down when maintenance is insufficient, the rocket silo gets slower instead.
+--- @param entry Entry
+--- @return locale
+local function get_maintenance_description(entry)
+    local clockwork_value = storage.caste_bonuses[Type.clockwork]
+    if clockwork_value >= 0 then
+        return {"sosciencity.display-good-maintenance", clockwork_value}
+    end
+    if entry[EK.type] == Type.rocket_silo then
+        return {"sosciencity.display-bad-maintenance", clockwork_value}
+    end
+    return entry[EK.broken_down] and {"sosciencity.display-broken-down", -clockwork_value} or
+        {"sosciencity.display-at-risk", -clockwork_value}
+end
+
 local function update_general_building_details(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local tab = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
@@ -157,13 +173,16 @@ local function update_general_building_details(container, entry, player_id)
     end
 
     if type_details.affected_by_clockwork then
-        local clockwork_value = storage.caste_bonuses[Type.clockwork]
-        Datalist.set_kv_pair_value(
-            building_data,
-            "maintenance",
-            clockwork_value >= 0 and {"sosciencity.display-good-maintenance", clockwork_value} or
-                {"sosciencity.display-bad-maintenance", clockwork_value}
-        )
+        Datalist.set_kv_pair_value(building_data, "maintenance", get_maintenance_description(entry))
+
+        if storage.maintenance_enabled then
+            Datalist.set_kv_pair_value(
+                building_data,
+                "needs-maintenance",
+                entry[EK.active_machine_status] and {"sosciencity.display-needs-maintenance"} or
+                    {"sosciencity.display-needs-no-maintenance"}
+            )
+        end
     end
 
     local report_flow = tab["performance-report"]
@@ -296,6 +315,9 @@ local function create_general_building_details(container, entry, player_id)
 
     if type_details.affected_by_clockwork then
         Datalist.add_kv_pair(building_data, "maintenance", {"sosciencity.maintenance"})
+        if storage.maintenance_enabled then
+            Datalist.add_kv_pair(building_data, "needs-maintenance", {"sosciencity.needs-maintenance"})
+        end
     end
 
     if Entity.has_performance_report_builder(entry[EK.type]) then

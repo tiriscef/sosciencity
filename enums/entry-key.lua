@@ -75,6 +75,8 @@ EK.workhours = 152
 EK.last_time_active = 153
 --- is this maintenance relevant machine counted as currently active
 EK.active_machine_status = 154
+--- is this machine currently broken down due to insufficient maintenance (nil if not)
+EK.broken_down = 155
 
 -- type specific stuff
 -- empty housing

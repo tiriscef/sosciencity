@@ -144,6 +144,7 @@ Entity.broken_status = broken_status
 --- @param is_broken boolean
 local function set_breakdown_state(entry, is_broken)
     set_active(entry, not is_broken, is_broken and broken_status or nil)
+    entry[EK.broken_down] = is_broken or nil
     if is_broken then
         Subentities.add_common_sprite(entry, RenderingType.breakdown_warning)
     else

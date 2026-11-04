@@ -223,16 +223,21 @@ local tooltip_fns = {
                 storage.caste_bonuses[Type.clockwork]
             }
         else
-            ret[#ret + 1] = {"sosciencity.tooltip-insufficient-maintenance", storage.caste_bonuses[Type.clockwork]}
+            ret[#ret + 1] = {"sosciencity.tooltip-insufficient-maintenance", -storage.caste_bonuses[Type.clockwork]}
         end
 
         local total_machines = Register.get_machine_count()
         if storage.maintenance_enabled and total_machines ~= maintenance_cost then
-            ret[#ret + 1] = {
-                "sosciencity.tooltip-clockwork-theoretical",
-                total_machines,
-                Inhabitants.get_clockwork_bonus(nil, total_machines)
-            }
+            local theoretical_bonus = Inhabitants.get_clockwork_bonus(nil, total_machines)
+            if theoretical_bonus >= 0 then
+                ret[#ret + 1] = {"sosciencity.tooltip-clockwork-theoretical", total_machines, theoretical_bonus}
+            else
+                ret[#ret + 1] = {
+                    "sosciencity.tooltip-clockwork-theoretical-breakdown",
+                    total_machines,
+                    -theoretical_bonus
+                }
+            end
         end
 
         return ret
