@@ -5,8 +5,8 @@ local saved_pending
 
 local function setup()
     created_prototypes = {}
-    saved_pending = Tirislib.Recipe.pending_item_unlocks
-    Tirislib.Recipe.pending_item_unlocks = {}
+    saved_pending = Tirislib.Recipe.pending_derived_unlocks
+    Tirislib.Recipe.pending_derived_unlocks = {}
 end
 
 local function teardown()
@@ -16,7 +16,7 @@ local function teardown()
         end
     end
     created_prototypes = {}
-    Tirislib.Recipe.pending_item_unlocks = saved_pending
+    Tirislib.Recipe.pending_derived_unlocks = saved_pending
 end
 
 local function create_item(name)
@@ -65,7 +65,7 @@ end
 
 Tirislib.Testing.add_test_case(
     "unlock_with_item: item available from the start keeps the recipe enabled",
-    "lib.recipe|lib.unlock-with-item",
+    "lib.recipe|lib.derived-unlocks",
     function()
         create_item("test-uwi-wood")
         create_item("test-uwi-lumber")
@@ -75,9 +75,9 @@ Tirislib.Testing.add_test_case(
         recipe:add_unlock_with_item("test-uwi-wood")
         Assert.equals(recipe.enabled, false, "disabled until resolved")
 
-        Tirislib.Recipe.resolve_item_unlocks()
+        Tirislib.Recipe.resolve_derived_unlocks()
         Assert.equals(recipe.enabled, true)
-        Assert.is_table_empty(Tirislib.Recipe.pending_item_unlocks)
+        Assert.is_table_empty(Tirislib.Recipe.pending_derived_unlocks)
     end,
     setup,
     teardown
@@ -85,7 +85,7 @@ Tirislib.Testing.add_test_case(
 
 Tirislib.Testing.add_test_case(
     "unlock_with_item: only the earliest of dependent technologies unlocks the recipe",
-    "lib.recipe|lib.unlock-with-item",
+    "lib.recipe|lib.derived-unlocks",
     function()
         create_item("test-uwi-wood")
         create_item("test-uwi-lumber")
@@ -97,7 +97,7 @@ Tirislib.Testing.add_test_case(
         local recipe = create_recipe("test-uwi-saw", "test-uwi-lumber", "test-uwi-wood")
 
         recipe:add_unlock_with_item("test-uwi-wood")
-        Tirislib.Recipe.resolve_item_unlocks()
+        Tirislib.Recipe.resolve_derived_unlocks()
 
         Assert.equals(recipe.enabled, false)
         Assert.is_true(unlocks("test-uwi-early", "test-uwi-saw"), "earliest tech unlocks it")
@@ -109,7 +109,7 @@ Tirislib.Testing.add_test_case(
 
 Tirislib.Testing.add_test_case(
     "unlock_with_item: independent technologies all unlock the recipe",
-    "lib.recipe|lib.unlock-with-item",
+    "lib.recipe|lib.derived-unlocks",
     function()
         create_item("test-uwi-wood")
         create_item("test-uwi-lumber")
@@ -120,7 +120,7 @@ Tirislib.Testing.add_test_case(
         local recipe = create_recipe("test-uwi-saw", "test-uwi-lumber", "test-uwi-wood")
 
         recipe:add_unlock_with_item("test-uwi-wood")
-        Tirislib.Recipe.resolve_item_unlocks()
+        Tirislib.Recipe.resolve_derived_unlocks()
 
         Assert.is_true(unlocks("test-uwi-a", "test-uwi-saw"))
         Assert.is_true(unlocks("test-uwi-b", "test-uwi-saw"))
@@ -131,7 +131,7 @@ Tirislib.Testing.add_test_case(
 
 Tirislib.Testing.add_test_case(
     "unlock_with_item: chains resolve in order",
-    "lib.recipe|lib.unlock-with-item",
+    "lib.recipe|lib.derived-unlocks",
     function()
         create_item("test-uwi-wood")
         create_item("test-uwi-lumber")
@@ -144,11 +144,11 @@ Tirislib.Testing.add_test_case(
         -- registered in the "wrong" order on purpose: the chair waits for the saw
         chair:add_unlock_with_item("test-uwi-lumber")
         saw:add_unlock_with_item("test-uwi-wood")
-        Tirislib.Recipe.resolve_item_unlocks()
+        Tirislib.Recipe.resolve_derived_unlocks()
 
         Assert.is_true(unlocks("test-uwi-a", "test-uwi-saw"))
         Assert.is_true(unlocks("test-uwi-a", "test-uwi-chair"))
-        Assert.is_table_empty(Tirislib.Recipe.pending_item_unlocks)
+        Assert.is_table_empty(Tirislib.Recipe.pending_derived_unlocks)
     end,
     setup,
     teardown
@@ -156,17 +156,65 @@ Tirislib.Testing.add_test_case(
 
 Tirislib.Testing.add_test_case(
     "unlock_with_item: item without a producing recipe stays locked and gets reported",
-    "lib.recipe|lib.unlock-with-item",
+    "lib.recipe|lib.derived-unlocks",
     function()
         create_item("test-uwi-wood")
         create_item("test-uwi-lumber")
         local recipe = create_recipe("test-uwi-saw", "test-uwi-lumber", "test-uwi-wood", true)
 
         recipe:add_unlock_with_item("test-uwi-wood")
-        Tirislib.Recipe.resolve_item_unlocks()
+        Tirislib.Recipe.resolve_derived_unlocks()
 
         Assert.equals(recipe.enabled, false)
-        Assert.equals(Tirislib.Recipe.describe_unresolved_item_unlocks(), {"test-uwi-saw with test-uwi-wood"})
+        Assert.equals(Tirislib.Recipe.describe_unresolved_derived_unlocks(), {"test-uwi-saw with test-uwi-wood"})
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "unlock_with_recipe: copies the earliest technologies of the given recipe",
+    "lib.recipe|lib.derived-unlocks",
+    function()
+        create_item("test-uwi-wood")
+        create_item("test-uwi-chair")
+        local farm = create_recipe("test-uwi-farm", "test-uwi-wood", nil, false)
+        create_tech("test-uwi-a", nil, {"test-uwi-farm"})
+        create_tech("test-uwi-b", {"test-uwi-a"}, {"test-uwi-farm"})
+        local recipe = create_recipe("test-uwi-chair", "test-uwi-chair", nil, true)
+
+        recipe:add_unlock_with_recipe(farm.name)
+        Tirislib.Recipe.resolve_derived_unlocks()
+
+        Assert.equals(recipe.enabled, false)
+        Assert.is_true(unlocks("test-uwi-a", "test-uwi-chair"))
+        Assert.is_false(unlocks("test-uwi-b", "test-uwi-chair"))
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "unlock_with_recipe: recipe available from the start keeps it enabled, a missing recipe gets reported",
+    "lib.recipe|lib.derived-unlocks",
+    function()
+        create_item("test-uwi-wood")
+        create_item("test-uwi-chair")
+        create_item("test-uwi-table")
+        create_recipe("test-uwi-gather", "test-uwi-wood", nil, true)
+        local chair = create_recipe("test-uwi-chair", "test-uwi-chair")
+        local table_recipe = create_recipe("test-uwi-table", "test-uwi-table")
+
+        chair:add_unlock_with_recipe("test-uwi-gather")
+        table_recipe:add_unlock_with_recipe("test-uwi-missing")
+        Tirislib.Recipe.resolve_derived_unlocks()
+
+        Assert.equals(chair.enabled, true)
+        Assert.equals(table_recipe.enabled, false)
+        Assert.equals(
+            Tirislib.Recipe.describe_unresolved_derived_unlocks(),
+            {"test-uwi-table with recipe test-uwi-missing"}
+        )
     end,
     setup,
     teardown

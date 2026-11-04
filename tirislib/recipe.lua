@@ -503,12 +503,13 @@ function Tirislib.Recipe:add_unlock(technology_name)
     return self
 end
 
---- Requests of add_unlock_with_item that aren't resolved yet: array of {recipe = name, item = name, type = type}.
-Tirislib.Recipe.pending_item_unlocks = {}
+--- Requests of add_unlock_with_item and add_unlock_with_recipe that aren't resolved yet.
+--- Array of {recipe = name, item = name, type = type} or {recipe = name, with_recipe = name}.
+Tirislib.Recipe.pending_derived_unlocks = {}
 
 --- Unlocks this recipe together with the given item: by the technologies that unlock the recipes producing it,
 --- or right from the start if one of those recipes is available from the start.
---- Resolved by Tirislib.Recipe.resolve_item_unlocks at the end of the data stage, when all unlocks are known.
+--- Resolved by Tirislib.Recipe.resolve_derived_unlocks at the end of the data stage, when all unlocks are known.
 --- Until then the recipe is disabled, so an item without any producing recipe leaves it locked instead of
 --- silently available.
 --- @param item_name string
@@ -517,10 +518,43 @@ Tirislib.Recipe.pending_item_unlocks = {}
 function Tirislib.Recipe:add_unlock_with_item(item_name, _type)
     Tirislib.Recipe.set_field(self, "enabled", false)
 
-    local pending = Tirislib.Recipe.pending_item_unlocks
+    local pending = Tirislib.Recipe.pending_derived_unlocks
     pending[#pending + 1] = {recipe = self.name, item = item_name, type = _type or "item"}
 
     return self
+end
+
+--- Unlocks this recipe together with the given recipe: by the same technologies (the earliest of them),
+--- or right from the start if that recipe is available from the start.
+--- Resolved like add_unlock_with_item; until then the recipe is disabled.
+--- @param recipe_name string
+--- @return RecipePrototype itself
+function Tirislib.Recipe:add_unlock_with_recipe(recipe_name)
+    Tirislib.Recipe.set_field(self, "enabled", false)
+
+    local pending = Tirislib.Recipe.pending_derived_unlocks
+    pending[#pending + 1] = {recipe = self.name, with_recipe = recipe_name}
+
+    return self
+end
+
+--- Returns the recipes whose unlocks the given request copies.
+--- @param request table entry of pending_derived_unlocks
+--- @return table[] recipe prototypes
+local function get_unlock_sources(request)
+    if request.with_recipe then
+        local source = data.raw["recipe"][request.with_recipe]
+        return source and source.name ~= request.recipe and {source} or {}
+    end
+
+    local sources = {}
+    for _, source in pairs(data.raw["recipe"]) do
+        if source.name ~= request.recipe and not source.hidden
+            and Tirislib.Recipe.has_result(source, request.item, request.type) then
+            sources[#sources + 1] = source
+        end
+    end
+    return sources
 end
 
 --- Returns a set of all technologies that are (direct or indirect) prerequisites of the given one.
@@ -572,11 +606,11 @@ local function remove_later_technologies(technologies, cache)
     return earliest
 end
 
---- Resolves the requests of add_unlock_with_item. A request waits while one of the item's producing recipes is
---- waiting itself, so chains resolve in order. Requests without any producing recipe stay pending; the next data
---- stage tries them again, see describe_unresolved_item_unlocks.
-function Tirislib.Recipe.resolve_item_unlocks()
-    local pending = Tirislib.Recipe.pending_item_unlocks
+--- Resolves the requests of add_unlock_with_item and add_unlock_with_recipe. A request waits while one of its
+--- source recipes is waiting itself, so chains resolve in order. Requests without any source recipe stay pending;
+--- the next data stage tries them again, see describe_unresolved_derived_unlocks.
+function Tirislib.Recipe.resolve_derived_unlocks()
+    local pending = Tirislib.Recipe.pending_derived_unlocks
     if #pending == 0 then
         return
     end
@@ -607,16 +641,11 @@ function Tirislib.Recipe.resolve_item_unlocks()
         local still_pending = {}
         for _, request in pairs(pending) do
             local recipe = data.raw["recipe"][request.recipe]
-            local sources = {}
+            local sources = get_unlock_sources(request)
             local blocked = false
-
-            for _, source in pairs(data.raw["recipe"]) do
-                if source.name ~= request.recipe and not source.hidden
-                    and Tirislib.Recipe.has_result(source, request.item, request.type) then
-                    if waiting[source.name] then
-                        blocked = true
-                    end
-                    sources[#sources + 1] = source
+            for _, source in pairs(sources) do
+                if waiting[source.name] then
+                    blocked = true
                 end
             end
 
@@ -654,17 +683,18 @@ function Tirislib.Recipe.resolve_item_unlocks()
         pending = still_pending
     end
 
-    Tirislib.Recipe.pending_item_unlocks = pending
+    Tirislib.Recipe.pending_derived_unlocks = pending
 end
 
---- Returns a readable description of every add_unlock_with_item request that couldn't be resolved,
---- e.g. "lumber-from-cherry-wood with cherry-wood". After the last data stage these are items that no visible
---- recipe produces (mined or scripted items, or typos).
+--- Returns a readable description of every derived unlock request that couldn't be resolved,
+--- e.g. "lumber-from-cherry-wood with cherry-wood" or "x with recipe y". After the last data stage these are
+--- items that no visible recipe produces (mined or scripted items, or typos) and recipes that don't exist.
 --- @return string[]
-function Tirislib.Recipe.describe_unresolved_item_unlocks()
+function Tirislib.Recipe.describe_unresolved_derived_unlocks()
     local descriptions = {}
-    for _, request in pairs(Tirislib.Recipe.pending_item_unlocks) do
-        descriptions[#descriptions + 1] = request.recipe .. " with " .. request.item
+    for _, request in pairs(Tirislib.Recipe.pending_derived_unlocks) do
+        descriptions[#descriptions + 1] =
+            request.recipe .. " with " .. (request.with_recipe and ("recipe " .. request.with_recipe) or request.item)
     end
     return descriptions
 end

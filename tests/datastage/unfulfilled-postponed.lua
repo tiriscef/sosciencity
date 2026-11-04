@@ -19,8 +19,8 @@ Tirislib.Testing.add_test_case(
     "No unlock_with_item requests stay unresolved",
     "content.postponed",
     function()
-        Tirislib.Recipe.resolve_item_unlocks()
-        local unresolved = Tirislib.Recipe.describe_unresolved_item_unlocks()
+        Tirislib.Recipe.resolve_derived_unlocks()
+        local unresolved = Tirislib.Recipe.describe_unresolved_derived_unlocks()
 
         Assert.is_table_empty(unresolved, "unresolved: " .. table.concat(unresolved, "; "))
     end
