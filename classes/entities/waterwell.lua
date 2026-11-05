@@ -18,10 +18,15 @@ local get_breakdown_state = Entity.get_breakdown_state
 local set_breakdown_state = Entity.set_breakdown_state
 local max = math.max
 
-local function get_waterwell_competition_performance(entry)
+--- @param other_count integer number of other pumps in range
+local function get_competition_performance(other_count)
     -- +1 so it counts itself too
-    local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    return near_count ^ (-0.45), near_count - 1
+    return (other_count + 1) ^ (-0.45)
+end
+
+local function get_waterwell_competition_performance(entry)
+    local other_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
+    return get_competition_performance(other_count), other_count
 end
 
 local function get_clockwork_boost()
@@ -85,3 +90,13 @@ end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
 
 Register.set_entity_destruction_handler(Type.waterwell, remove_active_machine_status)
+
+local function build_waterwell_site_report(entity, building_details)
+    local other_count = Neighborhood.count_potential_neighbors(entity, Type.waterwell, building_details.range)
+    local speed = Tirislib.Utils.round(100 * get_competition_performance(other_count))
+
+    return {
+        {caption = {"sosciencity.site-waterwell-competition", other_count, speed}, ok = other_count == 0}
+    }
+end
+Entity.set_site_report_builder(Type.waterwell, build_waterwell_site_report)

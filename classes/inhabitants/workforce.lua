@@ -85,6 +85,30 @@ local function look_for_workers(manufactory, acceptable_castes, count)
     end
 end
 
+--- Returns the number of inhabitants of the given castes who are free to work at the given entity, counted over
+--- the houses whose range reaches it. Works for entities that aren't registered, like ghosts or a building that is
+--- just being placed.
+--- @param entity LuaEntity
+--- @param acceptable_castes Type[]
+--- @return integer
+function Inhabitants.count_employable_in_reach(entity, acceptable_castes)
+    local site = {[EK.entity] = entity}
+    local surface_index = entity.surface.index
+    local count = 0
+
+    for _, caste in pairs(acceptable_castes) do
+        for _, house in Register.iterate_type(caste) do
+            local house_entity = house[EK.entity]
+            if house_entity.valid and house_entity.surface.index == surface_index
+                and Neighborhood.is_in_range(house, site, get_building_details(house).range) then
+                count = count + get_employable_count(house)
+            end
+        end
+    end
+
+    return count
+end
+
 --- Fires all the workers working in this building.
 --- Must be called if a building with workforce gets deconstructed.
 --- @param manufactory Entry with workforce

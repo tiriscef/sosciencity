@@ -74,6 +74,30 @@ function Neighborhood.is_in_range(neighbor, entry, range)
 end
 local is_in_range = Neighborhood.is_in_range
 
+--- Counts the registered entries of the given type that would be bidirectional neighbors of the given entity.
+--- Works for entities that aren't registered, like ghosts or a building that is just being placed.
+--- @param entity LuaEntity
+--- @param _type Type
+--- @param range number|"global" range of the entity's building
+--- @return integer
+function Neighborhood.count_potential_neighbors(entity, _type, range)
+    local site = {[EK.entity] = entity}
+    local surface_index = entity.surface.index
+    local count = 0
+
+    for _, other in Register.iterate_type(_type) do
+        local other_entity = other[EK.entity]
+        if other_entity.valid and other_entity ~= entity and other_entity.surface.index == surface_index then
+            local other_range = get_building_details(other).range
+            if (range and is_in_range(other, site, range)) or (other_range and is_in_range(site, other, other_range)) then
+                count = count + 1
+            end
+        end
+    end
+
+    return count
+end
+
 local function connect_bidirectional(entry, neighbor)
     local building_details = get_building_details(entry)
     local range = building_details.range

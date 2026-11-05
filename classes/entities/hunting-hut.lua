@@ -19,13 +19,15 @@ local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local Utils = Tirislib.Utils
 local min = math.min
 
+local function count_trees(entity, range)
+    local area = Utils.get_range_bounding_box(entity.position, range)
+    return entity.surface.count_entities_filtered {area = area, type = "tree"}
+end
+
 local function get_tree_count(entry, building_details)
     local cached_value = entry[EK.tree_count]
     if not cached_value or storage.last_entity_update > entry[EK.last_update] then
-        local entity = entry[EK.entity]
-        local position = entity.position
-        local area = Utils.get_range_bounding_box(position, building_details.range)
-        local trees = entity.surface.count_entities_filtered {area = area, type = "tree"}
+        local trees = count_trees(entry[EK.entity], building_details.range)
 
         entry[EK.tree_count] = trees
         return trees
@@ -127,3 +129,15 @@ local function create_hunting_hut(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
+
+local function build_hunting_hut_site_report(entity, building_details)
+    local trees = count_trees(entity, building_details.range)
+    local needed = building_details.tree_count
+
+    return {
+        {caption = {"sosciencity.site-trees", trees, needed}, ok = trees >= needed},
+        Entity.build_workforce_site_line(entity, building_details),
+        Entity.build_competition_site_line(entity, building_details)
+    }
+end
+Entity.set_site_report_builder(Type.hunting_hut, build_hunting_hut_site_report)

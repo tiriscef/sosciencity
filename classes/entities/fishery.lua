@@ -114,3 +114,15 @@ local function create_fishery(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.fishery, create_fishery)
+
+local function build_fishery_site_report(entity, building_details)
+    local water_tiles = Entity.count_water_tiles(entity, building_details.range)
+    local needed = building_details.water_tiles
+
+    return {
+        {caption = {"sosciencity.site-water-tiles", water_tiles, needed}, ok = water_tiles >= needed},
+        Entity.build_workforce_site_line(entity, building_details),
+        Entity.build_competition_site_line(entity, building_details)
+    }
+end
+Entity.set_site_report_builder(Type.fishery, build_fishery_site_report)

@@ -287,6 +287,15 @@ Entity.remove_active_machine_status = remove_active_machine_status
 ---------------------------------------------------------------------------------------------------
 -- << shared utilities >>
 
+--- Counts the water tiles in range of the given entity, without any caching.
+--- @param entity LuaEntity
+--- @param range number
+--- @return integer
+function Entity.count_water_tiles(entity, range)
+    local area = Utils.get_range_bounding_box(entity.position, range)
+    return entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
+end
+
 --- Returns the number of water tiles in the building's area, using a cached value when the tile layout hasn't changed.
 --- @param entry Entry
 --- @param building_details table
@@ -295,8 +304,7 @@ function Entity.get_water_tiles(entry, building_details)
     local cached_value = entry[EK.water_tiles]
     if not cached_value or storage.last_tile_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
-        local area = Utils.get_range_bounding_box(entity.position, building_details.range)
-        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
+        local water_tiles = Entity.count_water_tiles(entity, building_details.range)
 
         entry[EK.water_tiles] = water_tiles
         return water_tiles
@@ -364,6 +372,67 @@ end
 --- @return boolean
 function Entity.has_performance_report_builder(_type)
     return report_builder_lookup[_type] ~= nil
+end
+
+---------------------------------------------------------------------------------------------------
+-- << site report builder registry >>
+-- A site report tells the player how well a building's location suits it, right when they place the
+-- building or a ghost of it. Only for buildings whose performance depends on their surroundings.
+
+local site_report_builder_lookup = {}
+
+--- Registers a function that describes the site of a building of the given type.
+--- @param _type Type
+--- @param fn function receives the LuaEntity (real or ghost, not registered yet) and its building details,
+--- returns an array of lines {caption = LocalisedString, ok = boolean}
+function Entity.set_site_report_builder(_type, fn)
+    Tirislib.Utils.desync_protection()
+    if site_report_builder_lookup[_type] then
+        error("Duplicate site_report_builder registration for type " .. tostring(_type))
+    end
+    site_report_builder_lookup[_type] = fn
+end
+
+--- Returns whether buildings of the given type get a site report.
+--- @param _type Type
+--- @return boolean
+function Entity.has_site_report_builder(_type)
+    return site_report_builder_lookup[_type] ~= nil
+end
+
+--- Builds the site report for the given entity, or returns nil if its building doesn't get one.
+--- @param entity LuaEntity real entity or ghost
+--- @param name string name of the building, the ghost_name for ghosts
+--- @return table?
+function Entity.build_site_report(entity, name)
+    local building_details = Buildings.get_by_name(name)
+    local fn = building_details.type and site_report_builder_lookup[building_details.type]
+    return fn and fn(entity, building_details)
+end
+
+--- Site report line about the free workers of fitting castes whose houses reach the entity.
+--- @param entity LuaEntity
+--- @param building_details table
+--- @return table
+function Entity.build_workforce_site_line(entity, building_details)
+    local workforce = building_details.workforce
+    local available = Inhabitants.count_employable_in_reach(entity, workforce.castes)
+    return {
+        caption = {"sosciencity.site-workers", available, workforce.count},
+        ok = available >= workforce.count
+    }
+end
+
+--- Site report line about the buildings of the same type in range.
+--- @param entity LuaEntity
+--- @param building_details table
+--- @return table
+function Entity.build_competition_site_line(entity, building_details)
+    local count = Neighborhood.count_potential_neighbors(entity, building_details.type, building_details.range)
+    return {
+        caption = {"sosciencity.site-competition", count},
+        ok = count == 0
+    }
 end
 
 ---------------------------------------------------------------------------------------------------
