@@ -6,6 +6,7 @@ Tirislib.Prototype.default_icon_path = "__sosciencity-graphics__/graphics/icon/"
 -- Call scripts that make changes mostly to Sosciencity's prototypes.
 
 require("datastage-scripts.crafting-categories")
+require("datastage-scripts.assembling-machine-fluids")
 require("datastage-scripts.garbage-to-landfill")
 require("datastage-scripts.item-descriptions")
 require("datastage-scripts.technology-descriptions")

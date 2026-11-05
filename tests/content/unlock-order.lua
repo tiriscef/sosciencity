@@ -47,9 +47,7 @@ end
 --- The test fails on problems that aren't listed and on listed ones that don't occur any more,
 --- so remove an entry when fixing it.
 --- Keys: "<technology> needs <fact>" for research, "<recipe> from <technology>" for recipes.
-local known_research_problems = {
-    ["automation-2 needs item:logistic-science-pack"] = true
-}
+local known_research_problems = {}
 
 local known_recipe_problems = {
     ["amylum from medbay"] = true,
@@ -57,18 +55,13 @@ local known_recipe_problems = {
     ["antiemetics from medbay"] = true,
     ["antihistamines from medbay"] = true,
     ["aquafarm from animal-husbandry"] = true,
-    ["ceramic from clockwork-quarry"] = true,
-    ["ceramic-mixture from clockwork-quarry"] = true,
     ["education-gunfire from gunfire-caste"] = true,
     ["extract-spinal-fluid from ovosynthesis"] = true,
     ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true,
     ["huwan-egg-ovosynthesis from ovosynthesis"] = true,
     ["industrial-animal-farm from animal-husbandry"] = true,
-    ["logistic-science-pack from logistic-science-pack"] = true,
     ["marble1 from clockwork-quarry"] = true,
-    ["mosaic from logistic-science-pack"] = true,
     ["nutritional-supplements from medbay"] = true,
-    ["pemtenn1 from fermentation"] = true,
     ["power-tools from tinkering-workshop"] = true,
     ["power-tools-workshop from tinkering-workshop"] = true,
     ["psych-ward from psychiatry"] = true,
@@ -90,8 +83,7 @@ local known_recipe_problems = {
     ["sos-husbandry-primal-quackling from sosciencity-unlock-primal-quacker"] = true,
     ["sos-husbandry-river-horse from sosciencity-unlock-river-horse"] = true,
     ["sos-husbandry-smol-bonesnake from sosciencity-unlock-bonesnake"] = true,
-    ["sosciencity-medical-kit1 from medbay"] = true,
-    ["sugar-medium from fermentation"] = true
+    ["sosciencity-medical-kit1 from medbay"] = true
 }
 
 local known_early_recipe_problems = {
