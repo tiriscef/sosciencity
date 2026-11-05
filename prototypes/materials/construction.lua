@@ -184,7 +184,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "explosives", amount = 1},
         {type = "item", name = "power-tools", amount = 1}
     },
-    category = "sosciencity-clockwork-quarry",
+    category = "sosciencity-clockwork-mine",
     energy_required = 6,
     unlock = "production-science-pack"
 }
