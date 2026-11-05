@@ -72,6 +72,16 @@ Unlocks.gated_technologies = {
     }
 }
 
+--- The research trigger of an item acquisition technology: crafting the item, or mining the entity it comes from.
+--- @param details table entry of Unlocks.by_item_acquisition
+--- @return table research_trigger
+function Unlocks.get_research_trigger(details)
+    if details.mined_from then
+        return {type = "mine-entity", entities = {details.mined_from}}
+    end
+    return {type = "craft-item", item = details.item, count = 1}
+end
+
 --- Name getter function for the data stage. Checks if the name is registered for the control stage.
 --- (Registering it automatically doesn't work, as the Lua state will reset before entering the control stage.)
 --- @param item_name string

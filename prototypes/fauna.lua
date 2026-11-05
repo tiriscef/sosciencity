@@ -26,6 +26,7 @@ local animal_configs = {
         size = 50,
         bird = true,
         metabolism_coefficient = 4,
+        bred_only = true,
         unlock = Unlocks.get_tech_name("primal-quacker"),
         food_theme = "breed_birds"
     },
@@ -50,6 +51,7 @@ local animal_configs = {
         size = 70,
         bird = true,
         metabolism_coefficient = 3.5,
+        bred_only = true,
         unlock = Unlocks.get_tech_name("nan-swan"),
         food_theme = "breed_birds"
     },
@@ -57,6 +59,7 @@ local animal_configs = {
         name = "smol-bonesnake",
         size = 20,
         bird = true,
+        bred_only = true,
         unlock = Unlocks.get_tech_name("bonesnake"),
         food_theme = "breed_birds"
     },
@@ -71,6 +74,7 @@ local animal_configs = {
         name = "elder-bonesnake",
         size = 170,
         bird = true,
+        bred_only = true,
         unlock = Unlocks.get_tech_name("bonesnake"),
         food_theme = "breed_birds"
     },
@@ -79,6 +83,7 @@ local animal_configs = {
         size = 2000,
         water_animal = true,
         metabolism_coefficient = 1.2,
+        bred_only = true,
         unlock = Unlocks.get_tech_name("petunial"),
         food_theme = "breed_water_herbivores"
     },
@@ -242,6 +247,59 @@ local function get_offal_amount(animal)
     return animal.size * 0.03
 end
 
+---------------------------------------------------------------------------------------------------
+-- << keeping technologies >>
+
+-- Keeping and breeding a species needs the species itself (its trigger technology, researched by catching it)
+-- and the farms and the food of animal-husbandry. Factorio unlocks a recipe with any one of its technologies,
+-- so every species gets a keeping technology that needs both and gets researched by catching the species again.
+
+local keeping_technologies = {}
+
+--- Returns the name of the keeping technology for the species of the given trigger technology,
+--- creating it on first use.
+--- @param trigger_technology_name string technology of Unlocks.by_item_acquisition
+--- @return string
+local function get_keeping_technology(trigger_technology_name)
+    local name = keeping_technologies[trigger_technology_name]
+    if name then
+        return name
+    end
+
+    local details = Unlocks.by_item_acquisition[trigger_technology_name]
+    local item = Tirislib.Item.get_by_name(details.item)
+    local localised_name = item:get_localised_name()
+
+    name = trigger_technology_name:gsub("^sosciencity%-unlock%-", "sosciencity-keeping-")
+    Tirislib.Technology.create {
+        name = name,
+        icon = Tirislib.String.insert(item.icon, "-hr", -5),
+        icon_size = 128,
+        prerequisites = {trigger_technology_name, "animal-husbandry"},
+        effects = {},
+        research_trigger = Unlocks.get_research_trigger(details),
+        upgrade = false,
+        localised_name = {"technology-name.animal-keeping", localised_name},
+        localised_description = {
+            "",
+            {"technology-description.animal-keeping"},
+            "\n\n",
+            {"sosciencity-util.unlock-condition"},
+            "\n [img=tooltip-category-debug] ",
+            {"sosciencity-util.acquisition", localised_name}
+        }
+    }
+
+    keeping_technologies[trigger_technology_name] = name
+    return name
+end
+
+--- The technology that unlocks keeping, breeding and slaughtering the given animal.
+--- Animals the huts catch can be slaughtered as soon as the species is found, bred-only ones need the farms.
+local function get_slaughter_unlock(animal)
+    return animal.bred_only and get_keeping_technology(animal.unlock) or animal.unlock
+end
+
 local function get_slaughter_waste_amount(animal)
     return animal.size * 0.02
 end
@@ -275,7 +333,7 @@ local function create_slaughter_recipe(animal, index)
         order = string.format("%03d", index),
         localised_name = {"recipe-name.slaughter", item:get_localised_name()},
         localised_description = {"recipe-description.slaughter"},
-        unlock = animal.unlock,
+        unlock = get_slaughter_unlock(animal),
         auto_recycle = false,
         allow_productivity = false
     }:add_category_layer("slaughter")
@@ -362,7 +420,7 @@ local function create_husbandry_recipe(details)
         localised_description = "",
         icon = animal_item.icon,
         icon_size = 64,
-        unlock = animal.unlock,
+        unlock = get_keeping_technology(animal.unlock),
         auto_recycle = false
     })
 
