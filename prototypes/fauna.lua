@@ -122,14 +122,15 @@ local animal_configs = {
         size = 20,
         fish = true,
         group_size = 5,
-        unlock = Unlocks.get_tech_name("boofish"),
+        -- no species technology: the fishing hut and the fishwhirl both give them (see the fishwhirl technology)
+        unlock = "hunting-fishing",
         food_theme = "breed_fish"
     },
     {
         name = "fupper",
         size = 40,
         fish = true,
-        unlock = Unlocks.get_tech_name("fupper"),
+        unlock = "hunting-fishing",
         food_theme = "breed_fish"
     },
     {
@@ -256,11 +257,17 @@ end
 
 local keeping_technologies = {}
 
---- Returns the name of the keeping technology for the species of the given trigger technology,
---- creating it on first use.
---- @param trigger_technology_name string technology of Unlocks.by_item_acquisition
+--- Returns the name of the technology that unlocks keeping the species of the given animal.
+--- Species with a trigger technology get a keeping technology, created on first use. Species without one
+--- have nothing to combine with animal-husbandry.
+--- @param animal table animal config
 --- @return string
-local function get_keeping_technology(trigger_technology_name)
+local function get_keeping_technology(animal)
+    local trigger_technology_name = animal.unlock
+    if not Unlocks.by_item_acquisition[trigger_technology_name] then
+        return "animal-husbandry"
+    end
+
     local name = keeping_technologies[trigger_technology_name]
     if name then
         return name
@@ -297,7 +304,7 @@ end
 --- The technology that unlocks keeping, breeding and slaughtering the given animal.
 --- Animals the huts catch can be slaughtered as soon as the species is found, bred-only ones need the farms.
 local function get_slaughter_unlock(animal)
-    return animal.bred_only and get_keeping_technology(animal.unlock) or animal.unlock
+    return animal.bred_only and get_keeping_technology(animal) or animal.unlock
 end
 
 local function get_slaughter_waste_amount(animal)
@@ -420,7 +427,7 @@ local function create_husbandry_recipe(details)
         localised_description = "",
         icon = animal_item.icon,
         icon_size = 64,
-        unlock = get_keeping_technology(animal.unlock),
+        unlock = get_keeping_technology(animal),
         auto_recycle = false
     })
 
@@ -687,4 +694,25 @@ if settings.startup["sosciencity-modify-environment"].value then
             }
         }
     }
+
+    -- mining a fishwhirl gives fish before the fishing hut, so it unlocks slaughtering them too
+    Tirislib.Technology.create {
+        name = "sosciencity-unlock-fishwhirl",
+        icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl-1.png",
+        icon_size = 128,
+        prerequisites = {},
+        effects = {},
+        research_trigger = {type = "mine-entity", entities = {"fishwhirl"}},
+        upgrade = false,
+        localised_name = {"entity-name.fishwhirl"},
+        localised_description = {
+            "",
+            {"sosciencity-util.unlock-condition"},
+            "\n [img=tooltip-category-debug] ",
+            {"sosciencity-util.acquisition", {"entity-name.fishwhirl"}}
+        }
+    }
+    for _, recipe_name in pairs({"slaughter-boofish", "slaughter-fupper"}) do
+        Tirislib.Recipe.get_by_name(recipe_name):add_unlock("sosciencity-unlock-fishwhirl")
+    end
 end
