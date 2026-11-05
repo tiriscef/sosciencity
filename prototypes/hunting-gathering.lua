@@ -134,7 +134,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "wild-edible-plants", amount_min = 0, amount_max = 6},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000565"
+    order = "000560"
 }
 
 create_hunting_gathering_recipe {
@@ -196,7 +196,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "plemnemm-cotton", amount = 5},
         {type = "item", name = "gingil-hemp", amount = 5, independent_probability = 0.5}
     },
-    order = "000590"
+    order = "000561"
 }
 
 create_hunting_gathering_recipe {
@@ -237,7 +237,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "gingil-hemp", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000594"
+    order = "000562"
 }
 
 create_hunting_gathering_recipe {
