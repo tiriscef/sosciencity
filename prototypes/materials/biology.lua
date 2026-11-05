@@ -103,7 +103,7 @@ Tirislib.RecipeGenerator.create {
     name = "salty-water-evaporation",
     category = "sosciencity-salt-pond",
     energy_required = 4,
-    unlock = {"fermentation", "medbay"},
+    unlock = "salt-pond",
     auto_recycle = false
 }
 

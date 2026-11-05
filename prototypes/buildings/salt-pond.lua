@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create {
         {theme = "machine", amount = 1}
     },
     default_theme_level = 1,
-    unlock = {"fermentation", "medbay"}
+    unlock = "salt-pond"
 }
 Sosciencity.Config.remove_quality_multipliers("salt-pond")
 

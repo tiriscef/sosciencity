@@ -378,7 +378,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-kitchen-for-all",
     energy_required = 3,
-    unlock = "ember-caste",
+    unlock = "kitchen-for-all",
     auto_recycle = false
 }
 

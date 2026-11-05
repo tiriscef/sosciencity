@@ -5,7 +5,7 @@ Tirislib.Technology.create {
     name = "medbay",
     icon = "__sosciencity-graphics__/graphics/technology/medbay.png",
     icon_size = 256,
-    prerequisites = {"orchid-caste"},
+    prerequisites = {"orchid-caste", "salt-pond"},
     unit = {
         count = 29,
         ingredients = {

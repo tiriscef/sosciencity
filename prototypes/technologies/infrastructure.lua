@@ -51,6 +51,20 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "kitchen-for-all",
+    icon = "__sosciencity-graphics__/graphics/technology/kitchen-for-all.png",
+    icon_size = 128,
+    prerequisites = {"upbringing"},
+    unit = {
+        count = 15,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
     name = "infrastructure-2",
     icon = "__sosciencity-graphics__/graphics/icon/infrastructure.png",
     icon_size = 128,
