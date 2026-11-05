@@ -18,7 +18,6 @@ Unlocks.by_item_acquisition = {
     [get_tech_name("apple")] = {item = "apple", prerequisite = "ortrot-variations"},
     [get_tech_name("avocado")] = {item = "avocado", prerequisite = "genetic-neogenesis"},
     [get_tech_name("bell-pepper")] = {item = "bell-pepper", prerequisite = "nightshades"},
-    [get_tech_name("birdsnake")] = {item = "birdsnake", prerequisite = "mushroom-farming"},
     [get_tech_name("bonesnake")] = {item = "bonesnake", prerequisite = "hunting-fishing"},
     [get_tech_name("boofish")] = {item = "boofish", prerequisite = "hunting-fishing", mined_from = "fishwhirl"},
     [get_tech_name("brutal-pumpkin")] = {item = "brutal-pumpkin", prerequisite = "explore-alien-flora-2"},

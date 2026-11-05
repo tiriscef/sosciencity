@@ -2,3 +2,4 @@
 require("tests.content.start-recipes")
 require("tests.content.placement-range")
 require("tests.content.unfulfilled-postponed")
+require("tests.content.trigger-technologies")
