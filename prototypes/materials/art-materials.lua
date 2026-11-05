@@ -46,7 +46,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "wild-flowers", amount = 10}
     },
-    unlock = "ember-caste",
+    unlock = "atelier",
     auto_recycle = false
 }
 
@@ -83,7 +83,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "dye", amount = 1}
     },
-    unlock = "ember-caste",
+    unlock = {"gunfire-caste", "gleam-caste"},
     auto_recycle = false
 }
 

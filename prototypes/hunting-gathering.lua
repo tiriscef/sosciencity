@@ -251,7 +251,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000595",
-    unlock = "orchid-caste"
+    unlock = {"atelier", "orchid-caste"}
 }
 
 create_hunting_gathering_recipe {
