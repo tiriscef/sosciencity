@@ -56,6 +56,16 @@ Tirislib.Entity.create {
     },
     crafting_speed = 1,
     crafting_categories = {"sosciencity-clockwork-quarry"},
+    -- steam for washing out clay; only pipe covers until the quarry gets its own pipe pictures
+    fluid_boxes = {
+        {
+            volume = 1000,
+            pipe_covers = Tirislib.Entity.get_standard_pipe_cover(),
+            pipe_connections = {{position = {0, 3}, flow_direction = "input", direction = defines.direction.south}},
+            production_type = "input"
+        }
+    },
+    fluid_boxes_off_when_no_fluid_recipe = true,
     energy_usage = "60kW",
     energy_source = {
         type = "electric",
