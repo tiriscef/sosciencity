@@ -6,9 +6,7 @@ require("tests.tirislib.load-tests")
 require("tests.tirislib.datastage.load-tests")
 require("tests.content.load-tests")
 
-local summary, results = Tirislib.Testing.run_all()
-log(summary)
-
-if #results.failed_tests > 0 or #results.failed_asserts > 0 then
-    error("Data stage tests failed:\n" .. summary)
-end
+-- Failures only get logged, the mod keeps loading so that the control stage tests still run.
+-- The headless runner (test-setup/tests-entrypoint.sh) fails the run on any "FAILED:" line in the log.
+local summary = Tirislib.Testing.run_all()
+log("Data stage tests:\n" .. summary)
