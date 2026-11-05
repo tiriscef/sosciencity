@@ -27,6 +27,7 @@ local garbage_items = {
     },
     {
         name = "expired-food",
+        sprite_variations = {name = "expired-food", count = 3, include_icon = true},
         fuel_value = "1MJ",
         fuel_categories = {"garbage"},
         auto_recycle = false
