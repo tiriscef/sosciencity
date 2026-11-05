@@ -698,7 +698,7 @@ if settings.startup["sosciencity-modify-environment"].value then
     -- mining a fishwhirl gives fish before the fishing hut, so it unlocks slaughtering them too
     Tirislib.Technology.create {
         name = "sosciencity-unlock-fishwhirl",
-        icon = "__sosciencity-graphics__/graphics/entity/fishwhirl/fishwhirl-1.png",
+        icon = "__sosciencity-graphics__/graphics/icon/fupper-hr.png",
         icon_size = 128,
         prerequisites = {},
         effects = {},
