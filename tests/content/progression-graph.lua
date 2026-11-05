@@ -1,7 +1,8 @@
 --- Data-stage model of what a player can obtain, for the progression checks in tests/content.
 ---
 --- Everything is expressed as rules "these facts give those facts". Facts are strings:
---- "item:<name>", "fluid:<name>", "entity:<name>" (placeable), "crafting:<category>",
+--- "item:<name>", "fluid:<name>", "entity:<name>" (placeable), "crafting:<category>" (a machine for it,
+--- with "[<n> in, <m> out]" appended when the recipe needs fluid boxes),
 --- "mining:<resource category>", "fluid-mining:<resource category>", "mining-with-fluid" and "rocket-launch".
 --- A state starts from the rules that don't depend on research and gets recipe rules added for the
 --- recipes that a set of technologies unlocks. Adding rules keeps everything derived so far,
@@ -15,15 +16,6 @@ local ProgressionGraph = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << prototype access >>
-
-local function get_entity(name)
-    for type_name in pairs(defines.prototypes.entity) do
-        local entity = data.raw[type_name] and data.raw[type_name][name]
-        if entity then
-            return entity
-        end
-    end
-end
 
 local function iterate_prototypes(base_type, fn)
     for type_name in pairs(defines.prototypes[base_type]) do
@@ -58,6 +50,58 @@ local function get_recipe_categories(recipe)
         return recipe.categories
     end
     return {recipe.category or "crafting"}
+end
+
+--- The fact for a machine that crafts the category and has at least the given numbers of fluid boxes.
+local function crafting_fact(category, fluid_inputs, fluid_outputs)
+    if fluid_inputs == 0 and fluid_outputs == 0 then
+        return "crafting:" .. category
+    end
+    return string.format("crafting:%s[%d in, %d out]", category, fluid_inputs, fluid_outputs)
+end
+
+local function count_fluids(products)
+    local count = 0
+    for _, product in pairs(products or {}) do
+        if product.type == "fluid" then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+--- The crafting facts of which the recipe needs one: one per category, with its fluid box needs.
+local function get_crafting_requirements(recipe)
+    local fluid_inputs = count_fluids(recipe.ingredients)
+    local fluid_outputs = count_fluids(recipe.results)
+    local facts = {}
+    for _, category in pairs(get_recipe_categories(recipe)) do
+        facts[#facts + 1] = crafting_fact(category, fluid_inputs, fluid_outputs)
+    end
+    return facts
+end
+
+--- The crafting facts a machine provides: every category with every fluid box count up to its own.
+local function get_crafting_capabilities(entity)
+    local fluid_inputs = 0
+    local fluid_outputs = 0
+    for _, fluid_box in pairs(entity.fluid_boxes or {}) do
+        if fluid_box.production_type == "input" or fluid_box.production_type == "input-output" then
+            fluid_inputs = fluid_inputs + 1
+        elseif fluid_box.production_type == "output" then
+            fluid_outputs = fluid_outputs + 1
+        end
+    end
+
+    local facts = {}
+    for _, category in pairs(entity.crafting_categories) do
+        for inputs = 0, fluid_inputs do
+            for outputs = 0, fluid_outputs do
+                facts[#facts + 1] = crafting_fact(category, inputs, outputs)
+            end
+        end
+    end
+    return facts
 end
 
 --- The ingredients of the recipe as facts.
@@ -233,7 +277,6 @@ end
 
 local static_rules
 local static_facts
-local character_categories
 
 --- Rules that hold regardless of research.
 local function build_static_rules()
@@ -244,12 +287,10 @@ local function build_static_rules()
         static_rules[#static_rules + 1] = {requirements = requirements, products = products, source = source}
     end
 
-    -- the character: handcrafting and handmining
+    -- the character: handcrafting (without fluids) and handmining
     local character = data.raw.character and data.raw.character.character
-    character_categories = {}
     for _, category in pairs(character and character.crafting_categories or {}) do
-        static_facts[#static_facts + 1] = "crafting:" .. category
-        character_categories[category] = true
+        static_facts[#static_facts + 1] = crafting_fact(category, 0, 0)
     end
     for _, category in pairs(character and character.mining_categories or {}) do
         static_facts[#static_facts + 1] = "mining:" .. category
@@ -292,11 +333,7 @@ local function build_static_rules()
         local fact = "entity:" .. entity.name
 
         if entity.crafting_categories and entity.type ~= "character" then
-            local categories = {}
-            for _, category in pairs(entity.crafting_categories) do
-                categories[#categories + 1] = "crafting:" .. category
-            end
-            add_rule({fact}, categories, entity.name)
+            add_rule({fact}, get_crafting_capabilities(entity), entity.name)
         end
 
         if entity.type == "rocket-silo" then
@@ -349,7 +386,7 @@ local function build_static_rules()
     end
     for _, definition in pairs(ScriptedProducts.crafting_categories) do
         for _, entity_name in pairs(ScriptedProducts.get_producer_entities(definition)) do
-            add_rule({"entity:" .. entity_name}, {"crafting:" .. definition.category}, entity_name .. " (scripted)")
+            add_rule({"entity:" .. entity_name}, {crafting_fact(definition.category, 0, 0)}, entity_name .. " (scripted)")
         end
     end
 end
@@ -451,7 +488,7 @@ function State:propagate()
     self.queue = {}
 end
 
---- Adds the rules of a recipe: one per crafting category, since any of them is enough.
+--- Adds the rules of a recipe: one per crafting category, since a machine for any of them is enough.
 function State:add_recipe(recipe_name)
     if self.added_recipes[recipe_name] then
         return
@@ -465,8 +502,8 @@ function State:add_recipe(recipe_name)
 
     local requirements = ProgressionGraph.recipe_requirements(recipe)
     local products = ProgressionGraph.recipe_products(recipe)
-    for _, category in pairs(get_recipe_categories(recipe)) do
-        local rule_requirements = {"crafting:" .. category}
+    for _, crafting in pairs(get_crafting_requirements(recipe)) do
+        local rule_requirements = {crafting}
         for _, requirement in pairs(requirements) do
             rule_requirements[#rule_requirements + 1] = requirement
         end
@@ -501,29 +538,14 @@ function State:has(fact)
     return self.facts[fact] == true
 end
 
---- Whether some category of the recipe can be crafted in this state.
+--- Whether this state has a machine for the recipe.
 function State:can_craft_category(recipe)
-    for _, category in pairs(get_recipe_categories(recipe)) do
-        if self.facts["crafting:" .. category] then
+    for _, crafting in pairs(get_crafting_requirements(recipe)) do
+        if self.facts[crafting] then
             return true
         end
     end
     return false
-end
-
---- The requirements of the recipe that this state lacks, as readable strings.
-function State:explain_recipe(recipe_name)
-    local recipe = data.raw.recipe[recipe_name]
-    local missing = {}
-    for _, requirement in pairs(ProgressionGraph.recipe_requirements(recipe)) do
-        if not self.facts[requirement] then
-            missing[#missing + 1] = requirement
-        end
-    end
-    if not self:can_craft_category(recipe) then
-        missing[#missing + 1] = "a machine for " .. table.concat(get_recipe_categories(recipe), "/")
-    end
-    return missing
 end
 
 --- Follows the given missing facts back to the ones nothing in this state can produce.
@@ -564,7 +586,7 @@ function State:find_roots(facts)
     return ret
 end
 
---- The missing requirements of the recipe as facts, the crafting category as "crafting:<a>/<b>".
+--- The missing requirements of the recipe as facts, with every crafting fact that would do when no machine fits.
 function State:missing_for_recipe(recipe_name)
     local recipe = data.raw.recipe[recipe_name]
     local missing = {}
@@ -574,20 +596,12 @@ function State:missing_for_recipe(recipe_name)
         end
     end
     if not self:can_craft_category(recipe) then
-        for _, category in pairs(get_recipe_categories(recipe)) do
-            missing[#missing + 1] = "crafting:" .. category
+        for _, crafting in pairs(get_crafting_requirements(recipe)) do
+            missing[#missing + 1] = crafting
         end
     end
     return missing
 end
-
---- Whether all products of the recipe are obtainable and it can be crafted.
-function State:can_craft(recipe_name)
-    local recipe = data.raw.recipe[recipe_name]
-    return recipe ~= nil and #self:explain_recipe(recipe_name) == 0
-end
-
-ProgressionGraph.get_entity = get_entity
 
 --- The state of everything a player has once the given technologies are researched.
 --- @param technologies table<string, boolean> set of technology names
