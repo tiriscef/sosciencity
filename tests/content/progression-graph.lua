@@ -124,6 +124,12 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << technologies >>
 
+--- Whether the prototype belongs to the sosciencity-debug test setup (see datastage-scripts/test-prototype-group.lua).
+--- Test recipes are enabled from the start and some make real items, so they would hide real problems.
+function ProgressionGraph.is_test_prototype(name)
+    return name:sub(1, 5) == "test-"
+end
+
 --- Whether the recipe is available without any research.
 function ProgressionGraph.is_start_recipe(recipe)
     return recipe.enabled ~= false and not recipe.parameter
@@ -496,7 +502,7 @@ function State:add_recipe(recipe_name)
     self.added_recipes[recipe_name] = true
 
     local recipe = data.raw.recipe[recipe_name]
-    if not recipe or recipe.parameter then
+    if not recipe or recipe.parameter or ProgressionGraph.is_test_prototype(recipe_name) then
         return
     end
 
