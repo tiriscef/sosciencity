@@ -51,8 +51,7 @@ end
 local known_research_problems = {}
 
 local known_recipe_problems = {
-    ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true,
-    ["psych-ward from psychiatry"] = true
+    ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true
 }
 
 local known_early_recipe_problems = {

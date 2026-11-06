@@ -18,7 +18,7 @@ Tirislib.RecipeGenerator.create {
     },
     ingredients = {
         {theme = "building", amount = 10},
-        {theme = "furnishing", amount = 5, level = 5},
+        {theme = "furnishing", amount = 5, level = 4},
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 2,
