@@ -36,7 +36,6 @@ require("prototypes.buildings")
 require("prototypes.unlocking-technologies")
 
 require("prototypes.alerts")
-require("prototypes.tips")
 
 require("prototypes.hidden.caste-technologies")
 require("prototypes.hidden.electric-energy-interface")
