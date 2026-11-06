@@ -9,7 +9,7 @@ for tech_name, details in pairs(Unlocks.by_item_acquisition) do
         name = tech_name,
         icon = Tirislib.String.insert(item.icon, "-hr", -5),
         icon_size = 128,
-        prerequisites = {details.prerequisite},
+        prerequisites = details.prerequisites,
         effects = {},
         research_trigger = Unlocks.get_research_trigger(details),
         upgrade = false,

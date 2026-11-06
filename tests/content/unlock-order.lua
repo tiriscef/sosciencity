@@ -50,9 +50,7 @@ end
 --- Keys: "<technology> needs <fact>" for research, "<recipe> from <technology>" for recipes.
 local known_research_problems = {}
 
-local known_recipe_problems = {
-    ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true
-}
+local known_recipe_problems = {}
 
 local known_early_recipe_problems = {
     ["bread from food-processing"] = true,
