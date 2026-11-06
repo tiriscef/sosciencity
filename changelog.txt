@@ -4,6 +4,7 @@ Date: 2026.11.06 (maybe)
   Major Features:
     - Rebuilt for Factorio 2.1. Not compatible with 1.1 saves.
     - Castes are educated in schools (medical school, military school and others) instead of appearing on their own.
+    - Science rework: every science pack comes from its own caste's production chain - Ember art, Orchid studies of the local ecosystem, Clockwork inventions, Gunfire strategies, Foundry scientific theories and Gleam metastudies - and needs an art item from the Ember artists.
     - Food rework: castes have eating behaviors and essential nutrients, foods carry nutrition tags, and the kitchen for all cooks for whole neighbourhoods.
     - Housing rework: houses have comfort levels and traits that can be upgraded.
     - Population control: houses have priorities, buttons pull healthy huwans into a house or move everyone out, and sanatoriums take in the sick. (Until now, tearing down houses was the only way to move huwans around and that way annoying.)
