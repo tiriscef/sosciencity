@@ -173,7 +173,8 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
     allow_productivity = true,
-    unlock = "clockwork-quarry"
+    -- the better marble recipe comes when power tools do
+    unlock_with_item = "power-tools"
 }:add_number_layer(2)
 
 Tirislib.RecipeGenerator.create {
@@ -226,7 +227,7 @@ Tirislib.RecipeGenerator.create {
     },
     energy_required = 4,
     default_theme_level = 3,
-    unlock = "tinkering-workshop"
+    unlock_with_item = "battery"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -242,7 +243,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-tinkering-workshop",
     default_theme_level = 3,
-    unlock = "tinkering-workshop"
+    unlock_with_item = "battery"
 }:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create {
