@@ -1,6 +1,7 @@
 local EatingBehavior = require("enums.eating-behavior")
 local Gender = require("enums.gender")
 local HousingTrait = require("enums.housing-trait")
+local NutritionTag = require("enums.nutrition-tag")
 local Taste = require("enums.taste")
 local Type = require("enums.type")
 
@@ -27,13 +28,14 @@ local Castes = {}
 --- @field no_power_malus number happiness summand when power is insufficient (negative)
 --- @field garbage_coefficient number garbage items produced per inhabitant per tick
 --- @field water_demand number fluid units consumed per inhabitant per tick
---- @field eating_behavior EatingBehavior diet construction personality (minimalist/mixed/foodie)
+--- @field eating_behavior EatingBehavior diet construction personality (health-conscious/mixed/foodie)
 --- @field favored_taste Taste preferred taste (one of the 4 designable tastes: fruity, salty, umami, spicy)
 --- @field least_favored_taste Taste disliked taste (one of the 4 designable tastes: fruity, salty, umami, spicy)
 --- @field minimum_food_count integer minimum distinct food groups needed to avoid variety penalty
---- @field happiness_per_favored_food number happiness summand per favored food in the diet (0 for minimalists, who don't select by taste)
+--- @field happiness_per_favored_food number happiness summand per favored food in the diet (0 for health-conscious eaters, who don't select by taste)
 --- @field happiness_per_disliked_food number happiness summand per forced disliked food (negative; 0 for foodies who never eat disliked)
---- @field happiness_per_nutrition_tag number happiness summand per required nutrition tag that is covered (primarily for minimalists)
+--- @field essential_nutrition_tags NutritionTag[] tags whose absence costs health; mixed eaters pick foods to cover them, health-conscious eaters eat disliked food for them (order = display order)
+--- @field happiness_per_nutrition_tag number happiness summand per covered nutrition tag (any tag for health-conscious eaters, essential tags otherwise)
 --- @field happiness_per_missing_food number happiness malus per food group below minimum_food_count (negative; multiplied by the shortage count)
 --- @field food_distress_factor number happiness factor applied when the caste is forced to eat outside their normal diet behavior (0–1)
 --- @field required_room_count number room requirement for housing comfort calculation
@@ -46,13 +48,11 @@ local Castes = {}
 --- @field full_strike_worker_fraction number minimum fraction of workers willing to work even at full strike
 --- @field immigration_genders table<Gender, number> gender weight distribution for arriving immigrants
 --- @field housing_preferences table<HousingTrait, number> preference modifiers keyed by housing trait
---- @field accident_disease_resilience number multiplier reducing accident disease probability
---- @field health_disease_resilience number multiplier reducing health disease probability
---- @field sanity_disease_resilience number multiplier reducing sanity disease probability
+--- @field accident_disease_susceptibility number multiplier on the accident disease frequency (higher = more cases)
+--- @field health_disease_susceptibility number multiplier on the health disease frequency (higher = more cases)
+--- @field sanity_disease_susceptibility number multiplier on the sanity disease frequency (higher = more cases)
 --- @field relocation_penalty {shock: number, factor: number}? happiness shock and factor applied on relocation (nil if caste has no penalty)
 --- @field type Type set in postprocessing from the table key
-
--- TODO: Balancing of new diet fields
 
 Castes.values = {
     [Type.clockwork] = {
@@ -71,15 +71,16 @@ Castes.values = {
         no_power_malus = -2,
         garbage_coefficient = 0.1 / Time.minute, -- garbage produced per inhabitant per tick
         water_demand = 4 / Time.minute,
-        eating_behavior = EatingBehavior.minimalist,
+        eating_behavior = EatingBehavior.health_conscious,
         favored_taste = Taste.umami,
         least_favored_taste = Taste.spicy,
         minimum_food_count = 1,
         happiness_per_favored_food = 0,
         happiness_per_disliked_food = -1,
-        happiness_per_nutrition_tag = 2,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
+        happiness_per_nutrition_tag = 1,
         happiness_per_missing_food = -1,
-        food_distress_factor = 0.80, -- minimalist, early game
+        food_distress_factor = 0.80, -- health-conscious, early game
         required_room_count = 1,
         minimum_comfort = 0,
         social_coefficient = 1,
@@ -104,9 +105,9 @@ Castes.values = {
             [HousingTrait.green] = -1,
             [HousingTrait.pompous] = -1
         },
-        accident_disease_resilience = 0.7,
-        health_disease_resilience = 0.65,
-        sanity_disease_resilience = 0.35
+        accident_disease_susceptibility = 0.7,
+        health_disease_susceptibility = 0.65,
+        sanity_disease_susceptibility = 0.35
     },
     [Type.orchid] = {
         name = "orchid",
@@ -128,8 +129,9 @@ Castes.values = {
         favored_taste = Taste.fruity,
         least_favored_taste = Taste.salty,
         minimum_food_count = 5,
-        happiness_per_favored_food = 3,
+        happiness_per_favored_food = 1,
         happiness_per_disliked_food = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -3,
         food_distress_factor = 0.70, -- foodie, early game
@@ -155,9 +157,9 @@ Castes.values = {
             [HousingTrait.technical] = -3,
             [HousingTrait.compact] = -1
         },
-        accident_disease_resilience = 0.35,
-        health_disease_resilience = 0.2,
-        sanity_disease_resilience = 0.65
+        accident_disease_susceptibility = 0.35,
+        health_disease_susceptibility = 0.2,
+        sanity_disease_susceptibility = 0.65
     },
     [Type.gunfire] = {
         name = "gunfire",
@@ -175,15 +177,16 @@ Castes.values = {
         no_power_malus = -1,
         garbage_coefficient = 0.04 / Time.minute,
         water_demand = 3 / Time.minute,
-        eating_behavior = EatingBehavior.minimalist,
+        eating_behavior = EatingBehavior.health_conscious,
         favored_taste = Taste.umami,
         least_favored_taste = Taste.fruity,
         minimum_food_count = 1,
         happiness_per_favored_food = 0,
         happiness_per_disliked_food = -1,
-        happiness_per_nutrition_tag = 2,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich, NutritionTag.vitamin_rich, NutritionTag.fiber_rich},
+        happiness_per_nutrition_tag = 0.8,
         happiness_per_missing_food = -1,
-        food_distress_factor = 0.75, -- minimalist, mid game
+        food_distress_factor = 0.75, -- health-conscious, mid game
         required_room_count = 0.5,
         minimum_comfort = 0,
         social_coefficient = 0.5,
@@ -210,9 +213,9 @@ Castes.values = {
             [HousingTrait.pompous] = -1,
             [HousingTrait.tall] = -1
         },
-        accident_disease_resilience = 1,
-        health_disease_resilience = 0.2,
-        sanity_disease_resilience = 1
+        accident_disease_susceptibility = 1,
+        health_disease_susceptibility = 0.2,
+        sanity_disease_susceptibility = 1
     },
     [Type.ember] = {
         name = "ember",
@@ -234,9 +237,10 @@ Castes.values = {
         favored_taste = Taste.fruity,
         least_favored_taste = Taste.salty,
         minimum_food_count = 3,
-        happiness_per_favored_food = 2,
+        happiness_per_favored_food = 1.5,
         happiness_per_disliked_food = -2,
-        happiness_per_nutrition_tag = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
+        happiness_per_nutrition_tag = 0.5,
         happiness_per_missing_food = -2,
         food_distress_factor = 0.75, -- mixed, early game
         required_room_count = 1,
@@ -258,9 +262,9 @@ Castes.values = {
             [HousingTrait.tall] = 3,
             [HousingTrait.simple] = -2
         },
-        accident_disease_resilience = 0.1,
-        health_disease_resilience = 0.8,
-        sanity_disease_resilience = 0.6
+        accident_disease_susceptibility = 0.1,
+        health_disease_susceptibility = 0.8,
+        sanity_disease_susceptibility = 0.6
     },
     [Type.foundry] = {
         name = "foundry",
@@ -282,9 +286,10 @@ Castes.values = {
         favored_taste = Taste.spicy,
         least_favored_taste = Taste.umami,
         minimum_food_count = 6,
-        happiness_per_favored_food = 2,
+        happiness_per_favored_food = 1.5,
         happiness_per_disliked_food = -2,
-        happiness_per_nutrition_tag = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich, NutritionTag.vitamin_rich, NutritionTag.fiber_rich, NutritionTag.mineral_rich},
+        happiness_per_nutrition_tag = 0.5,
         happiness_per_missing_food = -2,
         food_distress_factor = 0.65, -- mixed, late game
         required_room_count = 4,
@@ -310,9 +315,9 @@ Castes.values = {
             [HousingTrait.individualistic] = -1,
             [HousingTrait.low] = -2
         },
-        accident_disease_resilience = 0.5,
-        health_disease_resilience = 1,
-        sanity_disease_resilience = 1,
+        accident_disease_susceptibility = 0.5,
+        health_disease_susceptibility = 1,
+        sanity_disease_susceptibility = 1,
         relocation_penalty = {
             shock = 3,
             factor = 0.8
@@ -338,8 +343,9 @@ Castes.values = {
         favored_taste = Taste.spicy,
         least_favored_taste = Taste.umami,
         minimum_food_count = 7,
-        happiness_per_favored_food = 3,
+        happiness_per_favored_food = 1,
         happiness_per_disliked_food = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich, NutritionTag.vitamin_rich, NutritionTag.fiber_rich, NutritionTag.mineral_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -3,
         food_distress_factor = 0.60, -- foodie, late game
@@ -364,9 +370,9 @@ Castes.values = {
             [HousingTrait.technical] = -2,
             [HousingTrait.cheap] = -3
         },
-        accident_disease_resilience = 0.2,
-        health_disease_resilience = 2,
-        sanity_disease_resilience = 2,
+        accident_disease_susceptibility = 0.2,
+        health_disease_susceptibility = 2,
+        sanity_disease_susceptibility = 2,
         relocation_penalty = {
             shock = 3,
             factor = 0.8
@@ -394,6 +400,7 @@ Castes.values = {
         minimum_food_count = 9,
         happiness_per_favored_food = 3,
         happiness_per_disliked_food = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich},
         happiness_per_nutrition_tag = 0,
         happiness_per_missing_food = -3,
         food_distress_factor = 0.55, -- foodie, very late game
@@ -424,9 +431,9 @@ Castes.values = {
             [HousingTrait.copy_paste] = -2,
             [HousingTrait.cheap] = -5
         },
-        accident_disease_resilience = 0.2,
-        health_disease_resilience = 1.5,
-        sanity_disease_resilience = 1
+        accident_disease_susceptibility = 0.2,
+        health_disease_susceptibility = 1.5,
+        sanity_disease_susceptibility = 1
     },
     [Type.plasma] = {
         name = "plasma",
@@ -448,9 +455,10 @@ Castes.values = {
         favored_taste = Taste.salty,
         least_favored_taste = Taste.fruity,
         minimum_food_count = 4,
-        happiness_per_favored_food = 2,
+        happiness_per_favored_food = 1.5,
         happiness_per_disliked_food = -2,
-        happiness_per_nutrition_tag = 0,
+        essential_nutrition_tags = {NutritionTag.protein_rich, NutritionTag.fat_rich, NutritionTag.carb_rich, NutritionTag.vitamin_rich, NutritionTag.fiber_rich},
+        happiness_per_nutrition_tag = 0.5,
         happiness_per_missing_food = -2,
         food_distress_factor = 0.70, -- mixed, mid game
         required_room_count = 3,
@@ -476,9 +484,9 @@ Castes.values = {
             [HousingTrait.simple] = -1,
             [HousingTrait.cheap] = -3
         },
-        accident_disease_resilience = 0.2,
-        health_disease_resilience = 0.2,
-        sanity_disease_resilience = 1.5
+        accident_disease_susceptibility = 0.2,
+        health_disease_susceptibility = 0.2,
+        sanity_disease_susceptibility = 1.5
     }
 }
 

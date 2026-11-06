@@ -145,7 +145,6 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "engineer-spinal-fluid", amount = 1},
         {type = "item", name = "proteins",              amount = 1},
-        {type = "item", name = "nucleobases",           amount = 1},
         {type = "item", name = "limestone",             amount = 2},
         {type = "item", name = "hehe",                  amount = 2}
     },

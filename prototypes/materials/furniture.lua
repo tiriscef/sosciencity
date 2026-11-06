@@ -14,7 +14,7 @@ local furniture_items = {
     },
     {
         name = "kitchen-furniture",
-        use_placeholder_icon = true
+        sprite_variations = {name = "kitchen-furniture", count = 3}
     },
     {
         name = "bathroom-furniture",
@@ -58,7 +58,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item",   name = "lumber",    amount = 1},
         {type = "item",   name = "screw-set", amount = 1}
     },
-    unlock = "infrastucture-1"
+    unlock_with_item = "screw-set"
 }
 
 Tirislib.RecipeGenerator.create {

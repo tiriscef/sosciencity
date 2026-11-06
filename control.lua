@@ -113,7 +113,7 @@ remote.add_interface("sosciencity", {
 })
 
 if DEBUG then
-    require("tests.load-tests")
+    require("tests.tirislib.load-tests")
     require("tests.controlstage.load-tests")
     require("tests.integration.load-tests")
     local IntegrationHelpers = require("tests.integration.helpers")
@@ -316,6 +316,18 @@ local function init()
     Events.run_on_init_handlers()
 end
 
+--- Shows the player how well the site suits the building they just placed, as a real building or a ghost.
+--- Runs before the building is registered, so it doesn't count itself.
+--- @param entity LuaEntity
+--- @param player_index integer
+local function show_site_report(entity, player_index)
+    local name = entity.type == "entity-ghost" and entity.ghost_name or entity.name
+    local lines = Entity.build_site_report(entity, name)
+    if lines then
+        Visualisation.show_site_report(game.get_player(player_index), entity, lines)
+    end
+end
+
 local function on_entity_built(event)
     storage.last_entity_update = game.tick
 
@@ -328,6 +340,10 @@ local function on_entity_built(event)
     -- If more handlers for ghosts or specific entity names arise, 
     -- then we should add a handler-register pattern to the Register class for those.
     -- For now these 2 are fine I guess.
+
+    if event.player_index then
+        show_site_report(entity, event.player_index)
+    end
 
     if entity.type == "entity-ghost" then
         Inhabitants.on_house_ghost_placed(entity, event)
@@ -458,6 +474,7 @@ local function on_configuration_change()
                 :to_table()
         end
         Register.load()
+        Inhabitants.migrate_immunities()
 
         -- Rebuild entries
         local old_register = Tirislib.Tables.copy(storage.register)
@@ -645,7 +662,25 @@ script.on_configuration_changed(on_configuration_change)
 -- player creation
 script.on_event(defines.events.on_player_created, on_player_created)
 
+--- Returns the name of the building the player holds in the cursor, as an item or as a ghost cursor.
+--- @param player LuaPlayer
+--- @return string?
+local function get_held_building(player)
+    local cursor = player.cursor_stack
+    if cursor and cursor.valid_for_read then
+        local place_result = cursor.prototype.place_result
+        return place_result and place_result.name
+    end
+
+    local cursor_ghost = player.cursor_ghost
+    if cursor_ghost then
+        local place_result = cursor_ghost.name.place_result
+        return place_result and place_result.name
+    end
+end
+
 -- advanced placement mode: show/hide CityInfo placement controls when holding a house item
+-- and the placement highlights when holding a building that cares about its site
 local function on_cursor_stack_changed(event)
     local player = game.players[event.player_index]
     local cursor = player.cursor_stack
@@ -659,6 +694,8 @@ local function on_cursor_stack_changed(event)
     else
         Gui.CityInfo.set_placement_mode(player, false)
     end
+
+    Visualisation.update_placement_highlights(player, get_held_building(player))
 end
 script.on_event(defines.events.on_player_cursor_stack_changed, on_cursor_stack_changed)
 

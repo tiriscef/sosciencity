@@ -1,3 +1,4 @@
+local AgeLink = require("enums.age-link")
 local DiseaseCategory = require("enums.disease-category")
 local DiseasedCause = require("enums.diseased-cause")
 local Type = require("enums.type")
@@ -23,6 +24,10 @@ local Diseases = {}
 --- @field contagiousness number
 --- @field lethality number
 --- @field natural_recovery number
+--- @field immunity_duration number
+--- @field vaccine_immunity_duration number
+--- @field immunity_waning_rate number
+--- @field vaccine_immunity_waning_rate number
 --- @field escalation DiseaseID
 --- @field escalation_probability number
 --- @field complication DiseaseID
@@ -30,6 +35,7 @@ local Diseases = {}
 --- @field complication_lethality number
 --- @field work_effectivity number
 --- @field reports_per_treatment number
+--- @field age_link AgeLink
 
 --- Disease definitions<br>
 --- **name:** prototype name of the disease<br>
@@ -41,14 +47,22 @@ local Diseases = {}
 --- **contagiousness:** probability that the disease infects someone else during a social meeting<br>
 --- **lethality:** probability that the person doesn't survive the disease<br>
 --- **natural_recovery:** average time till recovery - will be translated to the probability per tick during runtime<br>
+--- **immunity_duration:** average time a person stays immune after living through the disease; nil means no immunity,
+--- math.huge lifelong immunity<br>
+--- **vaccine_immunity_duration:** like immunity_duration, but for immunity from a vaccine<br>
+--- **immunity_waning_rate:** probability per tick of losing the immunity from immunity_duration (0 for lifelong) - set during postprocessing<br>
+--- **vaccine_immunity_waning_rate:** like immunity_waning_rate, for vaccine_immunity_duration - set during postprocessing<br>
 --- **escalation:** the disease that this disease can escalate to when it doesn't get cured<br>
 --- **escalation_probability:** the probability that the disease escalates<br>
 --- **complication:** the disease that this disease can transform to, even if it gets cured<br>
 --- **complication_probability:** the probability of a complication<br>
---- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured<br>
+--- **complication_lethality:** the probability that the person doesn't survive the disease when it gets cured
+--- (defaults to the lethality, capped at Diseases.default_complication_lethality - set during postprocessing)<br>
 --- **work_effectivity:** The percentage of the normal points the inhabitants provide<br>
 --- **is_treatable:** false when no hospital can treat the disease; absent means treatable<br>
 --- **reports_per_treatment:** The count of medical reports that a treatment of this disease produces<br>
+--- **age_link:** which inhabitants of a house have this disease when some of them leave it (death, transport) -
+--- the bookkeeping doesn't know who has which disease; nil means any age<br>
 Diseases.values = {
     -- 1+: primarily accidents
     [1] = {
@@ -78,6 +92,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 1 * Time.nauvis_week,
+        escalation = "severe-burns",
+        escalation_probability = 0.1,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -89,6 +105,8 @@ Diseases.values = {
         curing_workload = 1,
         lethality = 0.15,
         natural_recovery = 1 * Time.nauvis_week,
+        escalation = "tetanus",
+        escalation_probability = 0.1,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -125,13 +143,58 @@ Diseases.values = {
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0.5
     },
+    [8] = {
+        name = "head-trauma",
+        cure_items = {
+            ["medical-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["potent-analgesics"] = 1
+        },
+        curing_workload = 6,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.3,
+        natural_recovery = 3 * Time.nauvis_week,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2
+    },
+    [9] = {
+        name = "train-collision",
+        cure_items = {
+            ["medical-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["blood-bag"] = 2,
+            ["bandage"] = 3
+        },
+        curing_workload = 8,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.7,
+        natural_recovery = 4 * Time.nauvis_week,
+        complication = "limb-loss",
+        complication_probability = 0.2,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [10] = {
+        name = "spitter-acid-burns",
+        cure_items = {
+            ["bandage"] = 2,
+            ["antitoxin"] = 1,
+            ["potent-analgesics"] = 1
+        },
+        curing_workload = 3,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.3,
+        natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
     -- 1000+: primarily mental health related
     [1000] = {
         name = "depression",
         cure_items = {
             ["psychotropics"] = 4
         },
-        curing_workload = 15,
+        curing_workload = 10,
         curing_facility = Type.psych_ward,
         lethality = 0.1,
         work_effectivity = 0.5,
@@ -142,7 +205,7 @@ Diseases.values = {
         cure_items = {
             ["psychotropics"] = 10
         },
-        curing_workload = 15,
+        curing_workload = 10,
         curing_facility = Type.psych_ward,
         lethality = 0.2,
         work_effectivity = 0.3,
@@ -155,7 +218,7 @@ Diseases.values = {
         },
         curing_workload = 10,
         curing_facility = Type.psych_ward,
-        natural_recovery = 1 * Time.nauvis_week,
+        natural_recovery = 2 * Time.nauvis_week,
         work_effectivity = 0.3,
         reports_per_treatment = 1
     },
@@ -181,6 +244,7 @@ Diseases.values = {
         curing_workload = 1,
         contagiousness = 0.1,
         natural_recovery = 2 * Time.nauvis_day,
+        immunity_duration = 30 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.25,
@@ -205,7 +269,10 @@ Diseases.values = {
         },
         curing_workload = 1,
         lethality = 0.01,
+        contagiousness = 0.04,
         natural_recovery = 3 * Time.nauvis_day,
+        immunity_duration = 60 * Time.nauvis_day,
+        vaccine_immunity_duration = 60 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.1,
         work_effectivity = 0.5,
@@ -260,6 +327,37 @@ Diseases.values = {
         work_effectivity = 0.65,
         reports_per_treatment = 1
     },
+    [2008] = {
+        name = "purple-pox",
+        cure_items = {
+            ["antimicrobials"] = 1,
+            ["analgesics"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.02,
+        contagiousness = 0.08,
+        natural_recovery = 4 * Time.nauvis_day,
+        immunity_duration = math.huge,
+        vaccine_immunity_duration = math.huge,
+        work_effectivity = 0.2,
+        reports_per_treatment = 1
+    },
+    [2009] = {
+        name = "whooping-cough",
+        cure_items = {
+            ["antimicrobials"] = 2
+        },
+        curing_workload = 2,
+        lethality = 0.01,
+        contagiousness = 0.025,
+        natural_recovery = 10 * Time.nauvis_day,
+        immunity_duration = 200 * Time.nauvis_day,
+        vaccine_immunity_duration = 100 * Time.nauvis_day,
+        escalation = "lung-infection",
+        escalation_probability = 0.1,
+        work_effectivity = 0.4,
+        reports_per_treatment = 1
+    },
     -- 3000+: primarily escalation diseases
     [3000] = {
         name = "lung-infection",
@@ -268,8 +366,10 @@ Diseases.values = {
             ["analgesics"] = 1
         },
         curing_workload = 5,
-        lethality = 0.1,
+        lethality = 0.05,
         natural_recovery = 2 * Time.nauvis_week,
+        escalation = "sepsis",
+        escalation_probability = 0.15,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -281,8 +381,10 @@ Diseases.values = {
             ["bandage"] = 1
         },
         curing_workload = 10,
-        lethality = 0.35,
+        lethality = 0.15,
         natural_recovery = 2 * Time.nauvis_week,
+        escalation = "sepsis",
+        escalation_probability = 0.3,
         work_effectivity = 0,
         reports_per_treatment = 2
     },
@@ -296,6 +398,74 @@ Diseases.values = {
         curing_facility = Type.intensive_care_unit,
         lethality = 0.85,
         natural_recovery = 1 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3003] = {
+        name = "sepsis",
+        cure_items = {
+            ["antimicrobials"] = 2,
+            ["isotonic-saline-solution"] = 2,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.6,
+        natural_recovery = 1 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3004] = {
+        name = "severe-burns",
+        cure_items = {
+            ["bandage"] = 4,
+            ["potent-analgesics"] = 1,
+            ["isotonic-saline-solution"] = 2
+        },
+        curing_workload = 5,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.4,
+        natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3005] = {
+        name = "respiratory-failure",
+        cure_items = {
+            ["antitoxin"] = 1,
+            ["anesthetics"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.7,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2
+    },
+    [3006] = {
+        name = "vector-rejection",
+        cure_items = {
+            ["antihistamines"] = 3,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 3,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.3,
+        natural_recovery = 1 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [3007] = {
+        name = "tetanus",
+        cure_items = {
+            ["antitoxin"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.5,
+        natural_recovery = 2 * Time.nauvis_week,
+        vaccine_immunity_duration = 300 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 2
     },
@@ -345,8 +515,11 @@ Diseases.values = {
             ["thermostable-dna-polymerase"] = 1
         },
         curing_workload = 4,
+        curing_facility = Type.gene_clinic,
         natural_recovery = 3 * Time.nauvis_month,
         lethality = 1,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
         work_effectivity = 0.6,
         reports_per_treatment = 2
     },
@@ -360,7 +533,8 @@ Diseases.values = {
         natural_recovery = 1 * Time.nauvis_week,
         lethality = 0.1,
         work_effectivity = 0.3,
-        reports_per_treatment = 1
+        reports_per_treatment = 1,
+        age_link = AgeLink.youngest
     },
     [4005] = {
         name = "environmental-allergy",
@@ -383,6 +557,88 @@ Diseases.values = {
         work_effectivity = 0.45,
         reports_per_treatment = 2
     },
+    [4007] = {
+        name = "engineer-syndrome",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["psychotropics"] = 2
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.8,
+        natural_recovery = 1 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 1.5,
+        reports_per_treatment = 2,
+        age_link = AgeLink.youngest
+    },
+    [4008] = {
+        name = "purple-surplus",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.6,
+        natural_recovery = 1 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 1.3,
+        reports_per_treatment = 2,
+        age_link = AgeLink.youngest
+    },
+    [4009] = {
+        name = "hemophilia",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.5,
+        reports_per_treatment = 2
+    },
+    [4010] = {
+        name = "sickle-cell-disease",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.5,
+        natural_recovery = 2 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.4,
+        reports_per_treatment = 2,
+        age_link = AgeLink.youngest
+    },
+    [4011] = {
+        name = "mirror-metabolism",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nutritional-supplements"] = 2
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.5,
+        reports_per_treatment = 2
+    },
     -- 5000+: primarily zoonoses
     [5001] = {
         name = "real-riverhorse-flu",
@@ -391,12 +647,109 @@ Diseases.values = {
         --},
         curing_workload = 2,
         lethality = 0.03,
-        contagiousness = 0.15,
+        contagiousness = 0.055,
         natural_recovery = 6 * Time.nauvis_day,
+        immunity_duration = 100 * Time.nauvis_day,
+        vaccine_immunity_duration = 100 * Time.nauvis_day,
         escalation = "lung-infection",
         escalation_probability = 0.2,
         work_effectivity = 0,
         reports_per_treatment = 0.5
+    },
+    -- 6000+: old age
+    [6000] = {
+        name = "eggshell-bones",
+        cure_items = {
+            ["bandage"] = 2,
+            ["analgesics"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.5,
+        complication_lethality = 0.05,
+        natural_recovery = 3 * Time.nauvis_week,
+        work_effectivity = 0,
+        reports_per_treatment = 1,
+        age_link = AgeLink.oldest
+    },
+    [6001] = {
+        name = "elderly-pneumonia",
+        cure_items = {
+            ["antimicrobials"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.5,
+        complication_lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_week,
+        escalation = "respiratory-failure",
+        escalation_probability = 0.3,
+        work_effectivity = 0.2,
+        reports_per_treatment = 1,
+        age_link = AgeLink.oldest
+    },
+    [6002] = {
+        name = "tired-heart",
+        cure_items = {
+            ["artificial-heart"] = 1,
+            ["anesthetics"] = 1
+        },
+        curing_workload = 6,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.9,
+        complication_lethality = 0.12,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [6003] = {
+        name = "stroke",
+        cure_items = {
+            ["anesthetics"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.intensive_care_unit,
+        lethality = 0.8,
+        complication = "hatching-nostalgia",
+        complication_probability = 0.3,
+        complication_lethality = 0.12,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 0,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [6004] = {
+        name = "hatching-nostalgia",
+        cure_items = {
+            ["psychotropics"] = 3
+        },
+        curing_workload = 8,
+        curing_facility = Type.psych_ward,
+        lethality = 0.05,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0,
+        reports_per_treatment = 1,
+        age_link = AgeLink.oldest
+    },
+    [6005] = {
+        name = "purple-fade",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1
+        },
+        curing_workload = 4,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.7,
+        complication_lethality = 0.1,
+        natural_recovery = 1 * Time.nauvis_month,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        work_effectivity = 0.3,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
     },
     -- 9000+: primarily malnutrition
     [9000] = {
@@ -434,6 +787,7 @@ Diseases.values = {
             ["blood-bag"] = 1
         },
         curing_workload = 5,
+        curing_facility = Type.intensive_care_unit,
         lethality = 1,
         natural_recovery = 5 * Time.nauvis_day,
         work_effectivity = 0,
@@ -476,6 +830,7 @@ Diseases.values = {
             ["blood-bag"] = 1
         },
         curing_workload = 5,
+        curing_facility = Type.intensive_care_unit,
         lethality = 1,
         natural_recovery = 2 * Time.nauvis_day,
         work_effectivity = 0,
@@ -514,8 +869,10 @@ Diseases.values = {
             ["antimicrobials"] = 1
         },
         curing_workload = 3,
-        lethality = 0.4,
-        natural_recovery = 2 * Time.nauvis_day,
+        lethality = 0.2,
+        natural_recovery = 5 * Time.nauvis_day,
+        escalation = "respiratory-failure",
+        escalation_probability = 0.3,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -526,7 +883,7 @@ Diseases.values = {
         },
         curing_workload = 3,
         lethality = 0.25,
-        natural_recovery = 2 * Time.nauvis_day,
+        natural_recovery = 5 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
     },
@@ -541,24 +898,87 @@ Diseases.values = {
         work_effectivity = 0.2,
         reports_per_treatment = 1
     },
-    -- 12000+: primarily polluted water
+    [11005] = {
+        name = "ergotism",
+        cure_items = {
+            ["activated-carbon"] = 1,
+            ["psychotropics"] = 1
+        },
+        curing_workload = 2,
+        natural_recovery = 3 * Time.nauvis_day,
+        escalation = "reality-loss",
+        escalation_probability = 0.3,
+        work_effectivity = 0.3,
+        reports_per_treatment = 1
+    },
+    -- 12000+: primarily waterborne diseases
     [12000] = {
-        name = "water-poisoning",
+        name = "gastroenteritis",
         cure_items = {
             ["activated-carbon"] = 1,
             ["isotonic-saline-solution"] = 1
         },
         curing_workload = 2,
         lethality = 0.05,
+        contagiousness = 0.06,
         natural_recovery = 2 * Time.nauvis_day,
+        immunity_duration = 25 * Time.nauvis_day,
         escalation = "diarrhea",
         escalation_probability = 0.5,
         work_effectivity = 0.4,
         reports_per_treatment = 1
     },
+    [12001] = {
+        name = "cholera",
+        cure_items = {
+            ["isotonic-saline-solution"] = 3,
+            ["antimicrobials"] = 1
+        },
+        curing_workload = 2,
+        lethality = 0.2,
+        natural_recovery = 2 * Time.nauvis_day,
+        escalation = "severe-dehydration",
+        escalation_probability = 0.4,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    },
+    [12002] = {
+        name = "giardiasis",
+        cure_items = {
+            ["antimicrobials"] = 1
+        },
+        curing_workload = 1,
+        natural_recovery = 2 * Time.nauvis_week,
+        work_effectivity = 0.6,
+        reports_per_treatment = 0.5
+    },
+    [12003] = {
+        name = "heavy-metal-poisoning",
+        cure_items = {
+            ["activated-carbon"] = 3,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 3,
+        lethality = 0.2,
+        natural_recovery = 3 * Time.nauvis_week,
+        work_effectivity = 0.5,
+        reports_per_treatment = 1
+    },
     -- 20000+: primarily hard work accident group
 
     -- 21000+: primarily office work accident group
+    [21000] = {
+        name = "caffeine-overload",
+        cure_items = {
+            ["activated-carbon"] = 1,
+            ["isotonic-saline-solution"] = 1
+        },
+        curing_workload = 1,
+        lethality = 0.05,
+        natural_recovery = 2 * Time.nauvis_day,
+        work_effectivity = 1.25,
+        reports_per_treatment = 0.5
+    },
 
     -- 22000+: primarily moderate work accident group
     [22000] = {
@@ -627,6 +1047,8 @@ Diseases.values = {
         },
         curing_workload = 1,
         natural_recovery = 3 * Time.nauvis_day,
+        escalation = "tetanus",
+        escalation_probability = 0.05,
         work_effectivity = 0.5,
         reports_per_treatment = 0.5
     },
@@ -648,7 +1070,7 @@ Diseases.values = {
         name = "skin-cancer",
         cure_items = {
             -- the idea is: it's a local surgery, so no chemo
-            ["surgery-instruments"] = 1,
+            ["medical-instruments"] = 1,
             ["potent-analgesics"] = 1,
             ["bandage"] = 1
         },
@@ -657,6 +1079,58 @@ Diseases.values = {
         natural_recovery = 10 * Time.nauvis_day,
         work_effectivity = 0,
         reports_per_treatment = 1
+    },
+    [40001] = {
+        name = "colon-cancer",
+        cure_items = {
+            ["medical-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["potent-analgesics"] = 1,
+            ["bandage"] = 2
+        },
+        curing_workload = 6,
+        lethality = 0.9,
+        complication_lethality = 0.12,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [40002] = {
+        name = "shell-gland-carcinoma",
+        cure_items = {
+            ["medical-instruments"] = 1,
+            ["anesthetics"] = 1,
+            ["potent-analgesics"] = 1,
+            ["bandage"] = 2
+        },
+        curing_workload = 6,
+        lethality = 0.85,
+        complication_lethality = 0.12,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
+    },
+    [40003] = {
+        name = "purple-leukemia",
+        cure_items = {
+            ["edited-huwan-genome"] = 1,
+            ["blank-dna-virus"] = 1,
+            ["nucleobases"] = 1,
+            ["thermostable-dna-polymerase"] = 1,
+            ["blood-bag"] = 1
+        },
+        curing_workload = 6,
+        curing_facility = Type.gene_clinic,
+        lethality = 0.85,
+        complication = "vector-rejection",
+        complication_probability = 0.1,
+        complication_lethality = 0.12,
+        natural_recovery = 1 * Time.nauvis_month,
+        work_effectivity = 0.2,
+        reports_per_treatment = 2,
+        age_link = AgeLink.oldest
     }
 }
 
@@ -669,12 +1143,19 @@ local function get_disease_id(disease_name)
     error("Diseases looked for the ID of a nonexistant disease: " .. disease_name)
 end
 
+--- Returns the DiseaseID of the disease with the given name. Errors if there is none.
+--- @param disease_name string
+--- @return DiseaseID
+Diseases.get_id = get_disease_id
+
 --- Defines which diseases belong to the categories and with which frequency. Contains the DiseaseID as keys and a frequency as value.
 Diseases.categories = {
     [DiseaseCategory.health] = {
         ["rare-cold"] = 100,
         ["yeast-infection"] = 100,
         ["riverhorse-like-flu"] = 100,
+        ["purple-pox"] = 30,
+        ["whooping-cough"] = 30,
         ["headaches"] = 100,
         ["diarrhea"] = 100,
         ["exhaustion"] = 500,
@@ -698,7 +1179,9 @@ Diseases.categories = {
         ["deep-cuts"] = 300,
         ["biter-bite"] = 50,
         ["joint-dislocation"] = 400,
-        ["hematoma"] = 400
+        ["hematoma"] = 400,
+        ["head-trauma"] = 30,
+        ["train-collision"] = 5
     },
     [DiseaseCategory.birth_defect] = {
         ["lack-of-purple-blood-cells"] = 600,
@@ -708,7 +1191,12 @@ Diseases.categories = {
         ["gender-dysphoria"] = 50,
         ["huntingtons"] = 100,
         ["environmental-allergy"] = 300,
-        ["autoimmune-joint-disease"] = 50
+        ["autoimmune-joint-disease"] = 50,
+        ["engineer-syndrome"] = 50,
+        ["purple-surplus"] = 100,
+        ["hemophilia"] = 100,
+        ["sickle-cell-disease"] = 100,
+        ["mirror-metabolism"] = 50
     },
     [DiseaseCategory.zoonosis] = {
         ["real-riverhorse-flu"] = 100
@@ -727,10 +1215,21 @@ Diseases.categories = {
         ["extreme-dehydration"] = 10
     },
     [DiseaseCategory.food_poisoning] = {
-        ["diarrhea"] = 100
+        ["food-poisoning"] = 300,
+        ["diarrhea"] = 200,
+        ["salmonella"] = 100,
+        ["listeriosis"] = 50,
+        ["hepatitis-a"] = 50,
+        ["botulism"] = 20,
+        ["ergotism"] = 30
     },
-    [DiseaseCategory.water_poisoning] = {
-        ["diarrhea"] = 100
+    [DiseaseCategory.waterborne] = {
+        ["gastroenteritis"] = 300,
+        ["diarrhea"] = 200,
+        ["hepatitis-a"] = 50,
+        ["cholera"] = 50,
+        ["giardiasis"] = 150,
+        ["heavy-metal-poisoning"] = 50
     },
     [DiseaseCategory.hard_work] = {
         ["limb-loss"] = 100,
@@ -740,7 +1239,9 @@ Diseases.categories = {
         ["biter-bite"] = 50,
         ["joint-dislocation"] = 400,
         ["hematoma"] = 400,
-        ["exhaustion"] = 400
+        ["exhaustion"] = 400,
+        ["head-trauma"] = 50,
+        ["train-collision"] = 20
     },
     [DiseaseCategory.office_work] = {
         ["rare-cold"] = 100,
@@ -749,7 +1250,8 @@ Diseases.categories = {
         ["exhaustion"] = 400,
         ["depression"] = 50,
         ["burnout"] = 50,
-        ["allergic-reaction"] = 200
+        ["allergic-reaction"] = 200,
+        ["caffeine-overload"] = 150
     },
     [DiseaseCategory.moderate_work] = {
         ["allergic-reaction"] = 200,
@@ -764,15 +1266,27 @@ Diseases.categories = {
         ["sunburn"] = 200,
         ["deep-cuts"] = 150,
         ["animal-scratch"] = 300,
-        ["water-poisoning"] = 100,
+        ["gastroenteritis"] = 100,
         ["joint-dislocation"] = 100,
         ["swimmers-itch"] = 150
+    },
+    [DiseaseCategory.old_age] = {
+        ["eggshell-bones"] = 25,
+        ["elderly-pneumonia"] = 20,
+        ["tired-heart"] = 13,
+        ["stroke"] = 12,
+        ["purple-fade"] = 8,
+        ["shell-gland-carcinoma"] = 7,
+        ["colon-cancer"] = 6,
+        ["hatching-nostalgia"] = 5,
+        ["purple-leukemia"] = 4
     },
     [DiseaseCategory.hunting_hut] = {
         ["biter-bite"] = 50,
         ["broken-bone"] = 200,
         ["joint-dislocation"] = 400,
-        ["limb-loss"] = 50
+        ["limb-loss"] = 50,
+        ["spitter-acid-burns"] = 30
     }
 }
 
@@ -828,7 +1342,8 @@ Diseases.disease_causes = {
     [DiseaseCategory.malnutrition] = DiseasedCause.malnutrition,
     [DiseaseCategory.dehydration] = DiseasedCause.dehydration,
     [DiseaseCategory.food_poisoning] = DiseasedCause.food_poisoning,
-    [DiseaseCategory.water_poisoning] = DiseasedCause.water_poisoning,
+    [DiseaseCategory.waterborne] = DiseasedCause.waterborne,
+    [DiseaseCategory.old_age] = DiseasedCause.old_age,
     [DiseaseCategory.hard_work] = DiseasedCause.workplace_accident,
     [DiseaseCategory.office_work] = DiseasedCause.workplace_accident,
     [DiseaseCategory.moderate_work] = DiseasedCause.workplace_accident,
@@ -856,7 +1371,52 @@ if DEBUG then
         is_treatable = false,
         work_effectivity = 0
     }
+    Diseases.values[99004] = {
+        name = "test-disease-psych-ward",
+        curing_workload = 1,
+        curing_facility = Type.psych_ward,
+        work_effectivity = 0,
+        reports_per_treatment = 1
+    }
+    Diseases.values[99005] = {
+        name = "test-disease-immunity",
+        curing_workload = 1,
+        natural_recovery = 60,
+        immunity_duration = 600,
+        vaccine_immunity_duration = math.huge,
+        work_effectivity = 0,
+        reports_per_treatment = 0
+    }
+    Diseases.values[99006] = {
+        name = "test-disease-immunity-2",
+        curing_workload = 1,
+        natural_recovery = 60,
+        immunity_duration = 600,
+        vaccine_immunity_duration = math.huge,
+        work_effectivity = 0,
+        reports_per_treatment = 0
+    }
+    Diseases.values[99007] = {
+        name = "test-disease-oldest",
+        curing_workload = 1,
+        lethality = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 0,
+        age_link = AgeLink.oldest
+    }
+    Diseases.values[99008] = {
+        name = "test-disease-youngest",
+        curing_workload = 1,
+        lethality = 1,
+        work_effectivity = 0,
+        reports_per_treatment = 0,
+        age_link = AgeLink.youngest
+    }
 end
+
+--- Death chance of treated cases for diseases that don't define a complication_lethality. Capped by the lethality,
+--- so diseases that can't kill untreated stay harmless when treated.
+Diseases.default_complication_lethality = 0.01
 
 -- postprocessing
 do
@@ -892,15 +1452,27 @@ do
             }
         end
 
-        if disease.complication_disease then
+        if disease.complication then
             points[#points + 1] = {
                 "sosciencity.complication",
-                {"disease-name." .. disease.complication_disease},
+                {"disease-name." .. disease.complication},
                 get_percentage(disease.complication_probability)
             }
         end
 
         return Tirislib.Locales.create_enumeration(points, "\n")
+    end
+
+    --- Returns a locale for an immunity duration, using lifelong_key for math.huge and key otherwise.
+    local function get_localised_immunity(duration, key, lifelong_key)
+        if duration == math.huge then
+            return {lifelong_key}
+        end
+        return {
+            key,
+            Tirislib.Locales.display_ingame_time(duration),
+            Tirislib.Locales.display_time(math.ceil(duration / 3600) * 3600)
+        }
     end
 
     local function get_localised_properties(disease)
@@ -936,6 +1508,22 @@ do
             points[#points + 1] = {"sosciencity.contagious", get_percentage(disease.contagiousness)}
         end
 
+        if disease.immunity_duration then
+            points[#points + 1] = get_localised_immunity(
+                disease.immunity_duration,
+                "sosciencity.immunity",
+                "sosciencity.immunity-lifelong"
+            )
+        end
+
+        if disease.vaccine_immunity_duration then
+            points[#points + 1] = get_localised_immunity(
+                disease.vaccine_immunity_duration,
+                "sosciencity.vaccine-immunity",
+                "sosciencity.vaccine-immunity-lifelong"
+            )
+        end
+
         if disease.escalation then
             points[#points + 1] = {
                 "sosciencity.escalation",
@@ -962,6 +1550,10 @@ do
     end
 
     for id, disease in pairs(Diseases.values) do
+        if disease.lethality and not disease.complication_lethality then
+            disease.complication_lethality = math.min(disease.lethality, Diseases.default_complication_lethality)
+        end
+
         disease.localised_name = {"disease-name." .. disease.name}
         disease.localised_description = get_localised_description(disease)
         disease.id = id
@@ -971,6 +1563,11 @@ do
 
         -- convert recovery from ticks till recovery to progress per tick
         disease.natural_recovery = disease.natural_recovery and 1 / disease.natural_recovery or nil
+
+        -- derive the probability per tick of losing the immunity from the immunity durations (0 for lifelong)
+        disease.immunity_waning_rate = disease.immunity_duration and 1 / disease.immunity_duration or nil
+        disease.vaccine_immunity_waning_rate =
+            disease.vaccine_immunity_duration and 1 / disease.vaccine_immunity_duration or nil
 
         -- exchange escalation and complication diseases with their ID for efficient lookups
         disease.escalation = disease.escalation and get_disease_id(disease.escalation) or nil

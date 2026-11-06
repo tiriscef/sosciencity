@@ -13,7 +13,8 @@ DiseasedCause.zoonosis = 8
 DiseasedCause.malnutrition = 9
 DiseasedCause.dehydration = 10
 DiseasedCause.food_poisoning = 11
-DiseasedCause.water_poisoning = 12
+DiseasedCause.waterborne = 12
+DiseasedCause.old_age = 13
 DiseasedCause.workplace_accident = 20
 
 return DiseasedCause

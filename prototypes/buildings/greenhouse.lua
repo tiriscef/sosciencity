@@ -32,7 +32,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "greenhouse"},
     max_health = 400,
     corpse = "greenhouse-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "glass",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
@@ -73,7 +73,6 @@ Tirislib.Entity.create {
     working_sound = {
         -- memo: make sound files louder in the future
         sound = {filename = "__sosciencity-graphics__/sound/greenhouse-watering.ogg", volume = 3},
-        apparent_volume = 1.5
     },
     fluid_boxes = {
         {

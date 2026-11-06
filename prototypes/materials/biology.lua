@@ -45,7 +45,7 @@ local biology_items = {
     {
         name = "solid-fat",
         fuel_value = "500kJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "proteins",
@@ -103,7 +103,7 @@ Tirislib.RecipeGenerator.create {
     name = "salty-water-evaporation",
     category = "sosciencity-salt-pond",
     energy_required = 4,
-    unlock = {"fermentation", "medbay"},
+    unlock = "salt-pond",
     auto_recycle = false
 }
 
@@ -116,7 +116,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.milling,
     energy_required = 1,
-    unlock = "food-processing",
+    unlock = Unlocks.get_tech_name("hardcorn-punk"),
     auto_recycle = false
 }
 
@@ -147,6 +147,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
+    unlock = Unlocks.get_tech_name("sugar-beet"),
     auto_recycle = false
 }
 
@@ -162,6 +163,7 @@ Tirislib.RecipeGenerator.create {
     category = "chemistry",
     energy_required = 1.6,
     allow_productivity = true,
+    unlock = Unlocks.get_tech_name("sugar-cane"),
     auto_recycle = false
 }
 
@@ -177,9 +179,27 @@ Tirislib.RecipeGenerator.create {
     energy_required = 4,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "medbay",
+    unlock = Unlocks.get_tech_name("hardcorn-punk"),
     auto_recycle = false
 }
+
+-- improvised bean starch, so the medbay's herbal medicines don't wait for hardcorn-punk
+Tirislib.RecipeGenerator.create {
+    name = "amylum-from-razha-bean",
+    results = {
+        {type = "item", name = "amylum", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "razha-bean", amount = 10},
+        {type = "fluid", name = "clean-water", amount = 80}
+    },
+    energy_required = 4,
+    category = "sosciencity-pharma",
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "medbay",
+    auto_recycle = false
+}:add_ingredient_layer("razha-bean")
 
 Tirislib.RecipeGenerator.create {
     results = {
@@ -203,7 +223,20 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
-    unlock = "explore-alien-flora-1",
+    unlock = Unlocks.get_tech_name("weird-berry"),
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "fluid", name = "fatty-oil", amount = 25}
+    },
+    ingredients = {
+        {type = "item", name = "heliofall", amount = 5}
+    },
+    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    energy_required = 1.6,
+    unlock = Unlocks.get_tech_name("heliofall"),
     auto_recycle = false
 }
 
@@ -216,6 +249,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
+    unlock = Unlocks.get_tech_name("avocado"),
     auto_recycle = false
 }
 
@@ -228,6 +262,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
     energy_required = 1.6,
+    unlock = Unlocks.get_tech_name("olive"),
     auto_recycle = false
 }
 
@@ -269,6 +304,20 @@ Tirislib.RecipeGenerator.create {
     unlock = "basic-biotechnology",
     auto_recycle = false
 }
+
+-- improvised insect protein, so ovosynthesis doesn't wait for basic biotechnology
+Tirislib.RecipeGenerator.create {
+    name = "proteins-from-insect-meat",
+    results = {
+        {type = "item", name = "proteins", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "insect-meat", amount = 10},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    unlock = "ovosynthesis",
+    auto_recycle = false
+}:add_ingredient_layer("insect-meat")
 
 Tirislib.RecipeGenerator.create {
     results = {

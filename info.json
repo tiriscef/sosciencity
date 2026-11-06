@@ -1,6 +1,6 @@
 {
     "name": "sosciencity",
-    "version": "0.2.4",
+    "version": "0.2.7",
     "title": "Sosciencity",
     "author": "tirisabella, Johanna Spieker, _traum",
     "contact": "tiriscef@protonmail.com",
@@ -8,9 +8,10 @@
     "factorio_version": "2.1",
     "dependencies": [
         "base >= 2.1.12",
-        "sosciencity-graphics >= 0.0.12",
+        "sosciencity-graphics >= 0.2.1",
         "?enable-all-feature-flags",
-        "(?)quality"
+        "+minime",
+        "(?)recycler"
     ],
     "description": "Factorio: Skylines. Adds citizens to the game. Attract various castes to your city in order to progress the game."
 }

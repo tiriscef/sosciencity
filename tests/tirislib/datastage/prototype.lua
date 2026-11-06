@@ -51,7 +51,26 @@ Tirislib.Testing.add_test_case(
         create_test_item("test-prototype-owner")
 
         local proto = Tirislib.Prototype.get("item", "test-prototype-owner")
-        Assert.equals(proto.owner, Tirislib.Prototype.modname)
+        Assert.equals(Tirislib.Prototype.get_owner(proto), Tirislib.Prototype.modname)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Prototype.create hides its own data from the unused prototype data check",
+    "lib.prototype",
+    function()
+        create_test_item("test-prototype-plain")
+        create_test_item("test-prototype-hack", {mod_metadata = {is_hack = true}})
+
+        local plain = Tirislib.Prototype.get("item", "test-prototype-plain")
+        local hack = Tirislib.Prototype.get("item", "test-prototype-hack")
+        Assert.equals(plain.mod_metadata.ignore, true)
+        Assert.equals(hack.mod_metadata.ignore, true)
+        Assert.equals(Tirislib.Prototype.is_hack(plain), false)
+        Assert.equals(Tirislib.Prototype.is_hack(hack), true)
+        Assert.equals(Tirislib.Prototype.get_owner(hack), Tirislib.Prototype.modname)
     end,
     setup,
     teardown
@@ -144,4 +163,22 @@ Tirislib.Testing.add_test_case(
     end,
     setup,
     teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << postponed calls >>
+
+Tirislib.Testing.add_test_case(
+    "Prototype.describe_postponed names the function and its arguments",
+    "lib.prototype",
+    function()
+        local saved = Tirislib.Prototype.postponed_functions
+        Tirislib.Prototype.postponed_functions = {}
+
+        Tirislib.Prototype.postpone(Tirislib.Recipe.add_unlock, {name = "test-recipe"}, "test-missing-tech")
+        local descriptions = Tirislib.Prototype.describe_postponed()
+
+        Tirislib.Prototype.postponed_functions = saved
+        Assert.equals(descriptions, {"Recipe.add_unlock(test-recipe, test-missing-tech)"})
+    end
 )

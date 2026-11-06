@@ -1,5 +1,13 @@
 local Assert = Tirislib.Testing.Assert
+local AgeLink = require("enums.age-link")
+local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
+local Gender = require("enums.gender")
+local Type = require("enums.type")
+
+local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
+local Time = require("constants.time")
 
 local Table = Tirislib.Tables
 
@@ -197,7 +205,7 @@ Tirislib.Testing.add_test_case(
     "inhabitants",
     function()
         local group = AgeGroup.new(5, 30)
-        Assert.equals(group[30], 5)
+        Assert.equals(group[AgeGroup.current_day() - 30], 5)
     end
 )
 
@@ -206,7 +214,7 @@ Tirislib.Testing.add_test_case(
     "inhabitants",
     function()
         local group = AgeGroup.new(3)
-        Assert.equals(group[0], 3)
+        Assert.equals(group[AgeGroup.current_day()], 3)
     end
 )
 
@@ -223,9 +231,8 @@ Tirislib.Testing.add_test_case(
     "AgeGroup.merge combines two groups",
     "inhabitants",
     function()
-        local lh = AgeGroup.new(3, 20)
-        local rh = AgeGroup.new(2, 20)
-        rh[30] = 1
+        local lh = {[20] = 3}
+        local rh = {[20] = 2, [30] = 1}
 
         AgeGroup.merge(lh, rh)
 
@@ -241,8 +248,8 @@ Tirislib.Testing.add_test_case(
     "AgeGroup.merge with keep_rh preserves rh",
     "inhabitants",
     function()
-        local lh = AgeGroup.new(3, 20)
-        local rh = AgeGroup.new(2, 30)
+        local lh = {[20] = 3}
+        local rh = {[30] = 2}
 
         AgeGroup.merge(lh, rh, true)
 
@@ -304,16 +311,285 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
-    "AgeGroup.shift advances all ages",
+    "AgeGroup.current_day counts nauvis days since the start of the game",
     "inhabitants",
     function()
-        local group = {[20] = 3, [30] = 2}
-        AgeGroup.shift(group, 5)
+        Assert.equals(AgeGroup.current_day(), math.floor(game.tick / Time.nauvis_day))
+    end
+)
 
-        Assert.is_nil(group[20])
-        Assert.is_nil(group[30])
-        Assert.equals(group[25], 3)
-        Assert.equals(group[35], 2)
+Tirislib.Testing.add_test_case(
+    "AgeGroup.get_age is the difference between today and the hatch day",
+    "inhabitants",
+    function()
+        Assert.equals(AgeGroup.get_age(80, 100), 20)
+        Assert.equals(AgeGroup.get_age(AgeGroup.current_day() - 7), 7)
+    end
+)
+
+-- test-disease-oldest / test-disease-youngest, see the test diseases in constants/diseases.lua
+local OLDEST_DISEASE = 99007
+local YOUNGEST_DISEASE = 99008
+
+Tirislib.Testing.add_test_case(
+    "Diseases without complication_lethality get the default, capped by their lethality",
+    "inhabitants",
+    function()
+        Assert.equals(Diseases.values[OLDEST_DISEASE].complication_lethality, Diseases.default_complication_lethality)
+        Assert.is_nil(
+            Diseases.values[99001].complication_lethality,
+            "a disease that can't kill untreated should stay harmless when treated"
+        )
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_extreme takes the oldest first",
+    "inhabitants",
+    function()
+        local group = {[30] = 2, [10] = 1, [20] = 4}
+        local taken = AgeGroup.take_extreme(group, 4, AgeLink.oldest)
+
+        Assert.equals(taken[10], 1)
+        Assert.equals(taken[20], 3)
+        Assert.is_nil(taken[30])
+        Assert.is_nil(group[10])
+        Assert.equals(group[20], 1)
+        Assert.equals(group[30], 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_extreme takes the youngest first",
+    "inhabitants",
+    function()
+        local group = {[30] = 2, [10] = 1, [20] = 4}
+        local taken = AgeGroup.take_extreme(group, 3, AgeLink.youngest)
+
+        Assert.equals(taken[30], 2)
+        Assert.equals(taken[20], 1)
+        Assert.equals(group[20], 3)
+        Assert.equals(group[10], 1)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_extreme takes at most everyone",
+    "inhabitants",
+    function()
+        local group = {[30] = 2, [10] = 1}
+        local taken = AgeGroup.take_extreme(group, 10, AgeLink.oldest)
+
+        Assert.equals(Table.sum(taken), 3)
+        Assert.equals(Table.sum(group), 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_for_diseases takes linked diseases from their end and the rest proportionally",
+    "inhabitants",
+    function()
+        local group = {[10] = 2, [20] = 6, [30] = 2}
+        local diseases = {[HEALTHY] = 2, [OLDEST_DISEASE] = 2, [YOUNGEST_DISEASE] = 1}
+        local taken = AgeGroup.take_for_diseases(group, diseases, 5, 10)
+
+        Assert.equals(Table.sum(taken), 5)
+        Assert.equals(Table.sum(taken) + Table.sum(group), 10)
+        Assert.equals(taken[10], 2, "the two oldest should be taken for the oldest-linked disease")
+        Assert.greater_than(taken[30] or 0, 0, "the youngest should be taken for the youngest-linked disease")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_for_diseases without linked diseases is proportional",
+    "inhabitants",
+    function()
+        local group = {[10] = 5, [20] = 5}
+        local taken = AgeGroup.take_for_diseases(group, {[HEALTHY] = 4}, 4, 10)
+
+        Assert.equals(taken[10], 2)
+        Assert.equals(taken[20], 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_specific takes the ages of age-linked diseases",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        group[EK.ages] = {[10] = 3, [20] = 4, [30] = 3}
+        DiseaseGroup.make_sick(group[EK.diseases], YOUNGEST_DISEASE, 3)
+
+        local taken = InhabitantGroup.take_specific(group, 3, {[YOUNGEST_DISEASE] = 3})
+
+        Assert.equals(taken[EK.ages][30], 3, "the youngest should leave with the disease")
+        Assert.is_nil(group[EK.ages][30])
+        Assert.equals(Table.sum(group[EK.ages]), 7)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased takes the ages of the disease's age link",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        group[EK.ages] = {[10] = 3, [20] = 4, [30] = 3}
+
+        local dead = InhabitantGroup.take_deceased(group, 2, OLDEST_DISEASE, 1)
+
+        Assert.equals(dead, 2)
+        Assert.equals(group[EK.ages][10], 1, "the oldest should die of an oldest-linked disease")
+        Assert.equals(group[EK.inhabitants], 8)
+        Assert.equals(group[EK.diseases][HEALTHY], 8)
+        Assert.equals(Table.sum(group[EK.ages]), 8, "ages should be subtracted only once")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased takes random ages for unlinked diseases",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        group[EK.ages] = {[10] = 5, [20] = 5}
+
+        local dead = InhabitantGroup.take_deceased(group, 4, 1, 1)
+
+        Assert.equals(dead, 4)
+        Assert.equals(group[EK.inhabitants], 6)
+        Assert.equals(Table.sum(group[EK.ages]), 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased raises the lethality with frailty",
+    "inhabitants",
+    function()
+        local today = AgeGroup.current_day()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        -- frailty 2^10 far past the onset, so even a tiny lethality is capped at 1
+        local onset = InhabitantGroup.get_frailty_onset(group)
+        group[EK.ages] = {[today - onset - 10 * InhabitantsConstants.frailty_doubling] = 10}
+
+        Assert.equals(InhabitantGroup.take_deceased(group, 10, 1, 0.01), 10)
+        Assert.equals(group[EK.inhabitants], 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_deceased kills no one without lethality",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+
+        Assert.equals(InhabitantGroup.take_deceased(group, 10, 1, 0), 0)
+        Assert.equals(group[EK.inhabitants], 10)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_natural_deaths takes the very old",
+    "inhabitants",
+    function()
+        local today = AgeGroup.current_day()
+        local group = InhabitantGroup.new(Type.clockwork, 10)
+        local onset = InhabitantGroup.get_frailty_onset(group)
+        local very_old = today - onset - 20 * InhabitantsConstants.frailty_doubling
+        group[EK.ages] = {[very_old] = 4, [today] = 6}
+
+        local dead = InhabitantGroup.take_natural_deaths(group, Time.nauvis_day)
+
+        Assert.equals(dead, 4)
+        Assert.is_nil(group[EK.ages][very_old])
+        Assert.equals(group[EK.ages][today], 6, "the newly hatched should survive")
+        Assert.equals(group[EK.inhabitants], 6)
+        Assert.equals(Table.sum(group[EK.genders]), 6)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.get_frailty_sum adds up the frailty of every inhabitant",
+    "inhabitants",
+    function()
+        local today = AgeGroup.current_day()
+        local group = InhabitantGroup.new(Type.clockwork, 5)
+        local onset = InhabitantGroup.get_frailty_onset(group)
+        local at_onset = today - math.floor(onset)
+        group[EK.ages] = {[at_onset] = 3, [today] = 2}
+
+        local expected =
+            3 * AgeGroup.get_frailty(at_onset, today, onset) + 2 * AgeGroup.get_frailty(today, today, onset)
+        Assert.is_number_close(InhabitantGroup.get_frailty_sum(group), expected, 1e-9)
+        Assert.less_than(AgeGroup.get_frailty(today, today, onset), 0.1, "the newly hatched should barely count")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Old age diseases are linked to the oldest inhabitants",
+    "inhabitants",
+    function()
+        local count = 0
+        for disease_id in pairs(Diseases.categories[DiseaseCategory.old_age]) do
+            Assert.not_nil(Diseases.values[disease_id])
+            Assert.equals(Diseases.values[disease_id].age_link, AgeLink.oldest)
+            count = count + 1
+        end
+        Assert.greater_than(count, 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.take_random takes the given count",
+    "inhabitants",
+    function()
+        local group = {[10] = 1, [20] = 1, [30] = 1}
+        local taken = AgeGroup.take_random(group, 2)
+
+        Assert.equals(Table.sum(taken), 2)
+        Assert.equals(Table.sum(group), 1)
+        for hatch_day, count in pairs(taken) do
+            Assert.equals(count, 1)
+            Assert.is_nil(group[hatch_day])
+        end
+        Assert.equals(Table.sum(AgeGroup.take_random(group, 5)), 1, "should take at most everyone")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.get_frailty is 1 at the onset and doubles every doubling time",
+    "inhabitants",
+    function()
+        local doubling = InhabitantsConstants.frailty_doubling
+        Assert.is_number_close(AgeGroup.get_frailty(0, 100, 100), 1, 1e-9)
+        Assert.is_number_close(AgeGroup.get_frailty(0, 100 + doubling, 100), 2, 1e-9)
+        Assert.is_number_close(AgeGroup.get_frailty(doubling, 100, 100), 0.5, 1e-9)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.get_frailty_onset is delayed by health and sanity up to the cap",
+    "inhabitants",
+    function()
+        local C = InhabitantsConstants
+        local group = InhabitantGroup.new(Type.clockwork, 1)
+        group[EK.health] = C.frailty_neutral_value
+        group[EK.sanity] = C.frailty_neutral_value
+        Assert.equals(InhabitantGroup.get_frailty_onset(group), C.frailty_onset)
+
+        group[EK.health] = C.frailty_neutral_value + 2
+        Assert.is_number_close(
+            InhabitantGroup.get_frailty_onset(group),
+            C.frailty_onset + 2 * C.frailty_health_shift,
+            1e-9
+        )
+
+        group[EK.health] = C.frailty_shift_cap + 100
+        group[EK.sanity] = C.frailty_shift_cap + 100
+        local capped = C.frailty_shift_cap - C.frailty_neutral_value
+        Assert.is_number_close(
+            InhabitantGroup.get_frailty_onset(group),
+            C.frailty_onset + capped * (C.frailty_health_shift + C.frailty_sanity_shift),
+            1e-9
+        )
     end
 )
 
@@ -323,6 +599,15 @@ Tirislib.Testing.add_test_case(
     function()
         local group = AgeGroup.random_new(50, function() return 25 end)
         Assert.equals(Table.sum(group), 50)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "AgeGroup.random_new keys the rolled ages by hatch day",
+    "inhabitants",
+    function()
+        local group = AgeGroup.random_new(10, function() return 25 end)
+        Assert.equals(group[AgeGroup.current_day() - 25], 10)
     end
 )
 
@@ -615,4 +900,383 @@ Tirislib.Testing.add_test_case(
 
         Assert.equals(Table.sum(taken), 0)
     end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << ImmunityGroup tests >>
+
+-- test-disease-immunity: short immunity after recovery, lifelong immunity from the vaccine
+local IMMUNITY_DISEASE = 99005
+
+--- Returns an ImmunityGroup with the given recovered and vaccinated counts for IMMUNITY_DISEASE.
+local function immunity_group(recovered, vaccinated)
+    local group = ImmunityGroup.new()
+    group.recovered[IMMUNITY_DISEASE] = recovered
+    group.vaccinated[IMMUNITY_DISEASE] = vaccinated
+    return group
+end
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.merge combines both kinds and empties rh",
+    "inhabitants",
+    function()
+        local lh = immunity_group(2, nil)
+        local rh = immunity_group(3, 4)
+
+        ImmunityGroup.merge(lh, rh)
+
+        Assert.equals(lh.recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(lh.vaccinated[IMMUNITY_DISEASE], 4)
+        Assert.is_table_empty(rh.recovered, "rh should be emptied")
+        Assert.is_table_empty(rh.vaccinated, "rh should be emptied")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.merge with keep_rh preserves rh",
+    "inhabitants",
+    function()
+        local lh = ImmunityGroup.new()
+        local rh = immunity_group(3, 4)
+
+        ImmunityGroup.merge(lh, rh, true)
+
+        Assert.equals(lh.recovered[IMMUNITY_DISEASE], 3)
+        Assert.equals(rh.recovered[IMMUNITY_DISEASE], 3)
+        Assert.equals(rh.vaccinated[IMMUNITY_DISEASE], 4)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.take takes the proportional share",
+    "inhabitants",
+    function()
+        local group = immunity_group(10, 4)
+
+        local taken = ImmunityGroup.take(group, 10, 20)
+
+        Assert.equals(taken.recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(taken.vaccinated[IMMUNITY_DISEASE], 2)
+        Assert.equals(group.recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(group.vaccinated[IMMUNITY_DISEASE], 2)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.take never takes more than exists and conserves the total",
+    "inhabitants",
+    function()
+        for _ = 1, 50 do
+            local group = immunity_group(3, nil)
+            local taken = ImmunityGroup.take(group, 7, 10)
+
+            local taken_count = taken.recovered[IMMUNITY_DISEASE] or 0
+            local remaining = group.recovered[IMMUNITY_DISEASE] or 0
+            Assert.equals(taken_count + remaining, 3, "immune people should neither appear nor vanish")
+            Assert.less_than(taken_count, 4, "should not take more than exists")
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.take of everyone takes all immunities",
+    "inhabitants",
+    function()
+        local group = immunity_group(3, 2)
+
+        local taken = ImmunityGroup.take(group, 15, 10)
+
+        Assert.equals(taken.recovered[IMMUNITY_DISEASE], 3)
+        Assert.equals(taken.vaccinated[IMMUNITY_DISEASE], 2)
+        Assert.is_table_empty(group.recovered)
+        Assert.is_table_empty(group.vaccinated)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.subtract errors on incompatible groups",
+    "inhabitants",
+    function()
+        local lh = immunity_group(2, nil)
+        local rh = immunity_group(3, nil)
+
+        Assert.throws(function()
+            ImmunityGroup.subtract(lh, rh)
+        end)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.get_immune sums both kinds and caps at the group size",
+    "inhabitants",
+    function()
+        local group = immunity_group(6, 3)
+
+        Assert.equals(ImmunityGroup.get_immune(group, IMMUNITY_DISEASE, 20), 9)
+        Assert.equals(ImmunityGroup.get_immune(group, IMMUNITY_DISEASE, 5), 5)
+        Assert.equals(ImmunityGroup.get_immune(group, 1, 20), 0)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.grant caps at the group size",
+    "inhabitants",
+    function()
+        local group = immunity_group(4, nil)
+
+        ImmunityGroup.grant(group, "recovered", IMMUNITY_DISEASE, 10, 8)
+
+        Assert.equals(group.recovered[IMMUNITY_DISEASE], 8)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.wane removes temporary immunity but keeps lifelong immunity",
+    "inhabitants",
+    function()
+        local group = immunity_group(10, 10)
+
+        ImmunityGroup.wane(group, 100000)
+
+        Assert.is_nil(group.recovered[IMMUNITY_DISEASE], "temporary immunity should wane")
+        Assert.equals(group.vaccinated[IMMUNITY_DISEASE], 10, "lifelong immunity should never wane")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "ImmunityGroup.wane drops immunities to diseases that grant none",
+    "inhabitants",
+    function()
+        local group = ImmunityGroup.new()
+        group.recovered[1] = 5
+
+        ImmunityGroup.wane(group, 1)
+
+        Assert.is_nil(group.recovered[1])
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << InhabitantGroup immunity tests >>
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.make_sick sickens nobody when every healthy inhabitant is immune",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        local sickened = InhabitantGroup.make_sick(group, IMMUNITY_DISEASE, 5)
+
+        Assert.equals(sickened, 0)
+        Assert.equals(group[EK.diseases][HEALTHY], 10)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.make_sick without immunities sickens like DiseaseGroup.make_sick",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+
+        local sickened = InhabitantGroup.make_sick(group, IMMUNITY_DISEASE, 3)
+
+        Assert.equals(sickened, 3)
+        Assert.equals(group[EK.diseases][IMMUNITY_DISEASE], 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.make_sick never sickens more than the susceptible inhabitants",
+    "inhabitants",
+    function()
+        for _ = 1, 20 do
+            local group = InhabitantGroup.new(TEST_CASTE, 10)
+            ImmunityGroup.grant(group[EK.immunities], "vaccinated", IMMUNITY_DISEASE, 8, 10)
+
+            local sickened = InhabitantGroup.make_sick(group, IMMUNITY_DISEASE, 10)
+
+            Assert.less_than(sickened, 3, "only 2 inhabitants are susceptible")
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.merge and take carry the immunities",
+    "inhabitants",
+    function()
+        local lh = InhabitantGroup.new(TEST_CASTE, 10)
+        local rh = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(rh[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        InhabitantGroup.merge(lh, rh)
+        Assert.equals(lh[EK.immunities].recovered[IMMUNITY_DISEASE], 10)
+        Assert.is_table_empty(rh[EK.immunities].recovered)
+
+        local taken = InhabitantGroup.take(lh, 10)
+        Assert.equals(taken[EK.immunities].recovered[IMMUNITY_DISEASE], 5)
+        Assert.equals(lh[EK.immunities].recovered[IMMUNITY_DISEASE], 5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.take_specific subtracts the given immunities",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 6, 10)
+
+        local taken = InhabitantGroup.take_specific(group, 2, nil, nil, nil, immunity_group(2, nil))
+
+        Assert.equals(taken[EK.immunities].recovered[IMMUNITY_DISEASE], 2)
+        Assert.equals(group[EK.immunities].recovered[IMMUNITY_DISEASE], 4)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << reproduction constants >>
+
+Tirislib.Testing.add_test_case(
+    "The meeting coefficient gives the reference meeting rate in the reference environment",
+    "inhabitants",
+    function()
+        local C = InhabitantsConstants
+        local rate = C.meeting_coefficient * C.reference_social_value ^ C.meeting_exponent
+
+        Assert.is_number_close(rate, C.reference_meeting_rate, 1e-12)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "The conception rate reaches the birth rate for naturally conceived eggs in the reference environment",
+    "inhabitants",
+    function()
+        local C = InhabitantsConstants
+        local genders = C.egg_data[C.egg_fertile].genders
+        local ga = genders[Gender.ga]
+        local eligible_share = ga * math.min(genders[Gender.fale] / ga, genders[Gender.pachin] / ga, 1)
+
+        local meetings_per_cycle = C.reference_meeting_rate * C.ga_reproduction_cycle
+        local chance_per_cycle = 1 - (1 - C.conception_rate) ^ meetings_per_cycle
+        local births_per_tick = eligible_share * chance_per_cycle / C.ga_reproduction_cycle
+
+        Assert.is_number_close(births_per_tick / C.birth_rate, 1, 1e-9)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << vaccination >>
+
+-- test-disease-immunity-2: like test-disease-immunity, for vaccines against two diseases
+local IMMUNITY_DISEASE_2 = 99006
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.get_vaccinable counts the healthy inhabitants susceptible to one of the diseases",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        DiseaseGroup.make_sick(group[EK.diseases], 1, 2)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 6, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE_2, 3, 10)
+
+        Assert.equals(InhabitantGroup.get_vaccinable(group, {IMMUNITY_DISEASE}), 2)
+        Assert.equals(InhabitantGroup.get_vaccinable(group, {IMMUNITY_DISEASE, IMMUNITY_DISEASE_2}), 5)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate grants one vaccinated immunity per dose",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+
+        Assert.is_true(InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE}))
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], 1)
+        Assert.is_nil(group[EK.immunities].recovered[IMMUNITY_DISEASE])
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate refuses when nobody can use the dose",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        Assert.is_false(InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE}))
+        Assert.is_nil(group[EK.immunities].vaccinated[IMMUNITY_DISEASE])
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate against two diseases makes a non-immune huwan immune to both",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+
+        InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE, IMMUNITY_DISEASE_2})
+
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], 1)
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE_2], 1)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "InhabitantGroup.vaccinate against two diseases still helps when one of them is covered",
+    "inhabitants",
+    function()
+        local group = InhabitantGroup.new(TEST_CASTE, 10)
+        ImmunityGroup.grant(group[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        Assert.is_true(InhabitantGroup.vaccinate(group, {IMMUNITY_DISEASE, IMMUNITY_DISEASE_2}))
+        Assert.equals(group[EK.immunities].vaccinated[IMMUNITY_DISEASE_2], 1)
+        Assert.is_nil(group[EK.immunities].vaccinated[IMMUNITY_DISEASE], "nobody is susceptible to the covered disease")
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << maintenance >>
+
+local saved_maintenance
+
+local function save_maintenance_state()
+    saved_maintenance = {
+        enabled = storage.maintenance_enabled,
+        active = storage.active_machine_count,
+        points = storage.caste_points[Type.clockwork],
+        starting = storage.starting_clockwork_points
+    }
+end
+
+local function restore_maintenance_state()
+    storage.maintenance_enabled = saved_maintenance.enabled
+    storage.active_machine_count = saved_maintenance.active
+    storage.caste_points[Type.clockwork] = saved_maintenance.points
+    storage.starting_clockwork_points = saved_maintenance.starting
+end
+
+Tirislib.Testing.add_test_case(
+    "Maintenance points include the startup points and decide whether maintenance is sufficient",
+    "inhabitants",
+    function()
+        storage.maintenance_enabled = true
+        storage.caste_points[Type.clockwork] = 7.5
+        storage.starting_clockwork_points = 10
+
+        Assert.equals(Inhabitants.get_maintenance_points(), 17.5)
+        Assert.equals(Inhabitants.get_maintenance_points(2), 12)
+
+        storage.active_machine_count = 17
+        Assert.is_true(Inhabitants.has_sufficient_maintenance(), "17 machines, 17.5 points")
+        Assert.greater_than(Inhabitants.get_clockwork_bonus(), -1, "no breakdown penalty when sufficient")
+
+        storage.active_machine_count = 18
+        Assert.is_false(Inhabitants.has_sufficient_maintenance(), "18 machines, 17.5 points")
+        Assert.less_than(Inhabitants.get_clockwork_bonus(), 0, "breakdown penalty when insufficient")
+
+        storage.maintenance_enabled = false
+        Assert.is_true(Inhabitants.has_sufficient_maintenance(), "always sufficient when disabled")
+    end,
+    save_maintenance_state,
+    restore_maintenance_state
 )

@@ -323,3 +323,86 @@ Tirislib.Testing.add_test_case(
         Assert.equals(locale[3], {"some.key", "arg"})
     end
 )
+
+---------------------------------------------------------------------------------------------------
+-- << display_rate >>
+
+Tirislib.Testing.add_test_case(
+    "display_rate shows things per minute when it happens at least once a minute",
+    "lib.locales",
+    function()
+        Assert.equals(
+            Locales.display_rate(1 / 3600, "sosciencity.xoperations"),
+            {"sosciencity.rate-per-minute", {"sosciencity.xoperations", 1}}
+        )
+        Assert.equals(
+            Locales.display_rate(2.5 / 3600, "sosciencity.xoperations"),
+            {"sosciencity.rate-per-minute", {"sosciencity.xoperations", 2.5}}
+        )
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "display_rate rounds things per minute to one decimal place",
+    "lib.locales",
+    function()
+        Assert.equals(
+            Locales.display_rate(1.234 / 3600, "sosciencity.xoperations"),
+            {"sosciencity.rate-per-minute", {"sosciencity.xoperations", 1.2}}
+        )
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "display_rate shows zero as things per minute",
+    "lib.locales",
+    function()
+        Assert.equals(
+            Locales.display_rate(0, "sosciencity.xoperations"),
+            {"sosciencity.rate-per-minute", {"sosciencity.xoperations", 0}}
+        )
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "display_rate shows one thing every rough interval when it happens less than once a minute",
+    "lib.locales",
+    function()
+        -- once every 3 minutes and 21 seconds
+        Assert.equals(
+            Locales.display_rate(1 / (201 * 60), "sosciencity.xcases"),
+            {"sosciencity.rate-every", {"sosciencity.xcases", 1}, {"sosciencity.xminutes", 3}}
+        )
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << display_rough_time >>
+
+Tirislib.Testing.add_test_case(
+    "display_rough_time uses seconds below 2 minutes",
+    "lib.locales",
+    function()
+        Assert.equals(Locales.display_rough_time(75 * 60), {"sosciencity.xseconds", 75})
+        Assert.equals(Locales.display_rough_time(119 * 60), {"sosciencity.xseconds", 119})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "display_rough_time uses whole minutes below 2 hours",
+    "lib.locales",
+    function()
+        Assert.equals(Locales.display_rough_time(120 * 60), {"sosciencity.xminutes", 2})
+        Assert.equals(Locales.display_rough_time(201 * 60), {"sosciencity.xminutes", 3})
+        Assert.equals(Locales.display_rough_time(119 * 3600), {"sosciencity.xminutes", 119})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "display_rough_time uses whole hours from 2 hours on",
+    "lib.locales",
+    function()
+        Assert.equals(Locales.display_rough_time(2 * 216000), {"sosciencity.xhours", 2})
+        Assert.equals(Locales.display_rough_time(2.6 * 216000), {"sosciencity.xhours", 3})
+    end
+)

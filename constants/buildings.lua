@@ -20,6 +20,7 @@ local Building = {}
 --- @field auto_name string? name of the auto-naming scheme in AutoNames (see classes/auto-names.lua); omit to skip auto-naming
 --- @field eei boolean? if true, an EEI is registered so the building can consume power
 --- @field inhabitant_count integer? number of inhabitants the building needs to function (shown as a tooltip)
+--- @field recipe_visualisation RecipeVisualisationDefinition? shows what the building is currently working on (crafting machines only)
 
 --- Definition table for a building's workforce
 --- @class WorkforceDefinition
@@ -30,6 +31,13 @@ local Building = {}
 --- @field disease_frequency number disease progress per worker per tick
 --- @field happiness_weight number how much worker happiness affects this building's performance (0 = none, 1 = full effect)
 --- @field noun string? stem for the workforce labels (e.g. "recruits"); overrides the type-level default, which itself falls back to "staff". Requires locale keys <noun>, target-<noun>, show-<noun>, not-enough-<noun> (and sosciencity-util.workforce-<noun> for the entity tooltip)
+
+--- A sprite on top of the building that follows the active recipe
+--- (the atelier's focus corner shows the piece the artists are working on).
+--- Each variant needs sprite prototypes named by Building.get_recipe_visualisation_sprite.
+--- @class RecipeVisualisationDefinition
+--- @field default string variant shown when no recipe is set or the recipe has no variant of its own
+--- @field by_recipe table<string, string> recipe name -> variant
 
 --- The standard range for connections where the huwans are supposed to walk to the entity.
 local range_by_foot = 50
@@ -75,6 +83,20 @@ Building.values = {
             disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
             happiness_weight = 1,
             noun = "artists"
+        },
+        recipe_visualisation = {
+            default = "idle",
+            by_recipe = {
+                ["sketch"] = "sketch",
+                ["mosaic"] = "mosaic",
+                ["painting"] = "painting",
+                ["statue"] = "statue",
+                ["jewellery"] = "jewellery",
+                ["mixtape"] = "mixtape",
+                ["found-art"] = "found-art",
+                ["kinetic-sculpture"] = "kinetic-sculpture",
+                ["novel"] = "novel"
+            }
         }
     },
     ["bloomhouse"] = {
@@ -206,9 +228,34 @@ Building.values = {
             noun = "researchers"
         }
     },
+    ["general-ward"] = {
+        type = Type.general_ward,
+        range = 7,
+        slots = 5,
+        speed = 1 / Time.minute,
+        workforce = {
+            count = 5,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 50 * Unit.kW,
+        eei = true
+    },
     ["gene-clinic"] = {
         type = Type.gene_clinic,
         range = 7,
+        slots = 2,
+        speed = 1 / Time.minute,
+        workforce = {
+            count = 4,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 200 * Unit.kW,
         eei = true
     },
     ["gleam-hq"] = {
@@ -258,7 +305,7 @@ Building.values = {
         type = Type.hospital,
         range = 150,
         slots = 10,
-        speed = 2 / Time.second,
+        speed = 1 / Time.minute,
         workforce = {
             count = 10,
             castes = {Type.plasma},
@@ -301,6 +348,16 @@ Building.values = {
     ["intensive-care-unit"] = {
         type = Type.intensive_care_unit,
         range = 7,
+        slots = 3,
+        speed = 1 / Time.minute,
+        workforce = {
+            count = 8,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 150 * Unit.kW,
         eei = true
     },
     ["kitchen-for-all"] = {
@@ -318,7 +375,7 @@ Building.values = {
         type = Type.improvised_hospital,
         range = 50,
         slots = 3,
-        speed = 0.4 / Time.second,
+        speed = 1 / Time.minute,
         workforce = {
             count = 5,
             castes = {Type.orchid, Type.plasma},
@@ -421,7 +478,18 @@ Building.values = {
     },
     ["psych-ward"] = {
         type = Type.psych_ward,
-        range = 7
+        range = 7,
+        slots = 5,
+        speed = 1 / Time.minute,
+        workforce = {
+            count = 5,
+            castes = {Type.plasma},
+            disease_category = DiseaseCategory.moderate_work,
+            disease_frequency_fully_staffed = 0.1 * Unit.per_minute,
+            happiness_weight = 1
+        },
+        power_usage = 50 * Unit.kW,
+        eei = true
     },
     ["psychology-institute"] = {
         type = Type.manufactory,
@@ -564,7 +632,23 @@ Building.values = {
     ["test-psych-ward"] = {
         type = Type.psych_ward,
         range = 42,
+        slots = 5,
+        speed = 20 / Time.second,
         power_usage = 50 * Unit.kW,
+        eei = true
+    },
+    ["test-psych-ward-no-workforce"] = {
+        type = Type.psych_ward,
+        range = 42,
+        slots = 2,
+        speed = 20 / Time.second,
+        eei = true
+    },
+    ["test-general-ward-no-workforce"] = {
+        type = Type.general_ward,
+        range = 42,
+        slots = 2,
+        speed = 20 / Time.second,
         eei = true
     },
     ["test-night-club"] = {
@@ -735,6 +819,14 @@ Building.values = {
 }
 local buildings = Building.values
 
+--- Logistic modes the cold storage warehouse has a logistic system variant for.
+--- The variants are named like the vanilla chests ("passive-provider-cold-storage-warehouse")
+--- and keep food fresh exactly like the plain warehouse.
+Building.cold_storage_logistic_modes = {"passive-provider", "active-provider", "storage", "buffer", "requester"}
+for _, mode in pairs(Building.cold_storage_logistic_modes) do
+    buildings[mode .. "-cold-storage-warehouse"] = Tirislib.Tables.copy(buildings["cold-storage-warehouse"])
+end
+
 --- Applies unit conversions to a building definition in place.
 --- disease_frequency_fully_staffed: per-minute for full crew to disease_frequency per-worker-per-tick.
 --- @param def BuildingDefinition
@@ -755,9 +847,44 @@ local housing_details = {
     power_usage = 1 * Unit.kW -- Will be set dynamically, depending on the number of inhabitants. This dummy value will assure the eei is spawned upon placement.
 }
 
+--- The maps a recipe visualisation variant can have (as in the sosciencity-blender-tools sprite-data.lua),
+--- with the sprite name suffix and how the control stage draws them.
+Building.recipe_visualisation_maps = {
+    diffuse = {suffix = "", light_mode = "occluder"},
+    glow = {suffix = "-glow", light_mode = "glow"},
+    lightmap = {suffix = "-light", light_mode = "light"}
+}
+
+--- Name of the sprite prototype that shows the given map of a recipe visualisation variant.
+--- @param building string entity name
+--- @param variant string
+--- @param map string key of Building.recipe_visualisation_maps
+--- @return string
+function Building.get_recipe_visualisation_sprite(building, variant, map)
+    return building .. "-recipe-visualisation-" .. variant .. Building.recipe_visualisation_maps[map].suffix
+end
+
+--- Returns all variants of a recipe visualisation (the default and every recipe's variant).
+--- @param visualisation RecipeVisualisationDefinition
+--- @return table<string, boolean> set of variant names
+function Building.get_recipe_visualisation_variants(visualisation)
+    local variants = {[visualisation.default] = true}
+    for _, variant in pairs(visualisation.by_recipe) do
+        variants[variant] = true
+    end
+    return variants
+end
+
 --- Returns the Custom Building specification of this entry or an empty table if this entry isn't an actual Custom Building.
 function Building.get(entry)
-    local name = entry[EK.name]
+    return Building.get_by_name(entry[EK.name])
+end
+
+--- Returns the Custom Building specification of the entity with this name, houses included,
+--- or an empty table if it isn't an actual Custom Building.
+--- @param name string entity name
+--- @return table
+function Building.get_by_name(name)
     return buildings[name] or (houses[name] and housing_details) or {}
 end
 

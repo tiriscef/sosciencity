@@ -36,5 +36,5 @@ end
 --- @param caste_id integer
 --- @return boolean
 function HousingCore.allowes_caste(house, caste_id)
-    return house.room_count >= castes[caste_id].required_room_count
+    return Housing.allows_caste(house, castes[caste_id])
 end

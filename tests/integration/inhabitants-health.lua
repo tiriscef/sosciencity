@@ -92,7 +92,7 @@ Tirislib.Testing.add_test_case(
             inventory.insert({name = item_name, count = count})
         end
 
-        Register.update_entry(hospital_entry, game.tick + 100)
+        Helpers.update_entry(hospital_entry)
 
         Assert.greater_than(#hospital_entry[EK.slots], 0, "hospital should have claimed slots for sick inhabitants")
     end,

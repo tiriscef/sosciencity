@@ -18,10 +18,24 @@ Tirislib.Technology.create {
 }
 
 Tirislib.Technology.create {
+    name = "salt-pond",
+    icon = "__sosciencity-graphics__/graphics/technology/salt-pond.png",
+    icon_size = 128,
+    prerequisites = {"open-environment-farming"},
+    unit = {
+        count = 15,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
     name = "fermentation",
     icon = "__sosciencity-graphics__/graphics/technology/fermentation.png",
     icon_size = 256,
-    prerequisites = {"open-environment-farming"},
+    prerequisites = {"salt-pond"},
     unit = {
         count = 32,
         ingredients = {
@@ -35,7 +49,7 @@ Tirislib.Technology.create {
     name = "ovosynthesis",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"fermentation", "upbringing"},
+    prerequisites = {"fermentation", "explore-local-ecosystem"},
     unit = {
         count = 60,
         ingredients = {

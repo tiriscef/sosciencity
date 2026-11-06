@@ -200,24 +200,52 @@ Tirislib.Testing.add_test_case(
 -- << ages >>
 
 Tirislib.Testing.add_test_case(
-    "update_ages shifts ages after a week passes",
+    "Ages grow with time without any update",
     "integration|integration.inhabitants",
     function()
         local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
 
-        -- set last_age_shift far in the past (more than a week ago)
-        entry[EK.last_age_shift] = game.tick - 2 * Time.nauvis_week
+        -- new inhabitants are hatched today
+        local today = AgeGroup.current_day()
+        Assert.equals(entry[EK.ages][today], 10, "new inhabitants should be keyed by today's hatch day")
+        Assert.equals(AgeGroup.get_age(today), 0, "new inhabitants should be age 0")
 
-        -- all inhabitants start at age 0
-        local ages_before = Tirislib.Tables.copy(entry[EK.ages])
-
-        Inhabitants.update_ages(entry)
-
-        -- ages should have shifted
-        Assert.unequal(entry[EK.ages], ages_before, "ages should have changed after a week")
+        -- the same hatch day reports an older age on a later day
+        Assert.equals(AgeGroup.get_age(today, today + 12), 12, "age should be days since the hatch day")
     end,
     setup,
     teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "migrate_ages converts week ages to hatch days",
+    "integration|integration.inhabitants",
+    function()
+        local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
+        local homeless = storage.homeless[Type.clockwork]
+        local today = AgeGroup.current_day()
+
+        -- old format: age in weeks, last shift 3 days ago
+        entry[EK.ages] = {[0] = 4, [2] = 6}
+        entry[EK.last_age_shift] = game.tick - 3 * Time.nauvis_day
+        homeless[EK.ages] = {[5] = 2}
+
+        Inhabitants.migrate_ages()
+
+        Assert.equals(entry[EK.ages][today - 3], 4, "age 0 weeks + 3 days since the shift")
+        Assert.equals(entry[EK.ages][today - 17], 6, "age 2 weeks + 3 days since the shift")
+        Assert.is_nil(entry[EK.last_age_shift], "the shift marker should be removed")
+        Assert.equals(homeless[EK.ages][today - 35], 2, "homeless never aged, 5 weeks = 35 days")
+
+        -- houses are marked by EK.last_age_shift, so a second call leaves them alone
+        Inhabitants.migrate_ages()
+        Assert.equals(entry[EK.ages][today - 17], 6, "converted houses should not be converted again")
+    end,
+    setup,
+    function()
+        storage.homeless[Type.clockwork][EK.ages] = AgeGroup.new(storage.homeless[Type.clockwork][EK.inhabitants])
+        teardown()
+    end
 )
 
 ---------------------------------------------------------------------------------------------------

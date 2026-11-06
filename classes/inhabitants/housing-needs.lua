@@ -4,19 +4,22 @@ local HappinessFactor = require("enums.happiness-factor")
 local HappinessSummand = require("enums.happiness-summand")
 local HealthFactor = require("enums.health-factor")
 local HealthSummand = require("enums.health-summand")
+local NutritionTag = require("enums.nutrition-tag")
 local RenderingType = require("enums.rendering-type")
 local SanitySummand = require("enums.sanity-summand")
 local Type = require("enums.type")
 local WarningType = require("enums.warning-type")
 
 local Castes = require("constants.castes")
+local DrinkingWater = require("constants.drinking-water")
 local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 
 local castes = Castes.values
 local food_values = Food.values
-local required_nutrition_tags = InhabitantsConstants.required_nutrition_tags
+local water_values = DrinkingWater.values
 local nutrition_tag_effects = InhabitantsConstants.nutrition_tag_effects
+local all_nutrition_tags = Tirislib.Tables.values(NutritionTag)
 local log_fluid = Statistics.log_fluid
 local assembling_machine_output = defines.inventory.crafter_output
 
@@ -87,24 +90,24 @@ local function update_covered_tags(diet, covered_tags)
     end
 end
 
---- Returns true if all required nutrition tags are covered.
-local function all_tags_covered(covered_tags)
-    for _, tag in pairs(required_nutrition_tags) do
+--- Returns true if all of the given nutrition tags are covered.
+local function all_tags_covered(covered_tags, tags)
+    for _, tag in pairs(tags) do
         if not covered_tags[tag] then return false end
     end
 
     return true
 end
 
---- Iterates food_list and adds each food to diet if it covers at least one uncovered tag.
+--- Iterates food_list and adds each food to diet if it covers at least one uncovered tag of wanted_tags.
 --- Updates covered_tags in place. Returns the number of foods added.
-local function add_tag_covering_foods(food_list, diet, covered_tags)
+local function add_tag_covering_foods(food_list, diet, covered_tags, wanted_tags)
     local added = 0
     for _, item_name in pairs(food_list) do
-        if all_tags_covered(covered_tags) then break end
+        if all_tags_covered(covered_tags, wanted_tags) then break end
         local food = food_values[item_name]
-        for tag in pairs(food.nutrition_tags) do
-            if not covered_tags[tag] then
+        for _, tag in pairs(wanted_tags) do
+            if food.nutrition_tags[tag] and not covered_tags[tag] then
                 diet[#diet + 1] = item_name
                 -- mark all of this food's tags as covered
                 for t in pairs(food.nutrition_tags) do
@@ -118,16 +121,17 @@ local function add_tag_covering_foods(food_list, diet, covered_tags)
     return added
 end
 
---- Minimalist: covers nutrition tags using favored foods first, then neutral, then disliked as a
---- last resort. No fill step - eating only what is nutritionally necessary.
+--- Health-conscious: covers every nutrition tag it can get from favored foods first, then neutral.
+--- Disliked foods are only eaten as a last resort to cover essential tags. No fill step - every
+--- food has to bring a tag.
 --- @return string[] diet, integer disliked_count, table covered_tags
-local function build_diet_minimalist(favored, neutral, disliked)
+local function build_diet_health_conscious(favored, neutral, disliked, essential_tags)
     local diet = {}
     local covered_tags = {}
 
-    add_tag_covering_foods(favored, diet, covered_tags)
-    add_tag_covering_foods(neutral, diet, covered_tags)
-    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags)
+    add_tag_covering_foods(favored, diet, covered_tags, all_nutrition_tags)
+    add_tag_covering_foods(neutral, diet, covered_tags, all_nutrition_tags)
+    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags, essential_tags)
 
     return diet, disliked_count, covered_tags
 end
@@ -135,7 +139,7 @@ end
 --- Mixed: includes all favored foods, covers missing tags from neutral then disliked,
 --- then fills to minimum_food_count with the most appealing neutral foods not yet in the diet.
 --- @return string[] diet, integer disliked_count, table covered_tags
-local function build_diet_mixed(favored, neutral, disliked, minimum_food_count)
+local function build_diet_mixed(favored, neutral, disliked, minimum_food_count, essential_tags)
     local diet = {}
     local covered_tags = {}
 
@@ -144,8 +148,8 @@ local function build_diet_mixed(favored, neutral, disliked, minimum_food_count)
     end
     update_covered_tags(diet, covered_tags)
 
-    add_tag_covering_foods(neutral, diet, covered_tags)
-    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags)
+    add_tag_covering_foods(neutral, diet, covered_tags, essential_tags)
+    local disliked_count = add_tag_covering_foods(disliked, diet, covered_tags, essential_tags)
 
     if #diet < minimum_food_count then
         local diet_set = Tirislib.Tables.to_lookup(diet)
@@ -184,18 +188,18 @@ local function build_diet_foodie(favored, neutral)
     return diet, 0, covered_tags
 end
 
---- Constructs the diet for the given eating behavior.
---- @param behavior EatingBehavior
+--- Constructs the diet for the caste's eating behavior.
+--- @param caste CasteDefinition
 --- @param favored string[] foods with favored taste
 --- @param neutral string[] foods with neutral taste
 --- @param disliked string[] foods with disliked taste
---- @param minimum_food_count integer
 --- @return string[] diet, integer disliked_count, table covered_tags
-local function build_diet(behavior, favored, neutral, disliked, minimum_food_count)
-    if behavior == EatingBehavior.minimalist then
-        return build_diet_minimalist(favored, neutral, disliked)
+local function build_diet(caste, favored, neutral, disliked)
+    local behavior = caste.eating_behavior
+    if behavior == EatingBehavior.health_conscious then
+        return build_diet_health_conscious(favored, neutral, disliked, caste.essential_nutrition_tags)
     elseif behavior == EatingBehavior.mixed then
-        return build_diet_mixed(favored, neutral, disliked, minimum_food_count)
+        return build_diet_mixed(favored, neutral, disliked, caste.minimum_food_count, caste.essential_nutrition_tags)
     elseif behavior == EatingBehavior.foodie then
         return build_diet_foodie(favored, neutral)
     else
@@ -206,8 +210,8 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << fallback diet (food distress) >>
 
---- Fallback for minimalists: steps through taste tiers and returns the first non-empty one.
-local function build_fallback_diet_minimalist(favored, neutral, disliked)
+--- Fallback for health-conscious eaters: steps through taste tiers and returns the first non-empty one.
+local function build_fallback_diet_health_conscious(favored, neutral, disliked)
     if #favored > 0 then return favored end
     if #neutral > 0 then return neutral end
     return disliked
@@ -238,8 +242,8 @@ end
 --- Builds a fallback diet when the primary behavior produced an empty result but food is available.
 --- @return string[] diet
 local function build_fallback_diet(behavior, favored, neutral, disliked, minimum_food_count)
-    if behavior == EatingBehavior.minimalist then
-        return build_fallback_diet_minimalist(favored, neutral, disliked)
+    if behavior == EatingBehavior.health_conscious then
+        return build_fallback_diet_health_conscious(favored, neutral, disliked)
     elseif behavior == EatingBehavior.mixed then
         return build_fallback_diet_mixed(disliked, minimum_food_count)
     elseif behavior == EatingBehavior.foodie then
@@ -259,6 +263,9 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     local health_factors = entry[EK.health_factors]
     local sanity = entry[EK.sanity_summands]
 
+    entry[EK.conception_rate_factor] = 1
+    entry[EK.food_poisoning_risk] = 0
+
     if #diet == 0 then
         happiness_factors[HappinessFactor.hunger] = InhabitantsConstants.starvation.happiness_factor
         health_factors[HealthFactor.hunger] = InhabitantsConstants.starvation.health_factor
@@ -271,6 +278,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     local favored_taste = caste.favored_taste
     local least_favored_taste = caste.least_favored_taste
     local intrinsic_healthiness = 0
+    local poisoning_risk = 0
     local favored_food_count = 0
     local taste_counts = {}
     local appeals = {}
@@ -279,6 +287,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     for _, item_name in pairs(diet) do
         local food = food_values[item_name]
         intrinsic_healthiness = intrinsic_healthiness + food.healthiness
+        poisoning_risk = poisoning_risk + food.poisoning_risk
         local taste = food.taste_category
         taste_counts[taste] = (taste_counts[taste] or 0) + 1
         appeals[#appeals + 1] = food.appeal
@@ -289,6 +298,7 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
     end
 
     intrinsic_healthiness = intrinsic_healthiness / #diet
+    entry[EK.food_poisoning_risk] = poisoning_risk / #diet
 
     -- top-3 appeal average
     table.sort(appeals, function(a, b) return a > b end)
@@ -329,8 +339,11 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
             happiness[HappinessSummand.food_variety] = (-variety) * caste.happiness_per_missing_food
         end
         if caste.happiness_per_nutrition_tag ~= 0 then
+            -- health-conscious eaters enjoy every covered tag, the others only their essential ones
+            local rewarded_tags = (caste.eating_behavior == EatingBehavior.health_conscious)
+                and all_nutrition_tags or caste.essential_nutrition_tags
             local nutrition_happiness = 0
-            for _, tag in pairs(required_nutrition_tags) do
+            for _, tag in pairs(rewarded_tags) do
                 if covered_tags[tag] then
                     nutrition_happiness = nutrition_happiness + caste.happiness_per_nutrition_tag
                 end
@@ -341,15 +354,24 @@ local function add_diet_effects(entry, diet, caste, disliked_count, covered_tags
         end
     end
 
-    -- health
+    -- nutrition tags: every covered tag gives its bonuses, every missing essential tag its malus
     local nutrients_health = 0
-    for _, tag in pairs(required_nutrition_tags) do
+    local nutrients_sanity = 0
+    local conception_rate_factor = 1
+    for tag in pairs(covered_tags) do
         local effect = nutrition_tag_effects[tag]
-        if covered_tags[tag] then
-            nutrients_health = nutrients_health + effect.bonus
-        elseif effect.malus ~= 0 then
-            nutrients_health = nutrients_health + effect.malus
+        nutrients_health = nutrients_health + effect.health_bonus
+        nutrients_sanity = nutrients_sanity + effect.sanity_bonus
+        conception_rate_factor = conception_rate_factor * effect.conception_rate_factor
+    end
+    for _, tag in pairs(caste.essential_nutrition_tags) do
+        if not covered_tags[tag] then
+            nutrients_health = nutrients_health + nutrition_tag_effects[tag].health_malus
         end
+    end
+    entry[EK.conception_rate_factor] = conception_rate_factor
+    if nutrients_sanity ~= 0 then
+        sanity[SanitySummand.nutrients] = nutrients_sanity
     end
     if nutrients_health ~= 0 then
         health[HealthSummand.nutrients] = nutrients_health
@@ -375,8 +397,7 @@ function Inhabitants.get_diet_info(entry)
     local available_foods = get_available_foods(inventories)
     local favored, neutral, disliked = classify_by_taste(available_foods, caste)
 
-    local diet, _, covered_tags = build_diet(
-        caste.eating_behavior, favored, neutral, disliked, caste.minimum_food_count)
+    local diet, _, covered_tags = build_diet(caste, favored, neutral, disliked)
 
     local is_distress = false
     if #diet == 0 and #available_foods > 0 then
@@ -411,8 +432,7 @@ function Inhabitants.evaluate_diet(entry, delta_ticks)
     local available_foods = get_available_foods(inventories)
     local favored, neutral, disliked = classify_by_taste(available_foods, caste)
 
-    local diet, disliked_count, covered_tags = build_diet(
-        caste.eating_behavior, favored, neutral, disliked, caste.minimum_food_count)
+    local diet, disliked_count, covered_tags = build_diet(caste, favored, neutral, disliked)
 
     local is_distress = false
     if #diet == 0 and #available_foods > 0 then
@@ -445,9 +465,11 @@ end
 --- @param amount number
 --- @return number satisfaction a factor from 0 to 1 how much of the given amound was actually consumed
 --- @return number quality the average quality of the consumes drinking water
+--- @return number contamination the average contamination of the consumed drinking water
 local function consume_water(distributers, amount)
     local to_consume = amount
     local quality = 0
+    local contamination = 0
 
     for _, distributer in pairs(distributers) do
         local water_name = distributer[EK.water_name]
@@ -457,6 +479,7 @@ local function consume_water(distributers, amount)
         local consumed = removed and removed.amount or 0
         log_fluid(water_name, -consumed)
         quality = quality + consumed * distributer[EK.water_quality]
+        contamination = contamination + consumed * water_values[water_name].contamination
         to_consume = to_consume - consumed
 
         if to_consume < 0.0001 then
@@ -464,7 +487,7 @@ local function consume_water(distributers, amount)
         end
     end
 
-    return (amount - to_consume) / amount, quality / amount
+    return (amount - to_consume) / amount, quality / amount, contamination / amount
 end
 
 --- Evaluates if the house has access to drinking water, consumes it, and evaluates the effects.
@@ -487,9 +510,10 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
 
     local water_to_consume = castes[entry[EK.type]].water_demand * entry[EK.inhabitants] * delta_ticks
     local satisfaction, quality
+    local contamination = 0
 
     if water_to_consume > 0 then
-        satisfaction, quality = consume_water(distributers, water_to_consume)
+        satisfaction, quality, contamination = consume_water(distributers, water_to_consume)
 
         if satisfaction < 0.1 then
             Subentities.add_common_sprite(entry, RenderingType.water_warning)
@@ -524,4 +548,5 @@ function Inhabitants.evaluate_water(entry, delta_ticks, happiness_factors, healt
     end
 
     entry[EK.has_water] = satisfaction >= 0.9
+    entry[EK.water_contamination] = contamination
 end

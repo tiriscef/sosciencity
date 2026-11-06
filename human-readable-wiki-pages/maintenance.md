@@ -6,7 +6,9 @@ In Sosciencity you need mechanics that maintain your machines. That's the job of
 
 - When you don't have enough maintenance work for the size of your factory, some of your machines will be in a broken-down state at any given time. At the worst, up to 60% of your factory can be offline simultaneously.
 
-- Broken machines turn off entirely - they don't they don't produce anything and stop drawing power. The breakdown rotates between machines over time as Clockwork mechanics go around and fix the broken ones. But as long as you don't have enough Clockwork Points, your machines will take turns breaking down
+- Broken machines turn off entirely - they don't produce anything and stop drawing power. The breakdown rotates between machines over time as Clockwork mechanics go around and fix the broken ones. But as long as you don't have enough Clockwork Points, your machines will take turns breaking down.
+
+- The mechanics work through your factory area by area, so the breakdowns are not spread evenly. For a few minutes, one area can have several times as many broken machines as the percentage in the city info suggests, while the rest of your factory runs fine. That percentage is the average over your whole factory.
 
 - In the beginning of the game this can be tough. So don't build big until you have a healthy settlement going.
 

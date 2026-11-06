@@ -15,10 +15,4 @@ TypeGroup.social_places = {
     Type.kitchen_for_all
 }
 
-TypeGroup.hospital_complements = {
-    Type.pharmacy,
-    Type.psych_ward,
-    Type.intensive_care_unit
-}
-
 return TypeGroup

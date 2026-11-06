@@ -9,36 +9,48 @@ local function get_tech_name(item_name)
 end
 
 --- Technologies that are researched by aquiring a given item.
+--- The prerequisites are the technologies that first make the item obtainable, so that the trigger technology
+--- doesn't show up in the tech tree before the player can do anything about it. When what the trigger technology
+--- unlocks needs more than the item (necrofall farming needs the bloomhouse), that technology is a prerequisite too.
+--- Items that the player only gets by mining an entity name it as `mined_from`, because mining doesn't count as crafting.
+--- Crops that get identified follow the base game's pattern: the identification recipe comes with a research, the
+--- trigger tech for the identified crop then unlocks what the player can do with it (farming, processing).
 Unlocks.by_item_acquisition = {
-    [get_tech_name("apple")] = "apple",
-    [get_tech_name("avocado")] = "avocado",
-    [get_tech_name("bell-pepper")] = "bell-pepper",
-    [get_tech_name("birdsnake")] = "birdsnake",
-    [get_tech_name("bonesnake")] = "bonesnake",
-    [get_tech_name("boofish")] = "boofish",
-    [get_tech_name("cabar")] = "cabar",
-    [get_tech_name("caddle")] = "caddle",
-    [get_tech_name("cherry")] = "cherry",
-    [get_tech_name("dodkopus")] = "dodkopus",
-    [get_tech_name("eggplant")] = "eggplant",
-    [get_tech_name("fupper")] = "fupper",
-    [get_tech_name("hellfin")] = "hellfin",
-    [get_tech_name("lemon")] = "lemon",
-    [get_tech_name("necrofall")] = "necrofall",
-    [get_tech_name("nan-swan")] = "nan-swan",
-    [get_tech_name("olive")] = "olive",
-    [get_tech_name("orange")] = "orange",
-    [get_tech_name("petunial")] = "petunial",
-    [get_tech_name("phytofall-blossom")] = "phytofall-blossom",
-    [get_tech_name("potato")] = "potato",
-    [get_tech_name("primal-quacker")] = "primal-quacker",
-    [get_tech_name("river-horse")] = "river-horse",
-    [get_tech_name("sugar-beet")] = "sugar-beet",
-    [get_tech_name("sugar-cane")] = "sugar-cane",
-    [get_tech_name("shellscript")] = "shellscript",
-    [get_tech_name("squibbel")] = "miniscule-squibbel",
-    [get_tech_name("tomato")] = "tomato",
-    [get_tech_name("warnal")] = "warnal"
+    [get_tech_name("apple")] = {item = "apple", prerequisites = {"ortrot-variations"}},
+    [get_tech_name("avocado")] = {item = "avocado", prerequisites = {"genetic-neogenesis"}},
+    [get_tech_name("bell-pepper")] = {item = "bell-pepper", prerequisites = {"nightshades"}},
+    [get_tech_name("bonesnake")] = {item = "bonesnake", prerequisites = {"hunting-fishing"}},
+    [get_tech_name("brutal-pumpkin")] = {item = "brutal-pumpkin", prerequisites = {"explore-alien-flora-2"}},
+    [get_tech_name("cabar")] = {item = "cabar", prerequisites = {"hunting-fishing"}},
+    [get_tech_name("caddle")] = {item = "caddle", prerequisites = {"hunting-fishing"}},
+    [get_tech_name("cherry")] = {item = "cherry", prerequisites = {"genetic-neogenesis"}},
+    [get_tech_name("chromafall")] = {item = "chromafall", prerequisites = {"explore-alien-flora-1"}},
+    [get_tech_name("dodkopus")] = {item = "dodkopus", prerequisites = {"advanced-fishing"}},
+    [get_tech_name("eggplant")] = {item = "eggplant", prerequisites = {"nightshades"}},
+    [get_tech_name("hardcorn-punk")] = {item = "hardcorn-punk", prerequisites = {"food-processing"}},
+    [get_tech_name("heliofall")] = {item = "heliofall", prerequisites = {"explore-alien-flora-1"}},
+    [get_tech_name("hellfin")] = {item = "hellfin", prerequisites = {"advanced-fishing"}},
+    [get_tech_name("lemon")] = {item = "lemon", prerequisites = {"zetorn-variations"}},
+    [get_tech_name("manok")] = {item = "manok", prerequisites = {"explore-alien-flora-1"}},
+    [get_tech_name("nan-swan")] = {item = "nan-swan", prerequisites = {"hunting-fishing"}},
+    [get_tech_name("necrofall")] = {item = "necrofall", prerequisites = {"composting-silo", "indoor-growing"}, mined_from = "necrofall-circle"},
+    [get_tech_name("olive")] = {item = "olive", prerequisites = {"genetic-neogenesis"}},
+    [get_tech_name("orange")] = {item = "orange", prerequisites = {"zetorn-variations"}},
+    [get_tech_name("ortrot")] = {item = "ortrot", prerequisites = {"explore-alien-flora-2"}},
+    [get_tech_name("petunial")] = {item = "petunial", prerequisites = {"advanced-fishing"}},
+    [get_tech_name("phytofall-blossom")] = {item = "phytofall-blossom", prerequisites = {"orchid-caste"}},
+    [get_tech_name("potato")] = {item = "potato", prerequisites = {"nightshades"}},
+    [get_tech_name("primal-quacker")] = {item = "primal-quacker", prerequisites = {"hunting-fishing"}},
+    [get_tech_name("river-horse")] = {item = "river-horse", prerequisites = {"hunting-fishing"}},
+    [get_tech_name("shellscript")] = {item = "shellscript", prerequisites = {"advanced-fishing"}},
+    [get_tech_name("squibbel")] = {item = "miniscule-squibbel", prerequisites = {"advanced-fishing"}},
+    [get_tech_name("sugar-beet")] = {item = "sugar-beet", prerequisites = {"genetic-neogenesis"}},
+    [get_tech_name("sugar-cane")] = {item = "sugar-cane", prerequisites = {"genetic-neogenesis"}},
+    [get_tech_name("tello-fruit")] = {item = "tello-fruit", prerequisites = {"explore-alien-flora-1"}},
+    [get_tech_name("tomato")] = {item = "tomato", prerequisites = {"nightshades"}},
+    [get_tech_name("warnal")] = {item = "warnal", prerequisites = {"advanced-fishing"}},
+    [get_tech_name("weird-berry")] = {item = "weird-berry", prerequisites = {"explore-alien-flora-1"}},
+    [get_tech_name("zetorn")] = {item = "zetorn", prerequisites = {"explore-alien-flora-1"}}
 }
 
 --- Technologies that are gated by one or more conditions.
@@ -58,6 +70,16 @@ Unlocks.gated_technologies = {
         }
     }
 }
+
+--- The research trigger of an item acquisition technology: crafting the item, or mining the entity it comes from.
+--- @param details table entry of Unlocks.by_item_acquisition
+--- @return table research_trigger
+function Unlocks.get_research_trigger(details)
+    if details.mined_from then
+        return {type = "mine-entity", entities = {details.mined_from}}
+    end
+    return {type = "craft-item", item = details.item, count = 1}
+end
 
 --- Name getter function for the data stage. Checks if the name is registered for the control stage.
 --- (Registering it automatically doesn't work, as the Lua state will reset before entering the control stage.)

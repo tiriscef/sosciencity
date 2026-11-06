@@ -94,12 +94,13 @@ Tirislib.Technology.create {
     name = "animal-husbandry",
     icon = "__sosciencity-graphics__/graphics/technology/animal-husbandry.png",
     icon_size = 128,
-    prerequisites = {"architecture-2"},
+    prerequisites = {"architecture-2", "chemical-science-pack"},
     unit = {
         count = 151,
         ingredients = {
             {"automation-science-pack", 1},
-            {"logistic-science-pack", 1}
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
         },
         time = 30
     }

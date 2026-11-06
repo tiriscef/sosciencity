@@ -12,12 +12,16 @@ Visualisation = {}
     --------------------------------
     storage.mouseover_highlights: table
         [player_index]: table of render_ids
+
+    storage.placement_highlights: table
+        [player_index]: table of render objects, shown while the player holds a building with a site report
 ]]
 -- local often used globals for ridiculous performance gains
 
 local try_get = Register.try_get
 local types = Types.definitions
-local get_building_details = require("constants.buildings").get
+local Buildings = require("constants.buildings")
+local get_building_details = Buildings.get
 
 local max = math.max
 local get_box_size = Tirislib.Utils.get_box_size
@@ -34,6 +38,7 @@ end
 
 function Visualisation.init()
     storage.mouseover_highlights = {}
+    storage.placement_highlights = {}
 
     set_locals()
 end
@@ -401,6 +406,131 @@ function Visualisation.remove_mouseover_highlights(player_id)
     end
 
     highlights[player_id] = nil
+end
+
+---------------------------------------------------------------------------------------------------
+-- << placement visualisations >>
+
+local site_report_ok_color = {r = 0.7, g = 1, b = 0.7}
+local site_report_bad_color = {r = 1, g = 0.6, b = 0.3}
+local site_report_line_height = 0.6
+local site_report_time_to_live = 10 * 60
+
+--- Draws the site report on top of the entity for the given player.
+--- Reports on ghosts stay until the ghost is gone, reports on real buildings fade after a few seconds.
+--- @param player LuaPlayer
+--- @param entity LuaEntity
+--- @param lines table array of {caption = LocalisedString, ok = boolean}
+function Visualisation.show_site_report(player, entity, lines)
+    local time_to_live = entity.type ~= "entity-ghost" and site_report_time_to_live or nil
+    local top = -0.5 * site_report_line_height * (#lines - 1)
+
+    for i, line in pairs(lines) do
+        rendering.draw_text {
+            text = line.caption,
+            target = {entity = entity, offset = {0, top + (i - 1) * site_report_line_height}},
+            surface = entity.surface,
+            players = {player.index},
+            color = line.ok and site_report_ok_color or site_report_bad_color,
+            alignment = "center",
+            vertical_alignment = "middle",
+            scale = 1.25,
+            time_to_live = time_to_live
+        }
+    end
+end
+
+-- only buildings this close to the player get highlighted, so a big city doesn't draw thousands of objects
+local placement_highlight_distance = 200
+
+local function is_near(entity, surface_index, position)
+    if entity.surface.index ~= surface_index then
+        return false
+    end
+    local entity_position = entity.position
+    return math.abs(entity_position.x - position.x) < placement_highlight_distance and
+        math.abs(entity_position.y - position.y) < placement_highlight_distance
+end
+
+local function highlight_free_workers(player, house, created_highlights)
+    local entity = house[EK.entity]
+    local free = Inhabitants.get_employable_count(house)
+
+    created_highlights[#created_highlights + 1] =
+        rendering.draw_text {
+        text = {"sosciencity.site-free-workers", free},
+        target = entity,
+        surface = entity.surface,
+        players = {player.index},
+        color = free > 0 and site_report_ok_color or Color.grey,
+        alignment = "center",
+        vertical_alignment = "middle",
+        scale = 1.5
+    }
+end
+
+--- Removes the placement highlights of the given player.
+--- @param player_index integer
+function Visualisation.remove_placement_highlights(player_index)
+    local all_highlights = storage.placement_highlights
+    local renders = all_highlights and all_highlights[player_index]
+    if not renders then
+        return
+    end
+
+    for _, render in pairs(renders) do
+        if render.valid then
+            render.destroy()
+        end
+    end
+    all_highlights[player_index] = nil
+end
+
+--- Shows what matters for placing the given building while the player holds it: the ranges of the buildings
+--- of the same type, which it would compete with, and the free workers of the houses that could staff it.
+--- Removes the previous placement highlights first. Does nothing else for buildings without a site report.
+--- @param player LuaPlayer
+--- @param entity_name string? name of the held building, nil if the player holds none
+function Visualisation.update_placement_highlights(player, entity_name)
+    local player_index = player.index
+    Visualisation.remove_placement_highlights(player_index)
+
+    if not entity_name then
+        return
+    end
+    local building_details = Buildings.get_by_name(entity_name)
+    local _type = building_details.type
+    if not _type or not Entity.has_site_report_builder(_type) then
+        return
+    end
+
+    local created_highlights = {}
+    local surface_index = player.surface.index
+    local position = player.position
+
+    for _, entry in Register.iterate_type(_type) do
+        local entity = entry[EK.entity]
+        if entity.valid and is_near(entity, surface_index, position) then
+            highlight_range(player_index, entry, get_building_details(entry), created_highlights)
+        end
+    end
+
+    local workforce = building_details.workforce
+    if workforce then
+        for _, caste in pairs(workforce.castes) do
+            for _, house in Register.iterate_type(caste) do
+                local entity = house[EK.entity]
+                if entity.valid and is_near(entity, surface_index, position) then
+                    highlight_free_workers(player, house, created_highlights)
+                end
+            end
+        end
+    end
+
+    if #created_highlights > 0 then
+        storage.placement_highlights = storage.placement_highlights or {}
+        storage.placement_highlights[player_index] = created_highlights
+    end
 end
 
 return Visualisation

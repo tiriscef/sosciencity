@@ -8,6 +8,7 @@ local SanitySummand = require("enums.sanity-summand")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
+local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
@@ -18,16 +19,16 @@ local Assert = Tirislib.Testing.Assert
 -- sosciencity-debug) so that balancing changes to real food values don't break behavior tests.
 --
 -- Test castes and their relevant taste preferences:
---   Clockwork  minimalist  umami=favored   spicy=disliked
---   Ember      mixed       fruity=favored  salty=disliked
---   Orchid     foodie      fruity=favored  salty=disliked
+--   Clockwork  health-conscious  umami=favored   spicy=disliked
+--   Ember      mixed             fruity=favored  salty=disliked
+--   Orchid     foodie            fruity=favored  salty=disliked
 --
 -- Test food items:
 --   test-food-fruity-carb         fruity   carb                    appeal 6
 --   test-food-fruity-fat          fruity   fat                     appeal 6
 --   test-food-neutral-protein-fat neutral  protein+fat             appeal 7
 --   test-food-neutral-carb        neutral  carb                    appeal 5
---   test-food-salty-protein       salty    protein                 appeal 6
+--   test-food-salty-protein       salty    protein                 appeal 6   poisoning risk 0.6
 --   test-food-spicy-alltags       spicy    protein+fat+carb        appeal 8
 --   test-food-umami-carb          umami    carb                    appeal 5
 --   test-food-umami-notag         umami    (none)                  appeal 5
@@ -59,12 +60,12 @@ local function run_evaluate_diet(house, delta_ticks)
 end
 
 local tag_effects = InhabitantsConstants.nutrition_tag_effects
-local carb_bonus = tag_effects[NutritionTag.carb_rich].bonus
-local protein_bonus = tag_effects[NutritionTag.protein_rich].bonus
-local fat_bonus = tag_effects[NutritionTag.fat_rich].bonus
-local protein_malus = tag_effects[NutritionTag.protein_rich].malus
-local fat_malus = tag_effects[NutritionTag.fat_rich].malus
-local carb_malus = tag_effects[NutritionTag.carb_rich].malus
+local carb_bonus = tag_effects[NutritionTag.carb_rich].health_bonus
+local protein_bonus = tag_effects[NutritionTag.protein_rich].health_bonus
+local fat_bonus = tag_effects[NutritionTag.fat_rich].health_bonus
+local protein_malus = tag_effects[NutritionTag.protein_rich].health_malus
+local fat_malus = tag_effects[NutritionTag.fat_rich].health_malus
+local carb_malus = tag_effects[NutritionTag.carb_rich].health_malus
 local full_tag_bonus = carb_bonus + protein_bonus + fat_bonus
 
 local clockwork = Castes.values[Type.clockwork]
@@ -154,13 +155,13 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << minimalist behavior >>
+-- << health-conscious behavior >>
 
--- Clockwork minimalist + test-food-neutral-carb (neutral for Clockwork, carb).
--- Minimalist covers carb tag with the only available food.
+-- Clockwork health-conscious + test-food-neutral-carb (neutral for Clockwork, carb).
+-- Health-conscious eater covers carb tag with the only available food.
 
 Tirislib.Testing.add_test_case(
-    "evaluate_diet gives minimalist a nutrition tag happiness bonus per covered tag",
+    "evaluate_diet gives health-conscious eater a nutrition tag happiness bonus per covered tag",
     "integration|integration.inhabitants",
     function()
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
@@ -169,44 +170,44 @@ Tirislib.Testing.add_test_case(
         local hs, _, _, _, _ = run_evaluate_diet(house, Time.minute)
 
         Assert.equals(hs[HappinessSummand.nutrition_tags], clockwork.happiness_per_nutrition_tag,
-            "minimalist should get happiness_per_nutrition_tag per covered required tag")
+            "health-conscious eater should get happiness_per_nutrition_tag per covered tag")
         Assert.is_nil(hs[HappinessSummand.taste],
-            "minimalist should not receive a favored-food happiness bonus (test-food-neutral-carb is not umami)")
+            "health-conscious eater should not receive a favored-food happiness bonus (test-food-neutral-carb is not umami)")
     end,
     setup,
     teardown
 )
 
 Tirislib.Testing.add_test_case(
-    "evaluate_diet includes favored-taste food in minimalist diet when it covers a tag",
+    "evaluate_diet includes favored-taste food in health-conscious diet when it covers a tag",
     "integration|integration.inhabitants",
     function()
         -- test-food-umami-carb: umami = favored for Clockwork, carb_rich.
-        -- Minimalist picks favored-taste foods first for tag coverage.
+        -- Health-conscious eater picks favored-taste foods first for tag coverage.
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
         Inventories.get_chest_inventory(house).insert {name = "test-food-umami-carb", count = 100}
 
         local hs, hf, ths, _, _ = run_evaluate_diet(house, Time.minute)
 
         Assert.is_nil(hf[HappinessFactor.hunger],
-            "minimalist should eat test-food-umami-carb and not starve")
+            "health-conscious eater should eat test-food-umami-carb and not starve")
         Assert.equals(ths[HealthSummand.nutrients], carb_bonus + protein_malus + fat_malus,
             "carb tag should be covered by test-food-umami-carb, protein and fat tags apply malus")
         Assert.equals(hs[HappinessSummand.nutrition_tags], clockwork.happiness_per_nutrition_tag,
-            "minimalist should get nutrition tag happiness for the covered carb tag")
+            "health-conscious eater should get nutrition tag happiness for the covered carb tag")
         Assert.is_nil(hs[HappinessSummand.taste],
-            "minimalist should not receive a favored-food happiness bonus")
+            "health-conscious eater should not receive a favored-food happiness bonus")
     end,
     setup,
     teardown
 )
 
 Tirislib.Testing.add_test_case(
-    "evaluate_diet forces minimalist to eat disliked food when it is the only way to cover tags",
+    "evaluate_diet forces health-conscious eater to eat disliked food when it is the only way to cover tags",
     "integration|integration.inhabitants",
     function()
         -- test-food-spicy-alltags: spicy = disliked for Clockwork, covers all 3 tags.
-        -- No neutral/favored foods available; minimalist must use disliked.
+        -- No neutral/favored foods available; health-conscious eater must use disliked.
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
         Inventories.get_chest_inventory(house).insert {name = "test-food-spicy-alltags", count = 100}
 
@@ -221,6 +222,103 @@ Tirislib.Testing.add_test_case(
     end,
     setup,
     teardown
+)
+
+-- Clockwork with essential_nutrition_tags temporarily reduced to carb only, so protein and fat
+-- become non-essential tags.
+
+local original_clockwork_tags = clockwork.essential_nutrition_tags
+
+local function setup_carb_only_clockwork()
+    setup()
+    clockwork.essential_nutrition_tags = {NutritionTag.carb_rich}
+end
+
+local function teardown_carb_only_clockwork()
+    clockwork.essential_nutrition_tags = original_clockwork_tags
+    teardown()
+end
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet makes health-conscious eaters eat neutral food for non-essential tags",
+    "integration|integration.inhabitants",
+    function()
+        -- test-food-umami-carb (favored) covers carb; test-food-neutral-protein-fat adds the
+        -- non-essential protein and fat tags, so it belongs in the diet too.
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        local inventory = Inventories.get_chest_inventory(house)
+        inventory.insert {name = "test-food-umami-carb", count = 100}
+        inventory.insert {name = "test-food-neutral-protein-fat", count = 100}
+
+        local hs, _, ths, _, _ = run_evaluate_diet(house, Time.minute)
+
+        Assert.equals(#Inhabitants.get_diet_info(house).diet, 2,
+            "health-conscious eater should add the neutral food for its non-essential tags")
+        Assert.equals(ths[HealthSummand.nutrients], full_tag_bonus,
+            "every covered tag should give its health bonus, essential or not")
+        Assert.equals(hs[HappinessSummand.nutrition_tags], 3 * clockwork.happiness_per_nutrition_tag,
+            "health-conscious eater should get nutrition tag happiness for non-essential tags too")
+    end,
+    setup_carb_only_clockwork,
+    teardown_carb_only_clockwork
+)
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet applies the sanity, health and conception effects of huwan-specific nutrients",
+    "integration|integration.inhabitants",
+    function()
+        -- test-food-neutral-huwan-nutrients carries lucidin, purpurin and ovolin, none of them essential.
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        local inventory = Inventories.get_chest_inventory(house)
+        inventory.insert {name = "test-food-umami-carb", count = 100}
+        inventory.insert {name = "test-food-neutral-huwan-nutrients", count = 100}
+
+        local hs, _, ths, _, ss = run_evaluate_diet(house, Time.minute)
+
+        local huwan_tags = {NutritionTag.lucidin_rich, NutritionTag.purpurin_rich, NutritionTag.ovolin_rich}
+        local expected_health = carb_bonus + protein_malus + fat_malus
+        local expected_sanity = 0
+        local expected_conception_factor = 1
+        for _, tag in pairs(huwan_tags) do
+            expected_health = expected_health + tag_effects[tag].health_bonus
+            expected_sanity = expected_sanity + tag_effects[tag].sanity_bonus
+            expected_conception_factor = expected_conception_factor * tag_effects[tag].conception_rate_factor
+        end
+
+        Assert.equals(ths[HealthSummand.nutrients], expected_health,
+            "huwan-specific nutrients should add their health bonuses")
+        Assert.equals(ss[SanitySummand.nutrients], expected_sanity,
+            "huwan-specific nutrients should add their sanity bonuses")
+        Assert.equals(house[EK.conception_rate_factor], expected_conception_factor,
+            "huwan-specific nutrients should multiply the conception rate")
+        Assert.equals(hs[HappinessSummand.nutrition_tags], 4 * clockwork.happiness_per_nutrition_tag,
+            "health-conscious eater should get nutrition tag happiness for carb and the three huwan nutrients")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet keeps health-conscious eaters from eating disliked food for non-essential tags",
+    "integration|integration.inhabitants",
+    function()
+        -- test-food-spicy-alltags is disliked and would only add the non-essential protein and fat tags.
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        local inventory = Inventories.get_chest_inventory(house)
+        inventory.insert {name = "test-food-umami-carb", count = 100}
+        inventory.insert {name = "test-food-spicy-alltags", count = 100}
+
+        local hs, _, ths, _, _ = run_evaluate_diet(house, Time.minute)
+
+        Assert.equals(Inhabitants.get_diet_info(house).diet, {"test-food-umami-carb"},
+            "disliked food should not be eaten for non-essential tags")
+        Assert.is_nil(hs[HappinessSummand.disliked_food],
+            "no disliked food should be in the diet")
+        Assert.equals(ths[HealthSummand.nutrients], carb_bonus,
+            "missing non-essential tags should not cost health")
+    end,
+    setup_carb_only_clockwork,
+    teardown_carb_only_clockwork
 )
 
 ---------------------------------------------------------------------------------------------------
@@ -296,7 +394,7 @@ Tirislib.Testing.add_test_case(
     teardown
 )
 
--- Clockwork minimalist + test-food-spicy-alltags only.
+-- Clockwork health-conscious + test-food-spicy-alltags only.
 -- Only food is spicy = disliked for Clockwork → dominant = disliked → -4 sanity.
 -- No favored food in diet → favorite_taste not set.
 
@@ -366,12 +464,12 @@ Tirislib.Testing.add_test_case(
 ---------------------------------------------------------------------------------------------------
 -- << food distress fallback >>
 
--- Clockwork minimalist + test-food-umami-notag (umami = favored, no tags).
+-- Clockwork health-conscious + test-food-umami-notag (umami = favored, no tags).
 -- Primary diet is empty (no tag-covering food). Food is available → distress fallback fires.
 -- Fallback: eat all favored → [test-food-umami-notag]. is_distress = true.
 
 Tirislib.Testing.add_test_case(
-    "evaluate_diet applies food_distress factor when minimalist can only find no-tag food",
+    "evaluate_diet applies food_distress factor when health-conscious eater can only find no-tag food",
     "integration|integration.inhabitants",
     function()
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
@@ -410,6 +508,50 @@ Tirislib.Testing.add_test_case(
             "disliked_food happiness summand should be suppressed in distress state")
         Assert.is_nil(hf[HappinessFactor.hunger],
             "hunger factor should not fire when fallback provides food")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << food poisoning risk >>
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet stores the average poisoning risk of the diet",
+    "integration|integration.inhabitants",
+    function()
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        local inventory = Inventories.get_chest_inventory(house)
+        inventory.insert {name = "test-food-umami-carb", count = 100}
+        inventory.insert {name = "test-food-salty-protein", count = 100}
+
+        local diet = Inhabitants.get_diet_info(house).diet
+        local expected_risk = 0
+        for _, item_name in pairs(diet) do
+            expected_risk = expected_risk + Food.values[item_name].poisoning_risk
+        end
+        expected_risk = expected_risk / #diet
+
+        run_evaluate_diet(house, Time.minute)
+
+        Assert.greater_than(expected_risk, 0, "the diet should contain the risky test food")
+        Assert.equals(house[EK.food_poisoning_risk], expected_risk,
+            "the poisoning risk should be the average over the diet")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "evaluate_diet resets the poisoning risk when no food is available",
+    "integration|integration.inhabitants",
+    function()
+        local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 5)
+        house[EK.food_poisoning_risk] = 0.5
+
+        run_evaluate_diet(house, Time.minute)
+
+        Assert.equals(house[EK.food_poisoning_risk], 0, "without food there should be no poisoning risk")
     end,
     setup,
     teardown

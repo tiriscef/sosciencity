@@ -6,6 +6,6 @@ In the beginning you can donate blood by yourself at the cost of some health poi
 
 But as a seasoned Factorio player, you surely want to avoid having to do this manually all the time. The key to automation is [technology=transfusion-medicine]. This allows your huwans to donate blood for you in a nearby hospital or med bay. 
 
-Only healthy huwans will donate blood. How often they do this depends on their Health. The blood donation needs **10 operations** on the side of the hospital.
+Only healthy huwans will donate blood. How often they do this depends on their Health. The blood donation needs **1 operation** on the side of the hospital.
 
 

@@ -32,7 +32,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "clockwork-hq"},
     max_health = 200,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal-large",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
@@ -53,7 +53,6 @@ Tirislib.Entity.create {
     energy_usage = "250kW",
     energy_source = {
         type = "burner",
-        usage_priority = "secondary-input",
         emissions_per_minute = {pollution = 1},
         fuel_inventory_size = 1,
         smoke = {
@@ -62,7 +61,6 @@ Tirislib.Entity.create {
                 frequency = 15,
                 north_position = {3.75, -9.5},
                 starting_vertical_speed = 0.08,
-                slow_down_factor = 1,
                 starting_frame_deviation = 60
             }
         }

@@ -8,13 +8,29 @@ local function create_animal_farm(entry)
 end
 Register.set_entity_creation_handler(Type.animal_farm, create_animal_farm)
 
+--- Recipe categories that keep animals. Animal farms can also run other recipes (e.g. water plants in the aquafarm).
+local husbandry_categories = {
+    ["sosciencity-animal-farming"] = true,
+    ["sosciencity-water-animal-farming"] = true
+}
+
+local function is_husbandry_recipe(recipe)
+    for _, category in pairs(recipe.categories) do
+        if husbandry_categories[category] then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function update_animal_farm(entry)
     local entity = entry[EK.entity]
     local recipe = entity.get_recipe()
     local houses_animals =
         recipe ~= nil and
         entity.status == defines.entity_status.working and
-        Tirislib.String.begins_with(recipe.name, "sos-husbandry-")
+        is_husbandry_recipe(recipe)
     local housed_in_the_past = entry[EK.houses_animals]
 
     if houses_animals and not housed_in_the_past then

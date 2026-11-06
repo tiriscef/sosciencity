@@ -12,8 +12,7 @@ Tirislib.Fluid.batch_create(
         max_temperature = 100,
         base_color = {r = 0.151, g = 0.483, b = 0.933},
         flow_color = {r = 0.151, g = 0.483, b = 0.933},
-        subgroup = "sosciencity-growth-media",
-        unlock = ""
+        subgroup = "sosciencity-growth-media"
     }
 )
 

@@ -1,3 +1,4 @@
+local AgeLink = require("enums.age-link")
 local DeathCause = require("enums.death-cause")
 local EK = require("enums.entry-key")
 local MoveCause = require("enums.move-cause")
@@ -5,6 +6,7 @@ local Type = require("enums.type")
 
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 --- Static class that handles the behaviour of the people.
@@ -73,6 +75,8 @@ local dice_rolls = Utils.dice_rolls
 local shuffle = Tirislib.Arrays.shuffle
 local weighted_average = Utils.weighted_average
 local random = math.random
+local coin_flips = Utils.coin_flips
+local occurrence_probability = Utils.occurrence_probability
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -117,6 +121,49 @@ function Inhabitants.init()
     Inhabitants.init_housing_environment()
 
     set_locals()
+end
+
+--- Gives the inhabitant groups of saves from before immunities existed an empty ImmunityGroup.
+--- Call during on_configuration_changed, before entries get copied.
+function Inhabitants.migrate_immunities()
+    for _, entry in pairs(storage.register) do
+        if entry[EK.diseases] and not entry[EK.immunities] then
+            entry[EK.immunities] = ImmunityGroup.new()
+        end
+    end
+
+    for _, group in pairs(storage.homeless) do
+        group[EK.immunities] = group[EK.immunities] or ImmunityGroup.new()
+    end
+end
+
+--- Converts the AgeGroups of saves from before ages were keyed by hatch day. Those were keyed by age in
+--- nauvis weeks, and houses shifted them every week (EK.last_age_shift). Homeless groups never aged.<br>
+--- Called by the 0.2.6 migration script, which the engine runs once per save - homeless groups have no marker of
+--- their own, so a second call would age them again. Also runs on new games, where it finds nothing to convert.
+function Inhabitants.migrate_ages()
+    local today = AgeGroup.current_day()
+
+    local function convert(ages, days_since_shift)
+        local converted = {}
+        for weeks, count in pairs(ages) do
+            local hatch_day = today - 7 * weeks - days_since_shift
+            converted[hatch_day] = (converted[hatch_day] or 0) + count
+        end
+        return converted
+    end
+
+    for _, entry in pairs(storage.register) do
+        local last_shift = entry[EK.last_age_shift]
+        if entry[EK.ages] and last_shift then
+            entry[EK.ages] = convert(entry[EK.ages], floor((game.tick - last_shift) / Time.nauvis_day))
+            entry[EK.last_age_shift] = nil
+        end
+    end
+
+    for _, group in pairs(storage.homeless) do
+        group[EK.ages] = convert(group[EK.ages], 0)
+    end
 end
 
 --- Sets local references during on_load
@@ -227,6 +274,7 @@ function DiseaseGroup.subtract(lh, rh)
 end
 
 --- Tries to makes the given number of people sick with the given disease. Returns the number of people that were actually sickened.
+--- Ignores immunities - use InhabitantGroup.make_sick for inhabitants that can be immune.
 --- @param group DiseaseGroup
 --- @param disease_id DiseaseID
 --- @param count integer
@@ -241,24 +289,36 @@ function DiseaseGroup.make_sick(group, disease_id, count)
 end
 local make_sick = DiseaseGroup.make_sick
 
+--- Rolls random diseases of the given category and applies them with the given sicken function.
+--- @param sicken function (target, disease_id, count) -> number of people actually sickened
+--- @param target DiseaseGroup|InhabitantGroup
+--- @param disease_category DiseaseCategory
+--- @param count integer
+--- @param actual_count integer?
+--- @param suppress_logging boolean?
+local function sicken_randomly(sicken, target, disease_category, count, actual_count, suppress_logging)
+    actual_count = min(count, actual_count or 20)
+
+    local rolled_diseases = dice_rolls(Diseases.categories[disease_category], count, actual_count, true)
+
+    for disease_id, rolled_count in pairs(rolled_diseases) do
+        local sickened = sicken(target, disease_id, rolled_count)
+
+        if not suppress_logging and sickened > 0 then
+            Communication.report_diseased(disease_id, sickened, Diseases.disease_causes[disease_category])
+        end
+    end
+end
+
 --- Tries to make the given number of people sick with random diseases of the given category.
+--- Ignores immunities - use InhabitantGroup.make_sick_randomly for inhabitants that can be immune.
 --- @param group DiseaseGroup
 --- @param disease_category DiseaseCategory
 --- @param count integer
 --- @param actual_count integer?
 --- @param suppress_logging boolean?
 function DiseaseGroup.make_sick_randomly(group, disease_category, count, actual_count, suppress_logging)
-    actual_count = min(count, actual_count or 20)
-
-    local rolled_diseases = dice_rolls(Diseases.categories[disease_category], count, actual_count, true)
-
-    for disease_id, rolled_count in pairs(rolled_diseases) do
-        local sickened = make_sick(group, disease_id, rolled_count)
-
-        if not suppress_logging and sickened > 0 then
-            Communication.report_diseased(disease_id, sickened, Diseases.disease_causes[disease_category])
-        end
-    end
+    sicken_randomly(make_sick, group, disease_category, count, actual_count, suppress_logging)
 end
 
 --- Tries to cure the given number of people of the given disease. Returns the number of people that were actually cured.
@@ -285,44 +345,72 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << inhabitant ages >>
 
---- Object class for holding the Ages of an InhabitantGroup
+--- Object class for holding the Ages of an InhabitantGroup.<br>
+--- Keys are hatch days (nauvis days since the start of the game), values the count of inhabitants hatched on
+--- that day. Keys are absolute, so groups can be merged without adjustment and never need to be shifted.
 --- @class AgeGroup
 AgeGroup = {}
 
+--- Returns the current day, in nauvis days since the start of the game.
+--- @return integer
+function AgeGroup.current_day()
+    return floor(game.tick / Time.nauvis_day)
+end
+
+--- Returns the age in nauvis days of the inhabitants hatched on the given day.
+--- @param hatch_day integer
+--- @param today integer? the current day, to avoid recalculating it in loops
+--- @return integer
+function AgeGroup.get_age(hatch_day, today)
+    return (today or AgeGroup.current_day()) - hatch_day
+end
+
+--- Returns the frailty of the inhabitants hatched on the given day. It is 1 at the onset age and doubles every
+--- InhabitantsConstants.frailty_doubling days, so it is negligible for young inhabitants.
+--- @param hatch_day integer
+--- @param today integer
+--- @param onset number age in nauvis days at which the frailty is 1, see InhabitantGroup.get_frailty_onset
+--- @return number
+function AgeGroup.get_frailty(hatch_day, today, onset)
+    return 2 ^ ((today - hatch_day - onset) / InhabitantsConstants.frailty_doubling)
+end
+
 --- Returns a new AgeGroup table with fixed ages.
 --- @param count integer
---- @param age integer?
+--- @param age integer? age in nauvis days, defaults to 0
 function AgeGroup.new(count, age)
     local ret = {}
 
     if count > 0 then
-        ret[age or 0] = count
+        ret[AgeGroup.current_day() - (age or 0)] = count
     end
 
     return ret
 end
 
+-- immigration is disabled, so these ages aren't tuned to anything
 local function get_immigrant_age()
     local r1 = random() ^ 2
     local r2 = (random() < 0.5) and 1 or -1
 
-    return round(50 + r1 * r2 * 30)
+    return round(7 * (50 + r1 * r2 * 30))
 end
 
 --- Returns a new AgeGroup table with random ages.
 --- @param count integer
---- @param age_function function
+--- @param age_function function returns an age in nauvis days
 function AgeGroup.random_new(count, age_function)
     local ret = {}
 
     if count > 0 then
+        local today = AgeGroup.current_day()
         local rolls = min(count, 10)
         local count_per_roll = floor(count / rolls)
         local modulo = count % rolls
 
         for i = 1, rolls do
-            local rolled = age_function()
-            ret[rolled] = (ret[rolled] or 0) + count_per_roll + (i <= modulo and 1 or 0)
+            local hatch_day = today - age_function()
+            ret[hatch_day] = (ret[hatch_day] or 0) + count_per_roll + (i <= modulo and 1 or 0)
         end
     end
 
@@ -341,8 +429,8 @@ end
 --- @param rh AgeGroup
 --- @param keep_rh boolean?
 function AgeGroup.merge(lh, rh, keep_rh)
-    for age, count in pairs(rh) do
-        lh[age] = (lh[age] or 0) + count
+    for hatch_day, count in pairs(rh) do
+        lh[hatch_day] = (lh[hatch_day] or 0) + count
     end
 
     if not keep_rh then
@@ -350,7 +438,7 @@ function AgeGroup.merge(lh, rh, keep_rh)
     end
 end
 
---- Takes the given count of people from the given age group and returns the age group of the taken people.
+--- Takes the given count of people from the given AgeGroup and returns the AgeGroup of the taken people.
 --- @param group AgeGroup
 --- @param to_take integer
 --- @param total_count integer?
@@ -363,7 +451,7 @@ function AgeGroup.take(group, to_take, total_count)
 
     while to_take > 0 do
         local made_progress = false
-        for age, current_count in pairs(group) do
+        for hatch_day, current_count in pairs(group) do
             local percentage_to_take = to_take / total_count
             local current_take = min(current_count, to_take, ceil(percentage_to_take * current_count))
 
@@ -374,8 +462,8 @@ function AgeGroup.take(group, to_take, total_count)
             total_count = total_count - current_take
             to_take = to_take - current_take
 
-            ret[age] = (ret[age] or 0) + current_take
-            group[age] = (current_count ~= current_take) and current_count - current_take or nil
+            ret[hatch_day] = (ret[hatch_day] or 0) + current_take
+            group[hatch_day] = (current_count ~= current_take) and current_count - current_take or nil
 
             if to_take == 0 then
                 return ret
@@ -387,30 +475,106 @@ function AgeGroup.take(group, to_take, total_count)
     return ret
 end
 
---- Subtracts the age counts in rh from lh. Errors if lh has fewer people of any age than rh.
+--- Takes the given count of people at random from the given AgeGroup and returns the AgeGroup of the taken people.
+--- Unlike AgeGroup.take, every person has the same chance to be taken, even when only a few are taken.
+--- @param group AgeGroup
+--- @param to_take integer
+--- @param total_count integer?
+--- @return AgeGroup
+function AgeGroup.take_random(group, to_take, total_count)
+    total_count = total_count or Tables.sum(group)
+    to_take = min(to_take, total_count)
+
+    local ret = {}
+    for _ = 1, to_take do
+        local hatch_day = Tables.pick_random_key_weighted(group, total_count)
+        local count = group[hatch_day]
+        ret[hatch_day] = (ret[hatch_day] or 0) + 1
+        group[hatch_day] = (count > 1) and count - 1 or nil
+        total_count = total_count - 1
+    end
+
+    return ret
+end
+
+--- Takes the given count of people from the oldest or youngest end of the given AgeGroup and returns the
+--- AgeGroup of the taken people.
+--- @param group AgeGroup
+--- @param to_take integer
+--- @param link AgeLink which end to take from
+--- @return AgeGroup
+function AgeGroup.take_extreme(group, to_take, link)
+    local hatch_days = Tables.get_keyset(group)
+    if link == AgeLink.oldest then
+        table.sort(hatch_days)
+    else
+        table.sort(hatch_days, function(a, b) return a > b end)
+    end
+
+    local ret = {}
+    for _, hatch_day in pairs(hatch_days) do
+        if to_take <= 0 then
+            break
+        end
+
+        local current_count = group[hatch_day]
+        local current_take = min(current_count, to_take)
+        if current_take > 0 then
+            ret[hatch_day] = current_take
+            to_take = to_take - current_take
+        end
+        group[hatch_day] = (current_count ~= current_take) and current_count - current_take or nil
+    end
+
+    return ret
+end
+
+--- Takes the ages of people with the given diseases. People with an age-linked disease are taken from the
+--- matching end of the AgeGroup, the rest proportionally. Returns the AgeGroup of the taken people.
+--- @param group AgeGroup
+--- @param diseases DiseaseGroup diseases of the taken people
+--- @param to_take integer
+--- @param total_count integer? count of people in the AgeGroup
+--- @return AgeGroup
+function AgeGroup.take_for_diseases(group, diseases, to_take, total_count)
+    total_count = total_count or Tables.sum(group)
+
+    local oldest = 0
+    local youngest = 0
+    for disease_id, count in pairs(diseases) do
+        local link = disease_id ~= HEALTHY and Diseases.values[disease_id].age_link
+        if link == AgeLink.oldest then
+            oldest = oldest + count
+        elseif link == AgeLink.youngest then
+            youngest = youngest + count
+        end
+    end
+
+    if oldest + youngest == 0 then
+        return AgeGroup.take(group, to_take, total_count)
+    end
+
+    local ret = AgeGroup.take_extreme(group, min(oldest, to_take), AgeLink.oldest)
+    AgeGroup.merge(ret, AgeGroup.take_extreme(group, min(youngest, to_take - Tables.sum(ret)), AgeLink.youngest))
+
+    local linked_count = Tables.sum(ret)
+    AgeGroup.merge(ret, AgeGroup.take(group, to_take - linked_count, total_count - linked_count))
+
+    return ret
+end
+
+--- Subtracts the counts in rh from lh. Errors if lh has fewer people of any hatch day than rh.
 --- @param lh AgeGroup
 --- @param rh AgeGroup
 function AgeGroup.subtract(lh, rh)
-    for age, count in pairs(rh) do
-        local new_count = lh[age] - count
+    for hatch_day, count in pairs(rh) do
+        local new_count = lh[hatch_day] - count
 
         if new_count < 0 then
             error("Sosciencity tried to subtract two incompatible AgeGroup objects.")
         end
 
-        lh[age] = (new_count > 0) and new_count or nil
-    end
-end
-
---- Shifts all ages in the group forward by the given time increment.
---- @param group AgeGroup
---- @param time integer
-function AgeGroup.shift(group, time)
-    local copy = Tables.copy(group)
-    Tables.empty(group)
-
-    for age, count in pairs(copy) do
-        group[age + time] = count
+        lh[hatch_day] = (new_count > 0) and new_count or nil
     end
 end
 
@@ -504,6 +668,145 @@ function GenderGroup.subtract(lh, rh)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- << inhabitant immunities >>
+
+--- Object class for holding the immunities of an InhabitantGroup.<br>
+--- Holds one count table per immunity kind: (disease_id, count of immune people)-pairs.
+--- Each count is a subset of the group, so the counts of different diseases overlap.
+--- @class ImmunityGroup
+ImmunityGroup = {}
+
+--- Kinds of immunity, mapped to the disease field with their waning rate per tick.
+ImmunityGroup.kinds = {
+    recovered = "immunity_waning_rate",
+    vaccinated = "vaccine_immunity_waning_rate"
+}
+local immunity_kinds = ImmunityGroup.kinds
+
+--- Returns a new ImmunityGroup without any immune people.
+--- @return ImmunityGroup
+function ImmunityGroup.new()
+    return {recovered = {}, vaccinated = {}}
+end
+local new_immunity_group = ImmunityGroup.new
+
+--- Merges the right hand group into the left hand group. If keep_rh is falsy, the right hand group gets emptied.
+--- @param lh ImmunityGroup
+--- @param rh ImmunityGroup
+--- @param keep_rh boolean?
+function ImmunityGroup.merge(lh, rh, keep_rh)
+    for kind in pairs(immunity_kinds) do
+        local lh_counts = lh[kind]
+        local rh_counts = rh[kind]
+
+        for disease_id, count in pairs(rh_counts) do
+            lh_counts[disease_id] = (lh_counts[disease_id] or 0) + count
+        end
+
+        if not keep_rh then
+            Tables.empty(rh_counts)
+        end
+    end
+end
+
+--- Takes the immunities of the given count of people out of the given group and returns them as a new group.
+--- Every count loses its proportional share, rounded randomly so that the expected value is exact.
+--- @param group ImmunityGroup
+--- @param to_take integer
+--- @param total_count integer number of people in the InhabitantGroup
+--- @return ImmunityGroup
+function ImmunityGroup.take(group, to_take, total_count)
+    local ret = new_immunity_group()
+    if total_count <= 0 or to_take <= 0 then
+        return ret
+    end
+    local share = min(1, to_take / total_count)
+
+    for kind in pairs(immunity_kinds) do
+        local counts = group[kind]
+        local taken_counts = ret[kind]
+
+        for disease_id, count in pairs(counts) do
+            local exact = count * share
+            local taken = floor(exact)
+            if random() < exact - taken then
+                taken = taken + 1
+            end
+            taken = min(taken, count)
+
+            if taken > 0 then
+                taken_counts[disease_id] = taken
+                counts[disease_id] = (count ~= taken) and count - taken or nil
+            end
+        end
+    end
+
+    return ret
+end
+
+--- Subtracts the immunity counts in rh from lh. Errors if lh has fewer immune people than rh.
+--- @param lh ImmunityGroup
+--- @param rh ImmunityGroup
+function ImmunityGroup.subtract(lh, rh)
+    for kind in pairs(immunity_kinds) do
+        local lh_counts = lh[kind]
+
+        for disease_id, count in pairs(rh[kind]) do
+            local new_count = (lh_counts[disease_id] or 0) - count
+
+            if new_count < 0 then
+                error("Sosciencity tried to subtract two incompatible ImmunityGroup objects.")
+            end
+
+            lh_counts[disease_id] = (new_count > 0) and new_count or nil
+        end
+    end
+end
+
+--- Returns the number of people that are immune to the given disease.
+--- @param group ImmunityGroup
+--- @param disease_id DiseaseID
+--- @param inhabitants integer number of people in the InhabitantGroup
+--- @return integer
+function ImmunityGroup.get_immune(group, disease_id, inhabitants)
+    return min(inhabitants, (group.recovered[disease_id] or 0) + (group.vaccinated[disease_id] or 0))
+end
+
+--- Makes the given number of people immune to the given disease.
+--- @param group ImmunityGroup
+--- @param kind string key of ImmunityGroup.kinds
+--- @param disease_id DiseaseID
+--- @param count integer
+--- @param inhabitants integer number of people in the InhabitantGroup
+function ImmunityGroup.grant(group, kind, disease_id, count, inhabitants)
+    local counts = group[kind]
+    local new_count = min(inhabitants, (counts[disease_id] or 0) + count)
+    counts[disease_id] = (new_count > 0) and new_count or nil
+end
+
+--- Lets the immunities wane over the given time.
+--- @param group ImmunityGroup
+--- @param delta_ticks integer
+function ImmunityGroup.wane(group, delta_ticks)
+    for kind, rate_field in pairs(immunity_kinds) do
+        local counts = group[kind]
+
+        for disease_id, count in pairs(counts) do
+            local disease = Diseases.values[disease_id]
+            local rate = disease and disease[rate_field]
+
+            if not rate then
+                -- the disease no longer grants this kind of immunity
+                counts[disease_id] = nil
+            elseif rate > 0 then
+                local lost = coin_flips(occurrence_probability(rate, delta_ticks), count, 5)
+                counts[disease_id] = (count ~= lost) and count - lost or nil
+            end
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------------------
 -- << inhabitant groups >>
 
 --- Object class for holding groups of inhabitants.
@@ -523,8 +826,9 @@ local DEFAULT_SANITY = 10
 --- @param diseases DiseaseGroup?
 --- @param genders GenderGroup?
 --- @param ages AgeGroup?
+--- @param immunities ImmunityGroup?
 --- @return InhabitantGroup
-function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, genders, ages)
+function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, genders, ages, immunities)
     count = count or 0
 
     return {
@@ -535,7 +839,8 @@ function InhabitantGroup.new(caste, count, happiness, health, sanity, diseases, 
         [EK.sanity] = sanity or DEFAULT_SANITY,
         [EK.diseases] = diseases or new_disease_group(count),
         [EK.genders] = genders or GenderGroup.new_immigrants(count, caste),
-        [EK.ages] = ages or AgeGroup.new(count)
+        [EK.ages] = ages or AgeGroup.new(count),
+        [EK.immunities] = immunities or new_immunity_group()
     }
 end
 local new_group = InhabitantGroup.new
@@ -555,7 +860,8 @@ function InhabitantGroup.new_immigrant_group(caste, count)
         [EK.sanity] = DEFAULT_SANITY,
         [EK.diseases] = new_disease_group(count),
         [EK.genders] = GenderGroup.new_immigrants(count, caste),
-        [EK.ages] = AgeGroup.random_new(count, get_immigrant_age)
+        [EK.ages] = AgeGroup.random_new(count, get_immigrant_age),
+        [EK.immunities] = new_immunity_group()
     }
 end
 
@@ -570,6 +876,7 @@ function InhabitantGroup.empty(group)
     group[EK.diseases] = new_disease_group(0)
     group[EK.genders] = GenderGroup.new()
     group[EK.ages] = AgeGroup.new(0)
+    group[EK.immunities] = new_immunity_group()
 end
 
 --- Adds the necessary data so this house can also work as an InhabitantGroup.
@@ -609,6 +916,7 @@ function InhabitantGroup.merge(lh, rh, keep_rh, allow_caste_mismatch)
     DiseaseGroup.merge(lh[EK.diseases], rh[EK.diseases], keep_rh)
     AgeGroup.merge(lh[EK.ages], rh[EK.ages], keep_rh)
     GenderGroup.merge(lh[EK.genders], rh[EK.genders], keep_rh)
+    ImmunityGroup.merge(lh[EK.immunities], rh[EK.immunities], keep_rh)
 
     if not keep_rh then
         InhabitantGroup.empty(rh)
@@ -633,7 +941,8 @@ function InhabitantGroup.take(group, count)
         group[EK.sanity],
         DiseaseGroup.take(group[EK.diseases], taken_count, existing_count),
         GenderGroup.take(group[EK.genders], taken_count, existing_count),
-        AgeGroup.take(group[EK.ages], taken_count, existing_count)
+        AgeGroup.take(group[EK.ages], taken_count, existing_count),
+        ImmunityGroup.take(group[EK.immunities], taken_count, existing_count)
     )
 end
 
@@ -643,8 +952,9 @@ end
 --- @param diseases DiseaseGroup? DiseaseGroup of the taken inhabitants.
 --- @param genders GenderGroup? GenderGroup of the taken inhabitants.
 --- @param ages AgeGroup? AgeGroup of the taken Inhabitants.
+--- @param immunities ImmunityGroup? ImmunityGroup of the taken Inhabitants.
 --- @return InhabitantGroup
-function InhabitantGroup.take_specific(group, count, diseases, genders, ages)
+function InhabitantGroup.take_specific(group, count, diseases, genders, ages, immunities)
     local existing_count = group[EK.inhabitants]
     local taken_count = min(existing_count, count)
     group[EK.inhabitants] = existing_count - taken_count
@@ -657,6 +967,11 @@ function InhabitantGroup.take_specific(group, count, diseases, genders, ages)
     end
     if ages then
         AgeGroup.subtract(group[EK.ages], ages)
+    elseif diseases then
+        ages = AgeGroup.take_for_diseases(group[EK.ages], diseases, taken_count, existing_count)
+    end
+    if immunities then
+        ImmunityGroup.subtract(group[EK.immunities], immunities)
     end
 
     return new_group(
@@ -667,8 +982,184 @@ function InhabitantGroup.take_specific(group, count, diseases, genders, ages)
         group[EK.sanity],
         diseases or DiseaseGroup.take(group[EK.diseases], taken_count, existing_count),
         genders or GenderGroup.take(group[EK.genders], taken_count, existing_count),
-        ages or AgeGroup.take(group[EK.ages], taken_count, existing_count)
+        ages or AgeGroup.take(group[EK.ages], taken_count, existing_count),
+        immunities or ImmunityGroup.take(group[EK.immunities], taken_count, existing_count)
     )
+end
+
+--- Returns the age in nauvis days at which the frailty of the given group's inhabitants is 1. Good health and
+--- sanity delay it.
+--- @param group InhabitantGroup
+--- @return number
+function InhabitantGroup.get_frailty_onset(group)
+    local C = InhabitantsConstants
+    local neutral = C.frailty_neutral_value
+    local cap = C.frailty_shift_cap
+
+    return C.frailty_onset + C.frailty_health_shift * (min(group[EK.health], cap) - neutral) +
+        C.frailty_sanity_shift * (min(group[EK.sanity], cap) - neutral)
+end
+
+--- Rolls which of the given count of inhabitants with the given disease don't survive it and takes them out of
+--- the group. They have to be bookkept as healthy already, like after InhabitantGroup.cure. The lethality rises
+--- with their frailty. Their ages depend on the disease's age link: the oldest or youngest for linked diseases,
+--- random ones otherwise. Returns the number of dead.
+--- @param group InhabitantGroup
+--- @param count integer
+--- @param disease_id DiseaseID
+--- @param lethality number death chance of a case at a frailty of 1 or less
+--- @return integer
+function InhabitantGroup.take_deceased(group, count, disease_id, lethality)
+    local link = Diseases.values[disease_id].age_link
+    -- the ages of the cases are only chosen on a copy, because take_specific subtracts the ages of the dead
+    local ages = Tables.copy(group[EK.ages])
+    local case_ages
+    if link then
+        case_ages = AgeGroup.take_extreme(ages, count, link)
+    else
+        case_ages = AgeGroup.take_random(ages, count, group[EK.inhabitants])
+    end
+
+    local today = AgeGroup.current_day()
+    local onset = InhabitantGroup.get_frailty_onset(group)
+    local dead_ages = {}
+    local dead_count = 0
+    for hatch_day, case_count in pairs(case_ages) do
+        local frailty = AgeGroup.get_frailty(hatch_day, today, onset)
+        local dead = coin_flips(min(1, lethality * max(1, frailty)), case_count)
+        if dead > 0 then
+            dead_ages[hatch_day] = dead
+            dead_count = dead_count + dead
+        end
+    end
+
+    if dead_count > 0 then
+        InhabitantGroup.take_specific(group, dead_count, {[HEALTHY] = dead_count}, nil, dead_ages)
+    end
+
+    return dead_count
+end
+
+--- Returns the summed frailty of the group's inhabitants, which scales everything that comes with old age.
+--- @param group InhabitantGroup
+--- @return number
+function InhabitantGroup.get_frailty_sum(group)
+    local today = AgeGroup.current_day()
+    local onset = InhabitantGroup.get_frailty_onset(group)
+    local ret = 0
+
+    for hatch_day, count in pairs(group[EK.ages]) do
+        ret = ret + count * AgeGroup.get_frailty(hatch_day, today, onset)
+    end
+
+    return ret
+end
+
+--- Rolls which inhabitants of the group die a natural death during the given ticks and takes them out of the
+--- group. The chance follows their frailty, so it is negligible for young inhabitants. Returns the number of dead.
+--- @param group InhabitantGroup
+--- @param delta_ticks integer
+--- @return integer
+function InhabitantGroup.take_natural_deaths(group, delta_ticks)
+    local today = AgeGroup.current_day()
+    local onset = InhabitantGroup.get_frailty_onset(group)
+    local rate = InhabitantsConstants.natural_death_rate
+    local dead_ages = {}
+    local dead_count = 0
+
+    for hatch_day, count in pairs(group[EK.ages]) do
+        local rate_per_tick = min(1, rate * AgeGroup.get_frailty(hatch_day, today, onset))
+        local dead = coin_flips(occurrence_probability(rate_per_tick, delta_ticks), count)
+        if dead > 0 then
+            dead_ages[hatch_day] = dead
+            dead_count = dead_count + dead
+        end
+    end
+
+    if dead_count > 0 then
+        InhabitantGroup.take_specific(group, dead_count, nil, nil, dead_ages)
+    end
+
+    return dead_count
+end
+
+--- Tries to make the given number of people sick with the given disease, respecting their immunities.
+--- Every case hits an immune person with the probability of the immune share of the healthy people.
+--- Returns the number of people that were actually sickened.
+--- @param group InhabitantGroup
+--- @param disease_id DiseaseID
+--- @param count integer
+--- @return integer
+function InhabitantGroup.make_sick(group, disease_id, count)
+    local diseases = group[EK.diseases]
+    local healthy = diseases[HEALTHY]
+    if healthy == 0 then
+        return 0
+    end
+
+    local immune = ImmunityGroup.get_immune(group[EK.immunities], disease_id, group[EK.inhabitants])
+    if immune > 0 then
+        local susceptible = max(0, healthy - immune)
+        count = min(susceptible, coin_flips(susceptible / healthy, count, 5))
+    end
+
+    return make_sick(diseases, disease_id, count)
+end
+local make_group_sick = InhabitantGroup.make_sick
+
+--- Tries to make the given number of people sick with random diseases of the given category, respecting their immunities.
+--- @param group InhabitantGroup
+--- @param disease_category DiseaseCategory
+--- @param count integer
+--- @param actual_count integer?
+--- @param suppress_logging boolean?
+function InhabitantGroup.make_sick_randomly(group, disease_category, count, actual_count, suppress_logging)
+    sicken_randomly(make_group_sick, group, disease_category, count, actual_count, suppress_logging)
+end
+
+--- Returns the number of healthy people that are not immune to the given disease.
+--- @param group InhabitantGroup
+--- @param disease_id DiseaseID
+--- @return integer
+local function get_susceptible(group, disease_id)
+    local immune = ImmunityGroup.get_immune(group[EK.immunities], disease_id, group[EK.inhabitants])
+    return max(0, group[EK.diseases][HEALTHY] - immune)
+end
+
+--- Returns the number of healthy people that a vaccine against the given diseases would still protect.<br>
+--- Assumes the susceptible people of the different diseases overlap as much as possible (people that were
+--- vaccinated together are immune together), so it is the most people susceptible to one of the diseases.
+--- @param group InhabitantGroup
+--- @param disease_ids DiseaseID[]
+--- @return integer
+function InhabitantGroup.get_vaccinable(group, disease_ids)
+    local vaccinable = 0
+    for _, disease_id in pairs(disease_ids) do
+        vaccinable = max(vaccinable, get_susceptible(group, disease_id))
+    end
+    return vaccinable
+end
+
+--- Gives one healthy person a vaccine dose against the given diseases.<br>
+--- With the same overlap assumption as get_vaccinable, the dose goes to someone susceptible to every covered
+--- disease that anybody is still susceptible to, so it makes them immune to all of those.
+--- Returns false if nobody could use the dose.
+--- @param group InhabitantGroup
+--- @param disease_ids DiseaseID[]
+--- @return boolean vaccinated
+function InhabitantGroup.vaccinate(group, disease_ids)
+    local inhabitants = group[EK.inhabitants]
+    local immunities = group[EK.immunities]
+    local vaccinated = false
+
+    for _, disease_id in pairs(disease_ids) do
+        if get_susceptible(group, disease_id) > 0 then
+            ImmunityGroup.grant(immunities, "vaccinated", disease_id, 1, inhabitants)
+            vaccinated = true
+        end
+    end
+
+    return vaccinated
 end
 
 --- Merges the given number of inhabitants from the right InhabitantGroup in to the left one.

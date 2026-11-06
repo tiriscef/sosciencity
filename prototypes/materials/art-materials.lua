@@ -1,3 +1,5 @@
+local Unlocks = require("constants.unlocks")
+
 ---------------------------------------------------------------------------------------------------
 -- << items >>
 
@@ -14,7 +16,7 @@ local art_material_items = {
         name = "wax",
         sprite_variations = {name = "wax", count = 3, include_icon = true},
         fuel_value = "1MJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "crayons",
@@ -25,7 +27,7 @@ local art_material_items = {
     },
     {
         name = "musical-instruments",
-        use_placeholder_icon = true
+        sprite_variations = {name = "musical-instruments", count = 5}
     }
 }
 
@@ -44,7 +46,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "wild-flowers", amount = 10}
     },
-    unlock = "ember-caste",
+    unlock = "atelier",
     auto_recycle = false
 }
 
@@ -55,7 +57,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "chromafall", amount = 2}
     },
-    unlock = "orchid-caste",
+    unlock = Unlocks.get_tech_name("chromafall"),
     auto_recycle = false
 }
 
@@ -81,7 +83,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "wax", amount = 1},
         {type = "item", name = "dye", amount = 1}
     },
-    unlock = "ember-caste",
+    unlock = {"gunfire-caste", "gleam-caste"},
     auto_recycle = false
 }
 
@@ -167,7 +169,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "lumber", amount = 2},
         {type = "item", name = "gingil-hemp", amount = 2}
     },
-    energy_required = 5,
+    energy_required = 2,
     allow_productivity = true,
     unlock = "automation-science-pack"
 }

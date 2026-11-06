@@ -263,42 +263,51 @@ Gui.CityView.add_page {
             container,
             {
                 {"city-view.food-text21"},
-                {"city-view.food-text22"},
-                {"city-view.food-text23"}
+                {"city-view.food-text22"}
             }
         )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text23"})
         Gui.Elements.Label.paragraph(container, {"city-view.food-text24"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text25"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text26"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.food-text27"},
-                {"city-view.food-text28"},
-                {"city-view.food-text29"}
+                {"city-view.food-text25"},
+                {"city-view.food-text26"},
+                {"city-view.food-text27"}
             }
         )
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text30"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text31"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text28"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text29"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text30"})
         Gui.Elements.Label.list(
             container,
             {
+                {"city-view.food-text31"},
                 {"city-view.food-text32"},
                 {"city-view.food-text33"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text34"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text34"})
         Gui.Elements.Label.paragraph(container, {"city-view.food-text35"})
-        Gui.Elements.Label.heading_2(container, {"city-view.food-text36"})
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text37"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.food-text38"},
-                {"city-view.food-text39"}
+                {"city-view.food-text36"},
+                {"city-view.food-text37"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.food-text40"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text38"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text39"})
+        Gui.Elements.Label.heading_2(container, {"city-view.food-text40"})
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text41"})
+        Gui.Elements.Label.list(
+            container,
+            {
+                {"city-view.food-text42"},
+                {"city-view.food-text43"}
+            }
+        )
+        Gui.Elements.Label.paragraph(container, {"city-view.food-text44"})
         -- END GENERATED: food
     end
 }
@@ -323,33 +332,33 @@ Gui.CityView.add_page {
                 {"city-view.healthcare-text9"},
                 {"city-view.healthcare-text10"},
                 {"city-view.healthcare-text11"},
-                {"city-view.healthcare-text12"}
+                {"city-view.healthcare-text12"},
+                {"city-view.healthcare-text13"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text13"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text14"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text15"})
         Gui.Elements.Button.page_link(container, "data", "diseases")
-        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text16"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text17"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text17"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text18"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text19"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text20"})
         Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text21"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text22"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text23"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text24"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text25"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text26"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text27"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.healthcare-text23"},
-                {"city-view.healthcare-text24"},
-                {"city-view.healthcare-text25"}
+                {"city-view.healthcare-text28"},
+                {"city-view.healthcare-text29"},
+                {"city-view.healthcare-text30"},
+                {"city-view.healthcare-text31"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text26"})
-        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text27"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text28"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text29"})
-        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text30"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text31"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text32"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text33"})
         Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text34"})
@@ -359,17 +368,24 @@ Gui.CityView.add_page {
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text38"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text39"})
         Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text40"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text41"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text41"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text42"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text43"})
+        Gui.Elements.Label.heading_2(container, {"city-view.healthcare-text44"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text45"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text46"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text47"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text48"})
         Gui.Elements.Label.list(
             container,
             {
-                {"city-view.healthcare-text42"},
-                {"city-view.healthcare-text43"},
-                {"city-view.healthcare-text44"}
+                {"city-view.healthcare-text49"},
+                {"city-view.healthcare-text50"},
+                {"city-view.healthcare-text51"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text45"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text46"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text52"})
+        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-text53"})
         -- END GENERATED: healthcare
     end
 }
@@ -408,10 +424,11 @@ Gui.CityView.add_page {
                 {"city-view.maintenance-text4"},
                 {"city-view.maintenance-text5"},
                 {"city-view.maintenance-text6"},
-                {"city-view.maintenance-text7"}
+                {"city-view.maintenance-text7"},
+                {"city-view.maintenance-text8"}
             }
         )
-        Gui.Elements.Label.paragraph(container, {"city-view.maintenance-text8"})
+        Gui.Elements.Label.paragraph(container, {"city-view.maintenance-text9"})
         -- END GENERATED: maintenance
     end
 }

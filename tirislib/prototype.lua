@@ -80,11 +80,39 @@ function Tirislib.Prototype.get(prototype_type, name, mt)
     end
 end
 
+--- Unofficial fields describing a prototype live in its 'mod_metadata' table, meant as a convention any mod can read and write:
+--- - owner: name of the mod that created the prototype
+--- - is_hack: the prototype is a technical helper, not actual game content, so procedural changes for its type should skip it
+--- 'ignore = true' makes Factorio skip the table when checking for unused prototype data
+--- (--check-unused-prototype-data), so typos in the official fields aren't drowned out.
+local function get_mod_metadata(prototype)
+    -- rawget, so dummy prototypes don't hand out their 'nothing' function
+    return rawget(prototype, "mod_metadata") or {}
+end
+
+--- Returns the name of the mod that created the given prototype with Tirislib, or nil.
+--- @param prototype Prototype
+--- @return string|nil
+function Tirislib.Prototype.get_owner(prototype)
+    return get_mod_metadata(prototype).owner
+end
+
+--- Checks if the given prototype is a technical helper instead of actual game content.
+--- Set by creating it with 'mod_metadata = {is_hack = true}'.
+--- @param prototype Prototype
+--- @return boolean
+function Tirislib.Prototype.is_hack(prototype)
+    return get_mod_metadata(prototype).is_hack == true
+end
+
 --- Creates the given prototype and adds it to data.raw.
 --- @param prototype table
 --- @return Prototype Prototype
 function Tirislib.Prototype.create(prototype)
-    prototype.owner = prototype.owner or Tirislib.Prototype.modname
+    local metadata = get_mod_metadata(prototype)
+    metadata.ignore = true
+    metadata.owner = metadata.owner or Tirislib.Prototype.modname
+    prototype.mod_metadata = metadata
 
     data:extend {prototype}
 
@@ -141,8 +169,44 @@ function Tirislib.Prototype.finish_postponed()
 end
 
 --- Boilerplate function. Has to be called at the end of a data stage.
+--- Returns a readable description of every postponed call that is still waiting, e.g.
+--- "Recipe.add_unlock(window, infrastucture-1)". After finish_postponed, these are calls that reference
+--- a prototype which never got created, mostly typos.
+--- @return string[]
+function Tirislib.Prototype.describe_postponed()
+    local descriptions = {}
+
+    for _, postponed in pairs(Tirislib.Prototype.postponed_functions) do
+        local function_name = "<unknown function>"
+        for class_name, class in pairs(Tirislib) do
+            if type(class) == "table" then
+                for name, fn in pairs(class) do
+                    if fn == postponed.fn then
+                        function_name = class_name .. "." .. name
+                    end
+                end
+            end
+        end
+
+        local arguments = {}
+        for _, argument in pairs(postponed.arg) do
+            if type(argument) == "table" then
+                arguments[#arguments + 1] = tostring(argument.name or argument.type or "<table>")
+            else
+                arguments[#arguments + 1] = tostring(argument)
+            end
+        end
+
+        descriptions[#descriptions + 1] = string.format("%s(%s)", function_name, table.concat(arguments, ", "))
+    end
+
+    return descriptions
+end
+
 function Tirislib.Prototype.finish()
     Tirislib.Prototype.finish_postponed()
+    -- after the postponed calls, because they can add the unlocks that these requests copy
+    Tirislib.Recipe.resolve_derived_unlocks()
 
     remove_metatables()
 end

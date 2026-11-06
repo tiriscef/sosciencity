@@ -239,6 +239,37 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "Sanatorium pulls patients of an age-linked disease with the matching ages",
+    "integration|integration.sanatorium",
+    function()
+        local YOUNGEST_DISEASE = 99008 -- test-disease-youngest
+
+        local hospital_entity = Helpers.create_and_register(test_surface, "test-hospital", {0, 0})
+        hospital_entity[EK.treatment_permissions] = {}
+        hospital_entity[EK.active] = true
+
+        local sanatorium = create_house({3, 0}, 0)
+        sanatorium[EK.is_sanatorium] = true
+
+        local outpost = create_house({6, 0}, 10)
+        local today = AgeGroup.current_day()
+        outpost[EK.ages] = {[today - 100] = 7, [today] = 3}
+        make_sick(outpost, YOUNGEST_DISEASE, 3)
+
+        outpost[EK.unclaimed_disease_ticks] = {[YOUNGEST_DISEASE] = THRESHOLD + 1}
+        storage.transport_eligible_houses[outpost[EK.type]][outpost[EK.unit_number]] = true
+
+        Inhabitants.update_sanatorium(sanatorium)
+
+        Assert.equals(sanatorium[EK.inhabitants], 3, "all three patients should have been pulled")
+        Assert.equals(sanatorium[EK.ages][today], 3, "the patients should be the youngest")
+        Assert.equals(outpost[EK.ages][today - 100], 7, "the old ones should have stayed")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
     "Sanatorium does not pull when no hospital neighbor is present",
     "integration|integration.sanatorium",
     function()

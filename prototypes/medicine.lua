@@ -1,3 +1,5 @@
+local Unlocks = require("constants.unlocks")
+
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
@@ -11,8 +13,8 @@ local medicine_items = {
         sprite_variations = {name = "medical-report", count = 3, include_icon = true}
     },
     {
-        name = "surgery-instruments",
-        use_placeholder_icon = true
+        name = "medical-instruments",
+        sprite_variations = {name = "medical-instruments", count = 5}
     },
     {
         name = "activated-carbon",
@@ -61,7 +63,7 @@ local medicine_items = {
     },
     {
         name = "antiemetics",
-        use_placeholder_icon = true
+        sprite_variations = {name = "antiemetics-pile", count = 3}
     },
     {
         name = "antitoxin",
@@ -70,17 +72,55 @@ local medicine_items = {
     {
         name = "antihistamines",
         sprite_variations = {name = "antihistamines-pile", count = 3}
+    },
+    {
+        name = "ovoculture",
+        sprite_variations = {name = "ovoculture-pile", count = 3}
+    },
+    {
+        name = "riverhorse-flu-vaccine",
+        sprite_variations = {name = "riverhorse-flu-vaccine-pile", count = 3}
+    },
+    {
+        name = "purple-pox-vaccine",
+        sprite_variations = {name = "purple-pox-vaccine-pile", count = 3}
+    },
+    {
+        name = "whooping-cough-vaccine",
+        sprite_variations = {name = "whooping-cough-vaccine-pile", count = 3}
+    },
+    {
+        name = "tetanus-vaccine",
+        sprite_variations = {name = "tetanus-vaccine-pile", count = 3}
+    },
+    {
+        name = "flu-vaccine",
+        sprite_variations = {name = "flu-vaccine-pile", count = 3}
+    },
+    {
+        name = "tetanus-whooping-cough-vaccine",
+        sprite_variations = {name = "tetanus-whooping-cough-vaccine-pile", count = 3}
     }
 }
 
 Tirislib.Item.batch_create(medicine_items, {subgroup = "sosciencity-medicine", stack_size = 50})
+
+-- test vaccine for the vaccination tests, see constants/vaccines.lua
+if Sosciencity.Config.DEBUG then
+    Tirislib.Item.create {
+        name = "test-vaccine",
+        use_placeholder_icon = true,
+        subgroup = "sosciencity-medicine",
+        stack_size = 50
+    }
+end
 
 ---------------------------------------------------------------------------------------------------
 -- << recipes >>
 
 Tirislib.RecipeGenerator.create {
     results = {
-        {type = "item", name = "surgery-instruments", amount = 1}
+        {type = "item", name = "medical-instruments", amount = 1}
     },
     ingredients = {
         {theme = "plating",  amount = 2},
@@ -92,7 +132,7 @@ Tirislib.RecipeGenerator.create {
 
 Tirislib.RecipeGenerator.create {
     results = {
-        {type = "item", name = "surgery-instruments", amount = 2}
+        {type = "item", name = "medical-instruments", amount = 2}
     },
     ingredients = {
         {theme = "plating",  amount = 2},
@@ -285,6 +325,22 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "antimicrobials", amount = 1}
     },
     ingredients = {
+        {type = "item",  name = "heliofall", amount = 3},
+        {type = "item",  name = "amylum",    amount = 1},
+        {type = "fluid", name = "ethanol",   amount = 10}
+    },
+    category = "sosciencity-pharma",
+    energy_required = 3,
+    do_index_fluid_ingredients = true,
+    unlock = Unlocks.get_tech_name("heliofall"),
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "antimicrobials", amount = 1}
+    },
+    ingredients = {
         {type = "item",  name = "amylum",  amount = 1},
         {type = "item",  name = "sugar",   amount = 10},
         {type = "fluid", name = "flinnum", amount = 10}
@@ -323,7 +379,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    unlock = "medbay",
+    unlock = "hospital",
     auto_recycle = false
 }
 
@@ -355,7 +411,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-pharma",
     energy_required = 3,
     do_index_fluid_ingredients = true,
-    unlock = "medbay",
+    unlock = "explore-alien-flora-1",
     auto_recycle = false
 }
 
@@ -407,13 +463,59 @@ Tirislib.RecipeGenerator.create {
     auto_recycle = false
 }
 
+-- every kind of huwan egg can grow an ovoculture, so the vaccines don't depend on one kind
+for egg_name in pairs(InhabitantsConstants.egg_data) do
+    Tirislib.RecipeGenerator.create {
+        name = "ovoculture-from-" .. egg_name,
+        results = {
+            {type = "item", name = "ovoculture", amount = 1}
+        },
+        ingredients = {
+            {type = "item",  name = egg_name,      amount = 1},
+            {type = "fluid", name = "clean-water", amount = 20}
+        },
+        category = "sosciencity-fermentation-tank",
+        energy_required = 30,
+        unlock = "vaccination",
+        auto_recycle = false
+    }:add_ingredient_layer(egg_name)
+end
+
+-- every vaccine is grown in an ovoculture; combined vaccines protect against more diseases per egg
+local vaccine_unlocks = {
+    ["riverhorse-flu-vaccine"] = "vaccination",
+    ["purple-pox-vaccine"] = "vaccination",
+    ["whooping-cough-vaccine"] = "vaccination",
+    ["tetanus-vaccine"] = "vaccination",
+    ["flu-vaccine"] = "combined-vaccines",
+    ["tetanus-whooping-cough-vaccine"] = "combined-vaccines"
+}
+
+for vaccine_name, unlock in pairs(vaccine_unlocks) do
+    Tirislib.RecipeGenerator.create {
+        results = {
+            {type = "item", name = vaccine_name, amount = 5}
+        },
+        ingredients = {
+            {type = "item",  name = "ovoculture", amount = 1},
+            {type = "item",  name = "agarose",    amount = 2},
+            {type = "fluid", name = "ethanol",    amount = 10}
+        },
+        energy_required = 10,
+        category = "sosciencity-pharma",
+        do_index_fluid_ingredients = true,
+        unlock = unlock,
+        auto_recycle = false
+    }
+end
+
 Tirislib.RecipeGenerator.create {
     name = "donate-blood",
     category = "sosciencity-handcrafting",
     enabled = true,
     energy_required = 3,
     ingredients = {
-        {type = "item", name = "surgery-instruments", amount = 1}
+        {type = "item", name = "medical-instruments", amount = 1}
     },
     results = {
         {type = "item", name = "blood-bag", amount = 1}
@@ -431,7 +533,7 @@ Tirislib.RecipeGenerator.create {
     enabled = false,
     energy_required = 3,
     ingredients = {
-        {type = "item", name = "surgery-instruments", amount = 1},
+        {type = "item", name = "medical-instruments", amount = 1},
         {type = "item", name = "analgesics",          amount = 1}
     },
     results = {
@@ -500,7 +602,6 @@ local consumable_medicine = {
                 cooldown = 15,
                 range = 0,
                 ammo_type = {
-                    category = "capsule",
                     target_type = "position",
                     action = {
                         type = "direct",
@@ -534,7 +635,6 @@ local consumable_medicine = {
                 cooldown = 15,
                 range = 0,
                 ammo_type = {
-                    category = "capsule",
                     target_type = "position",
                     action = {
                         type = "direct",

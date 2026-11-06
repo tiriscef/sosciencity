@@ -51,6 +51,7 @@ local add_fear
 
 local add_subentities
 local remove_subentities
+local update_recipe_visualisation
 
 local get_entity_type = Types.get_entity_type
 
@@ -82,6 +83,7 @@ local function set_locals()
 
     add_subentities = Subentities.add_all_for
     remove_subentities = Subentities.remove_all_for
+    update_recipe_visualisation = Subentities.update_recipe_visualisation
 
     establish_new_neighbor = Neighborhood.establish_new_neighbor
     unsubscribe_neighborhood = Neighborhood.unsubscribe_all
@@ -161,6 +163,11 @@ local function update_custom_building(entry)
     local workforce = building_details.workforce
     if workforce then
         update_workforce(entry, workforce)
+    end
+
+    local recipe_visualisation = building_details.recipe_visualisation
+    if recipe_visualisation then
+        update_recipe_visualisation(entry, recipe_visualisation)
     end
 end
 

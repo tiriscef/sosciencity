@@ -18,7 +18,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "architectural-concept", amount = 1}
     },
     default_theme_level = 0,
-    unlock = "upbringing"
+    unlock = "infrastructure-2"
 }
 
 Tirislib.Entity.create {
@@ -29,7 +29,7 @@ Tirislib.Entity.create {
     max_health = 200,
     inventory_size = 20,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},

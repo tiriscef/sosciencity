@@ -5,6 +5,8 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
+local ScriptedProducts = require("constants.scripted-products")
+
 local Entity = require("classes.entity")
 local Inventories = require("classes.inventories")
 local Neighborhood = require("classes.neighborhood")
@@ -17,11 +19,37 @@ local remove_active_machine_status = Entity.remove_active_machine_status
 local get_breakdown_state = Entity.get_breakdown_state
 local set_breakdown_state = Entity.set_breakdown_state
 local max = math.max
+local required_modules = ScriptedProducts.required_modules
+
+Entity.Waterwell = {}
+local Waterwell = Entity.Waterwell
+
+--- Returns the module that the waterwell's current recipe needs and that isn't inserted, or nil.
+--- @param entry Entry
+--- @return string|nil
+function Waterwell.get_missing_module(entry)
+    local entity = entry[EK.entity]
+    local recipe = entity.get_recipe()
+    if not recipe then
+        return nil
+    end
+    local module = required_modules[recipe.name]
+    if module and not Inventories.assembler_has_module(entity, module) then
+        return module
+    end
+    return nil
+end
+local get_missing_module = Waterwell.get_missing_module
+
+--- @param other_count integer number of other pumps in range
+local function get_competition_performance(other_count)
+    -- +1 so it counts itself too
+    return (other_count + 1) ^ (-0.45)
+end
 
 local function get_waterwell_competition_performance(entry)
-    -- +1 so it counts itself too
-    local near_count = Neighborhood.get_neighbor_count(entry, Type.waterwell) + 1
-    return near_count ^ (-0.45), near_count - 1
+    local other_count = Neighborhood.get_neighbor_count(entry, Type.waterwell)
+    return get_competition_performance(other_count), other_count
 end
 
 local function get_clockwork_boost()
@@ -29,10 +57,7 @@ local function get_clockwork_boost()
 end
 
 local function update_waterwell(entry)
-    local entity = entry[EK.entity]
-    local recipe = entity.get_recipe()
-    if recipe and recipe.name == "clean-water-from-ground"
-        and not Inventories.assembler_has_module(entity, "water-filter") then
+    if get_missing_module(entry) then
         set_crafting_machine_performance(entry, 0)
         return
     end
@@ -47,10 +72,7 @@ end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
 
 local function build_waterwell_report(entry)
-    local entity = entry[EK.entity]
-    local recipe = entity.get_recipe()
-    if recipe and recipe.name == "clean-water-from-ground"
-        and not Inventories.assembler_has_module(entity, "water-filter") then
+    if get_missing_module(entry) then
         return {[PK.effects] = {}, [PK.results] = {}}
     end
 
@@ -85,3 +107,13 @@ end
 Register.set_entity_creation_handler(Type.waterwell, create_waterwell)
 
 Register.set_entity_destruction_handler(Type.waterwell, remove_active_machine_status)
+
+local function build_waterwell_site_report(entity, building_details)
+    local other_count = Neighborhood.count_potential_neighbors(entity, Type.waterwell, building_details.range)
+    local speed = Tirislib.Utils.round(100 * get_competition_performance(other_count))
+
+    return {
+        {caption = {"sosciencity.site-waterwell-competition", other_count, speed}, ok = other_count == 0}
+    }
+end
+Entity.set_site_report_builder(Type.waterwell, build_waterwell_site_report)

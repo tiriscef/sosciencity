@@ -8,7 +8,7 @@ local util_sprites = data.raw["utility-sprites"] and data.raw["utility-sprites"]
 if util_sprites then
     local names = {}
     for key, val in pairs(util_sprites) do
-        if key ~= "type" and key ~= "name" and key ~= "owner" and type(val) == "table" then
+        if key ~= "type" and key ~= "name" and key ~= "mod_metadata" and type(val) == "table" then
             names[key] = true
         end
     end

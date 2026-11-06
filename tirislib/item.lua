@@ -114,7 +114,7 @@ function Tirislib.Item.create(prototype)
     if use_placeholder_icon then
         prototype.icon = Tirislib.Prototype.placeholder_icon
         prototype.icon_size = prototype.icon_size or 64
-    elseif not prototype.icon then
+    elseif not prototype.icon and not prototype.icons then
         prototype.icon = Tirislib.Prototype.default_icon_path .. prototype.name .. ".png"
     end
 

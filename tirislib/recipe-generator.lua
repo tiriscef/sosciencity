@@ -202,13 +202,15 @@ end
 ---   entries; those are expanded and removed before the recipe prototype is submitted.
 --- - One entry in `results` may be marked with `product = true` to identify the main product for
 ---   field derivation (name, subgroup, order, icon, localisation). Falls back to `results[1]`.
---- - `unlock`, `default_theme_level`, `do_index_fluid_ingredients`, `do_index_fluid_results`,
+--- - `unlock`, `unlock_with_item`, `unlock_with_recipe`, `default_theme_level`, `do_index_fluid_ingredients`, `do_index_fluid_results`,
 ---   `localised_name_wrapper` and `category` are extra keys consumed by `create` and never
 ---   forwarded to the underlying Factorio prototype.
 ---@class ExtendedRecipePrototype : data.RecipePrototype
 ---@field ingredients? (data.IngredientPrototype | ThemeEntry)[] Regular ingredient entries and/or inline theme expansions.
 ---@field results? (ProductResultEntry | ThemeEntry)[] Result entries (with optional `product` marker) and/or inline theme expansions.
 ---@field unlock? string | string[] Technology name(s) that unlock the recipe. Accepts a single string or an array.
+---@field unlock_with_item? string Item that this recipe unlocks together with: same technologies as the item's producing recipes (the earliest of them), or available from the start if the item is. See `Tirislib.Recipe.add_unlock_with_item`.
+---@field unlock_with_recipe? string Recipe that this recipe unlocks together with: the same technologies (the earliest of them), or available from the start if that recipe is. See `Tirislib.Recipe.add_unlock_with_recipe`.
 ---@field default_theme_level? number Fallback technology level used when a theme entry omits its own `level`. Defaults to 0.
 ---@field do_index_fluid_ingredients? boolean When true, fluid ingredient entries receive an explicit `fluidbox_index` after creation.
 ---@field do_index_fluid_results? boolean When true, fluid result entries receive an explicit `fluidbox_index` after creation.
@@ -329,7 +331,8 @@ local function derive_fields_from_product(prototype, product_entry, localised_na
     local has_custom_identity = prototype.localised_name or prototype.localised_description or prototype.icon or prototype.icons
 
     if has_custom_identity then
-        if product then
+        -- an empty main_product means the recipe has an identity of its own (recipe-name.<name>)
+        if product and prototype.main_product ~= "" then
             prototype.localised_name = prototype.localised_name or product:get_localised_name()
             prototype.localised_description = prototype.localised_description or product:get_localised_description()
         end
@@ -357,6 +360,8 @@ end
 --- Creates a recipe from a (potentially incomplete) recipe prototype.<br>
 --- The prototype can contain regular recipe fields as well as these extra keys:<br>
 --- **unlock:** technology that unlocks the recipe<br>
+--- **unlock_with_item:** item that this recipe unlocks together with<br>
+--- **unlock_with_recipe:** recipe that this recipe unlocks together with<br>
 --- **default_theme_level:** default level for theme entries without an explicit level<br>
 --- **do_index_fluid_ingredients:** bool<br>
 --- **do_index_fluid_results:** bool<br>
@@ -375,12 +380,16 @@ end
 function Tirislib.RecipeGenerator.create(prototype)
     -- consume and nil extra keys
     local unlock = prototype.unlock
+    local unlock_with_item = prototype.unlock_with_item
+    local unlock_with_recipe = prototype.unlock_with_recipe
     local default_theme_level = prototype.default_theme_level
     local index_fluid_ingredients = prototype.do_index_fluid_ingredients
     local index_fluid_results = prototype.do_index_fluid_results
     local skip_auto_catalyst = prototype.no_auto_catalyst
     local localised_name_wrapper = prototype.localised_name_wrapper
     prototype.unlock = nil
+    prototype.unlock_with_item = nil
+    prototype.unlock_with_recipe = nil
     prototype.default_theme_level = nil
     prototype.do_index_fluid_ingredients = nil
     prototype.do_index_fluid_results = nil
@@ -450,6 +459,12 @@ function Tirislib.RecipeGenerator.create(prototype)
         end
     elseif unlock then
         recipe:add_unlock(unlock)
+    end
+    if unlock_with_item then
+        recipe:add_unlock_with_item(unlock_with_item)
+    end
+    if unlock_with_recipe then
+        recipe:add_unlock_with_recipe(unlock_with_recipe)
     end
 
     -- categories: an explicit `categories` array wins; the singular `category` field is legacy

@@ -5,7 +5,7 @@ Tirislib.Technology.create {
     name = "medbay",
     icon = "__sosciencity-graphics__/graphics/technology/medbay.png",
     icon_size = 256,
-    prerequisites = {"orchid-caste"},
+    prerequisites = {"orchid-caste", "salt-pond"},
     unit = {
         count = 29,
         ingredients = {
@@ -57,6 +57,44 @@ Tirislib.Technology.create {
     },
     unit = {
         count = 86,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib.Technology.create {
+    name = "vaccination",
+    icon = "__sosciencity-graphics__/graphics/technology/vaccination.png",
+    icon_size = 256,
+    prerequisites = {"transfusion-medicine"},
+    effects = {
+        {
+            type = "nothing",
+            effect_description = {"description.enable-vaccinations"}
+        }
+    },
+    unit = {
+        count = 120,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}
+
+Tirislib.Technology.create {
+    name = "combined-vaccines",
+    icon = "__sosciencity-graphics__/graphics/technology/combined-vaccines.png",
+    icon_size = 256,
+    prerequisites = {"vaccination"},
+    unit = {
+        count = 250,
         ingredients = {
             {"automation-science-pack", 1},
             {"logistic-science-pack", 1},

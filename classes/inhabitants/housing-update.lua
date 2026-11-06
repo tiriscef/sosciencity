@@ -6,7 +6,6 @@ local WarningType = require("enums.warning-type")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local Housing = require("constants.housing")
-local Time = require("constants.time")
 
 local castes = Castes.values
 local disease_values = Diseases.values
@@ -117,22 +116,6 @@ end
 function Inhabitants.get_nominal_sanity(entry)
     return get_nominal_value(entry[EK.sanity_summands], entry[EK.sanity_factors])
 end
-
----------------------------------------------------------------------------------------------------
--- << ages >>
-
---- Advances the age groups of the inhabitants based on elapsed in-game weeks.
---- @param entry Entry
-local function update_ages(entry)
-    local last_shift = entry[EK.last_age_shift]
-    local shift = floor((game.tick - last_shift) / Time.nauvis_week)
-
-    if shift > 0 then
-        AgeGroup.shift(entry[EK.ages], shift)
-        entry[EK.last_age_shift] = last_shift + shift * Time.nauvis_week
-    end
-end
-Inhabitants.update_ages = update_ages
 
 ---------------------------------------------------------------------------------------------------
 -- << strike >>
@@ -392,7 +375,6 @@ local function update_house(entry, delta_ticks)
     local nominal_happiness = get_nominal_value(happiness_summands, happiness_factors)
     update_happiness(entry, nominal_happiness, delta_ticks)
 
-    update_ages(entry)
     update_strike_level(entry, entry[EK.happiness], caste)
     validate_employment_capacity(entry, moving_healthy)
     update_housing_census(entry, moving_still)

@@ -4,7 +4,7 @@
 
 if not feature_flags["spoiling"] then
     for _, item in Tirislib.Item.iterate() do
-        if item.owner == "sosciencity" then
+        if Tirislib.Prototype.get_owner(item) == "sosciencity" then
             item.spoil_ticks = nil
             item.spoil_result = nil
             item.spoil_to_trigger_result = nil

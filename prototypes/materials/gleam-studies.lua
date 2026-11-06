@@ -3,8 +3,14 @@
 
 local gleam_items = {
     {name = "metastudy"},
-    {name = "study-design", use_placeholder_icon = true},
-    {name = "survey", use_placeholder_icon = true}
+    {
+        name = "study-design",
+        sprite_variations = {name = "study-design", count = 3, include_icon = true}
+    },
+    {
+        name = "survey",
+        sprite_variations = {name = "survey", count = 3, include_icon = true}
+    }
 }
 
 Tirislib.Item.batch_create(

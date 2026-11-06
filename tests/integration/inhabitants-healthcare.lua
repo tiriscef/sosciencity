@@ -2,6 +2,8 @@ local DiseaseCategory = require("enums.disease-category")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local InhabitantsConstants = require("constants.inhabitants")
+
 local Helpers = require("tests.integration.helpers")
 local Assert = Tirislib.Testing.Assert
 
@@ -207,6 +209,138 @@ Tirislib.Testing.add_test_case(
         local good_sick = count_sick(good_entry[EK.diseases])
 
         Assert.greater_than(bad_sick, good_sick, "bad conditions should produce more disease cases than good conditions")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << immunity >>
+
+-- test-disease-immunity: recovers after ~60 ticks, immunity lasts ~600 ticks
+local IMMUNITY_DISEASE = 99005
+
+Tirislib.Testing.add_test_case(
+    "Natural recovery grants immunity",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        DiseaseGroup.make_sick(entry[EK.diseases], IMMUNITY_DISEASE, 5)
+
+        Inhabitants.update_diseases(entry, 1200)
+
+        Assert.is_nil(entry[EK.diseases][IMMUNITY_DISEASE], "everyone should have recovered")
+        Assert.equals(entry[EK.immunities].recovered[IMMUNITY_DISEASE], 5, "the recovered should be immune")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Immunity after recovery wanes over time",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        ImmunityGroup.grant(entry[EK.immunities], "recovered", IMMUNITY_DISEASE, 10, 10)
+
+        Inhabitants.update_diseases(entry, 20000)
+
+        Assert.is_nil(entry[EK.immunities].recovered[IMMUNITY_DISEASE], "immunity should have waned")
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << natural deaths >>
+
+Tirislib.Testing.add_test_case(
+    "Very old huwans pass away in their sleep during the disease update",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        local today = AgeGroup.current_day()
+        local very_old = today - 10000
+        entry[EK.ages] = {[very_old] = 3, [today] = 7}
+
+        Inhabitants.update_diseases(entry, 60)
+
+        Assert.is_nil(entry[EK.ages][very_old], "the very old should have died")
+        Assert.equals(entry[EK.inhabitants], 7)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Old huwans get old age diseases, newly hatched ones barely",
+    "integration|integration.healthcare",
+    function()
+        local old_house = create_healthy_house({0, 0}, 10)
+        local young_house = create_healthy_house({10, 0}, 10)
+        local today = AgeGroup.current_day()
+        local old_age = math.floor(InhabitantGroup.get_frailty_onset(old_house)) + InhabitantsConstants.frailty_doubling
+        old_house[EK.ages] = {[today - old_age] = 10}
+
+        local old_progress = Inhabitants.get_old_age_disease_progress(old_house, 1000)
+        local young_progress = Inhabitants.get_old_age_disease_progress(young_house, 1000)
+
+        Assert.is_number_close(
+            old_progress,
+            10 * 1000 * InhabitantsConstants.old_age_disease_rate *
+                AgeGroup.get_frailty(today - old_age, today, InhabitantGroup.get_frailty_onset(old_house)),
+            1e-9
+        )
+        Assert.less_than(young_progress, old_progress / 10)
+    end,
+    setup,
+    teardown
+)
+
+---------------------------------------------------------------------------------------------------
+-- << age links >>
+
+-- test-disease-oldest / test-disease-youngest: lethality 1, see the test diseases in constants/diseases.lua
+local OLDEST_DISEASE = 99007
+local YOUNGEST_DISEASE = 99008
+
+Tirislib.Testing.add_test_case(
+    "Huwans dying of an oldest-linked disease are the oldest",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        local today = AgeGroup.current_day()
+        entry[EK.ages] = {[today - 100] = 2, [today - 50] = 3, [today] = 5}
+        DiseaseGroup.make_sick(entry[EK.diseases], OLDEST_DISEASE, 2)
+
+        DiseaseGroup.cure(entry[EK.diseases], OLDEST_DISEASE, 2)
+        Inhabitants.apply_cure_side_effects(entry, OLDEST_DISEASE, 2, false)
+
+        Assert.equals(entry[EK.inhabitants], 8, "both should have died")
+        Assert.is_nil(entry[EK.ages][today - 100], "the oldest should have died")
+        Assert.equals(entry[EK.ages][today - 50], 3)
+        Assert.equals(entry[EK.ages][today], 5)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Huwans dying of a youngest-linked disease are the youngest",
+    "integration|integration.healthcare",
+    function()
+        local entry = create_healthy_house({0, 0}, 10)
+        local today = AgeGroup.current_day()
+        entry[EK.ages] = {[today - 100] = 2, [today - 50] = 3, [today] = 5}
+        DiseaseGroup.make_sick(entry[EK.diseases], YOUNGEST_DISEASE, 3)
+
+        DiseaseGroup.cure(entry[EK.diseases], YOUNGEST_DISEASE, 3)
+        Inhabitants.apply_cure_side_effects(entry, YOUNGEST_DISEASE, 3, false)
+
+        Assert.equals(entry[EK.inhabitants], 7, "all three should have died")
+        Assert.equals(entry[EK.ages][today], 2, "the youngest should have died")
+        Assert.equals(entry[EK.ages][today - 100], 2)
+        Assert.equals(entry[EK.ages][today - 50], 3)
     end,
     setup,
     teardown

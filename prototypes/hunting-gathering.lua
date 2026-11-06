@@ -124,7 +124,7 @@ end
 
 create_hunting_gathering_recipe {
     name = "gathering-food",
-    category = "sosciencity-hunting",
+    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
     energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-food-1.png"}
@@ -134,7 +134,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "wild-edible-plants", amount_min = 0, amount_max = 6},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000565"
+    order = "000560"
 }
 
 create_hunting_gathering_recipe {
@@ -148,12 +148,28 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "wild-fungi", amount_min = 0, amount_max = 6}
     },
-    order = "000575"
+    order = "000575",
+    unlock = "explore-local-ecosystem"
+}
+
+create_hunting_gathering_recipe {
+    name = "gathering-insects",
+    category = "sosciencity-hunting",
+    energy_required = 5,
+    icons = {
+        {icon = "__sosciencity-graphics__/graphics/icon/insect-meat.png"}
+    },
+    icon_size = 64,
+    results = {
+        {type = "item", name = "insect-meat", amount_min = 0, amount_max = 4}
+    },
+    order = "000580",
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {
     name = "gathering-algae",
-    category = "sosciencity-fishery-hand",
+    categories = {"sosciencity-fishery-hand", "sosciencity-handcrafting"},
     energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-algae.png"}
@@ -167,7 +183,7 @@ create_hunting_gathering_recipe {
 
 create_hunting_gathering_recipe {
     name = "gathering-materials",
-    category = "sosciencity-hunting",
+    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
     energy_required = 3,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-materials.png"}
@@ -179,7 +195,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "plemnemm-cotton", amount = 5},
         {type = "item", name = "gingil-hemp", amount = 5, independent_probability = 0.5}
     },
-    order = "000590"
+    order = "000561"
 }
 
 create_hunting_gathering_recipe {
@@ -192,7 +208,8 @@ create_hunting_gathering_recipe {
         {type = "item", name = "tiriscefing-willow-wood", amount = 3},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000592"
+    order = "000592",
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {
@@ -205,12 +222,13 @@ create_hunting_gathering_recipe {
         {type = "item", name = "plemnemm-cotton", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000593"
+    order = "000593",
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {
     name = "gathering-hemp",
-    category = "sosciencity-hunting",
+    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
     energy_required = 3,
     icon = "__sosciencity-graphics__/graphics/icon/gingil-hemp.png",
     icon_size = 64,
@@ -218,21 +236,21 @@ create_hunting_gathering_recipe {
         {type = "item", name = "gingil-hemp", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },
-    order = "000594"
+    order = "000562"
 }
 
 create_hunting_gathering_recipe {
     name = "gathering-flowers",
     category = "sosciencity-hunting",
     energy_required = 3,
-    icon = "__sosciencity-graphics__/graphics/icon/phytofall-blossom.png",
+    icon = "__sosciencity-graphics__/graphics/icon/wild-flowers.png",
     icon_size = 64,
     results = {
-        {type = "item", name = "phytofall-blossom", amount = 2},
+        {type = "item", name = "wild-flowers", amount = 5},
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000595",
-    unlock = "orchid-caste"
+    unlock = {"atelier", "orchid-caste"}
 }
 
 create_hunting_gathering_recipe {

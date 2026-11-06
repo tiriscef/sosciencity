@@ -24,6 +24,7 @@ Technologies = {}
 
 local tracked_techs = {
     ["transfusion-medicine"] = true,
+    ["vaccination"] = true,
     ["architecture-1"] = true,
     ["architecture-2"] = true,
     ["architecture-3"] = true,

@@ -6,25 +6,32 @@ local DrinkingWater = {}
 --- @field localised_name LocalisedString
 --- @field localised_description LocalisedString
 --- @field healthiness number health effect of drinking this water; negative values harm health
+--- @field contamination number multiplier on the waterborne disease rate; 0 is safe, 1 is untreated water
 
 DrinkingWater.values = {
     ["clean-water"] = {
-        healthiness = 2
+        healthiness = 2,
+        contamination = 0
     },
     ["drinkable-water"] = {
-        healthiness = 0.5
+        healthiness = 0.5,
+        contamination = 0.05
     },
     ["water"] = {
-        healthiness = -5
+        healthiness = -5,
+        contamination = 1
     },
     ["mechanically-cleaned-water"] = {
-        healthiness = -3
+        healthiness = -3,
+        contamination = 0.5
     },
     ["biologically-cleaned-water"] = {
-        healthiness = -1
+        healthiness = -1,
+        contamination = 0.2
     },
     ["ultra-pure-water"] = {
-        healthiness = -2
+        healthiness = -2,
+        contamination = 0
     }
 }
 

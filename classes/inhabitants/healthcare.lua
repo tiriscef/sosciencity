@@ -1,3 +1,4 @@
+local DeathCause = require("enums.death-cause")
 local DiseaseCategory = require("enums.disease-category")
 local DiseasedCause = require("enums.diseased-cause")
 local EK = require("enums.entry-key")
@@ -6,21 +7,26 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
+local InhabitantsConstants = require("constants.inhabitants")
 
 local castes = Castes.values
 local disease_values = Diseases.values
 local get_building_details = Buildings.get
 local try_get = Register.try_get
 local Arrays = Tirislib.Arrays
+local Tables = Tirislib.Tables
 local Utils = Tirislib.Utils
 local coin_flips = Utils.coin_flips
 local occurence_probability = Utils.occurrence_probability
 local update_progress = Utils.update_progress
 local HEALTHY = DiseaseGroup.HEALTHY
-local make_sick = DiseaseGroup.make_sick
-local make_sick_randomly = DiseaseGroup.make_sick_randomly
+local make_sick = InhabitantGroup.make_sick
+local make_sick_randomly = InhabitantGroup.make_sick_randomly
+local grant_immunity = ImmunityGroup.grant
+local wane_immunities = ImmunityGroup.wane
 local cure = DiseaseGroup.cure
-local take_specific_inhabitants = InhabitantGroup.take_specific
+local take_deceased = InhabitantGroup.take_deceased
+local take_natural_deaths = InhabitantGroup.take_natural_deaths
 local floor = math.floor
 
 -- set during load
@@ -39,7 +45,7 @@ local special_sideeffect_fns = {
         local gender_group = entry[EK.genders]
 
         for _ = 1, count do
-            local gender_before = Utils.weighted_random(gender_group)
+            local gender_before = Tables.pick_random_key_weighted(gender_group)
             local gender_after = Utils.random_different(1, 4, gender_before)
 
             gender_group[gender_before] = gender_group[gender_before] - 1
@@ -57,18 +63,28 @@ local special_sideeffect_fns = {
 local function cure_side_effects(entry, disease_id, count, cured, new_diseases)
     local disease = disease_values[disease_id]
 
-    local lethal_probability = cured and disease.complication_lethality or disease.lethality
+    -- no and/or idiom here: a nil complication_lethality must not fall back to the lethality
+    local lethal_probability
+    if cured then
+        lethal_probability = disease.complication_lethality
+    else
+        lethal_probability = disease.lethality
+    end
     local dead_count = 0
     if lethal_probability then
-        dead_count = coin_flips(lethal_probability, count)
+        dead_count = take_deceased(entry, count, disease_id, lethal_probability)
         if dead_count > 0 then
-            take_specific_inhabitants(entry, dead_count, {[HEALTHY] = dead_count})
             Communication.report_disease_death(dead_count, disease_id)
         end
     end
 
     -- the following effects cannot occur when the persons died
     count = count - dead_count
+
+    -- living through the disease grants immunity, even when it escalates
+    if disease.immunity_duration and count > 0 then
+        grant_immunity(entry[EK.immunities], "recovered", disease_id, count, entry[EK.inhabitants])
+    end
 
     local escalation_disease = disease.escalation
     local escalation_count = 0
@@ -109,8 +125,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_accident_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + entry[EK.sanity] + 1) *
-        castes[entry[EK.type]].accident_disease_resilience
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.accident_disease_rate /
+        (entry[EK.health] + entry[EK.sanity] + 1) * castes[entry[EK.type]].accident_disease_susceptibility
 end
 
 --- Returns the disease progress for health-based diseases.
@@ -118,8 +134,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_health_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.health] + 1) *
-        castes[entry[EK.type]].health_disease_resilience
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.health_disease_rate / (entry[EK.health] + 1) *
+        castes[entry[EK.type]].health_disease_susceptibility
 end
 
 --- Returns the disease progress for sanity-based diseases.
@@ -127,8 +143,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_sanity_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks / 100000 / (entry[EK.sanity] + 1) *
-        castes[entry[EK.type]].sanity_disease_resilience
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.sanity_disease_rate / (entry[EK.sanity] + 1) *
+        castes[entry[EK.type]].sanity_disease_susceptibility
 end
 
 --- Returns the disease progress for zoonosis (from animal farms).
@@ -136,7 +152,8 @@ end
 --- @param delta_ticks integer
 --- @return number
 function Inhabitants.get_zoonosis_disease_progress(entry, delta_ticks)
-    return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) / 5000000
+    return entry[EK.inhabitants] * delta_ticks * (storage.active_animal_farms ^ 0.5) *
+        InhabitantsConstants.zoonosis_disease_rate
 end
 
 --- Returns the disease progress for malnutrition.
@@ -145,7 +162,7 @@ end
 --- @return number
 function Inhabitants.get_malnutrition_disease_progress(entry, delta_ticks)
     if entry[EK.has_food] then return 0 end
-    return entry[EK.inhabitants] * delta_ticks / 100000
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.malnutrition_disease_rate
 end
 
 --- Returns the disease progress for dehydration.
@@ -154,7 +171,25 @@ end
 --- @return number
 function Inhabitants.get_dehydration_disease_progress(entry, delta_ticks)
     if entry[EK.has_water] then return 0 end
-    return entry[EK.inhabitants] * delta_ticks / 100000
+    return entry[EK.inhabitants] * delta_ticks * InhabitantsConstants.dehydration_disease_rate
+end
+
+--- Returns the disease progress for food poisoning from the risky foods in the diet.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_food_poisoning_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks * entry[EK.food_poisoning_risk] *
+        InhabitantsConstants.food_poisoning_disease_rate
+end
+
+--- Returns the disease progress for waterborne diseases from contaminated drinking water.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_waterborne_disease_progress(entry, delta_ticks)
+    return entry[EK.inhabitants] * delta_ticks * entry[EK.water_contamination] *
+        InhabitantsConstants.waterborne_disease_rate
 end
 
 --- Returns the disease progress from workplace accidents of the given category.
@@ -162,6 +197,14 @@ end
 --- @param delta_ticks integer
 --- @param disease_category DiseaseCategory
 --- @return number
+--- Returns the disease progress for old age diseases.
+--- @param entry Entry
+--- @param delta_ticks integer
+--- @return number
+function Inhabitants.get_old_age_disease_progress(entry, delta_ticks)
+    return InhabitantGroup.get_frailty_sum(entry) * delta_ticks * InhabitantsConstants.old_age_disease_rate
+end
+
 local function get_workplace_accident_progress(entry, delta_ticks, disease_category)
     local progress = 0
     for unit_number, count in pairs(entry[EK.employments]) do
@@ -211,14 +254,17 @@ Inhabitants.disease_progress_updaters = {
     [DiseaseCategory.fishing_hut] = Inhabitants.get_fishing_hut_accident_progress,
     [DiseaseCategory.hunting_hut] = Inhabitants.get_hunting_hut_accident_progress,
     [DiseaseCategory.malnutrition] = Inhabitants.get_malnutrition_disease_progress,
-    [DiseaseCategory.dehydration] = Inhabitants.get_dehydration_disease_progress
+    [DiseaseCategory.dehydration] = Inhabitants.get_dehydration_disease_progress,
+    [DiseaseCategory.food_poisoning] = Inhabitants.get_food_poisoning_disease_progress,
+    [DiseaseCategory.waterborne] = Inhabitants.get_waterborne_disease_progress,
+    [DiseaseCategory.old_age] = Inhabitants.get_old_age_disease_progress
 }
 local disease_progress_updaters = Inhabitants.disease_progress_updaters
 
 ---------------------------------------------------------------------------------------------------
 -- << disease case creation and treatment >>
 
-local function create_disease_cases(entry, disease_group, delta_ticks)
+local function create_disease_cases(entry, delta_ticks)
     local progresses = entry[EK.disease_progress]
 
     for disease_category, updater in pairs(disease_progress_updaters) do
@@ -227,7 +273,7 @@ local function create_disease_cases(entry, disease_group, delta_ticks)
         if progress >= 1 then
             local new_diseases = floor(progress)
 
-            make_sick_randomly(disease_group, disease_category, new_diseases)
+            make_sick_randomly(entry, disease_category, new_diseases)
 
             progress = progress - new_diseases
         end
@@ -249,9 +295,8 @@ end
 function Inhabitants.apply_cure_side_effects(entry, disease_id, count, cured)
     local new_diseases = {}
     cure_side_effects(entry, disease_id, count, cured, new_diseases)
-    local disease_group = entry[EK.diseases]
     for nd_id, nd_count in pairs(new_diseases) do
-        make_sick(disease_group, nd_id, nd_count)
+        make_sick(entry, nd_id, nd_count)
     end
 end
 
@@ -295,21 +340,36 @@ local function update_disease_cases(entry, disease_group, delta_ticks)
     end
 
     for disease_id, count in pairs(new_diseases) do
-        make_sick(disease_group, disease_id, count)
+        make_sick(entry, disease_id, count)
+    end
+end
+
+---------------------------------------------------------------------------------------------------
+-- << natural deaths >>
+
+--- Lets old inhabitants pass away in their sleep. No hospital can prevent it, only good health and sanity delay it.
+--- @param entry Entry
+--- @param delta_ticks integer
+local function update_natural_deaths(entry, delta_ticks)
+    local dead_count = take_natural_deaths(entry, delta_ticks)
+    if dead_count > 0 then
+        Communication.report_death(dead_count, DeathCause.natural)
     end
 end
 
 ---------------------------------------------------------------------------------------------------
 -- << main disease update >>
 
---- Updates diseases for a housing entry: creates new cases and treats existing ones.
+--- Updates diseases for a housing entry: natural deaths, new cases and natural recovery.
 --- Employment correction is handled by validate_employment_capacity in update_house.
 --- @param entry Entry
 --- @param delta_ticks integer
 local function update_diseases(entry, delta_ticks)
     local disease_group = entry[EK.diseases]
 
-    create_disease_cases(entry, disease_group, delta_ticks)
+    wane_immunities(entry[EK.immunities], delta_ticks)
+    update_natural_deaths(entry, delta_ticks)
+    create_disease_cases(entry, delta_ticks)
     update_disease_cases(entry, disease_group, delta_ticks)
     update_unclaimed_disease_ticks(entry, delta_ticks)
 end

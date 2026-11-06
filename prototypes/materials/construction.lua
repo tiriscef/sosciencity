@@ -7,7 +7,7 @@ local construction_items = {
         name = "sawdust",
         sprite_variations = {name = "sawdust", count = 2, include_icon = true},
         fuel_value = "200kJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "marble",
@@ -25,7 +25,10 @@ local construction_items = {
         name = "soda",
         sprite_variations = {name = "soda", count = 3, include_icon = true}
     },
-    {name = "lye", use_placeholder_icon = true},
+    {
+        name = "lye",
+        sprite_variations = {name = "lye", count = 3, include_icon = true}
+    },
     {name = "glass"},
     {name = "glass-mixture"},
     {
@@ -76,7 +79,6 @@ local construction_items = {
         name = "water-filter",
         type = "module",
         effect = {},
-        limitation = {"clean-water-from-ground"},
         category = "sosciencity-water-filter",
         tier = 1,
         subgroup = "sosciencity-drinking-water",
@@ -85,7 +87,7 @@ local construction_items = {
     {name = "ferrous-sulfate"},
     {
         name = "granite",
-        use_placeholder_icon = true
+        sprite_variations = {name = "granite", count = 3, include_icon = true}
     },
     {
         name = "precious-ore",
@@ -97,7 +99,7 @@ local construction_items = {
     },
     {
         name = "gemstone",
-        use_placeholder_icon = true
+        sprite_variations = {name = "gemstone", count = 3, include_icon = true}
     },
     {
         name = "polished-gemstone",
@@ -105,7 +107,7 @@ local construction_items = {
     },
     {
         name = "tirinite",
-        use_placeholder_icon = true
+        sprite_variations = {name = "tirinite", count = 3, include_icon = true}
     }
 }
 
@@ -157,7 +159,8 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-quarry"
 }:add_number_layer(1)
 
 Tirislib.RecipeGenerator.create {
@@ -169,7 +172,9 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-clockwork-quarry",
     energy_required = 4,
-    allow_productivity = true
+    allow_productivity = true,
+    -- the better marble recipe comes when power tools do
+    unlock_with_item = "power-tools"
 }:add_number_layer(2)
 
 Tirislib.RecipeGenerator.create {
@@ -180,7 +185,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "explosives", amount = 1},
         {type = "item", name = "power-tools", amount = 1}
     },
-    category = "sosciencity-clockwork-quarry",
+    category = "sosciencity-clockwork-mine",
     energy_required = 6,
     unlock = "production-science-pack"
 }
@@ -190,13 +195,44 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "tools", amount = 1}
     },
     ingredients = {
-        {type = "item", name = "lumber", amount = 2},
-        {type = "item", name = "iron-plate", amount = 2}
+        {type = "item", name = "lumber", amount = 3},
+        {type = "item", name = "iron-plate", amount = 3}
     },
-    category = "sosciencity-tinkering-workshop"
+    energy_required = 2,
+    unlock = "clockwork-quarry"
 }
 
 Tirislib.RecipeGenerator.create {
+    name = "tools-workshop",
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
+    results = {
+        {type = "item", name = "tools", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "lumber", amount = 2},
+        {type = "item", name = "iron-plate", amount = 2}
+    },
+    category = "sosciencity-tinkering-workshop",
+    unlock = "tinkering-workshop"
+}:add_category_layer("workshop")
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "power-tools", amount = 2}
+    },
+    ingredients = {
+        {theme = "electronics", amount = 3},
+        {theme = "battery", amount = 3},
+        {type = "item", name = "steel-plate", amount = 6}
+    },
+    energy_required = 4,
+    default_theme_level = 3,
+    unlock_with_item = "battery"
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "power-tools-workshop",
+    localised_name_wrapper = "recipe-name.tinkering-workshop",
     results = {
         {type = "item", name = "power-tools", amount = 1}
     },
@@ -206,8 +242,9 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "steel-plate", amount = 2}
     },
     category = "sosciencity-tinkering-workshop",
-    default_theme_level = 3
-}
+    default_theme_level = 3,
+    unlock_with_item = "battery"
+}:add_category_layer("workshop")
 
 Tirislib.RecipeGenerator.create {
     localised_name = {"recipe-name.screw-set-copper"},
@@ -346,7 +383,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
     },
     category = "sosciencity-clockwork-quarry",
-    energy_required = 4
+    energy_required = 4,
+    unlock = "clockwork-quarry"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -359,7 +397,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "soda", amount = 1}
     },
     energy_required = 1.6,
-    unlock = "infrastructure-1"
+    -- limestone comes on another branch of the tree, which doesn't depend on soda
+    unlock_with_item = "soda"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -370,7 +409,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "glass-mixture", amount = 1}
     },
     category = "smelting",
-    energy_required = 3.2
+    energy_required = 3.2,
+    unlock_with_item = "glass-mixture"
 }:add_ingredient_layer("glass-mixture")
 
 Tirislib.RecipeGenerator.create {
@@ -393,7 +433,8 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "steam", amount = 600}
     },
     category = "sosciencity-clockwork-quarry",
-    energy_required = 5
+    energy_required = 5,
+    unlock = "clockwork-quarry"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -404,7 +445,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "clay-minerals", amount = 2},
         {type = "item", name = "limestone", amount = 1},
         {type = "fluid", name = "water", amount = 100}
-    }
+    },
+    unlock = "clockwork-quarry"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -414,7 +456,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "ceramic-mixture", amount = 1}
     },
-    category = "smelting"
+    category = "smelting",
+    unlock = "clockwork-quarry"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -460,7 +503,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "limestone", amount = 2}
     },
     category = "sosciencity-salt-pond",
-    energy_required = 4
+    energy_required = 4,
+    unlock = {"fermentation", "medbay"}
 }
 
 Tirislib.RecipeGenerator.create {
@@ -470,7 +514,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "pyrifera", amount = 5}
     },
-    energy_required = 5
+    energy_required = 5,
+    unlock = "algae-farming"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -534,7 +579,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {},
     category = "sosciencity-clockwork-mine",
     energy_required = 5,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-mine"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -544,7 +590,8 @@ Tirislib.RecipeGenerator.create {
     ingredients = {},
     category = "sosciencity-clockwork-mine",
     energy_required = 8,
-    allow_productivity = true
+    allow_productivity = true,
+    unlock = "clockwork-mine"
 }
 
 -- Tinkering Workshop - precious materials

@@ -18,6 +18,7 @@ require("datastage-scripts.missing-feature-flags")
 require("integrations-updates")
 
 require("datastage-scripts.utility-sprite-names")
+require("datastage-scripts.test-prototype-group")
 require("datastage-scripts.debug-tests")
 
 Tirislib.Prototype.finish()

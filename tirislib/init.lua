@@ -5,10 +5,11 @@ Tirislib = Tirislib or {}
 --- @class array
 
 require("testing")
+-- arrays before utils, utils uses Arrays.weighted_random at file scope
+require("arrays")
 require("utils")
 require("string")
 require("tables")
-require("arrays")
 require("locales")
 require("lazy-luaq")
 require("luaq")

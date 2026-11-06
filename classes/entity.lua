@@ -144,6 +144,7 @@ Entity.broken_status = broken_status
 --- @param is_broken boolean
 local function set_breakdown_state(entry, is_broken)
     set_active(entry, not is_broken, is_broken and broken_status or nil)
+    entry[EK.broken_down] = is_broken or nil
     if is_broken then
         Subentities.add_common_sprite(entry, RenderingType.breakdown_warning)
     else
@@ -152,9 +153,40 @@ local function set_breakdown_state(entry, is_broken)
 end
 Entity.set_breakdown_state = set_breakdown_state
 
+-- Breakdowns rotate through 100 phases, one step per cycle. Each machine has a fixed offset into
+-- that rotation: its area (in steps of BREAKDOWN_LOCATION_CHUNK_SIZE tiles) gives the regional part,
+-- so the mechanics visibly work through the factory area by area, and a hash of the unit number
+-- spreads the machines of one area over BREAKDOWN_LOCAL_JITTER phases.
+-- The jitter caps how much of one area is down at once: at -N% about N / BREAKDOWN_LOCAL_JITTER
+-- of an area's machines are broken while the breakdown passes through it (10 gave over 60% at -6%).
 local BREAKDOWN_CYCLE_LENGTH = 10 * Time.second
-local BREAKDOWN_LOCAL_JITTER = 10
+local BREAKDOWN_PHASE_COUNT = 100
+local BREAKDOWN_LOCAL_JITTER = 30
 local BREAKDOWN_LOCATION_CHUNK_SIZE = 16
+-- prime, so consecutive unit numbers spread over all jitter values instead of forming stripes
+local BREAKDOWN_HASH_MULTIPLIER = 7919
+
+--- Fixed offset of a machine in the breakdown rotation.
+--- @param unit_number integer
+--- @param position MapPosition
+--- @return integer offset in [0, BREAKDOWN_PHASE_COUNT)
+local function get_breakdown_offset(unit_number, position)
+    return ((unit_number * BREAKDOWN_HASH_MULTIPLIER) % BREAKDOWN_LOCAL_JITTER
+        + floor(position.x / BREAKDOWN_LOCATION_CHUNK_SIZE)
+        + floor(position.y / BREAKDOWN_LOCATION_CHUNK_SIZE)) % BREAKDOWN_PHASE_COUNT
+end
+Entity.get_breakdown_offset = get_breakdown_offset
+
+--- Current phase of the entry in the breakdown rotation. Machines with a phase below the
+--- breakdown threshold (the negated clockwork bonus) are broken.
+--- @param entry Entry
+--- @return integer phase in [0, BREAKDOWN_PHASE_COUNT)
+local function get_breakdown_phase(entry)
+    local entity = entry[EK.entity]
+    local time_index = floor(game.tick / BREAKDOWN_CYCLE_LENGTH)
+    return (get_breakdown_offset(entity.unit_number, entity.position) + time_index) % BREAKDOWN_PHASE_COUNT
+end
+Entity.get_breakdown_phase = get_breakdown_phase
 
 --- Verdict for whether the entry is currently in the broken-down phase due to insufficient
 --- clockwork maintenance. Pure: returns a boolean derived from clockwork_bonus, the entry's
@@ -167,17 +199,7 @@ local function get_breakdown_state(entry)
         return false
     end
 
-    local entity = entry[EK.entity]
-    local position = entity.position
-    local phase =
-        (entity.unit_number % BREAKDOWN_LOCAL_JITTER
-            + floor(position.x / BREAKDOWN_LOCATION_CHUNK_SIZE)
-            + floor(position.y / BREAKDOWN_LOCATION_CHUNK_SIZE)) % 100
-    local time_index = floor(game.tick / BREAKDOWN_CYCLE_LENGTH)
-    local effective_phase = (phase + time_index) % 100
-    local broken_threshold = -clockwork_bonus
-
-    return effective_phase < broken_threshold
+    return get_breakdown_phase(entry) < -clockwork_bonus
 end
 Entity.get_breakdown_state = get_breakdown_state
 
@@ -265,6 +287,15 @@ Entity.remove_active_machine_status = remove_active_machine_status
 ---------------------------------------------------------------------------------------------------
 -- << shared utilities >>
 
+--- Counts the water tiles in range of the given entity, without any caching.
+--- @param entity LuaEntity
+--- @param range number
+--- @return integer
+function Entity.count_water_tiles(entity, range)
+    local area = Utils.get_range_bounding_box(entity.position, range)
+    return entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
+end
+
 --- Returns the number of water tiles in the building's area, using a cached value when the tile layout hasn't changed.
 --- @param entry Entry
 --- @param building_details table
@@ -273,8 +304,7 @@ function Entity.get_water_tiles(entry, building_details)
     local cached_value = entry[EK.water_tiles]
     if not cached_value or storage.last_tile_update > entry[EK.last_update] then
         local entity = entry[EK.entity]
-        local area = Utils.get_range_bounding_box(entity.position, building_details.range)
-        local water_tiles = entity.surface.count_tiles_filtered {area = area, collision_mask = "water_tile"}
+        local water_tiles = Entity.count_water_tiles(entity, building_details.range)
 
         entry[EK.water_tiles] = water_tiles
         return water_tiles
@@ -342,6 +372,67 @@ end
 --- @return boolean
 function Entity.has_performance_report_builder(_type)
     return report_builder_lookup[_type] ~= nil
+end
+
+---------------------------------------------------------------------------------------------------
+-- << site report builder registry >>
+-- A site report tells the player how well a building's location suits it, right when they place the
+-- building or a ghost of it. Only for buildings whose performance depends on their surroundings.
+
+local site_report_builder_lookup = {}
+
+--- Registers a function that describes the site of a building of the given type.
+--- @param _type Type
+--- @param fn function receives the LuaEntity (real or ghost, not registered yet) and its building details,
+--- returns an array of lines {caption = LocalisedString, ok = boolean}
+function Entity.set_site_report_builder(_type, fn)
+    Tirislib.Utils.desync_protection()
+    if site_report_builder_lookup[_type] then
+        error("Duplicate site_report_builder registration for type " .. tostring(_type))
+    end
+    site_report_builder_lookup[_type] = fn
+end
+
+--- Returns whether buildings of the given type get a site report.
+--- @param _type Type
+--- @return boolean
+function Entity.has_site_report_builder(_type)
+    return site_report_builder_lookup[_type] ~= nil
+end
+
+--- Builds the site report for the given entity, or returns nil if its building doesn't get one.
+--- @param entity LuaEntity real entity or ghost
+--- @param name string name of the building, the ghost_name for ghosts
+--- @return table?
+function Entity.build_site_report(entity, name)
+    local building_details = Buildings.get_by_name(name)
+    local fn = building_details.type and site_report_builder_lookup[building_details.type]
+    return fn and fn(entity, building_details)
+end
+
+--- Site report line about the free workers of fitting castes whose houses reach the entity.
+--- @param entity LuaEntity
+--- @param building_details table
+--- @return table
+function Entity.build_workforce_site_line(entity, building_details)
+    local workforce = building_details.workforce
+    local available = Inhabitants.count_employable_in_reach(entity, workforce.castes)
+    return {
+        caption = {"sosciencity.site-workers", available, workforce.count},
+        ok = available >= workforce.count
+    }
+end
+
+--- Site report line about the buildings of the same type in range.
+--- @param entity LuaEntity
+--- @param building_details table
+--- @return table
+function Entity.build_competition_site_line(entity, building_details)
+    local count = Neighborhood.count_potential_neighbors(entity, building_details.type, building_details.range)
+    return {
+        caption = {"sosciencity.site-competition", count},
+        ok = count == 0
+    }
 end
 
 ---------------------------------------------------------------------------------------------------

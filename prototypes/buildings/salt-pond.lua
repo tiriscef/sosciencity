@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create {
         {theme = "machine", amount = 1}
     },
     default_theme_level = 1,
-    unlock = {"fermentation", "medbay"}
+    unlock = "salt-pond"
 }
 Sosciencity.Config.remove_quality_multipliers("salt-pond")
 
@@ -33,7 +33,7 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "salt-pond"},
     max_health = 200,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "stone",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},

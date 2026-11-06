@@ -1,9 +1,9 @@
--- TODO: graphics
+local sprites = require("__sosciencity-graphics__.graphics.entity.psychology-institute.sprite-data")
 
 Tirislib.Item.create {
     type = "item",
     name = "psychology-institute",
-    icon = Tirislib.Prototype.placeholder_icon,
+    icon = "__sosciencity-graphics__/graphics/icon/psychology-institute.png",
     icon_size = 64,
     subgroup = "sosciencity-buildings",
     order = "fac",
@@ -32,29 +32,22 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "psychology-institute"},
     max_health = 200,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "stone",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     graphics_set = {
-        animation = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                    priority = "high",
-                    width = 224,
-                    height = 224,
-                    scale = 6/7
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/gleam-caste.png",
-                    priority = "high",
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    frame_count = 1
-                }
+        animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.static),
+        working_visualisations = {
+            -- always drawn, so the rats and pigeons stay visible (frozen) while the institute is idle
+            {
+                always_draw = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.rats)
+            },
+            {
+                always_draw = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.pigeons)
             }
         }
     },
@@ -67,5 +60,5 @@ Tirislib.Entity.create {
         emissions_per_minute = {pollution = 0.05},
         drain = "5kW"
     }
-}:set_size(6, 6):copy_icon_from_item()
+}:set_size(7, 7):copy_icon_from_item()
 Sosciencity.configure_building("psychology-institute")

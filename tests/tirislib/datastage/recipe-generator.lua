@@ -975,3 +975,33 @@ Tirislib.Testing.add_test_case(
     setup,
     teardown
 )
+
+Tirislib.Testing.add_test_case(
+    "create keeps the recipe's own locale when it has a custom icon and an empty main_product",
+    "lib.recipe-generator",
+    function()
+        create_test_item("test-rg-own-identity-product")
+
+        local own = Tirislib.RecipeGenerator.create {
+            name = "test-rg-own-identity",
+            icon = "__base__/graphics/icons/iron-plate.png",
+            icon_size = 64,
+            main_product = "",
+            results = {{type = "item", name = "test-rg-own-identity-product", amount = 1}}
+        }
+
+        Assert.is_nil(own.localised_name, "no product name copied")
+        Assert.is_nil(own.localised_description, "no product description copied")
+
+        local derived = Tirislib.RecipeGenerator.create {
+            name = "test-rg-derived-identity",
+            icon = "__base__/graphics/icons/iron-plate.png",
+            icon_size = 64,
+            results = {{type = "item", name = "test-rg-own-identity-product", amount = 1}}
+        }
+
+        Assert.not_nil(derived.localised_name, "product name copied without an empty main_product")
+    end,
+    setup,
+    teardown
+)

@@ -14,8 +14,6 @@ for _, name in pairs(sprites_to_create) do
     Tirislib.Prototype.create {
         type = "sprite",
         name = name .. "-caste",
-        width = 256,
-        height = 256,
         layers = {
             {
                 filename = "__core__/graphics/entity-info-dark-background.png",

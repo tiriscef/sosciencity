@@ -321,7 +321,7 @@ Gui.CityView.add_page {
         -- Healthcare
         local healthcare_types = {
             Type.hospital, Type.improvised_hospital, Type.pharmacy,
-            Type.psych_ward, Type.intensive_care_unit, Type.gene_clinic
+            Type.general_ward, Type.psych_ward, Type.intensive_care_unit, Type.gene_clinic
         }
         local has_healthcare = false
         for _, t in pairs(healthcare_types) do

@@ -3,7 +3,10 @@
 
 local clockwork_items = {
     {name = "invention"},
-    {name = "technical-drawing", use_placeholder_icon = true},
+    {
+        name = "technical-drawing",
+        sprite_variations = {name = "technical-drawing", count = 3, include_icon = true}
+    },
     {
         name = "contraption",
         sprite_variations = {name = "contraption", count = 3, include_icon = true}

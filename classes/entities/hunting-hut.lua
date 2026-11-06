@@ -19,13 +19,15 @@ local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local Utils = Tirislib.Utils
 local min = math.min
 
+local function count_trees(entity, range)
+    local area = Utils.get_range_bounding_box(entity.position, range)
+    return entity.surface.count_entities_filtered {area = area, type = "tree"}
+end
+
 local function get_tree_count(entry, building_details)
     local cached_value = entry[EK.tree_count]
     if not cached_value or storage.last_entity_update > entry[EK.last_update] then
-        local entity = entry[EK.entity]
-        local position = entity.position
-        local area = Utils.get_range_bounding_box(position, building_details.range)
-        local trees = entity.surface.count_entities_filtered {area = area, type = "tree"}
+        local trees = count_trees(entry[EK.entity], building_details.range)
 
         entry[EK.tree_count] = trees
         return trees
@@ -57,6 +59,11 @@ local function get_hunting_competition(entry)
     local effective_count = same_count + different_recipe_weight * other_count
     return (effective_count + 1) ^ (-0.35), same_count, other_count
 end
+--- Share of the needed trees that are in range. More trees than needed don't make the hut faster.
+local function get_forest_performance(tree_count, building_details)
+    return min(1, tree_count / building_details.tree_count)
+end
+
 local function update_hunting_hut(entry)
     local building_details = get_building_details(entry)
     local tree_count = get_tree_count(entry, building_details)
@@ -64,7 +71,7 @@ local function update_hunting_hut(entry)
 
     local worker_performance = evaluate_workforce(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
-    local forest_performance = tree_count / building_details.tree_count
+    local forest_performance = get_forest_performance(tree_count, building_details)
     local competition, _, _ = get_hunting_competition(entry)
 
     set_crafting_machine_performance(entry, min(worker_performance, forest_performance) * competition * worker_happiness)
@@ -76,7 +83,7 @@ local function build_hunting_hut_report(entry)
     local worker_happiness = evaluate_worker_happiness(entry)
     local building_details = get_building_details(entry)
     local tree_count = entry[EK.tree_count] or 0
-    local forest_performance = tree_count / building_details.tree_count
+    local forest_performance = get_forest_performance(tree_count, building_details)
     local competition, same_count, other_count = get_hunting_competition(entry)
     local performance = min(worker_performance, forest_performance) * competition * worker_happiness
 
@@ -122,3 +129,15 @@ local function create_hunting_hut(entry)
     entry[EK.performance] = 1
 end
 Register.set_entity_creation_handler(Type.hunting_hut, create_hunting_hut)
+
+local function build_hunting_hut_site_report(entity, building_details)
+    local trees = count_trees(entity, building_details.range)
+    local needed = building_details.tree_count
+
+    return {
+        {caption = {"sosciencity.site-trees", trees, needed}, ok = trees >= needed},
+        Entity.build_workforce_site_line(entity, building_details),
+        Entity.build_competition_site_line(entity, building_details)
+    }
+end
+Entity.set_site_report_builder(Type.hunting_hut, build_hunting_hut_site_report)

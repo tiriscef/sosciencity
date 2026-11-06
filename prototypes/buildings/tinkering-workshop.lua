@@ -1,9 +1,7 @@
--- TODO: graphics
-
 Tirislib.Item.create {
     type = "item",
     name = "tinkering-workshop",
-    icon = Tirislib.Prototype.placeholder_icon,
+    icon = "__sosciencity-graphics__/graphics/icon/tinkering-workshop.png",
     icon_size = 64,
     subgroup = "sosciencity-production-buildings",
     order = "aaa",
@@ -25,6 +23,10 @@ Tirislib.RecipeGenerator.create {
     unlock = "tinkering-workshop"
 }
 
+local pipe_covers = Tirislib.Entity.get_standard_pipe_cover()
+local pipe_pictures = Tirislib.Entity.get_standard_pipe_pictures()
+local sprites = require("__sosciencity-graphics__.graphics.entity.tinkering-workshop.sprite-data")
+
 Tirislib.Entity.create {
     type = "assembling-machine",
     name = "tinkering-workshop",
@@ -32,30 +34,22 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "tinkering-workshop"},
     max_health = 200,
     corpse = "small-remnants",
-    vehicle_impact_sound = {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.65},
+    impact_category = "metal",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     graphics_set = {
-        animation = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                    priority = "high",
-                    width = 224,
-                    height = 224,
-                    scale = 6/7
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/clockwork-caste.png",
-                    priority = "high",
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    frame_count = 1
-                }
-            }
+        animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.static),
+        -- constant_speed: the animations don't speed up with the crafting speed (modules, maintenance bonus)
+        working_visualisations = {
+            -- flywheel and the smoker's clockwork: always drawn, so they stay visible while idle
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(
+                sprites.drive, {always_draw = true, constant_speed = true}),
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(
+                sprites.smoker, {always_draw = true, constant_speed = true}),
+            -- the furnace only burns while the workshop crafts
+            Tirislib.Entity.create_working_visualisation_from_sprite_data(sprites.fire, {constant_speed = true})
         }
     },
     crafting_speed = 1,
@@ -63,11 +57,15 @@ Tirislib.Entity.create {
     fluid_boxes = {
         {
             volume = 200,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
             pipe_connections = {{position = {-2.5, 0}, flow_direction = "input", direction = defines.direction.west}},
             production_type = "input"
         },
         {
             volume = 200,
+            pipe_covers = pipe_covers,
+            pipe_picture = pipe_pictures,
             pipe_connections = {{position = {2.5, 0}, flow_direction = "input", direction = defines.direction.east}},
             production_type = "input"
         }

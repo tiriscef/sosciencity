@@ -62,5 +62,13 @@ Tirislib.Prototype.batch_create {
         icon_size = 64,
         subgroup = "sosciencity-alerts",
         order = "ay"
+    },
+    {
+        type = "virtual-signal",
+        name = "alert-breakdown",
+        icon = "__sosciencity-graphics__/graphics/utility/alert-breakdown.png",
+        icon_size = 64,
+        subgroup = "sosciencity-alerts",
+        order = "ay"
     }
 }

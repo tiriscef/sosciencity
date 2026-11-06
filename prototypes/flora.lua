@@ -9,7 +9,7 @@ local flora_items = {
         name = "leafage",
         sprite_variations = {name = "leafage", count = 3, include_icon = true},
         fuel_value = "500kJ",
-        fuel_category = "chemical"
+        fuel_categories = {"chemical"}
     },
     {
         name = "hardcorn-punk",
@@ -25,28 +25,23 @@ local flora_items = {
     },
     {
         name = "cherry-wood",
-        wood = true,
-        unlock = Unlocks.get_tech_name("cherry")
+        wood = true
     },
     {
         name = "olive-wood",
-        wood = true,
-        unlock = Unlocks.get_tech_name("olive")
+        wood = true
     },
     {
         name = "ortrot-wood",
-        wood = true,
-        unlock = "explore-alien-flora-2"
+        wood = true
     },
     {
         name = "avocado-wood",
-        wood = true,
-        unlock = Unlocks.get_tech_name("avocado")
+        wood = true
     },
     {
         name = "zetorn-wood",
-        wood = true,
-        unlock = "explore-alien-flora-1"
+        wood = true
     },
     {
         name = "sugar-cane",
@@ -72,24 +67,30 @@ local flora_items = {
         name = "chromafall",
         sprite_variations = {name = "chromafall-pile", count = 4}
     },
+    -- chronofall is on hold until perfume is in scope (after the alpha)
+    -- {
+    --     name = "chronofall",
+    --     sprite_variations = {name = "chronofall-pile", count = 4}
+    -- },
     {
-        name = "chronofall",
-        sprite_variations = {name = "chronofall-pile", count = 4}
-    },
-    {
-        name = "chamofall",
-        sprite_variations = {name = "chamofall-pile", count = 4}
+        name = "heliofall",
+        sprite_variations = {name = "heliofall-pile", count = 4}
     },
     {
         name = "ignivern",
-        use_placeholder_icon = true
+        sprite_variations = {name = "ignivern", count = 3, include_icon = true}
     }
 }
+
+--- names of the flora items that are wood, they get a lumber recipe further down
+local wood_items = {}
 
 for _, item in pairs(flora_items) do
     if item.wood then
         item.fuel_value = "2MJ"
-        item.fuel_category = "chemical"
+        item.fuel_categories = {"chemical"}
+        item.wood = nil
+        wood_items[#wood_items + 1] = item.name
     end
 end
 
@@ -348,7 +349,7 @@ create_annual_recipe {
 -- brutal pumpkin
 create_annual_recipe {
     product = "brutal-pumpkin",
-    unlock = "explore-alien-flora-2"
+    unlock = Unlocks.get_tech_name("brutal-pumpkin")
 }
 
 create_identification_recipe {
@@ -386,6 +387,22 @@ create_neogenesis_recipe {
     unlock = "hummus"
 }
 
+-- chromafall
+create_annual_bloomhouse_recipe {
+    product = "chromafall",
+    ingredients = {{type = "fluid", name = "water", amount = 200}}
+}
+
+create_identification_recipe {
+    product = "chromafall",
+    ingredients = {
+        {type = "item", name = "wild-flowers",    amount = 20},
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "humus",           amount = 40}
+    },
+    unlock = "explore-alien-flora-1"
+}
+
 -- eggplant
 create_annual_recipe {
     product = "eggplant",
@@ -409,7 +426,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "hardcorn-punk",
     ingredients = {{type = "fluid", name = "water", amount = 1000}},
-    unlock = "food-processing"
+    unlock = Unlocks.get_tech_name("hardcorn-punk")
 }
 
 create_identification_recipe {
@@ -420,6 +437,22 @@ create_identification_recipe {
         {type = "item", name = "leafage",            amount = 200}
     },
     unlock = "food-processing"
+}
+
+-- heliofall
+create_annual_bloomhouse_recipe {
+    product = "heliofall",
+    ingredients = {{type = "fluid", name = "water", amount = 300}}
+}
+
+create_identification_recipe {
+    product = "heliofall",
+    ingredients = {
+        {type = "item", name = "wild-flowers",    amount = 20},
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "humus",           amount = 40}
+    },
+    unlock = "explore-alien-flora-1"
 }
 
 -- lemon
@@ -446,7 +479,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "manok",
     ingredients = {{type = "fluid", name = "water", amount = 1000}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("manok")
 }
 
 create_identification_recipe {
@@ -494,7 +527,7 @@ create_perennial_recipe {
     product = "ortrot",
     ingredients = {{type = "fluid", name = "water", amount = 75}},
     results = {{type = "item", name = "ortrot-wood", amount = 1, independent_probability = 0.2}},
-    unlock = "explore-alien-flora-2"
+    unlock = Unlocks.get_tech_name("ortrot")
 }
 
 create_identification_recipe {
@@ -511,6 +544,16 @@ create_identification_recipe {
 create_annual_bloomhouse_recipe {
     product = "phytofall-blossom",
     ingredients = {{type = "fluid", name = "water", amount = 200}}
+}
+
+create_identification_recipe {
+    product = "phytofall-blossom",
+    ingredients = {
+        {type = "item", name = "wild-flowers",    amount = 20},
+        {type = "item", name = "botanical-study", amount = 10},
+        {type = "item", name = "humus",           amount = 40}
+    },
+    unlock = "orchid-caste"
 }
 
 -- potato
@@ -570,7 +613,7 @@ create_neogenesis_recipe {
 create_annual_recipe {
     product = "tello-fruit",
     ingredients = {{type = "fluid", name = "water", amount = 500}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("tello-fruit")
 }
 
 create_identification_recipe {
@@ -620,7 +663,7 @@ create_annual_recipe {
 create_annual_recipe {
     product = "weird-berry",
     ingredients = {{type = "fluid", name = "water", amount = 500}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("weird-berry")
 }
 
 create_identification_recipe {
@@ -637,7 +680,7 @@ create_identification_recipe {
 create_perennial_recipe {
     product = "zetorn",
     results = {{type = "item", name = "zetorn-wood", amount = 1, independent_probability = 0.2}},
-    unlock = "explore-alien-flora-1"
+    unlock = Unlocks.get_tech_name("zetorn")
 }
 
 create_identification_recipe {
@@ -871,22 +914,21 @@ Tirislib.RecipeGenerator.create {
 ---------------------------------------------------------------------------------------------------
 -- << processing recipes >>
 
-for _, item in pairs(flora_items) do
-    if item.wood then
-        Tirislib.RecipeGenerator.create {
-            results = {
-                {type = "item", name = "lumber",  amount = 3, product = true},
-                {type = "item", name = "sawdust", amount = 1}
-            },
-            ingredients = {
-                {type = "item", name = item.name, amount = 1}
-            },
-            name = "sawdust",
-            category = "sosciencity-wood-processing",
-            allow_productivity = true,
-            auto_recycle = false
-        }
-    end
+for _, wood_name in pairs(wood_items) do
+    Tirislib.RecipeGenerator.create {
+        name = "lumber-from-" .. wood_name,
+        results = {
+            {type = "item", name = "lumber",  amount = 3, product = true},
+            {type = "item", name = "sawdust", amount = 1}
+        },
+        ingredients = {
+            {type = "item", name = wood_name, amount = 1}
+        },
+        category = "sosciencity-wood-processing",
+        unlock_with_item = wood_name,
+        allow_productivity = true,
+        auto_recycle = false
+    }:add_ingredient_layer(wood_name)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -900,37 +942,30 @@ Tirislib.Prototype.create {
 local saplings = {
     {
         name = "apple-sapling",
-        limitation = {"farming-perennial-apple"},
         effect = {}
     },
     {
         name = "avocado-sapling",
-        limitation = {"farming-perennial-avocado"},
         effect = {}
     },
     {
         name = "cherry-sapling",
-        limitation = {"farming-perennial-cherry"},
         effect = {}
     },
     {
         name = "lemon-sapling",
-        limitation = {"farming-perennial-lemon"},
         effect = {}
     },
     {
         name = "orange-sapling",
-        limitation = {"farming-perennial-orange"},
         effect = {}
     },
     {
         name = "ortrot-sapling",
-        limitation = {"farming-perennial-ortrot"},
         effect = {}
     },
     {
         name = "zetorn-sapling",
-        limitation = {"farming-perennial-zetorn"},
         effect = {}
     }
 }
@@ -981,6 +1016,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("apple"),
     auto_recycle = false
 }
 
@@ -995,6 +1031,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 1,
+    unlock = Unlocks.get_tech_name("avocado"),
     auto_recycle = false
 }
 
@@ -1009,6 +1046,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 1,
+    unlock = Unlocks.get_tech_name("cherry"),
     auto_recycle = false
 }
 
@@ -1023,6 +1061,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("lemon"),
     auto_recycle = false
 }
 
@@ -1037,6 +1076,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-plant-upbringing",
     default_theme_level = 2,
+    unlock = Unlocks.get_tech_name("orange"),
     auto_recycle = false
 }
 
@@ -1050,7 +1090,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item",  name = "ortrot", amount = 10}
     },
     category = "sosciencity-plant-upbringing",
-    unlock = "explore-alien-flora-2",
+    unlock = Unlocks.get_tech_name("ortrot"),
     auto_recycle = false
 }
 
@@ -1064,7 +1104,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item",  name = "zetorn", amount = 10}
     },
     category = "sosciencity-plant-upbringing",
-    unlock = "explore-alien-flora-1",
+    unlock = Unlocks.get_tech_name("zetorn"),
     auto_recycle = false
 }
 
@@ -1240,5 +1280,7 @@ Tirislib.Prototype.create {
     icon_size = 64,
     small_icon = "__sosciencity-graphics__/graphics/icon/sapling-1.png",
     small_icon_size = 64,
-    technology_to_unlock = "indoor-growing"
+    technology_to_unlock = "indoor-growing",
+    -- otherwise it stays unlocked in every new game once it was researched in any save
+    unavailable_until_unlocked = true
 }

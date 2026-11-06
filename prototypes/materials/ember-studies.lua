@@ -2,15 +2,15 @@
 -- << items >>
 
 local ember_items = {
-    {name = "artistic-insight"},
-    {name = "sketch", use_placeholder_icon = true},
-    {name = "mosaic", use_placeholder_icon = true},
+    {name = "artistic-insight", sprite_variations = {name = "artistic-insight-on-belt", count = 4}},
+    {name = "sketch", sprite_variations = {name = "sketch-on-belt", count = 6}},
+    {name = "mosaic", sprite_variations = {name = "mosaic-on-belt", count = 6}},
     {name = "painting", sprite_variations = {name = "painting-on-belt", count = 7}},
     {name = "statue", sprite_variations = {name = "statue", count = 1}},
-    {name = "jewellery"},
+    {name = "jewellery", sprite_variations = {name = "jewellery-on-belt", count = 3, include_icon = true}},
     {name = "mixtape"},
-    {name = "novel", use_placeholder_icon = true},
-    {name = "found-art", use_placeholder_icon = true},
+    {name = "novel", sprite_variations = {name = "novel-on-belt", count = 4}},
+    {name = "found-art"},
     {name = "kinetic-sculpture"}
 }
 
@@ -28,8 +28,8 @@ Tirislib.RecipeGenerator.create {
     name = "brainstorm",
     category = "sosciencity-handcrafting",
     enabled = true,
-    energy_required = 5,
-    ingredients = {{type = "item", name = "paper", amount = 2}},
+    energy_required = 2,
+    ingredients = {{type = "item", name = "paper", amount = 1}},
     results = {
         {type = "item", name = "artistic-insight", amount_min = 2, amount_max = 4}
     },
@@ -142,6 +142,17 @@ Tirislib.RecipeGenerator.create {
     unlock = "production-science-pack"
 }
 
+Tirislib.RecipeGenerator.create {
+    results = {{type = "item", name = "novel", amount = 1}},
+    ingredients = {
+        {type = "item", name = "paper", amount = 5},
+        {type = "item", name = "artistic-insight", amount = 2}
+    },
+    category = "sosciencity-atelier",
+    energy_required = 6,
+    unlock = "gleam-caste"
+}
+
 -- Ember HQ
 
 Tirislib.RecipeGenerator.create {
@@ -166,19 +177,5 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-caste-ember",
     energy_required = 8,
     unlock = "atelier",
-    auto_recycle = false
-}
-
-Tirislib.RecipeGenerator.create {
-    results = {
-        {type = "item", name = "novel", amount = 1}
-    },
-    ingredients = {
-        {type = "item", name = "paper", amount = 5},
-        {type = "item", name = "artistic-insight", amount = 2}
-    },
-    category = "sosciencity-caste-ember",
-    energy_required = 6,
-    unlock = "gleam-caste",
     auto_recycle = false
 }

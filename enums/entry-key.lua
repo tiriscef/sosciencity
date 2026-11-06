@@ -75,6 +75,8 @@ EK.workhours = 152
 EK.last_time_active = 153
 --- is this maintenance relevant machine counted as currently active
 EK.active_machine_status = 154
+--- is this machine currently broken down due to insufficient maintenance (nil if not)
+EK.broken_down = 155
 
 -- type specific stuff
 -- empty housing
@@ -126,7 +128,7 @@ EK.recovery_progress = 224
 EK.genders = 225
 --- the ages of the inhabitants
 EK.ages = 226
---- the tick of the last age shift
+--- the tick of the last age shift - ages are keyed by hatch day now, only read by Inhabitants.migrate_ages
 EK.last_age_shift = 227
 --- the entries that make up the social environment as an array of unit_numbers
 EK.social_environment = 228
@@ -156,6 +158,14 @@ EK.is_sanatorium = 239
 EK.unclaimed_disease_ticks = 240
 --- array of moving cohorts: {count, healthy, expires} for inhabitants currently settling in
 EK.moving_cohorts = 241
+--- conception rate multiplier from the nutrition tags of the current diet
+EK.conception_rate_factor = 242
+--- average poisoning risk of the current diet
+EK.food_poisoning_risk = 243
+--- average contamination of the water drunk in the last update
+EK.water_contamination = 244
+--- the immunities of the inhabitants as an ImmunityGroup object
+EK.immunities = 245
 
 -- water distributer
 
@@ -213,6 +223,8 @@ EK.treatment_permissions = 901
 EK.blood_donation_threshold = 902
 --- The count of blood donations at this hospital
 EK.blood_donations = 903
+--- The count of vaccine doses given at this bed building
+EK.vaccinations = 904
 
 -- upbringing station
 
@@ -259,6 +271,9 @@ EK.slots = 1500
 
 --- array of blood donation slots for hospitals: {uid, work_done}
 EK.donation_slots = 1503
+
+--- array of vaccination slots for bed buildings: {uid, vaccine, work_done}
+EK.vaccination_slots = 1504
 
 -- farms (slot-based claim fields)
 

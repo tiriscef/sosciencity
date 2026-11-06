@@ -17,6 +17,9 @@ Tirislib.Technology.create {
     ignore_tech_cost_multiplier = true
 }
 
+-- the first buildings (e.g. the water tower) need iron sticks, which vanilla unlocks much later
+Tirislib.Recipe.get_by_name("iron-stick"):add_unlock("infrastructure-1")
+
 Tirislib.Technology.create {
     name = "upbringing",
     icon = "__sosciencity-graphics__/graphics/technology/upbringing.png",
@@ -45,6 +48,34 @@ Tirislib.Technology.create {
         time = 10
     },
     ignore_tech_cost_multiplier = true
+}
+
+Tirislib.Technology.create {
+    name = "explore-local-ecosystem",
+    icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
+    icon_size = 128,
+    prerequisites = {"upbringing"},
+    unit = {
+        count = 15,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
+    name = "kitchen-for-all",
+    icon = "__sosciencity-graphics__/graphics/technology/kitchen-for-all.png",
+    icon_size = 128,
+    prerequisites = {"upbringing"},
+    unit = {
+        count = 15,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
 }
 
 Tirislib.Technology.create {

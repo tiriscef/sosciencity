@@ -2,11 +2,23 @@
 -- << items >>
 
 local foundry_items = {
-    {name = "scientific-theory", use_placeholder_icon = true},
+    {
+        name = "scientific-theory",
+        sprite_variations = {name = "scientific-theory", count = 3, include_icon = true}
+    },
     {name = "complex-scientific-data"},
-    {name = "experimental-data", use_placeholder_icon = true},
-    {name = "computing-model", use_placeholder_icon = true},
-    {name = "metallurgical-report", use_placeholder_icon = true}
+    {
+        name = "experimental-data",
+        sprite_variations = {name = "experimental-data", count = 3, include_icon = true}
+    },
+    {
+        name = "computing-model",
+        sprite_variations = {name = "computing-model", count = 3, include_icon = true}
+    },
+    {
+        name = "metallurgical-report",
+        sprite_variations = {name = "metallurgical-report", count = 3, include_icon = true}
+    }
 }
 
 Tirislib.Item.batch_create(

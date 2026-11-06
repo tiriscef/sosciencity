@@ -12,6 +12,7 @@ local housing_prototype_details = {
         },
         width = 4,
         height = 4,
+        impact_category = "wood",
         tech_level = 0,
         main_entity = "improvised-hut",
         entity_only = true,
@@ -28,6 +29,7 @@ local housing_prototype_details = {
         },
         width = 4,
         height = 4,
+        impact_category = "wood",
         tech_level = 0,
         icon = "improvised-hut",
         main_entity = "improvised-hut",
@@ -60,9 +62,9 @@ local housing_prototype_details = {
         height = 6,
         tech_level = 3,
     },]]
-    ["khrushchyovka"] = {
+    ["panel-block"] = {
         picture = Tirislib.Entity.create_standard_picture {
-            path = "__sosciencity-graphics__/graphics/entity/khrushchyovka/khrushchyovka",
+            path = "__sosciencity-graphics__/graphics/entity/panel-block/panel-block",
             width = 13,
             height = 13,
             shift = {3.0, -3.5},
@@ -181,6 +183,7 @@ local housing_prototype_details = {
         },
         width = 8,
         height = 6,
+        impact_category = "metal",
         tech_level = 1
     },
     ["living-container"] = {
@@ -194,6 +197,7 @@ local housing_prototype_details = {
         },
         width = 5,
         height = 5,
+        impact_category = "metal",
         tech_level = 0
     },
     ["barrack-container"] = {
@@ -209,6 +213,7 @@ local housing_prototype_details = {
         },
         width = 8,
         height = 5,
+        impact_category = "metal",
         tech_level = 2
     },
     ["balcony-house"] = {
@@ -280,6 +285,7 @@ local housing_prototype_details = {
         },
         width = 4,
         height = 7,
+        impact_category = "wood",
         tech_level = 3
     }
 }

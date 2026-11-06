@@ -18,7 +18,7 @@ local foods = {
     },
     {
         name = "insect-meat",
-        spoil_ticks = 10 * Time.minute,
+        spoil_ticks = 30 * Time.minute,
         spoil_result = "expired-food"
     },
     {
@@ -269,19 +269,19 @@ local foods = {
     },
     {
         name = "wild-edible-plants",
-        spoil_ticks = 15 * Time.minute,
+        spoil_ticks = 45 * Time.minute,
         spoil_result = "expired-food",
         sprite_variations = {name = "wild-edible-plants", count = 7, include_icon = true}
     },
     {
         name = "wild-fungi",
-        spoil_ticks = 15 * Time.minute,
+        spoil_ticks = 45 * Time.minute,
         spoil_result = "expired-food",
         sprite_variations = {name = "wild-fungi", count = 7, include_icon = true}
     },
     {
         name = "wild-algae",
-        spoil_ticks = 15 * Time.minute,
+        spoil_ticks = 45 * Time.minute,
         spoil_result = "expired-food",
         sprite_variations = {name = "wild-algae", count = 7, include_icon = true}
     },
@@ -363,7 +363,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     energy_required = 2,
-    unlock = "food-processing",
+    unlock_with_item = "flour",
     auto_recycle = false
 }
 
@@ -378,6 +378,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-kitchen-for-all",
     energy_required = 3,
+    unlock = "kitchen-for-all",
     auto_recycle = false
 }
 
@@ -393,7 +394,8 @@ if Sosciencity.Config.DEBUG then
         "test-food-salty-protein",
         "test-food-spicy-alltags",
         "test-food-umami-carb",
-        "test-food-umami-notag"
+        "test-food-umami-notag",
+        "test-food-neutral-huwan-nutrients"
     }
 
     local test_food_items = {}

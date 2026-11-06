@@ -67,7 +67,7 @@ Being homeless is a tough fortune. Over time these huwans will leave your city a
 
 ##Food
 
-Your inhabitants need something to eat. You can provide them food either by placing it inside their home or in a nearby [entity=market-hall]. Every caste has an **eating behavior** - minimalist, mixed or foodie - that determines which foods they include in their diet and how they prioritize taste versus variety.
+Your inhabitants need something to eat. You can provide them food either by placing it inside their home or in a nearby [entity=market-hall]. Every caste has an **eating behavior** - health-conscious, mixed or foodie - that determines which foods they include in their diet and how they prioritize taste versus variety.
 
 - **Taste:** Each caste favors one taste and dislikes another. Eating favored food boosts happiness; eating disliked food hurts it. Having any favored food at all gives a small sanity boost. If the diet becomes dominated by disliked foods, sanity suffers too.
 - **Appeal:** Food has an appeal value independent of taste. The average of the three most appealing foods in the diet is granted as a happiness bonus. 

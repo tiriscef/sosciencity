@@ -9,6 +9,7 @@ local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
 local HealthSummand = require("enums.health-summand")
 local HealthFactor = require("enums.health-factor")
+local NutritionTag = require("enums.nutrition-tag")
 local SanitySummand = require("enums.sanity-summand")
 local SanityFactor = require("enums.sanity-factor")
 
@@ -18,23 +19,20 @@ local Color = require("constants.color")
 local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 local Housing = require("constants.housing")
-local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
-local required_nutrition_tags = InhabitantsConstants.required_nutrition_tags
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
 local Register = Register
-local ceil = math.ceil
 local floor = math.floor
 local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step
 local display_item_stack = Tirislib.Locales.display_item_stack
-local display_time = Tirislib.Locales.display_time
+local display_rate = Tirislib.Locales.display_rate
 local Datalist = Gui.Elements.Datalist
 
 local upgradeable_tags = Tirislib.Tables.get_keyset(Housing.tag_costs)
@@ -568,8 +566,14 @@ local function update_ages_list(flow, entry)
     local ages_list = flow.ages
 
     ages_list.clear()
-    for age, count in pairs(entry[EK.ages]) do
-        Datalist.add_operand_entry(ages_list, age, {"sosciencity.show-age", age}, count)
+    local ages = entry[EK.ages]
+    -- descending hatch days = youngest first
+    local hatch_days = Tirislib.Tables.get_keyset(ages)
+    table.sort(hatch_days, function(a, b) return a > b end)
+    local today = AgeGroup.current_day()
+    for _, hatch_day in pairs(hatch_days) do
+        local age = AgeGroup.get_age(hatch_day, today)
+        Datalist.add_operand_entry(ages_list, hatch_day, {"sosciencity.show-age", age}, ages[hatch_day])
     end
 
     local visible = (entry[EK.inhabitants] > 0)
@@ -588,6 +592,44 @@ local function update_genders_list(flow, entry)
     local visible = (entry[EK.inhabitants] > 0)
     genders_list.visible = visible
     flow["header-genders"].visible = visible
+end
+
+local function update_immunities_list(flow, entry)
+    local immunities_list = flow.immunities
+    local immunities = entry[EK.immunities]
+    local inhabitants = entry[EK.inhabitants]
+
+    immunities_list.clear()
+
+    local disease_ids = {}
+    for _, counts in pairs(immunities) do
+        for disease_id in pairs(counts) do
+            disease_ids[disease_id] = true
+        end
+    end
+
+    for disease_id in pairs(disease_ids) do
+        local immune = ImmunityGroup.get_immune(immunities, disease_id, inhabitants)
+        if immune > 0 then
+            local disease = diseases[disease_id]
+            local key = format("immunity-%d", disease_id)
+            Datalist.add_operand_entry(immunities_list, key, disease.localised_name, immune)
+            Datalist.set_kv_pair_tooltip(
+                immunities_list,
+                key,
+                {
+                    "sosciencity.explain-immunity",
+                    immunities.recovered[disease_id] or 0,
+                    immunities.vaccinated[disease_id] or 0
+                }
+            )
+        end
+    end
+
+    local visible = #immunities_list.children > 0
+    immunities_list.visible = visible
+    flow["header-immunities"].visible = visible
+    flow["separator-immunities"].visible = visible
 end
 
 local function update_housing_general_info_tab(tabbed_pane, entry)
@@ -720,11 +762,10 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         local updater = Inhabitants.disease_progress_updaters[category_id]
         if updater then
             local progress_per_tick = updater(entry, 1)
-            local ticks_till_disease = ceil(1 / progress_per_tick)
             local label = disease_progress_flow[tostring(category_id)]
             label.caption = {
                 "sosciencity.show-disease-rate",
-                display_time(ticks_till_disease),
+                display_rate(progress_per_tick, "sosciencity.xcases"),
                 {"disease-category-name." .. category_name}
             }
             label.visible = (progress_per_tick > 0)
@@ -1028,6 +1069,7 @@ local function update_housing_detailed_info_tab(tabbed_pane, entry)
     update_occupations_list(flow, entry)
     update_ages_list(flow, entry)
     update_genders_list(flow, entry)
+    update_immunities_list(flow, entry)
 end
 
 
@@ -1089,6 +1131,11 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
     Gui.Elements.Label.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
     Datalist.create(flow, "genders")
 
+    Gui.Elements.Utils.separator_line(flow, "separator-immunities")
+
+    Gui.Elements.Label.header_label(flow, "header-immunities", {"sosciencity.immunities"})
+    Datalist.create(flow, "immunities")
+
     -- call the update function to set the values
     update_housing_detailed_info_tab(tabbed_pane, entry)
 end
@@ -1127,13 +1174,21 @@ local function update_housing_diet_tab(tabbed_pane, entry)
         end
     end
 
-    -- nutrition tag coverage
+    -- nutrition tag coverage: essential tags always, other tags only when covered
     local nutrition_flow = flow["diet-nutrition"]
-    for _, tag in pairs(required_nutrition_tags) do
+    local essential_tags = Tirislib.Tables.to_lookup(castes[entry[EK.type]].essential_nutrition_tags)
+    for _, tag in pairs(NutritionTag) do
         local label = nutrition_flow[tostring(tag)]
         local covered = info.covered_tags[tag]
-        label.caption = {"", covered and "✓ " or "✗ ", Locale.nutrition_tag(tag)}
-        label.style.font_color = covered and Color.green or Color.red
+        if essential_tags[tag] then
+            label.visible = true
+            label.caption = {"", covered and "✓ " or "✗ ", Locale.nutrition_tag(tag)}
+            label.style.font_color = covered and Color.green or Color.red
+        else
+            label.visible = covered == true
+            label.caption = {"", "+ ", Locale.nutrition_tag(tag)}
+            label.style.font_color = Color.light_teal
+        end
     end
 end
 
@@ -1166,8 +1221,8 @@ local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
     -- dynamic: nutrition tag coverage
     Gui.Elements.Label.header_label(flow, "diet-nutrition-header", {"sosciencity.diet-nutrition"})
     local nutrition_flow = flow.add {type = "flow", name = "diet-nutrition", direction = "vertical"}
-    for _, tag in pairs(required_nutrition_tags) do
-        nutrition_flow.add {type = "label", name = tostring(tag)}
+    for _, tag in pairs(NutritionTag) do
+        nutrition_flow.add {type = "label", name = tostring(tag), tooltip = Locale.nutrition_tag_description(tag)}
     end
 
     update_housing_diet_tab(tabbed_pane, entry)

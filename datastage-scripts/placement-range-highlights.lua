@@ -1,6 +1,10 @@
 local Buildings = require("constants.buildings")
+local Housing = require("constants.housing")
 
-for name, details in pairs(Buildings.values) do
+--- Shows the range of a building while the player holds it in the cursor.
+--- @param name string entity name
+--- @param details table Custom Building specification
+local function add_range_visualisation(name, details)
     if details.range == "global" then
         local entity = Tirislib.Entity.get_by_name(name)
 
@@ -42,4 +46,13 @@ for name, details in pairs(Buildings.values) do
             draw_on_selection = false
         }
     end
+end
+
+for name, details in pairs(Buildings.values) do
+    add_range_visualisation(name, details)
+end
+
+-- houses aren't in Buildings.values, they share one specification
+for name in pairs(Housing.values) do
+    add_range_visualisation(name, Buildings.get_by_name(name))
 end

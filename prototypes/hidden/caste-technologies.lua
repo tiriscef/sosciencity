@@ -25,7 +25,7 @@ for i = 0, 20 do
         hidden = true,
         upgrade = false,
         prerequisites = {},
-        is_hack = true,
+        mod_metadata = {is_hack = true},
         localised_name = {"technology-name.hidden-technology"},
         localised_description = {"technology-description.hidden-technology"}
     }
@@ -54,7 +54,7 @@ for i = 0, 20 do
         hidden = true,
         upgrade = false,
         prerequisites = {},
-        is_hack = true,
+        mod_metadata = {is_hack = true},
         localised_name = {"technology-name.hidden-technology"},
         localised_description = {"technology-description.hidden-technology"}
     }
@@ -78,7 +78,7 @@ for i = 0, 20 do
         hidden = true,
         upgrade = false,
         prerequisites = {},
-        is_hack = true,
+        mod_metadata = {is_hack = true},
         localised_name = {"technology-name.hidden-technology"},
         localised_description = {"technology-description.hidden-technology"}
     }
