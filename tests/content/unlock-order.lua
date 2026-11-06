@@ -51,7 +51,6 @@ end
 local known_research_problems = {}
 
 local known_recipe_problems = {
-    ["education-gunfire from gunfire-caste"] = true,
     ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true,
     ["marble1 from clockwork-quarry"] = true,
     ["power-tools from tinkering-workshop"] = true,

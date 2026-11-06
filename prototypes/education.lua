@@ -26,8 +26,7 @@ Tirislib.RecipeGenerator.create {
     enabled = true,
     energy_required = 60,
     ingredients = {
-        {type = "item", name = "submachine-gun", amount = 2},
-        {type = "item", name = "pistol", amount = 8},
+        {type = "item", name = "submachine-gun", amount = 4},
         {type = "item", name = "light-armor", amount = 1},
         {type = "item", name = "firearm-magazine", amount = 10}
     },
