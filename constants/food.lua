@@ -641,8 +641,8 @@ Food.values = {
         group = "potluck"
     },
 
-    -- Test food items. Prototypes are only created when sosciencity-debug is active, but the
-    -- constants are always present so the diet tests can reference stable, fixed values.
+    -- Test food items. Prototypes are only created when sosciencity-debug is active. At control
+    -- stage, the entries are removed when their prototypes don't exist.
     ["test-food-fruity-carb"] = {
         fat = 5, carbohydrates = 20, proteins = 10,
         healthiness = 5, food_category = "processed",
@@ -744,7 +744,9 @@ if Tirislib.Utils.is_control_stage() then
     for food_name, food_data in pairs(Food.values) do
         local food_prototype = prototypes.item[food_name]
 
+        -- e.g. the test foods without sosciencity-debug; everything at control stage only knows existing items
         if not food_prototype then
+            Food.values[food_name] = nil
             goto continue
         end
 
