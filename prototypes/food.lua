@@ -363,7 +363,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     energy_required = 2,
-    unlock = "food-processing",
+    unlock_with_item = "flour",
     auto_recycle = false
 }
 

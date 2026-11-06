@@ -52,12 +52,7 @@ local known_research_problems = {}
 
 local known_recipe_problems = {}
 
-local known_early_recipe_problems = {
-    ["bread from food-processing"] = true,
-    ["glass from infrastructure-1"] = true,
-    ["glass-mixture from infrastructure-1"] = true,
-    ["window from infrastructure-1"] = true
-}
+local known_early_recipe_problems = {}
 
 --- Problems by kind, each {key = string, message = string}.
 local research_problems

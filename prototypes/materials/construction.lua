@@ -397,7 +397,8 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "soda", amount = 1}
     },
     energy_required = 1.6,
-    unlock = "infrastructure-1"
+    -- limestone comes on another branch of the tree, which doesn't depend on soda
+    unlock_with_item = "soda"
 }
 
 Tirislib.RecipeGenerator.create {
@@ -409,7 +410,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "smelting",
     energy_required = 3.2,
-    unlock = "infrastructure-1"
+    unlock_with_item = "glass-mixture"
 }:add_ingredient_layer("glass-mixture")
 
 Tirislib.RecipeGenerator.create {
