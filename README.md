@@ -20,6 +20,7 @@ Sosciencity was updated to Factorio 2.1, with many systems reworked along the wa
 
 
 
+<!-- not-on-portal -->
 # Screenshots
 
 ![Settlement with Clockwork HQ](https://assets-mod.factorio.com/assets/8178bdcf30b5baa4d93b691b75f61987c00ea561.png)
@@ -27,6 +28,7 @@ Sosciencity was updated to Factorio 2.1, with many systems reworked along the wa
 ![Food Production with Greenhouses and Orangeries](https://assets-mod.factorio.com/assets/3eb787ed15d60d5afd78eb7877d691f02ba14a84.png)
 
 ![Clean Water Production with a Clarifier Setup](https://assets-mod.factorio.com/assets/917fc621cff3205e16071a718866c545c65ae18d.png)
+<!-- /not-on-portal -->
 
 
 
