@@ -8,6 +8,7 @@ local intended_start_recipes = {
     ["sawdust"] = true,
     ["lumber-from-tiriscefing-willow-wood"] = true, -- willow wood comes from gathering materials
     ["gathering-food"] = true,
+    ["gathering-algae"] = true,
     ["gathering-hemp"] = true,
     ["gathering-materials"] = true,
     ["medical-instruments"] = true,

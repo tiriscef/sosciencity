@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create {
         {theme = "framework", amount = 20}
     },
     default_theme_level = 1,
-    unlock = "infrastructure-1"
+    unlock = "open-environment-farming"
 }
 
 Tirislib.Entity.create {

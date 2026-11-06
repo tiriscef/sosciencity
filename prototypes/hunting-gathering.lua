@@ -149,7 +149,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "wild-fungi", amount_min = 0, amount_max = 6}
     },
     order = "000575",
-    unlock = "infrastructure-1"
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {
@@ -164,12 +164,12 @@ create_hunting_gathering_recipe {
         {type = "item", name = "insect-meat", amount_min = 0, amount_max = 4}
     },
     order = "000580",
-    unlock = "infrastructure-1"
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {
     name = "gathering-algae",
-    category = "sosciencity-fishery-hand",
+    categories = {"sosciencity-fishery-hand", "sosciencity-handcrafting"},
     energy_required = 5,
     icons = {
         {icon = "__sosciencity-graphics__/graphics/icon/gather-algae.png"}
@@ -178,8 +178,7 @@ create_hunting_gathering_recipe {
     results = {
         {type = "item", name = "wild-algae", amount_min = 0, amount_max = 6}
     },
-    order = "000585",
-    unlock = "infrastructure-1"
+    order = "000585"
 }
 
 create_hunting_gathering_recipe {
@@ -210,7 +209,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000592",
-    unlock = "infrastructure-1"
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {
@@ -224,7 +223,7 @@ create_hunting_gathering_recipe {
         {type = "item", name = "leafage", amount = 1}
     },
     order = "000593",
-    unlock = "infrastructure-1"
+    unlock = "explore-local-ecosystem"
 }
 
 create_hunting_gathering_recipe {

@@ -19,7 +19,7 @@ Tirislib.RecipeGenerator.create {
         {theme = "plating", amount = 10},
         {theme = "brick", amount = 20}
     },
-    unlock = "infrastructure-1"
+    unlock = "upbringing"
 }
 
 Tirislib.Entity.create {
