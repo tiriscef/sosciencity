@@ -49,7 +49,7 @@ Tirislib.Technology.create {
     name = "ovosynthesis",
     icon = "__sosciencity-graphics__/graphics/technology/placeholder.png",
     icon_size = 128,
-    prerequisites = {"fermentation", "upbringing"},
+    prerequisites = {"fermentation", "explore-local-ecosystem"},
     unit = {
         count = 60,
         ingredients = {
