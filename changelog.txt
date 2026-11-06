@@ -1,19 +1,20 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.2.6
-Date: 2026.11.06 (maybe)
+Version: 0.2.7
+Date: 2026.11.06
+  Info:
+    - The mildly anxious 'I am bad at finishing stuff but it's getting ridiculous how much time this takes' release.
+    - Ported to Factorio 2.1. Not compatible with 1.1 saves.
+    - This is still an Alpha version. Space Age loads but isn't balanced.
+
   Major Features:
-    - Rebuilt for Factorio 2.1. Not compatible with 1.1 saves.
     - Castes are educated in schools (medical school, military school and others) instead of appearing on their own.
-    - Science rework: every science pack comes from its own caste's production chain - Ember art, Orchid studies of the local ecosystem, Clockwork inventions, Gunfire strategies, Foundry scientific theories and Gleam metastudies - and needs an art item from the Ember artists.
+    - Science rework: The castes got actual production chains.
     - Food rework: castes have eating behaviors and essential nutrients, foods carry nutrition tags, and the kitchen for all cooks for whole neighbourhoods.
     - Housing rework: houses have comfort levels and traits that can be upgraded.
     - Population control: houses have priorities, buttons pull healthy huwans into a house or move everyone out, and sanatoriums take in the sick. (Until now, tearing down houses was the only way to move huwans around and that way annoying.)
     - Healthcare rework: hospitals with specialised wards and beds, many new diseases with sources at work, in food and in water, contagion and vaccines, and diseases of old age.
     - Workforce rework: the happiness of workers affects their building, and unhappy castes go on strike instead of emigrating.
     - City view: a new GUI with population statistics, reports, building overviews and an ingame wiki.
-
-  Info:
-    - Alpha version. Space Age loads but isn't balanced yet.
     - Removed the weather system.
 
 ---------------------------------------------------------------------------------------------------
