@@ -179,9 +179,27 @@ Tirislib.RecipeGenerator.create {
     energy_required = 4,
     allow_productivity = true,
     do_index_fluid_ingredients = true,
-    unlock = "medbay",
+    unlock = Unlocks.get_tech_name("hardcorn-punk"),
     auto_recycle = false
 }
+
+-- improvised bean starch, so the medbay's herbal medicines don't wait for hardcorn-punk
+Tirislib.RecipeGenerator.create {
+    name = "amylum-from-razha-bean",
+    results = {
+        {type = "item", name = "amylum", amount = 2}
+    },
+    ingredients = {
+        {type = "item", name = "razha-bean", amount = 10},
+        {type = "fluid", name = "clean-water", amount = 80}
+    },
+    energy_required = 4,
+    category = "sosciencity-pharma",
+    allow_productivity = true,
+    do_index_fluid_ingredients = true,
+    unlock = "medbay",
+    auto_recycle = false
+}:add_ingredient_layer("razha-bean")
 
 Tirislib.RecipeGenerator.create {
     results = {

@@ -379,7 +379,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-pharma",
     energy_required = 3,
-    unlock = "medbay",
+    unlock = "hospital",
     auto_recycle = false
 }
 
@@ -411,7 +411,7 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-pharma",
     energy_required = 3,
     do_index_fluid_ingredients = true,
-    unlock = "medbay",
+    unlock = "explore-alien-flora-1",
     auto_recycle = false
 }
 

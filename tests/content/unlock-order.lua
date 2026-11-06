@@ -50,28 +50,25 @@ end
 local known_research_problems = {}
 
 local known_recipe_problems = {
-    ["amylum from medbay"] = true,
-    ["analgesics from medbay"] = true,
-    ["antiemetics from medbay"] = true,
-    ["antihistamines from medbay"] = true,
     ["education-gunfire from gunfire-caste"] = true,
-    ["extract-spinal-fluid from ovosynthesis"] = true,
     ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true,
     ["huwan-egg-ovosynthesis from ovosynthesis"] = true,
     ["marble1 from clockwork-quarry"] = true,
-    ["nutritional-supplements from medbay"] = true,
     ["power-tools from tinkering-workshop"] = true,
     ["power-tools-workshop from tinkering-workshop"] = true,
-    ["psych-ward from psychiatry"] = true,
-    ["sosciencity-medical-kit1 from medbay"] = true
+    ["psych-ward from psychiatry"] = true
 }
 
 local known_early_recipe_problems = {
+    ["amylum-from-razha-bean from medbay"] = true,
+    ["analgesics from medbay"] = true,
+    ["antihistamines from medbay"] = true,
     ["antimicrobials from medbay"] = true,
     ["bread from food-processing"] = true,
     ["glass from infrastructure-1"] = true,
     ["glass-mixture from infrastructure-1"] = true,
     ["isotonic-saline-solution from medbay"] = true,
+    ["sosciencity-medical-kit1 from medbay"] = true,
     ["window from infrastructure-1"] = true
 }
 
