@@ -3,12 +3,17 @@
 --- Everything is expressed as rules "these facts give those facts". Facts are strings:
 --- "item:<name>", "fluid:<name>", "entity:<name>" (placeable), "crafting:<category>" (a machine for it,
 --- with "[<n> in, <m> out]" appended when the recipe needs fluid boxes),
---- "mining:<resource category>", "fluid-mining:<resource category>", "mining-with-fluid" and "rocket-launch".
+--- "mining:<resource category>", "fluid-mining:<resource category>", "mining-with-fluid", "rocket-launch",
+--- "technology:<name>" (researched), "housing" (a house to move into) and "inhabitants:<caste>".
+--- People are facts too, so that loops through them (eggs -> inhabitants -> eggs) need a way in like any other.
 --- A state starts from the rules that don't depend on research and gets recipe rules added for the
 --- recipes that a set of technologies unlocks. Adding rules keeps everything derived so far,
 --- so a check can derive the state of a technology's prerequisites first and add the technology's
 --- own recipes afterwards.
 
+local Castes = require("constants.castes")
+local Housing = require("constants.housing")
+local InhabitantsConstants = require("constants.inhabitants")
 local ScriptedProducts = require("constants.scripted-products")
 local Unlocks = require("constants.unlocks")
 
@@ -124,6 +129,13 @@ function ProgressionGraph.recipe_products(recipe)
     end
     return facts
 end
+
+--- The fact for having inhabitants of the caste.
+--- @param caste_type Type
+function ProgressionGraph.inhabitants_fact(caste_type)
+    return "inhabitants:" .. Castes.values[caste_type].name
+end
+local inhabitants_fact = ProgressionGraph.inhabitants_fact
 
 ---------------------------------------------------------------------------------------------------
 -- << technologies >>
@@ -294,6 +306,9 @@ local function build_static_rules()
     static_facts = {}
 
     local function add_rule(requirements, products, source)
+        if ProgressionGraph.is_test_prototype(source) then
+            return
+        end
         static_rules[#static_rules + 1] = {requirements = requirements, products = products, source = source}
     end
 
@@ -391,7 +406,32 @@ local function build_static_rules()
     -- scripted building logic
     for _, definition in pairs(ScriptedProducts.values) do
         for _, entity_name in pairs(ScriptedProducts.get_producer_entities(definition)) do
-            add_rule({"entity:" .. entity_name}, {"item:" .. definition.item}, entity_name .. " (scripted)")
+            local source = entity_name .. " (scripted)"
+            if definition.needs_inhabitants then
+                for _, caste in pairs(Castes.all) do
+                    add_rule({"entity:" .. entity_name, inhabitants_fact(caste.type)}, {"item:" .. definition.item}, source)
+                end
+            else
+                add_rule({"entity:" .. entity_name}, {"item:" .. definition.item}, source)
+            end
+        end
+    end
+
+    -- inhabitants: hatched from any egg into one of the researched breedable castes, moving into a house
+    for house_name in pairs(Housing.values) do
+        add_rule({"entity:" .. house_name}, {"housing"}, house_name)
+    end
+    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.hatcheries)) do
+        for egg_name in pairs(InhabitantsConstants.egg_data) do
+            for _, caste in pairs(Castes.all) do
+                if caste.breedable then
+                    add_rule(
+                        {"entity:" .. entity_name, "item:" .. egg_name, "housing", "technology:" .. caste.tech_name},
+                        {inhabitants_fact(caste.type)},
+                        entity_name .. " (scripted)"
+                    )
+                end
+            end
         end
     end
     for _, definition in pairs(ScriptedProducts.crafting_categories) do
@@ -512,12 +552,29 @@ function State:add_recipe(recipe_name)
 
     local requirements = ProgressionGraph.recipe_requirements(recipe)
     local products = ProgressionGraph.recipe_products(recipe)
-    for _, crafting in pairs(get_crafting_requirements(recipe)) do
-        local rule_requirements = {crafting}
-        for _, requirement in pairs(requirements) do
-            rule_requirements[#rule_requirements + 1] = requirement
+
+    -- an education recipe graduates the students into its caste, any of the student castes will do
+    local student_requirements = {false}
+    local education = ScriptedProducts.get_education(recipe)
+    if education then
+        products[#products + 1] = inhabitants_fact(education.result)
+        student_requirements = {}
+        for _, student_caste in pairs(education.students) do
+            student_requirements[#student_requirements + 1] = inhabitants_fact(student_caste)
         end
-        self:add_rule({requirements = rule_requirements, products = products, source = recipe_name})
+    end
+
+    for _, crafting in pairs(get_crafting_requirements(recipe)) do
+        for _, students in pairs(student_requirements) do
+            local rule_requirements = {crafting}
+            if students then
+                rule_requirements[2] = students
+            end
+            for _, requirement in pairs(requirements) do
+                rule_requirements[#rule_requirements + 1] = requirement
+            end
+            self:add_rule({requirements = rule_requirements, products = products, source = recipe_name})
+        end
     end
 end
 
@@ -527,6 +584,7 @@ function State:add_technology(technology_name)
     if not technology then
         return
     end
+    self:add_fact("technology:" .. technology_name)
     for _, effect in pairs(technology.effects or {}) do
         if effect.type == "unlock-recipe" then
             self:add_recipe(effect.recipe)
@@ -591,6 +649,55 @@ function State:find_roots(facts)
     local ret = {}
     for fact in pairs(roots) do
         ret[#ret + 1] = fact
+    end
+    table.sort(ret)
+    return ret
+end
+
+--- Follows the given missing facts back like find_roots and returns the loops on the way: facts that need,
+--- through other missing facts, themselves. Each loop as "a needs b needs a", sorted.
+--- @param facts string[]
+--- @return string[]
+function State:find_cycles(facts)
+    local cycles = {}
+    local done = {}
+    local stack = {}
+    local stack_index = {}
+
+    local function visit(fact)
+        if done[fact] or self.facts[fact] then
+            return
+        end
+        local index = stack_index[fact]
+        if index then
+            local loop = {}
+            for i = index, #stack do
+                loop[#loop + 1] = stack[i]
+            end
+            loop[#loop + 1] = fact
+            cycles[table.concat(loop, " needs ")] = true
+            return
+        end
+
+        stack[#stack + 1] = fact
+        stack_index[fact] = #stack
+        for _, rule in pairs(self.rules_by_product[fact] or {}) do
+            for _, requirement in pairs(rule.requirements) do
+                visit(requirement)
+            end
+        end
+        stack[#stack] = nil
+        stack_index[fact] = nil
+        done[fact] = true
+    end
+
+    for _, fact in pairs(facts) do
+        visit(fact)
+    end
+
+    local ret = {}
+    for cycle in pairs(cycles) do
+        ret[#ret + 1] = cycle
     end
     table.sort(ret)
     return ret
