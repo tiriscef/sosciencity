@@ -30,6 +30,21 @@ Tirislib.RecipeGenerator.create {
     unlock = "infrastructure-1"
 }
 
+-- the first, fuel-hungry source of clean water for medicine and fermentation, before water filters and clarifiers
+Tirislib.RecipeGenerator.create {
+    name = "distilled-water",
+    results = {
+        {type = "fluid", name = "clean-water", amount = 40}
+    },
+    ingredients = {
+        {type = "fluid", name = "drinkable-water", amount = 50}
+    },
+    energy_required = 10,
+    category = "sosciencity-water-heater",
+    unlock = {"medbay", "fermentation"},
+    auto_recycle = false
+}
+
 Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "drinkable-water", amount = 80}

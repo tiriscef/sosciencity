@@ -59,15 +59,9 @@ local known_recipe_problems = {
 }
 
 local known_early_recipe_problems = {
-    ["amylum-from-razha-bean from medbay"] = true,
-    ["analgesics from medbay"] = true,
-    ["antihistamines from medbay"] = true,
-    ["antimicrobials from medbay"] = true,
     ["bread from food-processing"] = true,
     ["glass from infrastructure-1"] = true,
     ["glass-mixture from infrastructure-1"] = true,
-    ["isotonic-saline-solution from medbay"] = true,
-    ["sosciencity-medical-kit1 from medbay"] = true,
     ["window from infrastructure-1"] = true
 }
 
