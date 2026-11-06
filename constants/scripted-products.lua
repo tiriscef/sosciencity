@@ -37,6 +37,14 @@ ScriptedProducts.crafting_categories = {
     {category = "sosciencity-comfort-upgrade", producers = {Type.empty_house}}
 }
 
+--- Recipes that a building's script only lets run with a module inserted, by recipe name.
+--- Without the module the building works at zero performance, so the module is a hidden ingredient.
+--- @type table<string, string> module item name by recipe name
+ScriptedProducts.required_modules = {
+    -- waterwell.lua: the groundwater pump only pumps clean water through a water filter
+    ["clean-water-from-ground"] = "water-filter"
+}
+
 --- Returns the names of all entities of the producer types of the given definition.
 --- @param definition ScriptedProductDefinition|{producers: Type[]}
 --- @return string[]

@@ -5,6 +5,8 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
+local ScriptedProducts = require("constants.scripted-products")
+
 local Entity = require("classes.entity")
 local Inventories = require("classes.inventories")
 local Neighborhood = require("classes.neighborhood")
@@ -17,6 +19,27 @@ local remove_active_machine_status = Entity.remove_active_machine_status
 local get_breakdown_state = Entity.get_breakdown_state
 local set_breakdown_state = Entity.set_breakdown_state
 local max = math.max
+local required_modules = ScriptedProducts.required_modules
+
+Entity.Waterwell = {}
+local Waterwell = Entity.Waterwell
+
+--- Returns the module that the waterwell's current recipe needs and that isn't inserted, or nil.
+--- @param entry Entry
+--- @return string|nil
+function Waterwell.get_missing_module(entry)
+    local entity = entry[EK.entity]
+    local recipe = entity.get_recipe()
+    if not recipe then
+        return nil
+    end
+    local module = required_modules[recipe.name]
+    if module and not Inventories.assembler_has_module(entity, module) then
+        return module
+    end
+    return nil
+end
+local get_missing_module = Waterwell.get_missing_module
 
 --- @param other_count integer number of other pumps in range
 local function get_competition_performance(other_count)
@@ -34,10 +57,7 @@ local function get_clockwork_boost()
 end
 
 local function update_waterwell(entry)
-    local entity = entry[EK.entity]
-    local recipe = entity.get_recipe()
-    if recipe and recipe.name == "clean-water-from-ground"
-        and not Inventories.assembler_has_module(entity, "water-filter") then
+    if get_missing_module(entry) then
         set_crafting_machine_performance(entry, 0)
         return
     end
@@ -52,10 +72,7 @@ end
 Register.set_entity_updater(Type.waterwell, update_waterwell)
 
 local function build_waterwell_report(entry)
-    local entity = entry[EK.entity]
-    local recipe = entity.get_recipe()
-    if recipe and recipe.name == "clean-water-from-ground"
-        and not Inventories.assembler_has_module(entity, "water-filter") then
+    if get_missing_module(entry) then
         return {[PK.effects] = {}, [PK.results] = {}}
     end
 

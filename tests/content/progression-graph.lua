@@ -104,11 +104,15 @@ local function get_crafting_capabilities(entity)
     return facts
 end
 
---- The ingredients of the recipe as facts.
+--- The ingredients of the recipe as facts, and the module a building's script needs for it.
 function ProgressionGraph.recipe_requirements(recipe)
     local facts = {}
     for _, ingredient in pairs(recipe.ingredients or {}) do
         facts[#facts + 1] = fact_of(ingredient)
+    end
+    local required_module = ScriptedProducts.required_modules[recipe.name]
+    if required_module then
+        facts[#facts + 1] = "item:" .. required_module
     end
     return facts
 end

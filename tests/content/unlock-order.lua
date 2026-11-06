@@ -1,4 +1,5 @@
 local ProgressionGraph = require("tests.content.progression-graph")
+local ScriptedProducts = require("constants.scripted-products")
 
 local Assert = Tirislib.Testing.Assert
 
@@ -200,5 +201,18 @@ Tirislib.Testing.add_test_case(
     function()
         analyse()
         assert_only_known(early_recipe_problems, known_early_recipe_problems)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "A recipe that a building's script only runs with a module needs that module in the progression checks",
+    "content.unlock-order",
+    function()
+        local state = ProgressionGraph.new_state()
+        for recipe_name, module in pairs(ScriptedProducts.required_modules) do
+            Assert.not_nil(data.raw.recipe[recipe_name], "recipe exists: " .. recipe_name)
+            Assert.not_nil(data.raw.module[module] or data.raw.item[module], "module exists: " .. module)
+            Assert.contains(state:missing_for_recipe(recipe_name), "item:" .. module, recipe_name)
+        end
     end
 )
