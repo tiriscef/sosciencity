@@ -305,6 +305,20 @@ Tirislib.RecipeGenerator.create {
     auto_recycle = false
 }
 
+-- improvised insect protein, so ovosynthesis doesn't wait for basic biotechnology
+Tirislib.RecipeGenerator.create {
+    name = "proteins-from-insect-meat",
+    results = {
+        {type = "item", name = "proteins", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "insect-meat", amount = 10},
+        {type = "fluid", name = "ethanol", amount = 10}
+    },
+    unlock = "ovosynthesis",
+    auto_recycle = false
+}:add_ingredient_layer("insect-meat")
+
 Tirislib.RecipeGenerator.create {
     results = {
         {type = "fluid", name = "soy-milk", amount = 50}

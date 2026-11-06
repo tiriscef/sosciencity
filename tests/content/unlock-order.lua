@@ -52,7 +52,6 @@ local known_research_problems = {}
 local known_recipe_problems = {
     ["education-gunfire from gunfire-caste"] = true,
     ["farming-annual-bloomhouse-necrofall from sosciencity-unlock-necrofall"] = true,
-    ["huwan-egg-ovosynthesis from ovosynthesis"] = true,
     ["marble1 from clockwork-quarry"] = true,
     ["power-tools from tinkering-workshop"] = true,
     ["power-tools-workshop from tinkering-workshop"] = true,
