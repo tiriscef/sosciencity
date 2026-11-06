@@ -15,24 +15,6 @@ local Assert = Tirislib.Testing.Assert
 --- - early recipes: what a technology unlocks can be crafted right away, without the technologies of the
 ---   tier that build on it. Otherwise the recipe shows up before the player can use it.
 
---- Recipes that the game or other mods generate for every item or fluid, not meant as a step of progression.
-local generated_subgroups = {
-    ["fill-barrel"] = true,
-    ["empty-barrel"] = true
-}
-
-local function is_generated(recipe)
-    if generated_subgroups[recipe.subgroup] then
-        return true
-    end
-    for _, category in pairs(recipe.categories or {recipe.category}) do
-        if category == "recycling" then
-            return true
-        end
-    end
-    return false
-end
-
 --- What the trigger of a trigger technology needs, as a fact. Nil if the trigger type isn't checked.
 local function get_trigger_requirement(trigger)
     if trigger.type == "craft-item" then
@@ -125,7 +107,7 @@ local function analyse()
             state:propagate()
             for _, recipe_name in pairs(ProgressionGraph.get_unlocked_recipes(technology)) do
                 local recipe = data.raw.recipe[recipe_name]
-                if recipe and not recipe.parameter and not is_generated(recipe) then
+                if recipe and not recipe.parameter and not ProgressionGraph.is_generated_recipe(recipe) then
                     local early_problem = find_recipe_problem(state, recipe_name, name)
                     if early_problem then
                         local tier_problem = find_recipe_problem(get_tier_state(name), recipe_name, name)

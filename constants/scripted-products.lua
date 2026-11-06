@@ -31,6 +31,11 @@ ScriptedProducts.values = {
     {item = InhabitantsConstants.blood_donation_item, producers = Types.select("admits_patients"), needs_inhabitants = true}
 }
 
+--- Buildings whose script supplies the houses in range with food, from any food item, and drinking water.
+--- A house only takes inhabitants with both (empty-housing.lua).
+ScriptedProducts.food_suppliers = {producers = {Type.market}}
+ScriptedProducts.water_suppliers = {producers = {Type.water_distributer}}
+
 --- Buildings that hatch eggs into inhabitants of the researched breedable castes and send them to a house (upbringing.lua).
 ScriptedProducts.hatcheries = {producers = {Type.upbringing_station}}
 
@@ -52,12 +57,12 @@ ScriptedProducts.required_modules = {
 --- Returns what an education recipe turns its students into (caste-education.lua: the building's workers
 --- graduate into its result caste when the recipe finishes), or nil if the recipe doesn't educate.
 --- @param recipe table recipe prototype
---- @return {result: Type, students: Type[]}?
+--- @return {result: Type}?
 function ScriptedProducts.get_education(recipe)
     for _, category in pairs(recipe.categories or {recipe.category}) do
         local building = Building.values[category:match("^sosciencity%-(.+)$") or ""]
         if building and building.type == Type.caste_education_building then
-            return {result = building.result_caste, students = building.workforce.castes}
+            return {result = building.result_caste}
         end
     end
 end

@@ -4,14 +4,19 @@
 --- "item:<name>", "fluid:<name>", "entity:<name>" (placeable), "crafting:<category>" (a machine for it,
 --- with "[<n> in, <m> out]" appended when the recipe needs fluid boxes),
 --- "mining:<resource category>", "fluid-mining:<resource category>", "mining-with-fluid", "rocket-launch",
---- "technology:<name>" (researched), "housing" (a house to move into) and "inhabitants:<caste>".
---- People are facts too, so that loops through them (eggs -> inhabitants -> eggs) need a way in like any other.
+--- "technology:<name>" (researched), "working:<entity>" (placed and staffed with its workforce),
+--- "food-supply", "water-supply", "housing:<caste>" (a liveable house for the caste) and "inhabitants:<caste>".
+--- People are facts too, so that loops through them (eggs -> inhabitants -> eggs) need a way in like any other,
+--- and so do buildings that need workers of a caste.
 --- A state starts from the rules that don't depend on research and gets recipe rules added for the
 --- recipes that a set of technologies unlocks. Adding rules keeps everything derived so far,
 --- so a check can derive the state of a technology's prerequisites first and add the technology's
 --- own recipes afterwards.
 
+local Building = require("constants.buildings")
 local Castes = require("constants.castes")
+local DrinkingWater = require("constants.drinking-water")
+local Food = require("constants.food")
 local Housing = require("constants.housing")
 local InhabitantsConstants = require("constants.inhabitants")
 local ScriptedProducts = require("constants.scripted-products")
@@ -137,6 +142,19 @@ function ProgressionGraph.inhabitants_fact(caste_type)
 end
 local inhabitants_fact = ProgressionGraph.inhabitants_fact
 
+--- The fact for a liveable house that inhabitants of the caste can move into.
+--- @param caste_type Type
+function ProgressionGraph.housing_fact(caste_type)
+    return "housing:" .. Castes.values[caste_type].name
+end
+local housing_fact = ProgressionGraph.housing_fact
+
+--- The fact for a placed building that does its work: with its full workforce, if it needs one.
+function ProgressionGraph.working_fact(entity_name)
+    return "working:" .. entity_name
+end
+local working_fact = ProgressionGraph.working_fact
+
 ---------------------------------------------------------------------------------------------------
 -- << technologies >>
 
@@ -144,6 +162,24 @@ local inhabitants_fact = ProgressionGraph.inhabitants_fact
 --- Test recipes are enabled from the start and some make real items, so they would hide real problems.
 function ProgressionGraph.is_test_prototype(name)
     return name:sub(1, 5) == "test-"
+end
+
+--- Recipes that the game or other mods generate for every item or fluid, not meant as a step of progression.
+local generated_subgroups = {
+    ["fill-barrel"] = true,
+    ["empty-barrel"] = true
+}
+
+function ProgressionGraph.is_generated_recipe(recipe)
+    if generated_subgroups[recipe.subgroup] then
+        return true
+    end
+    for _, category in pairs(get_recipe_categories(recipe)) do
+        if category == "recycling" then
+            return true
+        end
+    end
+    return false
 end
 
 --- Whether the recipe is available without any research.
@@ -355,7 +391,17 @@ local function build_static_rules()
 
     -- entities: machines, drills, pumps, boilers, world entities
     iterate_prototypes("entity", function(entity)
-        local fact = "entity:" .. entity.name
+        local workforce = Building.values[entity.name] and Building.values[entity.name].workforce
+        if workforce then
+            -- Inhabitants.evaluate_workforce: buildings only work fully staffed
+            for _, caste in pairs(workforce.castes) do
+                add_rule({"entity:" .. entity.name, inhabitants_fact(caste)}, {working_fact(entity.name)}, entity.name)
+            end
+        else
+            add_rule({"entity:" .. entity.name}, {working_fact(entity.name)}, entity.name)
+        end
+
+        local fact = working_fact(entity.name)
 
         if entity.crafting_categories and entity.type ~= "character" then
             add_rule({fact}, get_crafting_capabilities(entity), entity.name)
@@ -409,24 +455,45 @@ local function build_static_rules()
             local source = entity_name .. " (scripted)"
             if definition.needs_inhabitants then
                 for _, caste in pairs(Castes.all) do
-                    add_rule({"entity:" .. entity_name, inhabitants_fact(caste.type)}, {"item:" .. definition.item}, source)
+                    add_rule({working_fact(entity_name), inhabitants_fact(caste.type)}, {"item:" .. definition.item}, source)
                 end
             else
-                add_rule({"entity:" .. entity_name}, {"item:" .. definition.item}, source)
+                add_rule({working_fact(entity_name)}, {"item:" .. definition.item}, source)
+            end
+        end
+    end
+
+    -- housing: a house big enough for the caste, with food and drinking water in range
+    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.food_suppliers)) do
+        for food_name in pairs(Food.values) do
+            add_rule({working_fact(entity_name), "item:" .. food_name}, {"food-supply"}, entity_name .. " (scripted)")
+        end
+    end
+    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.water_suppliers)) do
+        for water_name in pairs(DrinkingWater.values) do
+            add_rule({working_fact(entity_name), "fluid:" .. water_name}, {"water-supply"}, entity_name .. " (scripted)")
+        end
+    end
+    for house_name, house in pairs(Housing.values) do
+        for _, caste in pairs(Castes.all) do
+            if Housing.allows_caste(house, caste) then
+                add_rule({"entity:" .. house_name, "food-supply", "water-supply"}, {housing_fact(caste.type)}, house_name)
             end
         end
     end
 
     -- inhabitants: hatched from any egg into one of the researched breedable castes, moving into a house
-    for house_name in pairs(Housing.values) do
-        add_rule({"entity:" .. house_name}, {"housing"}, house_name)
-    end
     for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.hatcheries)) do
         for egg_name in pairs(InhabitantsConstants.egg_data) do
             for _, caste in pairs(Castes.all) do
                 if caste.breedable then
                     add_rule(
-                        {"entity:" .. entity_name, "item:" .. egg_name, "housing", "technology:" .. caste.tech_name},
+                        {
+                            working_fact(entity_name),
+                            "item:" .. egg_name,
+                            housing_fact(caste.type),
+                            "technology:" .. caste.tech_name
+                        },
                         {inhabitants_fact(caste.type)},
                         entity_name .. " (scripted)"
                     )
@@ -436,7 +503,7 @@ local function build_static_rules()
     end
     for _, definition in pairs(ScriptedProducts.crafting_categories) do
         for _, entity_name in pairs(ScriptedProducts.get_producer_entities(definition)) do
-            add_rule({"entity:" .. entity_name}, {crafting_fact(definition.category, 0, 0)}, entity_name .. " (scripted)")
+            add_rule({working_fact(entity_name)}, {crafting_fact(definition.category, 0, 0)}, entity_name .. " (scripted)")
         end
     end
 end
@@ -553,28 +620,20 @@ function State:add_recipe(recipe_name)
     local requirements = ProgressionGraph.recipe_requirements(recipe)
     local products = ProgressionGraph.recipe_products(recipe)
 
-    -- an education recipe graduates the students into its caste, any of the student castes will do
-    local student_requirements = {false}
+    -- an education recipe graduates the students into its caste, who need a house of their own
+    -- (the students are the workforce of the school, so its crafting fact needs them already)
     local education = ScriptedProducts.get_education(recipe)
     if education then
         products[#products + 1] = inhabitants_fact(education.result)
-        student_requirements = {}
-        for _, student_caste in pairs(education.students) do
-            student_requirements[#student_requirements + 1] = inhabitants_fact(student_caste)
-        end
+        requirements[#requirements + 1] = housing_fact(education.result)
     end
 
     for _, crafting in pairs(get_crafting_requirements(recipe)) do
-        for _, students in pairs(student_requirements) do
-            local rule_requirements = {crafting}
-            if students then
-                rule_requirements[2] = students
-            end
-            for _, requirement in pairs(requirements) do
-                rule_requirements[#rule_requirements + 1] = requirement
-            end
-            self:add_rule({requirements = rule_requirements, products = products, source = recipe_name})
+        local rule_requirements = {crafting}
+        for _, requirement in pairs(requirements) do
+            rule_requirements[#rule_requirements + 1] = requirement
         end
+        self:add_rule({requirements = rule_requirements, products = products, source = recipe_name})
     end
 end
 

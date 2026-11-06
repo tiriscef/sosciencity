@@ -251,6 +251,14 @@ Housing.values = {
 }
 local houses = Housing.values
 
+--- Whether inhabitants of the caste can live in the house: it needs the rooms for at least one of them.
+--- @param house HouseDefinition
+--- @param caste CasteDefinition
+--- @return boolean
+function Housing.allows_caste(house, caste)
+    return house.room_count >= caste.required_room_count
+end
+
 -- values postprocessing
 do
     local to_add = {}

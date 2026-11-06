@@ -1,0 +1,56 @@
+local ProgressionGraph = require("tests.content.progression-graph")
+local Building = require("constants.buildings")
+
+local Assert = Tirislib.Testing.Assert
+
+--- Caste gating: buildings that need workers of a caste, and inhabitants that need a liveable house.
+--- The progression graph knows both (working:<entity>, housing:<caste>), so the unlock-order checks already
+--- see recipes in machines nobody can staff. This file checks the buildings themselves, which also covers
+--- buildings that only work by script, like hospitals.
+
+--- Entities with a workforce that the recipe places, by entity name.
+local function get_staffed_buildings(recipe)
+    local entities = {}
+    for _, result in pairs(recipe.results or {}) do
+        local item = result.type ~= "fluid" and Tirislib.Item.get_by_name(result.name)
+        local entity_name = item and item.place_result
+        local building = entity_name and Building.values[entity_name]
+        if building and building.workforce then
+            entities[#entities + 1] = entity_name
+        end
+    end
+    return entities
+end
+
+Tirislib.Testing.add_test_case(
+    "Every building with a workforce can be staffed within the science tier that unlocks it",
+    "content.caste-gating",
+    function()
+        local problems = {}
+        local states = {} -- by tier, technologies of the same tier share the tier table
+        for name, technology in pairs(data.raw.technology) do
+            if ProgressionGraph.is_researchable(technology) then
+                for _, recipe_name in pairs(ProgressionGraph.get_unlocked_recipes(technology)) do
+                    local recipe = data.raw.recipe[recipe_name]
+                    local checked = recipe and not ProgressionGraph.is_generated_recipe(recipe)
+                    for _, entity_name in pairs(checked and get_staffed_buildings(recipe) or {}) do
+                        local tier = ProgressionGraph.get_tier(name)
+                        states[tier] = states[tier] or ProgressionGraph.state_for(tier)
+                        local state = states[tier]
+                        local fact = ProgressionGraph.working_fact(entity_name)
+                        if not state:has(fact) then
+                            problems[#problems + 1] = string.format(
+                                "%s (from %s) - root: %s",
+                                fact,
+                                name,
+                                table.concat(state:find_roots({fact}), ", ")
+                            )
+                        end
+                    end
+                end
+            end
+        end
+        table.sort(problems)
+        Assert.is_table_empty(problems, "buildings without workers:\n" .. table.concat(problems, "\n"))
+    end
+)
