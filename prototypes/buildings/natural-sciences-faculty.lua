@@ -46,7 +46,7 @@ Tirislib.Entity.create {
                     scale = 6/7
                 },
                 {
-                    filename = "__sosciencity-graphics__/graphics/gleam-caste.png",
+                    filename = "__sosciencity-graphics__/graphics/foundry-caste.png",
                     priority = "high",
                     width = 256,
                     height = 256,
