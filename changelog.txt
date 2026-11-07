@@ -1,8 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.9
+Date: 2026.11.07
+  Bugfixes:
+    - Fixed a crash caused by evil players disallowing tiriscef's speech.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.8
 Date: 2026.11.07
   Bugfixes:
     - Fixed test foods showing up on the food page of the City Builder's Manual.
+
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.7
 Date: 2026.11.06
