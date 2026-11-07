@@ -263,6 +263,10 @@ function Communication.say_welcome(player)
 end
 
 function Communication.useless_banter()
+    if #allowed_speakers == 0 then
+        return
+    end
+
     -- pick a random speaker and line until we found a line that wasn't used recently
     local speaker_name, speaker, line, line_index
     repeat
