@@ -4,6 +4,8 @@
 
 *Discord:* https://discord.gg/yg7yytYQRq
 
+*Bug reports:* https://git.gay/tirisabella/sosciencity/issues (preferred, but the Discord and the mod portal discussions work too)
+
 # Description
 
 You are an architect. The architect of a new civilization. 

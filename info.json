@@ -4,7 +4,7 @@
     "title": "Sosciencity",
     "author": "tirisabella, Johanna Spieker, _traum",
     "contact": "tiriscef@protonmail.com",
-    "homepage": "https://forums.factorio.com/viewtopic.php?f=190&t=75057",
+    "homepage": "https://git.gay/tirisabella/sosciencity",
     "factorio_version": "2.1",
     "dependencies": [
         "base >= 2.1.12",
