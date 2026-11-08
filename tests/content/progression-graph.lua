@@ -22,10 +22,21 @@ local InhabitantsConstants = require("constants.inhabitants")
 local ScriptedProducts = require("constants.scripted-products")
 local Unlocks = require("constants.unlocks")
 
+local get_keyset = Tirislib.Tables.get_keyset
+local get_subtbl = Tirislib.Tables.get_subtbl
+local merge = Tirislib.Tables.merge
+
 local ProgressionGraph = {}
 
 ---------------------------------------------------------------------------------------------------
--- << prototype access >>
+-- << helpers >>
+
+--- The keys of the set as a sorted array.
+local function sorted_keys(set)
+    local keys = get_keyset(set)
+    table.sort(keys)
+    return keys
+end
 
 local function iterate_prototypes(base_type, fn)
     for type_name in pairs(defines.prototypes[base_type]) do
@@ -35,31 +46,34 @@ local function iterate_prototypes(base_type, fn)
     end
 end
 
+---------------------------------------------------------------------------------------------------
+-- << facts >>
+
 local function fact_of(product)
     return (product.type == "fluid" and "fluid:" or "item:") .. product.name
 end
 
---- Facts of the products of a MinableProperties table.
-local function minable_products(minable)
+--- Facts of an array of ingredients or products.
+local function facts_of(products)
     local facts = {}
-    if not minable then
-        return facts
-    end
-    if minable.results then
-        for _, result in pairs(minable.results) do
-            facts[#facts + 1] = fact_of(result)
-        end
-    elseif minable.result then
-        facts[1] = "item:" .. minable.result
+    for _, product in pairs(products or {}) do
+        facts[#facts + 1] = fact_of(product)
     end
     return facts
 end
 
-local function get_recipe_categories(recipe)
-    if recipe.categories then
-        return recipe.categories
+--- Facts of the products of a MinableProperties table.
+local function minable_products(minable)
+    if not minable then
+        return {}
     end
-    return {recipe.category or "crafting"}
+    if minable.results then
+        return facts_of(minable.results)
+    end
+    if minable.result then
+        return {"item:" .. minable.result}
+    end
+    return {}
 end
 
 --- The fact for a machine that crafts the category and has at least the given numbers of fluid boxes.
@@ -68,71 +82,6 @@ local function crafting_fact(category, fluid_inputs, fluid_outputs)
         return "crafting:" .. category
     end
     return string.format("crafting:%s[%d in, %d out]", category, fluid_inputs, fluid_outputs)
-end
-
-local function count_fluids(products)
-    local count = 0
-    for _, product in pairs(products or {}) do
-        if product.type == "fluid" then
-            count = count + 1
-        end
-    end
-    return count
-end
-
---- The crafting facts of which the recipe needs one: one per category, with its fluid box needs.
-local function get_crafting_requirements(recipe)
-    local fluid_inputs = count_fluids(recipe.ingredients)
-    local fluid_outputs = count_fluids(recipe.results)
-    local facts = {}
-    for _, category in pairs(get_recipe_categories(recipe)) do
-        facts[#facts + 1] = crafting_fact(category, fluid_inputs, fluid_outputs)
-    end
-    return facts
-end
-
---- The crafting facts a machine provides: every category with every fluid box count up to its own.
-local function get_crafting_capabilities(entity)
-    local fluid_inputs = 0
-    local fluid_outputs = 0
-    for _, fluid_box in pairs(entity.fluid_boxes or {}) do
-        if fluid_box.production_type == "input" or fluid_box.production_type == "input-output" then
-            fluid_inputs = fluid_inputs + 1
-        elseif fluid_box.production_type == "output" then
-            fluid_outputs = fluid_outputs + 1
-        end
-    end
-
-    local facts = {}
-    for _, category in pairs(entity.crafting_categories) do
-        for inputs = 0, fluid_inputs do
-            for outputs = 0, fluid_outputs do
-                facts[#facts + 1] = crafting_fact(category, inputs, outputs)
-            end
-        end
-    end
-    return facts
-end
-
---- The ingredients of the recipe as facts, and the module a building's script needs for it.
-function ProgressionGraph.recipe_requirements(recipe)
-    local facts = {}
-    for _, ingredient in pairs(recipe.ingredients or {}) do
-        facts[#facts + 1] = fact_of(ingredient)
-    end
-    local required_module = ScriptedProducts.required_modules[recipe.name]
-    if required_module then
-        facts[#facts + 1] = "item:" .. required_module
-    end
-    return facts
-end
-
-function ProgressionGraph.recipe_products(recipe)
-    local facts = {}
-    for _, result in pairs(recipe.results or {}) do
-        facts[#facts + 1] = fact_of(result)
-    end
-    return facts
 end
 
 --- The fact for having inhabitants of the caste.
@@ -156,7 +105,77 @@ end
 local working_fact = ProgressionGraph.working_fact
 
 ---------------------------------------------------------------------------------------------------
--- << technologies >>
+-- << recipes and machines >>
+
+local function get_recipe_categories(recipe)
+    if recipe.categories then
+        return recipe.categories
+    end
+    return {recipe.category or "crafting"}
+end
+
+local function count_fluids(products)
+    local count = 0
+    for _, product in pairs(products or {}) do
+        if product.type == "fluid" then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+--- The crafting facts of which the recipe needs one: one per category, with its fluid box needs.
+local function get_crafting_requirements(recipe)
+    local fluid_inputs = count_fluids(recipe.ingredients)
+    local fluid_outputs = count_fluids(recipe.results)
+    local facts = {}
+    for _, category in pairs(get_recipe_categories(recipe)) do
+        facts[#facts + 1] = crafting_fact(category, fluid_inputs, fluid_outputs)
+    end
+    return facts
+end
+
+--- The number of input and of output fluid boxes of the machine.
+local function count_fluid_boxes(entity)
+    local inputs = 0
+    local outputs = 0
+    for _, fluid_box in pairs(entity.fluid_boxes or {}) do
+        if fluid_box.production_type == "input" or fluid_box.production_type == "input-output" then
+            inputs = inputs + 1
+        elseif fluid_box.production_type == "output" then
+            outputs = outputs + 1
+        end
+    end
+    return inputs, outputs
+end
+
+--- The crafting facts a machine provides: every category with every fluid box count up to its own.
+local function get_crafting_capabilities(entity)
+    local fluid_inputs, fluid_outputs = count_fluid_boxes(entity)
+    local facts = {}
+    for _, category in pairs(entity.crafting_categories) do
+        for inputs = 0, fluid_inputs do
+            for outputs = 0, fluid_outputs do
+                facts[#facts + 1] = crafting_fact(category, inputs, outputs)
+            end
+        end
+    end
+    return facts
+end
+
+--- The ingredients of the recipe as facts, and the module a building's script needs for it.
+function ProgressionGraph.recipe_requirements(recipe)
+    local facts = facts_of(recipe.ingredients)
+    local required_module = ScriptedProducts.required_modules[recipe.name]
+    if required_module then
+        facts[#facts + 1] = "item:" .. required_module
+    end
+    return facts
+end
+
+function ProgressionGraph.recipe_products(recipe)
+    return facts_of(recipe.results)
+end
 
 --- Whether the prototype belongs to the sosciencity-debug test setup (see datastage-scripts/test-prototype-group.lua).
 --- Test recipes are enabled from the start and some make real items, so they would hide real problems.
@@ -187,6 +206,9 @@ function ProgressionGraph.is_start_recipe(recipe)
     return recipe.enabled ~= false and not recipe.parameter
 end
 
+---------------------------------------------------------------------------------------------------
+-- << technologies >>
+
 --- Whether a player can research the technology at some point. Gated technologies start disabled
 --- and get enabled by script once their conditions are met.
 function ProgressionGraph.is_researchable(technology)
@@ -216,6 +238,26 @@ function ProgressionGraph.get_research_requirements(technology)
     return facts
 end
 
+local function name_of(prototype_or_name)
+    return type(prototype_or_name) == "table" and prototype_or_name.name or prototype_or_name
+end
+
+--- What the research trigger of the technology needs, as a fact.
+--- Nil if it has no trigger or the trigger type isn't modelled.
+function ProgressionGraph.get_trigger_requirement(technology)
+    local trigger = technology.research_trigger
+    if not trigger then
+        return nil
+    end
+    if trigger.type == "craft-item" then
+        return "item:" .. name_of(trigger.item)
+    elseif trigger.type == "craft-fluid" then
+        return "fluid:" .. trigger.fluid
+    elseif trigger.type == "build-entity" then
+        return "entity:" .. name_of(trigger.entity)
+    end
+end
+
 local ancestor_cache = {}
 
 --- All transitive prerequisites of the technology as a set, without the technology itself.
@@ -240,11 +282,7 @@ function ProgressionGraph.get_ancestors(technology_name)
 end
 
 local function get_pack_set(technology)
-    local packs = {}
-    for _, requirement in pairs(ProgressionGraph.get_research_requirements(technology)) do
-        packs[requirement] = true
-    end
-    return packs
+    return Tirislib.Tables.to_lookup(ProgressionGraph.get_research_requirements(technology))
 end
 
 --- The science packs of the technology and all its prerequisites, as a set of facts.
@@ -259,51 +297,58 @@ function ProgressionGraph.get_tier_packs(technology_name)
     return packs
 end
 
-local tier_cache = {}
+local function needs_only_packs(technology, packs)
+    for pack in pairs(get_pack_set(technology)) do
+        if not packs[pack] then
+            return false
+        end
+    end
+    return true
+end
 
---- All researchable technologies that need no other science packs than the given ones.
+local function has_prerequisites(technology, researched)
+    for _, prerequisite in pairs(technology.prerequisites or {}) do
+        if not researched[prerequisite] then
+            return false
+        end
+    end
+    return true
+end
+
+--- Researches whatever becomes researchable with the packs, until nothing new does.
 --- @param packs table<string, boolean> set of pack facts
 --- @return table<string, boolean>
-local function get_technologies_for_packs(packs)
-    local keys = {}
-    for pack in pairs(packs) do
-        keys[#keys + 1] = pack
-    end
-    table.sort(keys)
-    local key = table.concat(keys, ",")
-    if tier_cache[key] then
-        return tier_cache[key]
-    end
-
-    local technologies = {}
+local function research_everything_with(packs)
+    local researched = {}
     local changed = true
     while changed do
         changed = false
         for name, technology in pairs(data.raw.technology) do
-            if not technologies[name] and ProgressionGraph.is_researchable(technology) then
-                local ok = true
-                for pack in pairs(get_pack_set(technology)) do
-                    if not packs[pack] then
-                        ok = false
-                        break
-                    end
-                end
-                for _, prerequisite in pairs(ok and technology.prerequisites or {}) do
-                    if not technologies[prerequisite] then
-                        ok = false
-                        break
-                    end
-                end
-                if ok then
-                    technologies[name] = true
-                    changed = true
-                end
+            if not researched[name]
+                and ProgressionGraph.is_researchable(technology)
+                and needs_only_packs(technology, packs)
+                and has_prerequisites(technology, researched)
+            then
+                researched[name] = true
+                changed = true
             end
         end
     end
+    return researched
+end
 
-    tier_cache[key] = technologies
-    return technologies
+local tier_cache = {}
+
+--- All researchable technologies that need no other science packs than the given ones.
+--- The same pack set gets the same (cached) table.
+--- @param packs table<string, boolean> set of pack facts
+--- @return table<string, boolean>
+local function get_technologies_for_packs(packs)
+    local key = table.concat(sorted_keys(packs), ",")
+    if not tier_cache[key] then
+        tier_cache[key] = research_everything_with(packs)
+    end
+    return tier_cache[key]
 end
 
 --- All technologies a player can research in the tier of the given technology.
@@ -318,7 +363,7 @@ end
 --- @return table<string, boolean>
 function ProgressionGraph.get_tier_without(technology_name)
     local ret = {}
-    for name in pairs(get_technologies_for_packs(ProgressionGraph.get_tier_packs(technology_name))) do
+    for name in pairs(ProgressionGraph.get_tier(technology_name)) do
         if name ~= technology_name and not ProgressionGraph.get_ancestors(name)[technology_name] then
             ret[name] = true
         end
@@ -333,146 +378,169 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << static rules >>
 
+--- Rules and facts that hold regardless of research. Built once, on the first new state.
 local static_rules
 local static_facts
 
---- Rules that hold regardless of research.
-local function build_static_rules()
-    static_rules = {}
-    static_facts = {}
-
-    local function add_rule(requirements, products, source)
-        if ProgressionGraph.is_test_prototype(source) then
-            return
-        end
+local function add_rule(requirements, products, source)
+    if not ProgressionGraph.is_test_prototype(source) then
         static_rules[#static_rules + 1] = {requirements = requirements, products = products, source = source}
     end
+end
 
-    -- the character: handcrafting (without fluids) and handmining
+--- The character: handcrafting (without fluids) and handmining.
+local function add_character_facts()
     local character = data.raw.character and data.raw.character.character
-    for _, category in pairs(character and character.crafting_categories or {}) do
+    if not character then
+        return
+    end
+    for _, category in pairs(character.crafting_categories or {}) do
         static_facts[#static_facts + 1] = crafting_fact(category, 0, 0)
     end
-    for _, category in pairs(character and character.mining_categories or {}) do
+    for _, category in pairs(character.mining_categories or {}) do
         static_facts[#static_facts + 1] = "mining:" .. category
     end
+end
 
-    -- items: placing, spoiling, burning
-    iterate_prototypes("item", function(item)
-        if item.parameter then
-            return
-        end
-        local fact = "item:" .. item.name
-        if item.place_result then
-            add_rule({fact}, {"entity:" .. item.place_result}, item.name)
-        end
-        if item.spoil_result then
-            add_rule({fact}, {"item:" .. item.spoil_result}, item.name)
-        end
-        if item.burnt_result then
-            add_rule({fact}, {"item:" .. item.burnt_result}, item.name)
-        end
-        if item.rocket_launch_products then
-            local products = {}
-            for _, product in pairs(item.rocket_launch_products) do
-                products[#products + 1] = fact_of(product)
-            end
-            add_rule({fact, "rocket-launch"}, products, item.name)
-        end
-    end)
+--- Items: placing, spoiling, burning, launching.
+local function add_item_rules(item)
+    if item.parameter then
+        return
+    end
+    local fact = "item:" .. item.name
+    if item.place_result then
+        add_rule({fact}, {"entity:" .. item.place_result}, item.name)
+    end
+    if item.spoil_result then
+        add_rule({fact}, {"item:" .. item.spoil_result}, item.name)
+    end
+    if item.burnt_result then
+        add_rule({fact}, {"item:" .. item.burnt_result}, item.name)
+    end
+    if item.rocket_launch_products then
+        add_rule({fact, "rocket-launch"}, facts_of(item.rocket_launch_products), item.name)
+    end
+end
 
-    -- world fluids, pumped from autoplaced tiles
-    local tile_fluids = {}
+--- World fluids, pumped from autoplaced tiles.
+local function get_tile_fluids()
+    local fluids = {}
     for _, tile in pairs(data.raw.tile) do
         if tile.fluid and tile.autoplace then
-            tile_fluids[#tile_fluids + 1] = "fluid:" .. tile.fluid
+            fluids[#fluids + 1] = "fluid:" .. tile.fluid
         end
     end
+    return fluids
+end
 
-    -- entities: machines, drills, pumps, boilers, world entities
-    iterate_prototypes("entity", function(entity)
-        local workforce = Building.values[entity.name] and Building.values[entity.name].workforce
-        if workforce then
-            -- Inhabitants.evaluate_workforce: buildings only work fully staffed
-            for _, caste in pairs(workforce.castes) do
-                add_rule({"entity:" .. entity.name, inhabitants_fact(caste)}, {working_fact(entity.name)}, entity.name)
+--- A placed building works, with its full workforce if it needs one (Inhabitants.evaluate_workforce).
+local function add_working_rules(entity)
+    local building = Building.values[entity.name]
+    local workforce = building and building.workforce
+    local placed = "entity:" .. entity.name
+    if not workforce then
+        add_rule({placed}, {working_fact(entity.name)}, entity.name)
+        return
+    end
+    for _, caste in pairs(workforce.castes) do
+        add_rule({placed, inhabitants_fact(caste)}, {working_fact(entity.name)}, entity.name)
+    end
+end
+
+local function add_mining_drill_rules(entity)
+    local categories = {}
+    local fluid_categories = {}
+    for _, category in pairs(entity.resource_categories or {}) do
+        categories[#categories + 1] = "mining:" .. category
+        fluid_categories[#fluid_categories + 1] = "fluid-mining:" .. category
+    end
+    add_rule({working_fact(entity.name)}, categories, entity.name)
+    if entity.input_fluid_box then
+        add_rule({working_fact(entity.name)}, fluid_categories, entity.name)
+    end
+end
+
+local function add_resource_rules(entity)
+    local category = entity.category or "basic-solid"
+    local products = minable_products(entity.minable)
+    local required_fluid = entity.minable and entity.minable.required_fluid
+    if required_fluid then
+        add_rule({"fluid-mining:" .. category, "fluid:" .. required_fluid, "mining-with-fluid"}, products, entity.name)
+    else
+        add_rule({"mining:" .. category}, products, entity.name)
+    end
+end
+
+local function add_offshore_pump_rules(entity, tile_fluids)
+    add_rule({working_fact(entity.name)}, tile_fluids, entity.name)
+end
+
+local function add_boiler_rules(entity)
+    local input = entity.fluid_box and entity.fluid_box.filter
+    local output = entity.output_fluid_box and entity.output_fluid_box.filter
+    if input and output then
+        add_rule({working_fact(entity.name), "fluid:" .. input}, {"fluid:" .. output}, entity.name)
+    end
+end
+
+local function add_rocket_silo_rules(entity)
+    add_rule({working_fact(entity.name)}, {"rocket-launch"}, entity.name)
+end
+
+--- Rules for what an entity of the type gives, called with (entity, tile_fluids).
+local rules_by_entity_type = {
+    ["mining-drill"] = add_mining_drill_rules,
+    ["resource"] = add_resource_rules,
+    ["offshore-pump"] = add_offshore_pump_rules,
+    ["boiler"] = add_boiler_rules,
+    ["rocket-silo"] = add_rocket_silo_rules
+}
+
+--- Entities: machines, drills, pumps, boilers, world entities.
+local function add_entity_rules(entity, tile_fluids)
+    add_working_rules(entity)
+
+    if entity.crafting_categories and entity.type ~= "character" then
+        add_rule({working_fact(entity.name)}, get_crafting_capabilities(entity), entity.name)
+    end
+
+    local type_rules = rules_by_entity_type[entity.type]
+    if type_rules then
+        type_rules(entity, tile_fluids)
+    elseif entity.autoplace and entity.minable then
+        -- trees, rocks, fish, plants: mined by hand where the world generator put them
+        add_rule({}, minable_products(entity.minable), entity.name)
+    end
+end
+
+--- Adds a rule "working <producer> + requirements give products" for every producer entity of the definition.
+local function add_scripted_rules(definition, requirements, products)
+    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(definition)) do
+        add_rule(merge({working_fact(entity_name)}, requirements), products, entity_name .. " (scripted)")
+    end
+end
+
+--- Items that buildings insert by script, some of them only with inhabitants of any caste around.
+local function add_scripted_product_rules()
+    for _, definition in pairs(ScriptedProducts.values) do
+        local products = {"item:" .. definition.item}
+        if definition.needs_inhabitants then
+            for _, caste in pairs(Castes.all) do
+                add_scripted_rules(definition, {inhabitants_fact(caste.type)}, products)
             end
         else
-            add_rule({"entity:" .. entity.name}, {working_fact(entity.name)}, entity.name)
-        end
-
-        local fact = working_fact(entity.name)
-
-        if entity.crafting_categories and entity.type ~= "character" then
-            add_rule({fact}, get_crafting_capabilities(entity), entity.name)
-        end
-
-        if entity.type == "rocket-silo" then
-            add_rule({fact}, {"rocket-launch"}, entity.name)
-        end
-
-        if entity.type == "mining-drill" then
-            local categories = {}
-            local fluid_categories = {}
-            for _, category in pairs(entity.resource_categories or {}) do
-                categories[#categories + 1] = "mining:" .. category
-                fluid_categories[#fluid_categories + 1] = "fluid-mining:" .. category
-            end
-            add_rule({fact}, categories, entity.name)
-            if entity.input_fluid_box then
-                add_rule({fact}, fluid_categories, entity.name)
-            end
-        elseif entity.type == "resource" then
-            local category = entity.category or "basic-solid"
-            local products = minable_products(entity.minable)
-            local required_fluid = entity.minable and entity.minable.required_fluid
-            if required_fluid then
-                add_rule(
-                    {"fluid-mining:" .. category, "fluid:" .. required_fluid, "mining-with-fluid"},
-                    products,
-                    entity.name
-                )
-            else
-                add_rule({"mining:" .. category}, products, entity.name)
-            end
-        elseif entity.type == "offshore-pump" then
-            add_rule({fact}, tile_fluids, entity.name)
-        elseif entity.type == "boiler" then
-            local input = entity.fluid_box and entity.fluid_box.filter
-            local output = entity.output_fluid_box and entity.output_fluid_box.filter
-            if input and output then
-                add_rule({fact, "fluid:" .. input}, {"fluid:" .. output}, entity.name)
-            end
-        elseif entity.autoplace and entity.minable then
-            -- trees, rocks, fish, plants: mined by hand where the world generator put them
-            add_rule({}, minable_products(entity.minable), entity.name)
-        end
-    end)
-
-    -- scripted building logic
-    for _, definition in pairs(ScriptedProducts.values) do
-        for _, entity_name in pairs(ScriptedProducts.get_producer_entities(definition)) do
-            local source = entity_name .. " (scripted)"
-            if definition.needs_inhabitants then
-                for _, caste in pairs(Castes.all) do
-                    add_rule({working_fact(entity_name), inhabitants_fact(caste.type)}, {"item:" .. definition.item}, source)
-                end
-            else
-                add_rule({working_fact(entity_name)}, {"item:" .. definition.item}, source)
-            end
+            add_scripted_rules(definition, {}, products)
         end
     end
+end
 
-    -- housing: a house big enough for the caste, with food and drinking water in range
-    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.food_suppliers)) do
-        for food_name in pairs(Food.values) do
-            add_rule({working_fact(entity_name), "item:" .. food_name}, {"food-supply"}, entity_name .. " (scripted)")
-        end
+--- Housing: a house big enough for the caste, with a market with any food and drinking water in range.
+local function add_housing_rules()
+    for food_name in pairs(Food.values) do
+        add_scripted_rules(ScriptedProducts.food_suppliers, {"item:" .. food_name}, {"food-supply"})
     end
-    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.water_suppliers)) do
-        for water_name in pairs(DrinkingWater.values) do
-            add_rule({working_fact(entity_name), "fluid:" .. water_name}, {"water-supply"}, entity_name .. " (scripted)")
-        end
+    for water_name in pairs(DrinkingWater.values) do
+        add_scripted_rules(ScriptedProducts.water_suppliers, {"fluid:" .. water_name}, {"water-supply"})
     end
     for house_name, house in pairs(Housing.values) do
         for _, caste in pairs(Castes.all) do
@@ -481,31 +549,45 @@ local function build_static_rules()
             end
         end
     end
+end
 
-    -- inhabitants: hatched from any egg into one of the researched breedable castes, moving into a house
-    for _, entity_name in pairs(ScriptedProducts.get_producer_entities(ScriptedProducts.hatcheries)) do
-        for egg_name in pairs(InhabitantsConstants.egg_data) do
-            for _, caste in pairs(Castes.all) do
-                if caste.breedable then
-                    add_rule(
-                        {
-                            working_fact(entity_name),
-                            "item:" .. egg_name,
-                            housing_fact(caste.type),
-                            "technology:" .. caste.tech_name
-                        },
-                        {inhabitants_fact(caste.type)},
-                        entity_name .. " (scripted)"
-                    )
-                end
+--- Inhabitants: hatched from any egg into one of the researched breedable castes, moving into a house.
+local function add_hatching_rules()
+    for _, caste in pairs(Castes.all) do
+        if caste.breedable then
+            for egg_name in pairs(InhabitantsConstants.egg_data) do
+                add_scripted_rules(
+                    ScriptedProducts.hatcheries,
+                    {"item:" .. egg_name, housing_fact(caste.type), "technology:" .. caste.tech_name},
+                    {inhabitants_fact(caste.type)}
+                )
             end
         end
     end
+end
+
+--- Buildings that craft a category by script.
+local function add_scripted_crafting_rules()
     for _, definition in pairs(ScriptedProducts.crafting_categories) do
-        for _, entity_name in pairs(ScriptedProducts.get_producer_entities(definition)) do
-            add_rule({working_fact(entity_name)}, {crafting_fact(definition.category, 0, 0)}, entity_name .. " (scripted)")
-        end
+        add_scripted_rules(definition, {}, {crafting_fact(definition.category, 0, 0)})
     end
+end
+
+local function build_static_rules()
+    static_rules = {}
+    static_facts = {}
+
+    add_character_facts()
+    iterate_prototypes("item", add_item_rules)
+    local tile_fluids = get_tile_fluids()
+    iterate_prototypes("entity", function(entity)
+        add_entity_rules(entity, tile_fluids)
+    end)
+
+    add_scripted_product_rules()
+    add_housing_rules()
+    add_hatching_rules()
+    add_scripted_crafting_rules()
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -553,13 +635,18 @@ function State:fire(rule)
     end
 end
 
+--- Counts one more requirement of the rule as met and fires it once it has all of them.
+function State:satisfy_requirement(rule)
+    local missing = self.missing_counts[rule] - 1
+    self.missing_counts[rule] = missing
+    if missing == 0 then
+        self:fire(rule)
+    end
+end
+
 function State:add_rule(rule)
     for _, product in pairs(rule.products) do
-        local producers = self.rules_by_product[product]
-        if not producers then
-            producers = {}
-            self.rules_by_product[product] = producers
-        end
+        local producers = get_subtbl(self.rules_by_product, product)
         producers[#producers + 1] = rule
     end
 
@@ -567,11 +654,7 @@ function State:add_rule(rule)
     for _, requirement in pairs(rule.requirements) do
         if not self.facts[requirement] then
             missing = missing + 1
-            local waiting = self.rules_by_requirement[requirement]
-            if not waiting then
-                waiting = {}
-                self.rules_by_requirement[requirement] = waiting
-            end
+            local waiting = get_subtbl(self.rules_by_requirement, requirement)
             waiting[#waiting + 1] = rule
         end
     end
@@ -591,15 +674,9 @@ function State:propagate()
         index = index + 1
 
         local waiting = self.rules_by_requirement[fact]
-        if waiting then
-            self.rules_by_requirement[fact] = nil
-            for _, rule in pairs(waiting) do
-                local missing = self.missing_counts[rule] - 1
-                self.missing_counts[rule] = missing
-                if missing == 0 then
-                    self:fire(rule)
-                end
-            end
+        self.rules_by_requirement[fact] = nil
+        for _, rule in pairs(waiting or {}) do
+            self:satisfy_requirement(rule)
         end
     end
     self.queue = {}
@@ -629,11 +706,7 @@ function State:add_recipe(recipe_name)
     end
 
     for _, crafting in pairs(get_crafting_requirements(recipe)) do
-        local rule_requirements = {crafting}
-        for _, requirement in pairs(requirements) do
-            rule_requirements[#rule_requirements + 1] = requirement
-        end
-        self:add_rule({requirements = rule_requirements, products = products, source = recipe_name})
+        self:add_rule({requirements = merge({crafting}, requirements), products = products, source = recipe_name})
     end
 end
 
@@ -675,6 +748,30 @@ function State:can_craft_category(recipe)
     return false
 end
 
+--- The missing requirements of the recipe as facts, with every crafting fact that would do when no machine fits.
+function State:missing_for_recipe(recipe_name)
+    local recipe = data.raw.recipe[recipe_name]
+    local missing = {}
+    for _, requirement in pairs(ProgressionGraph.recipe_requirements(recipe)) do
+        if not self.facts[requirement] then
+            missing[#missing + 1] = requirement
+        end
+    end
+    if not self:can_craft_category(recipe) then
+        merge(missing, get_crafting_requirements(recipe))
+    end
+    return missing
+end
+
+--- Calls fn with every requirement of every rule that could produce the fact.
+function State:for_each_requirement_of(fact, fn)
+    for _, rule in pairs(self.rules_by_product[fact] or {}) do
+        for _, requirement in pairs(rule.requirements) do
+            fn(requirement)
+        end
+    end
+end
+
 --- Follows the given missing facts back to the ones nothing in this state can produce.
 --- Returns them as a sorted array of readable strings.
 --- @param facts string[]
@@ -689,28 +786,16 @@ function State:find_roots(facts)
         end
         visited[fact] = true
 
-        local producers = self.rules_by_product[fact]
-        if not producers then
+        if not self.rules_by_product[fact] then
             roots[fact] = true
-            return
         end
-        for _, rule in pairs(producers) do
-            for _, requirement in pairs(rule.requirements) do
-                visit(requirement)
-            end
-        end
+        self:for_each_requirement_of(fact, visit)
     end
 
     for _, fact in pairs(facts) do
         visit(fact)
     end
-
-    local ret = {}
-    for fact in pairs(roots) do
-        ret[#ret + 1] = fact
-    end
-    table.sort(ret)
-    return ret
+    return sorted_keys(roots)
 end
 
 --- Follows the given missing facts back like find_roots and returns the loops on the way: facts that need,
@@ -720,63 +805,40 @@ end
 function State:find_cycles(facts)
     local cycles = {}
     local done = {}
-    local stack = {}
-    local stack_index = {}
+    local path = {} -- the facts currently being visited, each needed by the one before
+    local path_index = {}
+
+    --- The loop from the fact's place in the path back to the fact.
+    local function describe_loop(fact)
+        local loop = {}
+        for i = path_index[fact], #path do
+            loop[#loop + 1] = path[i]
+        end
+        loop[#loop + 1] = fact
+        return table.concat(loop, " needs ")
+    end
 
     local function visit(fact)
         if done[fact] or self.facts[fact] then
             return
         end
-        local index = stack_index[fact]
-        if index then
-            local loop = {}
-            for i = index, #stack do
-                loop[#loop + 1] = stack[i]
-            end
-            loop[#loop + 1] = fact
-            cycles[table.concat(loop, " needs ")] = true
+        if path_index[fact] then
+            cycles[describe_loop(fact)] = true
             return
         end
 
-        stack[#stack + 1] = fact
-        stack_index[fact] = #stack
-        for _, rule in pairs(self.rules_by_product[fact] or {}) do
-            for _, requirement in pairs(rule.requirements) do
-                visit(requirement)
-            end
-        end
-        stack[#stack] = nil
-        stack_index[fact] = nil
+        path[#path + 1] = fact
+        path_index[fact] = #path
+        self:for_each_requirement_of(fact, visit)
+        path[#path] = nil
+        path_index[fact] = nil
         done[fact] = true
     end
 
     for _, fact in pairs(facts) do
         visit(fact)
     end
-
-    local ret = {}
-    for cycle in pairs(cycles) do
-        ret[#ret + 1] = cycle
-    end
-    table.sort(ret)
-    return ret
-end
-
---- The missing requirements of the recipe as facts, with every crafting fact that would do when no machine fits.
-function State:missing_for_recipe(recipe_name)
-    local recipe = data.raw.recipe[recipe_name]
-    local missing = {}
-    for _, requirement in pairs(ProgressionGraph.recipe_requirements(recipe)) do
-        if not self.facts[requirement] then
-            missing[#missing + 1] = requirement
-        end
-    end
-    if not self:can_craft_category(recipe) then
-        for _, crafting in pairs(get_crafting_requirements(recipe)) do
-            missing[#missing + 1] = crafting
-        end
-    end
-    return missing
+    return sorted_keys(cycles)
 end
 
 --- The state of everything a player has once the given technologies are researched.
@@ -789,6 +851,18 @@ function ProgressionGraph.state_for(technologies)
     end
     state:propagate()
     return state
+end
+
+local tier_states = {}
+
+--- The state of the whole tier of the technology, shared by all technologies of that tier.
+--- Cached, so don't add anything to it.
+function ProgressionGraph.get_tier_state(technology_name)
+    local tier = ProgressionGraph.get_tier(technology_name)
+    if not tier_states[tier] then
+        tier_states[tier] = ProgressionGraph.state_for(tier)
+    end
+    return tier_states[tier]
 end
 
 return ProgressionGraph

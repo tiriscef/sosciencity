@@ -15,45 +15,54 @@ local Assert = Tirislib.Testing.Assert
 --- - early recipes: what a technology unlocks can be crafted right away, without the technologies of the
 ---   tier that build on it. Otherwise the recipe shows up before the player can use it.
 
---- What the trigger of a trigger technology needs, as a fact. Nil if the trigger type isn't checked.
-local function get_trigger_requirement(trigger)
-    if trigger.type == "craft-item" then
-        return "item:" .. (type(trigger.item) == "table" and trigger.item.name or trigger.item)
-    elseif trigger.type == "craft-fluid" then
-        return "fluid:" .. trigger.fluid
-    elseif trigger.type == "build-entity" then
-        return "entity:" .. (type(trigger.entity) == "table" and trigger.entity.name or trigger.entity)
-    end
-end
-
---- Problems found when the test was written, to be fixed before the alpha release.
---- The test fails on problems that aren't listed and on listed ones that don't occur any more,
---- so remove an entry when fixing it.
+--- Problems that are known and accepted, which should not fail the test.
+--- A listed problem that doesn't occur any more fails the test, so the list stays current.
 --- Keys: "<technology> needs <fact>" for research, "<recipe> from <technology>" for recipes.
-local known_research_problems = {}
+local known_problems = {
+    research = {},
+    recipe = {},
+    early_recipe = {}
+}
 
-local known_recipe_problems = {}
+---------------------------------------------------------------------------------------------------
+-- << analysis >>
 
-local known_early_recipe_problems = {}
+--- Problems by kind (the keys of known_problems), each {key = string, message = string}.
+--- Nil until the first test runs the analysis.
+local problems
 
---- Problems by kind, each {key = string, message = string}.
-local research_problems
-local recipe_problems
-local early_recipe_problems
-
-local tier_states = {}
-
---- The state of the whole tier of the technology, shared by all technologies of that tier.
-local function get_tier_state(technology_name)
-    local tier = ProgressionGraph.get_tier(technology_name)
-    local state = tier_states[tier]
-    if not state then
-        state = ProgressionGraph.state_for(tier)
-        tier_states[tier] = state
-    end
-    return state
+local function add_problem(kind, problem)
+    local list = problems[kind]
+    list[#list + 1] = problem
 end
 
+--- What researching the technology needs: its science packs and, if it has one, its trigger.
+local function get_all_research_requirements(technology)
+    local requirements = ProgressionGraph.get_research_requirements(technology)
+    local trigger_requirement = ProgressionGraph.get_trigger_requirement(technology)
+    if trigger_requirement then
+        requirements[#requirements + 1] = trigger_requirement
+    end
+    return requirements
+end
+
+local function check_research(technology_name, technology, state)
+    for _, requirement in pairs(get_all_research_requirements(technology)) do
+        if not state:has(requirement) then
+            add_problem("research", {
+                key = technology_name .. " needs " .. requirement,
+                message = string.format(
+                    "%s needs %s - root: %s",
+                    technology_name,
+                    requirement,
+                    table.concat(state:find_roots({requirement}), ", ")
+                )
+            })
+        end
+    end
+end
+
+--- The problem if the state can't craft the recipe, nil otherwise.
 local function find_recipe_problem(state, recipe_name, technology_name)
     local missing = state:missing_for_recipe(recipe_name)
     if #missing == 0 then
@@ -71,78 +80,90 @@ local function find_recipe_problem(state, recipe_name, technology_name)
     }
 end
 
-local function analyse()
-    if research_problems then
+local function is_checked_recipe(recipe)
+    return recipe and not recipe.parameter and not ProgressionGraph.is_generated_recipe(recipe)
+end
+
+--- Checks a recipe the technology unlocks. If the state right after the technology can't craft it,
+--- the whole tier decides whether it needs a later tier or only shows up too early.
+local function check_unlocked_recipe(recipe_name, technology_name, state)
+    local early_problem = find_recipe_problem(state, recipe_name, technology_name)
+    if not early_problem then
         return
     end
-    research_problems = {}
-    recipe_problems = {}
-    early_recipe_problems = {}
 
-    for name, technology in pairs(data.raw.technology) do
-        if ProgressionGraph.is_researchable(technology) then
-            local state = ProgressionGraph.state_for(ProgressionGraph.get_tier_without(name))
+    local tier_problem =
+        find_recipe_problem(ProgressionGraph.get_tier_state(technology_name), recipe_name, technology_name)
+    if tier_problem then
+        add_problem("recipe", tier_problem)
+    else
+        add_problem("early_recipe", early_problem)
+    end
+end
 
-            local requirements = ProgressionGraph.get_research_requirements(technology)
-            local trigger_requirement = technology.research_trigger and
-                get_trigger_requirement(technology.research_trigger)
-            if trigger_requirement then
-                requirements[#requirements + 1] = trigger_requirement
-            end
-            for _, requirement in pairs(requirements) do
-                if not state:has(requirement) then
-                    research_problems[#research_problems + 1] = {
-                        key = name .. " needs " .. requirement,
-                        message = string.format(
-                            "%s needs %s - root: %s",
-                            name,
-                            requirement,
-                            table.concat(state:find_roots({requirement}), ", ")
-                        )
-                    }
-                end
-            end
+local function check_technology(technology_name, technology)
+    local state = ProgressionGraph.state_for(ProgressionGraph.get_tier_without(technology_name))
+    check_research(technology_name, technology, state)
 
-            state:add_technology(name)
-            state:propagate()
-            for _, recipe_name in pairs(ProgressionGraph.get_unlocked_recipes(technology)) do
-                local recipe = data.raw.recipe[recipe_name]
-                if recipe and not recipe.parameter and not ProgressionGraph.is_generated_recipe(recipe) then
-                    local early_problem = find_recipe_problem(state, recipe_name, name)
-                    if early_problem then
-                        local tier_problem = find_recipe_problem(get_tier_state(name), recipe_name, name)
-                        if tier_problem then
-                            recipe_problems[#recipe_problems + 1] = tier_problem
-                        else
-                            early_recipe_problems[#early_recipe_problems + 1] = early_problem
-                        end
-                    end
-                end
-            end
+    state:add_technology(technology_name)
+    state:propagate()
+    for _, recipe_name in pairs(ProgressionGraph.get_unlocked_recipes(technology)) do
+        if is_checked_recipe(data.raw.recipe[recipe_name]) then
+            check_unlocked_recipe(recipe_name, technology_name, state)
         end
     end
 end
 
---- Asserts that the found problems are exactly the known ones.
-local function assert_only_known(problems, known)
+--- The problems of the given kind. Analyses all technologies on the first call.
+local function get_problems(kind)
+    if not problems then
+        problems = {research = {}, recipe = {}, early_recipe = {}}
+        for name, technology in pairs(data.raw.technology) do
+            if ProgressionGraph.is_researchable(technology) then
+                check_technology(name, technology)
+            end
+        end
+    end
+    return problems[kind]
+end
+
+---------------------------------------------------------------------------------------------------
+-- << tests >>
+
+--- Messages of the problems that aren't known, sorted.
+local function get_new_problems(found, known)
     local new = {}
-    local found = {}
-    for _, problem in pairs(problems) do
-        found[problem.key] = true
+    for _, problem in pairs(found) do
         if not known[problem.key] then
             new[#new + 1] = problem.message
         end
     end
+    table.sort(new)
+    return new
+end
+
+--- Keys of the known problems that weren't found, sorted.
+local function get_fixed_problems(found, known)
+    local found_keys = {}
+    for _, problem in pairs(found) do
+        found_keys[problem.key] = true
+    end
 
     local fixed = {}
     for key in pairs(known) do
-        if not found[key] then
+        if not found_keys[key] then
             fixed[#fixed + 1] = key
         end
     end
-
-    table.sort(new)
     table.sort(fixed)
+    return fixed
+end
+
+--- Asserts that the found problems of the kind are exactly the known ones.
+local function assert_only_known(kind)
+    local found = get_problems(kind)
+    local new = get_new_problems(found, known_problems[kind])
+    local fixed = get_fixed_problems(found, known_problems[kind])
     Assert.is_table_empty(new, "new problems:\n" .. table.concat(new, "\n"))
     Assert.is_table_empty(fixed, "fixed, remove from the known problems:\n" .. table.concat(fixed, "\n"))
 end
@@ -151,8 +172,7 @@ Tirislib.Testing.add_test_case(
     "Every technology can be researched with what its science tier makes obtainable",
     "content.unlock-order",
     function()
-        analyse()
-        assert_only_known(research_problems, known_research_problems)
+        assert_only_known("research")
     end
 )
 
@@ -160,8 +180,7 @@ Tirislib.Testing.add_test_case(
     "Every unlocked recipe can be crafted within its science tier",
     "content.unlock-order",
     function()
-        analyse()
-        assert_only_known(recipe_problems, known_recipe_problems)
+        assert_only_known("recipe")
     end
 )
 
@@ -169,8 +188,7 @@ Tirislib.Testing.add_test_case(
     "Every unlocked recipe can be crafted as soon as its technology is researched",
     "content.unlock-order",
     function()
-        analyse()
-        assert_only_known(early_recipe_problems, known_early_recipe_problems)
+        assert_only_known("early_recipe")
     end
 )
 

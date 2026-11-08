@@ -22,32 +22,37 @@ local function get_staffed_buildings(recipe)
     return entities
 end
 
+--- Problems with the buildings with a workforce that the technology unlocks, as messages.
+local function find_unstaffed_buildings(technology_name, technology)
+    local problems = {}
+    for _, recipe_name in pairs(ProgressionGraph.get_unlocked_recipes(technology)) do
+        local recipe = data.raw.recipe[recipe_name]
+        if recipe and not ProgressionGraph.is_generated_recipe(recipe) then
+            for _, entity_name in pairs(get_staffed_buildings(recipe)) do
+                local state = ProgressionGraph.get_tier_state(technology_name)
+                local fact = ProgressionGraph.working_fact(entity_name)
+                if not state:has(fact) then
+                    problems[#problems + 1] = string.format(
+                        "%s (from %s) - root: %s",
+                        fact,
+                        technology_name,
+                        table.concat(state:find_roots({fact}), ", ")
+                    )
+                end
+            end
+        end
+    end
+    return problems
+end
+
 Tirislib.Testing.add_test_case(
     "Every building with a workforce can be staffed within the science tier that unlocks it",
     "content.caste-gating",
     function()
         local problems = {}
-        local states = {} -- by tier, technologies of the same tier share the tier table
         for name, technology in pairs(data.raw.technology) do
             if ProgressionGraph.is_researchable(technology) then
-                for _, recipe_name in pairs(ProgressionGraph.get_unlocked_recipes(technology)) do
-                    local recipe = data.raw.recipe[recipe_name]
-                    local checked = recipe and not ProgressionGraph.is_generated_recipe(recipe)
-                    for _, entity_name in pairs(checked and get_staffed_buildings(recipe) or {}) do
-                        local tier = ProgressionGraph.get_tier(name)
-                        states[tier] = states[tier] or ProgressionGraph.state_for(tier)
-                        local state = states[tier]
-                        local fact = ProgressionGraph.working_fact(entity_name)
-                        if not state:has(fact) then
-                            problems[#problems + 1] = string.format(
-                                "%s (from %s) - root: %s",
-                                fact,
-                                name,
-                                table.concat(state:find_roots({fact}), ", ")
-                            )
-                        end
-                    end
-                end
+                Tirislib.Tables.merge(problems, find_unstaffed_buildings(name, technology))
             end
         end
         table.sort(problems)
