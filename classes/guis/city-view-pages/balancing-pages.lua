@@ -1,9 +1,10 @@
 --- Debug category for the CityView - shared home for all dev-tool pages.
---- Only loaded when DEV_MODE is true (either sosciencity-debug or sosciencity-balancing active).
+--- Hidden unless DevMode.is_active() (map setting, sosciencity-debug or sosciencity-balancing).
 
 local Castes = require("constants.castes")
+local DevMode = require("classes.dev-mode")
 
-Gui.CityView.add_category("debug", {"city-view.debug"})
+Gui.CityView.add_category("debug", {"city-view.debug"}, DevMode.is_active)
 
 ---------------------------------------------------------------------------------------------------
 -- << Constants >>
@@ -2159,10 +2160,13 @@ Gui.CityView.add_page {
 
 -- Called by the export_sosciencity scenario for headless snapshot generation.
 -- Exports both modes with sosciencity-only filter and no player_index (writes to shared script-output).
-remote.add_interface("sosciencity_export", {
-    run = function()
-        export_full_progression("compact", false, nil)
-        export_full_progression("detailed", false, nil)
-        log("SNAPSHOT DONE")
-    end
-})
+-- Only for the companion mods, players who enable the dev tools setting don't need it.
+if DEBUG or BALANCING then
+    remote.add_interface("sosciencity_export", {
+        run = function()
+            export_full_progression("compact", false, nil)
+            export_full_progression("detailed", false, nil)
+            log("SNAPSHOT DONE")
+        end
+    })
+end

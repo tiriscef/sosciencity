@@ -65,6 +65,13 @@ data:extend {
     },
     {
         type = "bool-setting",
+        name = "sosciencity-dev-mode",
+        order = "zab",
+        setting_type = "runtime-global",
+        default_value = false
+    },
+    {
+        type = "bool-setting",
         name = "sosciencity-auto-naming-personal",
         order = "aaa",
         setting_type = "runtime-per-user",

@@ -312,11 +312,18 @@ function Gui.reset_guis()
     end
 end
 
+--- Rebuilds the open city views and details views of all players, so that they pick up a changed
+--- set of available pages and tabs (e.g. after the dev tools were toggled).
+function Gui.rebuild_open_views()
+    for _, player in pairs(game.players) do
+        Gui.CityView.rebuild(player)
+        Gui.DetailsView.rebuild(player)
+    end
+end
+
 require("classes.guis.elements")
 require("classes.guis.city-info")
-if DEV_MODE then
-    require("classes.guis.debug-widgets")
-end
+require("classes.guis.debug-widgets")
 require("classes.guis.building-overview")
 require("classes.guis.city-view")
 require("classes.guis.details-view")

@@ -21,6 +21,9 @@ local Food = require("constants.food")
 local Housing = require("constants.housing")
 local Time = require("constants.time")
 
+-- classes
+local DevMode = require("classes.dev-mode")
+
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
@@ -1384,129 +1387,127 @@ local function create_housing_details(container, entry, player_id)
     add_housing_detailed_info_tab(tabbed_pane, entry)
     add_housing_diet_tab(tabbed_pane, entry, caste_id)
 
-    if DEV_MODE then
+    if DevMode.is_active() then
         add_housing_debug_tab(tabbed_pane, entry, player_id)
     end
 end
 
-if DEV_MODE then
-    local function read(entry, key, event)
-        return tonumber(Gui.get_element(entry[EK.unit_number], key, event.player_index).text)
-    end
-
-    Gui.set_click_handler("housing_debug_add", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        local unit_number = entry[EK.unit_number]
-        local count = read(entry, "debug_add_count", event)
-        local happiness = read(entry, "debug_add_happiness", event)
-        local health = read(entry, "debug_add_health", event)
-        local sanity = read(entry, "debug_add_sanity", event)
-        local player = game.players[event.player_index]
-        if not count or count < 1 or not happiness or not health or not sanity then
-            player.print({"city-view.debug-invalid-count"})
-            return
-        end
-        local gender_idx = Gui.get_element(unit_number, "debug_add_gender", event.player_index).selected_index
-        local egg_idx = Gui.get_element(unit_number, "debug_add_egg", event.player_index).selected_index
-        local age_idx = Gui.get_element(unit_number, "debug_add_age", event.player_index).selected_index
-        local age_value = (age_idx == 3) and read(entry, "debug_add_age_value", event) or nil
-        if age_idx == 3 and (not age_value or age_value < 0) then
-            player.print({"city-view.debug-invalid-count"})
-            return
-        end
-        local genders = Gui.DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
-        local ages = Gui.DebugWidgets.make_age_group(age_idx, count, age_value)
-        local group = InhabitantGroup.new(entry[EK.type], count, happiness, health, sanity, nil, genders, ages)
-        local added = Inhabitants.add_to_house(entry, group, MoveCause.copy, true)
-        player.print({"city-view.debug-housing-add-done", added, count})
-    end)
-
-    Gui.set_click_handler("housing_debug_remove", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        local count = read(entry, "debug_remove_count", event)
-        local player = game.players[event.player_index]
-        if not count or count < 1 then
-            player.print({"city-view.debug-invalid-count"})
-            return
-        end
-        local before = entry[EK.inhabitants]
-        InhabitantGroup.take(entry, count)  -- discards taken group (vanish semantics)
-        local removed = before - entry[EK.inhabitants]
-        Inhabitants.update_free_space_status(entry)
-        player.print({"city-view.debug-housing-remove-done", removed})
-    end)
-
-    Gui.set_click_handler("housing_debug_set_hhs", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        local happiness = read(entry, "debug_hhs_happiness", event)
-        local health = read(entry, "debug_hhs_health", event)
-        local sanity = read(entry, "debug_hhs_sanity", event)
-        local player = game.players[event.player_index]
-        if not happiness or not health or not sanity then
-            player.print({"city-view.debug-invalid-count"})
-            return
-        end
-        entry[EK.happiness] = happiness
-        entry[EK.health] = health
-        entry[EK.sanity] = sanity
-        player.print({"city-view.debug-housing-set-hhs-done"})
-    end)
-
-    Gui.set_click_handler("housing_debug_infect", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        local player = game.players[event.player_index]
-        local scope_idx = Gui.get_element(entry[EK.unit_number], "debug_infect_scope", event.player_index).selected_index
-        local target_idx = Gui.get_element(entry[EK.unit_number], "debug_infect_target", event.player_index).selected_index
-        local count = read(entry, "debug_infect_count", event)
-        if not count or count < 1 then
-            player.print({"city-view.debug-invalid-count"})
-            return
-        end
-        local sickened = Gui.DebugWidgets.apply_infection_to_entry(entry[EK.diseases], count, scope_idx, target_idx)
-        player.print({"city-view.debug-housing-infect-done", sickened, count})
-    end)
-
-    Gui.set_click_handler("housing_debug_cure", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        local player = game.players[event.player_index]
-        local scope_idx = Gui.get_element(entry[EK.unit_number], "debug_cure_scope", event.player_index).selected_index
-        local target_idx = Gui.get_element(entry[EK.unit_number], "debug_cure_target", event.player_index).selected_index
-        local count = read(entry, "debug_cure_count", event)
-        if not count or count < 1 then
-            player.print({"city-view.debug-invalid-count"})
-            return
-        end
-        local cured = Gui.DebugWidgets.apply_cure_to_entry(entry, count, scope_idx, target_idx)
-        player.print({"city-view.debug-housing-cure-done", cured, count})
-    end)
-
-    Gui.set_click_handler("housing_debug_blood_donation", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        local player = game.players[event.player_index]
-        local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
-        Tirislib.Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
-        for _, hospital in pairs(hospitals) do
-            if Entity.Hospital.try_blood_donation(hospital, entry) then
-                player.print({"city-view.debug-housing-blood-donation-done"})
-                return
-            end
-        end
-        player.print({"city-view.debug-housing-blood-donation-noop"})
-    end)
-
-    Gui.set_click_handler("housing_debug_garbage", function(event)
-        local entry = Register.try_get(storage.details_view[event.player_index])
-        if not entry then return end
-        Consumption.produce_garbage(entry, "garbage", 1)
-        game.players[event.player_index].print({"city-view.debug-housing-garbage-done"})
-    end)
+local function read(entry, key, event)
+    return tonumber(Gui.get_element(entry[EK.unit_number], key, event.player_index).text)
 end
+
+Gui.set_click_handler("housing_debug_add", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    local unit_number = entry[EK.unit_number]
+    local count = read(entry, "debug_add_count", event)
+    local happiness = read(entry, "debug_add_happiness", event)
+    local health = read(entry, "debug_add_health", event)
+    local sanity = read(entry, "debug_add_sanity", event)
+    local player = game.players[event.player_index]
+    if not count or count < 1 or not happiness or not health or not sanity then
+        player.print({"city-view.debug-invalid-count"})
+        return
+    end
+    local gender_idx = Gui.get_element(unit_number, "debug_add_gender", event.player_index).selected_index
+    local egg_idx = Gui.get_element(unit_number, "debug_add_egg", event.player_index).selected_index
+    local age_idx = Gui.get_element(unit_number, "debug_add_age", event.player_index).selected_index
+    local age_value = (age_idx == 3) and read(entry, "debug_add_age_value", event) or nil
+    if age_idx == 3 and (not age_value or age_value < 0) then
+        player.print({"city-view.debug-invalid-count"})
+        return
+    end
+    local genders = Gui.DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
+    local ages = Gui.DebugWidgets.make_age_group(age_idx, count, age_value)
+    local group = InhabitantGroup.new(entry[EK.type], count, happiness, health, sanity, nil, genders, ages)
+    local added = Inhabitants.add_to_house(entry, group, MoveCause.copy, true)
+    player.print({"city-view.debug-housing-add-done", added, count})
+end)
+
+Gui.set_click_handler("housing_debug_remove", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    local count = read(entry, "debug_remove_count", event)
+    local player = game.players[event.player_index]
+    if not count or count < 1 then
+        player.print({"city-view.debug-invalid-count"})
+        return
+    end
+    local before = entry[EK.inhabitants]
+    InhabitantGroup.take(entry, count)  -- discards taken group (vanish semantics)
+    local removed = before - entry[EK.inhabitants]
+    Inhabitants.update_free_space_status(entry)
+    player.print({"city-view.debug-housing-remove-done", removed})
+end)
+
+Gui.set_click_handler("housing_debug_set_hhs", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    local happiness = read(entry, "debug_hhs_happiness", event)
+    local health = read(entry, "debug_hhs_health", event)
+    local sanity = read(entry, "debug_hhs_sanity", event)
+    local player = game.players[event.player_index]
+    if not happiness or not health or not sanity then
+        player.print({"city-view.debug-invalid-count"})
+        return
+    end
+    entry[EK.happiness] = happiness
+    entry[EK.health] = health
+    entry[EK.sanity] = sanity
+    player.print({"city-view.debug-housing-set-hhs-done"})
+end)
+
+Gui.set_click_handler("housing_debug_infect", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    local player = game.players[event.player_index]
+    local scope_idx = Gui.get_element(entry[EK.unit_number], "debug_infect_scope", event.player_index).selected_index
+    local target_idx = Gui.get_element(entry[EK.unit_number], "debug_infect_target", event.player_index).selected_index
+    local count = read(entry, "debug_infect_count", event)
+    if not count or count < 1 then
+        player.print({"city-view.debug-invalid-count"})
+        return
+    end
+    local sickened = Gui.DebugWidgets.apply_infection_to_entry(entry[EK.diseases], count, scope_idx, target_idx)
+    player.print({"city-view.debug-housing-infect-done", sickened, count})
+end)
+
+Gui.set_click_handler("housing_debug_cure", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    local player = game.players[event.player_index]
+    local scope_idx = Gui.get_element(entry[EK.unit_number], "debug_cure_scope", event.player_index).selected_index
+    local target_idx = Gui.get_element(entry[EK.unit_number], "debug_cure_target", event.player_index).selected_index
+    local count = read(entry, "debug_cure_count", event)
+    if not count or count < 1 then
+        player.print({"city-view.debug-invalid-count"})
+        return
+    end
+    local cured = Gui.DebugWidgets.apply_cure_to_entry(entry, count, scope_idx, target_idx)
+    player.print({"city-view.debug-housing-cure-done", cured, count})
+end)
+
+Gui.set_click_handler("housing_debug_blood_donation", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    local player = game.players[event.player_index]
+    local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
+    Tirislib.Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
+    for _, hospital in pairs(hospitals) do
+        if Entity.Hospital.try_blood_donation(hospital, entry) then
+            player.print({"city-view.debug-housing-blood-donation-done"})
+            return
+        end
+    end
+    player.print({"city-view.debug-housing-blood-donation-noop"})
+end)
+
+Gui.set_click_handler("housing_debug_garbage", function(event)
+    local entry = Register.try_get(storage.details_view[event.player_index])
+    if not entry then return end
+    Consumption.produce_garbage(entry, "garbage", 1)
+    game.players[event.player_index].print({"city-view.debug-housing-garbage-done"})
+end)
 
 Gui.DetailsView.register_type(Type.empty_house, {
     creater = create_empty_housing_details,

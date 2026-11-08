@@ -1,5 +1,5 @@
 --- Broadcast debug actions for the CityView - population/disease manipulation for testing.
---- Only loaded when DEV_MODE is true (either sosciencity-debug or sosciencity-balancing active).
+--- Lives in the debug category, which is hidden unless DevMode.is_active().
 
 ---------------------------------------------------------------------------------------------------
 -- << Constants >>
@@ -8,6 +8,7 @@
 local EK = require("enums.entry-key")
 local MoveCause = require("enums.move-cause")
 local Castes = require("constants.castes")
+local DevMode = require("classes.dev-mode")
 
 local CONTEXT = "debug-broadcast"
 local HEALTHY = DiseaseGroup.HEALTHY
@@ -210,6 +211,13 @@ Gui.CityView.add_page {
     localised_name = {"city-view.debug-broadcast"},
     creator = function(container)
         local main_flow = container.add {type = "flow", direction = "vertical"}
+        local first_activation = DevMode.get_first_activation()
+        main_flow.add {
+            type = "label",
+            caption = first_activation and
+                {"city-view.debug-dev-mode-record", Tirislib.Locales.display_time(first_activation)} or
+                {"city-view.debug-dev-mode-record-never"}
+        }
         build_spawn_section(main_flow, container.player_index)
         build_infect_section(main_flow, container.player_index)
         build_homelessness_section(main_flow)

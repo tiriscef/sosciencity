@@ -9,6 +9,9 @@ local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 local type_definitions = require("constants.types").definitions
 
+-- classes
+local DevMode = require("classes.dev-mode")
+
 local castes = Castes.values
 local Entity = Entity
 local Upbringing = Entity.Upbringing
@@ -174,7 +177,7 @@ local function create_upbringing_station(container, entry, player_id)
     Gui.Elements.Label.header_label(general, "header-classes", {"sosciencity.classes"})
     general.add {type = "flow", name = "classes", direction = "vertical"}
 
-    if DEV_MODE then
+    if DevMode.is_active() then
         local debug_tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
         debug_tab.add {
             type = "button",
@@ -200,23 +203,21 @@ Gui.set_checked_state_handler(
     end
 )
 
-if DEV_MODE then
-    Gui.set_click_handler(
-        "debug_upbringing_complete_classes",
-        function(event)
-            local entry = Register.try_get(storage.details_view[event.player_index])
-            if not entry then return end
-            local classes = entry[EK.classes]
-            local completed = 0
-            for i = #classes, 1, -1 do
-                Upbringing.finish_class(entry, classes[i], entry[EK.education_mode])
-                classes[i] = nil
-                completed = completed + 1
-            end
-            game.players[event.player_index].print({"city-view.debug-upbringing-complete-done", completed})
+Gui.set_click_handler(
+    "debug_upbringing_complete_classes",
+    function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
+        local classes = entry[EK.classes]
+        local completed = 0
+        for i = #classes, 1, -1 do
+            Upbringing.finish_class(entry, classes[i], entry[EK.education_mode])
+            classes[i] = nil
+            completed = completed + 1
         end
-    )
-end
+        game.players[event.player_index].print({"city-view.debug-upbringing-complete-done", completed})
+    end
+)
 
 Gui.DetailsView.register_type(
     Type.upbringing_station,

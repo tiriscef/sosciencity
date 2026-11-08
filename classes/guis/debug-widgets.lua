@@ -1,6 +1,6 @@
 --- Shared debug GUI widgets: dropdown data, scope picker, gender/age pickers, per-entry infect/cure primitives.
 --- Consumed by both the city-view broadcast page (Surface 2) and the detail-view debug tabs (Surface 3).
---- Only usable when DEV_MODE is true (both consumers are DEV_MODE-gated).
+--- Only shown when DevMode.is_active() (both consumers check it).
 
 local EK = require("enums.entry-key")
 local DiseaseCategory = require("enums.disease-category")

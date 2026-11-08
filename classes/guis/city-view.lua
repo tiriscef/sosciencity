@@ -39,7 +39,8 @@ local content = {}
 --- Adds a new category tab to the city view.
 --- @param name string
 --- @param localised_name locale
-function Gui.CityView.add_category(name, localised_name)
+--- @param enabler function? returns a truthy/falsy value if the category should show up, optional
+function Gui.CityView.add_category(name, localised_name, enabler)
     Tirislib.Utils.desync_protection()
 
     if Gui.CityView.get_category_definition(name) then
@@ -51,8 +52,23 @@ function Gui.CityView.add_category(name, localised_name)
         name = name,
         localised_name = localised_name,
         index = index,
+        enabler = enabler,
         pages = {}
     }
+end
+
+local function is_category_enabled(category)
+    return not category.enabler or category.enabler()
+end
+
+--- Returns the index of the category's tab, which differs from the category index when a
+--- category before it is disabled. Nil if the category has no tab.
+local function get_tab_index(tabpane, category_name)
+    for tab_index, tab_and_content in pairs(tabpane.tabs) do
+        if tab_and_content.content.name == category_name then
+            return tab_index
+        end
+    end
 end
 
 --- Returns the definition of the category with the given name. Or nil if there is no category
@@ -130,6 +146,9 @@ local function open_page(player, category_index, page_name, set_tab_index)
     local page = Gui.CityView.get_page_definition(category, page_name)
 
     local tab = gui.content.tabpane[category.name]
+    if not tab then
+        return
+    end
 
     local page_container = tab.page.scroll
     page_container.clear()
@@ -145,7 +164,7 @@ local function open_page(player, category_index, page_name, set_tab_index)
     last_opened_pages[category_index] = page_name
 
     if set_tab_index then
-        gui.content.tabpane.selected_tab_index = category_index
+        gui.content.tabpane.selected_tab_index = get_tab_index(gui.content.tabpane, category.name)
     end
 end
 
@@ -236,6 +255,10 @@ function Gui.CityView.open(player)
     local last_opened_pages = get_subtblr(storage, "last_opened_pages", player.index)
 
     for category_index, category in pairs(content) do
+        if not is_category_enabled(category) then
+            goto continue
+        end
+
         local tab =
             content_tabpane.add {
             type = "tab",
@@ -283,11 +306,17 @@ function Gui.CityView.open(player)
         -- open_page also calls fill_menu to set the correct style for the opened page
         -- so we don't call fill_menu here, as that would be overwritten anyway
         open_page(player, category_index, last_opened_pages[category_index] or category.pages[1].name)
+
+        ::continue::
     end
 
     local last_opened_tab = get_subtbl(storage, "last_opened_tab")[player.index]
+    if last_opened_tab and last_opened_tab > #content_tabpane.tabs then
+        -- the tab belonged to a category that is disabled now
+        last_opened_tab = nil
+    end
     -- defaulting to the 'how-tos' category on first open, because tiriscef points new players there in the welcome message
-    content_tabpane.selected_tab_index = last_opened_tab or Gui.CityView.get_category_definition("how-tos").index
+    content_tabpane.selected_tab_index = last_opened_tab or get_tab_index(content_tabpane, "how-tos")
 
     local footer =
         city_view_frame.add {
@@ -326,6 +355,15 @@ function Gui.CityView.close(player)
 end
 local close_city_view = Gui.CityView.close
 
+--- Closes and reopens the city view of the given player, if it is open.
+--- @param player LuaPlayer
+function Gui.CityView.rebuild(player)
+    if player.gui.screen[CITY_VIEW_NAME] then
+        close_city_view(player)
+        create_city_view(player)
+    end
+end
+
 local function toggle_city_view_opened(player)
     local gui = player.gui.screen[CITY_VIEW_NAME]
     if gui then
@@ -357,11 +395,10 @@ require("classes.guis.city-view-pages.caste-pages")
 require("classes.guis.city-view-pages.howto-pages")
 require("classes.guis.city-view-pages.charts-page")
 
-if DEV_MODE then
-    require("classes.guis.city-view-pages.balancing-pages")
-    require("classes.guis.city-view-pages.debug-pages")
-    require("classes.guis.city-view-pages.item-browser-page")
-    require("classes.guis.city-view-pages.recipe-balancing-page")
-    require("classes.guis.city-view-pages.housing-balancing-page")
-    require("classes.guis.city-view-pages.utility-sprite-browser")
-end
+-- dev tools, the category is hidden unless DevMode.is_active()
+require("classes.guis.city-view-pages.balancing-pages")
+require("classes.guis.city-view-pages.debug-pages")
+require("classes.guis.city-view-pages.item-browser-page")
+require("classes.guis.city-view-pages.recipe-balancing-page")
+require("classes.guis.city-view-pages.housing-balancing-page")
+require("classes.guis.city-view-pages.utility-sprite-browser")

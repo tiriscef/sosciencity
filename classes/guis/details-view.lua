@@ -705,6 +705,16 @@ function Gui.DetailsView.close(player)
     details_view.nested.clear()
 end
 
+--- Closes and reopens the details view of the given player, if it is open.
+--- @param player LuaPlayer
+function Gui.DetailsView.rebuild(player)
+    local unit_number = storage.details_view[player.index]
+    if unit_number then
+        Gui.DetailsView.close(player)
+        Gui.DetailsView.open(player, unit_number)
+    end
+end
+
 --- Closes and reopens all the Guis related to the given entry.
 --- @param entry Entry
 function Gui.DetailsView.rebuild_for_entry(entry)

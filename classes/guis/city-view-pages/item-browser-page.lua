@@ -1,5 +1,5 @@
 --- Debug page for cheating items into the player's inventory.
---- Only loaded when DEV_MODE is true.
+--- Lives in the debug category, which is hidden unless DevMode.is_active().
 
 local CONTEXT = "item-browser"
 local SLOT_GRID_COLUMNS = 20

@@ -20,32 +20,24 @@ local DrinkingWater = require("constants.drinking-water")
 
 DEBUG = script.active_mods["sosciencity-debug"] ~= nil
 BALANCING = script.active_mods["sosciencity-balancing"] ~= nil
--- Either companion mod enables the full dev/debug GUI + action set.
-DEV_MODE = DEBUG or BALANCING
+-- The cheat/debug GUIs are gated at runtime by DevMode.is_active() (map setting or companion mod).
 
-if DEV_MODE then
-    BalancingData = {
-        scripted_items = {}, -- item/fluid name → unlock condition ("always" or tech_name)
-        scripted_techs = {}, -- tech_name → human-readable description of unlock condition
-        register_scripted_item = function(name, unlock_condition)
-            BalancingData.scripted_items[name] = unlock_condition or "always"
-        end,
-        register_scripted_tech = function(tech_name, description)
-            BalancingData.scripted_techs[tech_name] = description
-        end
-    }
+BalancingData = {
+    scripted_items = {}, -- item/fluid name → unlock condition ("always" or tech_name)
+    scripted_techs = {}, -- tech_name → human-readable description of unlock condition
+    register_scripted_item = function(name, unlock_condition)
+        BalancingData.scripted_items[name] = unlock_condition or "always"
+    end,
+    register_scripted_tech = function(tech_name, description)
+        BalancingData.scripted_techs[tech_name] = description
+    end
+}
 
-    BalancingData.register_scripted_item("garbage", "upbringing")
-    BalancingData.register_scripted_item("food-leftovers", "upbringing")
-    BalancingData.register_scripted_item("humus", "composting-silo")
-    BalancingData.register_scripted_item("necrofall", "composting-silo")
-    BalancingData.register_scripted_item("medical-report", "medbay")
-else
-    BalancingData = {
-        register_scripted_item = function() end,
-        register_scripted_tech = function() end
-    }
-end
+BalancingData.register_scripted_item("garbage", "upbringing")
+BalancingData.register_scripted_item("food-leftovers", "upbringing")
+BalancingData.register_scripted_item("humus", "composting-silo")
+BalancingData.register_scripted_item("necrofall", "composting-silo")
+BalancingData.register_scripted_item("medical-report", "medbay")
 
 ---------------------------------------------------------------------------------------------------
 -- << constants >>
@@ -56,6 +48,7 @@ local Types = require("constants.types")
 -- << classes >>
 
 local Events = require("classes.events")
+local DevMode = require("classes.dev-mode")
 
 require("classes.locale")
 require("classes.scheduler")
@@ -196,7 +189,8 @@ if DEBUG then
     })
 end
 
-if DEV_MODE then
+-- console command that writes balancing files, only for the companion mods
+if DEBUG or BALANCING then
     require("balancing")
 end
 
@@ -254,7 +248,7 @@ local function update_cycle()
     storage.last_update = current_tick
 end
 
-local function update_settings()
+local function update_settings(event)
     storage.updates_per_cycle = settings.global["sosciencity-entity-updates-per-cycle"].value
 
     storage.maintenance_enabled = settings.global["sosciencity-penalty-module"].value
@@ -265,6 +259,11 @@ local function update_settings()
     storage.auto_naming_enabled = settings.global["sosciencity-auto-naming"].value
 
     Communication.settings_update()
+
+    DevMode.update_record()
+    if event and DevMode.is_setting_change(event) then
+        Gui.rebuild_open_views()
+    end
 end
 
 local function set_locals()

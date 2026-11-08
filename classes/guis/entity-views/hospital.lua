@@ -12,6 +12,9 @@ local Types = require("constants.types")
 local type_definitions = Types.definitions
 local ward_types = Types.select("is_hospital_ward")
 
+-- classes
+local DevMode = require("classes.dev-mode")
+
 local diseases = Diseases.values
 local Entity = Entity
 local Gui = Gui
@@ -354,7 +357,7 @@ local function create_hospital_details(container, entry, player_id)
 
     create_disease_catalogue(container)
 
-    if DEV_MODE then
+    if DevMode.is_active() then
         create_hospital_debug_tab(tabbed_pane)
     end
 
@@ -369,35 +372,33 @@ Gui.set_gui_confirmed_handler(
     end
 )
 
-if DEV_MODE then
-    Gui.set_click_handler(
-        "debug_hospital_complete_slots",
-        function(event)
-            local entry = Register.try_get(storage.details_view[event.player_index])
-            if not entry then return end
+Gui.set_click_handler(
+    "debug_hospital_complete_slots",
+    function(event)
+        local entry = Register.try_get(storage.details_view[event.player_index])
+        if not entry then return end
 
-            -- fill up the work of every bed, the next updates of the bed buildings finish them
-            local completed = 0
-            local bed_buildings = get_connected_wards(entry)
-            bed_buildings[#bed_buildings + 1] = entry
-            for _, bed_building in pairs(bed_buildings) do
-                for _, slot in pairs(bed_building[EK.slots]) do
-                    slot.work_done = diseases[slot.disease_id].curing_workload
-                    completed = completed + 1
-                end
-                for _, slot in pairs(bed_building[EK.donation_slots]) do
-                    slot.work_done = InhabitantsConstants.blood_donation_workload
-                    completed = completed + 1
-                end
-                for _, slot in pairs(bed_building[EK.vaccination_slots]) do
-                    slot.work_done = InhabitantsConstants.vaccination_workload
-                    completed = completed + 1
-                end
+        -- fill up the work of every bed, the next updates of the bed buildings finish them
+        local completed = 0
+        local bed_buildings = get_connected_wards(entry)
+        bed_buildings[#bed_buildings + 1] = entry
+        for _, bed_building in pairs(bed_buildings) do
+            for _, slot in pairs(bed_building[EK.slots]) do
+                slot.work_done = diseases[slot.disease_id].curing_workload
+                completed = completed + 1
             end
-            game.players[event.player_index].print({"city-view.debug-hospital-complete-done", completed})
+            for _, slot in pairs(bed_building[EK.donation_slots]) do
+                slot.work_done = InhabitantsConstants.blood_donation_workload
+                completed = completed + 1
+            end
+            for _, slot in pairs(bed_building[EK.vaccination_slots]) do
+                slot.work_done = InhabitantsConstants.vaccination_workload
+                completed = completed + 1
+            end
         end
-    )
-end
+        game.players[event.player_index].print({"city-view.debug-hospital-complete-done", completed})
+    end
+)
 
 Gui.DetailsView.register_type(Type.hospital, {creater = create_hospital_details, updater = update_hospital_details})
 Gui.DetailsView.register_type(
