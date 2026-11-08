@@ -581,6 +581,5 @@ Tirislib.RecipeGenerator.add_result_themes {
 }
 
 Tirislib.RecipeGenerator.add_item_aliases {
-    glass = "glass",
     nickel_catalyst = "iron-plate"
 }
