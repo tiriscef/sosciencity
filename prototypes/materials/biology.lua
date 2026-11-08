@@ -114,7 +114,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "hardcorn-punk", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.milling,
+    category = "crafting",
     energy_required = 1,
     unlock = Unlocks.get_tech_name("hardcorn-punk"),
     auto_recycle = false
@@ -221,7 +221,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "weird-berry", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    category = "crafting-with-fluid",
     energy_required = 1.6,
     unlock = Unlocks.get_tech_name("weird-berry"),
     auto_recycle = false
@@ -234,7 +234,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "heliofall", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    category = "crafting-with-fluid",
     energy_required = 1.6,
     unlock = Unlocks.get_tech_name("heliofall"),
     auto_recycle = false
@@ -247,7 +247,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "avocado", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    category = "crafting-with-fluid",
     energy_required = 1.6,
     unlock = Unlocks.get_tech_name("avocado"),
     auto_recycle = false
@@ -260,7 +260,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "olive", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    category = "crafting-with-fluid",
     energy_required = 1.6,
     unlock = Unlocks.get_tech_name("olive"),
     auto_recycle = false
@@ -273,7 +273,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "item", name = "sesame", amount = 5}
     },
-    category = Tirislib.RecipeGenerator.category_alias.plant_oil_extraction,
+    category = "crafting-with-fluid",
     energy_required = 1.6,
     unlock = "hummus",
     auto_recycle = false
@@ -327,7 +327,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "razha-bean", amount = 5},
         {type = "fluid", name = "clean-water", amount = 50}
     },
-    category = Tirislib.RecipeGenerator.category_alias.fluid_mixing,
+    category = "chemistry",
     energy_required = 2,
     unlock = "soy-products",
     auto_recycle = false
@@ -368,7 +368,7 @@ Tirislib.RecipeGenerator.create {
     ingredients = {
         {type = "fluid", name = "pemtenn", amount = 100}
     },
-    category = Tirislib.RecipeGenerator.category_alias.drying,
+    category = "sosciencity-drying-unit",
     energy_required = 5,
     unlock = "fermentation",
     auto_recycle = false

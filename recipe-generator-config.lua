@@ -580,18 +580,6 @@ Tirislib.RecipeGenerator.add_result_themes {
     }
 }
 
-Tirislib.RecipeGenerator.add_category_aliases {
-    dissolving = "crafting-with-fluid",
-    drying = "sosciencity-drying-unit",
-    filtration = "chemistry",
-    fluid_mixing = "chemistry",
-    food_processing = "sosciencity-orchid-food-processing",
-    handcrafting = "sosciencity-handcrafting",
-    milling = "crafting",
-    mixing = "crafting",
-    plant_oil_extraction = "crafting-with-fluid"
-}
-
 Tirislib.RecipeGenerator.add_item_aliases {
     glass = "glass",
     nickel_catalyst = "iron-plate"

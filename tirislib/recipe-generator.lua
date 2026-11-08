@@ -33,13 +33,6 @@ function Tirislib.RecipeGenerator.add_result_themes(themes)
     end
 end
 
-Tirislib.RecipeGenerator.category_alias = {}
-
---- Table with (alias, name of RecipeCategory) pairs.
-function Tirislib.RecipeGenerator.add_category_aliases(aliases)
-    Tirislib.Tables.set_fields(Tirislib.RecipeGenerator.category_alias, aliases)
-end
-
 Tirislib.RecipeGenerator.item_alias = {}
 
 --- Table with (alias, name of item) pairs.
