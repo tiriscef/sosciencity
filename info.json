@@ -13,5 +13,5 @@
         "+minime",
         "(?)recycler"
     ],
-    "description": "Factorio: Skylines. Adds citizens to the game. Attract various castes to your city in order to progress the game."
+    "description": "Factorio: Skylines. Adds citizens to the game. Attract various castes to your city in order to progress the game.\n\nSosciencity's buildings are scaled so their doors are about one tile tall - the vanilla engineer is a freaking giant next to them. If that bothers you, I recommend miniMAXIme, which shrinks him to a size that fits the city."
 }
