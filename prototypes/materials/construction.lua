@@ -515,6 +515,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "pyrifera", amount = 5}
     },
     energy_required = 5,
+    category = Tirislib.RecipeGenerator.category_alias.drying,
     unlock = "algae-farming"
 }
 

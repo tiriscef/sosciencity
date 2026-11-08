@@ -125,5 +125,6 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "semipermeable-membrane", amount = 1}
     },
     energy_required = 4,
+    category = Tirislib.RecipeGenerator.category_alias.filtration,
     unlock = "genetic-neogenesis"
 }:add_catalyst("semipermeable-membrane", "item", 1, 0.8)

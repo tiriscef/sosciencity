@@ -325,6 +325,7 @@ Tirislib.RecipeGenerator.create {
         {type = "item", name = "sesame",   amount = 10}
     },
     energy_required = 3,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "hummus",
     auto_recycle = false
 }
@@ -337,6 +338,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "solfaen", amount = 100}
     },
     energy_required = 5,
+    category = Tirislib.RecipeGenerator.category_alias.drying,
     unlock = "basic-biotechnology",
     auto_recycle = false
 }
@@ -350,6 +352,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "soy-milk", amount = 200}
     },
     energy_required = 5,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock = "soy-products",
     auto_recycle = false
 }
@@ -363,6 +366,7 @@ Tirislib.RecipeGenerator.create {
         {type = "fluid", name = "pemtenn", amount = 10}
     },
     energy_required = 2,
+    category = Tirislib.RecipeGenerator.category_alias.food_processing,
     unlock_with_item = "flour",
     auto_recycle = false
 }
