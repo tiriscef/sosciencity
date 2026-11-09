@@ -1,9 +1,16 @@
--- TODO: graphics
+local sprites = require("__sosciencity-graphics__.graphics.entity.social-observatory.sprite-data")
+
+--- A sprite-data part played at its own speed instead of the export's (the sanity dial swings twice per loop).
+local function with_speed(part, speed)
+    local copy = Tirislib.Tables.copy(part)
+    copy.animation_speed = speed
+    return copy
+end
 
 Tirislib.Item.create {
     type = "item",
     name = "social-observatory",
-    icon = Tirislib.Prototype.placeholder_icon,
+    icon = "__sosciencity-graphics__/graphics/icon/social-observatory.png",
     icon_size = 64,
     subgroup = "sosciencity-buildings",
     order = "fab",
@@ -31,29 +38,43 @@ Tirislib.Entity.create {
     minable = {mining_time = 0.5, result = "social-observatory"},
     max_health = 200,
     corpse = "small-remnants",
-    impact_category = "metal",
+    impact_category = "stone",
     repair_sound = {filename = "__base__/sound/manual-repair-simple.ogg"},
     open_sound = {filename = "__base__/sound/machine-open.ogg", volume = 0.85},
     close_sound = {filename = "__base__/sound/machine-close.ogg", volume = 0.75},
     allowed_effects = {"productivity", "speed"},
     graphics_set = {
-        animation = {
-            layers = {
-                {
-                    filename = "__sosciencity-graphics__/graphics/placeholder.png",
-                    priority = "high",
-                    width = 224,
-                    height = 224,
-                    scale = 6/7
-                },
-                {
-                    filename = "__sosciencity-graphics__/graphics/gleam-caste.png",
-                    priority = "high",
-                    width = 256,
-                    height = 256,
-                    scale = 0.5,
-                    frame_count = 1
-                }
+        animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.static),
+        -- constant speed: the ticker stays readable with speed modules
+        working_visualisations = {
+            -- only while working: the static sprite shows the ticker off and the activity LEDs dark
+            {
+                constant_speed = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites.ticker)
+            },
+            {
+                constant_speed = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites["server-leds"])
+            },
+            {
+                constant_speed = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites["hut-leds"])
+            },
+            -- the static sprite has no hands, so the dials are always drawn (frozen while idle)
+            {
+                always_draw = true,
+                constant_speed = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites["hand-happiness"])
+            },
+            {
+                always_draw = true,
+                constant_speed = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(sprites["hand-health"])
+            },
+            {
+                always_draw = true,
+                constant_speed = true,
+                animation = Tirislib.Entity.create_animation_from_sprite_data(with_speed(sprites["hand-sanity"], 0.2))
             }
         }
     },
