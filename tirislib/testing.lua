@@ -7,6 +7,18 @@ local tests = Tirislib.Testing.tests
 ---------------------------------------------------------------------------------------------------
 -- << adding test cases >>
 
+--- Returns a human-readable string representation of a value.
+--- Uses serpent for tables and tostring for everything else.
+--- @param v any The value to represent
+--- @return string representation
+local function get_string_representation(v)
+    if type(v) == "table" then
+        return serpent.line(v)
+    else
+        return tostring(v)
+    end
+end
+
 --- Creates a new test case table.
 --- @param name string The display name of the test case
 --- @param groups string Group names separated by "|"
@@ -32,6 +44,109 @@ end
 --- @param teardown function? Optional function to run after the test (runs even on failure)
 function Tirislib.Testing.add_test_case(name, groups, fn, setup, teardown)
     tests[#tests + 1] = new_test_case(name, groups, fn, setup, teardown)
+end
+
+--- Returns the number of values in a case, counting nil holes up to the highest integer key.
+--- @param case table The case
+--- @return integer count
+local function get_case_value_count(case)
+    local count = 0
+    for key in pairs(case) do
+        if type(key) == "number" and key > count then
+            count = key
+        end
+    end
+    return count
+end
+
+--- Creates the name of one case of a parameterized test case.
+--- @param name_pattern string Format string with one %s per case value
+--- @param case table The case
+--- @param value_count integer Number of values in the case
+--- @param index integer Position of the case in the case list
+--- @return string name
+local function get_parameterized_name(name_pattern, case, value_count, index)
+    if case.name then
+        return string.format("%s #%d", case.name, index)
+    end
+
+    local representations = {}
+    for i = 1, value_count do
+        representations[i] = get_string_representation(case[i])
+    end
+
+    local ok, name = pcall(string.format, name_pattern, table.unpack(representations, 1, value_count))
+    if not ok then
+        error(string.format("Name pattern '%s' doesn't fit case #%d: %s", name_pattern, index, name))
+    end
+
+    return string.format("%s #%d", name, index)
+end
+
+--- Wraps a function so it is called with the values of the given case.
+--- @param fn function? The function taking the case values
+--- @param case table The case
+--- @param value_count integer Number of values in the case
+--- @return function? wrapped
+local function bind_case(fn, case, value_count)
+    if not fn then
+        return nil
+    end
+
+    return function()
+        return fn(table.unpack(case, 1, value_count))
+    end
+end
+
+--- Creates one test case per case of a parameterized test, without registering them.
+--- See add_parameterized_test_case.
+--- @param name_pattern string Format string with one %s per case value
+--- @param groups string Group names separated by "|"
+--- @param cases table Array of cases, each an array of values with an optional `name` field
+--- @param fn function The test function, called with the values of a case
+--- @param setup function? Optional function to run before each case, called with its values
+--- @param teardown function? Optional function to run after each case, called with its values
+--- @return table test_cases Array of test case tables
+function Tirislib.Testing.create_parameterized_test_cases(name_pattern, groups, cases, fn, setup, teardown)
+    local test_cases = {}
+
+    for index, case in pairs(cases) do
+        if type(case) ~= "table" then
+            error(string.format("Case #%d of '%s' isn't a table.", index, name_pattern))
+        end
+
+        local value_count = get_case_value_count(case)
+        test_cases[#test_cases + 1] =
+            new_test_case(
+            get_parameterized_name(name_pattern, case, value_count, index),
+            groups,
+            bind_case(fn, case, value_count),
+            bind_case(setup, case, value_count),
+            bind_case(teardown, case, value_count)
+        )
+    end
+
+    return test_cases
+end
+
+--- Adds one test case per case, running the same test function with the values of each case.
+--- Like NUnit's TestCase attribute: useful for lists of edge cases and equivalence classes.
+--- Each case is its own test with its own setup and teardown, and failures name the case.
+--- The name of a case is the pattern formatted with its values (tables via serpent), followed by
+--- its position in the list; a `name` field on the case replaces the formatted part.
+--- Cases may contain nil values: `{nil, 0}` calls fn(nil, 0).
+--- @param name_pattern string Format string with one %s per case value
+--- @param groups string Group names separated by "|"
+--- @param cases table Array of cases, each an array of values with an optional `name` field
+--- @param fn function The test function, called with the values of a case
+--- @param setup function? Optional function to run before each case, called with its values
+--- @param teardown function? Optional function to run after each case, called with its values
+function Tirislib.Testing.add_parameterized_test_case(name_pattern, groups, cases, fn, setup, teardown)
+    for _, test_case in pairs(
+        Tirislib.Testing.create_parameterized_test_cases(name_pattern, groups, cases, fn, setup, teardown)
+    ) do
+        tests[#tests + 1] = test_case
+    end
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -393,18 +508,6 @@ local function equals(lh, rh)
         return Tirislib.Tables.equal(lh, rh)
     else
         return lh == rh
-    end
-end
-
---- Returns a human-readable string representation of a value.
---- Uses serpent for tables and tostring for everything else.
---- @param v any The value to represent
---- @return string representation
-local function get_string_representation(v)
-    if type(v) == "table" then
-        return serpent.line(v)
-    else
-        return tostring(v)
     end
 end
 
