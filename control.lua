@@ -398,6 +398,16 @@ local function on_entity_died(event)
     end
 end
 
+local function on_surface_removed(event)
+    storage.last_entity_update = game.tick
+    Register.remove_entries_on_surface(event.surface_index, DeconstructionCause.surface_removed)
+end
+
+local function on_chunks_removed(event)
+    storage.last_entity_update = game.tick
+    Register.remove_entries_on_surface(event.surface_index, DeconstructionCause.surface_removed, event.positions)
+end
+
 local function on_entity_mined(event)
     storage.last_entity_update = game.tick
 
@@ -644,6 +654,11 @@ script.on_event(defines.events.on_robot_mined_entity, on_entity_mined, filter)
 script.on_event(defines.events.on_entity_died, on_entity_died, filter)
 script.on_event(defines.events.script_raised_destroy, on_entity_removed, filter)
 filter = nil
+
+-- surfaces and chunks removing their entities without entity events
+script.on_event(defines.events.on_pre_surface_deleted, on_surface_removed)
+script.on_event(defines.events.on_pre_surface_cleared, on_surface_removed)
+script.on_event(defines.events.on_pre_chunk_deleted, on_chunks_removed)
 
 -- tile updates
 script.on_event(defines.events.on_player_built_tile, on_tile_update)

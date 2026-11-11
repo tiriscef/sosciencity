@@ -7,6 +7,8 @@ local TypeGroup = require("constants.type-groups")
 local Types = require("constants.types")
 local UpdateGroup = require("constants.update-groups")
 
+local floor = math.floor
+
 --- Static class that stores and manages entities in hopefully performant ways.
 Register = {}
 
@@ -587,6 +589,33 @@ function Register.remove_entity(entity, cause)
     local entry = register[entity.unit_number]
     if entry then
         remove_entry(entry, cause or DeconstructionCause.unknown)
+    end
+end
+
+--- Removes all entries whose entity is on the given surface, optionally only those in the given chunks.
+--- For the engine's pre-deletion events: the entities are still valid at that point, but get removed
+--- without any further event.
+--- @param surface_index integer
+--- @param cause DeconstructionCause
+--- @param chunk_positions ChunkPosition[]? only remove entries whose entity's position lies in these chunks
+function Register.remove_entries_on_surface(surface_index, cause, chunk_positions)
+    local chunks
+    if chunk_positions then
+        chunks = {}
+        for _, chunk in pairs(chunk_positions) do
+            chunks[chunk.x .. "," .. chunk.y] = true
+        end
+    end
+
+    for _, entry in pairs(register) do
+        local entity = entry[EK.entity]
+
+        if entity.valid and entity.surface_index == surface_index then
+            local position = entity.position
+            if not chunks or chunks[floor(position.x / 32) .. "," .. floor(position.y / 32)] then
+                remove_entry(entry, cause)
+            end
+        end
     end
 end
 

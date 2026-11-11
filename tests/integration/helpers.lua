@@ -151,9 +151,15 @@ function Helpers.assert_is_registered(entry, message)
 end
 
 --- Asserts that an entry is no longer in the register.
+--- A stale entry counts as removed: Register.remove_entry invalidates entries after removing them.
 --- @param entry Entry
 --- @param message string?
 function Helpers.assert_not_registered(entry, message)
+    if Register.is_stale(entry) then
+        Tirislib.Testing.Assert.pass()
+        return
+    end
+
     local unit_number = entry[EK.unit_number]
     Tirislib.Testing.Assert.is_nil(
         Register.try_get(unit_number),

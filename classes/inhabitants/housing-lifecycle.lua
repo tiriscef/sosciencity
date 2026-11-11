@@ -1,3 +1,4 @@
+local DeathCause = require("enums.death-cause")
 local DeconstructionCause = require("enums.deconstruction-cause")
 local EK = require("enums.entry-key")
 local MoveCause = require("enums.move-cause")
@@ -179,6 +180,9 @@ function Inhabitants.remove_house(entry, cause, event)
 
     if cause == DeconstructionCause.destroyed then
         Inhabitants.add_casualty_fear(entry)
+    elseif cause == DeconstructionCause.surface_removed then
+        -- we don't know why the surface is gone, so no fear - but the inhabitants are gone with it
+        Communication.report_death(entry[EK.inhabitants], DeathCause.unknown)
     elseif cause == DeconstructionCause.mined then
         add_to_homeless_pool(entry)
         local buffer = event and event.buffer
