@@ -1,4 +1,22 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.10
+Date: 2026.11.12
+  Minor Features:
+    - The fishing hut also gathers hemp and driftwood.
+
+  Graphics:
+    - Added the social observatory sprites.
+
+  Changes:
+    - [space-age] Houses, city buildings and farms can only be placed on Nauvis.
+
+  Bugfixes:
+    - Fixed a crash on game start when the "Modify environment" setting is off.
+    - Fixed another possible crash after disabling the narrator with really bad timing.
+    - Fixed hummus, tofu, bread, dried solfaen, soda and ultra-pure water being craftable by hand instead of in their buildings.
+    - Fixed the natural sciences faculty placeholder showing the Gleam icon instead of the Foundry one.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.9
 Date: 2026.11.07
   Bugfixes:

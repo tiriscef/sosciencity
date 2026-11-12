@@ -1,6 +1,6 @@
 {
     "name": "sosciencity",
-    "version": "0.2.9",
+    "version": "0.2.10",
     "title": "Sosciencity",
     "author": "tirisabella, Johanna Spieker, _traum",
     "contact": "tiriscef@protonmail.com",
@@ -8,7 +8,7 @@
     "factorio_version": "2.1",
     "dependencies": [
         "base >= 2.1.12",
-        "sosciencity-graphics >= 0.2.1",
+        "sosciencity-graphics >= 0.2.2",
         "?enable-all-feature-flags",
         "+minime",
         "(?)recycler"
