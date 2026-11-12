@@ -2,6 +2,11 @@ local Events = require("classes.events")
 
 Events.set_on_init_handler(
     function()
+        -- the fishwhirl only exists with the sosciencity-modify-environment startup setting
+        if not prototypes.entity["fishwhirl"] then
+            return
+        end
+
         for _, surface in pairs(game.surfaces) do
             for _, entity in pairs(surface.find_entities_filtered {name = "fishwhirl"}) do
                 entity.disabled_by_script = true
