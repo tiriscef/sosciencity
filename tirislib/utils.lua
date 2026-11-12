@@ -343,18 +343,6 @@ function Tirislib.Utils.get_range_bounding_box(position, range)
     return {{x - range, y - range}, {x + range, y + range}}
 end
 
---- Returns the width (x extent) and height (y extent) of the given LuaEntity's selection box.
---- @param entity LuaEntity
---- @return number width
---- @return number height
-function Tirislib.Utils.get_entity_size(entity)
-    local selection_box = entity.selection_box
-    local left_top = selection_box.left_top
-    local right_bottom = selection_box.right_bottom
-
-    return right_bottom.x - left_top.x, right_bottom.y - left_top.y
-end
-
 --- Returns the width (x extent) and height (y extent) of the given BoundingBox.
 --- Needs the named form with left_top and right_bottom.
 --- @param box table
@@ -381,15 +369,6 @@ end
 function Tirislib.Utils.add_random_float_offset(position, offset)
     position.x = position.x + random() * 2 * offset - offset
     position.y = position.y + random() * 2 * offset - offset
-end
-
---- Gets a sprite "shift" vector from the entity's bounding box center coordinates and the sprite's size.
---- @param center table in tiles
---- @param height number in tiles
---- @param width number in tiles
---- @return table shift
-function Tirislib.Utils.center_coordinates_to_shift(center, height, width)
-    return {width / 2 - center[1], height / 2 - center[2]}
 end
 
 --- Updates a progress value inside the given table and returns the number of full progresses.<br>
