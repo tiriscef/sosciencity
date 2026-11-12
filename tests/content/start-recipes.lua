@@ -75,7 +75,7 @@ Tirislib.Testing.add_test_case(
         local missing = {}
 
         for _, item in Tirislib.Item.iterate() do
-            if Tirislib.Prototype.get_owner(item) == "sosciencity" and item.name:sub(-5) == "-wood" then
+            if Tirislib.Prototype.get_owner(item) == "sosciencity" and item.name:sub(-4) == "wood" then
                 local recipe, found = Tirislib.Recipe.get_by_name("lumber-from-" .. item.name)
                 if not found then
                     missing[#missing + 1] = item.name .. " (no recipe)"

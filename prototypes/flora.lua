@@ -44,6 +44,11 @@ local flora_items = {
         wood = true
     },
     {
+        name = "driftwood",
+        sprite_variations = {name = "driftwood", count = 3, include_icon = true},
+        wood = true
+    },
+    {
         name = "sugar-cane",
         sprite_variations = {name = "sugar-cane", count = 3, include_icon = true}
     },

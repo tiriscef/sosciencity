@@ -181,6 +181,20 @@ create_hunting_gathering_recipe {
     order = "000585"
 }
 
+-- a source of wood for starts with few trees but some water
+create_hunting_gathering_recipe {
+    name = "gathering-driftwood",
+    categories = {"sosciencity-fishery-hand"},
+    energy_required = 3,
+    icon = "__sosciencity-graphics__/graphics/icon/driftwood.png",
+    icon_size = 64,
+    results = {
+        {type = "item", name = "driftwood", amount_min = 1, amount_max = 3}
+    },
+    order = "000586",
+    unlock = "explore-local-ecosystem"
+}
+
 create_hunting_gathering_recipe {
     name = "gathering-materials",
     categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
@@ -228,7 +242,8 @@ create_hunting_gathering_recipe {
 
 create_hunting_gathering_recipe {
     name = "gathering-hemp",
-    categories = {"sosciencity-hunting", "sosciencity-handcrafting"},
+    -- hemp also grows on the shores, so the fishing hut can gather it too
+    categories = {"sosciencity-hunting", "sosciencity-fishery-hand", "sosciencity-handcrafting"},
     energy_required = 3,
     icon = "__sosciencity-graphics__/graphics/icon/gingil-hemp.png",
     icon_size = 64,
