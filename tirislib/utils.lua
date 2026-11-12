@@ -211,14 +211,16 @@ local coin_flips = Tirislib.Utils.coin_flips
 
 --- Flips a coin the given number of times and returns the number of successes.<br>
 --- Implements an 'overcrit'-logic, meaning probabilities over 100% will guarantee one success per 100% and flip with the remaining percentage.
+--- This applies to every flip: probability 2.5 with count 10 gives 20 guaranteed successes plus 10 flips at 50%.
 --- @param probability number
 --- @param count integer
---- @param actual_count integer?
+--- @param actual_count integer? defaults to 20
+--- @return integer success_count
 function Tirislib.Utils.coin_flips_overcrit(probability, count, actual_count)
     local guaranteed = floor(probability)
     probability = probability - guaranteed
 
-    return coin_flips(probability, count, actual_count) + guaranteed
+    return coin_flips(probability, count, actual_count) + guaranteed * count
 end
 
 --- Returns an integer in the given intervall that is different that the given number n.

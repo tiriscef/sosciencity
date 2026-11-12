@@ -183,6 +183,38 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << coin_flips_overcrit >>
+
+Tirislib.Testing.add_parameterized_test_case(
+    "coin_flips_overcrit(%s, %s, %s) == %s",
+    "lib.utils",
+    {
+        {0, 10, nil, 0, name = "probability 0"},
+        {1, 10, nil, 10, name = "probability 1 succeeds every flip"},
+        {2, 10, nil, 20, name = "one guaranteed success per full 100% and flip"},
+        {2, 50, 20, 100, name = "extrapolated count"},
+        {2.5, 0, nil, 0, name = "no flips"},
+        {3, 1, 5, 3, name = "single flip"},
+    },
+    function(probability, count, actual_count, expected)
+        Assert.equals(Utils.coin_flips_overcrit(probability, count, actual_count), expected)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "coin_flips_overcrit flips the remaining percentage on top of the guaranteed successes",
+    "lib.utils",
+    function()
+        for _ = 1, 20 do
+            local successes = Utils.coin_flips_overcrit(1.5, 100, 100)
+            Assert.is_integer(successes)
+            Assert.greater_than(successes, 99)
+            Assert.less_than(successes, 201)
+        end
+    end
+)
+
+---------------------------------------------------------------------------------------------------
 -- << random_different >>
 
 Tirislib.Testing.add_test_case(
