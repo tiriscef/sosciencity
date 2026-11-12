@@ -678,6 +678,15 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "take_while stops at the first failing element even if later ones would pass",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({1, 2, 5, 1, 2}):take_while(function(v) return v < 3 end):to_array()
+        Assert.equals(result, {1, 2})
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "skip_while skips until condition fails",
     "lib.lazy-luaq",
     function()
@@ -1058,6 +1067,31 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "then_by levels apply in the order they were added",
+    "lib.lazy-luaq",
+    function()
+        -- b and c disagree on every pair with equal a, so the result shows which level decides
+        local data = {
+            {a = 1, b = 2, c = "a"},
+            {a = 1, b = 1, c = "z"},
+            {a = 1, b = 1, c = "m"},
+            {a = 0, b = 9, c = "q"}
+        }
+        local function names(query)
+            return query:select(function(v) return v.c end):to_array()
+        end
+        local by_a = LazyLuaq.from(data):order_by(function(v) return v.a end)
+
+        Assert.equals(names(by_a:then_by(function(v) return v.b end):then_by(function(v) return v.c end)),
+            {"q", "m", "z", "a"})
+        Assert.equals(names(by_a:then_by(function(v) return v.b end):then_by_descending(function(v) return v.c end)),
+            {"q", "z", "m", "a"})
+        Assert.equals(names(by_a:then_by_descending(function(v) return v.b end):then_by(function(v) return v.c end)),
+            {"q", "a", "m", "z"})
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "order_by_descending with then_by mixes directions",
     "lib.lazy-luaq",
     function()
@@ -1131,6 +1165,19 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "partial_sort variants return the whole sequence sorted when count exceeds its length",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({3, 1, 2})
+        local negate = function(v) return -v end
+        Assert.equals(query:partial_sort(5):to_array(), {1, 2, 3})
+        Assert.equals(query:partial_sort_descending(5):to_array(), {3, 2, 1})
+        Assert.equals(query:partial_sort_by(5, negate):to_array(), {3, 2, 1})
+        Assert.equals(query:partial_sort_by_descending(5, negate):to_array(), {1, 2, 3})
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "group_by groups elements by selector",
     "lib.lazy-luaq",
     function()
@@ -1154,6 +1201,25 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "shuffle can move every element to every position",
+    "lib.lazy-luaq",
+    function()
+        -- 400 shuffles of 4 elements: a missing (position, value) pair has a chance of about 10^-48
+        local seen = {}
+        for _ = 1, 400 do
+            for position, value in pairs(LazyLuaq.from({1, 2, 3, 4}):shuffle():to_array()) do
+                seen[position * 10 + value] = true
+            end
+        end
+        for position = 1, 4 do
+            for value = 1, 4 do
+                Assert.is_true(seen[position * 10 + value] == true, "never saw value " .. value .. " at " .. position)
+            end
+        end
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "reverse reverses the sequence",
     "lib.lazy-luaq",
     function()
@@ -1168,6 +1234,16 @@ Tirislib.Testing.add_test_case(
     function()
         local result = LazyLuaq.from({2, 3, 5}):normalize():to_array()
         Assert.equals(result, {0.2, 0.3, 0.5})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "normalize scales up elements whose sum is below 1",
+    "lib.lazy-luaq",
+    function()
+        local result = LazyLuaq.from({0.1, 0.3}):normalize():to_array()
+        Assert.is_number_close(result[1], 0.25, 1e-12)
+        Assert.is_number_close(result[2], 0.75, 1e-12)
     end
 )
 
@@ -1921,5 +1997,163 @@ Tirislib.Testing.add_test_case(
     function()
         local result = LazyLuaq.from({LazyLuaq.range(1, 2), LazyLuaq.range(3, 4)}):flatten():to_array()
         Assert.equals(result, {1, 2, 3, 4})
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << index semantics >>
+-- One test per rule of the index semantics in the header of tirislib/lazy-luaq.lua.
+-- Most other tests use to_array(), which discards the indices.
+
+--- Collects the (index, value) pairs of a query in iteration order, so repeated indices show.
+local function pairs_of(query)
+    local ret = {}
+    for index, value in query:iterate() do
+        ret[#ret + 1] = {index, value}
+    end
+    return ret
+end
+
+Tirislib.Testing.add_test_case(
+    "generators yield sequential indices starting at 1",
+    "lib.lazy-luaq",
+    function()
+        Assert.equals(pairs_of(LazyLuaq.range(3, 5)), {{1, 3}, {2, 4}, {3, 5}})
+        Assert.equals(pairs_of(LazyLuaq.repeat_element("x", 2)), {{1, "x"}, {2, "x"}})
+        Assert.equals(pairs_of(LazyLuaq.repeat_function(function() return "y" end, 2)), {{1, "y"}, {2, "y"}})
+        Assert.equals(pairs_of(LazyLuaq.from_keyset({a = true, b = true})), {{1, "a"}, {2, "b"}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "from_iterator adds sequential indices for iterators that return only one value",
+    "lib.lazy-luaq",
+    function()
+        local values = {"x", "y", "z"}
+        local i = 0
+        local function next_value()
+            i = i + 1
+            return values[i]
+        end
+        Assert.equals(pairs_of(LazyLuaq.from_iterator(next_value)), {{1, "x"}, {2, "y"}, {3, "z"}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "zip and pairwise yield sequential indices",
+    "lib.lazy-luaq",
+    function()
+        local zipped = LazyLuaq.from({a = 1, b = 2}):zip({x = 10, y = 20}, function(l, r) return l + r end)
+        Assert.equals(pairs_of(zipped), {{1, 11}, {2, 22}})
+
+        local differences = LazyLuaq.from({a = 1, b = 3, c = 6}):pairwise(function(prev, curr) return curr - prev end)
+        Assert.equals(pairs_of(differences), {{1, 2}, {2, 3}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "select replaces the index only when the selector returns a second value",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({a = 1, b = 2})
+        Assert.equals(query:select(function(v) return v * 10 end):to_table(), {a = 10, b = 20})
+        Assert.equals(query:select(function(v, i) return v, i .. i end):to_table(), {aa = 1, bb = 2})
+        Assert.equals(query:select(function(v) return v, nil end):to_table(), {a = 1, b = 2})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "select_many and flatten yield the indices of the inner sequences",
+    "lib.lazy-luaq",
+    function()
+        local flattened = LazyLuaq.from({p = {1, 2}, q = {3}}):flatten()
+        Assert.equals(pairs_of(flattened), {{1, 1}, {2, 2}, {1, 3}})
+
+        local projected = LazyLuaq.from({a = 1, b = 2}):select_many(function(v) return {x = v, y = v * 10} end)
+        Assert.equals(pairs_of(projected), {{"x", 1}, {"y", 10}, {"x", 2}, {"y", 20}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "chunk yields sequential indices and the chunks keep the original indices",
+    "lib.lazy-luaq",
+    function()
+        local chunks = pairs_of(LazyLuaq.from({a = 1, b = 2, c = 3}):chunk(2))
+        Assert.equals(#chunks, 2)
+        Assert.equals(chunks[1][1], 1)
+        Assert.equals(chunks[2][1], 2)
+        Assert.equals(chunks[1][2]:to_table(), {a = 1, b = 2})
+        Assert.equals(chunks[2][2]:to_table(), {c = 3})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "window yields sequential indices and the windows are arrays",
+    "lib.lazy-luaq",
+    function()
+        local windows = pairs_of(LazyLuaq.from({a = 1, b = 2, c = 3}):window(2))
+        Assert.equals(#windows, 2)
+        Assert.equals(windows[1][1], 1)
+        Assert.equals(windows[2][1], 2)
+        Assert.equals(windows[1][2]:to_table(), {1, 2})
+        Assert.equals(windows[2][2]:to_table(), {2, 3})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "group_by uses the group key as index and the groups keep the original indices",
+    "lib.lazy-luaq",
+    function()
+        local groups = LazyLuaq.from({a = 1, b = 2, c = 3}):group_by(function(v) return v % 2 end):to_table()
+        Assert.equals(groups[1]:to_table(), {a = 1, c = 3})
+        Assert.equals(groups[0]:to_table(), {b = 2})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "order, shuffle and partial_sort yield sequential indices",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({a = 3, b = 1, c = 2})
+        Assert.equals(query:order():to_table(), {1, 2, 3})
+        Assert.equals(query:order_by_descending(function(v) return v end):to_table(), {3, 2, 1})
+        Assert.equals(query:partial_sort(2):to_table(), {1, 2})
+        Assert.equals(query:shuffle():order():to_table(), {1, 2, 3})
+        Assert.equals(LazyLuaq.from(query:shuffle():to_table()):count(), 3)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "reverse keeps the original indices",
+    "lib.lazy-luaq",
+    function()
+        local reversed = LazyLuaq.from({"a", "b", "c"}):reverse()
+        Assert.equals(reversed:to_array(), {"c", "b", "a"})
+        Assert.equals(reversed:to_table(), {"a", "b", "c"})
+        Assert.equals(pairs_of(LazyLuaq.from({x = 1, y = 2}):reverse()), {{"y", 2}, {"x", 1}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "concat and prepend keep the original indices",
+    "lib.lazy-luaq",
+    function()
+        local combined = LazyLuaq.from({"x", "y"}):concat({"z"})
+        Assert.equals(pairs_of(combined), {{1, "x"}, {2, "y"}, {1, "z"}})
+        Assert.equals(combined:to_table(), {"z", "y"})
+        Assert.equals(pairs_of(LazyLuaq.from({a = 1}):prepend({b = 2})), {{"b", 2}, {"a", 1}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "filtering, take, skip, distinct and scan keep the original indices",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({a = 1, b = 2, c = 3, d = 2})
+        Assert.equals(query:where(function(v) return v > 1 end):to_table(), {b = 2, c = 3, d = 2})
+        Assert.equals(query:take(2):to_table(), {a = 1, b = 2})
+        Assert.equals(query:skip(2):to_table(), {c = 3, d = 2})
+        Assert.equals(query:distinct():to_table(), {a = 1, b = 2, c = 3})
+        Assert.equals(query:scan(function(acc, v) return acc + v end, 0):to_table(), {a = 1, b = 3, c = 6, d = 8})
     end
 )
