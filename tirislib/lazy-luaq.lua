@@ -19,9 +19,20 @@ Tirislib.LazyLuaq = LazyLuaq
 --
 -- Index semantics: operations preserve the original index by default.
 -- Exceptions are marked "Index-replacing" in their docstrings:
---   zip, pairwise    - merge two sequences into new composite elements.
---   order*, shuffle  - position after reordering becomes the new index.
---   partial_sort*    - same as above.
+--   zip, pairwise         - merge two sequences into new composite elements.
+--   order*, shuffle       - position after reordering becomes the new index.
+--   partial_sort*         - same as above.
+--   chunk, window         - every chunk/window is a new element with a sequential index.
+--   select_many, flatten  - yield the indices of the inner sequences, so indices can repeat.
+--   group_by              - the group key becomes the index.
+--   select                - only if the selector returns a new index as second value.
+--
+-- Generators that don't start from a table (range, repeat_element, repeat_function, from_keyset)
+-- yield sequential integer indices, starting at 1.
+--
+-- Preserving indices has consequences that are easy to miss:
+--   reverse():to_table() gives back the original table, use to_array() to see the new order.
+--   concat, prepend and interleave of two arrays repeat indices, which to_table() overwrites.
 --
 -- Terminal functions let you choose what to do with the index:
 --   to_array()  - discards indices, collects values into a consecutive array.
@@ -305,7 +316,7 @@ end
 --- **Caching:** elements are cached on first pass. Resetting rewinds to the cached data without
 --- re-calling the iterator, so mutations to the underlying source after the first pass are not visible.
 --- This is intentional: many iterators are single-pass and cannot be restarted.
---- @param fn function? iterator-function
+--- @param fn function iterator-function
 --- @param param any
 --- @param initial_index any
 --- @return LazyLuaqQuery
@@ -992,6 +1003,7 @@ local function select_many_reset(self)
 end
 
 --- Projects all elements of the sequence to another collection and flattens them.
+--- Index-replacing: yields the indices of the projected collections, so indices can repeat.
 --- @param selector function
 --- @return LazyLuaqQuery
 function LazyLuaq:select_many(selector)
@@ -1007,6 +1019,7 @@ function LazyLuaq:select_many(selector)
 end
 
 --- Flattens a sequence of tables or queries into a single sequence.
+--- Index-replacing: yields the indices of the inner tables or queries, so indices can repeat.
 --- @return LazyLuaqQuery
 function LazyLuaq:flatten()
     return self:select_many(identity)
@@ -1233,6 +1246,7 @@ local function concat_reset(self)
 end
 
 --- Combines the sequence with the given other sequence.
+--- Keeps the original indices, so combining two arrays repeats indices (to_table() overwrites them).
 --- @param sequence LazyLuaqQuery|table|array
 --- @return LazyLuaqQuery
 function LazyLuaq:concat(sequence)
@@ -1253,6 +1267,7 @@ function LazyLuaq:concat(sequence)
 end
 
 --- Prepends the given sequence's elements to this sequence.
+--- Keeps the original indices, so combining two arrays repeats indices (to_table() overwrites them).
 --- @param sequence LazyLuaqQuery|table|array
 --- @return LazyLuaqQuery
 function LazyLuaq:prepend(sequence)
@@ -1294,6 +1309,8 @@ local function chunk_reset(self)
 end
 
 --- Splits the sequence into chunks of the given number of elements.
+--- Each chunk is a LazyLuaqQuery that keeps the original indices of its elements.
+--- Index-replacing: yields sequential integer indices for the chunks.
 --- @param size number
 --- @return LazyLuaqQuery
 function LazyLuaq:chunk(size)
@@ -1395,7 +1412,7 @@ local function duplicates_move_next(self)
     end
 end
 
---- Returns the duplicate elements of the sequence, skipping first occuring elements.
+--- Returns the duplicate elements of the sequence, skipping first occurring elements.
 --- @return LazyLuaqQuery
 function LazyLuaq:duplicates()
     local ret = {
@@ -1607,7 +1624,9 @@ local function intersect_by_move_next(self)
     end
 end
 
---- Produces the set intersection of two sequences.
+--- Produces the set intersection of two sequences according to the given selector function:
+--- keeps the distinct elements whose key is also the key of an element of the other sequence.
+--- The selector is applied to the elements of both sequences.
 --- @param elements table|LazyLuaqQuery
 --- @param selector function
 --- @return LazyLuaqQuery
@@ -1837,7 +1856,8 @@ local function window_reset(self)
 end
 
 --- Returns a sliding window of the given size over the sequence.
---- Each element is a LazyLuaqQuery containing the window's values in order.
+--- Each element is a LazyLuaqQuery containing the window's values in order (as an array).
+--- Index-replacing: yields sequential integer indices for the windows.
 --- @param size integer
 --- @return LazyLuaqQuery
 function LazyLuaq:window(size)
@@ -1980,6 +2000,7 @@ local function create_ordered_query(upstream, sort_levels)
 end
 
 --- Sorts the sequence in ascending order.
+--- Sorting is deferred until first iteration. Chain with then_by/then_by_descending for multi-level sorting.
 --- Index-replacing: yields sequential integer indices.
 --- @param comparator function?
 --- @return LazyLuaqQuery
@@ -2014,13 +2035,14 @@ function LazyLuaq:order_by_descending(selector)
     return create_ordered_query(self, {{selector = selector, descending = true}})
 end
 
---- Adds a secondary ascending sort level to an ordered query. Can only be called after order_by or order_by_descending.
+--- Adds a secondary ascending sort level to an ordered query.
+--- Can only be called on the result of order, order_by, order_descending, order_by_descending or another then_by*.
 --- @param selector function
 --- @param comparator function?
 --- @return LazyLuaqQuery
 function LazyLuaq:then_by(selector, comparator)
     assert(self._is_ordered_query,
-        "then_by can only be called after order_by, order_by_descending, then_by, or then_by_descending")
+        "then_by can only be called on an ordered query (order*, then_by*)")
 
     local levels = {}
     for i, level in pairs(self._sort_levels) do
@@ -2031,12 +2053,13 @@ function LazyLuaq:then_by(selector, comparator)
     return create_ordered_query(self._upstream, levels)
 end
 
---- Adds a secondary descending sort level to an ordered query. Can only be called after order_by or order_by_descending.
+--- Adds a secondary descending sort level to an ordered query.
+--- Can only be called on the result of order, order_by, order_descending, order_by_descending or another then_by*.
 --- @param selector function
 --- @return LazyLuaqQuery
 function LazyLuaq:then_by_descending(selector)
     assert(self._is_ordered_query,
-        "then_by_descending can only be called after order_by, order_by_descending, then_by, or then_by_descending")
+        "then_by_descending can only be called on an ordered query (order*, then_by*)")
 
     local levels = {}
     for i, level in pairs(self._sort_levels) do
@@ -2211,6 +2234,8 @@ function LazyLuaq:partial_sort_by_descending(count, selector)
 end
 
 --- Groups the sequence by the keys of the given selector function.
+--- Index-replacing: the group key is the index, the value is a LazyLuaqQuery with the group's
+--- elements and their original indices.
 --- @param selector function
 --- @return LazyLuaqQuery
 function LazyLuaq:group_by(selector)
@@ -2262,6 +2287,8 @@ local function reverse_reset(self)
 end
 
 --- Returns the sequence in reversed order.
+--- Keeps the original indices: to_array() shows the reversed order, to_table() gives back the
+--- original mapping.
 --- @return LazyLuaqQuery
 function LazyLuaq:reverse()
     local keys = {}
