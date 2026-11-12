@@ -232,6 +232,10 @@ Communication.say = say
 --- @param speaker string|nil Name of the speaker
 local function say_random_variant(line, speaker, ...)
     if not speaker then
+        -- the line may have been planned before the narrator got disabled in the settings
+        if #allowed_speakers == 0 then
+            return
+        end
         speaker = pick_speaker(line)
     end
 

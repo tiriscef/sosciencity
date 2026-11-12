@@ -100,6 +100,23 @@ Tirislib.Testing.add_parameterized_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "a narrator line planned before the narrator is disabled doesn't crash when it's due",
+    "integration|integration.settings",
+    function()
+        -- player_got_run_over plans the line a second ahead; the scheduler then calls
+        -- say_random_variant without a speaker, after the setting may have changed
+        Communication.player_got_run_over()
+        set_setting("sosciencity-allow-tiriscef", false)
+
+        Assert.does_not_throw(function()
+            Communication.say_random_variant("roadkill")
+        end)
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
     "changing a runtime setting from script updates the stored value",
     "integration|integration.settings",
     function()
