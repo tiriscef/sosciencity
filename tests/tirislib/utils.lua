@@ -49,6 +49,21 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+Tirislib.Testing.add_parameterized_test_case(
+    "map_range(%s, %s, %s, %s, %s) == %s",
+    "lib.utils",
+    {
+        {15, 10, 20, 0, 100, 50, name = "from interval not starting at 0"},
+        {12, 10, 20, 100, 0, 80, name = "descending to interval"},
+        {12, 20, 10, 0, 100, 80, name = "descending from interval"},
+        {25, 20, 10, 0, 100, 0, name = "descending from interval clamps"},
+        {-15, -20, -10, 5, 7, 6, name = "negative intervals"},
+    },
+    function(val, from_min, from_max, to_min, to_max, expected)
+        Assert.is_number_close(Utils.map_range(val, from_min, from_max, to_min, to_max), expected, 1e-9)
+    end
+)
+
 Tirislib.Testing.add_test_case(
     "map_range returns to_min when from interval is a single point",
     "lib.utils",
@@ -127,6 +142,39 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
+-- << smoothstep / smootherstep >>
+
+Tirislib.Testing.add_parameterized_test_case(
+    "smoothstep(%s) == %s",
+    "lib.utils",
+    {
+        {0, 0},
+        {1, 1},
+        {0.5, 0.5},
+        {0.25, 0.15625},
+        {0.75, 0.84375},
+    },
+    function(x, expected)
+        Assert.is_number_close(Utils.smoothstep(x), expected, 1e-12)
+    end
+)
+
+Tirislib.Testing.add_parameterized_test_case(
+    "smootherstep(%s) == %s",
+    "lib.utils",
+    {
+        {0, 0},
+        {1, 1},
+        {0.5, 0.5},
+        {0.25, 0.103515625},
+        {0.75, 0.896484375},
+    },
+    function(x, expected)
+        Assert.is_number_close(Utils.smootherstep(x), expected, 1e-12)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
 -- << weighted_average >>
 
 Tirislib.Testing.add_test_case(
@@ -136,6 +184,20 @@ Tirislib.Testing.add_test_case(
         Assert.equals(Utils.weighted_average(0, 1, 10, 1), 5)
         Assert.equals(Utils.weighted_average(0, 1, 10, 3), 7.5)
         Assert.equals(Utils.weighted_average(5, 1, 5, 1), 5)
+    end
+)
+
+Tirislib.Testing.add_parameterized_test_case(
+    "weighted_average(%s, %s, %s, %s) == %s",
+    "lib.utils",
+    {
+        {2, 2, 8, 1, 4, name = "weights other than 1"},
+        {3, 0, 10, 1, 10, name = "only weight_a is 0"},
+        {3, 1, 10, 0, 3, name = "only weight_b is 0"},
+        {-4, 3, 4, 1, -2, name = "negative value"},
+    },
+    function(a, weight_a, b, weight_b, expected)
+        Assert.equals(Utils.weighted_average(a, weight_a, b, weight_b), expected)
     end
 )
 
@@ -179,6 +241,15 @@ Tirislib.Testing.add_test_case(
     function()
         Assert.equals(Utils.coin_flips(1, 100), 100)
         Assert.equals(Utils.coin_flips(1, 7), 7)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "coin_flips extrapolates counts that aren't a multiple of actual_count exactly",
+    "lib.utils",
+    function()
+        Assert.equals(Utils.coin_flips(1, 37, 20), 37)
+        Assert.equals(Utils.coin_flips(0, 37, 20), 0)
     end
 )
 
@@ -232,6 +303,18 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "random_different can return every value of the interval except n",
+    "lib.utils",
+    function()
+        local seen = {}
+        for _ = 1, 400 do
+            seen[Utils.random_different(1, 5, 3)] = true
+        end
+        Assert.equals(seen, {[1] = true, [2] = true, [4] = true, [5] = true})
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "random_different returns value_min when range has only one value",
     "lib.utils",
     function()
@@ -276,6 +359,9 @@ Tirislib.Testing.add_test_case(
         Assert.equals(Utils.lowest_common_multiple(7, 3), 21)
         Assert.equals(Utils.lowest_common_multiple(5, 5), 5)
         Assert.equals(Utils.lowest_common_multiple(0, 5), 0)
+        Assert.equals(Utils.lowest_common_multiple(5, 0), 0)
+        Assert.equals(Utils.lowest_common_multiple(1, 4), 4)
+        Assert.equals(Utils.lowest_common_multiple(4, 1), 4)
     end
 )
 
@@ -315,6 +401,84 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+Tirislib.Testing.add_parameterized_test_case(
+    "n_metric_distance(%s, %s, %s, %s, %s) == %s",
+    "lib.utils",
+    {
+        {2, 1, 1, 4, 5, 5, name = "neither point at the origin"},
+        {1, 2, -1, -1, 3, 7, name = "Manhattan distance"},
+    },
+    function(n, x1, y1, x2, y2, expected)
+        Assert.is_number_close(Utils.n_metric_distance(n, x1, y1, x2, y2), expected, 1e-9)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << get_range_bounding_box / get_box_size >>
+
+Tirislib.Testing.add_test_case(
+    "get_range_bounding_box spans range in every direction",
+    "lib.utils",
+    function()
+        Assert.equals(Utils.get_range_bounding_box({x = 2, y = 3}, 1), {{1, 2}, {3, 4}})
+        Assert.equals(Utils.get_range_bounding_box({x = -5, y = 0}, 2.5), {{-7.5, -2.5}, {-2.5, 2.5}})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "get_box_size returns width, then height",
+    "lib.utils",
+    function()
+        local width, height = Utils.get_box_size({left_top = {x = -1, y = -2}, right_bottom = {x = 3, y = 4}})
+        Assert.equals(width, 4)
+        Assert.equals(height, 6)
+    end
+)
+
+---------------------------------------------------------------------------------------------------
+-- << add_random_offset / add_random_float_offset >>
+
+Tirislib.Testing.add_test_case(
+    "add_random_offset moves each axis by an integer in [-offset, offset], in both directions",
+    "lib.utils",
+    function()
+        local seen_negative, seen_positive = {}, {}
+        for _ = 1, 200 do
+            local position = {x = 10, y = -10}
+            Utils.add_random_offset(position, 2)
+            for axis, delta in pairs({x = position.x - 10, y = position.y + 10}) do
+                Assert.is_integer(delta)
+                Assert.greater_than(delta, -3)
+                Assert.less_than(delta, 3)
+                seen_negative[axis] = seen_negative[axis] or delta < 0
+                seen_positive[axis] = seen_positive[axis] or delta > 0
+            end
+        end
+        Assert.equals(seen_negative, {x = true, y = true})
+        Assert.equals(seen_positive, {x = true, y = true})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "add_random_float_offset moves each axis within [-offset, offset], in both directions",
+    "lib.utils",
+    function()
+        local seen_negative, seen_positive = {}, {}
+        for _ = 1, 200 do
+            local position = {x = 10, y = -10}
+            Utils.add_random_float_offset(position, 0.5)
+            for axis, delta in pairs({x = position.x - 10, y = position.y + 10}) do
+                Assert.greater_than(delta, -0.5 - 1e-9)
+                Assert.less_than(delta, 0.5 + 1e-9)
+                seen_negative[axis] = seen_negative[axis] or delta < -0.25
+                seen_positive[axis] = seen_positive[axis] or delta > 0.25
+            end
+        end
+        Assert.equals(seen_negative, {x = true, y = true})
+        Assert.equals(seen_positive, {x = true, y = true})
+    end
+)
+
 ---------------------------------------------------------------------------------------------------
 -- << version_is_smaller_than >>
 
@@ -337,6 +501,9 @@ Tirislib.Testing.add_test_case(
         Assert.is_true(Utils.version_is_smaller_than("1.2", "1.2.3"))
         Assert.is_false(Utils.version_is_smaller_than("1.2.3", "1.2"))
         Assert.is_false(Utils.version_is_smaller_than("1.2.0", "1.2"))
+        Assert.is_false(Utils.version_is_smaller_than("1.2", "1.2.0"))
+        Assert.is_true(Utils.version_is_smaller_than("1.2", "1.2.1"))
+        Assert.is_false(Utils.version_is_smaller_than("1.2.1", "1.2"))
     end
 )
 
@@ -414,6 +581,29 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+Tirislib.Testing.add_test_case(
+    "dice_rolls keeps sides that were never rolled as 0, unless omit_zero_entries is set",
+    "lib.utils",
+    function()
+        local dice = {hit = 1, miss = 0}
+
+        Assert.equals(Utils.dice_rolls(dice, 5), {hit = 5, miss = 0})
+        Assert.equals(Utils.dice_rolls(dice, 5, nil, true), {hit = 5})
+        Assert.equals(Utils.dice_rolls(dice, 37, 20, true), {hit = 37})
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "dice_rolls lands on every side of a fair dice about equally often",
+    "lib.utils",
+    function()
+        -- 200 rolls of a fair coin: a side outside [50, 150] is 7 standard deviations off
+        local rolls = Utils.dice_rolls({heads = 1, tails = 1}, 200, 200)
+        Assert.greater_than(rolls.heads, 50)
+        Assert.greater_than(rolls.tails, 50)
+    end
+)
+
 
 ---------------------------------------------------------------------------------------------------
 -- << mix_seeds >>
@@ -436,6 +626,24 @@ Tirislib.Testing.add_test_case(
             Assert.is_integer(result)
             Assert.is_true(result >= 0 and result < 4294967296)
         end
+    end
+)
+
+-- Reference values from an independent implementation of the Murmur3 finalizer
+-- (mix_seeds = fmix32 over the arguments, starting from 0x9E3779B9).
+-- Property tests can't tell a mutated hash from a correct one, these can.
+Tirislib.Testing.add_parameterized_test_case(
+    "mix_seeds(%s) matches the Murmur3 reference",
+    "lib.utils",
+    {
+        {{0}, 2462723854},
+        {{1}, 920564995},
+        {{1234, 42}, 3683909962},
+        {{42, 1234}, 1577799553},
+        {{7, 0, 4294967295}, 4286446571},
+    },
+    function(args, expected)
+        Assert.equals(Utils.mix_seeds(table.unpack(args)), expected)
     end
 )
 
