@@ -181,16 +181,18 @@ local function move_next_range(self)
     local count = self._last_index or 0
     local value = self._start_value + count * self._step
 
-    if value <= self._end_value then
+    if (self._step >= 0 and value <= self._end_value) or (self._step < 0 and value >= self._end_value) then
         self._last_index = count + 1
         return count + 1, value
     end
 end
 
---- Creates a LazyLuaqQuery with the number range from the given starting value to the given end value.
+--- Creates a LazyLuaqQuery with the number range from the given starting value to the given end value.<br>
+--- The end value is included if a step lands on it. A negative step counts down, so range(5, 1, -2)
+--- gives 5, 3, 1. If the step points away from the end value, the range is empty.
 --- @param start_value number
 --- @param end_value number
---- @param step number?
+--- @param step number? defaults to 1
 --- @return LazyLuaqQuery
 function LazyLuaq.range(start_value, end_value, step)
     step = step or 1

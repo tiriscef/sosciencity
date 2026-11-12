@@ -51,6 +51,23 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+Tirislib.Testing.add_parameterized_test_case(
+    "range(%s, %s, %s) gives %s",
+    "lib.lazy-luaq",
+    {
+        {5, 1, -1, {5, 4, 3, 2, 1}, name = "negative step counts down"},
+        {10, 1, -3, {10, 7, 4, 1}, name = "negative step landing on the end value"},
+        {10, 2, -3, {10, 7, 4}, name = "negative step not landing on the end value"},
+        {3, 3, -1, {3}, name = "negative step, start equals end"},
+        {1, 5, -1, {}, name = "negative step pointing away from the end"},
+        {5, 1, nil, {}, name = "default step pointing away from the end"},
+        {1, 2, 0.5, {1, 1.5, 2}, name = "fractional step"},
+    },
+    function(start_value, end_value, step, expected)
+        Assert.equals(LazyLuaq.range(start_value, end_value, step):to_array(), expected)
+    end
+)
+
 Tirislib.Testing.add_test_case(
     "repeat_element repeats a value",
     "lib.lazy-luaq",
