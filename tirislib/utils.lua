@@ -35,7 +35,9 @@ function Tirislib.Utils.clamp(val, value_min, value_max)
 end
 local clamp = Tirislib.Utils.clamp
 
---- Maps the given value, so it falls in the 'to' interval proportional to the 'from' interval.
+--- Maps the given value, so it falls in the 'to' interval proportional to the 'from' interval.<br>
+--- Values outside the 'from' interval are clamped to it first, so the result never leaves the 'to' interval.
+--- If the 'from' interval is a single point, returns to_min.
 ---@param val number
 ---@param from_min number
 ---@param from_max number
@@ -341,10 +343,10 @@ function Tirislib.Utils.get_range_bounding_box(position, range)
     return {{x - range, y - range}, {x + range, y + range}}
 end
 
---- Returns the height and width of the given LuaEntity.
+--- Returns the width (x extent) and height (y extent) of the given LuaEntity's selection box.
 --- @param entity LuaEntity
---- @return number height
 --- @return number width
+--- @return number height
 function Tirislib.Utils.get_entity_size(entity)
     local selection_box = entity.selection_box
     local left_top = selection_box.left_top
@@ -353,10 +355,11 @@ function Tirislib.Utils.get_entity_size(entity)
     return right_bottom.x - left_top.x, right_bottom.y - left_top.y
 end
 
---- Returns the height and width of the given box.
+--- Returns the width (x extent) and height (y extent) of the given BoundingBox.
+--- Needs the named form with left_top and right_bottom.
 --- @param box table
---- @return number height
 --- @return number width
+--- @return number height
 function Tirislib.Utils.get_box_size(box)
     local left_top = box.left_top
     local right_bottom = box.right_bottom
@@ -389,7 +392,9 @@ function Tirislib.Utils.center_coordinates_to_shift(center, height, width)
     return {width / 2 - center[1], height / 2 - center[2]}
 end
 
---- Updates a progress value inside the given table and returns the number of full progresses.
+--- Updates a progress value inside the given table and returns the number of full progresses.<br>
+--- Adds delta_progress to tbl[key], keeps only the unfinished fraction in [0, 1) there and returns the
+--- whole part. tbl[key] must already hold a number (start it at 0).
 --- @param tbl table
 --- @param key any
 --- @param delta_progress number
