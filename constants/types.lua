@@ -48,6 +48,7 @@ local ward_subscriptions = {
 --- **subscriptions:** types that this type subscribes to by default\
 --- **is_civil:** is this type is part of the soscietal infrastructure\
 --- **is_inhabited:** do people live in this entity\
+--- **needs_huwan_habitat:** can only be placed where huwans live, although not civil (see Types.needs_huwan_habitat)\
 --- **has_subscriptions:** does this type have notifications and thus the "notify me"-checkbox in its gui\
 --- **affected_by_clockwork:** is this machine affected by the clockwork-maintenance-mechanic\
 --- **is_catch_all:** does this type map to a broad Factorio prototype type (so entries can come from any mod) - drives external-ownership detection\
@@ -397,10 +398,12 @@ Types.definitions = {
         subscriptions = {
             [Type.fertilization_station] = ConnectionType.from_neighbor,
             [Type.pruning_station] = ConnectionType.from_neighbor,
-        }
+        },
+        needs_huwan_habitat = true
     },
     [Type.animal_farm] = {
-        signature_color = Color.brown
+        signature_color = Color.brown,
+        needs_huwan_habitat = true
     },
     [Type.turret] = {},
     [Type.lab] = {
@@ -527,6 +530,24 @@ function Types.get_entity_type(entity)
     end
 
     return lookup_by_name[name] or lookup_by_entity_type[entity_type] or Type.null
+end
+
+--- Checks if the entity with the given name can only be placed where huwans live: houses, buildings of a civil type,
+--- buildings that need a workforce and the types marked with needs_huwan_habitat (farms would look odd in space).
+--- @param name string
+--- @return boolean
+function Types.needs_huwan_habitat(name)
+    if Housing.values[name] then
+        return true
+    end
+
+    local building = Buildings.values[name]
+    if not building then
+        return false
+    end
+
+    local definition = definitions[building.type]
+    return definition.is_civil == true or definition.needs_huwan_habitat == true or building.workforce ~= nil
 end
 
 --- Returns the type definition of the given entity

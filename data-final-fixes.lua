@@ -14,6 +14,7 @@ require("datastage-scripts.fish")
 require("datastage-scripts.lumber")
 require("datastage-scripts.quality-modifiers")
 require("datastage-scripts.missing-feature-flags")
+require("datastage-scripts.huwan-habitat")
 
 require("integrations-updates")
 
