@@ -25,3 +25,9 @@ jobs:
 
       - name: Run tests
         run: docker run --rm sosciencity-test
+
+      - name: Run tests with the optional startup settings turned off
+        run: |
+          docker run --rm \
+            -e STARTUP_SETTINGS="sosciencity-alien-loot=false sosciencity-modify-environment=false" \
+            sosciencity-test
