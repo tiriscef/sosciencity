@@ -744,6 +744,34 @@ Tirislib.Testing.add_test_case(
     end
 )
 
+-- Regression: the end check used '#' on the sparse table of finished sequences, which can count
+-- {[2] = true} as 2 and stopped as soon as the second of two sequences had ended.
+Tirislib.Testing.add_parameterized_test_case(
+    "interleave continues with the remaining sequences when one ends: %s",
+    "lib.lazy-luaq",
+    {
+        {{1, 2, 3}, {{"a"}}, {1, "a", 2, 3}, name = "second of two ends first"},
+        {{1}, {{"a", "b", "c"}}, {1, "a", "b", "c"}, name = "first of two ends first"},
+        {{}, {{"a", "b"}}, {"a", "b"}, name = "first is empty"},
+        {{1, 2, 3}, {{"a", "b"}, {"x"}}, {1, "a", "x", 2, "b", 3}, name = "three sequences"},
+        {{1, 2, 3}, {{"a"}, {"x", "y"}}, {1, "a", "x", 2, "y", 3}, name = "middle one ends first"},
+    },
+    function(first, others, expected)
+        local result = LazyLuaq.from(first):interleave(table.unpack(others)):to_array()
+        Assert.equals(result, expected)
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "interleave gives the same result when iterated again",
+    "lib.lazy-luaq",
+    function()
+        local query = LazyLuaq.from({1, 2, 3}):interleave({"a"})
+        Assert.equals(query:to_array(), {1, "a", 2, 3})
+        Assert.equals(query:to_array(), {1, "a", 2, 3})
+    end
+)
+
 Tirislib.Testing.add_test_case(
     "pairwise applies function to consecutive pairs",
     "lib.lazy-luaq",

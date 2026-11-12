@@ -1658,7 +1658,8 @@ end
 local function interleave_move_next(self)
     while true do
         -- if all sequences are finished, stop
-        if #self._sequences == #self._finished_sequences then
+        -- (counted, because '#' is undefined on the sparse _finished_sequences table)
+        if self._finished_count == #self._sequences then
             return
         end
 
@@ -1676,6 +1677,7 @@ local function interleave_move_next(self)
             else
                 -- this sequence is over, iterate to the next
                 self._finished_sequences[sequence_index] = true
+                self._finished_count = self._finished_count + 1
             end
         end
     end
@@ -1687,6 +1689,7 @@ local function interleave_reset(self)
     end
 
     self._finished_sequences = {}
+    self._finished_count = 0
     self._last_sequence_index = nil
 end
 
@@ -1706,7 +1709,8 @@ function LazyLuaq:interleave(...)
         _sequences = sequences,
         move_next = interleave_move_next,
         reset = interleave_reset,
-        _finished_sequences = {}
+        _finished_sequences = {},
+        _finished_count = 0
     }
     setmetatable(ret, LazyLuaq)
 
