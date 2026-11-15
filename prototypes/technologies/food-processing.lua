@@ -46,3 +46,35 @@ Tirislib.Technology.create {
         time = 20
     }
 }
+
+Tirislib.Technology.create {
+    name = "smoking",
+    icon = Tirislib.Prototype.placeholder_icon,
+    icon_size = 64,
+    prerequisites = {"kitchen-for-all", "salt-pond"},
+    unit = {
+        count = 27,
+        ingredients = {
+            {"automation-science-pack", 1}
+        },
+        time = 15
+    }
+}
+
+Tirislib.Technology.create {
+    name = "smokehouse",
+    icon = Tirislib.Prototype.placeholder_icon,
+    icon_size = 64,
+    -- gated by population
+    enabled = false,
+    prerequisites = {"smoking", "orchid-caste", "clockwork-caste", "chemical-science-pack"},
+    unit = {
+        count = 157,
+        ingredients = {
+            {"automation-science-pack", 1},
+            {"logistic-science-pack", 1},
+            {"chemical-science-pack", 1}
+        },
+        time = 30
+    }
+}

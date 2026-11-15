@@ -68,6 +68,18 @@ Unlocks.gated_technologies = {
             count = 150,
             caste = Type.orchid
         }
+    },
+    ["smokehouse"] = {
+        {
+            type = UnlockCondition.caste_population,
+            count = 500,
+            caste = Type.orchid
+        },
+        {
+            type = UnlockCondition.caste_population,
+            count = 500,
+            caste = Type.clockwork
+        }
     }
 }
 

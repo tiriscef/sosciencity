@@ -586,7 +586,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-smoking",
     energy_required = 10,
-    unlock = "fermentation",
+    unlock = "smoking",
     auto_recycle = false
 }
 
@@ -602,7 +602,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-smoking",
     energy_required = 10,
-    unlock = "fermentation",
+    unlock = "smoking",
     auto_recycle = false
 }
 
@@ -617,7 +617,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-smoking",
     energy_required = 10,
-    unlock = "fermentation",
+    unlock = "smoking",
     auto_recycle = false
 }
 
@@ -632,7 +632,7 @@ Tirislib.RecipeGenerator.create {
     },
     category = "sosciencity-smoking",
     energy_required = 10,
-    unlock = "fermentation",
+    unlock = "smoking",
     auto_recycle = false
 }
 
