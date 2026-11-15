@@ -1,22 +1,33 @@
 #!/bin/bash
 
-STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep '^human-readable-wiki-pages/.*\.md$')
+# Both steps below rewrite files in the working tree. If one of them changed something, the commit
+# is aborted so the result can be staged.
 
-if [ -z "$STAGED_MD" ]; then
-    exit 0
+snapshot() {
+    find locale/ classes/guis/ -type f \( -name "*.cfg" -o -name "*.lua" \) | sort | xargs md5sum
+}
+
+BEFORE=$(snapshot)
+
+# wiki pages: regenerate locale and GUI code for staged markdown files
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep '^human-readable-wiki-pages/.*\.md$')
+if [ -n "$STAGED_MD" ]; then
+    echo "Regenerating locale and GUI code for staged markdown files..."
+    FILENAMES=$(echo "$STAGED_MD" | xargs -I{} basename {})
+    python3 human-readable-wiki-pages/convert.py $FILENAMES
 fi
 
-BEFORE=$(find locale/ classes/guis/ -type f \( -name "*.cfg" -o -name "*.lua" \) | sort | xargs md5sum)
+# locale: sort the blocks tagged with [sorted] in staged locale files
+STAGED_CFG=$(git diff --cached --name-only --diff-filter=ACM | grep '^locale/.*\.cfg$')
+if [ -n "$STAGED_CFG" ]; then
+    python3 hooks/sort_locale.py $STAGED_CFG
+fi
 
-echo "Regenerating locale and GUI code for staged markdown files..."
-FILENAMES=$(echo "$STAGED_MD" | xargs -I{} basename {})
-python3 human-readable-wiki-pages/convert.py $FILENAMES
-
-AFTER=$(find locale/ classes/guis/ -type f \( -name "*.cfg" -o -name "*.lua" \) | sort | xargs md5sum)
+AFTER=$(snapshot)
 
 if [ "$BEFORE" != "$AFTER" ]; then
     echo ""
-    echo "Generated files were updated - stage the changes and commit again."
+    echo "Generated or sorted files were updated - stage the changes and commit again."
     exit 1
 fi
 
