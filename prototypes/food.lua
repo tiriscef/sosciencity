@@ -34,7 +34,7 @@ local foods = {
     },
     {
         name = "fermented-biter-meat",
-        spoil_ticks = 10 * Time.minute,
+        spoil_ticks = 2 * Time.hour,
         spoil_result = "expired-food",
         sprite_variations = {name = "fermented-biter-meat", count = 2, include_icon = true}
     },
