@@ -1,5 +1,6 @@
 local Time = require("constants.time")
 local Food = require("constants.food")
+local Unlocks = require("constants.unlocks")
 
 ---------------------------------------------------------------------------------------------------
 -- << items >>
@@ -207,7 +208,7 @@ local foods = {
         name = "dried-solfaen",
         sprite_variations = {name = "dried-solfaen", count = 3, include_icon = true},
         subgroup = "sosciencity-microorganism-products",
-        spoil_ticks = 40 * Time.minute,
+        spoil_ticks = 8 * Time.hour,
         spoil_result = "expired-food"
     },
     {
@@ -290,6 +291,102 @@ local foods = {
         spoil_ticks = 1 * Time.hour,
         spoil_result = "expired-food",
         sprite_variations = {name = "potluck", count = 3, include_icon = true}
+    },
+    {
+        name = "fruit-salad",
+        use_placeholder_icon = true,
+        spoil_ticks = 1 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "fishers-stew",
+        use_placeholder_icon = true,
+        spoil_ticks = 1 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "roast",
+        use_placeholder_icon = true,
+        spoil_ticks = 1 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "mushroom-roast",
+        use_placeholder_icon = true,
+        spoil_ticks = 1 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "smoked-meat",
+        use_placeholder_icon = true,
+        spoil_ticks = 3 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "smoked-fish",
+        use_placeholder_icon = true,
+        spoil_ticks = 3 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "smoked-birdsnake",
+        use_placeholder_icon = true,
+        spoil_ticks = 3 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "smoked-tofu",
+        use_placeholder_icon = true,
+        spoil_ticks = 3 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "ignivern-curry-paste",
+        use_placeholder_icon = true,
+        spoil_ticks = 2 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "offal-pate",
+        use_placeholder_icon = true,
+        spoil_ticks = 1 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "fries",
+        use_placeholder_icon = true,
+        spoil_ticks = 30 * Time.minute,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "custard-tart",
+        use_placeholder_icon = true,
+        spoil_ticks = 1 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "liontooth-kimchi",
+        use_placeholder_icon = true,
+        spoil_ticks = 3 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "razha-miso",
+        use_placeholder_icon = true,
+        spoil_ticks = 4 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "raisins",
+        use_placeholder_icon = true,
+        spoil_ticks = 8 * Time.hour,
+        spoil_result = "expired-food"
+    },
+    {
+        name = "stockfish",
+        use_placeholder_icon = true,
+        spoil_ticks = 8 * Time.hour,
+        spoil_result = "expired-food"
     }
 }
 
@@ -383,6 +480,296 @@ Tirislib.RecipeGenerator.create {
     category = "sosciencity-kitchen-for-all",
     energy_required = 3,
     unlock = "kitchen-for-all",
+    auto_recycle = false
+}
+
+---------------------------------------------------------------------------------------------------
+-- << meals of the kitchen for all >>
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "fruit-salad", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "unnamed-fruit", amount = 1},
+        {type = "item", name = "blue-grapes", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3,
+    unlock = "kitchen-for-all",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "fruit-salad-from-orange-and-cherry",
+    results = {
+        {type = "item", name = "fruit-salad", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "orange", amount = 1},
+        {type = "item", name = "cherry", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3,
+    unlock = {Unlocks.get_tech_name("orange"), Unlocks.get_tech_name("cherry")},
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "fishers-stew", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "fish-meat", amount = 1},
+        {type = "item", name = "wild-algae", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3,
+    unlock = "kitchen-for-all",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "roast", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "mammal-meat", amount = 1},
+        {type = "item", name = "wild-fungi", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3,
+    unlock = "kitchen-for-all",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "roast-from-bird-meat",
+    results = {
+        {type = "item", name = "roast", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "bird-meat", amount = 1},
+        {type = "item", name = "wild-fungi", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3,
+    unlock = "kitchen-for-all",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "mushroom-roast", amount = 1}
+    },
+    ingredients = {
+        {type = "item", name = "pocelial", amount = 1},
+        {type = "item", name = "fawoxylas", amount = 1}
+    },
+    category = "sosciencity-kitchen-for-all",
+    energy_required = 3,
+    unlock = "kitchen-for-all",
+    auto_recycle = false
+}
+
+---------------------------------------------------------------------------------------------------
+-- << smoked foods >>
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "smoked-meat", amount = 5}
+    },
+    ingredients = {
+        {type = "item", name = "mammal-meat", amount = 5},
+        {type = "item", name = "salt", amount = 1},
+        {type = "item", name = "sawdust", amount = 2}
+    },
+    category = "sosciencity-smoking",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    name = "smoked-meat-from-bird-meat",
+    results = {
+        {type = "item", name = "smoked-meat", amount = 5}
+    },
+    ingredients = {
+        {type = "item", name = "bird-meat", amount = 5},
+        {type = "item", name = "salt", amount = 1},
+        {type = "item", name = "sawdust", amount = 2}
+    },
+    category = "sosciencity-smoking",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "smoked-fish", amount = 5}
+    },
+    ingredients = {
+        {type = "item", name = "fish-meat", amount = 5},
+        {type = "item", name = "salt", amount = 1},
+        {type = "item", name = "sawdust", amount = 2}
+    },
+    category = "sosciencity-smoking",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "smoked-birdsnake", amount = 5}
+    },
+    ingredients = {
+        {type = "item", name = "birdsnake", amount = 5},
+        {type = "item", name = "salt", amount = 1},
+        {type = "item", name = "sawdust", amount = 2}
+    },
+    category = "sosciencity-smoking",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "smoked-tofu", amount = 5}
+    },
+    ingredients = {
+        {type = "item", name = "tofu", amount = 5},
+        {type = "item", name = "salt", amount = 1},
+        {type = "item", name = "sawdust", amount = 2}
+    },
+    category = "sosciencity-smoking",
+    energy_required = 10,
+    unlock = "soy-products",
+    auto_recycle = false
+}
+
+---------------------------------------------------------------------------------------------------
+-- << refined foods of the orchid food factory >>
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "ignivern-curry-paste", amount = 20}
+    },
+    ingredients = {
+        {type = "item", name = "ignivern", amount = 10},
+        {type = "item", name = "red-hatty", amount = 10},
+        {type = "fluid", name = "fatty-oil", amount = 20}
+    },
+    category = "sosciencity-orchid-food-processing",
+    energy_required = 4,
+    unlock = "food-processing",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "offal-pate", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "offal", amount = 10},
+        {type = "item", name = "salt", amount = 2},
+        {type = "item", name = "solid-fat", amount = 2}
+    },
+    category = "sosciencity-orchid-food-processing",
+    energy_required = 4,
+    unlock = "food-processing",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "fries", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "potato", amount = 10},
+        {type = "item", name = "salt", amount = 1},
+        {type = "fluid", name = "fatty-oil", amount = 10}
+    },
+    category = "sosciencity-orchid-food-processing",
+    energy_required = 3,
+    unlock = Unlocks.get_tech_name("potato"),
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "custard-tart", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "flour", amount = 10},
+        {type = "item", name = "sugar", amount = 5},
+        {type = "item", name = "queen-algae", amount = 5}
+    },
+    category = "sosciencity-orchid-food-processing",
+    energy_required = 4,
+    unlock_with_item = "flour",
+    auto_recycle = false
+}
+
+---------------------------------------------------------------------------------------------------
+-- << pickled and dried foods >>
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "liontooth-kimchi", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "liontooth", amount = 10},
+        {type = "item", name = "salt", amount = 2}
+    },
+    category = "sosciencity-fermentation-tank",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "razha-miso", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "razha-bean", amount = 10},
+        {type = "item", name = "salt", amount = 2},
+        {type = "fluid", name = "pemtenn", amount = 10}
+    },
+    category = "sosciencity-fermentation-tank",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "raisins", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "blue-grapes", amount = 10}
+    },
+    category = "sosciencity-drying-unit",
+    energy_required = 10,
+    unlock = "fermentation",
+    auto_recycle = false
+}
+
+Tirislib.RecipeGenerator.create {
+    results = {
+        {type = "item", name = "stockfish", amount = 10}
+    },
+    ingredients = {
+        {type = "item", name = "fish-meat", amount = 10},
+        {type = "item", name = "salt", amount = 2}
+    },
+    category = "sosciencity-drying-unit",
+    energy_required = 10,
+    unlock = "fermentation",
     auto_recycle = false
 }
 

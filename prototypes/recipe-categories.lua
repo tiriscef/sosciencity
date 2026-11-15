@@ -189,6 +189,10 @@ Tirislib.Prototype.batch_create {
     },
     {
         type = "recipe-category",
+        name = "sosciencity-smoking"
+    },
+    {
+        type = "recipe-category",
         name = "sosciencity-social-observatory"
     },
     {

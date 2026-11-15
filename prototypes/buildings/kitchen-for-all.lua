@@ -45,7 +45,7 @@ Tirislib.Entity.create {
         }
     },
     crafting_speed = 1,
-    crafting_categories = {"sosciencity-kitchen-for-all"},
+    crafting_categories = {"sosciencity-kitchen-for-all", "sosciencity-smoking"},
     energy_usage = "60kW",
     energy_source = {
         type = "electric",
