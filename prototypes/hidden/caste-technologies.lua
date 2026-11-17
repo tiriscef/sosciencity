@@ -1,4 +1,6 @@
-for i = 0, 20 do
+local TechEffects = require("constants.tech-effects")
+
+for i = 0, TechEffects.binary_tech_count - 1 do
     local strength = 2 ^ i
 
     Tirislib.Technology.create {

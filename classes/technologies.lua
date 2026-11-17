@@ -53,6 +53,7 @@ end
 local gated_technologies
 
 local floor = math.floor
+local min = math.min
 
 local function set_locals()
     gated_technologies = storage.gated_technologies
@@ -87,11 +88,13 @@ local function determine_tech_level(name)
 end
 
 --- Sets the given binary technologies so they encode the given value.
+--- Values above what the techs can encode are clamped to the maximum.
 function Technologies.set_binary_techs(value, name)
+    value = min(value, TechEffects.binary_tech_max_value)
     local new_value = value
     local techs = game.forces.player.technologies
 
-    for strength = 0, 20 do
+    for strength = 0, TechEffects.binary_tech_count - 1 do
         new_value = floor(value / 2)
 
         -- if new_value times two doesn't equal value, then the remainder was one

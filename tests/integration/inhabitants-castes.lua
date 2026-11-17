@@ -120,3 +120,48 @@ Tirislib.Testing.add_test_case(
         Helpers.clean_up()
     end
 )
+
+local TechEffects = require("constants.tech-effects")
+
+--- Returns the binary value the hidden techs with the given suffix currently encode.
+local function read_binary_techs(name)
+    local techs = game.forces.player.technologies
+    local value = 0
+    for strength = 0, TechEffects.binary_tech_count - 1 do
+        if techs[strength .. name].researched then
+            value = value + 2 ^ strength
+        end
+    end
+    return value
+end
+
+Tirislib.Testing.add_test_case(
+    "set_binary_techs encodes the value and clamps it to the maximum",
+    "integration|integration.inhabitants",
+    function()
+        local original = read_binary_techs("-foundry-caste")
+
+        Technologies.set_binary_techs(37, "-foundry-caste")
+        Assert.equals(read_binary_techs("-foundry-caste"), 37)
+
+        Technologies.set_binary_techs(TechEffects.binary_tech_max_value + 12345, "-foundry-caste")
+        Assert.equals(read_binary_techs("-foundry-caste"), TechEffects.binary_tech_max_value)
+
+        Technologies.set_binary_techs(original, "-foundry-caste")
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "no hidden caste bonus tech has an effect above 1000",
+    "integration|integration.inhabitants",
+    function()
+        for _, name in pairs {"-foundry-caste", "-gleam-caste", "-gunfire-caste"} do
+            for strength = 0, TechEffects.binary_tech_count - 1 do
+                for _, effect in pairs(prototypes.technology[strength .. name].effects) do
+                    Assert.is_true((effect.modifier or 0) <= 1000)
+                end
+            end
+            Assert.is_true(prototypes.technology[TechEffects.binary_tech_count .. name] == nil)
+        end
+    end
+)
