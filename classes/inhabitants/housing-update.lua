@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local RenderingType = require("enums.rendering-type")
 local HappinessSummand = require("enums.happiness-summand")
 local HappinessFactor = require("enums.happiness-factor")
 local WarningType = require("enums.warning-type")
@@ -120,6 +121,22 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << strike >>
 
+--- Shows the alert sprite that matches the strike level: none, partial or full strike.
+--- @param entry Entry
+--- @param strike_level number
+local function update_strike_warning(entry, strike_level)
+    if strike_level >= 1 then
+        Subentities.remove_common_sprite(entry, RenderingType.strike_warning)
+        Subentities.add_common_sprite(entry, RenderingType.full_strike_warning)
+    elseif strike_level > 0 then
+        Subentities.remove_common_sprite(entry, RenderingType.full_strike_warning)
+        Subentities.add_common_sprite(entry, RenderingType.strike_warning)
+    else
+        Subentities.remove_common_sprite(entry, RenderingType.strike_warning)
+        Subentities.remove_common_sprite(entry, RenderingType.full_strike_warning)
+    end
+end
+
 --- Computes and stores the current strike level for a housing entry.
 --- Strike level 0 means no strike, 1 means full strike.
 --- @param entry Entry
@@ -129,6 +146,7 @@ local function update_strike_level(entry, happiness, caste)
     -- empty houses shouldn't 'strike' so we return early
     if entry[EK.inhabitants] == 0 then
         entry[EK.strike_level] = 0
+        update_strike_warning(entry, 0)
         return
     end
 
@@ -141,6 +159,7 @@ local function update_strike_level(entry, happiness, caste)
         new_level = map_range(happiness, caste.strike_begin_threshold, caste.full_strike_threshold, 0, 1)
     end
     entry[EK.strike_level] = new_level
+    update_strike_warning(entry, new_level)
 
     if new_level > 0 then
         Communication.warning(WarningType.on_strike, entry[EK.type])

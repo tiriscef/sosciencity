@@ -70,5 +70,21 @@ Tirislib.Prototype.batch_create {
         icon_size = 64,
         subgroup = "sosciencity-alerts",
         order = "ay"
+    },
+    {
+        type = "virtual-signal",
+        name = "alert-strike",
+        icon = "__sosciencity-graphics__/graphics/utility/alert-strike.png",
+        icon_size = 64,
+        subgroup = "sosciencity-alerts",
+        order = "ay"
+    },
+    {
+        type = "virtual-signal",
+        name = "alert-full-strike",
+        icon = "__sosciencity-graphics__/graphics/utility/alert-strike-full.png",
+        icon_size = 64,
+        subgroup = "sosciencity-alerts",
+        order = "ar"
     }
 }
