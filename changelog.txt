@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.11
+Date: 2026.11.17
+  Minor Features:
+    - Striking houses show a blinking warning sign.
+    - Buildings with warning signs (food, water, workers, breakdowns, strikes) are also marked on the map.
+
+  Changes:
+    - Alerts are grouped into one alert per type with a count, instead of one line per building.
+
+  Bugfixes:
+    - Fixed a load error with mods that convert mining productivity into recipe productivity (e.g. PlanetsLib ground diggers).
+    - Fixed fermented biter meat spoiling as fast as raw biter meat.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.10
 Date: 2026.11.12
   Minor Features:
