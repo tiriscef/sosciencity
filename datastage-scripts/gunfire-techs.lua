@@ -1,6 +1,8 @@
 --<< find all turrets and add them to the hidden gunfire techs >>
+local TechEffects = require("constants.tech-effects")
+
 local gunfire_techs = {}
-for i = 0, 20 do
+for i = 0, TechEffects.binary_tech_count - 1 do
     local strength = 0.01 * 2 ^ i
 
     table.insert(
