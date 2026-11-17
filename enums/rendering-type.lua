@@ -10,5 +10,7 @@ RenderingType.breakdown_warning = 5
 RenderingType.recipe_visualisation = 6
 RenderingType.recipe_visualisation_glow = 7
 RenderingType.recipe_visualisation_light = 8
+RenderingType.strike_warning = 9
+RenderingType.full_strike_warning = 10
 
 return RenderingType

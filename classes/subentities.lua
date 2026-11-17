@@ -98,19 +98,26 @@ local common_sprites = {
     [RenderingType.food_warning] = "virtual-signal/alert-no-food",
     [RenderingType.water_warning] = "virtual-signal/alert-no-water",
     [RenderingType.no_workers] = "virtual-signal/alert-not-enough-workers",
-    [RenderingType.breakdown_warning] = "virtual-signal/alert-breakdown"
+    [RenderingType.breakdown_warning] = "virtual-signal/alert-breakdown",
+    [RenderingType.strike_warning] = "virtual-signal/alert-strike",
+    [RenderingType.full_strike_warning] = "virtual-signal/alert-full-strike"
 }
 local common_sprite_offsets = {
     [RenderingType.food_warning] = {x = 1.25, y = 0},
     [RenderingType.water_warning] = {x = -1.25, y = 0},
     [RenderingType.no_workers] = {x = 1.25, y = 0},
-    [RenderingType.breakdown_warning] = {x = 0, y = 0}
+    [RenderingType.breakdown_warning] = {x = 0, y = 0},
+    -- above the centre, where houses show their caste icon in alt mode
+    [RenderingType.strike_warning] = {x = 0, y = -1.25},
+    [RenderingType.full_strike_warning] = {x = 0, y = -1.25}
 }
 local common_sprite_blink_intervals = {
     [RenderingType.food_warning] = 30,
     [RenderingType.water_warning] = 30,
     [RenderingType.no_workers] = 30,
-    [RenderingType.breakdown_warning] = 30
+    [RenderingType.breakdown_warning] = 30,
+    [RenderingType.strike_warning] = 30,
+    [RenderingType.full_strike_warning] = 30
 }
 
 --- Adds a common sprite to this entity.

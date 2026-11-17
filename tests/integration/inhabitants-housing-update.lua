@@ -1,4 +1,5 @@
 local EK = require("enums.entry-key")
+local RenderingType = require("enums.rendering-type")
 local Type = require("enums.type")
 local HappinessFactor = require("enums.happiness-factor")
 local HappinessSummand = require("enums.happiness-summand")
@@ -191,6 +192,37 @@ Tirislib.Testing.add_test_case(
             "strike level should be > 0 between thresholds")
         Assert.less_than(entry[EK.strike_level], 1,
             "strike level should be < 1 between thresholds")
+    end,
+    setup,
+    teardown
+)
+
+Tirislib.Testing.add_test_case(
+    "Strike alert matches the strike level",
+    "integration|integration.inhabitants",
+    function()
+        local entry = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.clockwork, 10)
+        local caste = Castes.values[Type.clockwork]
+
+        local function assert_alerts(partial, full, situation)
+            local renderings = entry[EK.attached_renderings] or {}
+            Assert.equals(renderings[RenderingType.strike_warning] ~= nil, partial,
+                "partial strike alert " .. (partial and "should" or "shouldn't") .. " be shown " .. situation)
+            Assert.equals(renderings[RenderingType.full_strike_warning] ~= nil, full,
+                "full strike alert " .. (full and "should" or "shouldn't") .. " be shown " .. situation)
+        end
+
+        entry[EK.happiness] = caste.full_strike_threshold - 1
+        Helpers.update_entry(entry)
+        assert_alerts(false, true, "at full strike")
+
+        entry[EK.happiness] = (caste.strike_begin_threshold + caste.full_strike_threshold) / 2
+        Helpers.update_entry(entry)
+        assert_alerts(true, false, "at partial strike")
+
+        entry[EK.happiness] = caste.strike_begin_threshold + 1
+        Helpers.update_entry(entry)
+        assert_alerts(false, false, "without strike")
     end,
     setup,
     teardown
