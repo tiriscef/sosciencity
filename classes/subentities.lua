@@ -120,6 +120,56 @@ local common_sprite_blink_intervals = {
     [RenderingType.full_strike_warning] = 30
 }
 
+--- Common sprites that also get a marker on the map, so affected buildings can be found from there.
+local common_sprite_map_markers = {
+    [RenderingType.food_warning] = RenderingType.food_warning_map,
+    [RenderingType.water_warning] = RenderingType.water_warning_map,
+    [RenderingType.no_workers] = RenderingType.no_workers_map,
+    [RenderingType.breakdown_warning] = RenderingType.breakdown_warning_map,
+    [RenderingType.strike_warning] = RenderingType.strike_warning_map,
+    [RenderingType.full_strike_warning] = RenderingType.full_strike_warning_map
+}
+--- Size of the map markers in tiles. Chart renderings are sized in world tiles and shrink when zooming out,
+--- so they need to be bigger than the sprites in the world.
+local map_marker_scale = 4
+
+--- Draws the map marker of a common sprite, unless it already has one.
+local function add_map_marker(entry, attached_renders, render_type)
+    local map_marker_type = common_sprite_map_markers[render_type]
+    if not map_marker_type then
+        return
+    end
+    local existing = attached_renders[map_marker_type]
+    if existing and existing.valid then
+        return
+    end
+
+    local entity = entry[EK.entity]
+    local marker =
+        rendering.draw_sprite(
+        {
+            sprite = common_sprites[render_type],
+            target = entity,
+            surface = entity.surface,
+            x_scale = map_marker_scale,
+            y_scale = map_marker_scale,
+            render_mode = "chart"
+        }
+    )
+    marker.blink_interval = common_sprite_blink_intervals[render_type] or 0
+    attached_renders[map_marker_type] = marker
+end
+
+local function destroy_render(attached_renders, render_type)
+    local render = attached_renders[render_type]
+    if render then
+        if render.valid then
+            render.destroy()
+        end
+        attached_renders[render_type] = nil
+    end
+end
+
 --- Adds a common sprite to this entity.
 --- @param entry Entry
 --- @param render_type RenderingType
@@ -128,6 +178,8 @@ function Subentities.add_common_sprite(entry, render_type)
 
     -- do nothing if the common sprite already exists, such that this function can be called without checking the state of the common sprite
     if attached_renders[render_type] then
+        -- sprites from saves before the map markers existed don't have one yet
+        add_map_marker(entry, attached_renders, render_type)
         return
     end
 
@@ -144,6 +196,8 @@ function Subentities.add_common_sprite(entry, render_type)
     )
     render.blink_interval = common_sprite_blink_intervals[render_type] or 0
     attached_renders[render_type] = render
+
+    add_map_marker(entry, attached_renders, render_type)
 end
 
 --- Removes a common sprite from this entity (if one exists, otherwise the call does nothing).
@@ -151,11 +205,11 @@ end
 --- @param render_type RenderingType
 function Subentities.remove_common_sprite(entry, render_type)
     local attached_renders = get_subtbl(entry, EK.attached_renderings)
-    local render = attached_renders[render_type]
+    destroy_render(attached_renders, render_type)
 
-    if render and render.valid then
-        render.destroy()
-        attached_renders[render_type] = nil
+    local map_marker_type = common_sprite_map_markers[render_type]
+    if map_marker_type then
+        destroy_render(attached_renders, map_marker_type)
     end
 end
 

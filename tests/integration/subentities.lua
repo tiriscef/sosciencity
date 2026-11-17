@@ -59,6 +59,54 @@ Tirislib.Testing.add_test_case(
 )
 
 Tirislib.Testing.add_test_case(
+    "Common sprite gets a map marker that is removed with it",
+    "integration|integration.subentities",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
+        Subentities.add_common_sprite(entry, RenderingType.food_warning)
+        local renderings = entry[EK.attached_renderings]
+        local marker = renderings[RenderingType.food_warning_map]
+        Assert.not_nil(marker, "food warning should have a map marker")
+        Assert.equals(marker.render_mode, "chart", "the marker should be drawn on the map")
+
+        Subentities.remove_common_sprite(entry, RenderingType.food_warning)
+        Assert.is_nil(renderings[RenderingType.food_warning_map], "the map marker should be removed with the sprite")
+        Assert.is_false(marker.valid, "the map marker should be destroyed")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
+    "Adding an existing common sprite again adds its missing map marker",
+    "integration|integration.subentities",
+    function()
+        local entry = Helpers.create_and_register(test_surface, "test-house", {0, 0})
+
+        -- like a sprite from a save before the map markers existed
+        Subentities.add_common_sprite(entry, RenderingType.food_warning)
+        local renderings = entry[EK.attached_renderings]
+        renderings[RenderingType.food_warning_map].destroy()
+        renderings[RenderingType.food_warning_map] = nil
+
+        Subentities.add_common_sprite(entry, RenderingType.food_warning)
+        local marker = renderings[RenderingType.food_warning_map]
+        Assert.not_nil(marker, "the missing map marker should be added")
+        Assert.is_true(marker.valid, "the added map marker should be valid")
+    end,
+    function()
+        test_surface = Helpers.create_test_surface()
+    end,
+    function()
+        Helpers.clean_up()
+    end
+)
+
+Tirislib.Testing.add_test_case(
     "Adding the same common sprite twice does not create a duplicate",
     "integration|integration.subentities",
     function()
