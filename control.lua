@@ -529,6 +529,7 @@ local function on_configuration_change()
     end
 
     Statistics.migrate()
+    Communication.migrate()
 end
 
 local function on_player_created(event)

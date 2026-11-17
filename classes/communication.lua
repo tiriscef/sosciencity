@@ -42,6 +42,10 @@ Communication = {}
     storage.warning_ticks: table
         [WarningType]: tick
 
+    storage.alert_entries: table
+        [WarningType]: table
+            [unit_number]: tick of the last warning
+
     storage.notifications: table
         [unit_number]: table of subscribed players
 ]]
@@ -59,6 +63,7 @@ local information_params
 local information_ticks
 local warning_params
 local warning_ticks
+local alert_entries
 
 local notifications
 local temporary_texts
@@ -102,6 +107,7 @@ local function set_locals()
     information_params = storage.information_params
     warning_ticks = storage.warning_ticks
     warning_params = storage.warning_params
+    alert_entries = storage.alert_entries
 
     notifications = storage.notifications
     temporary_texts = storage.temporary_texts
@@ -145,6 +151,7 @@ function Communication.init()
         storage.warning_ticks[warning_type] = -Time.nauvis_month
     end
     storage.warning_params = {}
+    storage.alert_entries = {}
 
     storage.notifications = {}
     storage.temporary_texts = {}
@@ -154,6 +161,13 @@ end
 
 function Communication.load()
     storage = _ENV.storage
+    set_locals()
+end
+
+--- Adds storage tables that older saves don't have yet.
+function Communication.migrate()
+    storage = _ENV.storage
+    storage.alert_entries = storage.alert_entries or {}
     set_locals()
 end
 
@@ -492,31 +506,88 @@ local speaker_warnings = {
     [WarningType.on_strike] = true
 }
 
-local function alert(entry, signal, message)
-    local entity = entry[EK.entity]
-    for _, player in pairs(game.connected_players) do
-        player.add_custom_alert(entity, signal, message, true)
+-- Custom alerts aren't grouped by the engine: every alert gets its own line in the alert tooltip.
+-- So warnings only record the entry, and every alert_refresh_interval one alert per warning type
+-- and surface is raised, with the number of affected entries in its message.
+
+local alert_definitions = {
+    [WarningType.no_food] = {signal = {type = "virtual", name = "alert-no-food"}, message = "alert.no-food"},
+    [WarningType.no_water] = {signal = {type = "virtual", name = "alert-no-water"}, message = "alert.no-water"},
+    [WarningType.garbage] = {signal = {type = "virtual", name = "alert-garbage"}, message = "alert.garbage"},
+    [WarningType.food_distress] = {
+        signal = {type = "virtual", name = "alert-food-distress"},
+        message = "alert.food-distress"
+    },
+    [WarningType.insufficient_workers] = {
+        signal = {type = "virtual", name = "alert-not-enough-workers"},
+        message = "alert.not-enough-workers"
+    }
+}
+
+local alert_refresh_interval = 2 * Time.second
+--- The alert points to another of the affected entities after this time, so clicking it shows different ones.
+local alert_rotation_interval = 10 * Time.second
+
+--- Remembers that the entry has the problem behind the given alert.
+local function record_alert(warning_type, entry)
+    local entries = get_subtbl(alert_entries, warning_type)
+    entries[entry[EK.unit_number]] = game.tick
+end
+
+--- Returns the entry if it still has the problem: it got the warning in its latest update.
+--- Every warning with an alert is raised in each update while the problem lasts.
+--- @return Entry?
+local function get_entry_with_current_alert(unit_number, warning_tick)
+    local entry = Register.try_get(unit_number)
+    if entry and entry[EK.last_update] <= warning_tick and entry[EK.entity].valid then
+        return entry
+    end
+end
+
+--- Groups the entries that still have the problem by surface and forgets the others.
+--- @return table [surface_index]: array of entries
+local function collect_current_alert_entries(entries)
+    local by_surface = {}
+    for unit_number, warning_tick in pairs(entries) do
+        local entry = get_entry_with_current_alert(unit_number, warning_tick)
+        if entry then
+            local list = get_subtbl(by_surface, entry[EK.entity].surface.index)
+            list[#list + 1] = entry
+        else
+            entries[unit_number] = nil
+        end
+    end
+    return by_surface
+end
+
+--- Replaces the alerts of the last refresh with one alert per warning type and surface.
+local function refresh_alerts(current_tick)
+    local rotation = math.floor(current_tick / alert_rotation_interval)
+    local players = game.connected_players
+
+    for warning_type, definition in pairs(alert_definitions) do
+        local signal = definition.signal
+        for _, player in pairs(players) do
+            player.remove_alert {type = defines.alert_type.custom, icon = signal}
+        end
+
+        local entries = alert_entries[warning_type]
+        if entries then
+            for _, list in pairs(collect_current_alert_entries(entries)) do
+                local count = #list
+                local target = list[rotation % count + 1][EK.entity]
+                local message = {definition.message, count}
+                for _, player in pairs(players) do
+                    player.add_custom_alert(target, signal, message, true)
+                end
+            end
+        end
     end
 end
 
 local warn_fns = {
-    [WarningType.no_food] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-no-food"}, {"alert.no-food"})
-    end,
-    [WarningType.no_water] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-no-water"}, {"alert.no-water"})
-    end,
-    [WarningType.garbage] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-garbage"}, {"alert.garbage"})
-    end,
     [WarningType.insufficient_maintenance] = function()
         say_random_variant("warning-insufficient-maintenance")
-    end,
-    [WarningType.food_distress] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-food-distress"}, {"alert.food-distress"})
-    end,
-    [WarningType.insufficient_workers] = function(entry)
-        alert(entry, {type = "virtual", name = "alert-not-enough-workers"}, {"alert.not-enough-workers"})
     end,
     [WarningType.homelessness] = function(caste_id)
         local caste = castes[caste_id]
@@ -536,8 +607,9 @@ function Communication.warning(warning_type, ...)
         if game.tick - warning_ticks[warning_type] >= 2 * Time.minute then
             warning_params[warning_type] = {...}
         end
+    elseif alert_definitions[warning_type] then
+        record_alert(warning_type, ...)
     else
-        -- vanilla alert type warning
         warn_fns[warning_type](...)
     end
 end
@@ -660,6 +732,10 @@ end
 -- << general >>
 
 function Communication.update(current_tick)
+    if current_tick % alert_refresh_interval == 0 then
+        refresh_alerts(current_tick)
+    end
+
     if current_tick % (20 * Time.minute) == (5 * Time.minute) then -- every 20 minutes, first time after 5 minutes
         useless_banter()
         return
