@@ -7,7 +7,10 @@ local TypeGroup = require("constants.type-groups")
 local Types = require("constants.types")
 local UpdateGroup = require("constants.update-groups")
 
+local DevMode = require("classes.dev-mode")
+
 local floor = math.floor
+local debug_mod_active = DevMode.debug_mod_active
 
 --- Static class that stores and manages entities in hopefully performant ways.
 Register = {}
@@ -530,7 +533,7 @@ end
 --- @param entry Entry
 --- @return boolean is_externally_owned
 function Register.is_externally_owned(entry)
-    if DEBUG then
+    if debug_mod_active then
         assert(
             Types.definitions[entry[EK.type]].is_catch_all,
             "is_externally_owned called on non-catch-all entry"

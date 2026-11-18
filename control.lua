@@ -16,13 +16,6 @@ local Food = require("constants.food")
 local DrinkingWater = require("constants.drinking-water")
 
 ---------------------------------------------------------------------------------------------------
--- << development feature flags >>
-
-DEBUG = script.active_mods["sosciencity-debug"] ~= nil
-BALANCING = script.active_mods["sosciencity-balancing"] ~= nil
--- The cheat/debug GUIs are gated at runtime by DevMode.is_active() (map setting or companion mod).
-
----------------------------------------------------------------------------------------------------
 -- << constants >>
 
 local Types = require("constants.types")
@@ -88,7 +81,7 @@ remote.add_interface("sosciencity", {
     end
 })
 
-if DEBUG then
+if DevMode.debug_mod_active then
     require("tests.tirislib.load-tests")
     require("tests.controlstage.load-tests")
     require("tests.integration.load-tests")
@@ -173,7 +166,7 @@ if DEBUG then
 end
 
 -- console command that writes balancing files, only for the companion mods
-if DEBUG or BALANCING then
+if DevMode.companion_mod_active then
     require("balancing")
 end
 

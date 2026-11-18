@@ -11,12 +11,22 @@
         when the map setting was first turned on in this save, nil if never
         the companion mods don't count, so opening a player's save with them doesn't mark it
 ]]
+local CompanionMods = require("constants.companion-mods")
+
 local DevMode = {}
 
 local SETTING = "sosciencity-dev-mode"
 
-local companion_mod_active =
-    script.active_mods["sosciencity-debug"] ~= nil or script.active_mods["sosciencity-balancing"] ~= nil
+--- Whether sosciencity-debug is active (test commands, test prototypes, debug features).
+DevMode.debug_mod_active = CompanionMods.debug
+
+--- Whether sosciencity-balancing is active (balancing and analysis commands).
+DevMode.balancing_mod_active = CompanionMods.balancing
+
+--- Whether one of the companion mods is active.
+DevMode.companion_mod_active = CompanionMods.debug or CompanionMods.balancing
+
+local companion_mod_active = DevMode.companion_mod_active
 
 --- Returns whether the cheat and debug tools are available.
 --- @return boolean

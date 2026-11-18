@@ -1,3 +1,4 @@
+local CompanionMods = require("constants.companion-mods")
 local Diseases = require("constants.diseases")
 
 --- Vaccine definitions, keyed by the name of the vaccine item.
@@ -31,7 +32,7 @@ Vaccines.values = {
 }
 
 -- test vaccines: only present when sosciencity-debug is active
-if DEBUG then
+if CompanionMods.debug then
     Vaccines.values["test-vaccine"] = {
         diseases = {"test-disease-immunity", "test-disease-immunity-2"}
     }

@@ -3,6 +3,7 @@ local DiseaseCategory = require("enums.disease-category")
 local DiseasedCause = require("enums.diseased-cause")
 local Type = require("enums.type")
 
+local CompanionMods = require("constants.companion-mods")
 local Time = require("constants.time")
 local Types = require("constants.types")
 
@@ -1352,7 +1353,7 @@ Diseases.disease_causes = {
 }
 
 -- test diseases: only present when sosciencity-debug is active
-if DEBUG then
+if CompanionMods.debug then
     Diseases.values[99001] = {
         name = "test-disease-simple",
         curing_workload = 1,

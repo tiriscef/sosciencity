@@ -62,9 +62,6 @@ local INTENDED_GLOBALS = {
 
 --- Globals the module system migration still has to remove. Only ever delete entries from this list.
 local LEGACY_GLOBALS = {
-    -- control.lua
-    "DEBUG",
-    "BALANCING",
     -- classes
     "AutoNames",
     "Communication",

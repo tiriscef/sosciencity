@@ -2188,7 +2188,7 @@ Gui.CityView.add_page {
 -- Called by the export_sosciencity scenario for headless snapshot generation.
 -- Exports both modes with sosciencity-only filter and no player_index (writes to shared script-output).
 -- Only for the companion mods, players who enable the dev tools setting don't need it.
-if DEBUG or BALANCING then
+if DevMode.companion_mod_active then
     remote.add_interface("sosciencity_export", {
         run = function()
             export_full_progression("compact", false, nil)
