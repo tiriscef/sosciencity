@@ -96,6 +96,7 @@ local function set_locals()
     remove_subentities = Subentities.remove_all_for
     update_recipe_visualisation = Subentities.update_recipe_visualisation
 
+    local Neighborhood = late_require("classes.neighborhood")
     establish_new_neighbor = Neighborhood.establish_new_neighbor
     unsubscribe_neighborhood = Neighborhood.unsubscribe_all
     remove_notifications = Communication.remove_notifications

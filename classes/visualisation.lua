@@ -7,6 +7,7 @@ local Types = require("constants.types")
 
 local HousingCore = require("classes.inhabitants.housing-core")
 local Workforce = require("classes.inhabitants.workforce")
+local Neighborhood = require("classes.neighborhood")
 
 --- Static class for all the functions that visualise the mod's concepts.
 local Visualisation = {}

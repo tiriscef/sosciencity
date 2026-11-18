@@ -13,8 +13,8 @@ local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
 local Consumption = require("classes.consumption")
 local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
 
-local Neighborhood = Neighborhood
 local floor = math.floor
 local round = Tirislib.Utils.round
 local display_time = Tirislib.Locales.display_time

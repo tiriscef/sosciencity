@@ -13,8 +13,8 @@ local Time = require("constants.time")
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Neighborhood = require("classes.neighborhood")
 
-local Neighborhood = Neighborhood
 local round_to_step = Tirislib.Utils.round_to_step
 local display_item_stack = Tirislib.Locales.display_item_stack
 local Table = Tirislib.Tables

@@ -2,7 +2,7 @@ local ConnectionType = require("enums.connection-type")
 local EK = require("enums.entry-key")
 
 --- Static class that takes care of the relations between entities.
-Neighborhood = {}
+local Neighborhood = {}
 
 -- Some entities need to know if there are neighborhood entities (like hospitals) nearby.
 -- This class ensures that the neighborhood aware entries have a neighborhood-table with all the neighbors that it is interested in

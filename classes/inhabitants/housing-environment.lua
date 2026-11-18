@@ -21,6 +21,7 @@ local HousingCore = require("classes.inhabitants.housing-core")
 local Subentities = require("classes.subentities")
 local Consumption = require("classes.consumption")
 local Communication = require("classes.communication")
+local Neighborhood = require("classes.neighborhood")
 
 local castes = Castes.values
 local disease_values = Diseases.values

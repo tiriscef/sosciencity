@@ -21,6 +21,7 @@ local Subentities = require("classes.subentities")
 local Consumption = require("classes.consumption")
 local Communication = require("classes.communication")
 local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
 
 local castes = Castes.values
 local food_values = Food.values
