@@ -9,9 +9,10 @@ local Entity = require("classes.entity")
 local Inhabitants = require("classes.inhabitants")
 local Register = require("classes.register")
 local Subentities = require("classes.subentities")
+local Workforce = require("classes.inhabitants.workforce")
 
 local has_power = Subentities.has_power
-local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_workforce = Workforce.evaluate_workforce
 
 -- 1000 mixtapes: 156%
 -- 10000 mixtapes: 200%

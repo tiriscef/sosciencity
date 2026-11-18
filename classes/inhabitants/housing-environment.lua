@@ -16,6 +16,8 @@ local TypeGroup = require("constants.type-groups")
 
 local DiseaseGroup = require("classes.groups.disease-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
+local HousingCore = require("classes.inhabitants.housing-core")
 
 local castes = Castes.values
 local disease_values = Diseases.values
@@ -65,7 +67,7 @@ Inhabitants.evaluate_housing_traits = evaluate_housing_traits
 --- Evaluates the effect of the housing on its inhabitants.
 --- @param entry Entry
 local function evaluate_housing(entry, happiness_summands, sanity_summands, happiness_factors, caste)
-    local housing = Inhabitants.HousingCore.get(entry)
+    local housing = HousingCore.get(entry)
     local current_comfort = entry[EK.current_comfort] or 0
     happiness_summands[HappinessSummand.housing] = current_comfort
     sanity_summands[SanitySummand.housing] = current_comfort

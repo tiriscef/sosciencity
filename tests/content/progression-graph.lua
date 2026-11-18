@@ -433,7 +433,7 @@ local function get_tile_fluids()
     return fluids
 end
 
---- A placed building works, with its full workforce if it needs one (Inhabitants.evaluate_workforce).
+--- A placed building works, with its full workforce if it needs one (Workforce.evaluate_workforce).
 local function add_working_rules(entity)
     local building = Building.values[entity.name]
     local workforce = building and building.workforce

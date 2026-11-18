@@ -9,6 +9,7 @@ local Time = require("constants.time")
 local AgeGroup = require("classes.groups.age-group")
 local ImmunityGroup = require("classes.groups.immunity-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local HousingCore = require("classes.inhabitants.housing-core")
 
 --- Static class that handles the behaviour of the people.
 Inhabitants = {}
@@ -74,9 +75,20 @@ local shuffle = Tirislib.Arrays.shuffle
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
+local is_researched = Technologies.caste_is_researched
+
+-- set during load, defined in the part files in classes/inhabitants/, which control.lua loads after this file
+local update_caste_bonuses
+local add_to_homeless_pool
+local update_homelessness
+
 local function set_locals()
     storage = _ENV.storage
     immigration = storage.immigration
+
+    update_caste_bonuses = Inhabitants.update_caste_bonuses
+    add_to_homeless_pool = Inhabitants.add_to_homeless_pool
+    update_homelessness = Inhabitants.update_homelessness
 end
 
 local function new_caste_table()
@@ -169,16 +181,6 @@ function Inhabitants.load()
     Inhabitants.load_housing_lifecycle()
 end
 
--- caste research, bonus calculations, and update_caste_bonuses
--- moved to classes/inhabitants/castes.lua
-local is_researched = Technologies.caste_is_researched
-local update_caste_bonuses -- set after castes.lua is loaded
-
--- nominal value functions moved to classes/inhabitants/housing-update.lua
-
-local add_to_homeless_pool
-local update_homelessness
-
 ---------------------------------------------------------------------------------------------------
 -- << immigration >>
 
@@ -261,7 +263,7 @@ end
 function Inhabitants.try_allow_for_caste(entry, caste_id, loud)
     if
         entry[EK.type] == Type.empty_house and is_researched(caste_id) and
-            Inhabitants.HousingCore.allowes_caste(Inhabitants.HousingCore.get(entry), caste_id)
+            HousingCore.allowes_caste(HousingCore.get(entry), caste_id)
      then
         local saved_comfort = entry[EK.current_comfort]
         local saved_target = entry[EK.target_comfort]
@@ -294,26 +296,5 @@ function Inhabitants.add_to_city(group, move_cause)
     Inhabitants.distribute(group, false, move_cause)
     add_to_homeless_pool(group)
 end
-
----------------------------------------------------------------------------------------------------
--- << outsourced subsystems >>
-
-require("classes.inhabitants.housing-core")
-require("classes.inhabitants.castes")
-require("classes.inhabitants.workforce")
-require("classes.inhabitants.housing-environment")
-require("classes.inhabitants.housing-needs")
-require("classes.inhabitants.healthcare")
-require("classes.inhabitants.housing-management")
-require("classes.inhabitants.homelessness")
-require("classes.inhabitants.housing-update")
-require("classes.inhabitants.housing-lifecycle")
-require("classes.inhabitants.housing-upgrades")
-require("classes.inhabitants.empty-housing")
-require("classes.inhabitants.housing-redistribution")
-
-update_caste_bonuses = Inhabitants.update_caste_bonuses
-add_to_homeless_pool = Inhabitants.add_to_homeless_pool
-update_homelessness = Inhabitants.update_homelessness
 
 return Inhabitants

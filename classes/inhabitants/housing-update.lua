@@ -10,6 +10,9 @@ local Housing = require("constants.housing")
 
 local DiseaseGroup = require("classes.groups.disease-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
+local Workforce = require("classes.inhabitants.workforce")
+local HousingCore = require("classes.inhabitants.housing-core")
 
 local castes = Castes.values
 local disease_values = Diseases.values
@@ -48,7 +51,7 @@ function Inhabitants.load_housing_update()
     update_diseases = Inhabitants.update_diseases
     update_blood_donations = Inhabitants.update_blood_donations
     update_free_space_status = Inhabitants.update_free_space_status
-    unemploy_inhabitants = Inhabitants.unemploy_inhabitants
+    unemploy_inhabitants = Workforce.unemploy_inhabitants
     get_caste_bonus_multiplier = Inhabitants.get_caste_bonus_multiplier
     try_auto_upgrades = Inhabitants.try_auto_upgrades
     update_sanatorium = Inhabitants.update_sanatorium
@@ -263,10 +266,10 @@ Inhabitants.remove_housing_census = remove_housing_census
 --- @param entry Entry
 local function set_custom_status(entry)
     local inhabitants = entry[EK.inhabitants]
-    local capacity = Inhabitants.HousingCore.get_capacity(entry)
+    local capacity = HousingCore.get_capacity(entry)
 
     local current_comfort = entry[EK.current_comfort] or 0
-    local max_comfort = Inhabitants.HousingCore.get(entry).max_comfort
+    local max_comfort = HousingCore.get(entry).max_comfort
     local comfort_append = {
         "sosciencity-custom-status.comfort-status",
         {"color-scale." .. current_comfort, {"comfort-scale." .. current_comfort}},

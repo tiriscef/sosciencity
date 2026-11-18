@@ -11,6 +11,7 @@ local Locale = require("classes.locale")
 local Register = require("classes.register")
 local DiseaseGroup = require("classes.groups.disease-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Workforce = require("classes.inhabitants.workforce")
 
 local get_building_details = Buildings.get
 local try_get = Register.try_get
@@ -41,7 +42,7 @@ function CasteEducation.is_education_recipe(recipe)
 end
 
 local function update_caste_education_building(entry)
-    if Inhabitants.get_workforce_count(entry) > 0 then
+    if Workforce.get_workforce_count(entry) > 0 then
         set_active(entry, true)
     else
         set_active(entry, false, {diode = defines.entity_status_diode.red, label = {"sosciencity.no-students"}})
@@ -71,7 +72,7 @@ function CasteEducation.on_recipe_crafted(event)
             InhabitantGroup.merge(converted_group, students, true, true)
         end
     end
-    Inhabitants.unemploy_all_workers(entry)
+    Workforce.unemploy_all_workers(entry)
 
     Communication.send_notification(
         entry,

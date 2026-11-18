@@ -9,6 +9,7 @@ local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 
+local Inhabitants = require("classes.inhabitants")
 local late_require = require("classes.late-require")
 local DiseaseGroup = require("classes.groups.disease-group")
 local ImmunityGroup = require("classes.groups.immunity-group")

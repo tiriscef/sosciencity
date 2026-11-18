@@ -10,6 +10,7 @@ local Effects = require("classes.effects")
 local Inhabitants = require("classes.inhabitants")
 local Neighborhood = require("classes.neighborhood")
 local Subentities = require("classes.subentities")
+local Workforce = require("classes.inhabitants.workforce")
 
 ---Static class for the game logic of my entities.
 Entity = {}
@@ -37,7 +38,7 @@ local get_building_details = Buildings.get
 local has_power = Subentities.has_power
 local set_effects = Effects.set
 
-local evaluate_workforce = Inhabitants.evaluate_workforce
+local evaluate_workforce = Workforce.evaluate_workforce
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
@@ -421,7 +422,7 @@ end
 --- @return table
 function Entity.build_workforce_site_line(entity, building_details)
     local workforce = building_details.workforce
-    local available = Inhabitants.count_employable_in_reach(entity, workforce.castes)
+    local available = Workforce.count_employable_in_reach(entity, workforce.castes)
     return {
         caption = {"sosciencity.site-workers", available, workforce.count},
         ok = available >= workforce.count

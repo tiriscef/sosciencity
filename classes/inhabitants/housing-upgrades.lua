@@ -1,6 +1,9 @@
 local EK = require("enums.entry-key")
 local Housing = require("constants.housing")
 
+local Inhabitants = require("classes.inhabitants")
+local HousingCore = require("classes.inhabitants.housing-core")
+
 -- Things about upgrading homes.
 Inhabitants.HousingUpgrades = {}
 local HousingUpgrades = Inhabitants.HousingUpgrades
@@ -108,7 +111,7 @@ end
 --- @return table?
 function Inhabitants.get_upgrade_progress(entry)
     local current = entry[EK.current_comfort] or 0
-    local cost = HousingUpgrades.get_upgrade_cost(Inhabitants.HousingCore.get(entry), current + 1)
+    local cost = HousingUpgrades.get_upgrade_cost(HousingCore.get(entry), current + 1)
     if not cost then return nil end
 
     local inventory = get_inventory(entry)
@@ -129,7 +132,7 @@ end
 --- @param player LuaPlayer
 --- @return LocalisedString?
 function Inhabitants.try_manual_upgrade(entry, player)
-    local house_details = Inhabitants.HousingCore.get(entry)
+    local house_details = HousingCore.get(entry)
     local max_comfort = house_details.max_comfort
     local current_comfort = entry[EK.current_comfort] or 0
     if current_comfort >= max_comfort then return end
@@ -201,7 +204,7 @@ end
 --- @param tag integer HousingTrait enum value
 --- @return table?
 function Inhabitants.get_tag_progress(entry, tag)
-    local cost = HousingUpgrades.get_tag_cost(Inhabitants.HousingCore.get(entry), tag)
+    local cost = HousingUpgrades.get_tag_cost(HousingCore.get(entry), tag)
     if not cost then return nil end
     local inventory = get_inventory(entry)
     local result = {}
@@ -229,7 +232,7 @@ function Inhabitants.try_manual_add_tag(entry, player, tag)
         return {"sosciencity.add-tag-locked", Locale.prototype_name(Housing.tag_required_tech[tag], "technology")}
     end
 
-    local house_details = Inhabitants.HousingCore.get(entry)
+    local house_details = HousingCore.get(entry)
     local cost = HousingUpgrades.get_tag_cost(house_details, tag)
 
     if not cost then
@@ -307,7 +310,7 @@ function Inhabitants.try_request_tag(entry, tag)
     entry[EK.target_tags] = target_tags
 
     local entity = entry[EK.entity]
-    local cost = HousingUpgrades.get_tag_cost(Inhabitants.HousingCore.get(entry), tag)
+    local cost = HousingUpgrades.get_tag_cost(HousingCore.get(entry), tag)
     if cost then
         ItemRequests.set_request(entity, get_inventory(entry), entry, tag, cost)
     end
@@ -329,7 +332,7 @@ end
 --- Checks chest inventory for fulfilled upgrades and applies them.
 --- @param entry Entry
 function Inhabitants.try_auto_upgrades(entry)
-    local house_details = Inhabitants.HousingCore.get(entry)
+    local house_details = HousingCore.get(entry)
     local entity = entry[EK.entity]
     local inventory = entity.get_inventory(defines.inventory.chest)
 

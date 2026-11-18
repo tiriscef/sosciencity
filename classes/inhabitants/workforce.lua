@@ -5,7 +5,11 @@ local WarningType = require("enums.warning-type")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 
+local Communication = require("classes.communication")
 local DiseaseGroup = require("classes.groups.disease-group")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+local Subentities = require("classes.subentities")
 
 local castes = Castes.values
 
@@ -19,6 +23,9 @@ local max = math.max
 local floor = math.floor
 local HEALTHY = DiseaseGroup.HEALTHY
 
+--- Static class for the employment of inhabitants in buildings.
+local Workforce = {}
+
 ---------------------------------------------------------------------------------------------------
 -- << workforce >>
 -- Manufactories need inhabitants as workers.
@@ -29,13 +36,13 @@ local HEALTHY = DiseaseGroup.HEALTHY
 --- Returns the number of employable inhabitants living in the housing entry.
 --- @param entry Entry with inhabitants
 --- @return integer
-function Inhabitants.get_employable_count(entry)
+function Workforce.get_employable_count(entry)
     local caste = castes[entry[EK.type]]
     local healthy = entry[EK.diseases][HEALTHY]
     local willing = floor(healthy * (1 - entry[EK.strike_level] * (1 - caste.full_strike_worker_fraction)))
     return max(0, willing - entry[EK.employed])
 end
-local get_employable_count = Inhabitants.get_employable_count
+local get_employable_count = Workforce.get_employable_count
 
 --- Tries to employ the given number of people from the house for the manufactory and
 --- returns the number of actually employed workers.
@@ -93,7 +100,7 @@ end
 --- @param entity LuaEntity
 --- @param acceptable_castes Type[]
 --- @return integer
-function Inhabitants.count_employable_in_reach(entity, acceptable_castes)
+function Workforce.count_employable_in_reach(entity, acceptable_castes)
     local site = {[EK.entity] = entity}
     local surface_index = entity.surface.index
     local count = 0
@@ -114,7 +121,7 @@ end
 --- Fires all the workers working in this building.
 --- Must be called if a building with workforce gets deconstructed.
 --- @param manufactory Entry with workforce
-function Inhabitants.unemploy_all_workers(manufactory)
+function Workforce.unemploy_all_workers(manufactory)
     local workers = manufactory[EK.workers]
     local manufactory_number = manufactory[EK.unit_number]
 
@@ -204,7 +211,7 @@ local function unemploy_inhabitants(house, count)
 
     return count
 end
-Inhabitants.unemploy_inhabitants = unemploy_inhabitants
+Workforce.unemploy_inhabitants = unemploy_inhabitants
 
 --- Ends the employment of all employed inhabitants of this house.
 --- Must be called if a house gets deconstructed.
@@ -212,13 +219,13 @@ Inhabitants.unemploy_inhabitants = unemploy_inhabitants
 local function unemploy_all_inhabitants(house)
     unemploy_inhabitants(house, house[EK.employed])
 end
-Inhabitants.unemploy_all_inhabitants = unemploy_all_inhabitants
+Workforce.unemploy_all_inhabitants = unemploy_all_inhabitants
 
 --- Update function for entries with workforce.
 --- Looks for employees if this entry needs them, or fires them if there are too many.
 --- @param manufactory Entry with workforce
 --- @param workforce table workforce specification
-function Inhabitants.update_workforce(manufactory, workforce)
+function Workforce.update_workforce(manufactory, workforce)
     local nominal_count = manufactory[EK.target_worker_count] or workforce.count
     local current_workers = manufactory[EK.worker_count]
 
@@ -240,7 +247,7 @@ end
 --- Returns a percentage on how satisfied the given building's need for workers is.
 --- @param manufactory Entry
 --- @return number ratio between 0 and 1+
-function Inhabitants.evaluate_workforce(manufactory)
+function Workforce.evaluate_workforce(manufactory)
     local workforce = get_building_details(manufactory).workforce
 
     if not workforce then
@@ -265,7 +272,7 @@ end
 --- The happiness_weight field on the WorkforceDefinition controls how much the building profits from happiness.
 --- @param manufactory Entry
 --- @return number multiplier around 1
-function Inhabitants.evaluate_worker_happiness(manufactory)
+function Workforce.evaluate_worker_happiness(manufactory)
     local workforce = get_building_details(manufactory).workforce
     if not workforce or not workforce.happiness_weight then
         return 1
@@ -294,7 +301,7 @@ end
 --- Returns the count of employed workers this building has.
 --- @param manufactory Entry
 --- @return integer
-function Inhabitants.get_workforce_count(manufactory)
+function Workforce.get_workforce_count(manufactory)
     local workers = 0
 
     for unit_number, worker_count in pairs(manufactory[EK.workers]) do
@@ -307,3 +314,5 @@ function Inhabitants.get_workforce_count(manufactory)
 
     return workers
 end
+
+return Workforce

@@ -5,6 +5,8 @@ local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
 local DiseaseGroup = require("classes.groups.disease-group")
+local Inhabitants = require("classes.inhabitants")
+local HousingCore = require("classes.inhabitants.housing-core")
 
 local floor = math.floor
 local min = math.min
@@ -17,7 +19,7 @@ local get_free_capacity
 function Inhabitants.load_housing_redistribution()
     take_from_house = Inhabitants.take_from_house
     add_to_house = Inhabitants.add_to_house
-    get_free_capacity = Inhabitants.HousingCore.get_free_capacity
+    get_free_capacity = HousingCore.get_free_capacity
 end
 
 --- Redistributes healthy inhabitants from lower-priority houses to fill vacancies in

@@ -3,6 +3,8 @@ local WarningType = require("enums.warning-type")
 
 local Castes = require("constants.castes")
 
+local Inhabitants = require("classes.inhabitants")
+
 local castes = Castes.values
 local Tables = Tirislib.Tables
 local Utils = Tirislib.Utils

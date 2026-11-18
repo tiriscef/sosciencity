@@ -2,8 +2,8 @@ local Castes = require("constants.castes")
 local EK = require("enums.entry-key")
 local Housing = require("constants.housing")
 
-Inhabitants.HousingCore = {}
-local HousingCore = Inhabitants.HousingCore
+--- Static class for looking up the definition and capacity of houses.
+local HousingCore = {}
 
 local castes = Castes.values
 local houses = Housing.values
@@ -38,3 +38,5 @@ end
 function HousingCore.allowes_caste(house, caste_id)
     return Housing.allows_caste(house, castes[caste_id])
 end
+
+return HousingCore

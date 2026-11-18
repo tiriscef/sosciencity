@@ -86,7 +86,7 @@ local function set_locals()
     last_index_per_group = storage.last_index_per_group
 
     -- These systems are loaded after the register, so we local them during on_load
-    fire_all_workers = Inhabitants.unemploy_all_workers
+    fire_all_workers = late_require("classes.inhabitants.workforce").unemploy_all_workers
     add_fear = Inhabitants.add_fear
 
     add_subentities = Subentities.add_all_for
@@ -97,7 +97,7 @@ local function set_locals()
     unsubscribe_neighborhood = Neighborhood.unsubscribe_all
     remove_notifications = Communication.remove_notifications
 
-    update_workforce = Inhabitants.update_workforce
+    update_workforce = late_require("classes.inhabitants.workforce").update_workforce
 end
 
 function Register.init()

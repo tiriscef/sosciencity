@@ -1,8 +1,12 @@
 local EK = require("enums.entry-key")
 
+local Buildings = require("constants.buildings")
 local Color = require("constants.color")
-local Types = require("constants.types")
 local Housing = require("constants.housing")
+local Types = require("constants.types")
+
+local HousingCore = require("classes.inhabitants.housing-core")
+local Workforce = require("classes.inhabitants.workforce")
 
 --- Static class for all the functions that visualise the mod's concepts.
 local Visualisation = {}
@@ -20,7 +24,6 @@ local Visualisation = {}
 
 local try_get = Register.try_get
 local types = Types.definitions
-local Buildings = require("constants.buildings")
 local get_building_details = Buildings.get
 
 local max = math.max
@@ -244,7 +247,7 @@ end
 
 local function show_inhabitants(player_id, entry, created_highlights)
     local inhabitants = entry[EK.inhabitants]
-    local capacity = Inhabitants.HousingCore.get_capacity(entry)
+    local capacity = HousingCore.get_capacity(entry)
     local entity = entry[EK.entity]
     local players = {player_id}
 
@@ -454,7 +457,7 @@ end
 
 local function highlight_free_workers(player, house, created_highlights)
     local entity = house[EK.entity]
-    local free = Inhabitants.get_employable_count(house)
+    local free = Workforce.get_employable_count(house)
 
     created_highlights[#created_highlights + 1] =
         rendering.draw_text {

@@ -12,10 +12,11 @@ local Inhabitants = require("classes.inhabitants")
 local Neighborhood = require("classes.neighborhood")
 local Register = require("classes.register")
 local Subentities = require("classes.subentities")
+local Workforce = require("classes.inhabitants.workforce")
 
 local get_building_details = Buildings.get
-local evaluate_workforce = Inhabitants.evaluate_workforce
-local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
+local evaluate_workforce = Workforce.evaluate_workforce
+local evaluate_worker_happiness = Workforce.evaluate_worker_happiness
 local has_power = Subentities.has_power
 local try_get = Register.try_get
 local floor = math.floor

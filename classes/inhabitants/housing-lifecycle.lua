@@ -8,6 +8,9 @@ local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
+local Workforce = require("classes.inhabitants.workforce")
+local HousingCore = require("classes.inhabitants.housing-core")
 
 local Tables = Tirislib.Tables
 local random = math.random
@@ -31,8 +34,8 @@ function Inhabitants.load_housing_lifecycle()
     update_housing_census = Inhabitants.update_housing_census
     remove_housing_census = Inhabitants.remove_housing_census
     disease_progress_updaters = Inhabitants.disease_progress_updaters
-    get_housing_details = Inhabitants.HousingCore.get
-    get_capacity = Inhabitants.HousingCore.get_capacity
+    get_housing_details = HousingCore.get
+    get_capacity = HousingCore.get_capacity
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -171,7 +174,7 @@ end
 --- @param cause DeconstructionCause
 --- @param event table?
 function Inhabitants.remove_house(entry, cause, event)
-    Inhabitants.unemploy_all_inhabitants(entry)
+    Workforce.unemploy_all_inhabitants(entry)
     remove_housing_census(entry)
 
     local unit_number = entry[EK.unit_number]

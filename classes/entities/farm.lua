@@ -15,10 +15,11 @@ local Inhabitants = require("classes.inhabitants")
 local Inventories = require("classes.inventories")
 local Pruning = require("classes.entities.pruning")
 local Register = require("classes.register")
+local Workforce = require("classes.inhabitants.workforce")
 
 local get_building_details = Buildings.get
-local evaluate_workforce = Inhabitants.evaluate_workforce
-local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
+local evaluate_workforce = Workforce.evaluate_workforce
+local evaluate_worker_happiness = Workforce.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local multiply_percentages = Entity.multiply_percentages
 local flora = Biology.flora

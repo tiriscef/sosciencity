@@ -18,6 +18,7 @@ local AutoNames = require("classes.auto-names")
 local Gui = require("classes.gui")
 local BuildingOverview = require("classes.guis.building-overview")
 local Elements = require("classes.guis.elements")
+local Workforce = require("classes.inhabitants.workforce")
 
 -- local often used globals for microscopic performance gains
 
@@ -152,7 +153,7 @@ local function update_general_building_details(container, entry, player_id)
             building_data["staff-target-input"].text = tostring(target_count)
         end
 
-        local staff_performance = Inhabitants.evaluate_workforce(entry)
+        local staff_performance = Workforce.evaluate_workforce(entry)
         Datalist.set_kv_pair_value(
             building_data,
             "staff-performance",

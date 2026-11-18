@@ -15,6 +15,8 @@ local DrinkingWater = require("constants.drinking-water")
 local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 
+local Inhabitants = require("classes.inhabitants")
+
 local castes = Castes.values
 local food_values = Food.values
 local water_values = DrinkingWater.values

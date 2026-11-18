@@ -7,6 +7,7 @@ local Housing = require("constants.housing")
 
 local Helpers = require("tests.integration.helpers")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local HousingCore = require("classes.inhabitants.housing-core")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface
@@ -132,7 +133,7 @@ Tirislib.Testing.add_test_case(
 
         local expected_capacity = math.floor(
             Housing.values["test-house"].room_count / Castes.values[Type.clockwork].required_room_count)
-        Assert.equals(Inhabitants.HousingCore.get_capacity(house), expected_capacity, "capacity should be floor(room_count / required_room_count)")
+        Assert.equals(HousingCore.get_capacity(house), expected_capacity, "capacity should be floor(room_count / required_room_count)")
     end,
     setup,
     teardown

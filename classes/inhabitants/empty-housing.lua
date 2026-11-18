@@ -6,6 +6,8 @@ local Type = require("enums.type")
 local Housing = require("constants.housing")
 
 local Market = require("classes.entities.market")
+local Inhabitants = require("classes.inhabitants")
+local HousingCore = require("classes.inhabitants.housing-core")
 
 local Tables = Tirislib.Tables
 local add_common_sprite = Subentities.add_common_sprite
@@ -48,7 +50,7 @@ local function update_empty_house(entry)
     Inhabitants.try_auto_upgrades(entry)
 
     local current_comfort = entry[EK.current_comfort] or 0
-    local max_comfort = Inhabitants.HousingCore.get(entry).max_comfort
+    local max_comfort = HousingCore.get(entry).max_comfort
     local label = {
         "sosciencity-custom-status.no-caste-assigned"
     }
@@ -86,7 +88,7 @@ Register.set_entity_updater(Type.empty_house, update_empty_house)
 --- @param entry Entry
 --- @param event table?
 local function create_empty_house(entry, event)
-    local house_details = Inhabitants.HousingCore.get(entry)
+    local house_details = HousingCore.get(entry)
     entry[EK.current_comfort] = house_details.starting_comfort
     entry[EK.target_comfort] = house_details.starting_comfort
 
@@ -153,7 +155,7 @@ local function remove_empty_house(entry, cause, event)
     if cause == DeconstructionCause.mined then
         local buffer = event and event.buffer
         if buffer then
-            local house_details = Inhabitants.HousingCore.get(entry)
+            local house_details = HousingCore.get(entry)
             for _, item in pairs(Inhabitants.HousingUpgrades.get_total_refund(house_details, entry[EK.current_comfort] or 0)) do
                 buffer.insert({name = item.name, count = item.count})
             end

@@ -4,6 +4,7 @@ local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 
 local Helpers = require("tests.integration.helpers")
+local Workforce = require("classes.inhabitants.workforce")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface
@@ -16,7 +17,7 @@ Tirislib.Testing.add_test_case(
         local hospital = Helpers.create_and_register(test_surface, "test-hospital", {5, 0})
         local workforce = Buildings.get(hospital).workforce
 
-        Inhabitants.update_workforce(hospital, workforce)
+        Workforce.update_workforce(hospital, workforce)
 
         Assert.greater_than(hospital[EK.worker_count], 0, "hospital should have hired workers")
     end,
@@ -35,7 +36,7 @@ Tirislib.Testing.add_test_case(
     function()
         local hospital = Helpers.create_and_register(test_surface, "test-hospital", {0, 0})
 
-        local ratio = Inhabitants.evaluate_workforce(hospital)
+        local ratio = Workforce.evaluate_workforce(hospital)
 
         Assert.equals(ratio, 0, "workforce ratio should be 0 with no workers")
     end,
@@ -56,9 +57,9 @@ Tirislib.Testing.add_test_case(
         local hospital = Helpers.create_and_register(test_surface, "test-hospital", {5, 0})
         local workforce = Buildings.get(hospital).workforce
 
-        Inhabitants.update_workforce(hospital, workforce)
+        Workforce.update_workforce(hospital, workforce)
 
-        local ratio = Inhabitants.evaluate_workforce(hospital)
+        local ratio = Workforce.evaluate_workforce(hospital)
 
         Assert.greater_than(ratio, 0, "workforce ratio should be above 0")
         Assert.less_than(ratio, 1, "workforce ratio should be below 1 with only 5 of 20 workers")
@@ -80,10 +81,10 @@ Tirislib.Testing.add_test_case(
         local hospital = Helpers.create_and_register(test_surface, "test-hospital", {5, 0})
         local workforce = Buildings.get(hospital).workforce
 
-        Inhabitants.update_workforce(hospital, workforce)
+        Workforce.update_workforce(hospital, workforce)
         Assert.greater_than(hospital[EK.worker_count], 0, "should have hired workers before clearing")
 
-        Inhabitants.unemploy_all_workers(hospital)
+        Workforce.unemploy_all_workers(hospital)
 
         Assert.equals(hospital[EK.worker_count], 0, "worker_count should be 0 after unemploy_all")
         Assert.equals(Tirislib.Tables.count(hospital[EK.workers]), 0, "workers table should be empty")
@@ -104,15 +105,15 @@ Tirislib.Testing.add_test_case(
     function()
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.plasma, 10)
 
-        local before = Inhabitants.get_employable_count(house)
+        local before = Workforce.get_employable_count(house)
         Assert.equals(before, 10, "all 10 inhabitants should be employable before hiring")
 
         local hospital = Helpers.create_and_register(test_surface, "test-hospital", {5, 0})
         local workforce = Buildings.get(hospital).workforce
 
-        Inhabitants.update_workforce(hospital, workforce)
+        Workforce.update_workforce(hospital, workforce)
 
-        local after = Inhabitants.get_employable_count(house)
+        local after = Workforce.get_employable_count(house)
         Assert.less_than(after, before, "employable count should decrease after hiring")
     end,
     function()
@@ -132,7 +133,7 @@ Tirislib.Testing.add_test_case(
         local hospital = Helpers.create_and_register(test_surface, "test-hospital", {5, 0})
         local workforce = Buildings.get(hospital).workforce
 
-        Inhabitants.update_workforce(hospital, workforce)
+        Workforce.update_workforce(hospital, workforce)
 
         Assert.equals(hospital[EK.worker_count], 0, "hospital should not hire clockwork workers (needs plasma)")
     end,
@@ -157,7 +158,7 @@ Tirislib.Testing.add_test_case(
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.ember, 10)
         house[EK.strike_level] = 1
 
-        Assert.equals(Inhabitants.get_employable_count(house), 0,
+        Assert.equals(Workforce.get_employable_count(house), 0,
             "fully striking Ember house should have 0 employable inhabitants")
     end,
     function()
@@ -177,7 +178,7 @@ Tirislib.Testing.add_test_case(
         local house = Helpers.create_inhabited_house(test_surface, {0, 0}, Type.orchid, 10)
         house[EK.strike_level] = 1
 
-        local employable = Inhabitants.get_employable_count(house)
+        local employable = Workforce.get_employable_count(house)
         Assert.greater_than(employable, 0, "fully striking Orchid house should still have some willing workers")
         Assert.less_than(employable, 10, "fully striking Orchid house should not have all inhabitants willing")
     end,
@@ -198,7 +199,7 @@ Tirislib.Testing.add_test_case(
         local manufactory = Helpers.create_and_register(test_surface, "test-ember-manufactory", {5, 0})
         local workforce = Buildings.get(manufactory).workforce
 
-        Inhabitants.update_workforce(manufactory, workforce)
+        Workforce.update_workforce(manufactory, workforce)
         Assert.greater_than(manufactory[EK.worker_count], 0, "should have hired workers before strike")
 
         -- force happiness below full_strike_threshold (Ember: 2) and run update
@@ -227,7 +228,7 @@ Tirislib.Testing.add_test_case(
         local manufactory = Helpers.create_and_register(test_surface, "test-orchid-manufactory", {5, 0})
         local workforce = Buildings.get(manufactory).workforce
 
-        Inhabitants.update_workforce(manufactory, workforce)
+        Workforce.update_workforce(manufactory, workforce)
         Assert.greater_than(manufactory[EK.worker_count], 0, "should have hired workers before strike")
 
         -- force happiness below full_strike_threshold (Orchid: 1) and run update

@@ -10,6 +10,7 @@ local AgeGroup = require("classes.groups.age-group")
 local DiseaseGroup = require("classes.groups.disease-group")
 local GenderGroup = require("classes.groups.gender-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local HousingCore = require("classes.inhabitants.housing-core")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface
@@ -63,7 +64,7 @@ Tirislib.Testing.add_test_case(
         low_priority[EK.housing_priority] = 0
 
         -- fill the high priority house to capacity first
-        local fill_group = InhabitantGroup.new(Type.clockwork, Inhabitants.HousingCore.get_capacity(high_priority))
+        local fill_group = InhabitantGroup.new(Type.clockwork, HousingCore.get_capacity(high_priority))
         InhabitantGroup.merge(high_priority, fill_group)
         Inhabitants.update_free_space_status(high_priority)
 
@@ -87,7 +88,7 @@ Tirislib.Testing.add_test_case(
         local house = Inhabitants.try_allow_for_caste(
             Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
 
-        local capacity = Inhabitants.HousingCore.get_capacity(house)
+        local capacity = HousingCore.get_capacity(house)
         local free_space = 2
 
         -- fill to near capacity
@@ -267,7 +268,7 @@ Tirislib.Testing.add_test_case(
             Helpers.create_and_register(test_surface, "test-house", {0, 0}), Type.clockwork, false)
 
         -- fill to capacity
-        local group = InhabitantGroup.new(Type.clockwork, Inhabitants.HousingCore.get_capacity(house))
+        local group = InhabitantGroup.new(Type.clockwork, HousingCore.get_capacity(house))
         InhabitantGroup.merge(house, group)
         Inhabitants.update_free_space_status(house)
 
