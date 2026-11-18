@@ -6,6 +6,7 @@ local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
 local Communication = require("classes.communication")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 -- The grouped alerts record game.tick, so these tests let real ticks pass and update at game.tick,

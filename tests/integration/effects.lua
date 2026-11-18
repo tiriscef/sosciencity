@@ -4,6 +4,7 @@ local Buildings = require("constants.buildings")
 local Types = require("constants.types")
 local Helpers = require("tests.integration.helpers")
 local Effects = require("classes.effects")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

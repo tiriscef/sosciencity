@@ -8,6 +8,7 @@ local DiseaseGroup = require("classes.groups.disease-group")
 local Inhabitants = require("classes.inhabitants")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Technologies = require("classes.technologies")
+local Register = require("classes.register")
 
 local floor = math.floor
 local min = math.min

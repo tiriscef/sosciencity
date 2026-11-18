@@ -21,9 +21,9 @@ local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
 local DiseaseGroup = require("classes.groups.disease-group")
 local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
 
 local diseases = Diseases.values
-local Register = Register
 local floor = math.floor
 local format = string.format
 local Table = Tirislib.Tables

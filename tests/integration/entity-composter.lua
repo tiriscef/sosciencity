@@ -3,6 +3,7 @@ local Type = require("enums.type")
 
 local Helpers = require("tests.integration.helpers")
 local Inventories = require("classes.inventories")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

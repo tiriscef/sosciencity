@@ -12,8 +12,8 @@ local Gui = require("classes.gui")
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Register = require("classes.register")
 
-local Register = Register
 local get_building_details = Buildings.get
 local format = string.format
 local display_item_stack = Tirislib.Locales.display_item_stack

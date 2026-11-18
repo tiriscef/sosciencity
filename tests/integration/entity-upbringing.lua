@@ -10,6 +10,7 @@ local Upbringing = require("classes.entities.upbringing")
 local Subentities = require("classes.subentities")
 local Inventories = require("classes.inventories")
 local Entity = require("classes.entity")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local Table = Tirislib.Tables

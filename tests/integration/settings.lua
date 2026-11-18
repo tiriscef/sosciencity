@@ -4,6 +4,7 @@ local Time = require("constants.time")
 local Helpers = require("tests.integration.helpers")
 local Communication = require("classes.communication")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 -- Smoke tests for the runtime map settings: every setting at a non-default value, followed by the

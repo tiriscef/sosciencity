@@ -12,6 +12,7 @@ local Inhabitants = require("classes.inhabitants")
 local Workforce = require("classes.inhabitants.workforce")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Communication = require("classes.communication")
+local Register = require("classes.register")
 
 local Tables = Tirislib.Tables
 local random = math.random

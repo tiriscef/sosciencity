@@ -3,6 +3,7 @@ local EK = require("enums.entry-key")
 local Helpers = require("tests.integration.helpers")
 local Market = require("classes.entities.market")
 local Inventories = require("classes.inventories")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

@@ -40,11 +40,11 @@ local Locale = require("classes.locale")
 local Technologies = require("classes.technologies")
 local Neighborhood = require("classes.neighborhood")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
-local Register = Register
 local floor = math.floor
 local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step

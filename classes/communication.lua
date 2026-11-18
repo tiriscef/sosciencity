@@ -9,6 +9,7 @@ local Speakers = require("constants.speakers")
 local Time = require("constants.time")
 
 local Scheduler = require("classes.scheduler")
+local late_require = require("classes.late-require")
 
 --- Static class for all the functions that tell the player something through various means.
 --- Flying texts, speaker messages, reports, warnings, informations, notifications.
@@ -98,7 +99,10 @@ local function generate_speakers_list()
     end
 end
 
+local try_get -- set during load, Register loads after this file
+
 local function set_locals()
+    try_get = late_require("classes.register").try_get
     --logs = storage.logs
     reports = storage.reports
     current_reports = storage.current_reports
@@ -540,7 +544,7 @@ end
 --- Every warning with an alert is raised in each update while the problem lasts.
 --- @return Entry?
 local function get_entry_with_current_alert(unit_number, warning_tick)
-    local entry = Register.try_get(unit_number)
+    local entry = try_get(unit_number)
     if entry and entry[EK.last_update] <= warning_tick and entry[EK.entity].valid then
         return entry
     end

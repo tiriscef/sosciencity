@@ -5,6 +5,7 @@ local DeconstructionCause = require("enums.deconstruction-cause")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Entity = require("classes.entity")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 
 local Helpers = {}
 

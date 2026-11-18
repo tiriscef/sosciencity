@@ -9,6 +9,7 @@ local Helpers = require("tests.integration.helpers")
 local Hospital = require("classes.entities.hospital")
 local DiseaseGroup = require("classes.groups.disease-group")
 local ImmunityGroup = require("classes.groups.immunity-group")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 -- Disease 99001 (test-disease-simple): treatable, no cure items, workload 1

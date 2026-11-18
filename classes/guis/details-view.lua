@@ -23,10 +23,10 @@ local Locale = require("classes.locale")
 local Communication = require("classes.communication")
 local Entity = require("classes.entity")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 
 -- local often used globals for microscopic performance gains
 
-local Register = Register
 local get_building_details = Buildings.get
 local type_definitions = Types.definitions
 

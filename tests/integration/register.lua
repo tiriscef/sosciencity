@@ -5,6 +5,7 @@ local DeconstructionCause = require("enums.deconstruction-cause")
 local UpdateGroup = require("constants.update-groups")
 
 local Helpers = require("tests.integration.helpers")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

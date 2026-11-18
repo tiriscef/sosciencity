@@ -1,6 +1,8 @@
 local ConnectionType = require("enums.connection-type")
 local EK = require("enums.entry-key")
 
+local Register = require("classes.register")
+
 --- Static class that takes care of the relations between entities.
 local Neighborhood = {}
 
@@ -19,7 +21,6 @@ local Neighborhood = {}
 ]]
 -- local often used globals for giant performance gains
 
-local Register = Register
 local try_get = Register.try_get
 local get_type_definition = require("constants.types").get
 local get_building_details = require("constants.buildings").get

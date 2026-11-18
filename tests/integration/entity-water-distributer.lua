@@ -2,6 +2,7 @@ local EK = require("enums.entry-key")
 
 local DrinkingWater = require("constants.drinking-water")
 local Helpers = require("tests.integration.helpers")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

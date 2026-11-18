@@ -11,6 +11,7 @@ local HousingCore = require("classes.inhabitants.housing-core")
 local Subentities = require("classes.subentities")
 local Locale = require("classes.locale")
 local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
 
 local Tables = Tirislib.Tables
 local add_common_sprite = Subentities.add_common_sprite

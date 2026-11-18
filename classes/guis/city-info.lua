@@ -23,10 +23,10 @@ local Elements = require("classes.guis.elements")
 local Locale = require("classes.locale")
 local Technologies = require("classes.technologies")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 
 -- local often used globals for microscopic performance gains
 local castes = Castes.values
-local Register = Register
 local floor = math.floor
 local max = math.max
 local min = math.min

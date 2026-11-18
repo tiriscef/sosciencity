@@ -11,6 +11,7 @@ local DiseaseGroup = require("classes.groups.disease-group")
 local Statistics = require("classes.statistics")
 local Locale = require("classes.locale")
 local Technologies = require("classes.technologies")
+local Register = require("classes.register")
 
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor

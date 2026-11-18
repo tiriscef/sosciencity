@@ -15,6 +15,7 @@ local HousingCore = require("classes.inhabitants.housing-core")
 local Technologies = require("classes.technologies")
 local Communication = require("classes.communication")
 local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
 
 local castes = Castes.values
 local try_get = Register.try_get

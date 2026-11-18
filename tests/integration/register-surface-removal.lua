@@ -4,6 +4,7 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 local Helpers = require("tests.integration.helpers")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 -- Surfaces get deleted at the end of the tick, so every test that deletes one needs a fresh name.

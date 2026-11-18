@@ -9,6 +9,7 @@ local HousingCore = require("classes.inhabitants.housing-core")
 local late_require = require("classes.late-require")
 local Workforce = require("classes.inhabitants.workforce")
 local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
 
 --- Static class for all the functions that visualise the mod's concepts.
 local Visualisation = {}

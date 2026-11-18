@@ -16,7 +16,7 @@ local Communication = require("classes.communication")
 local floor = math.floor
 
 --- Static class that stores and manages entities in hopefully performant ways.
-Register = {}
+local Register = {}
 
 --- An Entry from the Register, encapsulating a LuaEntity
 --- @class Entry

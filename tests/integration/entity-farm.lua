@@ -6,6 +6,7 @@ local Helpers = require("tests.integration.helpers")
 local Farm = require("classes.entities.farm")
 local Pruning = require("classes.entities.pruning")
 local Entity = require("classes.entity")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

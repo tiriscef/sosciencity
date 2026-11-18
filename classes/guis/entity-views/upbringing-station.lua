@@ -18,9 +18,9 @@ local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
 local Technologies = require("classes.technologies")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 
 local castes = Castes.values
-local Register = Register
 local get_building_details = Buildings.get
 local format = string.format
 local display_percentage = Tirislib.Locales.display_percentage

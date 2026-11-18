@@ -12,6 +12,7 @@ local GenderGroup = require("classes.groups.gender-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Inhabitants = require("classes.inhabitants")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

@@ -17,6 +17,7 @@ local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Technologies = require("classes.technologies")
 local Communication = require("classes.communication")
 local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
 
 local castes = Castes.values
 local disease_values = Diseases.values

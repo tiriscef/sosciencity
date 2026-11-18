@@ -8,6 +8,7 @@ local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
 local Inventories = require("classes.inventories")
+local Register = require("classes.register")
 local Assert = Tirislib.Testing.Assert
 
 local Table = Tirislib.Tables

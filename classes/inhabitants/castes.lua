@@ -6,6 +6,7 @@ local Castes = require("constants.castes")
 local Inhabitants = require("classes.inhabitants")
 local Technologies = require("classes.technologies")
 local Communication = require("classes.communication")
+local Register = require("classes.register")
 
 local castes = Castes.values
 local Tables = Tirislib.Tables
