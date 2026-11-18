@@ -3,6 +3,7 @@ local EK = require("enums.entry-key")
 local Buildings = require("constants.buildings")
 local Types = require("constants.types")
 local Helpers = require("tests.integration.helpers")
+local Effects = require("classes.effects")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

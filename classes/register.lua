@@ -9,6 +9,7 @@ local UpdateGroup = require("constants.update-groups")
 
 local AutoNames = require("classes.auto-names")
 local late_require = require("classes.late-require")
+local Effects = require("classes.effects")
 
 local floor = math.floor
 

@@ -65,7 +65,6 @@ local LEGACY_GLOBALS = {
     -- classes
     "Communication",
     "Consumption",
-    "Effects",
     "Entity",
     "Inhabitants",
     "Inventories",

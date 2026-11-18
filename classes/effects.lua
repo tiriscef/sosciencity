@@ -1,7 +1,7 @@
 local EK = require("enums.entry-key")
 
 --- Static class that applies sosciencity's effect bonuses to entities.
-Effects = {}
+local Effects = {}
 
 --[[
     Data this class stores in storage
