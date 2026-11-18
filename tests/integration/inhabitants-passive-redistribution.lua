@@ -6,6 +6,7 @@ local TechEffects = require("constants.tech-effects")
 
 local Helpers = require("tests.integration.helpers")
 local DiseaseGroup = require("classes.groups.disease-group")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

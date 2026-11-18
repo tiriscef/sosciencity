@@ -7,6 +7,7 @@ local Diseases = require("constants.diseases")
 local Helpers = require("tests.integration.helpers")
 local DiseaseGroup = require("classes.groups.disease-group")
 local Inventories = require("classes.inventories")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

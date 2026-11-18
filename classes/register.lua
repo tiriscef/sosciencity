@@ -90,7 +90,7 @@ local function set_locals()
 
     -- These systems are loaded after the register, so we local them during on_load
     fire_all_workers = late_require("classes.inhabitants.workforce").unemploy_all_workers
-    add_fear = Inhabitants.add_fear
+    add_fear = late_require("classes.inhabitants").add_fear
 
     add_subentities = Subentities.add_all_for
     remove_subentities = Subentities.remove_all_for

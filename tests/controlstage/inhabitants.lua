@@ -14,6 +14,7 @@ local DiseaseGroup = require("classes.groups.disease-group")
 local GenderGroup = require("classes.groups.gender-group")
 local ImmunityGroup = require("classes.groups.immunity-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
 
 local Table = Tirislib.Tables
 

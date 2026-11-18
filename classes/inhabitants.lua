@@ -15,7 +15,7 @@ local Technologies = require("classes.technologies")
 local Communication = require("classes.communication")
 
 --- Static class that handles the behaviour of the people.
-Inhabitants = {}
+local Inhabitants = {}
 
 --[[
     Data this class stores in storage

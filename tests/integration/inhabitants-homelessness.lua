@@ -11,6 +11,7 @@ local DiseaseGroup = require("classes.groups.disease-group")
 local GenderGroup = require("classes.groups.gender-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local HousingCore = require("classes.inhabitants.housing-core")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

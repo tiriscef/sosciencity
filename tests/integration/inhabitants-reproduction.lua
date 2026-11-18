@@ -3,6 +3,7 @@ local Type = require("enums.type")
 
 local Helpers = require("tests.integration.helpers")
 local GenderGroup = require("classes.groups.gender-group")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

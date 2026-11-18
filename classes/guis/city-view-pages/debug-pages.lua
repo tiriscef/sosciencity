@@ -15,6 +15,7 @@ local DebugWidgets = require("classes.guis.debug-widgets")
 local Elements = require("classes.guis.elements")
 local DiseaseGroup = require("classes.groups.disease-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
 
 local CONTEXT = "debug-broadcast"
 local HEALTHY = DiseaseGroup.HEALTHY

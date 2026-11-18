@@ -9,6 +9,7 @@ local AgeGroup = require("classes.groups.age-group")
 local DiseaseGroup = require("classes.groups.disease-group")
 local ImmunityGroup = require("classes.groups.immunity-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

@@ -12,6 +12,7 @@ local Time = require("constants.time")
 local Helpers = require("tests.integration.helpers")
 local AgeGroup = require("classes.groups.age-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

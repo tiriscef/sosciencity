@@ -39,7 +39,7 @@ local Visualisation = require("classes.visualisation")
 require("classes.item-requests")
 require("classes.inventories")
 local Consumption = require("classes.consumption")
-require("classes.inhabitants")
+local Inhabitants = require("classes.inhabitants")
 -- parts of the Inhabitants class; they add their functions to it
 require("classes.inhabitants.castes")
 require("classes.inhabitants.housing-environment")

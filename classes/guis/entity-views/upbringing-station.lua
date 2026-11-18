@@ -17,9 +17,9 @@ local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
 local Technologies = require("classes.technologies")
+local Inhabitants = require("classes.inhabitants")
 
 local castes = Castes.values
-local Inhabitants = Inhabitants
 local Register = Register
 local get_building_details = Buildings.get
 local format = string.format

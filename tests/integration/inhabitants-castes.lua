@@ -4,6 +4,7 @@ local Castes = require("constants.castes")
 
 local Helpers = require("tests.integration.helpers")
 local Technologies = require("classes.technologies")
+local Inhabitants = require("classes.inhabitants")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

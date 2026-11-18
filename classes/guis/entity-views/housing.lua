@@ -39,11 +39,11 @@ local Consumption = require("classes.consumption")
 local Locale = require("classes.locale")
 local Technologies = require("classes.technologies")
 local Neighborhood = require("classes.neighborhood")
+local Inhabitants = require("classes.inhabitants")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
-local Inhabitants = Inhabitants
 local Register = Register
 local floor = math.floor
 local format = string.format
