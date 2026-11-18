@@ -4,6 +4,10 @@ local Housing = require("constants.housing")
 local Castes = require("constants.castes")
 local HousingTrait = require("enums.housing-trait")
 
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
+
 local CONTEXT = "housing-balancing"
 
 ---------------------------------------------------------------------------------------------------
@@ -309,7 +313,7 @@ local function build_house_editor_fields(fields_flow, house_name, overrides, pla
     local room_row = fields_flow.add {type = "flow", direction = "horizontal"}
     room_row.style.vertical_align = "center"
     room_row.add {type = "label", caption = {"city-view.housing-balancing-edit-room-count"}}
-    local room_field = Gui.Elements.NumericTextField.create(room_row, nil, {
+    local room_field = Elements.NumericTextField.create(room_row, nil, {
         min = 0,
         step = 1,
         normal_font_color = EDITOR_FONT_COLOR,
@@ -359,7 +363,7 @@ local function build_house_editor_fields(fields_flow, house_name, overrides, pla
 end
 
 local function build_house_editor(container, player_index)
-    local content = Gui.Elements.CollapsibleSection.heading_2(
+    local content = Elements.CollapsibleSection.heading_2(
         container,
         {"city-view.housing-balancing-house-editor"},
         {collapsed = true}
@@ -393,7 +397,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 local function build_caste_editor(container, player_index)
-    local content = Gui.Elements.CollapsibleSection.heading_2(
+    local content = Elements.CollapsibleSection.heading_2(
         container,
         {"city-view.housing-balancing-caste-editor"},
         {collapsed = true}
@@ -430,7 +434,7 @@ local function build_caste_editor(container, player_index)
         }
         name_lbl.style.width = EDITOR_CASTE_NAME_WIDTH
 
-        local rrc_field = Gui.Elements.NumericTextField.create(tbl, nil, {
+        local rrc_field = Elements.NumericTextField.create(tbl, nil, {
             min = 0,
             normal_font_color = EDITOR_FONT_COLOR,
             numeric_confirmed_event = "hbal_caste_field_confirmed",
@@ -441,7 +445,7 @@ local function build_caste_editor(container, player_index)
         rrc_field.style.width = EDITOR_FIELD_WIDTH
 
         for _, trait_id in pairs(ALL_TRAIT_IDS) do
-            local pref_field = Gui.Elements.NumericTextField.create(tbl, nil, {
+            local pref_field = Elements.NumericTextField.create(tbl, nil, {
                 step = 1,
                 normal_font_color = EDITOR_FONT_COLOR,
                 numeric_confirmed_event = "hbal_caste_field_confirmed",
@@ -538,7 +542,7 @@ Gui.set_checked_state_handler(
     end
 )
 
-Gui.Elements.NumericTextField.set_confirmed_handler(
+Elements.NumericTextField.set_confirmed_handler(
     "hbal_house_roomcount_confirmed",
     function(event, result)
         local player_index = event.player_index
@@ -554,7 +558,7 @@ Gui.Elements.NumericTextField.set_confirmed_handler(
     end
 )
 
-Gui.Elements.NumericTextField.set_confirmed_handler(
+Elements.NumericTextField.set_confirmed_handler(
     "hbal_caste_field_confirmed",
     function(event, result)
         local player_index = event.player_index
@@ -583,7 +587,7 @@ Gui.Elements.NumericTextField.set_confirmed_handler(
 -- << Page registration >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "housing-balancing",
     category = "debug",
     localised_name = {"city-view.housing-balancing"},
@@ -600,7 +604,7 @@ Gui.CityView.add_page {
         local static_flow = main_flow.add {type = "flow", direction = "vertical"}
         Gui.register_element(static_flow, CONTEXT, "static_flow", player_index)
 
-        Gui.Elements.Utils.separator_line(main_flow)
+        Elements.Utils.separator_line(main_flow)
 
         -- Purchasable trait toggles (placed here because they affect the caste table below)
         local traits_row = main_flow.add {type = "flow", direction = "horizontal"}
@@ -641,10 +645,10 @@ Gui.CityView.add_page {
 
         rebuild_tables(player_index)
 
-        Gui.Elements.Utils.separator_line(main_flow)
+        Elements.Utils.separator_line(main_flow)
         build_house_editor(main_flow, player_index)
 
-        Gui.Elements.Utils.separator_line(main_flow)
+        Elements.Utils.separator_line(main_flow)
         build_caste_editor(main_flow, player_index)
     end
 }

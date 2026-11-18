@@ -9,7 +9,10 @@ local Castes = require("constants.castes")
 local DrinkingWater = require("constants.drinking-water")
 local Time = require("constants.time")
 
-local Gui = Gui
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
+
 local Neighborhood = Neighborhood
 local Locale = Locale
 local floor = math.floor
@@ -17,7 +20,7 @@ local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step
 local display_fluid_stack = Tirislib.Locales.display_fluid_stack
 local display_time = Tirislib.Locales.display_time
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function analyse_dependants(entry, consumption_key)
     local inhabitant_count = 0
@@ -37,8 +40,8 @@ local function analyse_dependants(entry, consumption_key)
 end
 
 local function create_water_catalogue(container)
-    local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "waters", {"sosciencity.drinking-water"}, "sosciencity_details_tab")
+    local tabbed_pane = DetailsView.get_or_create_tabbed_pane(container)
+    local tab = Elements.Tabs.create(tabbed_pane, "waters", {"sosciencity.drinking-water"}, "sosciencity_details_tab")
 
     local data_list = Datalist.create(tab, "waters", 2)
     data_list.style.column_alignments[2] = "right"
@@ -63,10 +66,10 @@ local function create_water_catalogue(container)
 end
 
 local function update_water_distributer(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local building_data = Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local water = entry[EK.water_name]
     local amount
@@ -106,9 +109,9 @@ local function update_water_distributer(container, entry, player_id)
 end
 
 local function create_water_distributer(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "content", {"sosciencity.content"})
@@ -121,16 +124,16 @@ local function create_water_distributer(container, entry, player_id)
     create_water_catalogue(container)
 end
 
-Gui.DetailsView.register_type(
+DetailsView.register_type(
     Type.water_distributer,
     {creater = create_water_distributer, updater = update_water_distributer}
 )
 
-Gui.BuildingOverview.register_type("water-distributers", {
+BuildingOverview.register_type("water-distributers", {
     types = {Type.water_distributer},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         local water = entry[EK.water_name]
         if water then
             local amount = floor(entry[EK.entity].get_fluid_count(water))

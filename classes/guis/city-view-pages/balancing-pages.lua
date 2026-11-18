@@ -4,8 +4,11 @@
 local Castes = require("constants.castes")
 local ScriptedProducts = require("constants.scripted-products")
 local DevMode = require("classes.dev-mode")
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
 
-Gui.CityView.add_category("debug", {"city-view.debug"}, DevMode.is_active)
+CityView.add_category("debug", {"city-view.debug"}, DevMode.is_active)
 
 ---------------------------------------------------------------------------------------------------
 -- << Constants >>
@@ -591,34 +594,34 @@ local function add_summary_section(content, rd)
         return
     end
 
-    local summary = Gui.Elements.CollapsibleSection.heading_1_compact(content, {"city-view.balancing-summary"})
+    local summary = Elements.CollapsibleSection.heading_1_compact(content, {"city-view.balancing-summary"})
 
     if #buildings > 0 then
-        local section = Gui.Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-buildings"})
+        local section = Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-buildings"})
         add_resource_display(section, buildings, "item/", "item", rd.item_meta, rd)
     end
 
     if #plain_items > 0 then
-        local section = Gui.Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-items"})
+        local section = Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-items"})
         add_resource_display(section, plain_items, "item/", "item", rd.item_meta, rd)
     end
 
     if #rd.fluids_delta > 0 then
-        local section = Gui.Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-fluids"})
+        local section = Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-fluids"})
         add_resource_display(section, rd.fluids_delta, "fluid/", "fluid", rd.fluid_meta, rd)
     end
 
     if #rd.techs_delta > 0 then
-        local section = Gui.Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-techs"})
+        local section = Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-summary-techs"})
         add_resource_display(section, rd.techs_delta, "technology/", "technology", nil, rd)
     end
 
     if #rd.recipes_delta > 0 then
-        local section = Gui.Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-recipes"})
+        local section = Elements.CollapsibleSection.heading_2_compact(summary, {"city-view.balancing-recipes"})
         add_recipes_display(section, rd.recipes_delta, rd)
     end
 
-    Gui.Elements.Utils.separator_line(content)
+    Elements.Utils.separator_line(content)
 end
 
 local function add_tech_section(content, tech_name, rd)
@@ -643,7 +646,7 @@ local function add_tech_section(content, tech_name, rd)
         caption[#caption + 1] = string.format("[item=%s]", ingredient.name)
     end
 
-    local section_content = Gui.Elements.CollapsibleSection.heading_2_compact(content, caption, {
+    local section_content = Elements.CollapsibleSection.heading_2_compact(content, caption, {
         collapsed = true,
         elem_tooltip = {type = "technology", name = tech_name}
     })
@@ -660,7 +663,7 @@ end
 local function add_new_technologies_section(content, rd)
     if #rd.techs_delta == 0 then return end
 
-    local outer_section = Gui.Elements.CollapsibleSection.heading_1_compact(content, {"city-view.balancing-delta-techs"})
+    local outer_section = Elements.CollapsibleSection.heading_1_compact(content, {"city-view.balancing-delta-techs"})
     for _, tech_name in pairs(rd.techs_delta) do
         add_tech_section(outer_section, tech_name, rd)
     end
@@ -792,7 +795,7 @@ local function rebuild_content(main_flow)
     add_new_technologies_section(content, rd)
 
     if #content.children == 0 then
-        Gui.Elements.Label.paragraph(content, {"city-view.balancing-nothing-available"})
+        Elements.Label.paragraph(content, {"city-view.balancing-nothing-available"})
     end
 end
 
@@ -1962,7 +1965,7 @@ local function add_radio_row(parent, row_name, label_key, opt1_name, opt1_key, o
     return row
 end
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "balancing-progression",
     category = "debug",
     localised_name = {"city-view.balancing-progression"},
@@ -2144,7 +2147,7 @@ Gui.CityView.add_page {
         }
 
         -- Display settings panel
-        local ds = Gui.Elements.CollapsibleSection.heading_3_compact(
+        local ds = Elements.CollapsibleSection.heading_3_compact(
             main_flow,
             {"city-view.balancing-display-settings"},
             {collapsed = true}
@@ -2169,7 +2172,7 @@ Gui.CityView.add_page {
             true)
         Gui.register_element(mod_row.mod_sosciencity, CONTEXT, "mod_sosciencity", container.player_index)
 
-        Gui.Elements.Utils.separator_line(main_flow)
+        Elements.Utils.separator_line(main_flow)
 
         main_flow.add {
             type = "flow",

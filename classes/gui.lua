@@ -13,13 +13,23 @@ Gui = {}
 ]]
 -- local often used globals for microscopic performance gains
 
+local late_require = require("classes.late-require")
+
 local storage
+
+-- set during load, the gui modules load after this file
+local CityInfo
+local CityView
+local DetailsView
 
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
     storage = _ENV.storage
+    CityInfo = late_require("classes.guis.city-info")
+    CityView = late_require("classes.guis.city-view")
+    DetailsView = late_require("classes.guis.details-view")
 end
 
 --- Initialize the guis for all existing players.
@@ -291,24 +301,24 @@ end
 --- Initializes the guis for the given player. Has to be called after a new player gets created.
 --- @param player LuaPlayer
 function Gui.create_guis(player)
-    Gui.CityInfo.create(player)
-    Gui.DetailsView.create(player)
+    CityInfo.create(player)
+    DetailsView.create(player)
 end
 
 --- Updates all the guis.
 function Gui.update_guis()
-    Gui.CityInfo.update()
-    Gui.DetailsView.update()
+    CityInfo.update()
+    DetailsView.update()
 end
 
 --- Resets all the guis for after an update.
 function Gui.reset_guis()
     for _, player in pairs(game.players) do
         -- we just destroy the persistent ones, because they get automatically recreated when lost anyway
-        Gui.CityInfo.destroy(player)
-        Gui.DetailsView.destroy(player)
+        CityInfo.destroy(player)
+        DetailsView.destroy(player)
 
-        Gui.CityView.close(player)
+        CityView.close(player)
     end
 end
 
@@ -316,16 +326,9 @@ end
 --- set of available pages and tabs (e.g. after the dev tools were toggled).
 function Gui.rebuild_open_views()
     for _, player in pairs(game.players) do
-        Gui.CityView.rebuild(player)
-        Gui.DetailsView.rebuild(player)
+        CityView.rebuild(player)
+        DetailsView.rebuild(player)
     end
 end
-
-require("classes.guis.elements")
-require("classes.guis.city-info")
-require("classes.guis.debug-widgets")
-require("classes.guis.building-overview")
-require("classes.guis.city-view")
-require("classes.guis.details-view")
 
 return Gui

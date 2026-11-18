@@ -1,6 +1,8 @@
 --- Debug CityView page: browse all utility sprites with their names.
 
-Gui.CityView.add_page {
+local CityView = require("classes.guis.city-view")
+
+CityView.add_page {
     name = "utility-sprites",
     category = "debug",
     localised_name = {"city-view.utility-sprites"},

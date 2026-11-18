@@ -1,15 +1,22 @@
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
+local PK = require("enums.performance-key")
+
 local Castes = require("constants.castes")
 local Color = require("constants.color")
 
-Gui.Elements = {}
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+
+local Elements = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << Utils >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Utils = {}
+Elements.Utils = {}
 
-function Gui.Elements.Utils.is_confirmed(button)
+function Elements.Utils.is_confirmed(button)
     local caption = button.caption[1]
     if caption == "sosciencity.confirm" then
         return true
@@ -20,7 +27,7 @@ function Gui.Elements.Utils.is_confirmed(button)
     end
 end
 
-function Gui.Elements.Utils.separator_line(container, name)
+function Elements.Utils.separator_line(container, name)
     return container.add {
         type = "line",
         name = name,
@@ -34,7 +41,7 @@ end
 
 --- A table with 2 rows. Left row has some locales, right row some numbers.\
 --- I have no better idea how to call these.
-Gui.Elements.CalculationTable = {}
+Elements.CalculationTable = {}
 
 --- Creates a new CalculationTable.\
 --- container: LuaGuiElement (where it should be added)\
@@ -42,7 +49,7 @@ Gui.Elements.CalculationTable = {}
 --- left_head: locale, optional (of the left header)
 --- @param details table
 --- @return LuaGuiElement calctable
-function Gui.Elements.CalculationTable.create(details)
+function Elements.CalculationTable.create(details)
     local calctable =
         details.container.add {
         type = "table",
@@ -52,12 +59,12 @@ function Gui.Elements.CalculationTable.create(details)
     }
 
     details.table = calctable
-    Gui.Elements.CalculationTable.rebuild(details)
+    Elements.CalculationTable.rebuild(details)
 
     return calctable
 end
 
-function Gui.Elements.CalculationTable.rebuild(details)
+function Elements.CalculationTable.rebuild(details)
     local calctable = details.table
     calctable.clear()
 
@@ -96,9 +103,9 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Class for generic lists
-Gui.Elements.Datalist = {}
+Elements.Datalist = {}
 
-function Gui.Elements.Datalist.create(container, name, columns, style)
+function Elements.Datalist.create(container, name, columns, style)
     local datatable =
         container.add {
         type = "table",
@@ -110,7 +117,7 @@ function Gui.Elements.Datalist.create(container, name, columns, style)
     return datatable
 end
 
-function Gui.Elements.Datalist.add_key_label(data_list, key, key_caption, key_font)
+function Elements.Datalist.add_key_label(data_list, key, key_caption, key_font)
     local key_label =
         data_list.add {
         type = "label",
@@ -119,9 +126,9 @@ function Gui.Elements.Datalist.add_key_label(data_list, key, key_caption, key_fo
     }
     key_label.style.font = key_font or "default-bold"
 end
-local add_key_label = Gui.Elements.Datalist.add_key_label
+local add_key_label = Elements.Datalist.add_key_label
 
-function Gui.Elements.Datalist.add_kv_pair(data_list, key, key_caption, value_caption, key_font, value_font)
+function Elements.Datalist.add_kv_pair(data_list, key, key_caption, value_caption, key_font, value_font)
     add_key_label(data_list, key, key_caption, key_font)
 
     local value_label =
@@ -137,7 +144,7 @@ function Gui.Elements.Datalist.add_kv_pair(data_list, key, key_caption, value_ca
     end
 end
 
-function Gui.Elements.Datalist.add_kv_flow(data_list, key, key_caption, key_font, direction)
+function Elements.Datalist.add_kv_flow(data_list, key, key_caption, key_font, direction)
     add_key_label(data_list, key, key_caption, key_font)
 
     local value_flow =
@@ -149,9 +156,9 @@ function Gui.Elements.Datalist.add_kv_flow(data_list, key, key_caption, key_font
 
     return value_flow
 end
-local add_kv_flow = Gui.Elements.Datalist.add_kv_flow
+local add_kv_flow = Elements.Datalist.add_kv_flow
 
-function Gui.Elements.Datalist.add_kv_checkbox(
+function Elements.Datalist.add_kv_checkbox(
     data_list,
     key,
     checkbox_name,
@@ -187,7 +194,7 @@ function Gui.Elements.Datalist.add_kv_checkbox(
     return checkbox, label
 end
 
-function Gui.Elements.Datalist.add_kv_textfield(data_list, key, textfield_name, params, key_caption, key_font)
+function Elements.Datalist.add_kv_textfield(data_list, key, textfield_name, params, key_caption, key_font)
     add_key_label(data_list, key, key_caption, key_font)
 
     local textfield_params = {
@@ -202,44 +209,44 @@ function Gui.Elements.Datalist.add_kv_textfield(data_list, key, textfield_name, 
     return textfield
 end
 
-function Gui.Elements.Datalist.get_checkbox(data_list, key)
+function Elements.Datalist.get_checkbox(data_list, key)
     local children = data_list[key].children
     return children[1], children[2]
 end
 
-function Gui.Elements.Datalist.get_kv_pair(data_list, key)
+function Elements.Datalist.get_kv_pair(data_list, key)
     return data_list["key-" .. key], data_list[key]
 end
-local get_kv_pair = Gui.Elements.Datalist.get_kv_pair
+local get_kv_pair = Elements.Datalist.get_kv_pair
 
-function Gui.Elements.Datalist.get_kv_value_element(data_list, key)
+function Elements.Datalist.get_kv_value_element(data_list, key)
     return data_list[key]
 end
 
-function Gui.Elements.Datalist.set_key(data_list, key, key_caption)
+function Elements.Datalist.set_key(data_list, key, key_caption)
     data_list["key-" .. key].caption = key_caption
 end
 
-function Gui.Elements.Datalist.set_kv_pair_value(data_list, key, value_caption)
+function Elements.Datalist.set_kv_pair_value(data_list, key, value_caption)
     data_list[key].caption = value_caption
 end
-local set_kv_pair_value = Gui.Elements.Datalist.set_kv_pair_value
+local set_kv_pair_value = Elements.Datalist.set_kv_pair_value
 
-function Gui.Elements.Datalist.set_datalist_value_tooltip(datalist, key, tooltip)
+function Elements.Datalist.set_datalist_value_tooltip(datalist, key, tooltip)
     datalist[key].tooltip = tooltip
 end
 
-function Gui.Elements.Datalist.set_kv_pair_tooltip(datalist, key, tooltip)
+function Elements.Datalist.set_kv_pair_tooltip(datalist, key, tooltip)
     local key_element, value_element = get_kv_pair(datalist, key)
     key_element.tooltip = tooltip
     value_element.tooltip = tooltip
 end
 
-function Gui.Elements.Datalist.set_kv_pair_visibility(datalist, key, visibility)
+function Elements.Datalist.set_kv_pair_visibility(datalist, key, visibility)
     datalist["key-" .. key].visible = visibility
     datalist[key].visible = visibility
 end
-local set_kv_pair_visibility = Gui.Elements.Datalist.set_kv_pair_visibility
+local set_kv_pair_visibility = Elements.Datalist.set_kv_pair_visibility
 
 local function add_final_value_entry(data_list, caption)
     local sum_key =
@@ -263,7 +270,7 @@ local function add_final_value_entry(data_list, caption)
     style.horizontal_align = "right"
 end
 
-function Gui.Elements.Datalist.add_operand_entry(data_list, key, key_caption, value_caption, description)
+function Elements.Datalist.add_operand_entry(data_list, key, key_caption, value_caption, description)
     local key_label =
         data_list.add {
         type = "label",
@@ -285,7 +292,7 @@ function Gui.Elements.Datalist.add_operand_entry(data_list, key, key_caption, va
     value_style.horizontal_align = "right"
     value_style.width = 50
 end
-local add_operand_entry = Gui.Elements.Datalist.add_operand_entry
+local add_operand_entry = Elements.Datalist.add_operand_entry
 
 local function add_entries(data_list, enum_table, names, descriptions)
     for name, id in pairs(enum_table) do
@@ -293,7 +300,7 @@ local function add_entries(data_list, enum_table, names, descriptions)
     end
 end
 
-function Gui.Elements.Datalist.create_operand_entries(
+function Elements.Datalist.create_operand_entries(
     data_list,
     final_caption,
     summands_enums,
@@ -307,7 +314,7 @@ function Gui.Elements.Datalist.create_operand_entries(
     add_entries(data_list, factor_enums, factor_localised, factor_descriptions)
 end
 
-function Gui.Elements.Datalist.update_operand_entries(
+function Elements.Datalist.update_operand_entries(
     data_list,
     final_value,
     summands,
@@ -344,7 +351,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- Class for lists that can be sorted by their columns.
-Gui.Elements.SortableList = {}
+Elements.SortableList = {}
 
 -- We're stuffing the data and category definitions inside the 'linked' table during startup.
 -- Otherwise I don't know a way to implement this without stuffing all this in storage,
@@ -368,14 +375,14 @@ Gui.Elements.SortableList = {}
 --- > font: function, optional (gets the name of a font from a data entry)\
 --- > constant_font: string, optional (when there should always be the same font)\
 --- > alignment: Alignment, optional (defaults to "left" for the first column and "right" for all others)
-Gui.Elements.SortableList.linked = {}
+Elements.SortableList.linked = {}
 
 --- Create a sortable list.
 --- @param container LuaGuiElement
 --- @param link string key to linked data and categories
 --- @return LuaGuiElement table that contains the list
-function Gui.Elements.SortableList.create(container, link)
-    local category_definitions = Gui.Elements.SortableList.linked[link].categories
+function Elements.SortableList.create(container, link)
+    local category_definitions = Elements.SortableList.linked[link].categories
 
     local list =
         container.add {
@@ -389,7 +396,7 @@ function Gui.Elements.SortableList.create(container, link)
         style.column_alignments[i] = category_definitions[i].alignment or (i == 1 and "left" or "right")
     end
 
-    Gui.Elements.SortableList.sort_and_rebuild(list, link, nil, "unsorted")
+    Elements.SortableList.sort_and_rebuild(list, link, nil, "unsorted")
 
     return list
 end
@@ -402,21 +409,21 @@ local function get_selected_category(category_definitions, name)
     end
 end
 
-function Gui.Elements.SortableList.comparator_ascending(a, b)
+function Elements.SortableList.comparator_ascending(a, b)
     return a.order < b.order
 end
 
-function Gui.Elements.SortableList.comparator_descending(a, b)
+function Elements.SortableList.comparator_descending(a, b)
     return a.order > b.order
 end
 
-Gui.Elements.SortableList.next_sort_modes = {
+Elements.SortableList.next_sort_modes = {
     unsorted = "ascending",
     ascending = "descending",
     descending = "ascending"
 }
 
-Gui.Elements.SortableList.sort_mode_symbols = {
+Elements.SortableList.sort_mode_symbols = {
     ascending = "↑",
     descending = "↓"
 }
@@ -426,10 +433,10 @@ Gui.Elements.SortableList.sort_mode_symbols = {
 --- @param link string  key to linked data and categories
 --- @param selected_category string?
 --- @param sort_mode string
-function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_category, sort_mode)
+function Elements.SortableList.sort_and_rebuild(list, link, selected_category, sort_mode)
     list.clear()
 
-    local definition = Gui.Elements.SortableList.linked[link]
+    local definition = Elements.SortableList.linked[link]
     local category_definitions = definition.categories
     local selected_category_definition = get_selected_category(category_definitions, selected_category)
 
@@ -441,12 +448,12 @@ function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_categor
                 "",
                 category.localised_name,
                 (category.name == selected_category and sort_mode ~= "unsorted") and
-                    Gui.Elements.SortableList.sort_mode_symbols[sort_mode] or
+                    Elements.SortableList.sort_mode_symbols[sort_mode] or
                     nil
             },
             tags = {
                 category = category.name,
-                sort_mode = Gui.Elements.SortableList.next_sort_modes[
+                sort_mode = Elements.SortableList.next_sort_modes[
                     (category.name == selected_category) and sort_mode or "unsorted"
                 ],
                 link = link,
@@ -472,8 +479,8 @@ function Gui.Elements.SortableList.sort_and_rebuild(list, link, selected_categor
     if sort_mode ~= "unsorted" then
         table.sort(
             sorted_data,
-            sort_mode == "ascending" and Gui.Elements.SortableList.comparator_ascending or
-                Gui.Elements.SortableList.comparator_descending
+            sort_mode == "ascending" and Elements.SortableList.comparator_ascending or
+                Elements.SortableList.comparator_descending
         )
     end
 
@@ -503,7 +510,7 @@ Gui.set_click_handler(
     function(event)
         local button = event.element
         local tags = button.tags
-        Gui.Elements.SortableList.sort_and_rebuild(button.parent, tags.link, tags.category, tags.sort_mode)
+        Elements.SortableList.sort_and_rebuild(button.parent, tags.link, tags.category, tags.sort_mode)
     end
 )
 
@@ -511,9 +518,9 @@ Gui.set_click_handler(
 -- << Sprites >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Sprite = {}
+Elements.Sprite = {}
 
-function Gui.Elements.Sprite.create_caste_sprite(container, caste_id, size)
+function Elements.Sprite.create_caste_sprite(container, caste_id, size)
     local caste = Castes.values[caste_id]
 
     local sprite =
@@ -534,9 +541,9 @@ end
 -- << Tabs >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Tabs = {}
+Elements.Tabs = {}
 
-function Gui.Elements.Tabs.create(tabbed_pane, name, caption, tab_style)
+function Elements.Tabs.create(tabbed_pane, name, caption, tab_style)
     local tab =
         tabbed_pane.add {
         type = "tab",
@@ -562,7 +569,7 @@ function Gui.Elements.Tabs.create(tabbed_pane, name, caption, tab_style)
     return flow
 end
 
-function Gui.Elements.Tabs.get_content(tabbed_pane, name)
+function Elements.Tabs.get_content(tabbed_pane, name)
     return tabbed_pane[name].flow
 end
 
@@ -570,14 +577,14 @@ end
 -- << Labels >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Label = {}
+Elements.Label = {}
 
 --- Creates a bold centered label spanning the full width of its container.
 --- @param container LuaGuiElement
 --- @param name string
 --- @param caption locale
 --- @return LuaGuiElement
-function Gui.Elements.Label.header_label(container, name, caption)
+function Elements.Label.header_label(container, name, caption)
     local header = container.add {
         type = "label",
         name = name,
@@ -595,7 +602,7 @@ end
 --- @param caption locale
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Label.heading_1(container, caption, name)
+function Elements.Label.heading_1(container, caption, name)
     return container.add {
         type = "label",
         name = name,
@@ -609,7 +616,7 @@ end
 --- @param caption locale
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Label.heading_2(container, caption, name)
+function Elements.Label.heading_2(container, caption, name)
     return container.add {
         type = "label",
         name = name,
@@ -623,7 +630,7 @@ end
 --- @param caption locale
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Label.heading_3(container, caption, name)
+function Elements.Label.heading_3(container, caption, name)
     return container.add {
         type = "label",
         name = name,
@@ -632,15 +639,15 @@ function Gui.Elements.Label.heading_3(container, caption, name)
     }
 end
 
-function Gui.Elements.Label.heading_1_compact(container, caption, name)
+function Elements.Label.heading_1_compact(container, caption, name)
     return container.add {type = "label", name = name, caption = caption, style = "sosciencity_heading_1_compact"}
 end
 
-function Gui.Elements.Label.heading_2_compact(container, caption, name)
+function Elements.Label.heading_2_compact(container, caption, name)
     return container.add {type = "label", name = name, caption = caption, style = "sosciencity_heading_2_compact"}
 end
 
-function Gui.Elements.Label.heading_3_compact(container, caption, name)
+function Elements.Label.heading_3_compact(container, caption, name)
     return container.add {type = "label", name = name, caption = caption, style = "sosciencity_heading_3_compact"}
 end
 
@@ -649,7 +656,7 @@ end
 --- @param caption locale
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Label.paragraph(container, caption, name)
+function Elements.Label.paragraph(container, caption, name)
     return container.add {
         type = "label",
         name = name,
@@ -662,7 +669,7 @@ end
 --- @param container LuaGuiElement
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Label.list_flow(container, name)
+function Elements.Label.list_flow(container, name)
     return container.add {
         type = "flow",
         name = name,
@@ -677,7 +684,7 @@ end
 --- @param marker_caption locale?
 --- @param name string?
 --- @return LuaGuiElement flow the flow that contains marker and text
-function Gui.Elements.Label.bullet_point(container, text_caption, marker_caption, name)
+function Elements.Label.bullet_point(container, text_caption, marker_caption, name)
     local flow =
         container.add {
         type = "flow",
@@ -691,7 +698,7 @@ function Gui.Elements.Label.bullet_point(container, text_caption, marker_caption
         caption = marker_caption or ">",
         style = "sosciencity_list_marker"
     }
-    Gui.Elements.Label.paragraph(flow, text_caption)
+    Elements.Label.paragraph(flow, text_caption)
 
     return flow
 end
@@ -702,11 +709,11 @@ end
 --- @param marker_caption locale?
 --- @param name string?
 --- @return LuaGuiElement flow the flow that contains the list
-function Gui.Elements.Label.list(container, point_captions, marker_caption, name)
-    local list_container = Gui.Elements.Label.list_flow(container, name)
+function Elements.Label.list(container, point_captions, marker_caption, name)
+    local list_container = Elements.Label.list_flow(container, name)
 
     for _, point in pairs(point_captions) do
-        Gui.Elements.Label.bullet_point(list_container, point, marker_caption)
+        Elements.Label.bullet_point(list_container, point, marker_caption)
     end
 
     return list_container
@@ -717,7 +724,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 --- A textfield that accepts arithmetic expressions and suffixes (k, M) and evaluates them on Enter.
-Gui.Elements.NumericTextField = {}
+Elements.NumericTextField = {}
 
 local suffix_multipliers = {
     k = 1e3,
@@ -811,7 +818,7 @@ end
 --- The handler receives (event, result) where result is the evaluated number.
 --- @param tag string
 --- @param fn function(event, result)
-function Gui.Elements.NumericTextField.set_confirmed_handler(tag, fn)
+function Elements.NumericTextField.set_confirmed_handler(tag, fn)
     Tirislib.Utils.desync_protection()
     if numeric_confirmed_handlers[tag] then
         error("Handler already registered for tag: " .. tag)
@@ -833,7 +840,7 @@ end
 --- @param name string?
 --- @param options table?
 --- @return LuaGuiElement textfield
-function Gui.Elements.NumericTextField.create(container, name, options)
+function Elements.NumericTextField.create(container, name, options)
     local tags = {sosciencity_gui_event = "evaluate_numeric_expression"}
     if options then
         for k, v in pairs(options) do
@@ -886,7 +893,7 @@ Gui.set_text_changed_handler(
 -- << NumericTextField.Panel >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.NumericTextField.Panel = {}
+Elements.NumericTextField.Panel = {}
 
 --- Creates a horizontal flow with a NumericTextField plus optional controls.
 --- The inner textfield is always named "numeric_input"; optional siblings:
@@ -900,7 +907,7 @@ Gui.Elements.NumericTextField.Panel = {}
 --- @param name string? name for the inner textfield
 --- @param options table? {min, max, step, default, preview, numeric_confirmed_event}
 --- @return LuaGuiElement flow
-function Gui.Elements.NumericTextField.Panel.create(container, name, options)
+function Elements.NumericTextField.Panel.create(container, name, options)
     options = options or {}
 
     local flow = container.add {type = "flow", direction = "horizontal"}
@@ -1005,14 +1012,14 @@ Gui.set_click_handler(
 -- << Buttons >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Button = {}
+Elements.Button = {}
 
 --- Creates a button that when clicked brings the player to the given city view page.
 --- @param container LuaGuiElement
 --- @param category_name string
 --- @param page_name string
 --- @return LuaGuiElement button
-function Gui.Elements.Button.page_link(container, category_name, page_name)
+function Elements.Button.page_link(container, category_name, page_name)
     local flow =
         container.add {
         type = "flow",
@@ -1020,8 +1027,8 @@ function Gui.Elements.Button.page_link(container, category_name, page_name)
         style = "sosciencity_page_link_flow"
     }
 
-    local category = Gui.CityView.get_category_definition(category_name)
-    local page = Gui.CityView.get_page_definition(category, page_name)
+    local category = CityView.get_category_definition(category_name)
+    local page = CityView.get_page_definition(category, page_name)
 
     flow.add {
         type = "button",
@@ -1040,7 +1047,7 @@ end
 --- @param container LuaGuiElement
 --- @param technology_name string
 --- @return LuaGuiElement flow
-function Gui.Elements.Button.technology_link(container, technology_name)
+function Elements.Button.technology_link(container, technology_name)
     local flow =
         container.add {
         type = "flow",
@@ -1078,13 +1085,13 @@ Gui.set_click_handler(
 -- << Flows >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.Flow = {}
+Elements.Flow = {}
 
 --- Creates a simple horizontal flow that centers its children.
 --- @param container LuaGuiElement
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Flow.horizontal_center(container, name)
+function Elements.Flow.horizontal_center(container, name)
     return container.add {
         type = "flow",
         name = name,
@@ -1097,7 +1104,7 @@ end
 --- @param container LuaGuiElement
 --- @param name string?
 --- @return LuaGuiElement
-function Gui.Elements.Flow.horizontal_right(container, name)
+function Elements.Flow.horizontal_right(container, name)
     return container.add {
         type = "flow",
         name = name,
@@ -1112,11 +1119,7 @@ end
 
 --- Reusable GUI component that renders a standardised performance breakdown.
 --- Receives a report built by Entity.build_performance_report, renders it grouped by dimension.
-Gui.Elements.PerformanceReport = {}
-
-local Comb = require("enums.performance-combination")
-local Dim = require("enums.performance-dimension")
-local PK = require("enums.performance-key")
+Elements.PerformanceReport = {}
 local ceil = math.ceil
 local floor = math.floor
 
@@ -1196,7 +1199,7 @@ end
 --- Creates the performance report GUI elements inside the given container.
 --- @param container LuaGuiElement
 --- @param name string? unique name for this report within the parent
-function Gui.Elements.PerformanceReport.create(container, name)
+function Elements.PerformanceReport.create(container, name)
     return container.add {
         type = "flow",
         name = name or "performance-report",
@@ -1207,7 +1210,7 @@ end
 --- Updates (rebuilds) the performance report from the given report data.
 --- @param report_flow LuaGuiElement the flow created by PerformanceReport.create
 --- @param report table? report built by Entity.build_performance_report
-function Gui.Elements.PerformanceReport.update(report_flow, report)
+function Elements.PerformanceReport.update(report_flow, report)
     report_flow.clear()
 
     if not report then
@@ -1306,7 +1309,7 @@ end
 -- << CollapsibleSection >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.CollapsibleSection = {}
+Elements.CollapsibleSection = {}
 
 local function create_collapsible_section(container, caption, options, style)
     options = options or {}
@@ -1342,7 +1345,7 @@ end
 --- @param caption locale
 --- @param options table? { collapsed: bool, elem_tooltip: ElemID?, tooltip: locale? }
 --- @return LuaGuiElement content_flow
-function Gui.Elements.CollapsibleSection.heading_1(container, caption, options)
+function Elements.CollapsibleSection.heading_1(container, caption, options)
     return create_collapsible_section(container, caption, options, "sosciencity_heading_1_button")
 end
 
@@ -1350,7 +1353,7 @@ end
 --- @param caption locale
 --- @param options table? { collapsed: bool, elem_tooltip: ElemID?, tooltip: locale? }
 --- @return LuaGuiElement content_flow
-function Gui.Elements.CollapsibleSection.heading_2(container, caption, options)
+function Elements.CollapsibleSection.heading_2(container, caption, options)
     return create_collapsible_section(container, caption, options, "sosciencity_heading_2_button")
 end
 
@@ -1358,19 +1361,19 @@ end
 --- @param caption locale
 --- @param options table? { collapsed: bool, elem_tooltip: ElemID?, tooltip: locale? }
 --- @return LuaGuiElement content_flow
-function Gui.Elements.CollapsibleSection.heading_3(container, caption, options)
+function Elements.CollapsibleSection.heading_3(container, caption, options)
     return create_collapsible_section(container, caption, options, "sosciencity_heading_3_button")
 end
 
-function Gui.Elements.CollapsibleSection.heading_1_compact(container, caption, options)
+function Elements.CollapsibleSection.heading_1_compact(container, caption, options)
     return create_collapsible_section(container, caption, options, "sosciencity_heading_1_button_compact")
 end
 
-function Gui.Elements.CollapsibleSection.heading_2_compact(container, caption, options)
+function Elements.CollapsibleSection.heading_2_compact(container, caption, options)
     return create_collapsible_section(container, caption, options, "sosciencity_heading_2_button_compact")
 end
 
-function Gui.Elements.CollapsibleSection.heading_3_compact(container, caption, options)
+function Elements.CollapsibleSection.heading_3_compact(container, caption, options)
     return create_collapsible_section(container, caption, options, "sosciencity_heading_3_button_compact")
 end
 
@@ -1401,7 +1404,7 @@ Gui.set_click_handler(
 --- A reusable ◄ [value] ► control for stepping an integer within a bounded range.
 --- The caller registers the event handler separately via Gui.set_click_handler(event_tag, ...).
 --- Both buttons carry `delta = -1` / `delta = 1` plus any extra_tags in their tags table.
-Gui.Elements.IntStepper = {}
+Elements.IntStepper = {}
 
 --- Creates an IntStepper inside parent.
 --- options:
@@ -1412,7 +1415,7 @@ Gui.Elements.IntStepper = {}
 ---   max           integer  increase button disabled when value == max
 ---   tooltip       locale?  applied to both buttons and the label
 --- @return LuaGuiElement the stepper flow
-function Gui.Elements.IntStepper.create(parent, name, options)
+function Elements.IntStepper.create(parent, name, options)
     local flow = parent.add {
         type = "flow",
         name = name,
@@ -1468,7 +1471,7 @@ end
 --- @param value integer current value
 --- @param min integer lower bound
 --- @param max integer upper bound
-function Gui.Elements.IntStepper.update(flow, value, min, max)
+function Elements.IntStepper.update(flow, value, min, max)
     flow["decrease"].enabled = value > min
     flow["val"].caption = value
     flow["increase"].enabled = value < max
@@ -1483,7 +1486,7 @@ end
 ---   "confirm" → green style, Escape triggers it if it also has "cancel"
 ---   "cancel"  → red style, Escape always triggers it
 --- A button with both roles is rendered green (confirm trumps cancel visually).
-Gui.Elements.MessageBox = {}
+Elements.MessageBox = {}
 
 local MESSAGEBOX_FRAME_NAME = "sosciencity_messagebox"
 
@@ -1494,7 +1497,7 @@ local messagebox_button_handlers = {}
 --- triggered by keyboard. Call at load time (subject to desync protection).
 --- @param tag string
 --- @param fn function(event)
-function Gui.Elements.MessageBox.set_button_handler(tag, fn)
+function Elements.MessageBox.set_button_handler(tag, fn)
     Tirislib.Utils.desync_protection()
     if messagebox_button_handlers[tag] then
         error("Handler already registered for messagebox button tag: " .. tag)
@@ -1546,7 +1549,7 @@ end
 ---     roles: string[]? - subset of {"confirm", "cancel"}
 ---     tag: string? - key for a handler registered via set_button_handler
 ---     style: string? - Factorio button style override
-function Gui.Elements.MessageBox.show(player_index, options)
+function Elements.MessageBox.show(player_index, options)
     local player = game.get_player(player_index)
     messagebox_close(player)
 
@@ -1630,13 +1633,13 @@ Gui.add_gui_closed_handler(
 -- << Bar Chart >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.Elements.BarChart = {}
+Elements.BarChart = {}
 
 --- Creates the bars flow element for a bar chart.
 --- Returns the element to pass to BarChart.render (and again on re-render).
 --- @param container LuaGuiElement
 --- @return LuaGuiElement bars_flow
-function Gui.Elements.BarChart.create(container)
+function Elements.BarChart.create(container)
     return container.add {
         type = "flow",
         direction = "horizontal",
@@ -1653,7 +1656,7 @@ end
 ---   total_width: number - total chart width incl. gaps; bar_width derived from sample count
 ---   gap: number - px between bars (default 0)
 ---   color: Color or function(index, value) -> Color (default Color.light_teal)
-function Gui.Elements.BarChart.render(bars_flow, samples, options)
+function Elements.BarChart.render(bars_flow, samples, options)
     bars_flow.clear()
 
     local n = #samples
@@ -1718,3 +1721,5 @@ function Gui.Elements.BarChart.render(bars_flow, samples, options)
         end
     end
 end
+
+return Elements

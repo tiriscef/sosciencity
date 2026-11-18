@@ -1,6 +1,9 @@
 --- Debug page for cheating items into the player's inventory.
 --- Lives in the debug category, which is hidden unless DevMode.is_active().
 
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+
 local CONTEXT = "item-browser"
 local SLOT_GRID_COLUMNS = 20
 
@@ -106,7 +109,7 @@ Gui.set_click_handler(
 -- << Page registration >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "item-browser",
     category = "debug",
     localised_name = {"city-view.item-browser"},

@@ -5,25 +5,26 @@ local Type = require("enums.type")
 
 local Buildings = require("constants.buildings")
 
-local Gui = Gui
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+
 local get_building_details = Buildings.get
 
-local generic_spec = {creater = Gui.DetailsView.create_general, updater = Gui.DetailsView.update_general}
-Gui.DetailsView.register_type(Type.mining_drill, generic_spec)
-Gui.DetailsView.register_type(Type.assembling_machine, generic_spec)
-Gui.DetailsView.register_type(Type.furnace, generic_spec)
-Gui.DetailsView.register_type(Type.rocket_silo, generic_spec)
-Gui.DetailsView.register_type(Type.caste_education_building, generic_spec)
-Gui.DetailsView.register_type(Type.composter_output, generic_spec)
-Gui.DetailsView.register_type(Type.egg_collector, generic_spec)
-Gui.DetailsView.register_type(Type.pharmacy, generic_spec)
-Gui.DetailsView.register_type(Type.manufactory, generic_spec)
-Gui.DetailsView.register_type(Type.social_observatory, generic_spec)
-Gui.DetailsView.register_type(Type.animal_farm, generic_spec)
-Gui.DetailsView.register_type(Type.fishery, generic_spec)
-Gui.DetailsView.register_type(Type.hunting_hut, generic_spec)
+local generic_spec = {creater = DetailsView.create_general, updater = DetailsView.update_general}
+DetailsView.register_type(Type.mining_drill, generic_spec)
+DetailsView.register_type(Type.assembling_machine, generic_spec)
+DetailsView.register_type(Type.furnace, generic_spec)
+DetailsView.register_type(Type.rocket_silo, generic_spec)
+DetailsView.register_type(Type.caste_education_building, generic_spec)
+DetailsView.register_type(Type.composter_output, generic_spec)
+DetailsView.register_type(Type.egg_collector, generic_spec)
+DetailsView.register_type(Type.pharmacy, generic_spec)
+DetailsView.register_type(Type.manufactory, generic_spec)
+DetailsView.register_type(Type.social_observatory, generic_spec)
+DetailsView.register_type(Type.animal_farm, generic_spec)
+DetailsView.register_type(Type.fishery, generic_spec)
+DetailsView.register_type(Type.hunting_hut, generic_spec)
 
-local BuildingOverview = Gui.BuildingOverview
 local generic_overview_creator = BuildingOverview.generic_stats_creator
 
 local function recipe_stats_creator(flow, entry)

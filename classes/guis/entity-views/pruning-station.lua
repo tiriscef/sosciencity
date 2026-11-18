@@ -8,12 +8,14 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 
 local Pruning = require("classes.entities.pruning")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
-local Gui = Gui
 local Register = Register
 local get_building_details = Buildings.get
 local floor = math.floor
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_pruning_slots(general, entry)
     local slots_list = general.pruning_slots
@@ -35,10 +37,10 @@ local function update_pruning_slots(general, entry)
 end
 
 local function update_pruning_station(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     local building_details = get_building_details(entry)
@@ -55,9 +57,9 @@ local function update_pruning_station(container, entry, player_id)
 end
 
 local function create_pruning_station(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
@@ -70,22 +72,22 @@ local function create_pruning_station(container, entry, player_id)
         {"sosciencity.explain-pruning", Pruning.productivity}
     )
 
-    Gui.Elements.Label.header_label(general, "header-pruning-slots", {"sosciencity.pruned-farms"})
+    Elements.Label.header_label(general, "header-pruning-slots", {"sosciencity.pruned-farms"})
     Datalist.create(general, "pruning_slots", 1)
 
     update_pruning_station(container, entry, player_id)
 end
 
-Gui.DetailsView.register_type(
+DetailsView.register_type(
     Type.pruning_station,
     {creater = create_pruning_station, updater = update_pruning_station}
 )
 
-Gui.BuildingOverview.register_type("pruning-stations", {
+BuildingOverview.register_type("pruning-stations", {
     types = {Type.pruning_station},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         local max_slots = get_building_details(entry).slots
         local effective_slots = Pruning.effective_slots(entry[EK.performance] or 0, max_slots)
         flow.add {

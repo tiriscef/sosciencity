@@ -8,18 +8,21 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local type_definitions = require("constants.types").definitions
 
-local Gui = Gui
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
+
 local Locale = Locale
 local get_building_details = Buildings.get
 local floor = math.floor
 local display_time = Tirislib.Locales.display_time
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_immigration_port_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     local ticks_to_next_wave = entry[EK.next_wave] - game.tick
@@ -38,9 +41,9 @@ local function update_immigration_port_details(container, entry, player_id)
 end
 
 local function create_immigration_port_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
     local building_details = get_building_details(entry)
 
@@ -58,9 +61,9 @@ local function create_immigration_port_details(container, entry, player_id)
         {"sosciencity.show-port-capacity", building_details.capacity}
     )
 
-    Gui.Elements.Utils.separator_line(general)
+    Elements.Utils.separator_line(general)
 
-    Gui.Elements.Label.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
+    Elements.Label.header_label(general, "header-immigration", {"sosciencity.estimated-immigrants"})
     local immigrants_list = Datalist.create(general, "immigration")
 
     for caste in pairs(storage.immigration) do
@@ -70,16 +73,16 @@ local function create_immigration_port_details(container, entry, player_id)
     update_immigration_port_details(container, entry)
 end
 
-Gui.DetailsView.register_type(
+DetailsView.register_type(
     Type.immigration_port,
     {creater = create_immigration_port_details, updater = update_immigration_port_details, always_update = true}
 )
 
-Gui.BuildingOverview.register_type("immigration-ports", {
+BuildingOverview.register_type("immigration-ports", {
     types = {Type.immigration_port},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         local ticks_to_next = math.max(0, entry[EK.next_wave] - game.tick)
         flow.add {type = "label", caption = display_time(ticks_to_next)}
     end

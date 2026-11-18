@@ -8,13 +8,15 @@ local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 
+local Gui = require("classes.gui")
+local Elements = require("classes.guis.elements")
+
 local random = math.random
 local min = math.min
 local floor = math.floor
 local dice_rolls = Tirislib.Utils.dice_rolls
 
-Gui.DebugWidgets = {}
-local DebugWidgets = Gui.DebugWidgets
+local DebugWidgets = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << Shared dropdown data (built once at require-time, deterministic across players) >>
@@ -254,7 +256,7 @@ function DebugWidgets.build_age_picker(parent, age_value_context, age_value_key,
                 age_value_key = age_value_key
             }
         }
-        local age_value = Gui.Elements.NumericTextField.create(parent)
+        local age_value = Elements.NumericTextField.create(parent)
         age_value.text = "30"
         age_value.enabled = false
         return age_dd, age_value
@@ -270,7 +272,7 @@ function DebugWidgets.build_age_picker(parent, age_value_context, age_value_key,
             age_value_key = age_value_key
         }
     }
-    local age_value = Gui.Elements.NumericTextField.create(row)
+    local age_value = Elements.NumericTextField.create(row)
     age_value.text = "30"
     age_value.enabled = false
     return age_dd, age_value
@@ -373,3 +375,5 @@ function DebugWidgets.apply_cure_to_entry(entry, cap, scope_idx, target_idx)
     end
     return cured
 end
+
+return DebugWidgets

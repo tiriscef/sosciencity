@@ -12,21 +12,24 @@ local Time = require("constants.time")
 local Farm = require("classes.entities.farm")
 local Fertilization = require("classes.entities.fertilization")
 local Pruning = require("classes.entities.pruning")
+local Gui = require("classes.gui")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
-local Gui = Gui
 local Inventories = Inventories
 local Register = Register
 local get_building_details = Buildings.get
 local floor = math.floor
 local format = string.format
 local display_item_stack = Tirislib.Locales.display_item_stack
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_farm(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local building_data = Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local building_details = get_building_details(entry)
 
@@ -71,9 +74,9 @@ local function update_farm(container, entry, player_id)
 end
 
 local function create_farm(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "biomass", {"sosciencity.biomass"})
@@ -140,13 +143,13 @@ Gui.set_checked_state_handler(
     end
 )
 
-Gui.DetailsView.register_type(Type.farm, {creater = create_farm, updater = update_farm})
+DetailsView.register_type(Type.farm, {creater = create_farm, updater = update_farm})
 
-Gui.BuildingOverview.register_type("farms", {
+BuildingOverview.register_type("farms", {
     types = {Type.farm},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         local recipe = entry[EK.entity].get_recipe()
         if recipe then
             flow.add {type = "label", caption = recipe.localised_name}

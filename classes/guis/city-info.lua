@@ -1,5 +1,5 @@
 --- The gui that is always on the top left corner and provides quick information about populations and caste bonuses.
-Gui.CityInfo = {}
+local CityInfo = {}
 
 --[[
     Data this class stores in storage
@@ -18,9 +18,11 @@ local Castes = require("constants.castes")
 local Color = require("constants.color")
 local Housing = require("constants.housing")
 
+local Gui = require("classes.gui")
+local Elements = require("classes.guis.elements")
+
 -- local often used globals for microscopic performance gains
 local castes = Castes.values
-local Gui = Gui
 local Register = Register
 local Inhabitants = Inhabitants
 local floor = math.floor
@@ -101,7 +103,7 @@ local function create_advanced_placement_section(flow, player_index)
     local advanced_flow = flow.add {type = "flow", name = "advanced_placement", direction = "vertical", visible = false}
     advanced_flow.style.top_margin = 4
 
-    Gui.Elements.Utils.separator_line(advanced_flow)
+    Elements.Utils.separator_line(advanced_flow)
 
     advanced_flow.add {
         type = "label",
@@ -111,7 +113,7 @@ local function create_advanced_placement_section(flow, player_index)
 
     advanced_flow.add {type = "label", caption = {"sosciencity.placement-target-comfort"}}
 
-    local stepper = Gui.Elements.IntStepper.create(advanced_flow, "comfort_row", {
+    local stepper = Elements.IntStepper.create(advanced_flow, "comfort_row", {
         event_tag = "placement_adjust_comfort",
         tooltip = {"sosciencity.placement-comfort-tooltip"},
         value = comfort_value,
@@ -446,7 +448,7 @@ local function create_caste_flow(container, caste_id, caste_tooltips, player_ind
     flow.style.vertical_spacing = 0
     flow.style.horizontal_align = "center"
 
-    local sprite = Gui.Elements.Sprite.create_caste_sprite(flow, caste_id, 48)
+    local sprite = Elements.Sprite.create_caste_sprite(flow, caste_id, 48)
     sprite.style.horizontal_align = "center"
 
     flow.add {
@@ -481,7 +483,7 @@ local function create_caste_flow(container, caste_id, caste_tooltips, player_ind
     update_caste_flow(container, caste_id, caste_tooltips or {})
 end
 
-function Gui.CityInfo.create(player, caste_tooltips)
+function CityInfo.create(player, caste_tooltips)
     local frame = player.gui.top[CITY_INFO_NAME]
     if frame and frame.valid then
         return -- the gui was already created and is still valid
@@ -504,12 +506,12 @@ function Gui.CityInfo.create(player, caste_tooltips)
     -- Restore placement mode if player is currently holding a house
     local cursor = player.cursor_stack
     if cursor and cursor.valid_for_read and Housing.values[cursor.name] then
-        Gui.CityInfo.set_placement_mode(player, true)
+        CityInfo.set_placement_mode(player, true)
     end
 end
 
 --- Updates the city info gui for all existing players.
-function Gui.CityInfo.update()
+function CityInfo.update()
     local caste_tooltips = {}
     for _, caste in pairs(Castes.all) do
         caste_tooltips[caste.type] = tooltip_fns[caste.type]()
@@ -526,7 +528,7 @@ function Gui.CityInfo.update()
                 update_caste_flow(city_info_gui, caste.type, caste_tooltips)
             end
         else
-            Gui.CityInfo.create(player, caste_tooltips)
+            CityInfo.create(player, caste_tooltips)
         end
     end
 end
@@ -534,7 +536,7 @@ end
 --- Shows or hides the advanced placement section and syncs controls from storage.
 --- @param player LuaPlayer
 --- @param active boolean
-function Gui.CityInfo.set_placement_mode(player, active)
+function CityInfo.set_placement_mode(player, active)
     local city_info = player.gui.top[CITY_INFO_NAME]
     if not (city_info and city_info.valid) then
         return
@@ -546,7 +548,7 @@ function Gui.CityInfo.set_placement_mode(player, active)
     if active and settings then
         local stepper = Gui.get_element("city-info-placement", "comfort-stepper", player.index)
         if stepper and stepper.valid then
-            Gui.Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
+            Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
         end
         for _, tag in pairs(Table.get_keyset(Housing.tag_costs)) do
             local el = Gui.get_element("city-info-placement-tag", tag, player.index)
@@ -571,7 +573,7 @@ end
 
 --- Destroys the city info gui.
 --- @param player LuaPlayer
-function Gui.CityInfo.destroy(player)
+function CityInfo.destroy(player)
     local city_info_gui = player.gui.top[CITY_INFO_NAME]
 
     if city_info_gui ~= nil and city_info_gui.valid then
@@ -593,7 +595,7 @@ Gui.set_click_handler(
         settings.target_comfort = max(0, min(settings.target_comfort + event.element.tags.delta, Housing.max_level))
         local stepper = Gui.get_element("city-info-placement", "comfort-stepper", player_index)
         if stepper and stepper.valid then
-            Gui.Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
+            Elements.IntStepper.update(stepper, settings.target_comfort, 0, Housing.max_level)
         end
     end
 )
@@ -635,3 +637,5 @@ Gui.set_checked_state_handler(
         end
     end
 )
+
+return CityInfo

@@ -7,9 +7,11 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 local Time = require("constants.time")
 
-local Gui = Gui
-local Datalist = Gui.Elements.Datalist
-local Tabs = Gui.Elements.Tabs
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
+
+local Datalist = Elements.Datalist
+local Tabs = Elements.Tabs
 
 local floor = math.floor
 local mix_seeds = Tirislib.Utils.mix_seeds
@@ -105,12 +107,12 @@ local function apply_lineup(building_data, entry)
 end
 
 local function update_nightclub_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
     apply_lineup(Tabs.get_content(container.tabpane, "general").building, entry)
 end
 
 local function create_nightclub_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
     local building_data = Tabs.get_content(tabbed_pane, "general").building
 
     Datalist.add_kv_pair(building_data, "on-stage", {"sosciencity.on-stage"})
@@ -136,7 +138,7 @@ local function create_nightclub_details(container, entry, player_id)
     return tabbed_pane
 end
 
-Gui.DetailsView.register_type(Type.nightclub, {
+DetailsView.register_type(Type.nightclub, {
     creater = create_nightclub_details,
     updater = update_nightclub_details
 })

@@ -4,16 +4,18 @@
 local Type = require("enums.type")
 
 local Waterwell = require("classes.entities.waterwell")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
-local Gui = Gui
 local display_item_stack = Tirislib.Locales.display_item_stack
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_waterwell_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local building_data = Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local missing_module = Waterwell.get_missing_module(entry)
     Datalist.set_kv_pair_visibility(building_data, "module", missing_module ~= nil)
@@ -27,9 +29,9 @@ local function update_waterwell_details(container, entry, player_id)
 end
 
 local function create_waterwell_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "module", nil, "")
@@ -37,10 +39,10 @@ local function create_waterwell_details(container, entry, player_id)
     update_waterwell_details(container, entry)
 end
 
-Gui.DetailsView.register_type(Type.waterwell, {creater = create_waterwell_details, updater = update_waterwell_details})
+DetailsView.register_type(Type.waterwell, {creater = create_waterwell_details, updater = update_waterwell_details})
 
-Gui.BuildingOverview.register_type("waterwells", {
+BuildingOverview.register_type("waterwells", {
     types = {Type.waterwell},
     layout = "grid",
-    stats_creator = Gui.BuildingOverview.generic_stats_creator
+    stats_creator = BuildingOverview.generic_stats_creator
 })

@@ -1,6 +1,10 @@
 local Castes = require("constants.castes")
 local Color = require("constants.color")
 
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
+
 local TIER_LABELS = {
     fine   = {"city-view.pop-history-fine"},
     medium = {"city-view.pop-history-medium"},
@@ -64,7 +68,7 @@ local function rebuild_chart(bars_flow, left_label, tier_index, caste_index)
         or ""
 
     local period = TIER_ACCENT_PERIOD[tier.name]
-    Gui.Elements.BarChart.render(bars_flow, samples, {
+    Elements.BarChart.render(bars_flow, samples, {
         height = 400,
         total_width = 876, -- The exact width of the page flow including the margin
         color = function(index) return index % period == 1 and Color.light_blue or Color.light_teal end,
@@ -73,7 +77,7 @@ local function rebuild_chart(bars_flow, left_label, tier_index, caste_index)
 end
 
 local function create_page(container)
-    Gui.Elements.Label.heading_1(container, {"city-view.pop-history"})
+    Elements.Label.heading_1(container, {"city-view.pop-history"})
 
     local player_index = container.player_index
 
@@ -101,7 +105,7 @@ local function create_page(container)
         tags = {sosciencity_gui_event = "pop_history_selector_changed"}
     }
 
-    local bars_flow = Gui.Elements.BarChart.create(container)
+    local bars_flow = Elements.BarChart.create(container)
 
     local time_labels = container.add {type = "flow", direction = "horizontal"}
     time_labels.style.horizontally_stretchable = true
@@ -133,7 +137,7 @@ Gui.set_selection_state_changed_handler(
     end
 )
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "pop-history",
     category = "statistics",
     localised_name = {"city-view.pop-history"},

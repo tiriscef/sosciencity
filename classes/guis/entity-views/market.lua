@@ -8,13 +8,16 @@ local Type = require("enums.type")
 local Castes = require("constants.castes")
 local Time = require("constants.time")
 
-local Gui = Gui
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
+
 local Inventories = Inventories
 local Neighborhood = Neighborhood
 local floor = math.floor
 local round = Tirislib.Utils.round
 local display_time = Tirislib.Locales.display_time
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function analyse_dependants(entry, consumption_key)
     local inhabitant_count = 0
@@ -34,10 +37,10 @@ local function analyse_dependants(entry, consumption_key)
 end
 
 local function update_market(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local building_data = Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local amount = Consumption.count_calories(Inventories.get_chest_inventory(entry))
 
@@ -74,9 +77,9 @@ local function update_market(container, entry, player_id)
 end
 
 local function create_market(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "content", {"sosciencity.content"})
@@ -87,9 +90,9 @@ local function create_market(container, entry, player_id)
     update_market(container, entry)
 end
 
-Gui.DetailsView.register_type(Type.market, {creater = create_market, updater = update_market})
+DetailsView.register_type(Type.market, {creater = create_market, updater = update_market})
 
-Gui.BuildingOverview.register_type("markets", {
+BuildingOverview.register_type("markets", {
     types = {Type.market},
     layout = "grid",
     stats_creator = function(flow, entry)

@@ -1,19 +1,22 @@
-Gui.CityView.add_category("caste", {"sosciencity.caste"})
-
 local Castes = require("constants.castes")
 local Time = require("constants.time")
+
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
+
+CityView.add_category("caste", {"sosciencity.caste"})
 
 local function add_caste_infos(container, caste_id)
     local caste = Castes.values[caste_id]
 
-    local centered_flow = Gui.Elements.Flow.horizontal_center(container)
-    Gui.Elements.Sprite.create_caste_sprite(centered_flow, caste_id, 256)
+    local centered_flow = Elements.Flow.horizontal_center(container)
+    Elements.Sprite.create_caste_sprite(centered_flow, caste_id, 256)
 
-    Gui.Elements.Label.heading_1(container, caste.localised_name)
-    Gui.Elements.Label.paragraph(container, {"technology-description." .. caste.name .. "-caste"})
+    Elements.Label.heading_1(container, caste.localised_name)
+    Elements.Label.paragraph(container, {"technology-description." .. caste.name .. "-caste"})
 
-    local caste_data = Gui.Elements.Datalist.create(container, "caste-infos")
-    Gui.Elements.Datalist.add_kv_pair(
+    local caste_data = Elements.Datalist.create(container, "caste-infos")
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "taste",
         {"sosciencity.taste"},
@@ -23,13 +26,13 @@ local function add_caste_infos(container, caste_id)
             Locale.taste_category(caste.least_favored_taste)
         }
     )
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "food-count",
         {"sosciencity.food-count"},
         {"sosciencity.show-food-count", caste.minimum_food_count}
     )
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "eating-behavior",
         {"sosciencity.eating-behavior"},
@@ -40,32 +43,32 @@ local function add_caste_infos(container, caste_id)
             caste.happiness_per_disliked_food
         }
     )
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "room-count",
         {"sosciencity.room-needs"},
         {"sosciencity.show-room-needs", caste.required_room_count}
     )
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "power-demand",
         {"sosciencity.power-demand"},
         {"sosciencity.show-power-demand", caste.power_demand / 1000 * Time.second} -- convert from J / tick to kW
     )
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "water-demand",
         {"sosciencity.water"},
         {"sosciencity.show-water-demand", caste.water_demand * Time.minute}
     )
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         caste_data,
         "fear-susceptibility",
         {"sosciencity.fear-susceptibility"},
         {"sosciencity.show-fear-susceptibility", caste.fear_susceptibility * 100}
     )
 
-    local housing_flow = Gui.Elements.Datalist.add_kv_flow(caste_data, "housing-traits", {"sosciencity.housing"})
+    local housing_flow = Elements.Datalist.add_kv_flow(caste_data, "housing-traits", {"sosciencity.housing"})
     housing_flow.add {
             type = "label",
             name = "comfort",
@@ -78,14 +81,14 @@ local function add_caste_infos(container, caste_id)
         name = "prefered-traits",
         direction = "vertical"
     }
-    Gui.Elements.Datalist.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-traits"})
+    Elements.Datalist.add_key_label(prefered_flow, "header-prefered", {"sosciencity.prefered-traits"})
     local disliked_flow =
         housing_flow.add {
         type = "flow",
         name = "disliked-traits",
         direction = "vertical"
     }
-    Gui.Elements.Datalist.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-traits"})
+    Elements.Datalist.add_key_label(disliked_flow, "header-disliked", {"sosciencity.disliked-traits"})
 
     for trait, assessment in pairs(caste.housing_preferences) do
         local trait_flow = assessment > 0 and prefered_flow or disliked_flow
@@ -98,25 +101,25 @@ local function add_caste_infos(container, caste_id)
         }
     end
 
-    Gui.Elements.Utils.separator_line(container)
-    Gui.Elements.Label.heading_2(container, {"sosciencity.strike"})
+    Elements.Utils.separator_line(container)
+    Elements.Label.heading_2(container, {"sosciencity.strike"})
 
-    local strike_data = Gui.Elements.Datalist.create(container, "strike-infos")
-    Gui.Elements.Datalist.add_kv_pair(
+    local strike_data = Elements.Datalist.create(container, "strike-infos")
+    Elements.Datalist.add_kv_pair(
         strike_data,
         "thresholds",
         {"sosciencity.strike"},
         {"sosciencity.show-strike-thresholds", caste.strike_begin_threshold, caste.full_strike_threshold}
     )
     if caste.full_strike_worker_fraction > 0 then
-        Gui.Elements.Datalist.add_kv_pair(
+        Elements.Datalist.add_kv_pair(
             strike_data,
             "min-workers",
             {"sosciencity.min-strike-workers"},
             {"sosciencity.show-min-strike-workers", caste.full_strike_worker_fraction * 100}
         )
     end
-    Gui.Elements.Datalist.add_kv_pair(
+    Elements.Datalist.add_kv_pair(
         strike_data,
         "caste-penalty",
         {"sosciencity.strike-caste-penalty"},
@@ -127,7 +130,7 @@ local function add_caste_infos(container, caste_id)
 end
 
 for _, caste in pairs(Castes.all) do
-    Gui.CityView.add_page {
+    CityView.add_page {
         name = caste.name,
         category = "caste",
         localised_name = caste.localised_name_short,

@@ -9,15 +9,18 @@ local EK = require("enums.entry-key")
 local MoveCause = require("enums.move-cause")
 local Castes = require("constants.castes")
 local DevMode = require("classes.dev-mode")
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local DebugWidgets = require("classes.guis.debug-widgets")
+local Elements = require("classes.guis.elements")
 
 local CONTEXT = "debug-broadcast"
 local HEALTHY = DiseaseGroup.HEALTHY
 
 local shuffle = Tirislib.Arrays.shuffle
 
-local CollapsibleSection = Gui.Elements.CollapsibleSection
-local NumericTextField = Gui.Elements.NumericTextField
-local DebugWidgets = Gui.DebugWidgets
+local CollapsibleSection = Elements.CollapsibleSection
+local NumericTextField = Elements.NumericTextField
 
 ---------------------------------------------------------------------------------------------------
 -- << UI builders >>
@@ -205,7 +208,7 @@ Gui.set_click_handler(
 -- << Page registration >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "debug-broadcast",
     category = "debug",
     localised_name = {"city-view.debug-broadcast"},

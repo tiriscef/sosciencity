@@ -8,6 +8,7 @@ local Types = require("constants.types")
 local UpdateGroup = require("constants.update-groups")
 
 local AutoNames = require("classes.auto-names")
+local late_require = require("classes.late-require")
 
 local floor = math.floor
 
@@ -72,8 +73,11 @@ local get_subtbl = Tirislib.Tables.get_subtbl
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
+local DetailsView -- set during load, the gui loads after Register
+
 local function set_locals()
     storage = _ENV.storage
+    DetailsView = late_require("classes.guis.details-view")
     register = storage.register
     register_by_type = storage.register_by_type
     register_by_group = storage.register_by_group
@@ -626,7 +630,7 @@ function Register.change_type(entry, new_type)
     local new_entry = add_entity(entry[EK.entity], new_type)
     new_entry[EK.tick_of_creation] = entry[EK.tick_of_creation]
 
-    Gui.DetailsView.rebuild_for_entry(new_entry)
+    DetailsView.rebuild_for_entry(new_entry)
     invalidate_entry(entry)
     return new_entry
 end

@@ -4,6 +4,10 @@ local Types = require("constants.types")
 local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
+
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor
 local log = math.log
@@ -73,7 +77,7 @@ end
 local function add_building_row(datalist, key, type_id, count)
     if count > 0 then
         local def = Types.definitions[type_id]
-        Gui.Elements.Datalist.add_kv_pair(
+        Elements.Datalist.add_kv_pair(
             datalist,
             key,
             def and def.localised_name or key,
@@ -82,15 +86,15 @@ local function add_building_row(datalist, key, type_id, count)
     end
 end
 
-Gui.CityView.add_category("statistics", {"city-view.statistics"})
+CityView.add_category("statistics", {"city-view.statistics"})
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "overview",
     category = "statistics",
     localised_name = {"city-view.overview"},
     creator = function(container)
-        Gui.Elements.Label.heading_1(container, {"city-view.overview"})
-        Gui.Elements.Label.paragraph(container, {"city-view.overview-intro"})
+        Elements.Label.heading_1(container, {"city-view.overview"})
+        Elements.Label.paragraph(container, {"city-view.overview-intro"})
 
         -- collect researched castes
         local researched_castes = {}
@@ -103,7 +107,7 @@ Gui.CityView.add_page {
         -----------------------------------------------------------------------
         -- Section 1: Population & Housing
         -----------------------------------------------------------------------
-        Gui.Elements.Label.heading_2(container, {"city-view.population-and-housing"})
+        Elements.Label.heading_2(container, {"city-view.population-and-housing"})
 
         -- population snapshot from ~1 hour ago for trend indicators
         local snapshot = Statistics.get_population_snapshot("fine", 60)
@@ -178,13 +182,13 @@ Gui.CityView.add_page {
         pop_table.add {type = "label", caption = {"city-view.homeless-estimate", approximate(total_homeless)}, style = "sosciencity_calculation_table_right_head"}
 
         if #researched_castes == 0 then
-            Gui.Elements.Label.paragraph(container, {"city-view.no-castes-researched"})
-            Gui.Elements.Button.technology_link(container, "upbringing")
+            Elements.Label.paragraph(container, {"city-view.no-castes-researched"})
+            Elements.Button.technology_link(container, "upbringing")
         end
 
         -- Population Management
         if storage.technologies["passive-redistribution"] then
-            Gui.Elements.Label.heading_3(container, {"city-view.population-management"})
+            Elements.Label.heading_3(container, {"city-view.population-management"})
 
             container.add {
                 type = "checkbox",
@@ -199,7 +203,7 @@ Gui.CityView.add_page {
         -- Section 2: Caste Bonuses
         -----------------------------------------------------------------------
         if #researched_castes > 0 then
-            Gui.Elements.Label.heading_2(container, {"city-view.caste-bonuses"})
+            Elements.Label.heading_2(container, {"city-view.caste-bonuses"})
 
             local bonus_table = container.add {
                 type = "table",
@@ -245,47 +249,47 @@ Gui.CityView.add_page {
         -----------------------------------------------------------------------
         local sick, employed, striking = compute_housing_stats()
 
-        local health_content = Gui.Elements.CollapsibleSection.heading_2(
+        local health_content = Elements.CollapsibleSection.heading_2(
             container,
             {"city-view.city-health"}
         )
 
-        local health_data = Gui.Elements.Datalist.create(health_content, nil, nil, "sosciencity_datalist_wide")
-        Gui.Elements.Datalist.add_kv_pair(
+        local health_data = Elements.Datalist.create(health_content, nil, nil, "sosciencity_datalist_wide")
+        Elements.Datalist.add_kv_pair(
             health_data, "fear",
             {"city-view.fear-level"},
             {"city-view.display-fear", string.format("%.1f", storage.fear)}
         )
-        Gui.Elements.Datalist.add_kv_pair(
+        Elements.Datalist.add_kv_pair(
             health_data, "sick",
             {"city-view.sick-inhabitants"},
             tostring(sick)
         )
-        Gui.Elements.Datalist.add_kv_pair(
+        Elements.Datalist.add_kv_pair(
             health_data, "striking",
             {"city-view.striking-houses"},
             tostring(striking)
         )
 
-        Gui.Elements.Button.page_link(health_content, "statistics", "census-report")
-        Gui.Elements.Button.page_link(health_content, "statistics", "healthcare-report")
+        Elements.Button.page_link(health_content, "statistics", "census-report")
+        Elements.Button.page_link(health_content, "statistics", "healthcare-report")
 
         -----------------------------------------------------------------------
         -- Section 4: Workforce
         -----------------------------------------------------------------------
-        local workforce_content = Gui.Elements.CollapsibleSection.heading_2(
+        local workforce_content = Elements.CollapsibleSection.heading_2(
             container,
             {"city-view.workforce"}
         )
 
-        local workforce_data = Gui.Elements.Datalist.create(workforce_content, nil, nil, "sosciencity_datalist_wide")
-        Gui.Elements.Datalist.add_kv_pair(
+        local workforce_data = Elements.Datalist.create(workforce_content, nil, nil, "sosciencity_datalist_wide")
+        Elements.Datalist.add_kv_pair(
             workforce_data,
             "employed",
             {"city-view.employed"},
             tostring(employed)
         )
-        Gui.Elements.Datalist.add_kv_pair(
+        Elements.Datalist.add_kv_pair(
             workforce_data,
             "manufactories",
             Types.definitions[Type.manufactory].localised_name,
@@ -295,16 +299,16 @@ Gui.CityView.add_page {
         -----------------------------------------------------------------------
         -- Section 5: Infrastructure
         -----------------------------------------------------------------------
-        local infra_content = Gui.Elements.CollapsibleSection.heading_2(
+        local infra_content = Elements.CollapsibleSection.heading_2(
             container,
             {"city-view.infrastructure"},
             {collapsed = true}
         )
 
         -- Factories
-        Gui.Elements.Label.heading_3(infra_content, {"city-view.factories"})
-        local factory_data = Gui.Elements.Datalist.create(infra_content, "factories", nil, "sosciencity_datalist_wide")
-        Gui.Elements.Datalist.add_kv_pair(
+        Elements.Label.heading_3(infra_content, {"city-view.factories"})
+        local factory_data = Elements.Datalist.create(infra_content, "factories", nil, "sosciencity_datalist_wide")
+        Elements.Datalist.add_kv_pair(
             factory_data, "machines",
             {"sosciencity.machines"},
             {"city-view.active-of-total", storage.active_machine_count, Register.get_machine_count()}
@@ -331,8 +335,8 @@ Gui.CityView.add_page {
             end
         end
         if has_healthcare then
-            Gui.Elements.Label.heading_3(infra_content, {"city-view.healthcare-buildings"})
-            local hc_data = Gui.Elements.Datalist.create(infra_content, "healthcare", nil, "sosciencity_datalist_wide")
+            Elements.Label.heading_3(infra_content, {"city-view.healthcare-buildings"})
+            local hc_data = Elements.Datalist.create(infra_content, "healthcare", nil, "sosciencity_datalist_wide")
             for _, t in pairs(healthcare_types) do
                 add_building_row(hc_data, "hc-" .. t, t, Register.get_type_count(t))
             end
@@ -354,8 +358,8 @@ Gui.CityView.add_page {
             end
         end
         if has_civil then
-            Gui.Elements.Label.heading_3(infra_content, {"city-view.civil-buildings"})
-            local civil_data = Gui.Elements.Datalist.create(infra_content, "civil", nil, "sosciencity_datalist_wide")
+            Elements.Label.heading_3(infra_content, {"city-view.civil-buildings"})
+            local civil_data = Elements.Datalist.create(infra_content, "civil", nil, "sosciencity_datalist_wide")
             for _, t in pairs(civil_types) do
                 add_building_row(civil_data, "civil-" .. t, t, Register.get_type_count(t))
             end
@@ -380,12 +384,12 @@ Gui.CityView.add_page {
             end
         end
         if has_production then
-            Gui.Elements.Label.heading_3(infra_content, {"city-view.production-buildings"})
-            local prod_data = Gui.Elements.Datalist.create(infra_content, "production", nil, "sosciencity_datalist_wide")
+            Elements.Label.heading_3(infra_content, {"city-view.production-buildings"})
+            local prod_data = Elements.Datalist.create(infra_content, "production", nil, "sosciencity_datalist_wide")
             for _, entry in pairs(production_entries) do
                 if entry.count > 0 then
                     local label = entry.label or Types.definitions[entry.type_id].localised_name
-                    Gui.Elements.Datalist.add_kv_pair(prod_data, entry.key, label, tostring(entry.count))
+                    Elements.Datalist.add_kv_pair(prod_data, entry.key, label, tostring(entry.count))
                 end
             end
         end
@@ -404,8 +408,8 @@ Gui.CityView.add_page {
             end
         end
         if has_other then
-            Gui.Elements.Label.heading_3(infra_content, {"city-view.other-buildings"})
-            local other_data = Gui.Elements.Datalist.create(infra_content, "other", nil, "sosciencity_datalist_wide")
+            Elements.Label.heading_3(infra_content, {"city-view.other-buildings"})
+            local other_data = Elements.Datalist.create(infra_content, "other", nil, "sosciencity_datalist_wide")
             for _, t in pairs(other_types) do
                 add_building_row(other_data, "other-" .. t, t, Register.get_type_count(t))
             end
@@ -420,25 +424,25 @@ Gui.set_checked_state_handler(
     end
 )
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "census-report",
     category = "statistics",
     localised_name = {"report-name.census"},
     creator = function(container)
         if not storage.current_reports.immigration then
-            Gui.Elements.Label.paragraph(container, {"city-view.no-report", {"report-name.census"}})
+            Elements.Label.paragraph(container, {"city-view.no-report", {"report-name.census"}})
             return
         end
 
-        Gui.Elements.Label.heading_1(container, {"report-name.census"})
-        Gui.Elements.Label.paragraph(container, {"city-view.census-report-intro"})
+        Elements.Label.heading_1(container, {"report-name.census"})
+        Elements.Label.paragraph(container, {"city-view.census-report-intro"})
 
-        Gui.Elements.Label.heading_3(container, {"city-view.overview"})
+        Elements.Label.heading_3(container, {"city-view.overview"})
 
         local immigration_sum = Tirislib.Tables.sum(storage.current_reports.immigration)
         local loss_sum = Tirislib.Tables.sum(storage.current_reports.loss)
         local death_sum = Tirislib.Tables.sum(storage.current_reports.death)
-        Gui.Elements.CalculationTable.create {
+        Elements.CalculationTable.create {
             container = container,
             groups = {
                 {
@@ -464,9 +468,9 @@ Gui.CityView.add_page {
             }
         }
 
-        Gui.Elements.Label.heading_3(container, {"city-view.immigration-by-cause"})
+        Elements.Label.heading_3(container, {"city-view.immigration-by-cause"})
         if immigration_sum > 0 then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -477,12 +481,12 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-immigration"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-immigration"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.loss-by-cause"})
+        Elements.Label.heading_3(container, {"city-view.loss-by-cause"})
         if loss_sum > 0 then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -493,12 +497,12 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-loss"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-loss"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.deaths-by-cause"})
+        Elements.Label.heading_3(container, {"city-view.deaths-by-cause"})
         if death_sum > 0 then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -509,32 +513,32 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-deaths"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-deaths"})
         end
     end
 }
 
 local Diseases = require("constants.diseases")
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "healthcare-report",
     category = "statistics",
     localised_name = {"report-name.healthcare"},
     creator = function(container)
         if not storage.current_reports.diseases then
-            Gui.Elements.Label.paragraph(container, {"city-view.no-report", {"report-name.healthcare"}})
+            Elements.Label.paragraph(container, {"city-view.no-report", {"report-name.healthcare"}})
             return
         end
 
-        Gui.Elements.Label.heading_1(container, {"report-name.healthcare"})
-        Gui.Elements.Label.paragraph(container, {"city-view.healthcare-report-intro"})
+        Elements.Label.heading_1(container, {"report-name.healthcare"})
+        Elements.Label.paragraph(container, {"city-view.healthcare-report-intro"})
 
-        Gui.Elements.Label.heading_3(container, {"city-view.overview"})
+        Elements.Label.heading_3(container, {"city-view.overview"})
         local new_diseases_sum = Tirislib.Tables.sum(storage.current_reports["disease-cause"])
         local treated_diseases_sum = Tirislib.Tables.sum(storage.current_reports["disease-recovery"][true])
         local recovered_diseases_sum = Tirislib.Tables.sum(storage.current_reports["disease-recovery"][false])
         local disease_death_sum = Tirislib.Tables.sum(storage.current_reports["disease-death"])
-        Gui.Elements.CalculationTable.create {
+        Elements.CalculationTable.create {
             container = container,
             groups = {
                 {
@@ -562,12 +566,12 @@ Gui.CityView.add_page {
             }
         }
 
-        Gui.Elements.Label.heading_3(container, {"city-view.overview-by-disease"})
+        Elements.Label.heading_3(container, {"city-view.overview-by-disease"})
         local disease_overview = Tirislib.Tables.copy(storage.current_reports.diseases)
         Tirislib.Tables.subtract(disease_overview, storage.current_reports["disease-recovery"][true])
         Tirislib.Tables.subtract(disease_overview, storage.current_reports["disease-recovery"][false])
         Tirislib.Tables.subtract(disease_overview, storage.current_reports["disease-death"])
-        Gui.Elements.CalculationTable.create {
+        Elements.CalculationTable.create {
             container = container,
             groups = {
                 {
@@ -591,9 +595,9 @@ Gui.CityView.add_page {
             }
         }
 
-        Gui.Elements.Label.heading_3(container, {"city-view.new-diseases"})
+        Elements.Label.heading_3(container, {"city-view.new-diseases"})
         if Tirislib.Tables.any(storage.current_reports.diseases) then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -609,12 +613,12 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-new-diseases"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-new-diseases"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.new-diseases-by-cause"})
+        Elements.Label.heading_3(container, {"city-view.new-diseases-by-cause"})
         if Tirislib.Tables.any(storage.current_reports["disease-cause"]) then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -625,12 +629,12 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-new-diseases"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-new-diseases"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.treated-diseases"})
+        Elements.Label.heading_3(container, {"city-view.treated-diseases"})
         if Tirislib.Tables.any(storage.current_reports["disease-recovery"][true]) then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -646,12 +650,12 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-treatments"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-treatments"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.recovered-diseases"})
+        Elements.Label.heading_3(container, {"city-view.recovered-diseases"})
         if Tirislib.Tables.any(storage.current_reports["disease-recovery"][false]) then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -667,12 +671,12 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-recoveries"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-recoveries"})
         end
 
-        Gui.Elements.Label.heading_3(container, {"city-view.disease-deaths"})
+        Elements.Label.heading_3(container, {"city-view.disease-deaths"})
         if Tirislib.Tables.any(storage.current_reports["disease-death"]) then
-            Gui.Elements.CalculationTable.create {
+            Elements.CalculationTable.create {
                 container = container,
                 groups = {
                     {
@@ -688,7 +692,7 @@ Gui.CityView.add_page {
                 }
             }
         else
-            Gui.Elements.Label.paragraph(container, {"city-view.no-reported-disease-deaths"})
+            Elements.Label.paragraph(container, {"city-view.no-reported-disease-deaths"})
         end
     end
 }

@@ -1,5 +1,5 @@
 --- The gui that pops up when the player opens a entity.
-Gui.DetailsView = {}
+local DetailsView = {}
 
 local DETAILS_VIEW_NAME = "sosciencity-details"
 
@@ -15,11 +15,13 @@ local Time = require("constants.time")
 local Types = require("constants.types")
 
 local AutoNames = require("classes.auto-names")
+local Gui = require("classes.gui")
+local BuildingOverview = require("classes.guis.building-overview")
+local Elements = require("classes.guis.elements")
 
 -- local often used globals for microscopic performance gains
 
 local Communication = Communication
-local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
 local Register = Register
@@ -39,7 +41,7 @@ local Luaq_from = Tirislib.Luaq.from
 
 local display_enumeration = Tirislib.Locales.create_enumeration
 
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_details_header(container, entry)
     local display_flow = container.parent.header.display_flow
@@ -47,7 +49,7 @@ local function update_details_header(container, entry)
     display_flow.reset_button.visible = entry[EK.custom_name] ~= nil
     display_flow.regenerate_button.visible = get_building_details(entry).auto_name ~= nil
 
-    local overview_page = Gui.BuildingOverview.get_page_for_type(entry[EK.type])
+    local overview_page = BuildingOverview.get_page_for_type(entry[EK.type])
     local overview_button = display_flow.overview_button
     overview_button.visible = overview_page ~= nil
     if overview_page then
@@ -67,8 +69,8 @@ local function get_or_create_tabbed_pane(container)
     end
 end
 
-Gui.DetailsView.update_header = update_details_header
-Gui.DetailsView.get_or_create_tabbed_pane = get_or_create_tabbed_pane
+DetailsView.update_header = update_details_header
+DetailsView.get_or_create_tabbed_pane = get_or_create_tabbed_pane
 
 -- Per-player flag: true while the player is typing in the staff target textfield.
 -- Prevents the tick-based update from overwriting their input.
@@ -116,7 +118,7 @@ end
 
 local function update_general_building_details(container, entry, player_id)
     local tabbed_pane = container.tabpane
-    local tab = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local tab = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = tab.building
 
     local building_details = get_building_details(entry)
@@ -189,7 +191,7 @@ local function update_general_building_details(container, entry, player_id)
 
     local report_flow = tab["performance-report"]
     if report_flow then
-        Gui.Elements.PerformanceReport.update(report_flow, Entity.build_performance_report(entry))
+        Elements.PerformanceReport.update(report_flow, Entity.build_performance_report(entry))
     end
 end
 
@@ -200,7 +202,7 @@ local function create_general_building_details(container, entry, player_id)
     local type_details = type_definitions[entry[EK.type]]
 
     local tabbed_pane = get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"}, "sosciencity_details_tab")
+    local tab = Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"}, "sosciencity_details_tab")
 
     if type_details.has_subscriptions then
         local flow =
@@ -311,7 +313,7 @@ local function create_general_building_details(container, entry, player_id)
         )
         Datalist.add_kv_pair(building_data, "castes", {"sosciencity.caste"}, castes_needed)
 
-        Gui.Elements.Label.header_label(tab, "worker-header", {Types.workforce_key(type_id, worker_specification, "")})
+        Elements.Label.header_label(tab, "worker-header", {Types.workforce_key(type_id, worker_specification, "")})
         Datalist.create(tab, "workers")
     end
 
@@ -323,9 +325,9 @@ local function create_general_building_details(container, entry, player_id)
     end
 
     if Entity.has_performance_report_builder(entry[EK.type]) then
-        Gui.Elements.Utils.separator_line(tab)
-        Gui.Elements.Label.header_label(tab, "header-performance", {"sosciencity.performance-breakdown"})
-        Gui.Elements.PerformanceReport.create(tab, "performance-report")
+        Elements.Utils.separator_line(tab)
+        Elements.Label.header_label(tab, "header-performance", {"sosciencity.performance-breakdown"})
+        Elements.PerformanceReport.create(tab, "performance-report")
     end
 
     update_general_building_details(container, entry, player_id)
@@ -333,8 +335,8 @@ local function create_general_building_details(container, entry, player_id)
     return tabbed_pane
 end
 
-Gui.DetailsView.update_general = update_general_building_details
-Gui.DetailsView.create_general = create_general_building_details
+DetailsView.update_general = update_general_building_details
+DetailsView.create_general = create_general_building_details
 
 Gui.set_value_changed_handler(
     "staff_target_slider",
@@ -413,7 +415,7 @@ local function apply_name_edit(player_index)
     frame.header.edit_flow.visible = false
     frame.header.display_flow.visible = true
 
-    Gui.DetailsView.update_header_for_entry(entry)
+    DetailsView.update_header_for_entry(entry)
 end
 
 Gui.set_click_handler(
@@ -459,7 +461,7 @@ Gui.set_click_handler(
         if not entry then return end
 
         entry[EK.custom_name] = nil
-        Gui.DetailsView.update_header_for_entry(entry)
+        DetailsView.update_header_for_entry(entry)
     end
 )
 
@@ -472,7 +474,7 @@ Gui.set_click_handler(
         local scheme = get_building_details(entry).auto_name
         if scheme then
             AutoNames.generate(scheme, entry)
-            Gui.DetailsView.update_header_for_entry(entry)
+            DetailsView.update_header_for_entry(entry)
         end
     end
 )
@@ -485,7 +487,7 @@ local type_gui_specifications = {}
 --- Registers the gui specification for a type.
 --- @param type_id integer
 --- @param spec table (creater, updater optional, always_update optional)
-function Gui.DetailsView.register_type(type_id, spec)
+function DetailsView.register_type(type_id, spec)
     type_gui_specifications[type_id] = spec
 end
 
@@ -493,7 +495,7 @@ end
 ---------------------------------------------------------------------------------------------------
 -- << general details view functions >>
 
-function Gui.DetailsView.create(player)
+function DetailsView.create(player)
     local frame = player.gui.screen[DETAILS_VIEW_NAME]
     if frame and frame.valid then
         return
@@ -622,12 +624,12 @@ local function get_details_view(player)
         return details_view
     else
         -- recreate it otherwise
-        Gui.DetailsView.create(player)
+        DetailsView.create(player)
         return get_details_view(player)
     end
 end
 
-Gui.DetailsView.get = get_details_view
+DetailsView.get = get_details_view
 
 --- Returns the nested content-part of the DetailView for the given player.
 --- @param player LuaPlayer
@@ -636,10 +638,10 @@ local function get_nested_details_view(player)
     return get_details_view(player).nested
 end
 
-Gui.DetailsView.get_nested = get_nested_details_view
+DetailsView.get_nested = get_nested_details_view
 
 --- Updates the details guis for every player.
-function Gui.DetailsView.update()
+function DetailsView.update()
     local current_tick = game.tick
 
     for player_id, unit_number in pairs(storage.details_view) do
@@ -648,7 +650,7 @@ function Gui.DetailsView.update()
 
         -- check if the entity hasn't been unregistered in the meantime
         if not entry then
-            Gui.DetailsView.close(player)
+            DetailsView.close(player)
         else
             local gui_spec = type_gui_specifications[entry[EK.type]]
             local updater = gui_spec and gui_spec.updater
@@ -663,7 +665,7 @@ end
 --- Builds a details gui for the given player and the given entity.
 --- @param player LuaPlayer
 --- @param unit_number integer
-function Gui.DetailsView.open(player, unit_number)
+function DetailsView.open(player, unit_number)
     local entry = Register.try_get(unit_number)
     if not entry then
         return
@@ -696,7 +698,7 @@ end
 
 --- Closes the details view for the given player.
 --- @param player LuaPlayer
-function Gui.DetailsView.close(player)
+function DetailsView.close(player)
     local details_view = get_details_view(player)
     local previous = storage.details_view[player.index]
     if previous then
@@ -709,24 +711,24 @@ end
 
 --- Closes and reopens the details view of the given player, if it is open.
 --- @param player LuaPlayer
-function Gui.DetailsView.rebuild(player)
+function DetailsView.rebuild(player)
     local unit_number = storage.details_view[player.index]
     if unit_number then
-        Gui.DetailsView.close(player)
-        Gui.DetailsView.open(player, unit_number)
+        DetailsView.close(player)
+        DetailsView.open(player, unit_number)
     end
 end
 
 --- Closes and reopens all the Guis related to the given entry.
 --- @param entry Entry
-function Gui.DetailsView.rebuild_for_entry(entry)
+function DetailsView.rebuild_for_entry(entry)
     local unit_number = entry[EK.unit_number]
 
     for player_index, viewed_unit_number in pairs(storage.details_view) do
         if unit_number == viewed_unit_number then
             local player = game.get_player(player_index)
-            Gui.DetailsView.close(player)
-            Gui.DetailsView.open(player, unit_number)
+            DetailsView.close(player)
+            DetailsView.open(player, unit_number)
         end
     end
 end
@@ -734,7 +736,7 @@ end
 --- Calls the updater for all open detail views showing the given entry, without rebuilding.
 --- Preserves scroll position and selected tab.
 --- @param entry Entry
-function Gui.DetailsView.update_for_entry(entry)
+function DetailsView.update_for_entry(entry)
     local unit_number = entry[EK.unit_number]
 
     for player_id, viewed_unit_number in pairs(storage.details_view) do
@@ -751,7 +753,7 @@ end
 
 --- Updates the name label and reset button for all players currently viewing entry.
 --- @param entry Entry
-function Gui.DetailsView.update_header_for_entry(entry)
+function DetailsView.update_header_for_entry(entry)
     local unit_number = entry[EK.unit_number]
     for player_id, viewed_unit_number in pairs(storage.details_view) do
         if unit_number == viewed_unit_number then
@@ -765,7 +767,7 @@ end
 
 --- Destroys the city info gui.
 --- @param player LuaPlayer
-function Gui.DetailsView.destroy(player)
+function DetailsView.destroy(player)
     local details_view_gui = player.gui.screen[DETAILS_VIEW_NAME]
 
     if details_view_gui ~= nil and details_view_gui.valid then
@@ -776,7 +778,7 @@ end
 Gui.add_gui_opened_handler(
     function(player, event)
         if event.gui_type == defines.gui_type.entity then
-            Gui.DetailsView.open(player, event.entity.unit_number)
+            DetailsView.open(player, event.entity.unit_number)
         end
     end
 )
@@ -784,26 +786,9 @@ Gui.add_gui_opened_handler(
 Gui.add_gui_closed_handler(
     function(player, event)
         if event.gui_type == defines.gui_type.entity then
-            Gui.DetailsView.close(player)
+            DetailsView.close(player)
         end
     end
 )
 
-require("classes.guis.entity-views.housing")
-require("classes.guis.entity-views.hospital")
-require("classes.guis.entity-views.upbringing-station")
-require("classes.guis.entity-views.composter")
-require("classes.guis.entity-views.farm")
-require("classes.guis.entity-views.salt-pond")
-require("classes.guis.entity-views.waterwell")
-require("classes.guis.entity-views.market")
-require("classes.guis.entity-views.water-distributer")
-require("classes.guis.entity-views.kitchen-for-all")
-require("classes.guis.entity-views.waste-dump")
-require("classes.guis.entity-views.dumpster")
-require("classes.guis.entity-views.immigration-port")
-require("classes.guis.entity-views.fertilization-station")
-require("classes.guis.entity-views.pruning-station")
-require("classes.guis.entity-views.cold-storage")
-require("classes.guis.entity-views.nightclub")
-require("classes.guis.entity-views.generic")
+return DetailsView

@@ -1,11 +1,12 @@
 --- Overview pages for buildings, one page per type, shown in the "buildings" CityView category.
-Gui.BuildingOverview = {}
-local BuildingOverview = Gui.BuildingOverview
+local BuildingOverview = {}
 
 local EK = require("enums.entry-key")
 local Buildings = require("constants.buildings")
 local Types = require("constants.types")
 local Color = require("constants.color")
+
+local Gui = require("classes.gui")
 
 local Register = Register
 local Locale = Locale
@@ -229,3 +230,5 @@ function BuildingOverview.make_enabler(page_name)
         return false
     end
 end
+
+return BuildingOverview

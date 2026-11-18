@@ -8,17 +8,19 @@ local Type = require("enums.type")
 local Time = require("constants.time")
 
 local Fertilization = require("classes.entities.fertilization")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
-local Gui = Gui
 local floor = math.floor
 local display_item_stack = Tirislib.Locales.display_item_stack
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_fertilization_station(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local building_data = Elements.Tabs.get_content(tabbed_pane, "general").building
 
     Datalist.set_kv_pair_value(
         building_data,
@@ -28,9 +30,9 @@ local function update_fertilization_station(container, entry, player_id)
 end
 
 local function create_fertilization_station(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
     Datalist.add_kv_pair(building_data, "humus-stored", {"item-name.humus"})
 
@@ -49,16 +51,16 @@ local function create_fertilization_station(container, entry, player_id)
     update_fertilization_station(container, entry, player_id)
 end
 
-Gui.DetailsView.register_type(
+DetailsView.register_type(
     Type.fertilization_station,
     {creater = create_fertilization_station, updater = update_fertilization_station}
 )
 
-Gui.BuildingOverview.register_type("fertilization-stations", {
+BuildingOverview.register_type("fertilization-stations", {
     types = {Type.fertilization_station},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         flow.add {type = "label", caption = display_item_stack("humus", floor(entry[EK.humus_stored]))}
     end
 })

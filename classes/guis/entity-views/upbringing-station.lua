@@ -12,9 +12,12 @@ local type_definitions = require("constants.types").definitions
 -- classes
 local DevMode = require("classes.dev-mode")
 local Upbringing = require("classes.entities.upbringing")
+local Gui = require("classes.gui")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
 local castes = Castes.values
-local Gui = Gui
 local Inhabitants = Inhabitants
 local Register = Register
 local get_building_details = Buildings.get
@@ -23,7 +26,7 @@ local display_percentage = Tirislib.Locales.display_percentage
 local Table = Tirislib.Tables
 local Array = Tirislib.Arrays
 local Luaq_from = Tirislib.Luaq.from
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 ---------------------------------------------------------------------------------------------------
 -- << upbringing station >>
@@ -83,10 +86,10 @@ local function update_classes_flow(entry, classes_flow)
 end
 
 local function update_upbringing_station(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     local mode_flow = Datalist.get_kv_value_element(building_data, "mode")
@@ -121,9 +124,9 @@ local function update_upbringing_station(container, entry, player_id)
 end
 
 local function create_upbringing_station(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(
@@ -173,11 +176,11 @@ local function create_upbringing_station(container, entry, player_id)
 
     Datalist.add_kv_pair(building_data, "graduates", {"sosciencity.graduates"})
 
-    Gui.Elements.Label.header_label(general, "header-classes", {"sosciencity.classes"})
+    Elements.Label.header_label(general, "header-classes", {"sosciencity.classes"})
     general.add {type = "flow", name = "classes", direction = "vertical"}
 
     if DevMode.is_active() then
-        local debug_tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
+        local debug_tab = Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
         debug_tab.add {
             type = "button",
             style = "red_button",
@@ -218,16 +221,16 @@ Gui.set_click_handler(
     end
 )
 
-Gui.DetailsView.register_type(
+DetailsView.register_type(
     Type.upbringing_station,
     {creater = create_upbringing_station, updater = update_upbringing_station, always_update = true}
 )
 
-Gui.BuildingOverview.register_type("upbringing-stations", {
+BuildingOverview.register_type("upbringing-stations", {
     types = {Type.upbringing_station},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         local mode = entry[EK.education_mode]
         if mode and mode ~= Type.null then
             flow.add {type = "label", caption = type_definitions[mode].localised_name}

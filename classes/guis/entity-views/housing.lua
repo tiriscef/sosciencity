@@ -24,11 +24,15 @@ local Time = require("constants.time")
 -- classes
 local DevMode = require("classes.dev-mode")
 local Hospital = require("classes.entities.hospital")
+local Gui = require("classes.gui")
+local BuildingOverview = require("classes.guis.building-overview")
+local DebugWidgets = require("classes.guis.debug-widgets")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
-local Gui = Gui
 local Inhabitants = Inhabitants
 local Locale = Locale
 local Register = Register
@@ -37,7 +41,7 @@ local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step
 local display_item_stack = Tirislib.Locales.display_item_stack
 local display_rate = Tirislib.Locales.display_rate
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local upgradeable_tags = Tirislib.Tables.get_keyset(Housing.tag_costs)
 
@@ -157,7 +161,7 @@ local function update_caste_chooser(flow, entry, house_details)
 end
 
 local function add_caste_chooser_tab(tabbed_pane, entry, house_details)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"}, "sosciencity_details_tab")
+    local flow = Elements.Tabs.create(tabbed_pane, "caste-chooser", {"sosciencity.caste"}, "sosciencity_details_tab")
     flow.style.horizontal_align = "center"
     flow.style.vertical_align = "center"
     flow.style.vertical_spacing = 6
@@ -188,7 +192,7 @@ Gui.set_click_handler(
             return
         end
 
-        Gui.DetailsView.update_for_entry(entry)
+        DetailsView.update_for_entry(entry)
     end
 )
 
@@ -212,7 +216,7 @@ Gui.set_click_handler(
 
         entry[EK.target_comfort] = new_target
 
-        Gui.DetailsView.update_for_entry(entry)
+        DetailsView.update_for_entry(entry)
     end
 )
 
@@ -230,7 +234,7 @@ Gui.set_click_handler(
             return
         end
 
-        Gui.DetailsView.update_for_entry(entry)
+        DetailsView.update_for_entry(entry)
     end
 )
 
@@ -247,7 +251,7 @@ Gui.set_checked_state_handler(
         else
             Inhabitants.try_request_tag(entry, tag)
         end
-        Gui.DetailsView.update_for_entry(entry)
+        DetailsView.update_for_entry(entry)
     end
 )
 
@@ -382,7 +386,7 @@ local function update_upgrade_section(frame, entry, house_details)
         end
     end
 
-    Gui.Elements.IntStepper.update(flow["automation-flow"]["stepper"], target, current, max_comfort)
+    Elements.IntStepper.update(flow["automation-flow"]["stepper"], target, current, max_comfort)
 end
 
 local function add_upgrade_section(flow, entry, house_details)
@@ -411,7 +415,7 @@ local function add_upgrade_section(flow, entry, house_details)
     local auto_flow = upgrade_flow.add {type = "flow", name = "automation-flow", direction = "horizontal"}
     auto_flow.style.vertical_align = "center"
     auto_flow.add {type = "label", caption = {"sosciencity.auto-deliver-target"}}
-    Gui.Elements.IntStepper.create(auto_flow, "stepper", {
+    Elements.IntStepper.create(auto_flow, "stepper", {
         event_tag = "set_target_comfort",
         extra_tags = {unit_number = unit_number},
         value = 0,
@@ -456,7 +460,7 @@ local function fill_traits_flow(traits_flow, housing_details, caste, trait_upgra
 end
 
 local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"}, "sosciencity_details_tab")
+    local flow = Elements.Tabs.create(tabbed_pane, "house-info", {"sosciencity.building-info"}, "sosciencity_details_tab")
 
     local data_list = Datalist.create(flow, "house-infos")
     Datalist.add_kv_pair(data_list, "room_count", {"sosciencity.room-count"}, house_details.room_count)
@@ -470,7 +474,7 @@ local function add_empty_house_info_tab(tabbed_pane, entry, house_details)
     local traits_flow = Datalist.add_kv_flow(data_list, "traits", {"sosciencity.traits"})
     fill_traits_flow(traits_flow, house_details, nil, entry[EK.trait_upgrades])
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
     add_upgrade_section(flow, entry, house_details)
     add_tag_sections(flow, entry)
 end
@@ -479,10 +483,10 @@ local function update_empty_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     local house_details = Inhabitants.HousingCore.get(entry)
 
-    local caste_chooser_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "caste-chooser")
+    local caste_chooser_flow = Elements.Tabs.get_content(tabbed_pane, "caste-chooser")
     update_caste_chooser(caste_chooser_flow, entry, house_details)
 
-    local info_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "house-info")
+    local info_flow = Elements.Tabs.get_content(tabbed_pane, "house-info")
     local data_list = info_flow["house-infos"]
     Datalist.set_kv_pair_value(
         data_list,
@@ -495,9 +499,9 @@ local function update_empty_housing_details(container, entry)
 end
 
 local function create_empty_housing_details(container, entry)
-    Gui.DetailsView.update_header(container, entry)
+    DetailsView.update_header(container, entry)
 
-    local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
+    local tabbed_pane = DetailsView.get_or_create_tabbed_pane(container)
 
     local house_details = Inhabitants.HousingCore.get(entry)
     add_caste_chooser_tab(tabbed_pane, entry, house_details)
@@ -637,7 +641,7 @@ local function update_immunities_list(flow, entry)
 end
 
 local function update_housing_general_info_tab(tabbed_pane, entry)
-    local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local flow = Elements.Tabs.get_content(tabbed_pane, "general")
 
     local general_list = flow["general-infos"]
 
@@ -818,7 +822,7 @@ Gui.set_checked_state_handler(
 )
 
 local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player_id)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"}, "sosciencity_details_tab")
+    local flow = Elements.Tabs.create(tabbed_pane, "general", {"sosciencity.general"}, "sosciencity_details_tab")
 
     flow.style.vertical_spacing = 6
     flow.style.horizontal_align = "right"
@@ -849,7 +853,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     local traits_flow = Datalist.add_kv_flow(general_list, "traits", {"sosciencity.traits"})
     fill_traits_flow(traits_flow, housing_details, caste, entry[EK.trait_upgrades])
 
-    local priority_flow = Gui.Elements.Flow.horizontal_right(flow, "priority_flow")
+    local priority_flow = Elements.Flow.horizontal_right(flow, "priority_flow")
     priority_flow.style.vertical_align = "center"
     priority_flow.add {
         type = "label",
@@ -870,7 +874,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     textfield.text = tostring(entry[EK.housing_priority])
     Gui.register_element(textfield, entry[EK.unit_number], "priority_textfield", player_id)
 
-    local priority_buttons_flow = Gui.Elements.Flow.horizontal_right(flow)
+    local priority_buttons_flow = Elements.Flow.horizontal_right(flow)
     for _, priority_preset in pairs(priority_presets) do
         priority_buttons_flow.add {
             type = "button",
@@ -886,7 +890,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     end
 
     if not housing_details.is_improvised then
-        local sanatorium_flow = Gui.Elements.Flow.horizontal_right(flow, "sanatorium_flow")
+        local sanatorium_flow = Elements.Flow.horizontal_right(flow, "sanatorium_flow")
         sanatorium_flow.style.vertical_align = "center"
         local sanatorium_checkbox =
             sanatorium_flow.add {
@@ -901,7 +905,7 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
         }
         Gui.register_element(sanatorium_checkbox, entry[EK.unit_number], "sanatorium_checkbox", player_id)
 
-        local relocation_flow = Gui.Elements.Flow.horizontal_right(flow, "relocation_flow")
+        local relocation_flow = Elements.Flow.horizontal_right(flow, "relocation_flow")
         local pull_button = relocation_flow.add {
             type = "button",
             name = "pull_button",
@@ -930,10 +934,10 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
         Gui.register_element(pull_hint, entry[EK.unit_number], "pull_hint", player_id)
     end
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
     add_upgrade_section(flow, entry, housing_details)
     add_tag_sections(flow, entry)
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
     -- the kickout_button only gets added if the house is built by the player
     -- this also avoids that the player can repurpose the hut
@@ -998,7 +1002,7 @@ Gui.set_click_handler(
     function(event)
         local button = event.element
         local entry = Register.try_get(storage.details_view[event.player_index])
-        if Gui.Elements.Utils.is_confirmed(button) then
+        if Elements.Utils.is_confirmed(button) then
             local saved_comfort = entry[EK.current_comfort]
             local saved_target = entry[EK.target_comfort]
             local saved_tags = entry[EK.trait_upgrades]
@@ -1011,7 +1015,7 @@ Gui.set_click_handler(
 )
 
 local function update_housing_detailed_info_tab(tabbed_pane, entry)
-    local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "details")
+    local flow = Elements.Tabs.get_content(tabbed_pane, "details")
 
     local happiness_list = flow["happiness"]
     Datalist.update_operand_entries(
@@ -1051,7 +1055,7 @@ end
 
 
 local function add_housing_detailed_info_tab(tabbed_pane, entry)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "details", {"sosciencity.details"}, "sosciencity_details_tab")
+    local flow = Elements.Tabs.create(tabbed_pane, "details", {"sosciencity.details"}, "sosciencity_details_tab")
 
     local happiness_list = Datalist.create(flow, "happiness")
     Datalist.create_operand_entries(
@@ -1065,7 +1069,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         Locale.happiness_factor_descriptions
     )
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
     local health_list = Datalist.create(flow, "health")
     Datalist.create_operand_entries(
@@ -1079,7 +1083,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         Locale.health_factor_descriptions
     )
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
     local sanity_list = Datalist.create(flow, "sanity")
     Datalist.create_operand_entries(
@@ -1093,24 +1097,24 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
         Locale.sanity_factor_descriptions
     )
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
-    Gui.Elements.Label.header_label(flow, "header-occupations", {"sosciencity.occupations"})
+    Elements.Label.header_label(flow, "header-occupations", {"sosciencity.occupations"})
     Datalist.create(flow, "occupations")
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
-    Gui.Elements.Label.header_label(flow, "header-ages", {"sosciencity.ages"})
+    Elements.Label.header_label(flow, "header-ages", {"sosciencity.ages"})
     Datalist.create(flow, "ages")
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
-    Gui.Elements.Label.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
+    Elements.Label.header_label(flow, "header-genders", {"sosciencity.gender-distribution"})
     Datalist.create(flow, "genders")
 
-    Gui.Elements.Utils.separator_line(flow, "separator-immunities")
+    Elements.Utils.separator_line(flow, "separator-immunities")
 
-    Gui.Elements.Label.header_label(flow, "header-immunities", {"sosciencity.immunities"})
+    Elements.Label.header_label(flow, "header-immunities", {"sosciencity.immunities"})
     Datalist.create(flow, "immunities")
 
     -- call the update function to set the values
@@ -1118,7 +1122,7 @@ local function add_housing_detailed_info_tab(tabbed_pane, entry)
 end
 
 local function update_housing_diet_tab(tabbed_pane, entry)
-    local flow = Gui.Elements.Tabs.get_content(tabbed_pane, "diet")
+    local flow = Elements.Tabs.get_content(tabbed_pane, "diet")
     local info = Inhabitants.get_diet_info(entry)
 
     -- status label
@@ -1170,7 +1174,7 @@ local function update_housing_diet_tab(tabbed_pane, entry)
 end
 
 local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
-    local flow = Gui.Elements.Tabs.create(tabbed_pane, "diet", {"sosciencity.diet"}, "sosciencity_details_tab")
+    local flow = Elements.Tabs.create(tabbed_pane, "diet", {"sosciencity.diet"}, "sosciencity_details_tab")
 
     local caste = castes[caste_id]
 
@@ -1182,7 +1186,7 @@ local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
     Datalist.add_kv_pair(info_list, "disliked-taste", {"sosciencity.diet-disliked-taste"}, Locale.taste_category(caste.least_favored_taste))
     Datalist.get_kv_value_element(info_list, "disliked-taste").style.font_color = Color.red
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
     -- dynamic: status warning
     local status = flow.add {type = "label", name = "diet-status"}
@@ -1190,13 +1194,13 @@ local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
     status.visible = false
 
     -- dynamic: current diet
-    Gui.Elements.Label.header_label(flow, "diet-current-header", {"sosciencity.diet-current"})
+    Elements.Label.header_label(flow, "diet-current-header", {"sosciencity.diet-current"})
     flow.add {type = "flow", name = "diet-items", direction = "vertical"}
 
-    Gui.Elements.Utils.separator_line(flow)
+    Elements.Utils.separator_line(flow)
 
     -- dynamic: nutrition tag coverage
-    Gui.Elements.Label.header_label(flow, "diet-nutrition-header", {"sosciencity.diet-nutrition"})
+    Elements.Label.header_label(flow, "diet-nutrition-header", {"sosciencity.diet-nutrition"})
     local nutrition_flow = flow.add {type = "flow", name = "diet-nutrition", direction = "vertical"}
     for _, tag in pairs(NutritionTag) do
         nutrition_flow.add {type = "label", name = tostring(tag), tooltip = Locale.nutrition_tag_description(tag)}
@@ -1212,7 +1216,7 @@ local function update_housing_debug_tab(tabbed_pane, entry)
         return
     end
 
-    local rates_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "debug")["debug-content"]["disease-rates"]
+    local rates_flow = Elements.Tabs.get_content(tabbed_pane, "debug")["debug-content"]["disease-rates"]
     for category_name, category_id in pairs(DiseaseCategory) do
         local updater = Inhabitants.disease_progress_updaters[category_id]
         if updater then
@@ -1237,13 +1241,13 @@ local function update_housing_details(container, entry)
 end
 
 local function add_housing_debug_tab(tabbed_pane, entry, player_id)
-    local DebugWidgets = Gui.DebugWidgets
-    local NumericTextField = Gui.Elements.NumericTextField
-    local Label = Gui.Elements.Label
-    local separator = Gui.Elements.Utils.separator_line
+    local DebugWidgets = DebugWidgets
+    local NumericTextField = Elements.NumericTextField
+    local Label = Elements.Label
+    local separator = Elements.Utils.separator_line
     local unit_number = entry[EK.unit_number]
 
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
+    local tab = Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
     local content = tab.add {type = "flow", name = "debug-content", direction = "vertical"}
 
     -- New disease cases per category, filled by update_housing_debug_tab
@@ -1387,9 +1391,9 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
 end
 
 local function create_housing_details(container, entry, player_id)
-    Gui.DetailsView.update_header(container, entry)
+    DetailsView.update_header(container, entry)
 
-    local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
+    local tabbed_pane = DetailsView.get_or_create_tabbed_pane(container)
 
     local caste_id = entry[EK.type]
     add_housing_general_info_tab(tabbed_pane, entry, caste_id, player_id)
@@ -1426,8 +1430,8 @@ Gui.set_click_handler("housing_debug_add", function(event)
         player.print({"city-view.debug-invalid-count"})
         return
     end
-    local genders = Gui.DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
-    local ages = Gui.DebugWidgets.make_age_group(age_idx, count, age_value)
+    local genders = DebugWidgets.make_gender_group(gender_idx, egg_idx, count)
+    local ages = DebugWidgets.make_age_group(age_idx, count, age_value)
     local group = InhabitantGroup.new(entry[EK.type], count, happiness, health, sanity, nil, genders, ages)
     local added = Inhabitants.add_to_house(entry, group, MoveCause.copy, true)
     player.print({"city-view.debug-housing-add-done", added, count})
@@ -1477,7 +1481,7 @@ Gui.set_click_handler("housing_debug_infect", function(event)
         player.print({"city-view.debug-invalid-count"})
         return
     end
-    local sickened = Gui.DebugWidgets.apply_infection_to_entry(entry[EK.diseases], count, scope_idx, target_idx)
+    local sickened = DebugWidgets.apply_infection_to_entry(entry[EK.diseases], count, scope_idx, target_idx)
     player.print({"city-view.debug-housing-infect-done", sickened, count})
 end)
 
@@ -1492,7 +1496,7 @@ Gui.set_click_handler("housing_debug_cure", function(event)
         player.print({"city-view.debug-invalid-count"})
         return
     end
-    local cured = Gui.DebugWidgets.apply_cure_to_entry(entry, count, scope_idx, target_idx)
+    local cured = DebugWidgets.apply_cure_to_entry(entry, count, scope_idx, target_idx)
     player.print({"city-view.debug-housing-cure-done", cured, count})
 end)
 
@@ -1518,12 +1522,12 @@ Gui.set_click_handler("housing_debug_garbage", function(event)
     game.players[event.player_index].print({"city-view.debug-housing-garbage-done"})
 end)
 
-Gui.DetailsView.register_type(Type.empty_house, {
+DetailsView.register_type(Type.empty_house, {
     creater = create_empty_housing_details,
     updater = update_empty_housing_details
 })
 for _, caste in pairs(Castes.all) do
-    Gui.DetailsView.register_type(caste.type, {
+    DetailsView.register_type(caste.type, {
         creater = create_housing_details,
         updater = update_housing_details
     })
@@ -1531,7 +1535,7 @@ end
 
 local HEALTHY = DiseaseGroup.HEALTHY
 for _, caste in pairs(Castes.all) do
-    Gui.BuildingOverview.register_type(caste.name .. "-housing", {
+    BuildingOverview.register_type(caste.name .. "-housing", {
         types = {caste.type},
         layout = "grid",
         stats_creator = function(flow, entry)

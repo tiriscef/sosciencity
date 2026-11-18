@@ -1,8 +1,12 @@
-Gui.CityView.add_category("data", {"city-view.data"})
-
 local Food = require("constants.food")
 
-Gui.Elements.SortableList.linked["food"] = {
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
+
+CityView.add_category("data", {"city-view.data"})
+
+Elements.SortableList.linked["food"] = {
     data = Food.values,
     categories = {
         {
@@ -80,13 +84,13 @@ Gui.Elements.SortableList.linked["food"] = {
     }
 }
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "food",
     category = "data",
     localised_name = {"city-view.food"},
     creator = function(container)
-        Gui.Elements.Label.heading_1(container, {"city-view.food-text-1"})
-        Gui.Elements.SortableList.create(container, "food")
+        Elements.Label.heading_1(container, {"city-view.food-text-1"})
+        Elements.SortableList.create(container, "food")
     end
 }
 
@@ -136,14 +140,14 @@ Gui.set_click_handler(
     end
 )
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "diseases",
     category = "data",
     localised_name = {"city-view.diseases"},
     creator = function(container)
-        Gui.Elements.Label.heading_1(container, {"city-view.ICHD"})
-        Gui.Elements.Label.paragraph(container, {"city-view.ICHD-intro"})
-        Gui.Elements.Label.heading_3(container, {"city-view.filter-by-category"})
+        Elements.Label.heading_1(container, {"city-view.ICHD"})
+        Elements.Label.paragraph(container, {"city-view.ICHD-intro"})
+        Elements.Label.heading_3(container, {"city-view.filter-by-category"})
 
         local filter_flow =
             container.add {
@@ -180,7 +184,7 @@ Gui.CityView.add_page {
 
 local ItemConstants = require("constants.item-constants")
 
-Gui.Elements.SortableList.linked["compostables"] = {
+Elements.SortableList.linked["compostables"] = {
     data = Tirislib.Luaq.from(ItemConstants.compost_values):select(
         function(name, humus)
             local prototype = prototypes.item[name]
@@ -234,19 +238,19 @@ Gui.Elements.SortableList.linked["compostables"] = {
     }
 }
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "compost",
     category = "data",
     localised_name = {"city-view.composting-text1"},
     creator = function(container)
-        Gui.Elements.Label.heading_1(container, {"city-view.compostables-head"})
-        Gui.Elements.SortableList.create(container, "compostables")
+        Elements.Label.heading_1(container, {"city-view.compostables-head"})
+        Elements.SortableList.create(container, "compostables")
     end
 }
 
 local DrinkingWater = require("constants.drinking-water")
 
-Gui.Elements.SortableList.linked["drinking-water"] = {
+Elements.SortableList.linked["drinking-water"] = {
     data = DrinkingWater.values,
     categories = {
         {
@@ -276,12 +280,12 @@ Gui.Elements.SortableList.linked["drinking-water"] = {
     }
 }
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "drinking-water",
     category = "data",
     localised_name = {"sosciencity.drinking-water"},
     creator = function(container)
-        Gui.Elements.Label.heading_1(container, {"sosciencity.drinking-water"})
-        Gui.Elements.SortableList.create(container, "drinking-water")
+        Elements.Label.heading_1(container, {"sosciencity.drinking-water"})
+        Elements.SortableList.create(container, "drinking-water")
     end
 }

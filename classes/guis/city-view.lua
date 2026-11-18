@@ -1,5 +1,7 @@
+local Gui = require("classes.gui")
+
 --- The gui called "The City Builder's Manual" that should provide a lot of information to the player.
-Gui.CityView = {}
+local CityView = {}
 
 local get_subtbl = Tirislib.Tables.get_subtbl
 local get_subtblr = Tirislib.Tables.get_subtbl_recursive
@@ -40,10 +42,10 @@ local content = {}
 --- @param name string
 --- @param localised_name locale
 --- @param enabler function? returns a truthy/falsy value if the category should show up, optional
-function Gui.CityView.add_category(name, localised_name, enabler)
+function CityView.add_category(name, localised_name, enabler)
     Tirislib.Utils.desync_protection()
 
-    if Gui.CityView.get_category_definition(name) then
+    if CityView.get_category_definition(name) then
         error("Duplicate city view category registration for '" .. tostring(name) .. "'")
     end
 
@@ -75,7 +77,7 @@ end
 --- with this name.
 --- @param category_name string
 --- @return table|nil
-function Gui.CityView.get_category_definition(category_name)
+function CityView.get_category_definition(category_name)
     for _, category in pairs(content) do
         if category.name == category_name then
             return category
@@ -91,10 +93,10 @@ end
 ---   [creator]: function (takes the gui container as argument)\
 ---   [enabler]: function (returns a truthy/falsy value if the page should show up), optional
 --- @param page table
-function Gui.CityView.add_page(page)
+function CityView.add_page(page)
     Tirislib.Utils.desync_protection()
 
-    local category = Gui.CityView.get_category_definition(page.category)
+    local category = CityView.get_category_definition(page.category)
     category.pages[#category.pages + 1] = page
 end
 
@@ -102,7 +104,7 @@ end
 --- @param category table (a category definition)
 --- @param page_name string
 --- @return table|nil
-function Gui.CityView.get_page_definition(category, page_name)
+function CityView.get_page_definition(category, page_name)
     for _, page in pairs(category.pages) do
         if page.name == page_name then
             return page
@@ -136,14 +138,14 @@ local function open_page(player, category_index, page_name, set_tab_index)
 
     -- If the gui is not already open, we create it. If that fails, we don't do anything.
     if not gui then
-        gui = Gui.CityView.open(player)
+        gui = CityView.open(player)
         if not gui then
             return
         end
     end
 
     local category = content[category_index]
-    local page = Gui.CityView.get_page_definition(category, page_name)
+    local page = CityView.get_page_definition(category, page_name)
 
     local tab = gui.content.tabpane[category.name]
     if not tab then
@@ -173,7 +175,7 @@ Gui.set_click_handler(
     function(event)
         local player = game.get_player(event.player_index)
         local tags = event.element.tags
-        local category = Gui.CityView.get_category_definition(tags.category)
+        local category = CityView.get_category_definition(tags.category)
 
         open_page(player, category.index, tags.page, true)
     end
@@ -182,7 +184,7 @@ Gui.set_click_handler(
 --- Opens the CityView for the given player. This can theoretically fail, if other mods interfere.
 --- @param player LuaPlayer
 --- @return LuaGuiElement? CityView
-function Gui.CityView.open(player)
+function CityView.open(player)
     local city_view_frame =
         player.gui.screen.add {
         type = "frame",
@@ -342,9 +344,9 @@ function Gui.CityView.open(player)
 
     return city_view_frame
 end
-local create_city_view = Gui.CityView.open
+local create_city_view = CityView.open
 
-function Gui.CityView.close(player)
+function CityView.close(player)
     local gui = player.gui.screen[CITY_VIEW_NAME]
     if gui then
         local last_opened_tab = get_subtbl(storage, "last_opened_tab")
@@ -353,11 +355,11 @@ function Gui.CityView.close(player)
         gui.destroy()
     end
 end
-local close_city_view = Gui.CityView.close
+local close_city_view = CityView.close
 
 --- Closes and reopens the city view of the given player, if it is open.
 --- @param player LuaPlayer
-function Gui.CityView.rebuild(player)
+function CityView.rebuild(player)
     if player.gui.screen[CITY_VIEW_NAME] then
         close_city_view(player)
         create_city_view(player)
@@ -388,17 +390,4 @@ Gui.add_gui_closed_handler(
     end
 )
 
-require("classes.guis.city-view-pages.report-pages")
-require("classes.guis.city-view-pages.buildings-pages")
-require("classes.guis.city-view-pages.data-pages")
-require("classes.guis.city-view-pages.caste-pages")
-require("classes.guis.city-view-pages.howto-pages")
-require("classes.guis.city-view-pages.charts-page")
-
--- dev tools, the category is hidden unless DevMode.is_active()
-require("classes.guis.city-view-pages.balancing-pages")
-require("classes.guis.city-view-pages.debug-pages")
-require("classes.guis.city-view-pages.item-browser-page")
-require("classes.guis.city-view-pages.recipe-balancing-page")
-require("classes.guis.city-view-pages.housing-balancing-page")
-require("classes.guis.city-view-pages.utility-sprite-browser")
+return CityView

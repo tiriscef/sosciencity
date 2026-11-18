@@ -8,7 +8,11 @@ local WasteDumpOperationMode = require("enums.waste-dump-operation-mode")
 -- constants
 local Buildings = require("constants.buildings")
 
-local Gui = Gui
+local Gui = require("classes.gui")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
+
 local Register = Register
 local get_building_details = Buildings.get
 local format = string.format
@@ -16,7 +20,7 @@ local display_item_stack = Tirislib.Locales.display_item_stack
 local display_enumeration = Tirislib.Locales.create_enumeration
 local Table = Tirislib.Tables
 local Luaq_from = Tirislib.Luaq.from
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 local function update_waste_dump_mode_radiobuttons(entry, mode_flow)
     local active_mode = entry[EK.waste_dump_mode]
@@ -27,10 +31,10 @@ local function update_waste_dump_mode_radiobuttons(entry, mode_flow)
 end
 
 local function update_waste_dump(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
+    local building_data = Elements.Tabs.get_content(tabbed_pane, "general").building
 
     local stored_garbage = entry[EK.stored_garbage]
     local capacity = get_building_details(entry).capacity
@@ -57,9 +61,9 @@ local function update_waste_dump(container, entry, player_id)
 end
 
 local function create_waste_dump(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
@@ -109,13 +113,13 @@ Gui.set_checked_state_handler(
     end
 )
 
-Gui.DetailsView.register_type(Type.waste_dump, {creater = create_waste_dump, updater = update_waste_dump})
+DetailsView.register_type(Type.waste_dump, {creater = create_waste_dump, updater = update_waste_dump})
 
-Gui.BuildingOverview.register_type("waste-dumps", {
+BuildingOverview.register_type("waste-dumps", {
     types = {Type.waste_dump},
     layout = "grid",
     stats_creator = function(flow, entry)
-        Gui.BuildingOverview.generic_stats_creator(flow, entry)
+        BuildingOverview.generic_stats_creator(flow, entry)
         flow.add {
             type = "label",
             caption = {"sosciencity.fraction", Table.sum(entry[EK.stored_garbage]), get_building_details(entry).capacity}

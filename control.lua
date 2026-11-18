@@ -68,6 +68,46 @@ require("classes.entities.waterwell")
 require("classes.entities.fishwhirl")
 local Handcrafting = require("classes.handcrafting")
 require("classes.gui")
+require("classes.guis.elements")
+local CityInfo = require("classes.guis.city-info")
+require("classes.guis.debug-widgets")
+require("classes.guis.building-overview")
+require("classes.guis.city-view")
+-- city view pages; they register themselves with CityView
+require("classes.guis.city-view-pages.report-pages")
+require("classes.guis.city-view-pages.buildings-pages")
+require("classes.guis.city-view-pages.data-pages")
+require("classes.guis.city-view-pages.caste-pages")
+require("classes.guis.city-view-pages.howto-pages")
+require("classes.guis.city-view-pages.charts-page")
+
+-- dev tools, the category is hidden unless DevMode.is_active()
+require("classes.guis.city-view-pages.balancing-pages")
+require("classes.guis.city-view-pages.debug-pages")
+require("classes.guis.city-view-pages.item-browser-page")
+require("classes.guis.city-view-pages.recipe-balancing-page")
+require("classes.guis.city-view-pages.housing-balancing-page")
+require("classes.guis.city-view-pages.utility-sprite-browser")
+require("classes.guis.details-view")
+-- details views per entity type; they register themselves with DetailsView
+require("classes.guis.entity-views.housing")
+require("classes.guis.entity-views.hospital")
+require("classes.guis.entity-views.upbringing-station")
+require("classes.guis.entity-views.composter")
+require("classes.guis.entity-views.farm")
+require("classes.guis.entity-views.salt-pond")
+require("classes.guis.entity-views.waterwell")
+require("classes.guis.entity-views.market")
+require("classes.guis.entity-views.water-distributer")
+require("classes.guis.entity-views.kitchen-for-all")
+require("classes.guis.entity-views.waste-dump")
+require("classes.guis.entity-views.dumpster")
+require("classes.guis.entity-views.immigration-port")
+require("classes.guis.entity-views.fertilization-station")
+require("classes.guis.entity-views.pruning-station")
+require("classes.guis.entity-views.cold-storage")
+require("classes.guis.entity-views.nightclub")
+require("classes.guis.entity-views.generic")
 local TreePlanting = require("classes.tree-planting")
 
 ---------------------------------------------------------------------------------------------------
@@ -704,9 +744,9 @@ local function on_cursor_stack_changed(event)
         if not storage.placement_settings[event.player_index] then
             storage.placement_settings[event.player_index] = {target_comfort = 0, auto_assign_caste = nil}
         end
-        Gui.CityInfo.set_placement_mode(player, true)
+        CityInfo.set_placement_mode(player, true)
     else
-        Gui.CityInfo.set_placement_mode(player, false)
+        CityInfo.set_placement_mode(player, false)
     end
 
     Visualisation.update_placement_highlights(player, get_held_building(player))

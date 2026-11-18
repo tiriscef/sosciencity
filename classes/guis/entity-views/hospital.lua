@@ -15,15 +15,18 @@ local ward_types = Types.select("is_hospital_ward")
 -- classes
 local DevMode = require("classes.dev-mode")
 local Hospital = require("classes.entities.hospital")
+local Gui = require("classes.gui")
+local BuildingOverview = require("classes.guis.building-overview")
+local DetailsView = require("classes.guis.details-view")
+local Elements = require("classes.guis.elements")
 
 local diseases = Diseases.values
-local Gui = Gui
 local Neighborhood = Neighborhood
 local Register = Register
 local floor = math.floor
 local format = string.format
 local Table = Tirislib.Tables
-local Datalist = Gui.Elements.Datalist
+local Datalist = Elements.Datalist
 
 ---------------------------------------------------------------------------------------------------
 -- << beds >>
@@ -122,7 +125,7 @@ end
 
 local function update_disease_catalogue(container, entry, wards)
     local tabbed_pane = container.tabpane
-    local data_list = Gui.Elements.Tabs.get_content(tabbed_pane, "diseases").diseases
+    local data_list = Elements.Tabs.get_content(tabbed_pane, "diseases").diseases
 
     local statistics = entry[EK.treated]
     local permissions = entry[EK.treatment_permissions]
@@ -142,10 +145,10 @@ local function update_disease_catalogue(container, entry, wards)
 end
 
 local function create_disease_catalogue(container)
-    local tabbed_pane = Gui.DetailsView.get_or_create_tabbed_pane(container)
-    local tab = Gui.Elements.Tabs.create(tabbed_pane, "diseases", {"sosciencity.diseases"}, "sosciencity_details_tab")
+    local tabbed_pane = DetailsView.get_or_create_tabbed_pane(container)
+    local tab = Elements.Tabs.create(tabbed_pane, "diseases", {"sosciencity.diseases"}, "sosciencity_details_tab")
 
-    Gui.Elements.Button.page_link(tab, "data", "diseases")
+    Elements.Button.page_link(tab, "data", "diseases")
 
     local data_list = Datalist.create(tab, "diseases", 3)
     data_list.style.column_alignments[2] = "right"
@@ -256,10 +259,10 @@ local function update_hospital_treatments(general, entry, wards)
 end
 
 local function update_hospital_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
     local tabbed_pane = container.tabpane
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     local wards = get_connected_wards(entry)
@@ -310,7 +313,7 @@ local function update_hospital_details(container, entry, player_id)
 end
 
 local function create_hospital_debug_tab(tabbed_pane)
-    local content = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
+    local content = Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
     content.add {
         type = "button",
         style = "red_button",
@@ -321,9 +324,9 @@ local function create_hospital_debug_tab(tabbed_pane)
 end
 
 local function create_hospital_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
@@ -349,10 +352,10 @@ local function create_hospital_details(container, entry, player_id)
     building_data["key-blood-donation-threshold"].visible = storage.technologies["transfusion-medicine"]
     textfield.visible = storage.technologies["transfusion-medicine"]
 
-    Gui.Elements.Label.header_label(general, "header-patients", {"sosciencity.patients"})
+    Elements.Label.header_label(general, "header-patients", {"sosciencity.patients"})
     Datalist.create(general, "patients")
 
-    Gui.Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
+    Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
     general.add {type = "flow", name = "treatments", direction = "vertical"}
 
     create_disease_catalogue(container)
@@ -400,8 +403,8 @@ Gui.set_click_handler(
     end
 )
 
-Gui.DetailsView.register_type(Type.hospital, {creater = create_hospital_details, updater = update_hospital_details})
-Gui.DetailsView.register_type(
+DetailsView.register_type(Type.hospital, {creater = create_hospital_details, updater = update_hospital_details})
+DetailsView.register_type(
     Type.improvised_hospital,
     {creater = create_hospital_details, updater = update_hospital_details}
 )
@@ -410,9 +413,9 @@ Gui.DetailsView.register_type(
 -- << wards >>
 
 local function update_ward_details(container, entry, player_id)
-    Gui.DetailsView.update_general(container, entry, player_id)
+    DetailsView.update_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(container.tabpane, "general")
+    local general = Elements.Tabs.get_content(container.tabpane, "general")
     local building_data = general.building
 
     Datalist.set_kv_pair_value(building_data, "capacity", get_bed_caption(entry))
@@ -439,9 +442,9 @@ local function update_ward_details(container, entry, player_id)
 end
 
 local function create_ward_details(container, entry, player_id)
-    local tabbed_pane = Gui.DetailsView.create_general(container, entry, player_id)
+    local tabbed_pane = DetailsView.create_general(container, entry, player_id)
 
-    local general = Gui.Elements.Tabs.get_content(tabbed_pane, "general")
+    local general = Elements.Tabs.get_content(tabbed_pane, "general")
     local building_data = general.building
 
     Datalist.add_kv_pair(building_data, "capacity", {"sosciencity.capacity"})
@@ -461,14 +464,14 @@ local function create_ward_details(container, entry, player_id)
         type_definitions[entry[EK.type]].treats_general_medicine == true and storage.technologies["vaccination"] ~= nil
     )
 
-    Gui.Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
+    Elements.Label.header_label(general, "header-treatments", {"sosciencity.treatments-in-progress"})
     general.add {type = "flow", name = "treatments", direction = "vertical"}
 
     update_ward_details(container, entry, player_id)
 end
 
 for _, _type in pairs(ward_types) do
-    Gui.DetailsView.register_type(_type, {creater = create_ward_details, updater = update_ward_details})
+    DetailsView.register_type(_type, {creater = create_ward_details, updater = update_ward_details})
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -479,7 +482,7 @@ for _, _type in pairs(ward_types) do
     overview_types[#overview_types + 1] = _type
 end
 
-Gui.BuildingOverview.register_type("hospitals", {
+BuildingOverview.register_type("hospitals", {
     types = overview_types,
     layout = "grid",
     stats_creator = function(flow, entry)

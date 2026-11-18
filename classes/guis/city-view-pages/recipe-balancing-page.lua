@@ -4,8 +4,12 @@ local Food = require("constants.food")
 local DrinkingWater = require("constants.drinking-water")
 local Castes = require("constants.castes")
 
+local Gui = require("classes.gui")
+local CityView = require("classes.guis.city-view")
+local Elements = require("classes.guis.elements")
+
 local CONTEXT = "recipe-balancing"
-local NumericTextField = Gui.Elements.NumericTextField
+local NumericTextField = Elements.NumericTextField
 local CONFIRMED_EVENT = "rcbal_value_confirmed"
 
 ---------------------------------------------------------------------------------------------------
@@ -272,7 +276,7 @@ local function rebuild_results(player_index)
     local metrics = compute_metrics(state)
 
     -- Throughput section
-    local throughput_section = Gui.Elements.CollapsibleSection.heading_2_compact(
+    local throughput_section = Elements.CollapsibleSection.heading_2_compact(
         results, {"city-view.recipe-balancing-throughput"}, {collapsed = false}
     )
     for _, fr in pairs(metrics.flow_rates) do
@@ -293,13 +297,13 @@ local function rebuild_results(player_index)
 
     -- Food section
     if metrics.has_food then
-        local food_section = Gui.Elements.CollapsibleSection.heading_2_compact(
+        local food_section = Elements.CollapsibleSection.heading_2_compact(
             results, {"city-view.recipe-balancing-food"}, {collapsed = false}
         )
-        local dl = Gui.Elements.Datalist.create(food_section, "food_datalist", 2)
-        Gui.Elements.Datalist.add_kv_pair(dl, "kcal_out", {"city-view.recipe-balancing-kcal-out"}, format_rate(metrics.kcal_out))
-        Gui.Elements.Datalist.add_kv_pair(dl, "kcal_in",  {"city-view.recipe-balancing-kcal-in"},  format_rate(metrics.kcal_in))
-        Gui.Elements.Datalist.add_kv_pair(dl, "kcal_net", {"city-view.recipe-balancing-kcal-net"}, format_rate(metrics.kcal_net))
+        local dl = Elements.Datalist.create(food_section, "food_datalist", 2)
+        Elements.Datalist.add_kv_pair(dl, "kcal_out", {"city-view.recipe-balancing-kcal-out"}, format_rate(metrics.kcal_out))
+        Elements.Datalist.add_kv_pair(dl, "kcal_in",  {"city-view.recipe-balancing-kcal-in"},  format_rate(metrics.kcal_in))
+        Elements.Datalist.add_kv_pair(dl, "kcal_net", {"city-view.recipe-balancing-kcal-net"}, format_rate(metrics.kcal_net))
 
         local fed_out, fed_net = {}, {}
         for _, caste in pairs(Castes.all) do
@@ -315,13 +319,13 @@ local function rebuild_results(player_index)
 
     -- Water section
     if metrics.has_water then
-        local water_section = Gui.Elements.CollapsibleSection.heading_2_compact(
+        local water_section = Elements.CollapsibleSection.heading_2_compact(
             results, {"city-view.recipe-balancing-water"}, {collapsed = false}
         )
         for _, wr in pairs(metrics.water_rates) do
             local proto = prototypes.fluid[wr.name]
-            local dl = Gui.Elements.Datalist.create(water_section, "water_dl_" .. wr.name, 2)
-            Gui.Elements.Datalist.add_kv_pair(dl, "rate",
+            local dl = Elements.Datalist.create(water_section, "water_dl_" .. wr.name, 2)
+            Elements.Datalist.add_kv_pair(dl, "rate",
                 {"city-view.recipe-balancing-water-rate", proto and proto.localised_name or wr.name},
                 format_rate(wr.rate))
 
@@ -572,7 +576,7 @@ NumericTextField.set_confirmed_handler(
 -- << Page registration >>
 ---------------------------------------------------------------------------------------------------
 
-Gui.CityView.add_page {
+CityView.add_page {
     name = "recipe-balancing",
     category = "debug",
     localised_name = {"city-view.recipe-balancing"},
@@ -639,14 +643,14 @@ Gui.CityView.add_page {
         main_flow.add {type = "flow", name = "io_section", direction = "vertical"}
         rebuild_io(player_index, nil)
 
-        Gui.Elements.Utils.separator_line(main_flow)
+        Elements.Utils.separator_line(main_flow)
 
         -- Results (cleared and rebuilt on any value change)
         local results_section = main_flow.add {type = "flow", name = "results_section", direction = "vertical"}
         Gui.register_element(results_section, CONTEXT, "results_section", player_index)
 
         -- Lua export (permanent, text updated by rebuild_results)
-        local lua_section = Gui.Elements.CollapsibleSection.heading_2_compact(
+        local lua_section = Elements.CollapsibleSection.heading_2_compact(
             main_flow, {"city-view.recipe-balancing-lua-export"}, {collapsed = false}
         )
         local lua_box = lua_section.add {type = "text-box", read_only = true}
