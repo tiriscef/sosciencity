@@ -17,6 +17,7 @@ local Subentities = require("classes.subentities")
 local Consumption = require("classes.consumption")
 local Locale = require("classes.locale")
 local Technologies = require("classes.technologies")
+local Communication = require("classes.communication")
 
 local castes = Castes.values
 local disease_values = Diseases.values

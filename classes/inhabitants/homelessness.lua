@@ -12,6 +12,7 @@ local Market = require("classes.entities.market")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Inhabitants = require("classes.inhabitants")
 local HousingCore = require("classes.inhabitants.housing-core")
+local Communication = require("classes.communication")
 
 local castes = Castes.values
 local get_building_details = Buildings.get

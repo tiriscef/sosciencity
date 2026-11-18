@@ -13,6 +13,7 @@ local DiseaseGroup = require("classes.groups.disease-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Technologies = require("classes.technologies")
+local Communication = require("classes.communication")
 
 local castes = Castes.values
 local try_get = Register.try_get

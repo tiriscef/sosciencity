@@ -7,6 +7,8 @@ local TechEffects = require("constants.tech-effects")
 local castes = Castes.values
 local Unlocks = require("constants.unlocks")
 
+local Communication = require("classes.communication")
+
 
 --- Static class that keeps track of the research state of important technologies.
 local Technologies = {}

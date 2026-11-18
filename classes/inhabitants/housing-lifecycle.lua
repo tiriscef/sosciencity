@@ -11,6 +11,7 @@ local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Inhabitants = require("classes.inhabitants")
 local Workforce = require("classes.inhabitants.workforce")
 local HousingCore = require("classes.inhabitants.housing-core")
+local Communication = require("classes.communication")
 
 local Tables = Tirislib.Tables
 local random = math.random

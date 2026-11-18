@@ -20,10 +20,10 @@ local BuildingOverview = require("classes.guis.building-overview")
 local Elements = require("classes.guis.elements")
 local Workforce = require("classes.inhabitants.workforce")
 local Locale = require("classes.locale")
+local Communication = require("classes.communication")
 
 -- local often used globals for microscopic performance gains
 
-local Communication = Communication
 local Inhabitants = Inhabitants
 local Register = Register
 local get_building_details = Buildings.get

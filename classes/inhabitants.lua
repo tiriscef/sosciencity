@@ -12,6 +12,7 @@ local InhabitantGroup = require("classes.groups.inhabitant-group")
 local HousingCore = require("classes.inhabitants.housing-core")
 local ItemRequests = require("classes.item-requests")
 local Technologies = require("classes.technologies")
+local Communication = require("classes.communication")
 
 --- Static class that handles the behaviour of the people.
 Inhabitants = {}

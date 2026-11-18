@@ -11,6 +11,7 @@ local AutoNames = require("classes.auto-names")
 local late_require = require("classes.late-require")
 local Effects = require("classes.effects")
 local Subentities = require("classes.subentities")
+local Communication = require("classes.communication")
 
 local floor = math.floor
 
