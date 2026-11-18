@@ -83,10 +83,7 @@ local occurrence_probability = Utils.occurrence_probability
 
 local function set_locals()
     storage = _ENV.storage
-    caste_bonuses = storage.caste_bonuses
     immigration = storage.immigration
-    free_houses = storage.free_houses
-    technologies = storage.technologies
 end
 
 local function new_caste_table()
@@ -1321,7 +1318,6 @@ require("classes.inhabitants.empty-housing")
 require("classes.inhabitants.housing-redistribution")
 
 update_caste_bonuses = Inhabitants.update_caste_bonuses
-build_social_environment = Inhabitants.build_social_environment
 add_to_homeless_pool = Inhabitants.add_to_homeless_pool
 update_homelessness = Inhabitants.update_homelessness
 
