@@ -12,6 +12,7 @@ local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
 local Locale = require("classes.locale")
+local Technologies = require("classes.technologies")
 
 local get_building_details = Buildings.get
 local floor = math.floor

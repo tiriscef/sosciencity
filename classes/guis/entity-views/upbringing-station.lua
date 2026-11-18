@@ -16,6 +16,7 @@ local Gui = require("classes.gui")
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Technologies = require("classes.technologies")
 
 local castes = Castes.values
 local Inhabitants = Inhabitants

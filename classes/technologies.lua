@@ -9,7 +9,7 @@ local Unlocks = require("constants.unlocks")
 
 
 --- Static class that keeps track of the research state of important technologies.
-Technologies = {}
+local Technologies = {}
 
 --[[
     Data this class stores in storage

@@ -37,6 +37,7 @@ local Workforce = require("classes.inhabitants.workforce")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Consumption = require("classes.consumption")
 local Locale = require("classes.locale")
+local Technologies = require("classes.technologies")
 
 local castes = Castes.values
 local diseases = Diseases.values

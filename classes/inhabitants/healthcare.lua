@@ -14,6 +14,7 @@ local late_require = require("classes.late-require")
 local DiseaseGroup = require("classes.groups.disease-group")
 local ImmunityGroup = require("classes.groups.immunity-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Technologies = require("classes.technologies")
 
 local castes = Castes.values
 local disease_values = Diseases.values

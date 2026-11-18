@@ -68,8 +68,7 @@ local LEGACY_GLOBALS = {
     "Inhabitants",
     "Inventories",
     "Neighborhood",
-    "Register",
-    "Technologies"
+    "Register"
 }
 
 local function to_set(...)
