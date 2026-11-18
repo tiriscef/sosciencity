@@ -5,6 +5,7 @@ local SubentityType = require("enums.subentity-type")
 local Diseases = require("constants.diseases")
 
 local Helpers = require("tests.integration.helpers")
+local DiseaseGroup = require("classes.groups.disease-group")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

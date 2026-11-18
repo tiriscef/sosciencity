@@ -4,6 +4,8 @@ local MoveCause = require("enums.move-cause")
 local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
+local DiseaseGroup = require("classes.groups.disease-group")
+
 local floor = math.floor
 local min = math.min
 local HEALTHY = DiseaseGroup.HEALTHY

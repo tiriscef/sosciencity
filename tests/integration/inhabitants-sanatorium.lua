@@ -5,6 +5,9 @@ local Type = require("enums.type")
 local InhabitantsConstants = require("constants.inhabitants")
 
 local Helpers = require("tests.integration.helpers")
+local AgeGroup = require("classes.groups.age-group")
+local DiseaseGroup = require("classes.groups.disease-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

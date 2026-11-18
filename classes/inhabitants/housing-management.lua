@@ -8,6 +8,8 @@ local InhabitantsConstants = require("constants.inhabitants")
 local Type = require("enums.type")
 
 local late_require = require("classes.late-require")
+local DiseaseGroup = require("classes.groups.disease-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 
 local castes = Castes.values
 local try_get = Register.try_get

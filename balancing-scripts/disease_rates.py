@@ -24,7 +24,7 @@ Model:
   zoonosis unless --animal-farms is given.
 
 Contagion model (--contagion), re-implements social_meeting in classes/inhabitants/housing-environment.lua
-and InhabitantGroup.make_sick in classes/inhabitants.lua:
+and InhabitantGroup.make_sick in classes/groups/inhabitant-group.lua:
 - A house has K * V^EXPONENT social meetings per minute (V = inhabitants * caste social coefficient of its
   social environment; K and EXPONENT from the meeting constants in constants/inhabitants.lua). Per meeting, every sick huwan infects with the disease's contagiousness, and the
   infection lands with the chance susceptible / healthy. So per sick huwan: beta = meetings * contagiousness.

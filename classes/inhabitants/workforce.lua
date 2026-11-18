@@ -5,6 +5,8 @@ local WarningType = require("enums.warning-type")
 local Buildings = require("constants.buildings")
 local Castes = require("constants.castes")
 
+local DiseaseGroup = require("classes.groups.disease-group")
+
 local castes = Castes.values
 
 local get_building_details = Buildings.get

@@ -2,6 +2,8 @@ local EK = require("enums.entry-key")
 local PK = require("enums.performance-key")
 local DeconstructionCause = require("enums.deconstruction-cause")
 
+local InhabitantGroup = require("classes.groups.inhabitant-group")
+
 local Helpers = {}
 
 local default_surface_name = "sosciencity-integration-test"

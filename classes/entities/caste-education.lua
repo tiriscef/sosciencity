@@ -9,6 +9,8 @@ local Entity = require("classes.entity")
 local Inhabitants = require("classes.inhabitants")
 local Locale = require("classes.locale")
 local Register = require("classes.register")
+local DiseaseGroup = require("classes.groups.disease-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 
 local get_building_details = Buildings.get
 local try_get = Register.try_get

@@ -19,6 +19,8 @@ local Inventories = require("classes.inventories")
 local Neighborhood = require("classes.neighborhood")
 local Register = require("classes.register")
 local Subentities = require("classes.subentities")
+local DiseaseGroup = require("classes.groups.disease-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory

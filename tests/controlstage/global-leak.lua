@@ -76,13 +76,7 @@ local LEGACY_GLOBALS = {
     "Register",
     "Statistics",
     "Subentities",
-    "Technologies",
-    -- group classes in classes/inhabitants.lua
-    "AgeGroup",
-    "DiseaseGroup",
-    "GenderGroup",
-    "ImmunityGroup",
-    "InhabitantGroup"
+    "Technologies"
 }
 
 local function to_set(...)

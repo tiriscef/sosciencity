@@ -6,6 +6,7 @@ local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
 local Helpers = require("tests.integration.helpers")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

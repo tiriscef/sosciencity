@@ -14,6 +14,9 @@ local Housing = require("constants.housing")
 local InhabitantsConstants = require("constants.inhabitants")
 local TypeGroup = require("constants.type-groups")
 
+local DiseaseGroup = require("classes.groups.disease-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
+
 local castes = Castes.values
 local disease_values = Diseases.values
 local get_garbage_value = Consumption.get_garbage_value

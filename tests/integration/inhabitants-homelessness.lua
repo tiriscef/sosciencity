@@ -6,6 +6,10 @@ local DeconstructionCause = require("enums.deconstruction-cause")
 local Housing = require("constants.housing")
 
 local Helpers = require("tests.integration.helpers")
+local AgeGroup = require("classes.groups.age-group")
+local DiseaseGroup = require("classes.groups.disease-group")
+local GenderGroup = require("classes.groups.gender-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

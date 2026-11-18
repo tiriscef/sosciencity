@@ -2,6 +2,7 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 local Helpers = require("tests.integration.helpers")
+local GenderGroup = require("classes.groups.gender-group")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

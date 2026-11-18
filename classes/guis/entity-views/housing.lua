@@ -29,6 +29,10 @@ local BuildingOverview = require("classes.guis.building-overview")
 local DebugWidgets = require("classes.guis.debug-widgets")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local AgeGroup = require("classes.groups.age-group")
+local DiseaseGroup = require("classes.groups.disease-group")
+local ImmunityGroup = require("classes.groups.immunity-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 
 local castes = Castes.values
 local diseases = Diseases.values

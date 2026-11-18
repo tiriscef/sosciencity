@@ -9,6 +9,7 @@ local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
 local Market = require("classes.entities.market")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 
 local castes = Castes.values
 local get_building_details = Buildings.get

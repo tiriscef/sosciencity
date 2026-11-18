@@ -7,6 +7,8 @@ local Type = require("enums.type")
 local Castes = require("constants.castes")
 local Housing = require("constants.housing")
 
+local InhabitantGroup = require("classes.groups.inhabitant-group")
+
 local Tables = Tirislib.Tables
 local random = math.random
 

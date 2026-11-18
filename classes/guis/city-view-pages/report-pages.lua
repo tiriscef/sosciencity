@@ -7,6 +7,7 @@ local Type = require("enums.type")
 local Gui = require("classes.gui")
 local CityView = require("classes.guis.city-view")
 local Elements = require("classes.guis.elements")
+local DiseaseGroup = require("classes.groups.disease-group")
 
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor

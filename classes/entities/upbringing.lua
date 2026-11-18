@@ -17,6 +17,9 @@ local Locale = require("classes.locale")
 local Register = require("classes.register")
 local Subentities = require("classes.subentities")
 local Technologies = require("classes.technologies")
+local DiseaseGroup = require("classes.groups.disease-group")
+local GenderGroup = require("classes.groups.gender-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
 
 local get_building_details = Buildings.get
 local is_active = Entity.check_is_active

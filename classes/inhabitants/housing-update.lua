@@ -8,6 +8,9 @@ local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local Housing = require("constants.housing")
 
+local DiseaseGroup = require("classes.groups.disease-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
+
 local castes = Castes.values
 local disease_values = Diseases.values
 local Utils = Tirislib.Utils

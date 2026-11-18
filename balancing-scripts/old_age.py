@@ -3,7 +3,8 @@
 Models the old age design of memory/project_old_age.md. Frailty, natural death and the old age disease rate are
 read from constants/inhabitants.lua, the old age diseases and the default complication lethality from
 constants/diseases.lua. Ordinary disease cases come from disease_rates.py, the birth rate from reproduction.py.
-Keep it in sync with the frailty logic in classes/inhabitants.lua and classes/inhabitants/healthcare.lua.
+Keep it in sync with the frailty logic in classes/groups/age-group.lua, classes/groups/inhabitant-group.lua and
+classes/inhabitants/healthcare.lua.
 
 Inputs:
 - diseases, disease categories, base rates, caste susceptibilities, workplaces and bed speed via disease_rates.py

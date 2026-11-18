@@ -10,6 +10,9 @@ local InhabitantsConstants = require("constants.inhabitants")
 
 local Gui = require("classes.gui")
 local Elements = require("classes.guis.elements")
+local AgeGroup = require("classes.groups.age-group")
+local DiseaseGroup = require("classes.groups.disease-group")
+local GenderGroup = require("classes.groups.gender-group")
 
 local random = math.random
 local min = math.min

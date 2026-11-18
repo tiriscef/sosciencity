@@ -9,6 +9,12 @@ local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
+local AgeGroup = require("classes.groups.age-group")
+local DiseaseGroup = require("classes.groups.disease-group")
+local GenderGroup = require("classes.groups.gender-group")
+local ImmunityGroup = require("classes.groups.immunity-group")
+local InhabitantGroup = require("classes.groups.inhabitant-group")
+
 local Table = Tirislib.Tables
 
 local HEALTHY = DiseaseGroup.HEALTHY
