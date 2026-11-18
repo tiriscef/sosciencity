@@ -1,5 +1,5 @@
 --- Static class for all the gui stuff.
-Gui = {}
+local Gui = {}
 
 --[[
     Data this class stores in storage

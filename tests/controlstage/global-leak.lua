@@ -67,7 +67,6 @@ local LEGACY_GLOBALS = {
     "Consumption",
     "Effects",
     "Entity",
-    "Gui",
     "Inhabitants",
     "Inventories",
     "ItemRequests",
