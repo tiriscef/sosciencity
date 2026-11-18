@@ -595,6 +595,28 @@ function Register.remove_entity(entity, cause)
     end
 end
 
+--- Former Type.automatic_farm, merged into Type.farm. Old saves can still have entries with it.
+local TYPE_AUTOMATIC_FARM_DEPRECATED = 1105
+
+--- Rebuilds every entry for a mod update: removes it and registers its entity again, so new fields get
+--- their defaults while the copy handlers carry the state over. Entries whose entity is gone are only removed.
+function Register.rebuild_all()
+    for _, entry in pairs(Tirislib.Tables.copy(register)) do
+        -- Removing one entry can remove another: a handler that looks up a neighbour with try_get removes it
+        -- when its entity is gone (e.g. a hospital releasing the bed of a house whose prototype vanished
+        -- with its mod). That entry is already fully removed, and without an entity there's nothing to rebuild.
+        if not Register.is_stale(entry) then
+            remove_entry(entry, DeconstructionCause.mod_update, nil, true)
+            if entry[EK.type] == TYPE_AUTOMATIC_FARM_DEPRECATED then
+                entry[EK.type] = Type.farm
+            end
+            if entry[EK.entity].valid then
+                Register.clone(entry, entry[EK.entity])
+            end
+        end
+    end
+end
+
 --- Removes all entries whose entity is on the given surface, optionally only those in the given chunks.
 --- For the engine's pre-deletion events: the entities are still valid at that point, but get removed
 --- without any further event.

@@ -1,6 +1,7 @@
 -- Integration tests (control-stage only, requires game state)
 require("tests.integration.register")
 require("tests.integration.register-surface-removal")
+require("tests.integration.register-rebuild")
 require("tests.integration.neighborhood")
 require("tests.integration.subentities")
 require("tests.integration.communication-alerts")

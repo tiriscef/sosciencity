@@ -7,7 +7,6 @@ require("tirislib.init")
 -- << enums, constants >>
 
 local EK = require("enums.entry-key")
-local Type = require("enums.type")
 local DeconstructionCause = require("enums.deconstruction-cause")
 local Building = require("constants.buildings")
 local Housing = require("constants.housing")
@@ -533,20 +532,7 @@ local function on_configuration_change()
         Register.load()
         Inhabitants.migrate_immunities()
 
-        -- Rebuild entries
-        local old_register = Tirislib.Tables.copy(storage.register)
-
-        local TYPE_AUTOMATIC_FARM_DEPRECATED = 1105 -- former Type.automatic_farm, merged into Type.farm
-
-        for _, entry in pairs(old_register) do
-            Register.remove_entry(entry, DeconstructionCause.mod_update, nil, true)
-            if entry[EK.type] == TYPE_AUTOMATIC_FARM_DEPRECATED then
-                entry[EK.type] = Type.farm
-            end
-            if entry[EK.entity].valid then
-                Register.clone(entry, entry[EK.entity])
-            end
-        end
+        Register.rebuild_all()
 
         Technologies.init()
 
