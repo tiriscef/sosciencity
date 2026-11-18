@@ -7,6 +7,7 @@ local Color = require("constants.color")
 
 local Gui = require("classes.gui")
 local CityView = require("classes.guis.city-view")
+local Locale = require("classes.locale")
 
 local Elements = {}
 

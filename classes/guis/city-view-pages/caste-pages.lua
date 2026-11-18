@@ -3,6 +3,7 @@ local Time = require("constants.time")
 
 local CityView = require("classes.guis.city-view")
 local Elements = require("classes.guis.elements")
+local Locale = require("classes.locale")
 
 CityView.add_category("caste", {"sosciencity.caste"})
 

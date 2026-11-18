@@ -12,9 +12,9 @@ local Time = require("constants.time")
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Locale = require("classes.locale")
 
 local Neighborhood = Neighborhood
-local Locale = Locale
 local floor = math.floor
 local format = string.format
 local round_to_step = Tirislib.Utils.round_to_step

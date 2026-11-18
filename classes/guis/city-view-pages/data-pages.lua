@@ -1,8 +1,12 @@
+local DiseaseCategory = require("enums.disease-category")
+
+local Diseases = require("constants.diseases")
 local Food = require("constants.food")
 
 local Gui = require("classes.gui")
 local CityView = require("classes.guis.city-view")
 local Elements = require("classes.guis.elements")
+local Locale = require("classes.locale")
 
 CityView.add_category("data", {"city-view.data"})
 
@@ -93,9 +97,6 @@ CityView.add_page {
         Elements.SortableList.create(container, "food")
     end
 }
-
-local Diseases = require("constants.diseases")
-local DiseaseCategory = require("enums.disease-category")
 
 local function fill_disease_catalogue(container, filter)
     local filtered_content = Tirislib.Luaq.from(Diseases.values)

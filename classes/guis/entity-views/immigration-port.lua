@@ -11,8 +11,8 @@ local type_definitions = require("constants.types").definitions
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Locale = require("classes.locale")
 
-local Locale = Locale
 local get_building_details = Buildings.get
 local floor = math.floor
 local display_time = Tirislib.Locales.display_time

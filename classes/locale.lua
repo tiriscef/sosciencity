@@ -2,7 +2,7 @@ local Castes = require("constants.castes")
 local EK = require("enums.entry-key")
 
 --- Static class that creates locales specific to Sosciencity.
-Locale = {}
+local Locale = {}
 
 --[[
     Data this class stores in storage

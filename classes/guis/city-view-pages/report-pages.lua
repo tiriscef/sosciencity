@@ -9,6 +9,7 @@ local CityView = require("classes.guis.city-view")
 local Elements = require("classes.guis.elements")
 local DiseaseGroup = require("classes.groups.disease-group")
 local Statistics = require("classes.statistics")
+local Locale = require("classes.locale")
 
 local HEALTHY = DiseaseGroup.HEALTHY
 local floor = math.floor

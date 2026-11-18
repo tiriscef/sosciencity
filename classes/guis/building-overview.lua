@@ -7,9 +7,9 @@ local Types = require("constants.types")
 local Color = require("constants.color")
 
 local Gui = require("classes.gui")
+local Locale = require("classes.locale")
 
 local Register = Register
-local Locale = Locale
 local floor = math.floor
 local ceil = math.ceil
 local get_building_details = Buildings.get

@@ -36,12 +36,12 @@ local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Workforce = require("classes.inhabitants.workforce")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Consumption = require("classes.consumption")
+local Locale = require("classes.locale")
 
 local castes = Castes.values
 local diseases = Diseases.values
 local food_values = Food.values
 local Inhabitants = Inhabitants
-local Locale = Locale
 local Register = Register
 local floor = math.floor
 local format = string.format

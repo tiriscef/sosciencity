@@ -20,6 +20,7 @@ local Housing = require("constants.housing")
 
 local Gui = require("classes.gui")
 local Elements = require("classes.guis.elements")
+local Locale = require("classes.locale")
 
 -- local often used globals for microscopic performance gains
 local castes = Castes.values

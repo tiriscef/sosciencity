@@ -9,6 +9,7 @@ local Market = require("classes.entities.market")
 local Inhabitants = require("classes.inhabitants")
 local HousingCore = require("classes.inhabitants.housing-core")
 local Subentities = require("classes.subentities")
+local Locale = require("classes.locale")
 
 local Tables = Tirislib.Tables
 local add_common_sprite = Subentities.add_common_sprite
