@@ -3,7 +3,7 @@ local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 ---Static class for the game logic of handcrafting side effects.
-Handcrafting = {}
+local Handcrafting = {}
 
 --[[
     Data this class stores in storage

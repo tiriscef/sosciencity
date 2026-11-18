@@ -14,6 +14,8 @@ local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 local Types = require("constants.types")
 
+local AutoNames = require("classes.auto-names")
+
 -- local often used globals for microscopic performance gains
 
 local Communication = Communication

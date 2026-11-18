@@ -7,6 +7,7 @@ local TypeGroup = require("constants.type-groups")
 local Types = require("constants.types")
 local UpdateGroup = require("constants.update-groups")
 
+local AutoNames = require("classes.auto-names")
 local DevMode = require("classes.dev-mode")
 
 local floor = math.floor

@@ -1,6 +1,6 @@
 local EK = require("enums.entry-key")
 
-AutoNames = {}
+local AutoNames = {}
 
 local generators = {}
 

@@ -63,25 +63,20 @@ local INTENDED_GLOBALS = {
 --- Globals the module system migration still has to remove. Only ever delete entries from this list.
 local LEGACY_GLOBALS = {
     -- classes
-    "AutoNames",
     "Communication",
     "Consumption",
     "Effects",
     "Entity",
     "Gui",
-    "Handcrafting",
     "Inhabitants",
     "Inventories",
     "ItemRequests",
     "Locale",
     "Neighborhood",
     "Register",
-    "Scheduler",
     "Statistics",
     "Subentities",
     "Technologies",
-    "TreePlanting",
-    "Visualisation",
     -- group classes in classes/inhabitants.lua
     "AgeGroup",
     "DiseaseGroup",

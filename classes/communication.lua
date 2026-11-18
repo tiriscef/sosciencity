@@ -8,6 +8,8 @@ local Castes = require("constants.castes")
 local Speakers = require("constants.speakers")
 local Time = require("constants.time")
 
+local Scheduler = require("classes.scheduler")
+
 --- Static class for all the functions that tell the player something through various means.
 --- Flying texts, speaker messages, reports, warnings, informations, notifications.
 Communication = {}

@@ -1,5 +1,5 @@
 --- Static class for planning actions in the future.
-Scheduler = {}
+local Scheduler = {}
 
 --[[
     Data this class stores in storage

@@ -5,7 +5,7 @@ local Types = require("constants.types")
 local Housing = require("constants.housing")
 
 --- Static class for all the functions that visualise the mod's concepts.
-Visualisation = {}
+local Visualisation = {}
 
 --[[
     Data this class stores in storage
