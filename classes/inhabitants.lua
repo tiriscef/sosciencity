@@ -145,7 +145,8 @@ end
 --- Converts the AgeGroups of saves from before ages were keyed by hatch day. Those were keyed by age in
 --- nauvis weeks, and houses shifted them every week (EK.last_age_shift). Homeless groups never aged.<br>
 --- Called by the 0.2.6 migration script, which the engine runs once per save - homeless groups have no marker of
---- their own, so a second call would age them again. Also runs on new games, where it finds nothing to convert.
+--- their own, so a second call would age them again. New games don't run it: the engine marks the
+--- existing migrations as applied when it creates a map.
 function Inhabitants.migrate_ages()
     local today = AgeGroup.current_day()
 
