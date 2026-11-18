@@ -3,7 +3,7 @@ local EK = require("enums.entry-key")
 --- Static class managing item-request-proxies with named request groups.
 --- Multiple independent request groups share a single proxy per entity.
 --- Storage: entry[EK.item_requests] = {groups = {key → items}, slots = {slot_indices}}
-ItemRequests = {}
+local ItemRequests = {}
 
 local function rebuild(entity, inventory, entry)
     local proxy = entity.item_request_proxy

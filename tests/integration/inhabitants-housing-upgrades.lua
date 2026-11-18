@@ -4,6 +4,7 @@ local Type = require("enums.type")
 local Housing = require("constants.housing")
 
 local Helpers = require("tests.integration.helpers")
+local ItemRequests = require("classes.item-requests")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

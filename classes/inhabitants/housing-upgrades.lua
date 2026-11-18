@@ -3,6 +3,7 @@ local Housing = require("constants.housing")
 
 local Inhabitants = require("classes.inhabitants")
 local HousingCore = require("classes.inhabitants.housing-core")
+local ItemRequests = require("classes.item-requests")
 
 -- Things about upgrading homes.
 Inhabitants.HousingUpgrades = {}

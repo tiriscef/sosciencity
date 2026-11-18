@@ -10,6 +10,7 @@ local AgeGroup = require("classes.groups.age-group")
 local ImmunityGroup = require("classes.groups.immunity-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local HousingCore = require("classes.inhabitants.housing-core")
+local ItemRequests = require("classes.item-requests")
 
 --- Static class that handles the behaviour of the people.
 Inhabitants = {}
