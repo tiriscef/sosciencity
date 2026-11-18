@@ -4,6 +4,7 @@ local Building = require("constants.buildings")
 local Food = require("constants.food")
 
 local Helpers = require("tests.integration.helpers")
+local Inventories = require("classes.inventories")
 local Assert = Tirislib.Testing.Assert
 
 local round = Tirislib.Utils.round

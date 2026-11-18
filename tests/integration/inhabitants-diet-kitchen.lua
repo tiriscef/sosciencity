@@ -10,6 +10,7 @@ local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
+local Inventories = require("classes.inventories")
 local Assert = Tirislib.Testing.Assert
 
 -- Tests for kitchen_for_all contributing food to neighboring houses.

@@ -13,8 +13,8 @@ local Composter = require("classes.entities.composter")
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Inventories = require("classes.inventories")
 
-local Inventories = Inventories
 local get_building_details = Buildings.get
 local floor = math.floor
 local format = string.format

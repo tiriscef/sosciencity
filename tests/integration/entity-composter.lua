@@ -2,6 +2,7 @@ local EK = require("enums.entry-key")
 local Type = require("enums.type")
 
 local Helpers = require("tests.integration.helpers")
+local Inventories = require("classes.inventories")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

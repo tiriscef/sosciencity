@@ -12,8 +12,8 @@ local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
 local Consumption = require("classes.consumption")
+local Inventories = require("classes.inventories")
 
-local Inventories = Inventories
 local Neighborhood = Neighborhood
 local floor = math.floor
 local round = Tirislib.Utils.round

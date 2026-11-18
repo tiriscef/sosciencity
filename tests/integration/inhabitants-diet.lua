@@ -13,6 +13,7 @@ local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
+local Inventories = require("classes.inventories")
 local Assert = Tirislib.Testing.Assert
 
 -- All tests use dedicated test food items (defined in constants/food.lua, prototyped under

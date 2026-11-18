@@ -65,7 +65,6 @@ local LEGACY_GLOBALS = {
     -- classes
     "Entity",
     "Inhabitants",
-    "Inventories",
     "Neighborhood",
     "Register"
 }

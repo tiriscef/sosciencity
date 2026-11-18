@@ -6,6 +6,7 @@ local InhabitantsConstants = require("constants.inhabitants")
 local ItemConstants = require("constants.item-constants")
 
 local Statistics = require("classes.statistics")
+local Inventories = require("classes.inventories")
 
 --- Static class for food consumption and inhabitant byproduct output (eggs, garbage).
 --- The class name captures the dominant use case. Naming is hard.
