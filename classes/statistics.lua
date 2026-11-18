@@ -3,7 +3,7 @@ local Time = require("constants.time")
 local Tables = Tirislib.Tables
 
 --- Static class for various statistic related functions.
-Statistics = {}
+local Statistics = {}
 
 --[[
     Data this class stores in storage

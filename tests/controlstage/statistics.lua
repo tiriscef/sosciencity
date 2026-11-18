@@ -1,3 +1,5 @@
+local Statistics = require("classes.statistics")
+
 local Assert = Tirislib.Testing.Assert
 
 ---------------------------------------------------------------------------------------------------

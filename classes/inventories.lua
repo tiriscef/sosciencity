@@ -1,5 +1,7 @@
 local EK = require("enums.entry-key")
 
+local Statistics = require("classes.statistics")
+
 --- Static class for the manipulation of inventories, items and fluids.
 Inventories = {}
 

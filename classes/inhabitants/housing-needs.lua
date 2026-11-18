@@ -16,6 +16,7 @@ local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 
 local Inhabitants = require("classes.inhabitants")
+local Statistics = require("classes.statistics")
 
 local castes = Castes.values
 local food_values = Food.values

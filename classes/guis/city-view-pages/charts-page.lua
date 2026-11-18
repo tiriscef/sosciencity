@@ -4,6 +4,7 @@ local Color = require("constants.color")
 local Gui = require("classes.gui")
 local CityView = require("classes.guis.city-view")
 local Elements = require("classes.guis.elements")
+local Statistics = require("classes.statistics")
 
 local TIER_LABELS = {
     fine   = {"city-view.pop-history-fine"},

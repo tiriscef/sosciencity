@@ -71,7 +71,6 @@ local LEGACY_GLOBALS = {
     "Locale",
     "Neighborhood",
     "Register",
-    "Statistics",
     "Subentities",
     "Technologies"
 }
