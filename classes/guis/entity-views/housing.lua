@@ -680,7 +680,6 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
         Datalist.set_kv_pair_value(general_list, "bonus", "-")
         Datalist.set_kv_pair_value(general_list, "employed-count", "-")
         Datalist.set_kv_pair_value(general_list, "diseased-count", "-")
-        Datalist.set_kv_pair_visibility(general_list, "disease-rate", false)
         return
     end
 
@@ -758,22 +757,6 @@ local function update_housing_general_info_tab(tabbed_pane, entry)
     local diseased = inhabitants - unemployed - employed
     Datalist.set_kv_pair_value(general_list, "employed-count", {"sosciencity.show-employed-count", employed})
     Datalist.set_kv_pair_value(general_list, "diseased-count", {"sosciencity.show-diseased-count", diseased})
-
-    Datalist.set_kv_pair_visibility(general_list, "disease-rate", DevMode.debug_mod_active)
-    local disease_progress_flow = Datalist.get_kv_value_element(general_list, "disease-rate")
-    for category_name, category_id in pairs(DiseaseCategory) do
-        local updater = Inhabitants.disease_progress_updaters[category_id]
-        if updater then
-            local progress_per_tick = updater(entry, 1)
-            local label = disease_progress_flow[tostring(category_id)]
-            label.caption = {
-                "sosciencity.show-disease-rate",
-                display_rate(progress_per_tick, "sosciencity.xcases"),
-                {"disease-category-name." .. category_name}
-            }
-            label.visible = (progress_per_tick > 0)
-        end
-    end
 end
 
 local priority_presets = {
@@ -856,16 +839,6 @@ local function add_housing_general_info_tab(tabbed_pane, entry, caste_id, player
     Datalist.set_datalist_value_tooltip(general_list, "bonus", {"sosciencity.tooltip-bonus"})
     Datalist.add_kv_pair(general_list, "employed-count", {"sosciencity.employed-count"})
     Datalist.add_kv_pair(general_list, "diseased-count", {"sosciencity.diseased-count"})
-
-    local disease_progress_flow = Datalist.add_kv_flow(general_list, "disease-rate")
-    for category in pairs(Inhabitants.disease_progress_updaters) do
-        local label =
-            disease_progress_flow.add {
-            type = "label",
-            name = tostring(category)
-        }
-        label.style.single_line = false
-    end
 
     local caste = castes[caste_id]
     local housing_details = Inhabitants.HousingCore.get(entry)
@@ -1231,11 +1204,35 @@ local function add_housing_diet_tab(tabbed_pane, entry, caste_id)
     update_housing_diet_tab(tabbed_pane, entry)
 end
 
+--- Updates the new disease cases per category in the debug tab. The tab only exists when dev mode was
+--- active as the view was created.
+local function update_housing_debug_tab(tabbed_pane, entry)
+    if not tabbed_pane.debug then
+        return
+    end
+
+    local rates_flow = Gui.Elements.Tabs.get_content(tabbed_pane, "debug")["debug-content"]["disease-rates"]
+    for category_name, category_id in pairs(DiseaseCategory) do
+        local updater = Inhabitants.disease_progress_updaters[category_id]
+        if updater then
+            local progress_per_tick = updater(entry, 1)
+            local label = rates_flow[tostring(category_id)]
+            label.caption = {
+                "sosciencity.show-disease-rate",
+                display_rate(progress_per_tick, "sosciencity.xcases"),
+                {"disease-category-name." .. category_name}
+            }
+            label.visible = (progress_per_tick > 0)
+        end
+    end
+end
+
 local function update_housing_details(container, entry)
     local tabbed_pane = container.tabpane
     update_housing_general_info_tab(tabbed_pane, entry)
     update_housing_detailed_info_tab(tabbed_pane, entry)
     update_housing_diet_tab(tabbed_pane, entry)
+    update_housing_debug_tab(tabbed_pane, entry)
 end
 
 local function add_housing_debug_tab(tabbed_pane, entry, player_id)
@@ -1246,7 +1243,18 @@ local function add_housing_debug_tab(tabbed_pane, entry, player_id)
     local unit_number = entry[EK.unit_number]
 
     local tab = Gui.Elements.Tabs.create(tabbed_pane, "debug", {"city-view.debug-tab"}, "sosciencity_details_tab")
-    local content = tab.add {type = "flow", direction = "vertical"}
+    local content = tab.add {type = "flow", name = "debug-content", direction = "vertical"}
+
+    -- New disease cases per category, filled by update_housing_debug_tab
+    Label.heading_3(content, {"city-view.debug-housing-disease-rates"})
+    local rates_flow = content.add {type = "flow", name = "disease-rates", direction = "vertical"}
+    for category in pairs(Inhabitants.disease_progress_updaters) do
+        local label = rates_flow.add {type = "label", name = tostring(category)}
+        label.style.single_line = false
+    end
+    update_housing_debug_tab(tabbed_pane, entry)
+
+    separator(content)
 
     -- Add inhabitants
     Label.heading_3(content, {"city-view.debug-housing-add"})
