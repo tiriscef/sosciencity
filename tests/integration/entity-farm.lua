@@ -3,10 +3,9 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 
 local Helpers = require("tests.integration.helpers")
+local Farm = require("classes.entities.farm")
+local Pruning = require("classes.entities.pruning")
 local Assert = Tirislib.Testing.Assert
-
-local Farm = Entity.Farm
-local Pruning = Entity.Pruning
 
 local test_surface
 local find_effect = Helpers.find_effect
@@ -29,7 +28,7 @@ local function clean_up()
 end
 
 ---------------------------------------------------------------------------------------------------
--- << Entity.Farm.biomass_to_productivity >>
+-- << Farm.biomass_to_productivity >>
 
 Tirislib.Testing.add_test_case(
     "biomass_to_productivity returns 0 below threshold",
@@ -60,7 +59,7 @@ Tirislib.Testing.add_test_case(
 )
 
 ---------------------------------------------------------------------------------------------------
--- << Entity.Pruning.effective_slots >>
+-- << Pruning.effective_slots >>
 
 Tirislib.Testing.add_test_case(
     "Pruning.effective_slots returns max at full performance",

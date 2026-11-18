@@ -21,8 +21,7 @@ local try_get = Register.try_get
 local floor = math.floor
 
 --- Static class for plant-pruning mechanics.
-Entity.Pruning = {}
-local Pruning = Entity.Pruning
+local Pruning = {}
 
 --- Productivity bonus % granted to a farm by an active pruning station.
 Pruning.productivity = 20 --%
@@ -208,3 +207,5 @@ Register.set_entity_copy_handler(
         end
     end
 )
+
+return Pruning

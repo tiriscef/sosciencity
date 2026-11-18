@@ -10,8 +10,10 @@ local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 
 local Entity = require("classes.entity")
+local Fertilization = require("classes.entities.fertilization")
 local Inhabitants = require("classes.inhabitants")
 local Inventories = require("classes.inventories")
+local Pruning = require("classes.entities.pruning")
 local Register = require("classes.register")
 
 local get_building_details = Buildings.get
@@ -19,15 +21,12 @@ local evaluate_workforce = Inhabitants.evaluate_workforce
 local evaluate_worker_happiness = Inhabitants.evaluate_worker_happiness
 local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local multiply_percentages = Entity.multiply_percentages
-local Fertilization = Entity.Fertilization
-local Pruning = Entity.Pruning
 local flora = Biology.flora
 local floor = math.floor
 local get_species = Biology.get_species
 
 ---Static class for farm-specific mechanics.
-Entity.Farm = {}
-local Farm = Entity.Farm
+local Farm = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << farms >>
@@ -255,3 +254,5 @@ local function paste_farm_settings(source, destination)
     end
 end
 Register.set_settings_paste_handler(Type.farm, Type.farm, paste_farm_settings)
+
+return Farm

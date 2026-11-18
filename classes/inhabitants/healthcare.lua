@@ -9,6 +9,8 @@ local Castes = require("constants.castes")
 local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 
+local late_require = require("classes.late-require")
+
 local castes = Castes.values
 local disease_values = Diseases.values
 local get_building_details = Buildings.get
@@ -31,9 +33,11 @@ local floor = math.floor
 
 -- set during load
 local update_unclaimed_disease_ticks
+local Hospital
 
 function Inhabitants.load_healthcare()
     update_unclaimed_disease_ticks = Inhabitants.update_unclaimed_disease_ticks
+    Hospital = late_require("classes.entities.hospital")
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -404,7 +408,7 @@ local function update_blood_donations(entry, delta_ticks)
         Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
 
         for _, hospital in pairs(hospitals) do
-            if Entity.Hospital.try_blood_donation(hospital, entry) then
+            if Hospital.try_blood_donation(hospital, entry) then
                 donations = donations - 1
                 if donations < 1 then
                     return

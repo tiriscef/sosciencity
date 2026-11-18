@@ -7,9 +7,9 @@ local Type = require("enums.type")
 -- constants
 local Buildings = require("constants.buildings")
 
-local Entity = Entity
+local Pruning = require("classes.entities.pruning")
+
 local Gui = Gui
-local Pruning = Entity.Pruning
 local Register = Register
 local get_building_details = Buildings.get
 local floor = math.floor

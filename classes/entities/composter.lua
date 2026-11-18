@@ -6,7 +6,6 @@ local Buildings = require("constants.buildings")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 
-local Entity = require("classes.entity")
 local Inventories = require("classes.inventories")
 local Neighborhood = require("classes.neighborhood")
 local Register = require("classes.register")
@@ -17,8 +16,7 @@ local floor = math.floor
 local min = math.min
 local Utils = Tirislib.Utils
 
-Entity.Composter = {}
-local Composter = Entity.Composter
+local Composter = {}
 
 ---------------------------------------------------------------------------------------------------
 -- << composter >>
@@ -176,3 +174,5 @@ local function update_composter_output(entry)
     end
 end
 Register.set_entity_updater(Type.composter_output, update_composter_output)
+
+return Composter

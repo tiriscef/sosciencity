@@ -9,7 +9,8 @@ local Buildings = require("constants.buildings")
 local ItemConstants = require("constants.item-constants")
 local Time = require("constants.time")
 
-local Entity = Entity
+local Composter = require("classes.entities.composter")
+
 local Gui = Gui
 local Inventories = Inventories
 local get_building_details = Buildings.get
@@ -54,7 +55,7 @@ local function update_composter_details(container, entry, player_id)
     Datalist.set_kv_pair_value(building_data, "humus", {"sosciencity.humus-count", round_to_step(humus / 100, 1)})
 
     local inventory = Inventories.get_chest_inventory(entry)
-    local progress_factor = Entity.Composter.analyze_inventory(Inventories.get_contents(inventory))
+    local progress_factor = Composter.analyze_inventory(Inventories.get_contents(inventory))
     -- display the composting speed as zero when the composter is full
     if humus >= get_building_details(entry).capacity then
         progress_factor = 0

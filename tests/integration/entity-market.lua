@@ -1,6 +1,7 @@
 local EK = require("enums.entry-key")
 
 local Helpers = require("tests.integration.helpers")
+local Market = require("classes.entities.market")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface
@@ -36,7 +37,7 @@ Tirislib.Testing.add_test_case(
         entity.get_inventory(defines.inventory.chest).insert {name = "mammal-meat", count = 10}
         local entry = Register.add(entity)
 
-        Assert.is_true(Entity.Market.has_food(entry), "has_food should be true when food was in chest at creation")
+        Assert.is_true(Market.has_food(entry), "has_food should be true when food was in chest at creation")
     end,
     setup,
     clean_up
@@ -51,7 +52,7 @@ Tirislib.Testing.add_test_case(
     function()
         local entry = Helpers.create_and_register(test_surface, "test-market", {0, 0})
 
-        Assert.is_false(Entity.Market.has_food(entry), "has_food should be false when chest is empty")
+        Assert.is_false(Market.has_food(entry), "has_food should be false when chest is empty")
     end,
     setup,
     clean_up
@@ -65,7 +66,7 @@ Tirislib.Testing.add_test_case(
         Inventories.get_chest_inventory(entry).insert {name = "mammal-meat", count = 10}
         Helpers.update_entry(entry)
 
-        Assert.is_true(Entity.Market.has_food(entry), "has_food should be true after food inserted and updated")
+        Assert.is_true(Market.has_food(entry), "has_food should be true after food inserted and updated")
     end,
     setup,
     clean_up
@@ -79,7 +80,7 @@ Tirislib.Testing.add_test_case(
         Inventories.get_chest_inventory(entry).insert {name = "iron-plate", count = 10}
         Helpers.update_entry(entry)
 
-        Assert.is_false(Entity.Market.has_food(entry), "has_food should be false for non-food items")
+        Assert.is_false(Market.has_food(entry), "has_food should be false for non-food items")
     end,
     setup,
     clean_up
@@ -97,12 +98,12 @@ Tirislib.Testing.add_test_case(
         inv.insert {name = "mammal-meat", count = 10}
         local entry = Register.add(entity)
 
-        Assert.is_true(Entity.Market.has_food(entry), "should have food before removal")
+        Assert.is_true(Market.has_food(entry), "should have food before removal")
 
         inv.clear()
         Helpers.update_entry(entry)
 
-        Assert.is_false(Entity.Market.has_food(entry), "has_food should be false after food removed and updated")
+        Assert.is_false(Market.has_food(entry), "has_food should be false after food removed and updated")
     end,
     setup,
     clean_up

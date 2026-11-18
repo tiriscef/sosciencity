@@ -6,9 +6,8 @@ local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 
 local Helpers = require("tests.integration.helpers")
+local Hospital = require("classes.entities.hospital")
 local Assert = Tirislib.Testing.Assert
-
-local Hospital = Entity.Hospital
 
 -- Disease 99001 (test-disease-simple): treatable, no cure items, workload 1
 -- Disease 99002 (test-disease-with-items): treatable, cure_items = {bandage = 1}, workload 1

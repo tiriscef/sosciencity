@@ -5,6 +5,8 @@ local Type = require("enums.type")
 
 local Housing = require("constants.housing")
 
+local Market = require("classes.entities.market")
+
 local Tables = Tirislib.Tables
 local add_common_sprite = Subentities.add_common_sprite
 local remove_common_sprite = Subentities.remove_common_sprite
@@ -30,7 +32,7 @@ local function update_empty_house(entry)
 
     local has_food = false
     for _, market in Neighborhood.iterate_type(entry, Type.market) do
-        if Entity.Market.has_food(market) then
+        if Market.has_food(market) then
             has_food = true
             break
         end

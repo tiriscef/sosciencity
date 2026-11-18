@@ -5,7 +5,6 @@ local Type = require("enums.type")
 local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 
-local Entity = require("classes.entity")
 local Inventories = require("classes.inventories")
 local Neighborhood = require("classes.neighborhood")
 local Register = require("classes.register")
@@ -19,8 +18,7 @@ local floor = math.floor
 local min = math.min
 
 ---Static class for humus fertilization mechanics.
-Entity.Fertilization = {}
-local Fertilization = Entity.Fertilization
+local Fertilization = {}
 
 Fertilization.speed_bonus = 30 --%
 Fertilization.workhours = 1 / Time.minute
@@ -121,3 +119,5 @@ Register.set_entity_copy_handler(
         destination[EK.humus_stored] = source[EK.humus_stored]
     end
 )
+
+return Fertilization

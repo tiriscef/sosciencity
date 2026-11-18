@@ -6,6 +6,11 @@ local Buildings = require("constants.buildings")
 local Food = require("constants.food")
 local Time = require("constants.time")
 
+local Effects = require("classes.effects")
+local Inhabitants = require("classes.inhabitants")
+local Neighborhood = require("classes.neighborhood")
+local Subentities = require("classes.subentities")
+
 ---Static class for the game logic of my entities.
 Entity = {}
 
@@ -434,41 +439,5 @@ function Entity.build_competition_site_line(entity, building_details)
         ok = count == 0
     }
 end
-
----------------------------------------------------------------------------------------------------
--- << per-type entity files >>
-
--- The submodules below are required at file scope and read fields off Entity at
--- their own file scope. Registering the (by now fully populated) table here lets
--- them `require("classes.entity")` instead of re-entering this file, which would
--- recurse until Lua runs out of C stack levels.
--- Factorio keys package.loaded by resolved path, not by the string passed to
--- require, so this has to be spelled out in full.
-package.loaded["__sosciencity__/classes/entity.lua"] = Entity
-
-require("classes.entities.machines")
-require("classes.entities.animal-farm")
-require("classes.entities.caste-education")
-require("classes.entities.city-combinator")
-require("classes.entities.composter")
-require("classes.entities.cold-storage")
-require("classes.entities.fertilization")
-require("classes.entities.pruning")
-require("classes.entities.farm")
-require("classes.entities.immigration-port")
-require("classes.entities.kitchen")
-require("classes.entities.manufactory")
-require("classes.entities.nightclub")
-require("classes.entities.social-observatory")
-require("classes.entities.fishery")
-require("classes.entities.hunting-hut")
-require("classes.entities.salt-pond")
-require("classes.entities.market")
-require("classes.entities.hospital")
-require("classes.entities.upbringing")
-require("classes.entities.waste-dump")
-require("classes.entities.water-distributer")
-require("classes.entities.waterwell")
-require("classes.entities.fishwhirl")
 
 return Entity

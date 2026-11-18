@@ -1,4 +1,8 @@
+local Comb = require("enums.performance-combination")
+local Dim = require("enums.performance-dimension")
 local EK = require("enums.entry-key")
+local PE = require("enums.performance-effect")
+local PK = require("enums.performance-key")
 local Type = require("enums.type")
 
 local Castes = require("constants.castes")
@@ -7,6 +11,14 @@ local Diseases = require("constants.diseases")
 local InhabitantsConstants = require("constants.inhabitants")
 local Types = require("constants.types")
 local Vaccines = require("constants.vaccines")
+
+local Communication = require("classes.communication")
+local Entity = require("classes.entity")
+local Inhabitants = require("classes.inhabitants")
+local Inventories = require("classes.inventories")
+local Neighborhood = require("classes.neighborhood")
+local Register = require("classes.register")
+local Subentities = require("classes.subentities")
 
 local get_building_details = Buildings.get
 local get_chest_inventory = Inventories.get_chest_inventory
@@ -26,8 +38,7 @@ local HEALTHY = DiseaseGroup.HEALTHY
 local max = math.max
 
 --- Static class for hospital-specific mechanics.
-Entity.Hospital = {}
-local Hospital = Entity.Hospital
+local Hospital = {}
 
 local inventory_sharing_types = Types.select("shares_hospital_inventory")
 local ward_types = Types.select("is_hospital_ward")
@@ -613,19 +624,6 @@ for _, _type in pairs(ward_types) do
     Register.set_entity_updater(_type, update_bed_building)
 end
 
-local Comb = require("enums.performance-combination")
-local Dim = require("enums.performance-dimension")
-local PE = require("enums.performance-effect")
-local PK = require("enums.performance-key")
-
-local Communication = require("classes.communication")
-local Entity = require("classes.entity")
-local Inhabitants = require("classes.inhabitants")
-local Inventories = require("classes.inventories")
-local Neighborhood = require("classes.neighborhood")
-local Register = require("classes.register")
-local Subentities = require("classes.subentities")
-
 local function build_hospital_report(entry)
     if not has_power(entry) then
         return {
@@ -796,3 +794,5 @@ for _, _type in pairs(ward_types) do
     Register.set_entity_destruction_handler(_type, release_all_beds)
     Register.set_entity_copy_handler(_type, copy_ward)
 end
+
+return Hospital

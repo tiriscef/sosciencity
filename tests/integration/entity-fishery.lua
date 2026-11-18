@@ -4,9 +4,8 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 
 local Helpers = require("tests.integration.helpers")
+local Fishery = require("classes.entities.fishery")
 local Assert = Tirislib.Testing.Assert
-
-local Fishery = Entity.Fishery
 
 local test_surface
 local find_effect = Helpers.find_effect

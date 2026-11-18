@@ -31,8 +31,7 @@ local max = math.max
 -- [2]: table with (item_name, count)-pairs
 
 ---Static class for upbringing station mechanics.
-Entity.Upbringing = {}
-local Upbringing = Entity.Upbringing
+local Upbringing = {}
 
 Upbringing.time = 2 * Time.minute
 local upbringing_time = Upbringing.time
@@ -198,3 +197,5 @@ local function paste_upbringing_settings(source, destination)
     destination[EK.education_mode] = source[EK.education_mode]
 end
 Register.set_settings_paste_handler(Type.upbringing_station, Type.upbringing_station, paste_upbringing_settings)
+
+return Upbringing

@@ -7,9 +7,9 @@ local Type = require("enums.type")
 -- constants
 local Time = require("constants.time")
 
-local Entity = Entity
+local Fertilization = require("classes.entities.fertilization")
+
 local Gui = Gui
-local Fertilization = Entity.Fertilization
 local floor = math.floor
 local display_item_stack = Tirislib.Locales.display_item_stack
 local Datalist = Gui.Elements.Datalist

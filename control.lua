@@ -41,6 +41,31 @@ require("classes.inventories")
 require("classes.consumption")
 require("classes.inhabitants")
 require("classes.entity")
+-- per-type entity logic; the files hook themselves into Register on load
+require("classes.entities.machines")
+require("classes.entities.animal-farm")
+local CasteEducation = require("classes.entities.caste-education")
+require("classes.entities.city-combinator")
+require("classes.entities.composter")
+require("classes.entities.cold-storage")
+require("classes.entities.fertilization")
+require("classes.entities.pruning")
+require("classes.entities.farm")
+require("classes.entities.immigration-port")
+require("classes.entities.kitchen")
+require("classes.entities.manufactory")
+require("classes.entities.nightclub")
+require("classes.entities.social-observatory")
+require("classes.entities.fishery")
+require("classes.entities.hunting-hut")
+require("classes.entities.salt-pond")
+require("classes.entities.market")
+require("classes.entities.hospital")
+require("classes.entities.upbringing")
+require("classes.entities.waste-dump")
+require("classes.entities.water-distributer")
+require("classes.entities.waterwell")
+require("classes.entities.fishwhirl")
 local Handcrafting = require("classes.handcrafting")
 require("classes.gui")
 local TreePlanting = require("classes.tree-planting")
@@ -714,8 +739,8 @@ script.on_event(defines.events.on_pre_player_crafted_item, on_player_queued_craf
 
 -- caste education: graduate students when an education recipe finishes crafting
 for _, recipe in pairs(prototypes.recipe) do
-    if recipe.on_crafted_event and Entity.CasteEducation.is_education_recipe(recipe) then
-        script.on_event(recipe.on_crafted_event, Entity.CasteEducation.on_recipe_crafted)
+    if recipe.on_crafted_event and CasteEducation.is_education_recipe(recipe) then
+        script.on_event(recipe.on_crafted_event, CasteEducation.on_recipe_crafted)
     end
 end
 

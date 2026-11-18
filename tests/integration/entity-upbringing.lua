@@ -6,10 +6,11 @@ local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
+local Upbringing = require("classes.entities.upbringing")
 local Assert = Tirislib.Testing.Assert
 
 local Table = Tirislib.Tables
-local upbringing_time = Entity.Upbringing.time
+local upbringing_time = Upbringing.time
 
 local test_surface
 

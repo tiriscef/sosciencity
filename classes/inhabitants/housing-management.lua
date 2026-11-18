@@ -7,6 +7,8 @@ local Housing = require("constants.housing")
 local InhabitantsConstants = require("constants.inhabitants")
 local Type = require("enums.type")
 
+local late_require = require("classes.late-require")
+
 local castes = Castes.values
 local try_get = Register.try_get
 local floor = math.floor
@@ -46,7 +48,7 @@ end
 
 function Inhabitants.load_housing_management()
     add_to_homeless_pool = Inhabitants.add_to_homeless_pool
-    hospital_can_treat = Entity.Hospital.can_treat
+    hospital_can_treat = late_require("classes.entities.hospital").can_treat
     get_moving_downtime_factor = Technologies.get_moving_downtime_factor
     get_housing_details = Inhabitants.HousingCore.get
     get_free_capacity = Inhabitants.HousingCore.get_free_capacity

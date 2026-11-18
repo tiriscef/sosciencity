@@ -14,9 +14,9 @@ local ward_types = Types.select("is_hospital_ward")
 
 -- classes
 local DevMode = require("classes.dev-mode")
+local Hospital = require("classes.entities.hospital")
 
 local diseases = Diseases.values
-local Entity = Entity
 local Gui = Gui
 local Neighborhood = Neighborhood
 local Register = Register
@@ -103,7 +103,7 @@ local function add_bed_cards(flow, bed_building)
 end
 
 local function get_bed_caption(bed_building)
-    return {"sosciencity.show-beds", Entity.Hospital.get_occupied_bed_count(bed_building), Entity.Hospital.get_bed_count(bed_building)}
+    return {"sosciencity.show-beds", Hospital.get_occupied_bed_count(bed_building), Hospital.get_bed_count(bed_building)}
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -237,8 +237,8 @@ local function update_hospital_treatments(general, entry, wards)
                 type_definitions[ward[EK.type]].localised_name,
                 floor(pos.x),
                 floor(pos.y),
-                Entity.Hospital.get_occupied_bed_count(ward),
-                Entity.Hospital.get_bed_count(ward)
+                Hospital.get_occupied_bed_count(ward),
+                Hospital.get_bed_count(ward)
             }
         }
         if not ward[EK.active] then

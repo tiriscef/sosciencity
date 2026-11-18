@@ -11,10 +11,9 @@ local type_definitions = require("constants.types").definitions
 
 -- classes
 local DevMode = require("classes.dev-mode")
+local Upbringing = require("classes.entities.upbringing")
 
 local castes = Castes.values
-local Entity = Entity
-local Upbringing = Entity.Upbringing
 local Gui = Gui
 local Inhabitants = Inhabitants
 local Register = Register

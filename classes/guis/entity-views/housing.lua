@@ -23,6 +23,7 @@ local Time = require("constants.time")
 
 -- classes
 local DevMode = require("classes.dev-mode")
+local Hospital = require("classes.entities.hospital")
 
 local castes = Castes.values
 local diseases = Diseases.values
@@ -1502,7 +1503,7 @@ Gui.set_click_handler("housing_debug_blood_donation", function(event)
     local hospitals = Neighborhood.get_by_type(entry, Type.improvised_hospital)
     Tirislib.Arrays.merge(hospitals, Neighborhood.get_by_type(entry, Type.hospital))
     for _, hospital in pairs(hospitals) do
-        if Entity.Hospital.try_blood_donation(hospital, entry) then
+        if Hospital.try_blood_donation(hospital, entry) then
             player.print({"city-view.debug-housing-blood-donation-done"})
             return
         end

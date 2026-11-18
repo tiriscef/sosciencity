@@ -9,13 +9,13 @@ local Biology = require("constants.biology")
 local Buildings = require("constants.buildings")
 local Time = require("constants.time")
 
-local Entity = Entity
+local Farm = require("classes.entities.farm")
+local Fertilization = require("classes.entities.fertilization")
+local Pruning = require("classes.entities.pruning")
+
 local Gui = Gui
 local Inventories = Inventories
 local Register = Register
-local Farm = Entity.Farm
-local Fertilization = Entity.Fertilization
-local Pruning = Entity.Pruning
 local get_building_details = Buildings.get
 local floor = math.floor
 local format = string.format

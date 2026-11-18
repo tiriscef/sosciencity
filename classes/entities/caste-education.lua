@@ -14,8 +14,7 @@ local get_building_details = Buildings.get
 local try_get = Register.try_get
 local set_active = Entity.set_active
 
-Entity.CasteEducation = {}
-local CasteEducation = Entity.CasteEducation
+local CasteEducation = {}
 
 -- crafting categories used by caste education buildings; their education recipes
 -- set raise_on_crafted, and control.lua subscribes to the resulting on_crafted_event
@@ -90,3 +89,5 @@ function CasteEducation.on_recipe_crafted(event)
     -- deactivate immediately so the building doesn't continue crafting before getting new students
     update_caste_education_building(entry)
 end
+
+return CasteEducation

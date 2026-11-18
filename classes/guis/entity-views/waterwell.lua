@@ -3,7 +3,8 @@
 -- enums
 local Type = require("enums.type")
 
-local Entity = Entity
+local Waterwell = require("classes.entities.waterwell")
+
 local Gui = Gui
 local display_item_stack = Tirislib.Locales.display_item_stack
 local Datalist = Gui.Elements.Datalist
@@ -14,7 +15,7 @@ local function update_waterwell_details(container, entry, player_id)
     local tabbed_pane = container.tabpane
     local building_data = Gui.Elements.Tabs.get_content(tabbed_pane, "general").building
 
-    local missing_module = Entity.Waterwell.get_missing_module(entry)
+    local missing_module = Waterwell.get_missing_module(entry)
     Datalist.set_kv_pair_visibility(building_data, "module", missing_module ~= nil)
     if missing_module then
         Datalist.set_kv_pair_value(

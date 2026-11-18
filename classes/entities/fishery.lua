@@ -19,8 +19,7 @@ local set_crafting_machine_performance = Entity.set_crafting_machine_performance
 local get_water_tiles = Entity.get_water_tiles
 local min = math.min
 
-Entity.Fishery = {}
-local Fishery = Entity.Fishery
+local Fishery = {}
 
 local different_recipe_weight = 0.3
 
@@ -126,3 +125,5 @@ local function build_fishery_site_report(entity, building_details)
     }
 end
 Entity.set_site_report_builder(Type.fishery, build_fishery_site_report)
+
+return Fishery

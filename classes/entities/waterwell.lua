@@ -21,8 +21,7 @@ local set_breakdown_state = Entity.set_breakdown_state
 local max = math.max
 local required_modules = ScriptedProducts.required_modules
 
-Entity.Waterwell = {}
-local Waterwell = Entity.Waterwell
+local Waterwell = {}
 
 --- Returns the module that the waterwell's current recipe needs and that isn't inserted, or nil.
 --- @param entry Entry
@@ -117,3 +116,5 @@ local function build_waterwell_site_report(entity, building_details)
     }
 end
 Entity.set_site_report_builder(Type.waterwell, build_waterwell_site_report)
+
+return Waterwell
