@@ -28,7 +28,6 @@ local DevMode = require("classes.dev-mode")
 
 require("classes.locale")
 require("classes.scheduler")
-require("classes.replacer")
 require("classes.register")
 require("classes.technologies")
 require("classes.subentities")
