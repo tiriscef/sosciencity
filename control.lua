@@ -22,22 +22,19 @@ local Types = require("constants.types")
 
 ---------------------------------------------------------------------------------------------------
 -- << classes >>
+-- Every module that does something at load time (registers handlers, or gets init/load calls below), in load
+-- order. Pure libraries aren't listed: the files that use them require them.
 
 local Events = require("classes.events")
 local DevMode = require("classes.dev-mode")
 
-require("classes.locale")
 local Scheduler = require("classes.scheduler")
 local Register = require("classes.register")
 local Technologies = require("classes.technologies")
-require("classes.subentities")
-require("classes.effects")
 local Neighborhood = require("classes.neighborhood")
 local Statistics = require("classes.statistics")
 local Communication = require("classes.communication")
 local Visualisation = require("classes.visualisation")
-require("classes.item-requests")
-require("classes.inventories")
 local Consumption = require("classes.consumption")
 local Inhabitants = require("classes.inhabitants")
 -- parts of the Inhabitants class; they add their functions to it

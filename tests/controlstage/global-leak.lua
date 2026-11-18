@@ -60,11 +60,6 @@ local INTENDED_GLOBALS = {
     "Tirislib"
 }
 
---- Globals the module system migration still has to remove. Only ever delete entries from this list.
-local LEGACY_GLOBALS = {
-    -- classes
-}
-
 local function to_set(...)
     local set = {}
     for _, list in pairs({...}) do
@@ -85,7 +80,7 @@ Tirislib.Testing.add_test_case(
     "no global outside the allowlists",
     "global-leak",
     function()
-        local allowed = to_set(ENGINE_GLOBALS, INTENDED_GLOBALS, LEGACY_GLOBALS)
+        local allowed = to_set(ENGINE_GLOBALS, INTENDED_GLOBALS)
         local unexpected = {}
         for name in pairs(_G) do
             if not allowed[name] then
@@ -97,20 +92,5 @@ Tirislib.Testing.add_test_case(
             unexpected,
             "unexpected globals (make them local and use require): " .. sorted_names(unexpected)
         )
-    end
-)
-
-Tirislib.Testing.add_test_case(
-    "every legacy global still exists",
-    "global-leak",
-    function()
-        local stale = {}
-        for _, name in pairs(LEGACY_GLOBALS) do
-            if rawget(_G, name) == nil then
-                stale[#stale + 1] = name
-            end
-        end
-
-        Assert.is_table_empty(stale, "migrated globals, delete them from LEGACY_GLOBALS: " .. sorted_names(stale))
     end
 )
