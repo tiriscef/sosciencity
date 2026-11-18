@@ -65,7 +65,6 @@ local LEGACY_GLOBALS = {
     -- control.lua
     "DEBUG",
     "BALANCING",
-    "BalancingData",
     -- classes
     "AutoNames",
     "Communication",

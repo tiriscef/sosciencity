@@ -22,23 +22,6 @@ DEBUG = script.active_mods["sosciencity-debug"] ~= nil
 BALANCING = script.active_mods["sosciencity-balancing"] ~= nil
 -- The cheat/debug GUIs are gated at runtime by DevMode.is_active() (map setting or companion mod).
 
-BalancingData = {
-    scripted_items = {}, -- item/fluid name → unlock condition ("always" or tech_name)
-    scripted_techs = {}, -- tech_name → human-readable description of unlock condition
-    register_scripted_item = function(name, unlock_condition)
-        BalancingData.scripted_items[name] = unlock_condition or "always"
-    end,
-    register_scripted_tech = function(tech_name, description)
-        BalancingData.scripted_techs[tech_name] = description
-    end
-}
-
-BalancingData.register_scripted_item("garbage", "upbringing")
-BalancingData.register_scripted_item("food-leftovers", "upbringing")
-BalancingData.register_scripted_item("humus", "composting-silo")
-BalancingData.register_scripted_item("necrofall", "composting-silo")
-BalancingData.register_scripted_item("medical-report", "medbay")
-
 ---------------------------------------------------------------------------------------------------
 -- << constants >>
 

@@ -2,6 +2,7 @@
 --- Hidden unless DevMode.is_active() (map setting, sosciencity-debug or sosciencity-balancing).
 
 local Castes = require("constants.castes")
+local ScriptedProducts = require("constants.scripted-products")
 local DevMode = require("classes.dev-mode")
 
 Gui.CityView.add_category("debug", {"city-view.debug"}, DevMode.is_active)
@@ -137,10 +138,26 @@ local function compute_available_techs(checked_packs, include_trigger_techs)
     return available
 end
 
+-- Scripted products (constants/scripted-products.lua) with the entities that produce them.
+-- Products that need inhabitants also need a hatchery, a rough stand-in for "the city has inhabitants".
+-- Returns: [{item = name, entities = [entity_name, ...], hatcheries = [entity_name, ...]?}, ...]
+local function get_scripted_producers()
+    local hatcheries = ScriptedProducts.get_producer_entities(ScriptedProducts.hatcheries)
+    return Q.from(ScriptedProducts.values)
+        :select(function(definition)
+            return {
+                item = definition.item,
+                entities = ScriptedProducts.get_producer_entities(definition),
+                hatcheries = definition.needs_inhabitants and hatcheries or nil
+            }
+        end)
+        :to_array()
+end
+
 -- Collects all items and fluids reachable at a given tech tier, from all sources:
 --   - recipe products (start recipes + recipes unlocked by available_techs)
 --   - world items (mined resources, offshore pump fluids, hand-minable autoplaced entities)
---   - scripted items (registered via BalancingData)
+--   - scripted products (made by a placeable producer building, see get_scripted_producers)
 --   - spoilage chains (iterative: items whose spoil_result is not yet reachable)
 --
 -- All sources feed a single fixpoint loop so that cross-source dependencies
@@ -158,6 +175,7 @@ local function collect_available_resources(available_techs, available_recipes, s
     local fluid_meta = {}
 
     local changed -- upvalue; set to true by add_item/add_fluid when a new entry is added
+    local scripted_producers = get_scripted_producers()
 
     local function add_item(name, entity_name, scripted)
         local proto = prototypes.item[name]
@@ -290,14 +308,16 @@ local function collect_available_resources(available_techs, available_recipes, s
             end
         end
 
-        -- Source 3: scripted items
-        for item_name, condition in pairs(BalancingData.scripted_items) do
-            local tech_name = condition == "always" and nil or condition
-            if tech_name == nil or available_techs[tech_name] then
-                if prototypes.fluid[item_name] then
-                    add_fluid(item_name, nil, true)
-                else
-                    add_item(item_name, nil, true)
+        -- Source 3: scripted products
+        local function is_available(entity_name)
+            return available_entities[entity_name]
+        end
+        for _, producer in pairs(scripted_producers) do
+            if not producer.hatcheries or Q.from(producer.hatcheries):any(is_available) then
+                for _, entity_name in pairs(producer.entities) do
+                    if available_entities[entity_name] then
+                        add_item(producer.item, entity_name, true)
+                    end
                 end
             end
         end
@@ -601,8 +621,7 @@ local function add_summary_section(content, rd)
     Gui.Elements.Utils.separator_line(content)
 end
 
--- description is optional; shown as tooltip on the heading when provided (used for scripted techs).
-local function add_tech_section(content, tech_name, rd, description)
+local function add_tech_section(content, tech_name, rd)
     local tech = prototypes.technology[tech_name]
     if not tech then return end
 
@@ -614,26 +633,9 @@ local function add_tech_section(content, tech_name, rd, description)
         end)
         :to_array()
 
-    -- scripted_items is {[item_name]=condition}, so from() yields (condition, item_name).
-    local scripted_items = Q.from(BalancingData.scripted_items)
-        :where(function(condition, name)
-            if condition ~= tech_name then return false end
-            local proto = prototypes.item[name]
-            return proto ~= nil and (not rd.sosciencity_only or is_sosciencity(proto))
-        end)
-        :select(function(_, name) return name end)
-        :to_array()
+    local scripted_items = rd.scripted_items_by_tech[tech_name] or {}
 
-    local scripted_fluids = Q.from(BalancingData.scripted_items)
-        :where(function(condition, name)
-            if condition ~= tech_name then return false end
-            local proto = prototypes.fluid[name]
-            return proto ~= nil and (not rd.sosciencity_only or is_sosciencity(proto))
-        end)
-        :select(function(_, name) return name end)
-        :to_array()
-
-    if #recipes == 0 and #scripted_items == 0 and #scripted_fluids == 0 then return end
+    if #recipes == 0 and #scripted_items == 0 then return end
 
     local caption = {"", string.format("[technology=%s] ", tech_name), tech.localised_name}
     for _, ingredient in pairs(tech.research_unit_ingredients) do
@@ -643,8 +645,7 @@ local function add_tech_section(content, tech_name, rd, description)
 
     local section_content = Gui.Elements.CollapsibleSection.heading_2_compact(content, caption, {
         collapsed = true,
-        elem_tooltip = {type = "technology", name = tech_name},
-        tooltip = description
+        elem_tooltip = {type = "technology", name = tech_name}
     })
 
     if #recipes > 0 then
@@ -653,10 +654,6 @@ local function add_tech_section(content, tech_name, rd, description)
 
     if #scripted_items > 0 then
         add_resource_display(section_content, scripted_items, "item/", "item", rd.item_meta, rd)
-    end
-
-    if #scripted_fluids > 0 then
-        add_resource_display(section_content, scripted_fluids, "fluid/", "fluid", rd.fluid_meta, rd)
     end
 end
 
@@ -667,6 +664,42 @@ local function add_new_technologies_section(content, rd)
     for _, tech_name in pairs(rd.techs_delta) do
         add_tech_section(outer_section, tech_name, rd)
     end
+end
+
+-- Assigns the scripted products that are new in Target to the new technologies that unlock one of their
+-- producer buildings (or, for products that need inhabitants, a hatchery).
+-- Returns: {[tech_name] = [item_name, ...]}
+local function compute_scripted_items_by_tech(techs_delta, tech_to_recipes, items_delta)
+    local new_items = Tirislib.Arrays.to_lookup(items_delta)
+    local new_producers = Q.from(get_scripted_producers())
+        :where(function(producer) return new_items[producer.item] end)
+        :to_array()
+
+    local scripted_items_by_tech = {}
+    for _, tech_name in pairs(techs_delta) do
+        local placed_entities = {}
+        for _, recipe_name in pairs(tech_to_recipes[tech_name] or {}) do
+            for _, product in pairs(prototypes.recipe[recipe_name].products) do
+                local item = product.type == "item" and prototypes.item[product.name]
+                if item and item.place_result then
+                    placed_entities[item.place_result.name] = true
+                end
+            end
+        end
+
+        local function is_placed(entity_name)
+            return placed_entities[entity_name]
+        end
+        scripted_items_by_tech[tech_name] = Q.from(new_producers)
+            :where(function(producer)
+                return Q.from(producer.entities):any(is_placed)
+                    or (producer.hatcheries ~= nil and Q.from(producer.hatcheries):any(is_placed))
+            end)
+            :select(function(producer) return producer.item end)
+            :to_array()
+    end
+
+    return scripted_items_by_tech
 end
 
 local function compute_tech_sets(main_flow)
@@ -745,6 +778,7 @@ local function compute_render_data(main_flow)
         fluids_delta     = fluids_delta,
         item_meta        = item_meta,
         fluid_meta       = fluid_meta,
+        scripted_items_by_tech = compute_scripted_items_by_tech(techs_delta, tech_to_recipes, items_delta),
     }
 end
 
@@ -931,14 +965,7 @@ local function build_export_tech_detail_lines(rd)
                 end)
                 :to_array()
 
-            local scripted_items = Q.from(BalancingData.scripted_items)
-                :where(function(condition, name)
-                    if condition ~= tech_name then return false end
-                    local proto = prototypes.item[name] or prototypes.fluid[name]
-                    return proto ~= nil and (not rd.sosciencity_only or is_sosciencity(proto))
-                end)
-                :select(function(_, name) return name end)
-                :to_array()
+            local scripted_items = rd.scripted_items_by_tech[tech_name] or {}
 
             if #recipes > 0 or #scripted_items > 0 then
                 out[#out + 1] = "### `" .. tech_name .. "`"
@@ -954,8 +981,8 @@ local function build_export_tech_detail_lines(rd)
                     for _, line in pairs(build_recipe_lines(recipes)) do out[#out + 1] = line end
                 end
                 if #scripted_items > 0 then
-                    out[#out + 1] = "**Scripted items/fluids:**"
-                    for _, line in pairs(build_resource_lines(scripted_items, nil)) do out[#out + 1] = line end
+                    out[#out + 1] = "**Scripted items:**"
+                    for _, line in pairs(build_resource_lines(scripted_items, rd.item_meta)) do out[#out + 1] = line end
                 end
                 out[#out + 1] = ""
             end
