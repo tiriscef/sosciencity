@@ -1,6 +1,7 @@
 local Food = require("constants.food")
 
 local Helpers = require("tests.integration.helpers")
+local Consumption = require("classes.consumption")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

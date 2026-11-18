@@ -2,6 +2,8 @@ local Food = require("constants.food")
 local InhabitantsConstants = require("constants.inhabitants")
 local Time = require("constants.time")
 
+local Consumption = require("classes.consumption")
+
 ---Static class for the game logic of handcrafting side effects.
 local Handcrafting = {}
 

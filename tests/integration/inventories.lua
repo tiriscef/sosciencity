@@ -6,6 +6,7 @@ local ItemConstants = require("constants.item-constants")
 
 local Helpers = require("tests.integration.helpers")
 local Subentities = require("classes.subentities")
+local Consumption = require("classes.consumption")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

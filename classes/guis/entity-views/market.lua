@@ -11,6 +11,7 @@ local Time = require("constants.time")
 local BuildingOverview = require("classes.guis.building-overview")
 local DetailsView = require("classes.guis.details-view")
 local Elements = require("classes.guis.elements")
+local Consumption = require("classes.consumption")
 
 local Inventories = Inventories
 local Neighborhood = Neighborhood

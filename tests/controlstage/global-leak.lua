@@ -64,7 +64,6 @@ local INTENDED_GLOBALS = {
 local LEGACY_GLOBALS = {
     -- classes
     "Communication",
-    "Consumption",
     "Entity",
     "Inhabitants",
     "Inventories",

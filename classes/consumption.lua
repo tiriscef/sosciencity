@@ -9,7 +9,7 @@ local Statistics = require("classes.statistics")
 
 --- Static class for food consumption and inhabitant byproduct output (eggs, garbage).
 --- The class name captures the dominant use case. Naming is hard.
-Consumption = {}
+local Consumption = {}
 
 --[[
     Data this class stores in storage

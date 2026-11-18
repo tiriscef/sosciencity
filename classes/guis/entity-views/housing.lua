@@ -35,6 +35,7 @@ local ImmunityGroup = require("classes.groups.immunity-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Workforce = require("classes.inhabitants.workforce")
 local HousingCore = require("classes.inhabitants.housing-core")
+local Consumption = require("classes.consumption")
 
 local castes = Castes.values
 local diseases = Diseases.values
