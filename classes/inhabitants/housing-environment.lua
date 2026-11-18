@@ -18,6 +18,7 @@ local DiseaseGroup = require("classes.groups.disease-group")
 local InhabitantGroup = require("classes.groups.inhabitant-group")
 local Inhabitants = require("classes.inhabitants")
 local HousingCore = require("classes.inhabitants.housing-core")
+local Subentities = require("classes.subentities")
 
 local castes = Castes.values
 local disease_values = Diseases.values

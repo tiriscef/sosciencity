@@ -3,7 +3,7 @@ local RenderingType = require("enums.rendering-type")
 local SubentityType = require("enums.subentity-type")
 
 --- Static class that handles hidden entities that hack additional behaviours.
-Subentities = {}
+local Subentities = {}
 
 --[[
     Data this class stores in storage
