@@ -17,7 +17,8 @@ local housing_prototype_details = {
         main_entity = "improvised-hut",
         entity_only = true,
         mining_result = {type = "item", name = "lumber", amount_min = 2, amount_max = 5},
-        description_prefix = {"entity-description.improvised-hut"}
+        description_prefix = {"entity-description.improvised-hut"},
+        not_blueprintable = true
     },
     ["improvised-hut-2"] = {
         picture = Tirislib.Entity.create_standard_picture {
@@ -34,7 +35,8 @@ local housing_prototype_details = {
         icon = "improvised-hut",
         main_entity = "improvised-hut",
         mining_result = {type = "item", name = "lumber", amount_min = 2, amount_max = 5},
-        description_prefix = {"entity-description.improvised-hut"}
+        description_prefix = {"entity-description.improvised-hut"},
+        not_blueprintable = true
     },
     --[[["boring-brick-house"] = {
         picture = {
@@ -349,6 +351,7 @@ if Sosciencity.Config.DEBUG then
 end
 
 -- I don't understand why, but the mere existence of these items make the improvised huts deconstructable by bots
+-- the huts are flagged not-blueprintable, so the placers can't be used to build them via blueprints
 Tirislib.Item.create {
     type = "item",
     name = "improvised-placer",

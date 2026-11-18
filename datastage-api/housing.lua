@@ -143,6 +143,11 @@ local function create_recipe(house_name, house_def, details)
 end
 
 local function create_entity(house_name, house_def, details)
+    local flags = {"placeable-neutral", "player-creation"}
+    if details.not_blueprintable then
+        flags[#flags + 1] = "not-blueprintable"
+    end
+
     local entity =
         Tirislib.Entity.create {
         type = "container",
@@ -150,7 +155,7 @@ local function create_entity(house_name, house_def, details)
         order = get_order(house_def),
         icon = "__sosciencity-graphics__/graphics/icon/" .. (details.icon or house_name) .. ".png",
         icon_size = 64,
-        flags = {"placeable-neutral", "player-creation"},
+        flags = flags,
         minable = {mining_time = 0.5},
         max_health = 500,
         corpse = "small-remnants",
@@ -194,7 +199,8 @@ end
 --- Set details.main_entity to the shared house name to inherit its localised_name and mining result.
 --- @param house_name string
 --- @param details table Prototype details: picture, width, height; optionally icon, main_entity,
----   mining_result, description_prefix, open_sound, close_sound, impact_category (default "stone").
+---   mining_result, description_prefix, open_sound, close_sound, impact_category (default "stone"),
+---   not_blueprintable (for entities the player can't build, like improvised huts).
 --- @param house_def HouseDefinition? House definition; looked up in constants/housing.lua by house_name if nil
 function Sosciencity.create_house_entity(house_name, details, house_def)
     house_def = house_def or Housing.values[house_name]
