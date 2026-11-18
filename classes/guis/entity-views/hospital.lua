@@ -253,6 +253,7 @@ local function update_hospital_treatments(general, entry, wards)
         local heading = treatments.add {type = "label", name = "ward-" .. unit_number, caption = caption}
         heading.style.font = "default-bold"
         heading.style.top_margin = 8
+        heading.style.single_line = false
 
         local ward_flow = treatments.add {type = "flow", name = "ward-beds-" .. unit_number, direction = "vertical"}
         add_bed_cards(ward_flow, ward)
