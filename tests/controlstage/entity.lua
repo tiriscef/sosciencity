@@ -1,3 +1,5 @@
+local Entity = require("classes.entity")
+
 local Assert = Tirislib.Testing.Assert
 
 ---------------------------------------------------------------------------------------------------

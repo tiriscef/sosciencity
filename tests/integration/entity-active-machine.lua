@@ -2,6 +2,7 @@ local EK = require("enums.entry-key")
 local Time = require("constants.time")
 
 local Helpers = require("tests.integration.helpers")
+local Entity = require("classes.entity")
 local Assert = Tirislib.Testing.Assert
 
 local ACTIVE_TIME_THRESHOLD = 2 * Time.minute

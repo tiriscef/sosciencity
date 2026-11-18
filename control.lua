@@ -52,7 +52,7 @@ require("classes.inhabitants.housing-lifecycle")
 require("classes.inhabitants.housing-upgrades")
 require("classes.inhabitants.empty-housing")
 require("classes.inhabitants.housing-redistribution")
-require("classes.entity")
+local Entity = require("classes.entity")
 -- per-type entity logic; the files hook themselves into Register on load
 require("classes.entities.machines")
 require("classes.entities.animal-farm")

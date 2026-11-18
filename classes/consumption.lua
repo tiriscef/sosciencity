@@ -8,6 +8,7 @@ local ItemConstants = require("constants.item-constants")
 local Statistics = require("classes.statistics")
 local Inventories = require("classes.inventories")
 local Neighborhood = require("classes.neighborhood")
+local late_require = require("classes.late-require")
 
 --- Static class for food consumption and inhabitant byproduct output (eggs, garbage).
 --- The class name captures the dominant use case. Naming is hard.
@@ -42,7 +43,7 @@ local is_active
 -- << lua state lifecycle stuff >>
 
 local function set_locals()
-    is_active = Entity.is_active
+    is_active = late_require("classes.entity").is_active
 end
 
 function Consumption.init()

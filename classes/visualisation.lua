@@ -6,6 +6,7 @@ local Housing = require("constants.housing")
 local Types = require("constants.types")
 
 local HousingCore = require("classes.inhabitants.housing-core")
+local late_require = require("classes.late-require")
 local Workforce = require("classes.inhabitants.workforce")
 local Neighborhood = require("classes.neighborhood")
 
@@ -36,8 +37,11 @@ local highlights
 ---------------------------------------------------------------------------------------------------
 -- << lua state lifecycle stuff >>
 
+local Entity -- set during load, Entity loads after this file
+
 local function set_locals()
     highlights = storage.mouseover_highlights
+    Entity = late_require("classes.entity")
 end
 
 function Visualisation.init()

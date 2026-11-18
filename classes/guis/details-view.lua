@@ -21,6 +21,7 @@ local Elements = require("classes.guis.elements")
 local Workforce = require("classes.inhabitants.workforce")
 local Locale = require("classes.locale")
 local Communication = require("classes.communication")
+local Entity = require("classes.entity")
 
 -- local often used globals for microscopic performance gains
 

@@ -3,6 +3,7 @@ local PK = require("enums.performance-key")
 local DeconstructionCause = require("enums.deconstruction-cause")
 
 local InhabitantGroup = require("classes.groups.inhabitant-group")
+local Entity = require("classes.entity")
 
 local Helpers = {}
 

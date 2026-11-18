@@ -9,6 +9,7 @@ local Helpers = require("tests.integration.helpers")
 local Upbringing = require("classes.entities.upbringing")
 local Subentities = require("classes.subentities")
 local Inventories = require("classes.inventories")
+local Entity = require("classes.entity")
 local Assert = Tirislib.Testing.Assert
 
 local Table = Tirislib.Tables

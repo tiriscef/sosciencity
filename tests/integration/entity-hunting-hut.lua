@@ -4,6 +4,7 @@ local PE = require("enums.performance-effect")
 local PK = require("enums.performance-key")
 
 local Helpers = require("tests.integration.helpers")
+local Entity = require("classes.entity")
 local Assert = Tirislib.Testing.Assert
 
 local test_surface

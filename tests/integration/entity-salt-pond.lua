@@ -7,6 +7,8 @@ local Assert = Tirislib.Testing.Assert
 
 local Buildings = require("constants.buildings")
 
+local Entity = require("classes.entity")
+
 local test_surface
 local find_effect = Helpers.find_effect
 

@@ -13,7 +13,7 @@ local Subentities = require("classes.subentities")
 local Workforce = require("classes.inhabitants.workforce")
 
 ---Static class for the game logic of my entities.
-Entity = {}
+local Entity = {}
 
 --[[
     Data this class stores in storage
